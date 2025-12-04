@@ -2,110 +2,156 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6A63D29F9C
-	for <webhook@archiver.kernel.org>; Thu,  4 Dec 2025 18:15:58 +0000 (UTC)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.50872.1764872156936516531
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DADD7D29F97
+	for <webhook@archiver.kernel.org>; Thu,  4 Dec 2025 18:16:08 +0000 (UTC)
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.50881.1764872163866021697
  for <cip-dev@lists.cip-project.org>;
- Thu, 04 Dec 2025 10:15:57 -0800
+ Thu, 04 Dec 2025 10:16:04 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=ZUOlzzLK;
- spf=pass (domain: tuxon.dev, ip: 209.85.128.41, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-47774d3536dso12489475e9.0
-        for <cip-dev@lists.cip-project.org>; Thu, 04 Dec 2025 10:15:56 -0800 (PST)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=NK0rTH3l;
+ spf=pass (domain: tuxon.dev, ip: 209.85.128.48, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4779adb38d3so11780325e9.2
+        for <cip-dev@lists.cip-project.org>; Thu, 04 Dec 2025 10:16:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1764872155; x=1765476955; darn=lists.cip-project.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EK/hfxW+raa7tbjhJkkIkm1mmmU2BTvdkM6FrHMsRt8=;
-        b=ZUOlzzLK3VTK1n0fz/89OAAyDElMTNm/RBj9wgUrImoxQ3QOdyAXe5RTn5ui5Z/oJU
-         ysbdSxyHGW0pzA/nK7Tvz/9UBGTPjRrheVnWEEzEURzaChz4HALfuLq0WCYSe0d2jtN/
-         YN1SoQuFf31eMi/oMYpXuLs0/sUqIsCabZVW3MSlKiQv1Z1y025s1fm6RtYYFK/mV5Ua
-         1zDrjpnTvLOFOM1weC8pYBIiyHE3x5yrO7Rpcy9gG3kdBjg9C5RRvS1W46ei2hvI0e91
-         JJi47FcjKFjrQMluB3PLNq9h/3QfxrYnihOU5Y7LaVKHg4VwRvCrv9VRHnZuLdzyueCY
-         Ns2w==
+        d=tuxon.dev; s=google; t=1764872162; x=1765476962; darn=lists.cip-project.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3XI77bz+HHb0zVjyzRP6MYNPzweSQzQuoxrocGaQsys=;
+        b=NK0rTH3lkVXheXUjbi0mxbsOWZHHk4WO/tyOPMcZCxyDBRNCK58jemoA5rZeQ3Fk7D
+         1vfrxGULdubDcx6HcluAg+zArUy+OlHF/1EIs794zBWynTWlpPCBF7QxXRkzrntwK8Ie
+         XqK4msaNd9qIutkEZC2uvxuLBrBwdwhcQRbh+oBQ/PX5M4+RJ9zs6wR1SjUC2hwXARKh
+         OLQmXYEyVlytopW+MJiUDje2xOEjFHqnb3FdfhheJOk5NMK56DccbqVPGGZeAbuOjkhq
+         GIoxraeAkIGMur1X2agQU+jD4+/waaG81+yGt+9ZBAVcyWP0DXV7xRZcsIAXvd9TDnxO
+         Cq3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764872155; x=1765476955;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=EK/hfxW+raa7tbjhJkkIkm1mmmU2BTvdkM6FrHMsRt8=;
-        b=RGGZGl90OSLzMM8FIJIN9qge2QlrqjclMHTmdxTehv6rUvVzbbOkYS8Asn1LuM9APi
-         acNWd9Ce3YBoDF80zvSC1w+Z/BsmYiB4oXNVfBSUr8LfzqAp8D+ePSLzaUlA4bMSIYUI
-         oq8zTD1rLNPT5ag9LsQwgiZUdA44yT+yceZM26s2nOSIe1fbAp530IKfU7CtgPSeOK8F
-         +4qxr442wF05GxfahbqWqH2LWXO/9h3+64R56LITO5nACcpFjb2SsJDfatoA5MBOkLDW
-         Xa7VNViPShosw+mM5JAMsaSNWlvd4sc9DQ7O79rzFj5qy91wt/VrUO+MRCEoPbzdcI9d
-         eFTw==
-X-Forwarded-Encrypted: i=1; AJvYcCW78N6GyhovJ5WuxttvqD6BShNfsZJAeFdCF/UAlfKYRPuUNP4Ohx/+wxphArOedRblTyZZmCVU@lists.cip-project.org
-X-Gm-Message-State: AOJu0Yx9PeuNsjgVnq3ufT8WuIvHKzAPdW2Q/lwkDzx4vZCvq+OW8lG/
-	IRxODhvpF7ZPHA/kQVQV7XqwjUg5E2e6KcovY0fT1o+LC4k/JP7uRAjCeSOmYm/zP4kdjc1O8vH
-	jvYLp
-X-Gm-Gg: ASbGncsZrwxz+ouRRQTeCOftAmeb/+ekOpLceDmlkUTyXaaLRhPndTKNAwiKLrqoBwG
-	uHUr4ZZxTcU9BvD59c5SkeDVTh7C3LkqkCEXhxU7rKooosyMLqofE+FADyUblj8k06AMJbIEiMj
-	dJSCIu6zeLWTaV2JOe3S0KW+OUD9YtkXt2HIADtM1vOBLIG1qTeFgnA0DEP7VYtYv25Ml28YzDL
-	u3KQWENsLbtUOeuOOXdsdCUjkrm0Mt3Of7gKYAMkrOJolZ55auSw8E8OL3BGbDIKIfvJOBjQWXS
-	iTWKTuN52XRs3eA5kRKyunh8MSQ3Ws2PxAtaCssgl+sFgWe4zsT6ltoErl/MDSMvVoyvzXjs9QM
-	eOYtssjB3lo3Znw4LkVTWGn2+z5Wg0WEA67KL48T5jW6pTz97ZEt7bH3+RmLKnlcfVljCFcYtGt
-	xD+jQhdUN48HCzMRtpeGOFJt/gYtiwXbMPX2dP4lMO
-X-Google-Smtp-Source: AGHT+IGQDYB0I9bfXrEVdrBOLnvqjm2Lg8dIWp9lV5uWxYtadyUjxjJuITrVGLWCF15h9HAhHl65bQ==
-X-Received: by 2002:a05:600c:4691:b0:46f:a2ba:581f with SMTP id 5b1f17b1804b1-4792eb4cfcfmr49049555e9.16.1764872155255;
-        Thu, 04 Dec 2025 10:15:55 -0800 (PST)
+        d=1e100.net; s=20230601; t=1764872162; x=1765476962;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3XI77bz+HHb0zVjyzRP6MYNPzweSQzQuoxrocGaQsys=;
+        b=Lvt1mfCNFRxBtBWvb518dIyHOQwPcXbETQhFnlEXcqzFjwCLG61xgUqAZF1D7rwdbW
+         TZeju7Hgipkr2rlPag/9HoSsh+rUxCUOSnAiz4WAKCu+EJtrmLo0ymq61VZorZPDpeLj
+         kiS31UoZjO+zYSyH5nHfod2fOY4Q77+qUKr71FbG9TfxCrlguHNCsy0My0AbUzMPbwct
+         FHiOE60GXRgK3S6YvT107J8p6YSvwQfUV0N5Lv2kY8ZbQyg1aouWtJThaAv3ebWGlpJj
+         kZUwuVwIa34EWGTyqQoLYxAnNF6I+yIKyDLPIvzahsAXZuQOPELz77jztTs/cxdqh2+a
+         DShA==
+X-Forwarded-Encrypted: i=1; AJvYcCU30DAUm/U9SyNfTCLWzvXLxuvIB/6W/awaRT4tWF1qRL0gxHlS5e4dE9XmOip0WnETUnY4+HmF@lists.cip-project.org
+X-Gm-Message-State: AOJu0Yy3JDSLsj09lRA+J9hJiccUagmvmSGq9lssgWKVd5mFjSc5ccMs
+	MfHxh9sKrNKMrfjeCWYhB0L3T/wM5EA/mKz/cMrAIzBwkc0VIkzhTj2DolITL22ENqw=
+X-Gm-Gg: ASbGncuPoTMPFeWTm5KCwvUhehuzqDZ9lYFE3YobLEqoYMGVrw8/J0rkiQsFrf8Uo0S
+	/I6EyTGNZtOUnj+TDJ+/X20a/4nWBx1CHb3dY9SJbo/wNEXebViVuO26bmQDMqaOALiMe70xzRO
+	4SzO1Eb8iH/U1uH4Bakxc4qSVTVlBdeOV26AZZlkoH8g3IRQjFcEDRicBoydKX4520WETjcekmY
+	ZX6FUbkUDbRzmilQBmAv9yGki/zJK6p1DW8oHl8ysBu0TmBGciZ3bwoRaUS+wi08EX5RIbgXJwp
+	XOrWDXhnxaBz0ixzkChpoGWsWXbbZZpH39D02sNEDz0MtUEFnsyK756aa/3XG/BhE/2mu7jfnQ6
+	FBveyMmdeh0vlrCmavAs1O8JJq6AJ/K/m73Plh5oUewONkFPJPiUAX55yJmon9hsouWd80vftRn
+	ukvReiZcp+DkHbHBD2U7luyozZ5dmuVzLtlzh6QwzY
+X-Google-Smtp-Source: AGHT+IFNP1jFJ9R4k0gzYLSRMvYZZgldvtqXPii/qw08w59eXopw+HJj1l7r7o8AwVgwLImBjWHxYA==
+X-Received: by 2002:a05:600c:4216:b0:479:33be:b23e with SMTP id 5b1f17b1804b1-47933beb24amr3714185e9.17.1764872162128;
+        Thu, 04 Dec 2025 10:16:02 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47930f286f4sm42953625e9.0.2025.12.04.10.15.54
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42f7d353f75sm4665971f8f.42.2025.12.04.10.16.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Dec 2025 10:15:54 -0800 (PST)
+        Thu, 04 Dec 2025 10:16:01 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 6.1.y-cip v2 17/19] clk: renesas: r9a08g045: Add MSTOP for GPIO
-Date: Thu,  4 Dec 2025 20:15:28 +0200
-Message-ID: <20251204181530.689132-18-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip v2 00/19] RZ/{G2L, G2LC, G2UL, G3S, Five, V2L}: Backport MSTOP support
+Date: Thu,  4 Dec 2025 20:15:41 +0200
+Message-ID: <20251204181600.689203-1-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251204181530.689132-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20251204181530.689132-1-claudiu.beznea.uj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 04 Dec 2025 18:15:58 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20883
+ <cip-dev@lists.cip-project.org>; Thu, 04 Dec 2025 18:16:08 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20886
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit f0cb3463d0244765ab66792a88dc5e2152c130e1 upstream.
+Hi,
 
-The GPIO module also supports MSTOP. Add it in the description of the gpio
-clock.
+Series backports the MSTOP (Module Stop) support for the Renesas
+RZ/G2L, RZ/G2LC, RZ/G2UL, RZ/G3S, RZ/Five, RZ/V2L SoCs.
 
-Fixes: c49695952746 ("clk: renesas: r9a08g045: Drop power domain instantiation")
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250806092129.621194-2-claudiu.beznea.uj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
- drivers/clk/renesas/r9a08g045-cpg.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+The purpose of MSTOP is to reduce power consumption by stopping
+unnecessary module's functions.
 
-diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9a08g045-cpg.c
-index 6d7295c36d5a..69b027f52506 100644
---- a/drivers/clk/renesas/r9a08g045-cpg.c
-+++ b/drivers/clk/renesas/r9a08g045-cpg.c
-@@ -274,7 +274,8 @@ static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
- 					MSTOP(BUS_MCPU2, BIT(5))),
- 	DEF_MOD("scif5_clk_pck",	R9A08G045_SCIF5_CLK_PCK, R9A08G045_CLK_P0, 0x584, 5,
- 					MSTOP(BUS_MCPU3, BIT(4))),
--	DEF_MOD("gpio_hclk",		R9A08G045_GPIO_HCLK, R9A08G045_OSCCLK, 0x598, 0, 0),
-+	DEF_MOD("gpio_hclk",		R9A08G045_GPIO_HCLK, R9A08G045_OSCCLK, 0x598, 0,
-+					MSTOP(BUS_PERI_CPU, BIT(6))),
- 	DEF_MOD("adc_adclk",		R9A08G045_ADC_ADCLK, R9A08G045_CLK_TSU, 0x5a8, 0,
- 					MSTOP(BUS_MCPU2, BIT(14))),
- 	DEF_MOD("adc_pclk",		R9A08G045_ADC_PCLK, R9A08G045_CLK_TSU, 0x5a8, 1,
+If any master accesses a module that has the clock stopped and the
+MSTOP bit set, a bus error will occur.
+
+Due to this, to avoid CPU generating synchronous aborts, changes
+to PM domain specific code were needed. The changes backported in
+this series were adjusted to be executed only for the above
+mentioned Renesas SoCs.
+
+Please share your thoughts on this approach.
+
+Thank you,
+Claudiu
+
+Changes in v2:
+- dropped patches:
+-- rpmsg: core: Drop dev_pm_domain_detach() call
+-- soundwire: bus: Drop dev_pm_domain_detach() call
+-- serdev: Drop dev_pm_domain_detach() call
+-- clk: renesas: r9a07g04[34]: Use tabs instead of spaces
+
+Claudiu Beznea (19):
+  PM: domains: Add flags to specify power on attach/detach
+  PM: domains: Add helper to check for PM domain detach on unbind
+    cleanup
+  PM: domains: Detach on device_unbind_cleanup()
+  driver core: platform: Drop dev_pm_domain_detach() call
+  mmc: sdio: Drop dev_pm_domain_detach() call
+  spi: Drop dev_pm_domain_detach() call
+  driver core: auxiliary bus: Drop dev_pm_domain_detach() call
+  i2c: core: Drop dev_pm_domain_detach() call
+  clk: renesas: rzg2l: Move pointers after hw member
+  clk: renesas: rzg2l: Add macro to loop through module clocks
+  clk: renesas: rzg2l: Add support for MSTOP in clock enable/disable API
+  clk: renesas: r9a08g045: Drop power domain instantiation
+  clk: renesas: rzg2l: Drop MSTOP based power domain support
+  dt-bindings: clock: rzg2l: Drop power domain IDs
+  Revert "dt-bindings: clock: renesas,rzg2l-cpg: Update
+    #power-domain-cells = <1> for RZ/G3S"
+  clk: renesas: r9a08g045: Add MSTOP for coupled clocks as well
+  clk: renesas: r9a08g045: Add MSTOP for GPIO
+  clk: renesas: r9a07g044: Add MSTOP for RZ/G2L
+  clk: renesas: r9a07g043: Add MSTOP for RZ/G2UL
+
+ .../bindings/clock/renesas,rzg2l-cpg.yaml     |  18 +-
+ drivers/amba/bus.c                            |   4 +-
+ drivers/base/auxiliary.c                      |   8 +-
+ drivers/base/dd.c                             |   3 +
+ drivers/base/platform.c                       |   8 +-
+ drivers/base/power/common.c                   |  29 +-
+ drivers/clk/qcom/apcs-sdx55.c                 |   2 +-
+ drivers/clk/renesas/r9a07g043-cpg.c           | 132 ++---
+ drivers/clk/renesas/r9a07g044-cpg.c           | 168 +++----
+ drivers/clk/renesas/r9a08g045-cpg.c           | 246 ++++-----
+ drivers/clk/renesas/r9a09g011-cpg.c           | 116 ++---
+ drivers/clk/renesas/rzg2l-cpg.c               | 476 ++++++++++--------
+ drivers/clk/renesas/rzg2l-cpg.h               |  71 +--
+ drivers/gpu/drm/display/drm_dp_aux_bus.c      |   2 +-
+ drivers/i2c/i2c-core-base.c                   |   9 +-
+ drivers/mmc/core/sdio_bus.c                   |   8 +-
+ drivers/rpmsg/rpmsg_core.c                    |   2 +-
+ drivers/soundwire/bus_type.c                  |   2 +-
+ drivers/spi/spi.c                             |   8 +-
+ drivers/tty/serdev/core.c                     |   2 +-
+ include/dt-bindings/clock/r9a07g043-cpg.h     |  53 --
+ include/dt-bindings/clock/r9a07g044-cpg.h     |  58 ---
+ include/dt-bindings/clock/r9a07g054-cpg.h     |  58 ---
+ include/dt-bindings/clock/r9a08g045-cpg.h     |  70 ---
+ include/linux/pm.h                            |   1 +
+ include/linux/pm_domain.h                     |  15 +-
+ 26 files changed, 671 insertions(+), 898 deletions(-)
+
 -- 
 2.43.0
 
