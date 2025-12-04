@@ -2,309 +2,162 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 968B8D2447E
-	for <webhook@archiver.kernel.org>; Thu,  4 Dec 2025 18:14:48 +0000 (UTC)
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.50804.1764872081862249405
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C4ACD24456
+	for <webhook@archiver.kernel.org>; Thu,  4 Dec 2025 18:15:38 +0000 (UTC)
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.50849.1764872137276329921
  for <cip-dev@lists.cip-project.org>;
- Thu, 04 Dec 2025 10:14:42 -0800
+ Thu, 04 Dec 2025 10:15:37 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=eJVGPbRG;
- spf=pass (domain: tuxon.dev, ip: 209.85.221.44, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-42e2cf93f7dso892184f8f.1
-        for <cip-dev@lists.cip-project.org>; Thu, 04 Dec 2025 10:14:41 -0800 (PST)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=GzOhUDp7;
+ spf=pass (domain: tuxon.dev, ip: 209.85.128.41, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-477632d9326so8839065e9.1
+        for <cip-dev@lists.cip-project.org>; Thu, 04 Dec 2025 10:15:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1764872080; x=1765476880; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1764872136; x=1765476936; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pTzCq29AYcuuwLJLTnWnRTb91xl0P/AoOCk13pqBfl8=;
-        b=eJVGPbRGDHygEWr4Jo6phuGeWugXt41MY8F++BUXxWsRLV1+ms+Gv8IFOjfQTyvAaM
-         rdWgJjXCyc1tXwsH4yp1BUqLbkBL/LQPisdTut3yRRqjoynw1jPmfNf5fX9NKp/QyNLx
-         dKGFQPT9Jy6rfvHK/mVCJWcO1z0y25hkEsrBqkIXpp9HMNxq5MdA5k7Jfte63e889ckK
-         HOMOZFeyDjqeLef5on3FwCPey84kgn7UuyWWznr5adA8tLyBc5fnELEbAAh7+DIC0EMV
-         1LvYnrfyCpn4cMuL0oZIxgtr6SC8ucihyl+OEEvST3CBJ14kLxep5MxAB8VeuxqT5SlE
-         gVxw==
+        bh=rcO6bxC5sutfLiJ12bSbwxhOLw6VToCiNt9uC70tff4=;
+        b=GzOhUDp7X8hC1T6C9fB/u28cPjGydR0nKLbi5LHJVMdQVrtiHqViMr8gr80xJ4nniq
+         0O220etq3FTXg+jRFHMQRd1wbsG8PNTSDLA3yw1ZNFEw76cx8qQiLG8PFZrvEcouI4aY
+         UGWuKK3wJQXMtaOJ3K/16G8vc3QjwSlZgsfPcqiWgtfqsKDzPoEDXNCoTb81A378U9tM
+         Ip484K2pYa4lCW38+yT9eUhwIlojQ5PBbW06uiPW7sPQx3+qEtNfcuc6bv66ix0DwVVh
+         oV3cDNamhI0PZ7EOMHL8hoaktNxXTk0pmVSmCDABrVBiLyh0eCnI/gji4AihlVRehVi4
+         pAuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764872080; x=1765476880;
+        d=1e100.net; s=20230601; t=1764872136; x=1765476936;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=pTzCq29AYcuuwLJLTnWnRTb91xl0P/AoOCk13pqBfl8=;
-        b=BNCCWylBFQ5Xet3GAncXjgJOt1Ib4DmQB0BMf4AQ4/SzbqBHCCJQhb2Nj8cER6Osrk
-         ALTNV4JDQI9kA57SpF3gqeL6lOtUcLbyPqhrAmEmqO8/NbCJU9Kp5jcpUi6BorY2vbCr
-         Tw85iw3EljaKiJTtpJcl5uH3t+/KYMjdas8JAMcs0Ey23d+a3FighB9SsWx1TH6GBiyz
-         wOJ714V/F+4CbmSIDdfeiQAvWvK8QcxANeLHSNiC45uLIX1mG5nzr0KKKEf1pc1Bxkx+
-         lyqTq703nJCmfAqzhNsEhUIuleaeumbl4mure/dVxUplFjjK2io2MTCvFYYKjnEL0xa+
-         DDrg==
-X-Forwarded-Encrypted: i=1; AJvYcCUm2JhvFP8Al5HLDuW4jtp2xZTnKJxcqrz+rQg8dVctwEUz6gV4SD/ZuzK17HTCfzOvpMfgcFgU@lists.cip-project.org
-X-Gm-Message-State: AOJu0Yy0TKqe0NVxv45L7gRUl1nAZtqVhUlpOnsDWPZeGZl5NyojKI9X
-	sQE7VswgA7k2SfKRIyPFfZtpHTRNHQU4PYDAuT1+Puuac+HvQFCbOiN0S3vN8GIXC0jCPpvIor1
-	2DmG3
-X-Gm-Gg: ASbGncs8sSAHfsDdoUlzCWggvXpeW2fn9eK4Oo8dnSgN/M/uEXKKI/UQZJOmooCFTQF
-	N66ld1Qy8ZCYuUN7Y4KIjld1k3w4TKVwQ4R49lArtbkeMWWc4ezyPsYSokgQB5MIYLY6CEiOe0E
-	A1D3Se7Ual1ephr6YfaAOFU/KuINqSNSBgPL9uJ+4r3lqWa5vxUBycoWX80pL5QFPVI7I5GRqHH
-	T/gi5APwCue3k3H2BSCRoP4ruWUABqNLiDuCv/IjUY4938o6W9cAOTFs/3srE/uuEKOhQSnBysN
-	wDkq2f7hw2leFVp8ak6cBPdBNm8TK9OdaRFjrPNoh2DPqopKhyX+zvPA5QSUcO5ccnl4zQme8gN
-	GyCMAYA/N9NBtO21PZaHau23BuaDS/NdQ5E2vEjB44Iio9i5d9V+Kad+PU7nz4Timhi4N/R/1zJ
-	zEZwR8ax4PICS7L3a/En7zwpqoER3lGsE/jtF0318f
-X-Google-Smtp-Source: AGHT+IGeJdkJaXQpFM8bs7WiqbRO+PBwOt3hsVZO8QHywXmtB9+VeeSThVV3UgksfyXVxlL9Nqc6Vw==
-X-Received: by 2002:a05:6000:200c:b0:42b:396e:2817 with SMTP id ffacd0b85a97d-42f731c2acemr7735903f8f.40.1764872080118;
-        Thu, 04 Dec 2025 10:14:40 -0800 (PST)
+        bh=rcO6bxC5sutfLiJ12bSbwxhOLw6VToCiNt9uC70tff4=;
+        b=UwZh7yB4hN6RXXy/qujyiRhmR3hfO4ypCwFfIjpLdFekhJE1hdBFhBKklMO34SC0lg
+         5uQksyhg4dXsP9S/E25tUwSzVinbZdJiI7DNFoWGIDSnzkue4umWba+yZmnJc27LVQks
+         daHqOek5/aHTIGovwNIohGhJ8Meoqxo4HV0DTyxloeWkgLkDlXhMKPTK/WV5/eiM2ejr
+         gsSt/uuabTdu+ZPeCFZBX8HkWhbrPikfr5YnbLt4yI7khXF1tivuApoQJG0By8yYr+sX
+         gg4nLwSmJL1PBpqBfJmnQPYboQ9JxKJlUbJiUpBVSB4vHP+pfTK1u6e5pLJ5lRDOXSNJ
+         b24g==
+X-Forwarded-Encrypted: i=1; AJvYcCWJm7x1a9fpY/haRu8S4r5MV2TJQfr0iXgjtLwGXmunHw6BRb6Eytzr70KjDYfRk4E+MWnwxYxq@lists.cip-project.org
+X-Gm-Message-State: AOJu0YzEy8FnbXQXOTvZVE8DCewGemrnrJoL4xHZ9IkY6fJVjqgL32TT
+	L2nqRzNdcbBvHZCjMdPN3t7tPo7YVL+IZNodRgkiqbOWuNgRCicFI929EELyIjMqmZ48Ec7AqiB
+	jGdMY
+X-Gm-Gg: ASbGncsmUI1RZGQZEUn0EE9ai4HKS3u3MfD6kv15AUasVFd2s7qTHqvD6yjyr/cM02G
+	tw0mPJwYR8qYvCO2LYenWwM2VZzCVmQeqmWrgKlkD0lTWkhT6sfLSsrMS1yZyUUXZwSeSsyXxUI
+	OoQxW+qDaQJnhiFwGZ059MTr6g6CAhBVKFu8zJ9WPiWS62aCyE5GjMUnSsZETTTEc1colP4xClk
+	rZ7ORlcV8R96bden8pZ/fXlPLOpLnZu+yVt7/2XZjxsVhBvtczYsNWGcCYh84osFna5Z2qqNKOY
+	rllBfIopTp6sBqW1q1P6e/5+j+L9y2ys8JuQhzZraRy90nVmzSkCAQEPa/tsB90obKG60F20Hp2
+	sYIz22S4W0YVQq0QRkkQzErJIya9FVKbXF1vy7K1xIAOKpZqU9Qz1SiaP6MzbTbg+pDH76jh5Oe
+	lASZhXwRbdPfUD/nxa5g0sJPx/X932aa7Dscp3FCRf
+X-Google-Smtp-Source: AGHT+IG8UEilExfJvO3PMkafN/Y6hpxJFGdNrLMsMSfTsJ0S6jYcq69xWetxeCO8K9QIJez5HqcJsw==
+X-Received: by 2002:a05:600c:1f8f:b0:477:73cc:82c3 with SMTP id 5b1f17b1804b1-4792af3d2e9mr71795415e9.26.1764872135586;
+        Thu, 04 Dec 2025 10:15:35 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42f7cc090bdsm4381629f8f.19.2025.12.04.10.14.39
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47930f286f4sm42953625e9.0.2025.12.04.10.15.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Dec 2025 10:14:39 -0800 (PST)
+        Thu, 04 Dec 2025 10:15:35 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip v2 18/18] clk: renesas: r9a07g043: Add MSTOP for RZ/G2UL
-Date: Thu,  4 Dec 2025 20:14:15 +0200
-Message-ID: <20251204181415.689009-19-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip v2 02/19] of: Add of_machine_compatible_match()
+Date: Thu,  4 Dec 2025 20:15:13 +0200
+Message-ID: <20251204181530.689132-3-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251204181415.689009-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20251204181415.689009-1-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20251204181530.689132-1-claudiu.beznea.uj@bp.renesas.com>
+References: <20251204181530.689132-1-claudiu.beznea.uj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 04 Dec 2025 18:14:48 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20865
+ <cip-dev@lists.cip-project.org>; Thu, 04 Dec 2025 18:15:38 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20868
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-commit 0f078d37aeeefa197f4ffff6acd677cd3220a070 upstream.
+commit c029b22f8a98e14988f800d5c0176a9eaec3c8db upstream.
 
-Add MSTOP configuration for all the module clocks on the RZ/G2UL
-based SoCs (RZ/G2UL, RZ/Five).
+We have of_machine_is_compatible() to check if a machine is compatible
+with a single compatible string. However some code is able to support
+multiple compatible boards, and so wants to check for one of many
+compatible strings.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250806092129.621194-4-claudiu.beznea.uj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+So add of_machine_compatible_match() which takes a NULL terminated
+array of compatible strings to check against the root node's
+compatible property.
+
+Compared to an open coded match this is slightly more self
+documenting, and also avoids the caller needing to juggle the root
+node either directly or via of_find_node_by_path().
+
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://msgid.link/20231214103152.12269-1-mpe@ellerman.id.au
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/clk/renesas/r9a07g043-cpg.c | 132 ++++++++++++++--------------
- 1 file changed, 66 insertions(+), 66 deletions(-)
+ drivers/of/base.c  | 21 +++++++++++++++++++++
+ include/linux/of.h |  6 ++++++
+ 2 files changed, 27 insertions(+)
 
-diff --git a/drivers/clk/renesas/r9a07g043-cpg.c b/drivers/clk/renesas/r9a07g043-cpg.c
-index 02dc5cecfd8d..f050f8565916 100644
---- a/drivers/clk/renesas/r9a07g043-cpg.c
-+++ b/drivers/clk/renesas/r9a07g043-cpg.c
-@@ -164,143 +164,143 @@ static const struct cpg_core_clk r9a07g043_core_clks[] __initconst = {
- static const struct rzg2l_mod_clk r9a07g043_mod_clks[] = {
- #ifdef CONFIG_ARM64
- 	DEF_MOD("gic",		R9A07G043_GIC600_GICCLK, R9A07G043_CLK_P1,
--				0x514, 0, 0),
-+				0x514, 0, MSTOP(BUS_REG1, BIT(7))),
- 	DEF_MOD("ia55_pclk",	R9A07G043_IA55_PCLK, R9A07G043_CLK_P2,
--				0x518, 0, 0),
-+				0x518, 0, MSTOP(BUS_PERI_CPU, BIT(13))),
- 	DEF_MOD("ia55_clk",	R9A07G043_IA55_CLK, R9A07G043_CLK_P1,
--				0x518, 1, 0),
-+				0x518, 1, MSTOP(BUS_PERI_CPU, BIT(13))),
- #endif
- #ifdef CONFIG_RISCV
- 	DEF_MOD("iax45_pclk",	R9A07G043_IAX45_PCLK, R9A07G043_CLK_P2,
--				0x518, 0, 0),
-+				0x518, 0, MSTOP(BUS_PERI_CPU, BIT(13))),
- 	DEF_MOD("iax45_clk",	R9A07G043_IAX45_CLK, R9A07G043_CLK_P1,
--				0x518, 1, 0),
-+				0x518, 1, MSTOP(BUS_PERI_CPU, BIT(13))),
- #endif
- 	DEF_MOD("dmac_aclk",	R9A07G043_DMAC_ACLK, R9A07G043_CLK_P1,
--				0x52c, 0, 0),
-+				0x52c, 0, MSTOP(BUS_REG1, BIT(2))),
- 	DEF_MOD("dmac_pclk",	R9A07G043_DMAC_PCLK, CLK_P1_DIV2,
--				0x52c, 1, 0),
-+				0x52c, 1, MSTOP(BUS_REG1, BIT(3))),
- 	DEF_MOD("ostm0_pclk",	R9A07G043_OSTM0_PCLK, R9A07G043_CLK_P0,
--				0x534, 0, 0),
-+				0x534, 0, MSTOP(BUS_REG0, BIT(4))),
- 	DEF_MOD("ostm1_pclk",	R9A07G043_OSTM1_PCLK, R9A07G043_CLK_P0,
--				0x534, 1, 0),
-+				0x534, 1, MSTOP(BUS_REG0, BIT(5))),
- 	DEF_MOD("ostm2_pclk",	R9A07G043_OSTM2_PCLK, R9A07G043_CLK_P0,
--				0x534, 2, 0),
-+				0x534, 2, MSTOP(BUS_REG0, BIT(6))),
- 	DEF_MOD("mtu_x_mck",	R9A07G043_MTU_X_MCK_MTU3, R9A07G043_CLK_P0,
--				0x538, 0, 0),
-+				0x538, 0, MSTOP(BUS_MCPU1, BIT(2))),
- 	DEF_MOD("wdt0_pclk",	R9A07G043_WDT0_PCLK, R9A07G043_CLK_P0,
--				0x548, 0, 0),
-+				0x548, 0, MSTOP(BUS_REG0, BIT(2))),
- 	DEF_MOD("wdt0_clk",	R9A07G043_WDT0_CLK, R9A07G043_OSCCLK,
--				0x548, 1, 0),
-+				0x548, 1, MSTOP(BUS_REG0, BIT(2))),
- 	DEF_MOD("spi_clk2",	R9A07G043_SPI_CLK2, R9A07G043_CLK_SPI1,
--				0x550, 0, 0),
-+				0x550, 0, MSTOP(BUS_MCPU1, BIT(1))),
- 	DEF_MOD("spi_clk",	R9A07G043_SPI_CLK, R9A07G043_CLK_SPI0,
--				0x550, 1, 0),
-+				0x550, 1, MSTOP(BUS_MCPU1, BIT(1))),
- 	DEF_MOD("sdhi0_imclk",	R9A07G043_SDHI0_IMCLK, CLK_SD0_DIV4,
--				0x554, 0, 0),
-+				0x554, 0, MSTOP(BUS_PERI_COM, BIT(0))),
- 	DEF_MOD("sdhi0_imclk2",	R9A07G043_SDHI0_IMCLK2, CLK_SD0_DIV4,
--				0x554, 1, 0),
-+				0x554, 1, MSTOP(BUS_PERI_COM, BIT(0))),
- 	DEF_MOD("sdhi0_clk_hs",	R9A07G043_SDHI0_CLK_HS, R9A07G043_CLK_SD0,
--				0x554, 2, 0),
-+				0x554, 2, MSTOP(BUS_PERI_COM, BIT(0))),
- 	DEF_MOD("sdhi0_aclk",	R9A07G043_SDHI0_ACLK, R9A07G043_CLK_P1,
--				0x554, 3, 0),
-+				0x554, 3, MSTOP(BUS_PERI_COM, BIT(0))),
- 	DEF_MOD("sdhi1_imclk",	R9A07G043_SDHI1_IMCLK, CLK_SD1_DIV4,
--				0x554, 4, 0),
-+				0x554, 4, MSTOP(BUS_PERI_COM, BIT(1))),
- 	DEF_MOD("sdhi1_imclk2",	R9A07G043_SDHI1_IMCLK2, CLK_SD1_DIV4,
--				0x554, 5, 0),
-+				0x554, 5, MSTOP(BUS_PERI_COM, BIT(1))),
- 	DEF_MOD("sdhi1_clk_hs",	R9A07G043_SDHI1_CLK_HS, R9A07G043_CLK_SD1,
--				0x554, 6, 0),
-+				0x554, 6, MSTOP(BUS_PERI_COM, BIT(1))),
- 	DEF_MOD("sdhi1_aclk",	R9A07G043_SDHI1_ACLK, R9A07G043_CLK_P1,
--				0x554, 7, 0),
-+				0x554, 7, MSTOP(BUS_PERI_COM, BIT(1))),
- #ifdef CONFIG_ARM64
- 	DEF_MOD("cru_sysclk",   R9A07G043_CRU_SYSCLK, CLK_M2_DIV2,
--				0x564, 0, 0),
-+				0x564, 0, MSTOP(BUS_PERI_VIDEO, BIT(3))),
- 	DEF_MOD("cru_vclk",     R9A07G043_CRU_VCLK, R9A07G043_CLK_M2,
--				0x564, 1, 0),
-+				0x564, 1, MSTOP(BUS_PERI_VIDEO, BIT(3))),
- 	DEF_MOD("cru_pclk",     R9A07G043_CRU_PCLK, R9A07G043_CLK_ZT,
--				0x564, 2, 0),
-+				0x564, 2, MSTOP(BUS_PERI_VIDEO, BIT(3))),
- 	DEF_MOD("cru_aclk",     R9A07G043_CRU_ACLK, R9A07G043_CLK_M0,
--				0x564, 3, 0),
-+				0x564, 3, MSTOP(BUS_PERI_VIDEO, BIT(3))),
- 	DEF_COUPLED("lcdc_clk_a", R9A07G043_LCDC_CLK_A, R9A07G043_CLK_M0,
--				0x56c, 0, 0),
-+				0x56c, 0, MSTOP(BUS_PERI_VIDEO, GENMASK(8, 7))),
- 	DEF_COUPLED("lcdc_clk_p", R9A07G043_LCDC_CLK_P, R9A07G043_CLK_ZT,
--				0x56c, 0, 0),
-+				0x56c, 0, MSTOP(BUS_PERI_VIDEO, GENMASK(8, 7))),
- 	DEF_MOD("lcdc_clk_d",	R9A07G043_LCDC_CLK_D, R9A07G043_CLK_M3,
--				0x56c, 1, 0),
-+				0x56c, 1, MSTOP(BUS_PERI_VIDEO, BIT(9))),
- #endif
- 	DEF_MOD("ssi0_pclk",	R9A07G043_SSI0_PCLK2, R9A07G043_CLK_P0,
--				0x570, 0, 0),
-+				0x570, 0, MSTOP(BUS_MCPU1, BIT(10))),
- 	DEF_MOD("ssi0_sfr",	R9A07G043_SSI0_PCLK_SFR, R9A07G043_CLK_P0,
--				0x570, 1, 0),
-+				0x570, 1, MSTOP(BUS_MCPU1, BIT(10))),
- 	DEF_MOD("ssi1_pclk",	R9A07G043_SSI1_PCLK2, R9A07G043_CLK_P0,
--				0x570, 2, 0),
-+				0x570, 2, MSTOP(BUS_MCPU1, BIT(11))),
- 	DEF_MOD("ssi1_sfr",	R9A07G043_SSI1_PCLK_SFR, R9A07G043_CLK_P0,
--				0x570, 3, 0),
-+				0x570, 3, MSTOP(BUS_MCPU1, BIT(11))),
- 	DEF_MOD("ssi2_pclk",	R9A07G043_SSI2_PCLK2, R9A07G043_CLK_P0,
--				0x570, 4, 0),
-+				0x570, 4, MSTOP(BUS_MCPU1, BIT(12))),
- 	DEF_MOD("ssi2_sfr",	R9A07G043_SSI2_PCLK_SFR, R9A07G043_CLK_P0,
--				0x570, 5, 0),
-+				0x570, 5, MSTOP(BUS_MCPU1, BIT(12))),
- 	DEF_MOD("ssi3_pclk",	R9A07G043_SSI3_PCLK2, R9A07G043_CLK_P0,
--				0x570, 6, 0),
-+				0x570, 6, MSTOP(BUS_MCPU1, BIT(13))),
- 	DEF_MOD("ssi3_sfr",	R9A07G043_SSI3_PCLK_SFR, R9A07G043_CLK_P0,
--				0x570, 7, 0),
-+				0x570, 7, MSTOP(BUS_MCPU1, BIT(13))),
- 	DEF_MOD("usb0_host",	R9A07G043_USB_U2H0_HCLK, R9A07G043_CLK_P1,
--				0x578, 0, 0),
-+				0x578, 0, MSTOP(BUS_PERI_COM, BIT(5))),
- 	DEF_MOD("usb1_host",	R9A07G043_USB_U2H1_HCLK, R9A07G043_CLK_P1,
--				0x578, 1, 0),
-+				0x578, 1, MSTOP(BUS_PERI_COM, BIT(7))),
- 	DEF_MOD("usb0_func",	R9A07G043_USB_U2P_EXR_CPUCLK, R9A07G043_CLK_P1,
--				0x578, 2, 0),
-+				0x578, 2, MSTOP(BUS_PERI_COM, BIT(6))),
- 	DEF_MOD("usb_pclk",	R9A07G043_USB_PCLK, R9A07G043_CLK_P1,
--				0x578, 3, 0),
-+				0x578, 3, MSTOP(BUS_PERI_COM, BIT(4))),
- 	DEF_COUPLED("eth0_axi",	R9A07G043_ETH0_CLK_AXI, R9A07G043_CLK_M0,
--				0x57c, 0, 0),
-+				0x57c, 0, MSTOP(BUS_PERI_COM, BIT(2))),
- 	DEF_COUPLED("eth0_chi",	R9A07G043_ETH0_CLK_CHI, R9A07G043_CLK_ZT,
--				0x57c, 0, 0),
-+				0x57c, 0, MSTOP(BUS_PERI_COM, BIT(2))),
- 	DEF_COUPLED("eth1_axi",	R9A07G043_ETH1_CLK_AXI, R9A07G043_CLK_M0,
--				0x57c, 1, 0),
-+				0x57c, 1, MSTOP(BUS_PERI_COM, BIT(3))),
- 	DEF_COUPLED("eth1_chi",	R9A07G043_ETH1_CLK_CHI, R9A07G043_CLK_ZT,
--				0x57c, 1, 0),
-+				0x57c, 1, MSTOP(BUS_PERI_COM, BIT(3))),
- 	DEF_MOD("i2c0",		R9A07G043_I2C0_PCLK, R9A07G043_CLK_P0,
--				0x580, 0, 0),
-+				0x580, 0, MSTOP(BUS_MCPU2, BIT(10))),
- 	DEF_MOD("i2c1",		R9A07G043_I2C1_PCLK, R9A07G043_CLK_P0,
--				0x580, 1, 0),
-+				0x580, 1, MSTOP(BUS_MCPU2, BIT(11))),
- 	DEF_MOD("i2c2",		R9A07G043_I2C2_PCLK, R9A07G043_CLK_P0,
--				0x580, 2, 0),
-+				0x580, 2, MSTOP(BUS_MCPU2, BIT(12))),
- 	DEF_MOD("i2c3",		R9A07G043_I2C3_PCLK, R9A07G043_CLK_P0,
--				0x580, 3, 0),
-+				0x580, 3, MSTOP(BUS_MCPU2, BIT(13))),
- 	DEF_MOD("scif0",	R9A07G043_SCIF0_CLK_PCK, R9A07G043_CLK_P0,
--				0x584, 0, 0),
-+				0x584, 0, MSTOP(BUS_MCPU2, BIT(1))),
- 	DEF_MOD("scif1",	R9A07G043_SCIF1_CLK_PCK, R9A07G043_CLK_P0,
--				0x584, 1, 0),
-+				0x584, 1, MSTOP(BUS_MCPU2, BIT(2))),
- 	DEF_MOD("scif2",	R9A07G043_SCIF2_CLK_PCK, R9A07G043_CLK_P0,
--				0x584, 2, 0),
-+				0x584, 2, MSTOP(BUS_MCPU2, BIT(3))),
- 	DEF_MOD("scif3",	R9A07G043_SCIF3_CLK_PCK, R9A07G043_CLK_P0,
--				0x584, 3, 0),
-+				0x584, 3, MSTOP(BUS_MCPU2, BIT(4))),
- 	DEF_MOD("scif4",	R9A07G043_SCIF4_CLK_PCK, R9A07G043_CLK_P0,
--				0x584, 4, 0),
-+				0x584, 4, MSTOP(BUS_MCPU2, BIT(5))),
- 	DEF_MOD("sci0",		R9A07G043_SCI0_CLKP, R9A07G043_CLK_P0,
--				0x588, 0, 0),
-+				0x588, 0, MSTOP(BUS_MCPU2, BIT(7))),
- 	DEF_MOD("sci1",		R9A07G043_SCI1_CLKP, R9A07G043_CLK_P0,
--				0x588, 1, 0),
-+				0x588, 1, MSTOP(BUS_MCPU2, BIT(8))),
- 	DEF_MOD("rspi0",	R9A07G043_RSPI0_CLKB, R9A07G043_CLK_P0,
--				0x590, 0, 0),
-+				0x590, 0, MSTOP(BUS_MCPU1, BIT(14))),
- 	DEF_MOD("rspi1",	R9A07G043_RSPI1_CLKB, R9A07G043_CLK_P0,
--				0x590, 1, 0),
-+				0x590, 1, MSTOP(BUS_MCPU1, BIT(15))),
- 	DEF_MOD("rspi2",	R9A07G043_RSPI2_CLKB, R9A07G043_CLK_P0,
--				0x590, 2, 0),
-+				0x590, 2, MSTOP(BUS_MCPU2, BIT(0))),
- 	DEF_MOD("canfd",	R9A07G043_CANFD_PCLK, R9A07G043_CLK_P0,
--				0x594, 0, 0),
-+				0x594, 0, MSTOP(BUS_MCPU2, BIT(9))),
- 	DEF_MOD("gpio",		R9A07G043_GPIO_HCLK, R9A07G043_OSCCLK,
--				0x598, 0, 0),
-+				0x598, 0, MSTOP(BUS_PERI_CPU, BIT(6))),
- 	DEF_MOD("adc_adclk",	R9A07G043_ADC_ADCLK, R9A07G043_CLK_TSU,
--				0x5a8, 0, 0),
-+				0x5a8, 0, MSTOP(BUS_MCPU2, BIT(14))),
- 	DEF_MOD("adc_pclk",	R9A07G043_ADC_PCLK, R9A07G043_CLK_P0,
--				0x5a8, 1, 0),
-+				0x5a8, 1, MSTOP(BUS_MCPU2, BIT(14))),
- 	DEF_MOD("tsu_pclk",	R9A07G043_TSU_PCLK, R9A07G043_CLK_TSU,
--				0x5ac, 0, 0),
-+				0x5ac, 0, MSTOP(BUS_MCPU2, BIT(15))),
- #ifdef CONFIG_RISCV
- 	DEF_MOD("nceplic_aclk",	R9A07G043_NCEPLIC_ACLK, R9A07G043_CLK_P1,
--				0x608, 0, 0),
-+				0x608, 0, MSTOP(BUS_REG1, BIT(7))),
- #endif
- };
+diff --git a/drivers/of/base.c b/drivers/of/base.c
+index 788706579419..f61e2c1f7777 100644
+--- a/drivers/of/base.c
++++ b/drivers/of/base.c
+@@ -580,6 +580,27 @@ int of_device_compatible_match(const struct device_node *device,
+ }
+ EXPORT_SYMBOL_GPL(of_device_compatible_match);
  
++/**
++ * of_machine_compatible_match - Test root of device tree against a compatible array
++ * @compats: NULL terminated array of compatible strings to look for in root node's compatible property.
++ *
++ * Returns true if the root node has any of the given compatible values in its
++ * compatible property.
++ */
++bool of_machine_compatible_match(const char *const *compats)
++{
++	struct device_node *root;
++	int rc = 0;
++
++	root = of_find_node_by_path("/");
++	if (root) {
++		rc = of_device_compatible_match(root, compats);
++		of_node_put(root);
++	}
++
++	return rc != 0;
++}
++
+ /**
+  * of_machine_is_compatible - Test root of device tree for a given compatible value
+  * @compat: compatible string to look for in root node's compatible property.
+diff --git a/include/linux/of.h b/include/linux/of.h
+index 44e432dbf67f..30d641eab476 100644
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -394,6 +394,7 @@ extern int of_alias_get_id(struct device_node *np, const char *stem);
+ extern int of_alias_get_highest_id(const char *stem);
+ 
+ extern int of_machine_is_compatible(const char *compat);
++bool of_machine_compatible_match(const char *const *compats);
+ 
+ extern int of_add_property(struct device_node *np, struct property *prop);
+ extern int of_remove_property(struct device_node *np, struct property *prop);
+@@ -787,6 +788,11 @@ static inline int of_remove_property(struct device_node *np, struct property *pr
+ 	return 0;
+ }
+ 
++static inline bool of_machine_compatible_match(const char *const *compats)
++{
++	return false;
++}
++
+ static inline bool of_console_check(const struct device_node *dn, const char *name, int index)
+ {
+ 	return false;
 -- 
 2.43.0
 
