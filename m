@@ -2,154 +2,367 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94B93D29F83
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 963FAD29F84
 	for <webhook@archiver.kernel.org>; Thu,  4 Dec 2025 18:15:38 +0000 (UTC)
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.50848.1764872134799666566
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.50524.1764872136114938565
  for <cip-dev@lists.cip-project.org>;
- Thu, 04 Dec 2025 10:15:35 -0800
+ Thu, 04 Dec 2025 10:15:36 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=qDq4YdiG;
- spf=pass (domain: tuxon.dev, ip: 209.85.128.44, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-477b91680f8so12484885e9.0
-        for <cip-dev@lists.cip-project.org>; Thu, 04 Dec 2025 10:15:34 -0800 (PST)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=A7Gzqtk7;
+ spf=pass (domain: tuxon.dev, ip: 209.85.128.50, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-477770019e4so12879815e9.3
+        for <cip-dev@lists.cip-project.org>; Thu, 04 Dec 2025 10:15:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1764872133; x=1765476933; darn=lists.cip-project.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+I6k84+gLKNUH8h0NuqNJYR42lzDAdRZ0VUMBNJP8Dg=;
-        b=qDq4YdiGTEKfooGFF+63IYljv1id9BRIG+SzWGYTaSQOW6sF+1hpWoIvA+bo7SXo3S
-         iWEyZ/MBKVFzofovjAgZdt7sOcfspmyCN1cqeOK6ZjgiJaQEurEF858GE06XP5VA6uyR
-         VpLJRY1GwCEFFPPdMwaSAQRkov1iJSMZS2BgVGOAu50vnQxH0XxPljpzQzfd92cqOL6N
-         vCPlFwdneXSN7RTieXAj+bbRFqAWepzNT0bM7fPYsf2x7TQUBNr2LbCPyoZKVhy1GOva
-         SkVd9XOJuPvzFzV34F+QUOZ/GAnvnc3wd8RuLdco3BCz5oSPNlUh0rRZM2CHR79A+Eni
-         oc6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764872133; x=1765476933;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=tuxon.dev; s=google; t=1764872134; x=1765476934; darn=lists.cip-project.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+I6k84+gLKNUH8h0NuqNJYR42lzDAdRZ0VUMBNJP8Dg=;
-        b=LcYdQrWdkqg6Z0QJp+v1Iy+1ZeLaNvEd+VzkOehI+9kyjqvkv08oXsxVkcsmekdPLn
-         Wfx7HrtiVcwk5v2lHWn9fRlJ6c6mhJbMU2+v9PPBX6ZO+LbKqGT421bEkfcAmpMHHvFa
-         kcxEZfVmhrMXdyyNq//PXTbsUpYR+ZCIyZvGgQhinT3Wznvf9HaLcq5c6vdtHYdndIfu
-         hUMewtM4AIkdQhoxpbeIAgmhsKCE+U/FVWEvowIx6+qTwKv9DzHlaRfEi1tukL5DWc3M
-         H22ICRi0Ti4T4hOOMpAeEGY104+uwXNSDn4sMBiVESw+6PxGBP0wTTJCDtYzS0SN+KHH
-         nahg==
-X-Forwarded-Encrypted: i=1; AJvYcCWrBUKi/UZ8RrfbonUdJws0CcMkoeC4vWrp/YKgMuo4kewCQ9GnNteE+lo+Iu/JF54K33Jl1hrM@lists.cip-project.org
-X-Gm-Message-State: AOJu0Yz3dGSV6YlvZlRKeL1/YmLVPC8USkUkySItx0du1d6jaZrbXRoq
-	YVNpP9+5FIvgeZ90lcJ4FiUGcPxiQMoK1qilvIE2VV8ApJ+3MaOwLqS8FksnpoyQq5E=
-X-Gm-Gg: ASbGnct3eDmezMbEEBgzdSxCsL0CdDvk1VfG/1KyXwS/QQTfEfQvjyj+Y5rPUf07Xto
-	AfiXshy3Jqa+i6/aiePRfI/8HTdZZTZ33+UZJDgLFoy+v50XQw+SvjEvn3XS/sDhTMqSz7Gkqv8
-	Ioo/Ppm+OTb/4Bk4kPOkpB2Y/C0TrjtLBbBxBgzHJ2sNwy2QVB8lP62FBLxzb5+LUUpZDCawsBY
-	AJvczWY93zlsWrpnsATkXwGeufvc2M48UuECfIzwA5V0dI9KrtNdcHu/IfrZQOZINe8ZyiKsWtk
-	IW5n4US2ubi9/sKkQ2GlGoaqY2Vfmv0SNgIX108LbParMC4VP+Sgg9qjkLyqVC6LCkJO4wYh4ZD
-	p7GBGHtVtnLoQMcmA/+SOo4sIN2eT1Hd7DmXGPCPtO0lbqRPjgVxo/Pmh7ccmn766Ua7TUKfnZ7
-	P0a9NKoxZMjFD/lA67VP8gzqTYVUwke03vS5PYxcMT
-X-Google-Smtp-Source: AGHT+IHA+jCmggrZnO3h09NDKtmUNOcVfYFpXfdivtAvw5WudZPyHxm8LeLLXIdi76H4Zjc1wE/PGg==
-X-Received: by 2002:a05:600c:5491:b0:45d:5c71:769a with SMTP id 5b1f17b1804b1-4792af3e01bmr68317455e9.26.1764872133230;
-        Thu, 04 Dec 2025 10:15:33 -0800 (PST)
+        bh=c7n/xWt1NBWFbg8GoGV+tlmOfZuZJMYHC0uUuKIxg3Q=;
+        b=A7Gzqtk7OsVRjghGLXvQqWBl1Ut1OWKeTKAh5VSpqH4sHUbA3s12AYk6fh8bUYkSpf
+         mlMBbZDHpXhXEN0vdIvci8fgzBeTYQ3s8jXD4p2Idc7juu8OVn5500i/355QXjMKm5z8
+         wIU4R9RZO5m9jtwG8ahaq69csZa2x0hDN2ozjDyPcYc3o5uwYfKfjqNDGn7ri/ke2v13
+         YvcgJgrMS5CjogwR8gOrOvtpv6sk3TqkBIEmBdLdA+BwDrqGlKNNC+cASILgjmDx/r8E
+         EcAuM8W93CcQ7CADBy0lFZMFvHP/S4iQ1cK+CHUkLVJdrM//cVNKm3/qeqWCd8cesXs8
+         y5bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764872134; x=1765476934;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=c7n/xWt1NBWFbg8GoGV+tlmOfZuZJMYHC0uUuKIxg3Q=;
+        b=uhtKP+qManwdzRiFnsBDewrIl3ZnIehCc4a9EIOtyLWd+sHSuHJKfdv0Tf4HJpnycC
+         vyuDTKIz1ppbklZDp4PDMpMwTeeK9L3ElMyIyriuewrMJj7DBcIjJ9QVG8Nz0Uimdk0a
+         ddSdwtckSpNQamKaoc1FCJg1ZLETm50eBi8DFVpY1meaDgVNwHzMi8F8FG8eU6xYkfUf
+         5G0FIVt6l4pOC2gkOXCrs5mk1FaH1eblPgaAfkiFxCtZmndNCugvUvYTZ4imtjxxQH8I
+         Am8xuosatCXzmh3Qc4ZLrDBlWwcgGLJOjvaah7N8JzeaMgnR7iosMdGyR7iJ2cdZFJtX
+         4H1w==
+X-Forwarded-Encrypted: i=1; AJvYcCU8ciRwwCQd3W8XgpewsLYsEzdrKtCSQXiLjgarebYVafEk2s+s34YHX3jws/CKfmxczk7dlVRe@lists.cip-project.org
+X-Gm-Message-State: AOJu0YwOkCBekqUMvCAH5czgbLhkaoQrfcGYlLqlDgFc3gEoqoN46pf/
+	gsDcuD7ZsHrMBuKwECD6sJyblgpEycxIc6opaVqItQ4Bn01Jad30GVNzKdV+LnVCnLY=
+X-Gm-Gg: ASbGncuqBQylrS+WqfSemAW342GGdCAAxgpMkiEjvcu7T5EAFWdugzIOYnwJY9MnbNs
+	U4OC3tmbvEmsM1i58unVvePxiaoA/VaK2U7+Bz30WeTAr7Q9iIetyrvPzoWk74FGcbgFr2aR8G5
+	cImcpXspewoHlAZPYxs44yGR8GV5dhquRvCLd3VtOZ5U2PANwqJQNsqCFFY8sssG5uNI02RGlGh
+	vvEFgbevWsR+JXc5eV7h2QAJxR9xePfSn/BIcYvFO8pE0mCMJuEtnRfeLaYoAB/O3AoJVwaNOT1
+	EQd4XrKs6RLVWtCqvonrh+MVDm9AUMbxTbBHEslgjVQtYwyIHAZSUOiS7Ur+ogS1/cjVf9RrO5v
+	mxh9k6Nw1Sg1BfOHZ34WMwsQFUa4AlMywLzIdJN1IqEHczyT+KmOcg1BS78y4zSyJhGLzrb4crU
+	MUX2B+jCj/0a/OvhJbbSGRh5aqXpspc/wi8rDgHgDt
+X-Google-Smtp-Source: AGHT+IHKau9KniIPOtkwfzxf00S2+vB7aMv0Nz80Twrm4gqRv0x/4z+oUj4tNv2SShSD3ffkQ6xjLQ==
+X-Received: by 2002:a05:600c:45d5:b0:477:aed0:f40a with SMTP id 5b1f17b1804b1-4792f380adfmr44835385e9.19.1764872134349;
+        Thu, 04 Dec 2025 10:15:34 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47930f286f4sm42953625e9.0.2025.12.04.10.15.31
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47930f286f4sm42953625e9.0.2025.12.04.10.15.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Dec 2025 10:15:32 -0800 (PST)
+        Thu, 04 Dec 2025 10:15:33 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 6.1.y-cip v2 00/19] RZ/{G2L, G2LC, G2UL, G3S, Five, V2L}: Backport MSTOP support
-Date: Thu,  4 Dec 2025 20:15:11 +0200
-Message-ID: <20251204181530.689132-1-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip v2 01/19] PM: domains: Add flags to specify power on attach/detach
+Date: Thu,  4 Dec 2025 20:15:12 +0200
+Message-ID: <20251204181530.689132-2-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251204181530.689132-1-claudiu.beznea.uj@bp.renesas.com>
+References: <20251204181530.689132-1-claudiu.beznea.uj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 04 Dec 2025 18:15:38 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20866
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20867
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Hi,
+commit d42c7c6fd66a6e2a78ae1da666c5df6c2fde8389 upstream.
 
-Series backports the MSTOP (Module Stop) support for the Renesas
-RZ/G2L, RZ/G2LC, RZ/G2UL, RZ/G3S, RZ/Five, RZ/V2L SoCs.
+Calling dev_pm_domain_attach()/dev_pm_domain_detach() in bus driver
+probe/remove functions can affect system behavior when the drivers
+attached to the bus use devres-managed resources. Since devres actions
+may need to access device registers, calling dev_pm_domain_detach() too
+early, i.e., before these actions complete, can cause failures on some
+systems. One such example is Renesas RZ/G3S SoC-based platforms.
 
-The purpose of MSTOP is to reduce power consumption by stopping
-unnecessary module's functions.
+If the device clocks are managed via PM domains, invoking
+dev_pm_domain_detach() in the bus driver's remove function removes the
+device's clocks from the PM domain, preventing any subsequent
+pm_runtime_resume*() calls from enabling those clocks.
 
-If any master accesses a module that has the clock stopped and the
-MSTOP bit set, a bus error will occur.
+The second argument of dev_pm_domain_attach() specifies whether the PM
+domain should be powered on during attachment. Likewise, the second
+argument of dev_pm_domain_detach() indicates whether the domain should be
+powered off during detachment.
 
-Due to this, to avoid CPU generating synchronous aborts, changes
-to PM domain specific code were needed. The changes backported in
-this series were adjusted to be executed only for the above
-mentioned Renesas SoCs.
+Upcoming changes address the issue described above (initially for the
+platform bus only) by deferring the call to dev_pm_domain_detach() until
+after devres_release_all() in device_unbind_cleanup(). The detach_power_off
+field in struct dev_pm_info stores the detach power off info from the
+second argument of dev_pm_domain_attach().
 
-Please share your thoughts on this approach.
+Because there are cases where the device's PM domain power-on/off behavior
+must be conditional (e.g., in i2c_device_probe()), the patch introduces
+PD_FLAG_ATTACH_POWER_ON and PD_FLAG_DETACH_POWER_OFF flags to be passed
+to dev_pm_domain_attach().
 
-Thank you,
-Claudiu
+Finally, dev_pm_domain_attach() and its users are updated to use the newly
+introduced PD_FLAG_ATTACH_POWER_ON and PD_FLAG_DETACH_POWER_OFF macros.
 
-Changes in v2:
-- dropped patches:
--- rpmsg: core: Drop dev_pm_domain_detach() call
--- soundwire: bus: Drop dev_pm_domain_detach() call
--- serdev: Drop dev_pm_domain_detach() call
--- clk: renesas: r9a07g04[34]: Use tabs instead of spaces
+This change is preparatory.
 
-Claudiu Beznea (18):
-  PM: domains: Add flags to specify power on attach/detach
-  PM: domains: Add helper to check for PM domain detach on unbind
-    cleanup
-  PM: domains: Detach on device_unbind_cleanup()
-  driver core: platform: Drop dev_pm_domain_detach() call
-  mmc: sdio: Drop dev_pm_domain_detach() call
-  spi: Drop dev_pm_domain_detach() call
-  driver core: auxiliary bus: Drop dev_pm_domain_detach() call
-  i2c: core: Drop dev_pm_domain_detach() call
-  clk: renesas: rzg2l: Extend power domain support
-  clk: renesas: rzg2l: Postpone updating priv->clks[]
-  clk: renesas: rzg2l: Move pointers after hw member
-  clk: renesas: rzg2l: Add macro to loop through module clocks
-  clk: renesas: rzg2l: Add support for MSTOP in clock enable/disable API
-  clk: renesas: r9a08g045: Drop power domain instantiation
-  clk: renesas: r9a08g045: Add MSTOP for coupled clocks as well
-  clk: renesas: r9a08g045: Add MSTOP for GPIO
-  clk: renesas: r9a07g044: Add MSTOP for RZ/G2L
-  clk: renesas: r9a07g043: Add MSTOP for RZ/G2UL
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com> # I2C
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Link: https://patch.msgid.link/20250703112708.1621607-2-claudiu.beznea.uj@bp.renesas.com
+[ rjw: Changelog adjustments ]
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+[claudiu.beznea:
+ - fixed conflict in apcs-sdx55.c by keeping the v6.12 version
+   (that don't check for failures) and adding flag
+   PD_FLAG_ATTACH_POWER_ON
+ - fixed conflict in pm_domain.h by keeping only PD_FLAG_ATTACH_POWER_ON
+   and PD_FLAG_ATTACH_POWER_OFF]
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
+ drivers/amba/bus.c                       |  4 ++--
+ drivers/base/auxiliary.c                 |  2 +-
+ drivers/base/platform.c                  |  2 +-
+ drivers/base/power/common.c              |  6 +++---
+ drivers/clk/qcom/apcs-sdx55.c            |  2 +-
+ drivers/gpu/drm/display/drm_dp_aux_bus.c |  2 +-
+ drivers/i2c/i2c-core-base.c              |  2 +-
+ drivers/mmc/core/sdio_bus.c              |  2 +-
+ drivers/rpmsg/rpmsg_core.c               |  2 +-
+ drivers/soundwire/bus_type.c             |  2 +-
+ drivers/spi/spi.c                        |  2 +-
+ drivers/tty/serdev/core.c                |  2 +-
+ include/linux/pm_domain.h                | 15 +++++++++++++--
+ 13 files changed, 28 insertions(+), 17 deletions(-)
 
-Michael Ellerman (1):
-  of: Add of_machine_compatible_match()
-
- drivers/amba/bus.c                       |   4 +-
- drivers/base/auxiliary.c                 |   8 +-
- drivers/base/dd.c                        |   3 +
- drivers/base/platform.c                  |   8 +-
- drivers/base/power/common.c              |  29 ++-
- drivers/clk/qcom/apcs-sdx55.c            |   2 +-
- drivers/clk/renesas/r9a07g043-cpg.c      | 132 +++++------
- drivers/clk/renesas/r9a07g044-cpg.c      | 168 +++++++-------
- drivers/clk/renesas/r9a08g045-cpg.c      | 139 ++++++++----
- drivers/clk/renesas/r9a09g011-cpg.c      |  92 ++++----
- drivers/clk/renesas/rzg2l-cpg.c          | 278 +++++++++++++++++++++--
- drivers/clk/renesas/rzg2l-cpg.h          |  28 ++-
- drivers/gpu/drm/display/drm_dp_aux_bus.c |   2 +-
- drivers/i2c/i2c-core-base.c              |   9 +-
- drivers/mmc/core/sdio_bus.c              |   8 +-
- drivers/of/base.c                        |  21 ++
- drivers/rpmsg/rpmsg_core.c               |   2 +-
- drivers/soundwire/bus_type.c             |   2 +-
- drivers/spi/spi.c                        |   8 +-
- drivers/tty/serdev/core.c                |   2 +-
- include/linux/of.h                       |   6 +
- include/linux/pm.h                       |   1 +
- include/linux/pm_domain.h                |  20 +-
- 23 files changed, 681 insertions(+), 291 deletions(-)
-
+diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
+index 0aa2d3111ae6..810840327a50 100644
+--- a/drivers/amba/bus.c
++++ b/drivers/amba/bus.c
+@@ -137,7 +137,7 @@ static int amba_read_periphid(struct amba_device *dev)
+ 	void __iomem *tmp;
+ 	int i, ret;
+ 
+-	ret = dev_pm_domain_attach(&dev->dev, true);
++	ret = dev_pm_domain_attach(&dev->dev, PD_FLAG_ATTACH_POWER_ON);
+ 	if (ret) {
+ 		dev_dbg(&dev->dev, "can't get PM domain: %d\n", ret);
+ 		goto err_out;
+@@ -290,7 +290,7 @@ static int amba_probe(struct device *dev)
+ 		if (ret < 0)
+ 			break;
+ 
+-		ret = dev_pm_domain_attach(dev, true);
++		ret = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON);
+ 		if (ret)
+ 			break;
+ 
+diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
+index 8c5e65930617..31f5a81b5393 100644
+--- a/drivers/base/auxiliary.c
++++ b/drivers/base/auxiliary.c
+@@ -207,7 +207,7 @@ static int auxiliary_bus_probe(struct device *dev)
+ 	struct auxiliary_device *auxdev = to_auxiliary_dev(dev);
+ 	int ret;
+ 
+-	ret = dev_pm_domain_attach(dev, true);
++	ret = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON);
+ 	if (ret) {
+ 		dev_warn(dev, "Failed to attach to PM Domain : %d\n", ret);
+ 		return ret;
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index 3a06c214ca1c..14fde28de3f8 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -1392,7 +1392,7 @@ static int platform_probe(struct device *_dev)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	ret = dev_pm_domain_attach(_dev, true);
++	ret = dev_pm_domain_attach(_dev, PD_FLAG_ATTACH_POWER_ON);
+ 	if (ret)
+ 		goto out;
+ 
+diff --git a/drivers/base/power/common.c b/drivers/base/power/common.c
+index 72115917e0bd..1a68e0075c14 100644
+--- a/drivers/base/power/common.c
++++ b/drivers/base/power/common.c
+@@ -82,7 +82,7 @@ EXPORT_SYMBOL_GPL(dev_pm_put_subsys_data);
+ /**
+  * dev_pm_domain_attach - Attach a device to its PM domain.
+  * @dev: Device to attach.
+- * @power_on: Used to indicate whether we should power on the device.
++ * @flags: indicate whether we should power on/off the device on attach/detach
+  *
+  * The @dev may only be attached to a single PM domain. By iterating through
+  * the available alternatives we try to find a valid PM domain for the device.
+@@ -99,14 +99,14 @@ EXPORT_SYMBOL_GPL(dev_pm_put_subsys_data);
+  * Returns 0 on successfully attached PM domain, or when it is found that the
+  * device doesn't need a PM domain, else a negative error code.
+  */
+-int dev_pm_domain_attach(struct device *dev, bool power_on)
++int dev_pm_domain_attach(struct device *dev, u32 flags)
+ {
+ 	int ret;
+ 
+ 	if (dev->pm_domain)
+ 		return 0;
+ 
+-	ret = acpi_dev_pm_attach(dev, power_on);
++	ret = acpi_dev_pm_attach(dev, !!(flags & PD_FLAG_ATTACH_POWER_ON));
+ 	if (!ret)
+ 		ret = genpd_dev_pm_attach(dev);
+ 
+diff --git a/drivers/clk/qcom/apcs-sdx55.c b/drivers/clk/qcom/apcs-sdx55.c
+index e599f862ec44..9a19aa7a72fc 100644
+--- a/drivers/clk/qcom/apcs-sdx55.c
++++ b/drivers/clk/qcom/apcs-sdx55.c
+@@ -111,7 +111,7 @@ static int qcom_apcs_sdx55_clk_probe(struct platform_device *pdev)
+ 	 * driver, there seems to be no better place to do this. So do it here!
+ 	 */
+ 	cpu_dev = get_cpu_device(0);
+-	dev_pm_domain_attach(cpu_dev, true);
++	dev_pm_domain_attach(cpu_dev, PD_FLAG_ATTACH_POWER_ON);
+ 
+ 	return 0;
+ 
+diff --git a/drivers/gpu/drm/display/drm_dp_aux_bus.c b/drivers/gpu/drm/display/drm_dp_aux_bus.c
+index f5741b45ca07..df87183bf23b 100644
+--- a/drivers/gpu/drm/display/drm_dp_aux_bus.c
++++ b/drivers/gpu/drm/display/drm_dp_aux_bus.c
+@@ -57,7 +57,7 @@ static int dp_aux_ep_probe(struct device *dev)
+ 		container_of(aux_ep, struct dp_aux_ep_device_with_data, aux_ep);
+ 	int ret;
+ 
+-	ret = dev_pm_domain_attach(dev, true);
++	ret = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON);
+ 	if (ret)
+ 		return dev_err_probe(dev, ret, "Failed to attach to PM Domain\n");
+ 
+diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+index f7e3fc0b3a1d..723dfaa994a0 100644
+--- a/drivers/i2c/i2c-core-base.c
++++ b/drivers/i2c/i2c-core-base.c
+@@ -569,7 +569,7 @@ static int i2c_device_probe(struct device *dev)
+ 		goto err_clear_wakeup_irq;
+ 
+ 	do_power_on = !i2c_acpi_waive_d0_probe(dev);
+-	status = dev_pm_domain_attach(&client->dev, do_power_on);
++	status = dev_pm_domain_attach(&client->dev, do_power_on ? PD_FLAG_ATTACH_POWER_ON : 0);
+ 	if (status)
+ 		goto err_clear_wakeup_irq;
+ 
+diff --git a/drivers/mmc/core/sdio_bus.c b/drivers/mmc/core/sdio_bus.c
+index f191a2a76f3b..8e7322fd62e0 100644
+--- a/drivers/mmc/core/sdio_bus.c
++++ b/drivers/mmc/core/sdio_bus.c
+@@ -161,7 +161,7 @@ static int sdio_bus_probe(struct device *dev)
+ 	if (!id)
+ 		return -ENODEV;
+ 
+-	ret = dev_pm_domain_attach(dev, false);
++	ret = dev_pm_domain_attach(dev, 0);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+index d6dde00efdae..65f723b8ac52 100644
+--- a/drivers/rpmsg/rpmsg_core.c
++++ b/drivers/rpmsg/rpmsg_core.c
+@@ -521,7 +521,7 @@ static int rpmsg_dev_probe(struct device *dev)
+ 	struct rpmsg_endpoint *ept = NULL;
+ 	int err;
+ 
+-	err = dev_pm_domain_attach(dev, true);
++	err = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON);
+ 	if (err)
+ 		goto out;
+ 
+diff --git a/drivers/soundwire/bus_type.c b/drivers/soundwire/bus_type.c
+index 963498db0fd2..c68f859db063 100644
+--- a/drivers/soundwire/bus_type.c
++++ b/drivers/soundwire/bus_type.c
+@@ -101,7 +101,7 @@ static int sdw_drv_probe(struct device *dev)
+ 	/*
+ 	 * attach to power domain but don't turn on (last arg)
+ 	 */
+-	ret = dev_pm_domain_attach(dev, false);
++	ret = dev_pm_domain_attach(dev, 0);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index df774fb148d8..feadf94b8893 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -435,7 +435,7 @@ static int spi_probe(struct device *dev)
+ 			spi->irq = 0;
+ 	}
+ 
+-	ret = dev_pm_domain_attach(dev, true);
++	ret = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/drivers/tty/serdev/core.c b/drivers/tty/serdev/core.c
+index 0180e1e4e75d..ea2d80990505 100644
+--- a/drivers/tty/serdev/core.c
++++ b/drivers/tty/serdev/core.c
+@@ -410,7 +410,7 @@ static int serdev_drv_probe(struct device *dev)
+ 	const struct serdev_device_driver *sdrv = to_serdev_device_driver(dev->driver);
+ 	int ret;
+ 
+-	ret = dev_pm_domain_attach(dev, true);
++	ret = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+index ebc351698090..d05b8cd15055 100644
+--- a/include/linux/pm_domain.h
++++ b/include/linux/pm_domain.h
+@@ -18,6 +18,17 @@
+ #include <linux/spinlock.h>
+ #include <linux/cpumask.h>
+ 
++/*
++ * Flags to control the behaviour when attaching a device to its PM domains.
++ *
++ * PD_FLAG_ATTACH_POWER_ON:	Power on the domain during attach.
++ *
++ * PD_FLAG_DETACH_POWER_OFF:	Power off the domain during detach.
++ *
++ */
++#define PD_FLAG_ATTACH_POWER_ON		BIT(3)
++#define PD_FLAG_DETACH_POWER_OFF	BIT(4)
++
+ /*
+  * Flags to control the behaviour of a genpd.
+  *
+@@ -410,7 +421,7 @@ struct generic_pm_domain *of_genpd_remove_last(struct device_node *np)
+ #endif /* CONFIG_PM_GENERIC_DOMAINS_OF */
+ 
+ #ifdef CONFIG_PM
+-int dev_pm_domain_attach(struct device *dev, bool power_on);
++int dev_pm_domain_attach(struct device *dev, u32 flags);
+ struct device *dev_pm_domain_attach_by_id(struct device *dev,
+ 					  unsigned int index);
+ struct device *dev_pm_domain_attach_by_name(struct device *dev,
+@@ -419,7 +430,7 @@ void dev_pm_domain_detach(struct device *dev, bool power_off);
+ int dev_pm_domain_start(struct device *dev);
+ void dev_pm_domain_set(struct device *dev, struct dev_pm_domain *pd);
+ #else
+-static inline int dev_pm_domain_attach(struct device *dev, bool power_on)
++static inline int dev_pm_domain_attach(struct device *dev, u32 flags)
+ {
+ 	return 0;
+ }
 -- 
 2.43.0
 
