@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13AF4D32D80
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1890ED32D81
 	for <webhook@archiver.kernel.org>; Fri,  5 Dec 2025 14:33:42 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.msgproc01-g2.7063.1764945182570660387
  for <cip-dev@lists.cip-project.org>;
- Fri, 05 Dec 2025 06:33:36 -0800
+ Fri, 05 Dec 2025 06:33:38 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-CSE-ConnectionGUID: iN843emLS4qjUdyxaC9VTQ==
-X-CSE-MsgGUID: dG5B7P/oQs6GAKxBqx8XzA==
+X-CSE-ConnectionGUID: xm/NlniSQe6GWPcupKwmtQ==
+X-CSE-MsgGUID: 56vqbdMqR5iUQjh/FTrN/w==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 05 Dec 2025 23:33:36 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 05 Dec 2025 23:33:37 +0900
 Received: from Ubuntu-22.. (unknown [10.24.1.60])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id BE9404179B99;
-	Fri,  5 Dec 2025 23:33:34 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 813234179CE0;
+	Fri,  5 Dec 2025 23:33:36 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 20/38] clk: renesas: Pass sub struct of cpg_mssr_priv to cpg_clk_register
-Date: Fri,  5 Dec 2025 14:32:40 +0000
-Message-ID: <20251205143258.13748-21-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 21/38] clk: renesas: Add support for R9A09G077 SoC
+Date: Fri,  5 Dec 2025 14:32:41 +0000
+Message-ID: <20251205143258.13748-22-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251205143258.13748-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20251205143258.13748-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -34,551 +34,526 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 05 Dec 2025 14:33:42 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20934
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20935
 
 From: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
 
-commit 3d37ca1482c36975255f29911a529f84f1bc34a9 upstream.
+commit 065fe720eec6e627afa24da387ff970afd9a8dcb upstream.
 
-In a subsequent patch, the registration callback will need more parameters
-from cpg_mssr_priv (like another base address with clock controllers
-with double register block, and also, notifiers and rmw_lock).
-Instead of adding more parameters, move the needed parameters to a public
-sub-struct.
-Instead moving clks to this structure, which would have implied to add
-an allocation (and cleanup) for it, keep the way the allocation is done
-and just have a copy of the pointer in the public structure.
+RZ/T2H has 2 register blocks at different addresses.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The clock tree has configurable dividers and mux selectors.
+Add these new clock types, new register layout type, and
+registration code for mux and div in registration callback.
+
 Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-Link: https://lore.kernel.org/20250515141828.43444-5-thierry.bultel.yh@bp.renesas.com
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/20250515141828.43444-6-thierry.bultel.yh@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/clk/renesas/r7s9210-cpg-mssr.c  |  7 +-
- drivers/clk/renesas/r8a77970-cpg-mssr.c |  8 +-
- drivers/clk/renesas/rcar-gen2-cpg.c     |  5 +-
- drivers/clk/renesas/rcar-gen2-cpg.h     |  3 +-
- drivers/clk/renesas/rcar-gen3-cpg.c     |  6 +-
- drivers/clk/renesas/rcar-gen3-cpg.h     |  3 +-
- drivers/clk/renesas/rcar-gen4-cpg.c     |  6 +-
- drivers/clk/renesas/rcar-gen4-cpg.h     |  3 +-
- drivers/clk/renesas/renesas-cpg-mssr.c  | 98 ++++++++++++-------------
- drivers/clk/renesas/renesas-cpg-mssr.h  | 20 ++++-
- 10 files changed, 88 insertions(+), 71 deletions(-)
+ drivers/clk/renesas/Kconfig            |   5 +
+ drivers/clk/renesas/Makefile           |   1 +
+ drivers/clk/renesas/r9a09g077-cpg.c    | 241 +++++++++++++++++++++++++
+ drivers/clk/renesas/renesas-cpg-mssr.c |  89 ++++++++-
+ drivers/clk/renesas/renesas-cpg-mssr.h |  12 ++
+ 5 files changed, 346 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/clk/renesas/r9a09g077-cpg.c
 
-diff --git a/drivers/clk/renesas/r7s9210-cpg-mssr.c b/drivers/clk/renesas/r7s9210-cpg-mssr.c
-index a85227c248f31..733244687daa8 100644
---- a/drivers/clk/renesas/r7s9210-cpg-mssr.c
-+++ b/drivers/clk/renesas/r7s9210-cpg-mssr.c
-@@ -159,12 +159,13 @@ static void __init r7s9210_update_clk_table(struct clk *extal_clk,
+diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
+index 50c20119d12aa..45f9ae5b6ef1a 100644
+--- a/drivers/clk/renesas/Kconfig
++++ b/drivers/clk/renesas/Kconfig
+@@ -43,6 +43,7 @@ config CLK_RENESAS
+ 	select CLK_R9A09G047 if ARCH_R9A09G047
+ 	select CLK_R9A09G056 if ARCH_R9A09G056
+ 	select CLK_R9A09G057 if ARCH_R9A09G057
++	select CLK_R9A09G077 if ARCH_R9A09G077
+ 	select CLK_SH73A0 if ARCH_SH73A0
  
- static struct clk * __init rza2_cpg_clk_register(struct device *dev,
- 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
--	struct clk **clks, void __iomem *base,
--	struct raw_notifier_head *notifiers)
-+	struct cpg_mssr_pub *pub)
- {
--	struct clk *parent;
-+	void __iomem *base = pub->base0;
-+	struct clk **clks = pub->clks;
- 	unsigned int mult = 1;
- 	unsigned int div = 1;
-+	struct clk *parent;
+ if CLK_RENESAS
+@@ -208,6 +209,10 @@ config CLK_R9A09G057
+        bool "RZ/V2H(P) clock support" if COMPILE_TEST
+        select CLK_RZV2H
  
- 	parent = clks[core->parent];
- 	if (IS_ERR(parent))
-diff --git a/drivers/clk/renesas/r8a77970-cpg-mssr.c b/drivers/clk/renesas/r8a77970-cpg-mssr.c
-index 3cec0f501b947..e2bda2c107306 100644
---- a/drivers/clk/renesas/r8a77970-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77970-cpg-mssr.c
-@@ -219,10 +219,11 @@ static int __init r8a77970_cpg_mssr_init(struct device *dev)
++config CLK_R9A09G077
++	bool "RZ/T2H clock support" if COMPILE_TEST
++	select CLK_RENESAS_CPG_MSSR
++
+ config CLK_SH73A0
+ 	bool "SH-Mobile AG5 clock support" if COMPILE_TEST
+ 	select CLK_RENESAS_CPG_MSTP
+diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
+index f9075bca6e954..d8d894a15d24b 100644
+--- a/drivers/clk/renesas/Makefile
++++ b/drivers/clk/renesas/Makefile
+@@ -40,6 +40,7 @@ obj-$(CONFIG_CLK_R9A09G011)		+= r9a09g011-cpg.o
+ obj-$(CONFIG_CLK_R9A09G047)		+= r9a09g047-cpg.o
+ obj-$(CONFIG_CLK_R9A09G056)		+= r9a09g056-cpg.o
+ obj-$(CONFIG_CLK_R9A09G057)		+= r9a09g057-cpg.o
++obj-$(CONFIG_CLK_R9A09G077)		+= r9a09g077-cpg.o
+ obj-$(CONFIG_CLK_SH73A0)		+= clk-sh73a0.o
  
- static struct clk * __init r8a77970_cpg_clk_register(struct device *dev,
- 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
--	struct clk **clks, void __iomem *base,
--	struct raw_notifier_head *notifiers)
-+	struct cpg_mssr_pub *pub)
- {
- 	const struct clk_div_table *table;
-+	void __iomem *base = pub->base0;
-+	struct clk **clks = pub->clks;
- 	const struct clk *parent;
- 	unsigned int shift;
- 
-@@ -236,8 +237,7 @@ static struct clk * __init r8a77970_cpg_clk_register(struct device *dev,
- 		shift = 4;
- 		break;
- 	default:
--		return rcar_gen3_cpg_clk_register(dev, core, info, clks, base,
--						  notifiers);
-+		return rcar_gen3_cpg_clk_register(dev, core, info, pub);
- 	}
- 
- 	parent = clks[core->parent];
-diff --git a/drivers/clk/renesas/rcar-gen2-cpg.c b/drivers/clk/renesas/rcar-gen2-cpg.c
-index 4c3764972bad9..ab34bb8c3e079 100644
---- a/drivers/clk/renesas/rcar-gen2-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen2-cpg.c
-@@ -274,10 +274,11 @@ static const struct soc_device_attribute cpg_quirks_match[] __initconst = {
- 
- struct clk * __init rcar_gen2_cpg_clk_register(struct device *dev,
- 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
--	struct clk **clks, void __iomem *base,
--	struct raw_notifier_head *notifiers)
-+	struct cpg_mssr_pub *pub)
- {
- 	const struct clk_div_table *table = NULL;
-+	void __iomem *base = pub->base0;
-+	struct clk **clks = pub->clks;
- 	const struct clk *parent;
- 	const char *parent_name;
- 	unsigned int mult = 1;
-diff --git a/drivers/clk/renesas/rcar-gen2-cpg.h b/drivers/clk/renesas/rcar-gen2-cpg.h
-index bdcd4a38d48d0..3d4b127fdeaf4 100644
---- a/drivers/clk/renesas/rcar-gen2-cpg.h
-+++ b/drivers/clk/renesas/rcar-gen2-cpg.h
-@@ -32,8 +32,7 @@ struct rcar_gen2_cpg_pll_config {
- 
- struct clk *rcar_gen2_cpg_clk_register(struct device *dev,
- 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
--	struct clk **clks, void __iomem *base,
--	struct raw_notifier_head *notifiers);
-+	struct cpg_mssr_pub *pub);
- int rcar_gen2_cpg_init(const struct rcar_gen2_cpg_pll_config *config,
- 		       unsigned int pll0_div, u32 mode);
- 
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 20b89eb6c35c1..1766d77adefcb 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -346,9 +346,11 @@ static const struct soc_device_attribute cpg_quirks_match[] __initconst = {
- 
- struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
--	struct clk **clks, void __iomem *base,
--	struct raw_notifier_head *notifiers)
-+	struct cpg_mssr_pub *pub)
- {
-+	struct raw_notifier_head *notifiers = &pub->notifiers;
-+	void __iomem *base = pub->base0;
-+	struct clk **clks = pub->clks;
- 	const struct clk *parent;
- 	unsigned int mult = 1;
- 	unsigned int div = 1;
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
-index bfdc649bdf12c..d15a5d1df71c7 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.h
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.h
-@@ -81,8 +81,7 @@ struct rcar_gen3_cpg_pll_config {
- 
- struct clk *rcar_gen3_cpg_clk_register(struct device *dev,
- 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
--	struct clk **clks, void __iomem *base,
--	struct raw_notifier_head *notifiers);
-+	struct cpg_mssr_pub *pub);
- int rcar_gen3_cpg_init(const struct rcar_gen3_cpg_pll_config *config,
- 		       unsigned int clk_extalr, u32 mode);
- 
-diff --git a/drivers/clk/renesas/rcar-gen4-cpg.c b/drivers/clk/renesas/rcar-gen4-cpg.c
-index 31aa790fd003d..fb9a876aaba5c 100644
---- a/drivers/clk/renesas/rcar-gen4-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen4-cpg.c
-@@ -418,9 +418,11 @@ static const struct clk_div_table cpg_rpcsrc_div_table[] = {
- 
- struct clk * __init rcar_gen4_cpg_clk_register(struct device *dev,
- 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
--	struct clk **clks, void __iomem *base,
--	struct raw_notifier_head *notifiers)
-+	struct cpg_mssr_pub *pub)
- {
-+	struct raw_notifier_head *notifiers = &pub->notifiers;
-+	void __iomem *base = pub->base0;
-+	struct clk **clks = pub->clks;
- 	const struct clk *parent;
- 	unsigned int mult = 1;
- 	unsigned int div = 1;
-diff --git a/drivers/clk/renesas/rcar-gen4-cpg.h b/drivers/clk/renesas/rcar-gen4-cpg.h
-index 717fd148464fe..6c8280b37c37b 100644
---- a/drivers/clk/renesas/rcar-gen4-cpg.h
-+++ b/drivers/clk/renesas/rcar-gen4-cpg.h
-@@ -78,8 +78,7 @@ struct rcar_gen4_cpg_pll_config {
- 
- struct clk *rcar_gen4_cpg_clk_register(struct device *dev,
- 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
--	struct clk **clks, void __iomem *base,
--	struct raw_notifier_head *notifiers);
-+	struct cpg_mssr_pub *pub);
- int rcar_gen4_cpg_init(const struct rcar_gen4_cpg_pll_config *config,
- 		       unsigned int clk_extalr, u32 mode);
- 
+ # Family
+diff --git a/drivers/clk/renesas/r9a09g077-cpg.c b/drivers/clk/renesas/r9a09g077-cpg.c
+new file mode 100644
+index 0000000000000..206816a2df23a
+--- /dev/null
++++ b/drivers/clk/renesas/r9a09g077-cpg.c
+@@ -0,0 +1,241 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * r9a09g077 Clock Pulse Generator / Module Standby and Software Reset
++ *
++ * Copyright (C) 2025 Renesas Electronics Corp.
++ *
++ */
++
++#include <linux/bitfield.h>
++#include <linux/clk-provider.h>
++#include <linux/device.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++
++#include <dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h>
++#include "renesas-cpg-mssr.h"
++
++#define RZT2H_REG_BLOCK_SHIFT	11
++#define RZT2H_REG_OFFSET_MASK	GENMASK(10, 0)
++#define RZT2H_REG_CONF(block, offset)	(((block) << RZT2H_REG_BLOCK_SHIFT) | \
++					((offset) & RZT2H_REG_OFFSET_MASK))
++
++#define RZT2H_REG_BLOCK(x)		((x) >> RZT2H_REG_BLOCK_SHIFT)
++#define RZT2H_REG_OFFSET(x)		((x) & RZT2H_REG_OFFSET_MASK)
++
++#define SCKCR		RZT2H_REG_CONF(0, 0x00)
++#define SCKCR2		RZT2H_REG_CONF(1, 0x04)
++#define SCKCR3		RZT2H_REG_CONF(0, 0x08)
++
++#define OFFSET_MASK	GENMASK(31, 20)
++#define SHIFT_MASK	GENMASK(19, 12)
++#define WIDTH_MASK	GENMASK(11, 8)
++
++#define CONF_PACK(offset, shift, width)  \
++	(FIELD_PREP_CONST(OFFSET_MASK, (offset)) | \
++	FIELD_PREP_CONST(SHIFT_MASK, (shift)) | \
++	FIELD_PREP_CONST(WIDTH_MASK, (width)))
++
++#define GET_SHIFT(val)         FIELD_GET(SHIFT_MASK, val)
++#define GET_WIDTH(val)         FIELD_GET(WIDTH_MASK, val)
++#define GET_REG_OFFSET(val)    FIELD_GET(OFFSET_MASK, val)
++
++#define DIVCA55C0	CONF_PACK(SCKCR2, 8, 1)
++#define DIVCA55C1	CONF_PACK(SCKCR2, 9, 1)
++#define DIVCA55C2	CONF_PACK(SCKCR2, 10, 1)
++#define DIVCA55C3	CONF_PACK(SCKCR2, 11, 1)
++#define DIVCA55S	CONF_PACK(SCKCR2, 12, 1)
++
++#define DIVSCI0ASYNC	CONF_PACK(SCKCR3, 6, 2)
++
++#define SEL_PLL		CONF_PACK(SCKCR, 22, 1)
++
++
++enum rzt2h_clk_types {
++	CLK_TYPE_RZT2H_DIV = CLK_TYPE_CUSTOM,	/* Clock with divider */
++	CLK_TYPE_RZT2H_MUX,			/* Clock with clock source selector */
++};
++
++#define DEF_DIV(_name, _id, _parent, _conf, _dtable) \
++	DEF_TYPE(_name, _id, CLK_TYPE_RZT2H_DIV, .conf = _conf, \
++		 .parent = _parent, .dtable = _dtable, .flag = 0)
++#define DEF_MUX(_name, _id, _conf, _parent_names, _num_parents, _mux_flags) \
++	DEF_TYPE(_name, _id, CLK_TYPE_RZT2H_MUX, .conf = _conf, \
++		 .parent_names = _parent_names, .num_parents = _num_parents, \
++		 .flag = 0, .mux_flags = _mux_flags)
++
++enum clk_ids {
++	/* Core Clock Outputs exported to DT */
++	LAST_DT_CORE_CLK = R9A09G077_CLK_PCLKM,
++
++	/* External Input Clocks */
++	CLK_EXTAL,
++
++	/* Internal Core Clocks */
++	CLK_LOCO,
++	CLK_PLL0,
++	CLK_PLL1,
++	CLK_PLL4,
++	CLK_SEL_CLK_PLL0,
++	CLK_SEL_CLK_PLL1,
++	CLK_SEL_CLK_PLL4,
++	CLK_PLL4D1,
++	CLK_SCI0ASYNC,
++
++	/* Module Clocks */
++	MOD_CLK_BASE,
++};
++
++static const struct clk_div_table dtable_1_2[] = {
++	{0, 2},
++	{1, 1},
++	{0, 0},
++};
++
++static const struct clk_div_table dtable_24_25_30_32[] = {
++	{0, 32},
++	{1, 30},
++	{2, 25},
++	{3, 24},
++	{0, 0},
++};
++
++/* Mux clock tables */
++
++static const char * const sel_clk_pll0[] = { ".loco", ".pll0" };
++static const char * const sel_clk_pll1[] = { ".loco", ".pll1" };
++static const char * const sel_clk_pll4[] = { ".loco", ".pll4" };
++
++static const struct cpg_core_clk r9a09g077_core_clks[] __initconst = {
++	/* External Clock Inputs */
++	DEF_INPUT("extal", CLK_EXTAL),
++
++	/* Internal Core Clocks */
++	DEF_RATE(".loco", CLK_LOCO, 1000 * 1000),
++	DEF_FIXED(".pll0", CLK_PLL0, CLK_EXTAL, 1, 48),
++	DEF_FIXED(".pll1", CLK_PLL1, CLK_EXTAL, 1, 40),
++	DEF_FIXED(".pll4", CLK_PLL4, CLK_EXTAL, 1, 96),
++
++	DEF_MUX(".sel_clk_pll0", CLK_SEL_CLK_PLL0, SEL_PLL,
++		sel_clk_pll0, ARRAY_SIZE(sel_clk_pll0), CLK_MUX_READ_ONLY),
++	DEF_MUX(".sel_clk_pll1", CLK_SEL_CLK_PLL1, SEL_PLL,
++		sel_clk_pll1, ARRAY_SIZE(sel_clk_pll1), CLK_MUX_READ_ONLY),
++	DEF_MUX(".sel_clk_pll4", CLK_SEL_CLK_PLL4, SEL_PLL,
++		sel_clk_pll4, ARRAY_SIZE(sel_clk_pll4), CLK_MUX_READ_ONLY),
++
++	DEF_FIXED(".pll4d1", CLK_PLL4D1, CLK_SEL_CLK_PLL4, 1, 1),
++	DEF_DIV(".sci0async", CLK_SCI0ASYNC, CLK_PLL4D1, DIVSCI0ASYNC,
++		dtable_24_25_30_32),
++
++	/* Core output clk */
++	DEF_DIV("CA55C0", R9A09G077_CLK_CA55C0, CLK_SEL_CLK_PLL0, DIVCA55C0,
++		dtable_1_2),
++	DEF_DIV("CA55C1", R9A09G077_CLK_CA55C1, CLK_SEL_CLK_PLL0, DIVCA55C1,
++		dtable_1_2),
++	DEF_DIV("CA55C2", R9A09G077_CLK_CA55C2, CLK_SEL_CLK_PLL0, DIVCA55C2,
++		dtable_1_2),
++	DEF_DIV("CA55C3", R9A09G077_CLK_CA55C3, CLK_SEL_CLK_PLL0, DIVCA55C3,
++		dtable_1_2),
++	DEF_DIV("CA55S", R9A09G077_CLK_CA55S, CLK_SEL_CLK_PLL0, DIVCA55S,
++		dtable_1_2),
++	DEF_FIXED("PCLKGPTL", R9A09G077_CLK_PCLKGPTL, CLK_SEL_CLK_PLL1, 2, 1),
++	DEF_FIXED("PCLKM", R9A09G077_CLK_PCLKM, CLK_SEL_CLK_PLL1, 8, 1),
++};
++
++static const struct mssr_mod_clk r9a09g077_mod_clks[] __initconst = {
++	DEF_MOD("sci0fck", 8, CLK_SCI0ASYNC),
++};
++
++static struct clk * __init
++r9a09g077_cpg_div_clk_register(struct device *dev,
++			       const struct cpg_core_clk *core,
++			       void __iomem *addr, struct cpg_mssr_pub *pub)
++{
++	const struct clk *parent;
++	const char *parent_name;
++	struct clk_hw *clk_hw;
++
++	parent = pub->clks[core->parent];
++	if (IS_ERR(parent))
++		return ERR_CAST(parent);
++
++	parent_name = __clk_get_name(parent);
++
++	if (core->dtable)
++		clk_hw = clk_hw_register_divider_table(dev, core->name,
++						       parent_name, 0,
++						       addr,
++						       GET_SHIFT(core->conf),
++						       GET_WIDTH(core->conf),
++						       core->flag,
++						       core->dtable,
++						       &pub->rmw_lock);
++	else
++		clk_hw = clk_hw_register_divider(dev, core->name,
++						 parent_name, 0,
++						 addr,
++						 GET_SHIFT(core->conf),
++						 GET_WIDTH(core->conf),
++						 core->flag, &pub->rmw_lock);
++
++	if (IS_ERR(clk_hw))
++		return ERR_CAST(clk_hw);
++
++	return clk_hw->clk;
++
++}
++
++static struct clk * __init
++r9a09g077_cpg_mux_clk_register(struct device *dev,
++			       const struct cpg_core_clk *core,
++			       void __iomem *addr, struct cpg_mssr_pub *pub)
++{
++	struct clk_hw *clk_hw;
++
++	clk_hw = devm_clk_hw_register_mux(dev, core->name,
++					  core->parent_names, core->num_parents,
++					  core->flag,
++					  addr,
++					  GET_SHIFT(core->conf),
++					  GET_WIDTH(core->conf),
++					  core->mux_flags, &pub->rmw_lock);
++	if (IS_ERR(clk_hw))
++		return ERR_CAST(clk_hw);
++
++	return clk_hw->clk;
++}
++
++static struct clk * __init
++r9a09g077_cpg_clk_register(struct device *dev, const struct cpg_core_clk *core,
++			   const struct cpg_mssr_info *info,
++			   struct cpg_mssr_pub *pub)
++{
++	u32 offset = GET_REG_OFFSET(core->conf);
++	void __iomem *base = RZT2H_REG_BLOCK(offset) ? pub->base1 : pub->base0;
++	void __iomem *addr = base + RZT2H_REG_OFFSET(offset);
++
++	switch (core->type) {
++	case CLK_TYPE_RZT2H_DIV:
++		return r9a09g077_cpg_div_clk_register(dev, core, addr, pub);
++	case CLK_TYPE_RZT2H_MUX:
++		return r9a09g077_cpg_mux_clk_register(dev, core, addr, pub);
++	default:
++		return ERR_PTR(-EINVAL);
++	}
++}
++
++const struct cpg_mssr_info r9a09g077_cpg_mssr_info = {
++	/* Core Clocks */
++	.core_clks = r9a09g077_core_clks,
++	.num_core_clks = ARRAY_SIZE(r9a09g077_core_clks),
++	.last_dt_core_clk = LAST_DT_CORE_CLK,
++	.num_total_core_clks = MOD_CLK_BASE,
++
++	/* Module Clocks */
++	.mod_clks = r9a09g077_mod_clks,
++	.num_mod_clks = ARRAY_SIZE(r9a09g077_mod_clks),
++	.num_hw_mod_clks = 14 * 32,
++
++	.reg_layout = CLK_REG_LAYOUT_RZ_T2H,
++	.cpg_clk_register = r9a09g077_cpg_clk_register,
++};
 diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index e93559b83bc23..762f3d2a4b3d7 100644
+index 762f3d2a4b3d7..2ae0b513b9734 100644
 --- a/drivers/clk/renesas/renesas-cpg-mssr.c
 +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -127,16 +127,14 @@ static const u16 srstclr_for_gen4[] = {
-  * struct cpg_mssr_priv - Clock Pulse Generator / Module Standby
-  *                        and Software Reset Private Data
-  *
-+ * @pub: Data passed to clock registration callback
-  * @rcdev: Optional reset controller entity
-  * @dev: CPG/MSSR device
-- * @base: CPG/MSSR register block base address
-  * @reg_layout: CPG/MSSR register layout
-- * @rmw_lock: protects RMW register accesses
-  * @np: Device node in DT for this CPG/MSSR module
-  * @num_core_clks: Number of Core Clocks in clks[]
-  * @num_mod_clks: Number of Module Clocks in clks[]
-  * @last_dt_core_clk: ID of the last Core Clock exported to DT
-- * @notifiers: Notifier chain to save/restore clock state for system resume
-  * @status_regs: Pointer to status registers array
-  * @control_regs: Pointer to control registers array
-  * @reset_regs: Pointer to reset registers array
-@@ -148,20 +146,18 @@ static const u16 srstclr_for_gen4[] = {
-  * @clks: Array containing all Core and Module Clocks
-  */
- struct cpg_mssr_priv {
-+	struct cpg_mssr_pub pub;
- #ifdef CONFIG_RESET_CONTROLLER
- 	struct reset_controller_dev rcdev;
- #endif
- 	struct device *dev;
--	void __iomem *base;
- 	enum clk_reg_layout reg_layout;
--	spinlock_t rmw_lock;
- 	struct device_node *np;
+@@ -81,6 +81,37 @@ static const u16 mstpcr_for_gen4[] = {
+ 	0x2D60, 0x2D64, 0x2D68, 0x2D6C, 0x2D70, 0x2D74,
+ };
  
- 	unsigned int num_core_clks;
- 	unsigned int num_mod_clks;
- 	unsigned int last_dt_core_clk;
- 
--	struct raw_notifier_head notifiers;
- 	const u16 *status_regs;
- 	const u16 *control_regs;
- 	const u16 *reset_regs;
-@@ -207,38 +203,39 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
- 
- 	dev_dbg(dev, "MSTP %u%02u/%pC %s\n", reg, bit, hw->clk,
- 		str_on_off(enable));
--	spin_lock_irqsave(&priv->rmw_lock, flags);
-+	spin_lock_irqsave(&priv->pub.rmw_lock, flags);
- 
- 	if (priv->reg_layout == CLK_REG_LAYOUT_RZ_A) {
--		value = readb(priv->base + priv->control_regs[reg]);
-+		value = readb(priv->pub.base0 + priv->control_regs[reg]);
- 		if (enable)
- 			value &= ~bitmask;
- 		else
- 			value |= bitmask;
--		writeb(value, priv->base + priv->control_regs[reg]);
-+		writeb(value, priv->pub.base0 + priv->control_regs[reg]);
- 
- 		/* dummy read to ensure write has completed */
--		readb(priv->base + priv->control_regs[reg]);
--		barrier_data(priv->base + priv->control_regs[reg]);
-+		readb(priv->pub.base0 + priv->control_regs[reg]);
-+		barrier_data(priv->pub.base0 + priv->control_regs[reg]);
++/*
++ * Module Stop Control Register (RZ/T2H)
++ * RZ/T2H has 2 registers blocks,
++ * Bit 12 is used to differentiate them
++ */
 +
- 	} else {
--		value = readl(priv->base + priv->control_regs[reg]);
-+		value = readl(priv->pub.base0 + priv->control_regs[reg]);
- 		if (enable)
- 			value &= ~bitmask;
- 		else
- 			value |= bitmask;
--		writel(value, priv->base + priv->control_regs[reg]);
-+		writel(value, priv->pub.base0 + priv->control_regs[reg]);
- 	}
++#define RZT2H_MSTPCR_BLOCK_SHIFT	12
++#define RZT2H_MSTPCR_OFFSET_MASK	GENMASK(11, 0)
++#define RZT2H_MSTPCR(block, offset)	(((block) << RZT2H_MSTPCR_BLOCK_SHIFT) | \
++					((offset) & RZT2H_MSTPCR_OFFSET_MASK))
++
++#define RZT2H_MSTPCR_BLOCK(x)		((x) >> RZT2H_MSTPCR_BLOCK_SHIFT)
++#define RZT2H_MSTPCR_OFFSET(x)		((x) & RZT2H_MSTPCR_OFFSET_MASK)
++
++static const u16 mstpcr_for_rzt2h[] = {
++	RZT2H_MSTPCR(0, 0x300), /* MSTPCRA */
++	RZT2H_MSTPCR(0, 0x304), /* MSTPCRB */
++	RZT2H_MSTPCR(0, 0x308), /* MSTPCRC */
++	RZT2H_MSTPCR(0, 0x30c),	/* MSTPCRD */
++	RZT2H_MSTPCR(0, 0x310), /* MSTPCRE */
++	0,
++	RZT2H_MSTPCR(1, 0x318), /* MSTPCRG */
++	0,
++	RZT2H_MSTPCR(1, 0x320), /* MSTPCRI */
++	RZT2H_MSTPCR(0, 0x324), /* MSTPCRJ */
++	RZT2H_MSTPCR(0, 0x328), /* MSTPCRK */
++	RZT2H_MSTPCR(0, 0x32c), /* MSTPCRL */
++	RZT2H_MSTPCR(0, 0x330), /* MSTPCRM */
++	RZT2H_MSTPCR(1, 0x334), /* MSTPCRN */
++};
++
+ /*
+  * Standby Control Register offsets (RZ/A)
+  * Base address is FRQCR register
+@@ -189,6 +220,26 @@ struct mstp_clock {
  
--	spin_unlock_irqrestore(&priv->rmw_lock, flags);
-+	spin_unlock_irqrestore(&priv->pub.rmw_lock, flags);
+ #define to_mstp_clock(_hw) container_of(_hw, struct mstp_clock, hw)
  
- 	if (!enable || priv->reg_layout == CLK_REG_LAYOUT_RZ_A)
- 		return 0;
- 
--	error = readl_poll_timeout_atomic(priv->base + priv->status_regs[reg],
-+	error = readl_poll_timeout_atomic(priv->pub.base0 + priv->status_regs[reg],
- 					  value, !(value & bitmask), 0, 10);
- 	if (error)
- 		dev_err(dev, "Failed to enable SMSTP %p[%d]\n",
--			priv->base + priv->control_regs[reg], bit);
-+			priv->pub.base0 + priv->control_regs[reg], bit);
- 
- 	return error;
- }
-@@ -257,12 +254,13 @@ static int cpg_mstp_clock_is_enabled(struct clk_hw *hw)
++static u32 cpg_rzt2h_mstp_read(struct clk_hw *hw, u16 offset)
++{
++	struct mstp_clock *clock = to_mstp_clock(hw);
++	struct cpg_mssr_priv *priv = clock->priv;
++	void __iomem *base =
++		RZT2H_MSTPCR_BLOCK(offset) ? priv->pub.base1 : priv->pub.base0;
++
++	return readl(base + RZT2H_MSTPCR_OFFSET(offset));
++}
++
++static void cpg_rzt2h_mstp_write(struct clk_hw *hw, u16 offset, u32 value)
++{
++	struct mstp_clock *clock = to_mstp_clock(hw);
++	struct cpg_mssr_priv *priv = clock->priv;
++	void __iomem *base =
++		RZT2H_MSTPCR_BLOCK(offset) ? priv->pub.base1 : priv->pub.base0;
++
++	writel(value, base + RZT2H_MSTPCR_OFFSET(offset));
++}
++
+ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
  {
  	struct mstp_clock *clock = to_mstp_clock(hw);
- 	struct cpg_mssr_priv *priv = clock->priv;
-+	unsigned int reg = clock->index / 32;
- 	u32 value;
+@@ -217,6 +268,18 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
+ 		readb(priv->pub.base0 + priv->control_regs[reg]);
+ 		barrier_data(priv->pub.base0 + priv->control_regs[reg]);
  
- 	if (priv->reg_layout == CLK_REG_LAYOUT_RZ_A)
--		value = readb(priv->base + priv->control_regs[clock->index / 32]);
-+		value = readb(priv->pub.base0 + priv->control_regs[reg]);
- 	else
--		value = readl(priv->base + priv->status_regs[clock->index / 32]);
-+		value = readl(priv->pub.base0 + priv->status_regs[reg]);
++	} else if (priv->reg_layout == CLK_REG_LAYOUT_RZ_T2H) {
++		value = cpg_rzt2h_mstp_read(hw,
++					    priv->control_regs[reg]);
++
++		if (enable)
++			value &= ~bitmask;
++		else
++			value |= bitmask;
++
++		cpg_rzt2h_mstp_write(hw,
++				     priv->control_regs[reg],
++				     value);
+ 	} else {
+ 		value = readl(priv->pub.base0 + priv->control_regs[reg]);
+ 		if (enable)
+@@ -228,7 +291,8 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
  
- 	return !(value & BIT(clock->index % 32));
- }
-@@ -354,7 +352,7 @@ static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
- 	case CLK_TYPE_DIV6P1:
- 	case CLK_TYPE_DIV6_RO:
- 		WARN_DEBUG(core->parent >= priv->num_core_clks);
--		parent = priv->clks[core->parent];
-+		parent = priv->pub.clks[core->parent];
- 		if (IS_ERR(parent)) {
- 			clk = parent;
- 			goto fail;
-@@ -364,12 +362,12 @@ static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
+ 	spin_unlock_irqrestore(&priv->pub.rmw_lock, flags);
  
- 		if (core->type == CLK_TYPE_DIV6_RO)
- 			/* Multiply with the DIV6 register value */
--			div *= (readl(priv->base + core->offset) & 0x3f) + 1;
-+			div *= (readl(priv->pub.base0 + core->offset) & 0x3f) + 1;
- 
- 		if (core->type == CLK_TYPE_DIV6P1) {
- 			clk = cpg_div6_register(core->name, 1, &parent_name,
--						priv->base + core->offset,
--						&priv->notifiers);
-+						priv->pub.base0 + core->offset,
-+						&priv->pub.notifiers);
- 		} else {
- 			clk = clk_register_fixed_factor(NULL, core->name,
- 							parent_name, 0,
-@@ -385,8 +383,7 @@ static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
- 	default:
- 		if (info->cpg_clk_register)
- 			clk = info->cpg_clk_register(dev, core, info,
--						     priv->clks, priv->base,
--						     &priv->notifiers);
-+						     &priv->pub);
- 		else
- 			dev_err(dev, "%s has unsupported core clock type %u\n",
- 				core->name, core->type);
-@@ -397,7 +394,7 @@ static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
- 		goto fail;
- 
- 	dev_dbg(dev, "Core clock %pC at %lu Hz\n", clk, clk_get_rate(clk));
--	priv->clks[id] = clk;
-+	priv->pub.clks[id] = clk;
- 	return;
- 
- fail:
-@@ -420,14 +417,14 @@ static void __init cpg_mssr_register_mod_clk(const struct mssr_mod_clk *mod,
- 	WARN_DEBUG(id < priv->num_core_clks);
- 	WARN_DEBUG(id >= priv->num_core_clks + priv->num_mod_clks);
- 	WARN_DEBUG(mod->parent >= priv->num_core_clks + priv->num_mod_clks);
--	WARN_DEBUG(PTR_ERR(priv->clks[id]) != -ENOENT);
-+	WARN_DEBUG(PTR_ERR(priv->pub.clks[id]) != -ENOENT);
- 
- 	if (!mod->name) {
- 		/* Skip NULLified clock */
- 		return;
- 	}
- 
--	parent = priv->clks[mod->parent];
-+	parent = priv->pub.clks[mod->parent];
- 	if (IS_ERR(parent)) {
- 		clk = parent;
- 		goto fail;
-@@ -629,13 +626,13 @@ static int cpg_mssr_reset(struct reset_controller_dev *rcdev,
- 	dev_dbg(priv->dev, "reset %u%02u\n", reg, bit);
- 
- 	/* Reset module */
--	writel(bitmask, priv->base + priv->reset_regs[reg]);
-+	writel(bitmask, priv->pub.base0 + priv->reset_regs[reg]);
- 
- 	/* Wait for at least one cycle of the RCLK clock (@ ca. 32 kHz) */
- 	udelay(35);
- 
- 	/* Release module from reset state */
--	writel(bitmask, priv->base + priv->reset_clear_regs[reg]);
-+	writel(bitmask, priv->pub.base0 + priv->reset_clear_regs[reg]);
- 
- 	return 0;
- }
-@@ -649,7 +646,7 @@ static int cpg_mssr_assert(struct reset_controller_dev *rcdev, unsigned long id)
- 
- 	dev_dbg(priv->dev, "assert %u%02u\n", reg, bit);
- 
--	writel(bitmask, priv->base + priv->reset_regs[reg]);
-+	writel(bitmask, priv->pub.base0 + priv->reset_regs[reg]);
- 	return 0;
- }
- 
-@@ -663,7 +660,7 @@ static int cpg_mssr_deassert(struct reset_controller_dev *rcdev,
- 
- 	dev_dbg(priv->dev, "deassert %u%02u\n", reg, bit);
- 
--	writel(bitmask, priv->base + priv->reset_clear_regs[reg]);
-+	writel(bitmask, priv->pub.base0 + priv->reset_clear_regs[reg]);
- 	return 0;
- }
- 
-@@ -675,7 +672,7 @@ static int cpg_mssr_status(struct reset_controller_dev *rcdev,
- 	unsigned int bit = id % 32;
- 	u32 bitmask = BIT(bit);
- 
--	return !!(readl(priv->base + priv->reset_regs[reg]) & bitmask);
-+	return !!(readl(priv->pub.base0 + priv->reset_regs[reg]) & bitmask);
- }
- 
- static const struct reset_control_ops cpg_mssr_reset_ops = {
-@@ -902,12 +899,12 @@ static int cpg_mssr_suspend_noirq(struct device *dev)
- 		if (priv->smstpcr_saved[reg].mask)
- 			priv->smstpcr_saved[reg].val =
- 				priv->reg_layout == CLK_REG_LAYOUT_RZ_A ?
--				readb(priv->base + priv->control_regs[reg]) :
--				readl(priv->base + priv->control_regs[reg]);
-+				readb(priv->pub.base0 + priv->control_regs[reg]) :
-+				readl(priv->pub.base0 + priv->control_regs[reg]);
- 	}
- 
- 	/* Save core clocks */
--	raw_notifier_call_chain(&priv->notifiers, PM_EVENT_SUSPEND, NULL);
-+	raw_notifier_call_chain(&priv->pub.notifiers, PM_EVENT_SUSPEND, NULL);
- 
- 	return 0;
- }
-@@ -924,7 +921,7 @@ static int cpg_mssr_resume_noirq(struct device *dev)
+-	if (!enable || priv->reg_layout == CLK_REG_LAYOUT_RZ_A)
++	if (!enable || priv->reg_layout == CLK_REG_LAYOUT_RZ_A ||
++	    priv->reg_layout == CLK_REG_LAYOUT_RZ_T2H)
  		return 0;
  
- 	/* Restore core clocks */
--	raw_notifier_call_chain(&priv->notifiers, PM_EVENT_RESUME, NULL);
-+	raw_notifier_call_chain(&priv->pub.notifiers, PM_EVENT_RESUME, NULL);
+ 	error = readl_poll_timeout_atomic(priv->pub.base0 + priv->status_regs[reg],
+@@ -259,6 +323,9 @@ static int cpg_mstp_clock_is_enabled(struct clk_hw *hw)
  
- 	/* Restore module clocks */
- 	for (reg = 0; reg < ARRAY_SIZE(priv->smstpcr_saved); reg++) {
-@@ -933,29 +930,29 @@ static int cpg_mssr_resume_noirq(struct device *dev)
- 			continue;
+ 	if (priv->reg_layout == CLK_REG_LAYOUT_RZ_A)
+ 		value = readb(priv->pub.base0 + priv->control_regs[reg]);
++	else if (priv->reg_layout == CLK_REG_LAYOUT_RZ_T2H)
++		value = cpg_rzt2h_mstp_read(hw,
++					    priv->control_regs[reg]);
+ 	else
+ 		value = readl(priv->pub.base0 + priv->status_regs[reg]);
  
- 		if (priv->reg_layout == CLK_REG_LAYOUT_RZ_A)
--			oldval = readb(priv->base + priv->control_regs[reg]);
-+			oldval = readb(priv->pub.base0 + priv->control_regs[reg]);
- 		else
--			oldval = readl(priv->base + priv->control_regs[reg]);
-+			oldval = readl(priv->pub.base0 + priv->control_regs[reg]);
- 		newval = oldval & ~mask;
- 		newval |= priv->smstpcr_saved[reg].val & mask;
- 		if (newval == oldval)
- 			continue;
- 
- 		if (priv->reg_layout == CLK_REG_LAYOUT_RZ_A) {
--			writeb(newval, priv->base + priv->control_regs[reg]);
-+			writeb(newval, priv->pub.base0 + priv->control_regs[reg]);
- 			/* dummy read to ensure write has completed */
--			readb(priv->base + priv->control_regs[reg]);
--			barrier_data(priv->base + priv->control_regs[reg]);
-+			readb(priv->pub.base0 + priv->control_regs[reg]);
-+			barrier_data(priv->pub.base0 + priv->control_regs[reg]);
- 			continue;
- 		} else
--			writel(newval, priv->base + priv->control_regs[reg]);
-+			writel(newval, priv->pub.base0 + priv->control_regs[reg]);
- 
- 		/* Wait until enabled clocks are really enabled */
- 		mask &= ~priv->smstpcr_saved[reg].val;
- 		if (!mask)
- 			continue;
- 
--		error = readl_poll_timeout_atomic(priv->base + priv->status_regs[reg],
-+		error = readl_poll_timeout_atomic(priv->pub.base0 + priv->status_regs[reg],
- 						oldval, !(oldval & mask), 0, 10);
- 		if (error)
- 			dev_warn(dev, "Failed to enable SMSTP%u[0x%x]\n", reg,
-@@ -1068,12 +1065,13 @@ static int __init cpg_mssr_common_init(struct device *dev,
- 	if (!priv)
- 		return -ENOMEM;
- 
-+	priv->pub.clks = priv->clks;
- 	priv->np = np;
- 	priv->dev = dev;
--	spin_lock_init(&priv->rmw_lock);
-+	spin_lock_init(&priv->pub.rmw_lock);
- 
--	priv->base = of_iomap(np, 0);
--	if (!priv->base) {
-+	priv->pub.base0 = of_iomap(np, 0);
-+	if (!priv->pub.base0) {
+@@ -875,6 +942,12 @@ static const struct of_device_id cpg_mssr_match[] = {
+ 		.compatible = "renesas,r8a779h0-cpg-mssr",
+ 		.data = &r8a779h0_cpg_mssr_info,
+ 	},
++#endif
++#ifdef CONFIG_CLK_R9A09G077
++	{
++		.compatible = "renesas,r9a09g077-cpg-mssr",
++		.data = &r9a09g077_cpg_mssr_info,
++	},
+ #endif
+ 	{ /* sentinel */ }
+ };
+@@ -1075,6 +1148,13 @@ static int __init cpg_mssr_common_init(struct device *dev,
  		error = -ENOMEM;
  		goto out_err;
  	}
-@@ -1081,7 +1079,7 @@ static int __init cpg_mssr_common_init(struct device *dev,
++	if (info->reg_layout == CLK_REG_LAYOUT_RZ_T2H) {
++		priv->pub.base1 = of_iomap(np, 1);
++		if (!priv->pub.base1) {
++			error = -ENOMEM;
++			goto out_err;
++		}
++	}
+ 
  	priv->num_core_clks = info->num_total_core_clks;
  	priv->num_mod_clks = info->num_hw_mod_clks;
- 	priv->last_dt_core_clk = info->last_dt_core_clk;
--	RAW_INIT_NOTIFIER_HEAD(&priv->notifiers);
-+	RAW_INIT_NOTIFIER_HEAD(&priv->pub.notifiers);
- 	priv->reg_layout = info->reg_layout;
- 	if (priv->reg_layout == CLK_REG_LAYOUT_RCAR_GEN2_AND_GEN3) {
- 		priv->status_regs = mstpsr;
-@@ -1101,7 +1099,7 @@ static int __init cpg_mssr_common_init(struct device *dev,
- 	}
- 
- 	for (i = 0; i < nclks; i++)
--		priv->clks[i] = ERR_PTR(-ENOENT);
-+		priv->pub.clks[i] = ERR_PTR(-ENOENT);
- 
- 	error = cpg_mssr_reserved_init(priv, info);
- 	if (error)
-@@ -1118,8 +1116,8 @@ static int __init cpg_mssr_common_init(struct device *dev,
- reserve_err:
- 	cpg_mssr_reserved_exit(priv);
+@@ -1088,6 +1168,8 @@ static int __init cpg_mssr_common_init(struct device *dev,
+ 		priv->reset_clear_regs = srstclr;
+ 	} else if (priv->reg_layout == CLK_REG_LAYOUT_RZ_A) {
+ 		priv->control_regs = stbcr;
++	} else if (priv->reg_layout == CLK_REG_LAYOUT_RZ_T2H) {
++		priv->control_regs = mstpcr_for_rzt2h;
+ 	} else if (priv->reg_layout == CLK_REG_LAYOUT_RCAR_GEN4) {
+ 		priv->status_regs = mstpsr_for_gen4;
+ 		priv->control_regs = mstpcr_for_gen4;
+@@ -1118,6 +1200,8 @@ static int __init cpg_mssr_common_init(struct device *dev,
  out_err:
--	if (priv->base)
--		iounmap(priv->base);
-+	if (priv->pub.base0)
-+		iounmap(priv->pub.base0);
+ 	if (priv->pub.base0)
+ 		iounmap(priv->pub.base0);
++	if (priv->pub.base1)
++		iounmap(priv->pub.base1);
  	kfree(priv);
  
  	return error;
+@@ -1182,7 +1266,8 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
+ 		goto reserve_exit;
+ 
+ 	/* Reset Controller not supported for Standby Control SoCs */
+-	if (priv->reg_layout == CLK_REG_LAYOUT_RZ_A)
++	if (priv->reg_layout == CLK_REG_LAYOUT_RZ_A ||
++	    priv->reg_layout == CLK_REG_LAYOUT_RZ_T2H)
+ 		goto reserve_exit;
+ 
+ 	error = cpg_mssr_reset_controller_register(priv);
 diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
-index a1d6e0cbcff94..7ce3cc9a64c1e 100644
+index 7ce3cc9a64c1e..ad11ab5f00694 100644
 --- a/drivers/clk/renesas/renesas-cpg-mssr.h
 +++ b/drivers/clk/renesas/renesas-cpg-mssr.h
-@@ -8,6 +8,8 @@
- #ifndef __CLK_RENESAS_CPG_MSSR_H__
- #define __CLK_RENESAS_CPG_MSSR_H__
- 
-+#include <linux/notifier.h>
-+
-     /*
-      * Definitions of CPG Core Clocks
-      *
-@@ -29,6 +31,21 @@ struct cpg_core_clk {
+@@ -29,18 +29,28 @@ struct cpg_core_clk {
+ 	unsigned int div;
+ 	unsigned int mult;
  	unsigned int offset;
++	union {
++		const char * const *parent_names;
++		const struct clk_div_table *dtable;
++	};
++	u32 conf;
++	u16 flag;
++	u8 mux_flags;
++	u8 num_parents;
  };
  
-+/**
-+ * struct cpg_mssr_pub - data shared with device-specific clk registration code
-+ *
-+ * @base0: CPG/MSSR register block base0 address
-+ * @notifiers: Notifier chain to save/restore clock state for system resume
-+ * @rmw_lock: protects RMW register accesses
-+ * @clks: pointer to clocks
-+ */
-+struct cpg_mssr_pub {
-+	void __iomem *base0;
-+	struct raw_notifier_head notifiers;
-+	spinlock_t rmw_lock;
-+	struct clk **clks;
-+};
-+
- enum clk_types {
- 	/* Generic */
- 	CLK_TYPE_IN,		/* External Clock Input */
-@@ -153,8 +170,7 @@ struct cpg_mssr_info {
- 	struct clk *(*cpg_clk_register)(struct device *dev,
- 					const struct cpg_core_clk *core,
- 					const struct cpg_mssr_info *info,
--					struct clk **clks, void __iomem *base,
--					struct raw_notifier_head *notifiers);
-+					struct cpg_mssr_pub *pub);
+ /**
+  * struct cpg_mssr_pub - data shared with device-specific clk registration code
+  *
+  * @base0: CPG/MSSR register block base0 address
++ * @base1: CPG/MSSR register block base1 address
+  * @notifiers: Notifier chain to save/restore clock state for system resume
+  * @rmw_lock: protects RMW register accesses
+  * @clks: pointer to clocks
+  */
+ struct cpg_mssr_pub {
+ 	void __iomem *base0;
++	void __iomem *base1;
+ 	struct raw_notifier_head notifiers;
+ 	spinlock_t rmw_lock;
+ 	struct clk **clks;
+@@ -106,6 +116,7 @@ enum clk_reg_layout {
+ 	CLK_REG_LAYOUT_RCAR_GEN2_AND_GEN3 = 0,
+ 	CLK_REG_LAYOUT_RZ_A,
+ 	CLK_REG_LAYOUT_RCAR_GEN4,
++	CLK_REG_LAYOUT_RZ_T2H,
  };
  
- extern const struct cpg_mssr_info r7s9210_cpg_mssr_info;
+     /**
+@@ -197,6 +208,7 @@ extern const struct cpg_mssr_info r8a779a0_cpg_mssr_info;
+ extern const struct cpg_mssr_info r8a779f0_cpg_mssr_info;
+ extern const struct cpg_mssr_info r8a779g0_cpg_mssr_info;
+ extern const struct cpg_mssr_info r8a779h0_cpg_mssr_info;
++extern const struct cpg_mssr_info r9a09g077_cpg_mssr_info;
+ 
+ void __init cpg_mssr_early_init(struct device_node *np,
+ 				const struct cpg_mssr_info *info);
 -- 
 2.43.0
 
