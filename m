@@ -1,310 +1,269 @@
-Return-Path: <claudiu.beznea@tuxon.dev>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61279D29FAE
-	for <webhook@archiver.kernel.org>; Thu,  4 Dec 2025 18:16:29 +0000 (UTC)
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.50904.1764872188002204800
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAB8DD2E00E
+	for <webhook@archiver.kernel.org>; Fri,  5 Dec 2025 06:55:29 +0000 (UTC)
+Received: from PA4PR04CU001.outbound.protection.outlook.com (PA4PR04CU001.outbound.protection.outlook.com [40.107.162.23])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.431.1764917726511238643
  for <cip-dev@lists.cip-project.org>;
- Thu, 04 Dec 2025 10:16:28 -0800
+ Thu, 04 Dec 2025 22:55:27 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=SQGnDtH7;
- spf=pass (domain: tuxon.dev, ip: 209.85.221.42, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-42e2b78d45bso625547f8f.0
-        for <cip-dev@lists.cip-project.org>; Thu, 04 Dec 2025 10:16:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1764872186; x=1765476986; darn=lists.cip-project.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pTzCq29AYcuuwLJLTnWnRTb91xl0P/AoOCk13pqBfl8=;
-        b=SQGnDtH7/TogRuHAS/oHhPT/JUlETt6d4e2Ci+VT1JUk/2Xxlw+yOj4UwM4EM//dKp
-         Z1rNt1EMYuOMUkjo4bm4E/U36aldHSkXABQfjMec/E+BziWEwwBXULanEQi5giNnQUwu
-         zy3GYTYm/eTwZXd6sGRh4xZuESN80lkYtdqB+Q929AMjeatfc34WeT405kN+b6e8VSUC
-         WiBf6i1JBX541geYJYXUmdaf0/c0Fn4uTE4d9y6SO/k0xPl07RuCsW4cOowQyDlrpb7d
-         +y00xy9OUWHmJ/ObLr3bMBCbHC+UZ9uO7DcJJ+IIxVO4ahd9K12/v+72H4qeKGrFlomE
-         yQ0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764872186; x=1765476986;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=pTzCq29AYcuuwLJLTnWnRTb91xl0P/AoOCk13pqBfl8=;
-        b=vCiUvrcPp/x4O01NIXKjMFRxY1XeTWl0sck8dkthikinIbXZ9RJXiZN41Mo/blyE9X
-         YpBoxyarErVQhJyDAfzUiT+SRI7KLI7zijSmVXCMFNxg4SRLRkMBnk0897fU6+QvdB73
-         NqZTumTjRRVX5OzqKnGU80F7zKRfD9AxY7t4l1wRX5WhRBQ8qhiDui1TFd8pshcXU1DE
-         YIpw5gO7xmHr/5N5GllJ2onKGVUQeBfbBiXtCN9e2HOJId7bohzPXa+OJPlwYpFiRdym
-         9Y1d7GCafFdppJiZml4MxBWRnkPnjqasQERl+TmMpw1Lk0iSwLHQkSUNgOESjmAW/Pig
-         iV9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU08gEcMu31+QFzGkK5eDo7hWPPwPn/yjLVYXgMhmm4C0qMd5nkfBwofKqIHoMb7XcDIwmg2b+a@lists.cip-project.org
-X-Gm-Message-State: AOJu0YwWY4ooIcbJMFivVy+2GbcjvR+TamaeJRJsRaNVBPFtDdWW0o2h
-	V0kF0tAYiqYqL2MTeNRcuSqPw+MuEyTihP7tVtAlPfEfA5umifLQHKOXyIGszEryGRQ=
-X-Gm-Gg: ASbGnctnhxIPiazpuSbkdAzWSjeuVbU3gWKhUlVd9ZfdIdKC4Q+5ssoG/H/7J6rGFiP
-	73EqwxVUAork5UuKztfD7Af/4sdB02n0znhyUJ5UijN2URMeH9qQEIdkLsTzjMnYbnrRzix6TyR
-	2EP+1MIL1NJj1tuo0psgK7HLWqe8/ISiQ829mCwJXUxSDLBsh4Mqa4huFNMwJZPzs801B+UHzO7
-	zOcoiqKJWscJu8RFqPVbf8oDlwXQnvwyhujUdQjm4+wXVPmpxkeelaTrNPGyq9/3+W5S+QA+dZh
-	JRh7UiSqzLbPtpj5/7CJXgLiSJ5xmocYi+cjMlE9X1wQ2Yfqqsc5ZuvJkSrJp9Ury7Ggd8KyqRH
-	IC/PXJylM0HLw9mXLbj3ZnnHYsAJXWYRWn1X1mDU1TDd/l4hbNYfGQyMiDsD3XEi9eT1f8n9b71
-	myDdm6dv1CKdqsB82WbyfPVjW34LYjN9a7LRTKnXlP
-X-Google-Smtp-Source: AGHT+IHI0PfcN3d6pV+fTQuKRCk8Cbkm0LkGplD78C+NxfMAZT0KNvpySwO6wBpKJblht3rf/wnA0g==
-X-Received: by 2002:adf:fe8d:0:b0:42b:3aca:5a86 with SMTP id ffacd0b85a97d-42f731edeffmr6023006f8f.57.1764872186225;
-        Thu, 04 Dec 2025 10:16:26 -0800 (PST)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42f7d353f75sm4665971f8f.42.2025.12.04.10.16.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Dec 2025 10:16:25 -0800 (PST)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: nobuhiro1.iwamatsu@toshiba.co.jp,
-	pavel@denx.de
-Cc: claudiu.beznea@tuxon.dev,
-	cip-dev@lists.cip-project.org
-Subject: [PATCH 6.12.y-cip v2 19/19] clk: renesas: r9a07g043: Add MSTOP for RZ/G2UL
-Date: Thu,  4 Dec 2025 20:16:00 +0200
-Message-ID: <20251204181600.689203-20-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251204181600.689203-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20251204181600.689203-1-claudiu.beznea.uj@bp.renesas.com>
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=UPjnQsit;
+ spf=pass (domain: siemens.com, ip: 40.107.162.23, mailfrom: jan.kiszka@siemens.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pLwPQONXWKQpmOvAk9zsZSzV95Ou91djoTNjloIO12pTOcFluSA99nZe5Ih/tHyV30Ozi7c8DRT2QyYdqw/KQ9hKhdGGwdcFNwHQ/C2077jIyTBHhu6B+m8JGK/mEeGHo9JovXxMqjHtJooU9dsOqybEmVaNLuilQHd94MhUhLsJ8+JnWUKLD/nvRcLWjhPRYDvbqsRIfyOKvHmRLXjkqsGkSFcDu1qsHlKqOOSqKOG+9YRhBATgHdb8ITE3cF7H/5G4jaivnlMAqqmPjboG1o50nszxKBP7yddY79umd29b0mJVy/y3ziWFiVmEjg3VrPWhNfwQ9dnCXCadCbzE1Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5zczUvDZYy9uYJPM1Dspvs2Yu3q112bpgmdyVV+P6yo=;
+ b=W01qzklhAU1gIqMTE87hac/AHrkQQHEeqSiZG9I3tBosYhVRSSApJJhDxVP8mIIDqH+jd7bSZ4pBASY7mpt5zNO+0FBs8jWMjH0AgDjkzSq9rEKRxaeTkyM7k1uvMyPvTOvjinpJ6vtjkH1g8ifgZWMlZH30s4TSJ9NOOviuj4OURQO65CCPSzv/4SzXuLBrH6XpiFLmsgO0oYDRvmt9ox8uCNXNREtDDbQLmecwaUlExA5OAi7FIgTTYU3J13mcRpe2qkvABxe/731IzMuE45e9bhrgHy4OhMZWq7epPbdhfF/PUqH2Q/DOap2DfoHxXHG36pCKHiDfsC07xe7mog==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5zczUvDZYy9uYJPM1Dspvs2Yu3q112bpgmdyVV+P6yo=;
+ b=UPjnQsitOTxLQ2C9z///q4uMKB0jT6KONi5Q3IxGxoyg57rzGiOXKY67OCDMj0YeuKWPJ+hYjM0VWvkLELoWT5wIy5OZC59hr7g7hZxRMOqPLJsSjUgick9E+9YnvP7IRT/7DYN7Cu7/Bp01YymAvauLW473BUX4k4mImokxhTYK0RuQup9SAbZfx/GxDgMM0HLyXzBIcdpSpLKsZsOsGuWVGOmes2x5Yp2A7yKZKLrsI7mFe57V3JbEe4RfhTSsO295ljAyZ8FDnXI6kGpHcR47j3Tm6vW8GRGx8xVTdR/xEMW2gSk+gLEgIem7Nb0ymYQbcHpoU3IirDHrXqcYCg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:208:17f::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9388.9; Fri, 5 Dec
+ 2025 06:55:22 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408%6]) with mapi id 15.20.9388.003; Fri, 5 Dec 2025
+ 06:55:22 +0000
+Message-ID: <74c6e6da-68ce-4eb7-9f41-5a587195b28f@siemens.com>
+Date: Fri, 5 Dec 2025 07:55:21 +0100
+User-Agent: Mozilla Thunderbird
+From: Jan Kiszka <jan.kiszka@siemens.com>
+To: cip-dev <cip-dev@lists.cip-project.org>
+Subject: [isar-cip-core][PATCH] linux-cip: Update to 4.4.302-cip105,
+ 4.19.325-cip126 and 6.12.59-cip14
+Content-Language: en-US
+Autocrypt: addr=jan.kiszka@siemens.com; keydata=
+ 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
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR2P281CA0145.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:98::17) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AM0PR10MB3172:EE_
+X-MS-Office365-Filtering-Correlation-Id: b5102d14-e03d-4de8-99b0-08de33cb42c4
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?dlNwNGkrQnhuN0NLektwVjg2M0J3TStxdjJ1Mk9ISmJISHM4NzRkZGlZYWd3?=
+ =?utf-8?B?ZFJUa1ZZZ2NJdklzL1l0S0kxSlZXUlBDTWpTbVlrcVJyWkhSSG1IZW45Z2Nh?=
+ =?utf-8?B?d0dvSE9jc04wTFFweDR6QkhvRjIyNU9HaVpyTHltdFJUd0VFSjNLc0ZMN2VO?=
+ =?utf-8?B?dUpId1VZZFFzQnJubEtxQTBWeW1ETURHQUpLMmFaZndFNEgrTE9mcFV0cUUw?=
+ =?utf-8?B?TXk5U3oyZE5WL0VxMDJhYjNuOHVVVmFHYmRicXJnb1VLb1hoU21CaDVPdWph?=
+ =?utf-8?B?VUFPTXdpSEVXVytmV2NiMGpoRXpwL3NYa2hVbENrRXpOem5UMWdaM2hJS1Z3?=
+ =?utf-8?B?UndCZ0VCcU1ocFRnaUQzNzM3QU16eE5JZW5tNEtMR3NBc2lNZEcyN3FJTjhH?=
+ =?utf-8?B?cGRwM2tyUERQcDlQOWlEQll0d1hNZk4zeWZRTHdKNGtlZHdGSjlOS0NFQ3Vp?=
+ =?utf-8?B?cHlLVWhQTlQ5K3ZCQ3h5cklEcGl1SDBTNEhuZVBZOG80NzBIdk9YNzVEcFRH?=
+ =?utf-8?B?NDdFcnpUZVRBRFhKMHlxejJMR0RISVkxSS9YelRlR1JsUVdveFFHNURxdStH?=
+ =?utf-8?B?eUNmL2t1UTErVHFpTnFIYUZ3a2VBMEtTQmJhaEJBRkNtV2NoVWw2dkZ5TGMv?=
+ =?utf-8?B?WmUrN3RsWHZGRDBDVkZCQndOOXo4ZlhGeHBQazhRbEM5TFdpTHVRSzFJMnpx?=
+ =?utf-8?B?c2ZrSGowTGd5alhHNW41b1ZYVzRzN0p6TzYvZEtVQVJQcWFtWWQyMnh3ZVZr?=
+ =?utf-8?B?V1AzZHZNWk9hZldCN24xeEdKc3IxdUtWeVpJaGhxSDUyeDJvUmtPYVhpUHRU?=
+ =?utf-8?B?d3NzT2lKTStTUWJsTlV6YUhKQ25CK204eXRHV1poblBDbFR2eFc3RlVibW9J?=
+ =?utf-8?B?MjhSeS9ieE9pOVdhWnVhcjIzeTBqc3FScmxTVkZEd05CNEVSWTh5TkYrYXlR?=
+ =?utf-8?B?a0xiS1hLUXk1bVJRSWpYT2RwVWp0TGZnNDZ6UW5LUkpqZlJYQVYxUnBYRnli?=
+ =?utf-8?B?TkM1anZGYlpRSTZxTm56VFkzbm9XcXZDeUdpM2JXZU12VktVdGYycE1ETmsv?=
+ =?utf-8?B?T1lhZHRyTkQyWTVqSmNBSTdJMDRXcGVNSTN5TktVZ25EQUNKdEdnUlJ5VTRJ?=
+ =?utf-8?B?NHhoWlYveVp6UWltYzZyM2VJL1JTZEkzUDZLR0NBSnlvMENPTDRqV0RNWTRO?=
+ =?utf-8?B?OVF3YmNZN0dLY0hBYk5sNXR2NTZkOHNsRUpISDFUR3VhN2lQekM0UUF2N0Jw?=
+ =?utf-8?B?REhCY3pTd0M0QXArYS9HWmFwbndvb0RRZlFOc1JOamhPVFpuTkRMM2NQbk8x?=
+ =?utf-8?B?R0lCOUxlWWhENGhqNkhtZjZFWXFLSkw4MkIxbW1HenZwVkh6QmJNeGZ2TnNy?=
+ =?utf-8?B?YzJxSlU1eW5SbmtobmVDN2RMY2FNVTIrOGFzUnk2cHlhWEFqWU8vWUxCWHd2?=
+ =?utf-8?B?ZEdBNGxZbHlNMTFCcTZTbTJBZyswTVhVRWJjZTRmbi9GSGZ1cGxoamJNQUhn?=
+ =?utf-8?B?dEJyeWZmTU9jWnoyRlBWK1hHSDh6emFpVzZRWktFTUVMeHYwSHFDSGpTMGVx?=
+ =?utf-8?B?L2Y3eDBMY3AzdDQyVUs1VGkyT3ErMXcrTi9lY1JBNGtBSUExdFJ4MG5xdkZ0?=
+ =?utf-8?B?Q1NudGh2ZWt5Q2pzRjYzUElVSmhhaWlqOUpONmVLY1I2TElYMlVHVncwb254?=
+ =?utf-8?B?OXNmQ1FWdEdNVmYxMHVtaGl4K0lYTXlBMTNpck15Nm5lODd3QUpTVDJUa1R6?=
+ =?utf-8?B?T0NxM0pBNHhUSFJtb1BTOWk5Nm8yMWxwWXo5R3VrY0NOZEh1VDhMalNpT1Z1?=
+ =?utf-8?B?emNJY1VwSDJTU1ByUkhlSi8rQVMzTWkvZVlNdjc1UkJTTVFaTDJGNFJRWGpp?=
+ =?utf-8?B?Y055SUlkTnI0OUlCS3NPMDdlbU9td3lSYmdmZVVTZU1iQkRGRExTSnNJa3Ri?=
+ =?utf-8?Q?WYI2QrRy7pshy+j3GZ5Vi/sp2kWsAXYR?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?NWkvTFpERnlhbC8wSkJuVGtKWnp4Mk9ISjRTTGtuUFQxWFNlb054eExhYkcv?=
+ =?utf-8?B?Qmx3QW1TOEF3SmNFVTJSOE1hUDNOWXpEMWdEVGZrTnllWFk5VGJMMlBkTlFu?=
+ =?utf-8?B?MDZBd2U1VU9ITVFJeC9tQ1ROQWFZZ01DZjVOcUtMNnZEUE93OUVpZzlXOFBj?=
+ =?utf-8?B?Ym9zbHNSMG9Cc0JKK3FLcEswZlRIQzhXNUFlMU1LNHMwWHJmT0p4QTUrOS9G?=
+ =?utf-8?B?czVvdXRiOVVKMFMzRWJzYVhaaVlsam1hQjRxRERoaTdwUXdKV212T1loT1hw?=
+ =?utf-8?B?VWRrVlloVWJ5UnNHQTBhUk85MGF2VlUvdG9rUTgwOXBpMWhuZDZOcXVycTRz?=
+ =?utf-8?B?aTdrbHBFK0QrZkJJTVVxWHZEeGE0am5Ocmx2cXZPRmNRelFmdDlpVkd4N0pk?=
+ =?utf-8?B?eVNVckNhQlQ5WnEySVVDUHFRMFNZN1VMeUdoWTZjcUo4N0RxZHY5cEtwTUxW?=
+ =?utf-8?B?ZUdMeUgrZFpDa3cvek0vR1BJZzNJaXV2eFQvVHpwMDBMVlJ5Nk85QzRxK2lh?=
+ =?utf-8?B?cWlhSFFDVmJvcmpBSUMyR1BmZldkdTRadStlVzUwYTdIL0EySHpWM0lBSndP?=
+ =?utf-8?B?anNJYWFzelJKeHhIVFdGMlVzUjhpM2U4M3pLTFpBM2V1RFViOTZvZTB0YytO?=
+ =?utf-8?B?bnFhdkNtMGhNZEo2bFljU2lBajBwV2F6WDl2STk3b1gvTnVFMkhYQXF6QlR5?=
+ =?utf-8?B?RWNSL1V5TW1rUzBGWE0wNHc4N2dNU2JaSVVHc05veFFLK2tSc25sU3daQ2hM?=
+ =?utf-8?B?SVpvc2IzbWFISkszcGhqK00yRkxHRGE0elVsb0w1dGdnazFpUG4vTEdBZGN6?=
+ =?utf-8?B?bml2N2lRTlNiYzRWVG45WmhLdU1GWlVSTlBVTXFjalVtL3BxOURZanhDRTQx?=
+ =?utf-8?B?M2J3MUpzdlNXL2hudFVGMDFxUEVjdG0rdFdKU0Q5UFNFalZQUHAxdjBJR2VT?=
+ =?utf-8?B?bm5QdEVEUEhhbkx5T2UzbG5VOTREbVVKZnFya1RDOWpFMk1KeVJhdGovdkJx?=
+ =?utf-8?B?b3dWKzZ3WFFKTU5MbmFTamRRSDZ4SzBoVnNsalhaUytYeVB3MkJyd01tWVdL?=
+ =?utf-8?B?ZHhiM21IUHhzTTRFSDVleXBOQ0hrdE15RDNhWXpIVmZQKzVxaVFKUDJOMFR0?=
+ =?utf-8?B?amluQkhrZlViZnJScXhNVVNtaWVCa1J0eDhXOHJmdExWYzBDcXNTK0k3M2U0?=
+ =?utf-8?B?YWZvRnZhblZtRnYrZW1nMFgvTHl4NG1kbk1LTVd0WUxwa3BPTVJaYUJXclov?=
+ =?utf-8?B?UklScmEvQ256Zlo0RGhSNVg5R1JuL3ZOc3pxTkl3TTRlT3hnYUwwL3pRakdn?=
+ =?utf-8?B?ajA1ZUlnWUhPQzY5ZnU4NXIzL3BHZGZtYkJhQ2dnS0Z5ZW1abnJWWktEOUpZ?=
+ =?utf-8?B?bXdRSnFTYWJoNmYxRXNoakU5NzdJZHlUN0dMOHRrcGYybW9pK28vRy90a3Fr?=
+ =?utf-8?B?cjNVZkFtOW1xaStEZjYvWXR5RCs1Umt2WTR6MjlEMjQwaXJ2UXFwZmlOZjh1?=
+ =?utf-8?B?UkI5ODZHS2xIUHJXS1Q2ZjVKVGx2UkU3MSs4a0dhUkdMY0tPd09PeDEvOXJv?=
+ =?utf-8?B?dXN0OVNVMnh4azZTNnhlck5Yb0w0NC9yMXBTeDU2TW5iU0hRYmpIZWl0cmo1?=
+ =?utf-8?B?UnVSSEhpWnhtTTQwN2Jaem1IZmNLcFRZU0VFaFV0d1ptbUxMQ0l0dVpvaitE?=
+ =?utf-8?B?dStIdllZcFBKUDlQYmpiMnR3akdId3lOdm1qUmRqYi9laUVtMnJnWSsrWFZS?=
+ =?utf-8?B?S0xSU1NLN1BIMUl1L3ZhYURIMDdKUkN1Sy9KaVBpUGZRTjhSOVFhZGtxZ1ho?=
+ =?utf-8?B?bFJFWVNlQ1hHU2tIMFN4Sis5UkUwNDlaZndpQXAza2RUa0YvUG5FN0ZmQXdI?=
+ =?utf-8?B?d0tUWHhzdGxhaHE1OFJ3d2R3eXBMZjRUQjAzVzYraEtVcTZLaDdvMWlHNERZ?=
+ =?utf-8?B?Q2RCeWpwWTNRSkt0by9YOXRZSjZjMXlSZjJhMERDdXVKcE9pR09jdG1ERjRV?=
+ =?utf-8?B?Rjc2a0JEQTMvbFFXYmlCNi9EMlVJNVp6bVpCRi9CWTB5S0JpVUZJWlFMWlV6?=
+ =?utf-8?B?MkdwaFdER25GbU9RK0lpTEdZUkRZVWxNRG9TNE9acnlEOElIWUJvQUxqb2l3?=
+ =?utf-8?B?TVVYSmE0Q1UrUWVGQVQrb2pWMy9vYXF0YWUzbi9lNWZnYTcxZWk5WDAzR0tJ?=
+ =?utf-8?B?MWc9PQ==?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b5102d14-e03d-4de8-99b0-08de33cb42c4
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2025 06:55:22.6365
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1dkESFdKmzdV7qpKthtQsp+hyYYw9E2eIF7sQFJbc4A4hCqOps2q1+iLgSlIV6fq/WibRZI8jHg0MlMXcAKtpQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR10MB3172
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 04 Dec 2025 18:16:29 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20905
+ <cip-dev@lists.cip-project.org>; Fri, 05 Dec 2025 06:55:29 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20906
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-commit 0f078d37aeeefa197f4ffff6acd677cd3220a070 upstream.
-
-Add MSTOP configuration for all the module clocks on the RZ/G2UL
-based SoCs (RZ/G2UL, RZ/Five).
-
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250806092129.621194-4-claudiu.beznea.uj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 ---
- drivers/clk/renesas/r9a07g043-cpg.c | 132 ++++++++++++++--------------
- 1 file changed, 66 insertions(+), 66 deletions(-)
+ recipes-kernel/linux/linux-cip-rt_6.12.57-cip12.bb              | 1 -
+ recipes-kernel/linux/linux-cip-rt_6.12.59-cip14.bb              | 1 +
+ ...inux-cip_4.19.325-cip125.bb => linux-cip_4.19.325-cip126.bb} | 2 +-
+ ...{linux-cip_4.4.302-cip104.bb => linux-cip_4.4.302-cip105.bb} | 2 +-
+ .../{linux-cip_6.12.57-cip12.bb => linux-cip_6.12.59-cip14.bb}  | 2 +-
+ 5 files changed, 4 insertions(+), 4 deletions(-)
+ delete mode 120000 recipes-kernel/linux/linux-cip-rt_6.12.57-cip12.bb
+ create mode 120000 recipes-kernel/linux/linux-cip-rt_6.12.59-cip14.bb
+ rename recipes-kernel/linux/{linux-cip_4.19.325-cip125.bb => linux-cip_4.19.325-cip126.bb} (68%)
+ rename recipes-kernel/linux/{linux-cip_4.4.302-cip104.bb => linux-cip_4.4.302-cip105.bb} (68%)
+ rename recipes-kernel/linux/{linux-cip_6.12.57-cip12.bb => linux-cip_6.12.59-cip14.bb} (59%)
 
-diff --git a/drivers/clk/renesas/r9a07g043-cpg.c b/drivers/clk/renesas/r9a07g043-cpg.c
-index 02dc5cecfd8d..f050f8565916 100644
---- a/drivers/clk/renesas/r9a07g043-cpg.c
-+++ b/drivers/clk/renesas/r9a07g043-cpg.c
-@@ -164,143 +164,143 @@ static const struct cpg_core_clk r9a07g043_core_clks[] __initconst = {
- static const struct rzg2l_mod_clk r9a07g043_mod_clks[] = {
- #ifdef CONFIG_ARM64
- 	DEF_MOD("gic",		R9A07G043_GIC600_GICCLK, R9A07G043_CLK_P1,
--				0x514, 0, 0),
-+				0x514, 0, MSTOP(BUS_REG1, BIT(7))),
- 	DEF_MOD("ia55_pclk",	R9A07G043_IA55_PCLK, R9A07G043_CLK_P2,
--				0x518, 0, 0),
-+				0x518, 0, MSTOP(BUS_PERI_CPU, BIT(13))),
- 	DEF_MOD("ia55_clk",	R9A07G043_IA55_CLK, R9A07G043_CLK_P1,
--				0x518, 1, 0),
-+				0x518, 1, MSTOP(BUS_PERI_CPU, BIT(13))),
- #endif
- #ifdef CONFIG_RISCV
- 	DEF_MOD("iax45_pclk",	R9A07G043_IAX45_PCLK, R9A07G043_CLK_P2,
--				0x518, 0, 0),
-+				0x518, 0, MSTOP(BUS_PERI_CPU, BIT(13))),
- 	DEF_MOD("iax45_clk",	R9A07G043_IAX45_CLK, R9A07G043_CLK_P1,
--				0x518, 1, 0),
-+				0x518, 1, MSTOP(BUS_PERI_CPU, BIT(13))),
- #endif
- 	DEF_MOD("dmac_aclk",	R9A07G043_DMAC_ACLK, R9A07G043_CLK_P1,
--				0x52c, 0, 0),
-+				0x52c, 0, MSTOP(BUS_REG1, BIT(2))),
- 	DEF_MOD("dmac_pclk",	R9A07G043_DMAC_PCLK, CLK_P1_DIV2,
--				0x52c, 1, 0),
-+				0x52c, 1, MSTOP(BUS_REG1, BIT(3))),
- 	DEF_MOD("ostm0_pclk",	R9A07G043_OSTM0_PCLK, R9A07G043_CLK_P0,
--				0x534, 0, 0),
-+				0x534, 0, MSTOP(BUS_REG0, BIT(4))),
- 	DEF_MOD("ostm1_pclk",	R9A07G043_OSTM1_PCLK, R9A07G043_CLK_P0,
--				0x534, 1, 0),
-+				0x534, 1, MSTOP(BUS_REG0, BIT(5))),
- 	DEF_MOD("ostm2_pclk",	R9A07G043_OSTM2_PCLK, R9A07G043_CLK_P0,
--				0x534, 2, 0),
-+				0x534, 2, MSTOP(BUS_REG0, BIT(6))),
- 	DEF_MOD("mtu_x_mck",	R9A07G043_MTU_X_MCK_MTU3, R9A07G043_CLK_P0,
--				0x538, 0, 0),
-+				0x538, 0, MSTOP(BUS_MCPU1, BIT(2))),
- 	DEF_MOD("wdt0_pclk",	R9A07G043_WDT0_PCLK, R9A07G043_CLK_P0,
--				0x548, 0, 0),
-+				0x548, 0, MSTOP(BUS_REG0, BIT(2))),
- 	DEF_MOD("wdt0_clk",	R9A07G043_WDT0_CLK, R9A07G043_OSCCLK,
--				0x548, 1, 0),
-+				0x548, 1, MSTOP(BUS_REG0, BIT(2))),
- 	DEF_MOD("spi_clk2",	R9A07G043_SPI_CLK2, R9A07G043_CLK_SPI1,
--				0x550, 0, 0),
-+				0x550, 0, MSTOP(BUS_MCPU1, BIT(1))),
- 	DEF_MOD("spi_clk",	R9A07G043_SPI_CLK, R9A07G043_CLK_SPI0,
--				0x550, 1, 0),
-+				0x550, 1, MSTOP(BUS_MCPU1, BIT(1))),
- 	DEF_MOD("sdhi0_imclk",	R9A07G043_SDHI0_IMCLK, CLK_SD0_DIV4,
--				0x554, 0, 0),
-+				0x554, 0, MSTOP(BUS_PERI_COM, BIT(0))),
- 	DEF_MOD("sdhi0_imclk2",	R9A07G043_SDHI0_IMCLK2, CLK_SD0_DIV4,
--				0x554, 1, 0),
-+				0x554, 1, MSTOP(BUS_PERI_COM, BIT(0))),
- 	DEF_MOD("sdhi0_clk_hs",	R9A07G043_SDHI0_CLK_HS, R9A07G043_CLK_SD0,
--				0x554, 2, 0),
-+				0x554, 2, MSTOP(BUS_PERI_COM, BIT(0))),
- 	DEF_MOD("sdhi0_aclk",	R9A07G043_SDHI0_ACLK, R9A07G043_CLK_P1,
--				0x554, 3, 0),
-+				0x554, 3, MSTOP(BUS_PERI_COM, BIT(0))),
- 	DEF_MOD("sdhi1_imclk",	R9A07G043_SDHI1_IMCLK, CLK_SD1_DIV4,
--				0x554, 4, 0),
-+				0x554, 4, MSTOP(BUS_PERI_COM, BIT(1))),
- 	DEF_MOD("sdhi1_imclk2",	R9A07G043_SDHI1_IMCLK2, CLK_SD1_DIV4,
--				0x554, 5, 0),
-+				0x554, 5, MSTOP(BUS_PERI_COM, BIT(1))),
- 	DEF_MOD("sdhi1_clk_hs",	R9A07G043_SDHI1_CLK_HS, R9A07G043_CLK_SD1,
--				0x554, 6, 0),
-+				0x554, 6, MSTOP(BUS_PERI_COM, BIT(1))),
- 	DEF_MOD("sdhi1_aclk",	R9A07G043_SDHI1_ACLK, R9A07G043_CLK_P1,
--				0x554, 7, 0),
-+				0x554, 7, MSTOP(BUS_PERI_COM, BIT(1))),
- #ifdef CONFIG_ARM64
- 	DEF_MOD("cru_sysclk",   R9A07G043_CRU_SYSCLK, CLK_M2_DIV2,
--				0x564, 0, 0),
-+				0x564, 0, MSTOP(BUS_PERI_VIDEO, BIT(3))),
- 	DEF_MOD("cru_vclk",     R9A07G043_CRU_VCLK, R9A07G043_CLK_M2,
--				0x564, 1, 0),
-+				0x564, 1, MSTOP(BUS_PERI_VIDEO, BIT(3))),
- 	DEF_MOD("cru_pclk",     R9A07G043_CRU_PCLK, R9A07G043_CLK_ZT,
--				0x564, 2, 0),
-+				0x564, 2, MSTOP(BUS_PERI_VIDEO, BIT(3))),
- 	DEF_MOD("cru_aclk",     R9A07G043_CRU_ACLK, R9A07G043_CLK_M0,
--				0x564, 3, 0),
-+				0x564, 3, MSTOP(BUS_PERI_VIDEO, BIT(3))),
- 	DEF_COUPLED("lcdc_clk_a", R9A07G043_LCDC_CLK_A, R9A07G043_CLK_M0,
--				0x56c, 0, 0),
-+				0x56c, 0, MSTOP(BUS_PERI_VIDEO, GENMASK(8, 7))),
- 	DEF_COUPLED("lcdc_clk_p", R9A07G043_LCDC_CLK_P, R9A07G043_CLK_ZT,
--				0x56c, 0, 0),
-+				0x56c, 0, MSTOP(BUS_PERI_VIDEO, GENMASK(8, 7))),
- 	DEF_MOD("lcdc_clk_d",	R9A07G043_LCDC_CLK_D, R9A07G043_CLK_M3,
--				0x56c, 1, 0),
-+				0x56c, 1, MSTOP(BUS_PERI_VIDEO, BIT(9))),
- #endif
- 	DEF_MOD("ssi0_pclk",	R9A07G043_SSI0_PCLK2, R9A07G043_CLK_P0,
--				0x570, 0, 0),
-+				0x570, 0, MSTOP(BUS_MCPU1, BIT(10))),
- 	DEF_MOD("ssi0_sfr",	R9A07G043_SSI0_PCLK_SFR, R9A07G043_CLK_P0,
--				0x570, 1, 0),
-+				0x570, 1, MSTOP(BUS_MCPU1, BIT(10))),
- 	DEF_MOD("ssi1_pclk",	R9A07G043_SSI1_PCLK2, R9A07G043_CLK_P0,
--				0x570, 2, 0),
-+				0x570, 2, MSTOP(BUS_MCPU1, BIT(11))),
- 	DEF_MOD("ssi1_sfr",	R9A07G043_SSI1_PCLK_SFR, R9A07G043_CLK_P0,
--				0x570, 3, 0),
-+				0x570, 3, MSTOP(BUS_MCPU1, BIT(11))),
- 	DEF_MOD("ssi2_pclk",	R9A07G043_SSI2_PCLK2, R9A07G043_CLK_P0,
--				0x570, 4, 0),
-+				0x570, 4, MSTOP(BUS_MCPU1, BIT(12))),
- 	DEF_MOD("ssi2_sfr",	R9A07G043_SSI2_PCLK_SFR, R9A07G043_CLK_P0,
--				0x570, 5, 0),
-+				0x570, 5, MSTOP(BUS_MCPU1, BIT(12))),
- 	DEF_MOD("ssi3_pclk",	R9A07G043_SSI3_PCLK2, R9A07G043_CLK_P0,
--				0x570, 6, 0),
-+				0x570, 6, MSTOP(BUS_MCPU1, BIT(13))),
- 	DEF_MOD("ssi3_sfr",	R9A07G043_SSI3_PCLK_SFR, R9A07G043_CLK_P0,
--				0x570, 7, 0),
-+				0x570, 7, MSTOP(BUS_MCPU1, BIT(13))),
- 	DEF_MOD("usb0_host",	R9A07G043_USB_U2H0_HCLK, R9A07G043_CLK_P1,
--				0x578, 0, 0),
-+				0x578, 0, MSTOP(BUS_PERI_COM, BIT(5))),
- 	DEF_MOD("usb1_host",	R9A07G043_USB_U2H1_HCLK, R9A07G043_CLK_P1,
--				0x578, 1, 0),
-+				0x578, 1, MSTOP(BUS_PERI_COM, BIT(7))),
- 	DEF_MOD("usb0_func",	R9A07G043_USB_U2P_EXR_CPUCLK, R9A07G043_CLK_P1,
--				0x578, 2, 0),
-+				0x578, 2, MSTOP(BUS_PERI_COM, BIT(6))),
- 	DEF_MOD("usb_pclk",	R9A07G043_USB_PCLK, R9A07G043_CLK_P1,
--				0x578, 3, 0),
-+				0x578, 3, MSTOP(BUS_PERI_COM, BIT(4))),
- 	DEF_COUPLED("eth0_axi",	R9A07G043_ETH0_CLK_AXI, R9A07G043_CLK_M0,
--				0x57c, 0, 0),
-+				0x57c, 0, MSTOP(BUS_PERI_COM, BIT(2))),
- 	DEF_COUPLED("eth0_chi",	R9A07G043_ETH0_CLK_CHI, R9A07G043_CLK_ZT,
--				0x57c, 0, 0),
-+				0x57c, 0, MSTOP(BUS_PERI_COM, BIT(2))),
- 	DEF_COUPLED("eth1_axi",	R9A07G043_ETH1_CLK_AXI, R9A07G043_CLK_M0,
--				0x57c, 1, 0),
-+				0x57c, 1, MSTOP(BUS_PERI_COM, BIT(3))),
- 	DEF_COUPLED("eth1_chi",	R9A07G043_ETH1_CLK_CHI, R9A07G043_CLK_ZT,
--				0x57c, 1, 0),
-+				0x57c, 1, MSTOP(BUS_PERI_COM, BIT(3))),
- 	DEF_MOD("i2c0",		R9A07G043_I2C0_PCLK, R9A07G043_CLK_P0,
--				0x580, 0, 0),
-+				0x580, 0, MSTOP(BUS_MCPU2, BIT(10))),
- 	DEF_MOD("i2c1",		R9A07G043_I2C1_PCLK, R9A07G043_CLK_P0,
--				0x580, 1, 0),
-+				0x580, 1, MSTOP(BUS_MCPU2, BIT(11))),
- 	DEF_MOD("i2c2",		R9A07G043_I2C2_PCLK, R9A07G043_CLK_P0,
--				0x580, 2, 0),
-+				0x580, 2, MSTOP(BUS_MCPU2, BIT(12))),
- 	DEF_MOD("i2c3",		R9A07G043_I2C3_PCLK, R9A07G043_CLK_P0,
--				0x580, 3, 0),
-+				0x580, 3, MSTOP(BUS_MCPU2, BIT(13))),
- 	DEF_MOD("scif0",	R9A07G043_SCIF0_CLK_PCK, R9A07G043_CLK_P0,
--				0x584, 0, 0),
-+				0x584, 0, MSTOP(BUS_MCPU2, BIT(1))),
- 	DEF_MOD("scif1",	R9A07G043_SCIF1_CLK_PCK, R9A07G043_CLK_P0,
--				0x584, 1, 0),
-+				0x584, 1, MSTOP(BUS_MCPU2, BIT(2))),
- 	DEF_MOD("scif2",	R9A07G043_SCIF2_CLK_PCK, R9A07G043_CLK_P0,
--				0x584, 2, 0),
-+				0x584, 2, MSTOP(BUS_MCPU2, BIT(3))),
- 	DEF_MOD("scif3",	R9A07G043_SCIF3_CLK_PCK, R9A07G043_CLK_P0,
--				0x584, 3, 0),
-+				0x584, 3, MSTOP(BUS_MCPU2, BIT(4))),
- 	DEF_MOD("scif4",	R9A07G043_SCIF4_CLK_PCK, R9A07G043_CLK_P0,
--				0x584, 4, 0),
-+				0x584, 4, MSTOP(BUS_MCPU2, BIT(5))),
- 	DEF_MOD("sci0",		R9A07G043_SCI0_CLKP, R9A07G043_CLK_P0,
--				0x588, 0, 0),
-+				0x588, 0, MSTOP(BUS_MCPU2, BIT(7))),
- 	DEF_MOD("sci1",		R9A07G043_SCI1_CLKP, R9A07G043_CLK_P0,
--				0x588, 1, 0),
-+				0x588, 1, MSTOP(BUS_MCPU2, BIT(8))),
- 	DEF_MOD("rspi0",	R9A07G043_RSPI0_CLKB, R9A07G043_CLK_P0,
--				0x590, 0, 0),
-+				0x590, 0, MSTOP(BUS_MCPU1, BIT(14))),
- 	DEF_MOD("rspi1",	R9A07G043_RSPI1_CLKB, R9A07G043_CLK_P0,
--				0x590, 1, 0),
-+				0x590, 1, MSTOP(BUS_MCPU1, BIT(15))),
- 	DEF_MOD("rspi2",	R9A07G043_RSPI2_CLKB, R9A07G043_CLK_P0,
--				0x590, 2, 0),
-+				0x590, 2, MSTOP(BUS_MCPU2, BIT(0))),
- 	DEF_MOD("canfd",	R9A07G043_CANFD_PCLK, R9A07G043_CLK_P0,
--				0x594, 0, 0),
-+				0x594, 0, MSTOP(BUS_MCPU2, BIT(9))),
- 	DEF_MOD("gpio",		R9A07G043_GPIO_HCLK, R9A07G043_OSCCLK,
--				0x598, 0, 0),
-+				0x598, 0, MSTOP(BUS_PERI_CPU, BIT(6))),
- 	DEF_MOD("adc_adclk",	R9A07G043_ADC_ADCLK, R9A07G043_CLK_TSU,
--				0x5a8, 0, 0),
-+				0x5a8, 0, MSTOP(BUS_MCPU2, BIT(14))),
- 	DEF_MOD("adc_pclk",	R9A07G043_ADC_PCLK, R9A07G043_CLK_P0,
--				0x5a8, 1, 0),
-+				0x5a8, 1, MSTOP(BUS_MCPU2, BIT(14))),
- 	DEF_MOD("tsu_pclk",	R9A07G043_TSU_PCLK, R9A07G043_CLK_TSU,
--				0x5ac, 0, 0),
-+				0x5ac, 0, MSTOP(BUS_MCPU2, BIT(15))),
- #ifdef CONFIG_RISCV
- 	DEF_MOD("nceplic_aclk",	R9A07G043_NCEPLIC_ACLK, R9A07G043_CLK_P1,
--				0x608, 0, 0),
-+				0x608, 0, MSTOP(BUS_REG1, BIT(7))),
- #endif
- };
+diff --git a/recipes-kernel/linux/linux-cip-rt_6.12.57-cip12.bb b/recipes-kernel/linux/linux-cip-rt_6.12.57-cip12.bb
+deleted file mode 120000
+index e78f72ab..00000000
+--- a/recipes-kernel/linux/linux-cip-rt_6.12.57-cip12.bb
++++ /dev/null
+@@ -1 +0,0 @@
+-linux-cip_6.12.57-cip12.bb
+\ No newline at end of file
+diff --git a/recipes-kernel/linux/linux-cip-rt_6.12.59-cip14.bb b/recipes-kernel/linux/linux-cip-rt_6.12.59-cip14.bb
+new file mode 120000
+index 00000000..9294da0e
+--- /dev/null
++++ b/recipes-kernel/linux/linux-cip-rt_6.12.59-cip14.bb
+@@ -0,0 +1 @@
++linux-cip_6.12.59-cip14.bb
+\ No newline at end of file
+diff --git a/recipes-kernel/linux/linux-cip_4.19.325-cip125.bb b/recipes-kernel/linux/linux-cip_4.19.325-cip126.bb
+similarity index 68%
+rename from recipes-kernel/linux/linux-cip_4.19.325-cip125.bb
+rename to recipes-kernel/linux/linux-cip_4.19.325-cip126.bb
+index c4337411..6f5e5bd1 100644
+--- a/recipes-kernel/linux/linux-cip_4.19.325-cip125.bb
++++ b/recipes-kernel/linux/linux-cip_4.19.325-cip126.bb
+@@ -11,4 +11,4 @@
  
+ require linux-cip-release.inc
+ 
+-SRC_URI[sha256sum] = "d8824967145bbfbb926e16e4c065f43cea2c31a41a2047d44d8a8de66eac5ab1"
++SRC_URI[sha256sum] = "88d02001518e19e4d52fc12ce00fec6db191bbe54f576bba9f6be3bc7fe816b2"
+diff --git a/recipes-kernel/linux/linux-cip_4.4.302-cip104.bb b/recipes-kernel/linux/linux-cip_4.4.302-cip105.bb
+similarity index 68%
+rename from recipes-kernel/linux/linux-cip_4.4.302-cip104.bb
+rename to recipes-kernel/linux/linux-cip_4.4.302-cip105.bb
+index 994d934a..807b0a92 100644
+--- a/recipes-kernel/linux/linux-cip_4.4.302-cip104.bb
++++ b/recipes-kernel/linux/linux-cip_4.4.302-cip105.bb
+@@ -11,4 +11,4 @@
+ 
+ require linux-cip-release.inc
+ 
+-SRC_URI[sha256sum] = "73489ea64b015a3539b4399dd233f0ca7e69cb179c0676095c1d587c77c93a78"
++SRC_URI[sha256sum] = "ca3e4c6dbcfca09eff9d2c3c8b3c5c5d76f3a36951551f1717976337bbe46199"
+diff --git a/recipes-kernel/linux/linux-cip_6.12.57-cip12.bb b/recipes-kernel/linux/linux-cip_6.12.59-cip14.bb
+similarity index 59%
+rename from recipes-kernel/linux/linux-cip_6.12.57-cip12.bb
+rename to recipes-kernel/linux/linux-cip_6.12.59-cip14.bb
+index 320888f0..d27b1114 100644
+--- a/recipes-kernel/linux/linux-cip_6.12.57-cip12.bb
++++ b/recipes-kernel/linux/linux-cip_6.12.59-cip14.bb
+@@ -7,4 +7,4 @@
+ 
+ require linux-cip-release.inc
+ 
+-SRC_URI[sha256sum] = "bd5279dce14c0dba16dda09f35b6d2d8224d8251a6575544beca2165c591e1c6"
++SRC_URI[sha256sum] = "ca060dcabf8588adcb702b58777c1a3d68f1eccaf899d39a54a7e6ed8288fcc7"
 -- 
-2.43.0
-
+2.51.0
 
