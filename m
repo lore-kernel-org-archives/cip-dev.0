@@ -2,46 +2,47 @@ Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4D15D2F7DE
-	for <webhook@archiver.kernel.org>; Fri,  5 Dec 2025 11:32:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D013D2F7E1
+	for <webhook@archiver.kernel.org>; Fri,  5 Dec 2025 11:33:50 +0000 (UTC)
 Received: from mx.denx.de (mx.denx.de [89.58.32.78])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.3508.1764934360853973700
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.3687.1764934422666223177
  for <cip-dev@lists.cip-project.org>;
- Fri, 05 Dec 2025 03:32:41 -0800
+ Fri, 05 Dec 2025 03:33:43 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=DwQFBjXU;
+ dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=fl+vB5A9;
  spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: pavel@denx.de)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 23B5D103AF6C3;
-	Fri,  5 Dec 2025 12:32:35 +0100 (CET)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D330210092110;
+	Fri,  5 Dec 2025 12:33:39 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1764934358; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=AC70NO95rWV/H/XRn+UUxqxn08Crrfw3A1VqLP1yanc=;
-	b=DwQFBjXU7UnKS21q/e8idYvNdqvCrMI72semDjC/eZ4EVx470AZQYPFdiJKZYYTarnng5Q
-	kcGYV/pddywRSeixMruUz61sX6KPr3F9FV7ZXOzVtdS/mImrFVn2SHk1iXak8A5a/Ebew+
-	CYFKWc6fNnBIEiQTY/h4GSh1lxI/abIlqTRFnqghH5uNKcrI1GQJehDT74WsHhZs0Gu0Ak
-	3DvyjKu4XGnxu9tYH4J4j8d02bCgKVvoQKqV372oYVGvPusZWYfUP93zFE5tgmT62wO9dh
-	e8KLJzp8cuelzr9vNG7eF4PCpGXxb4Ol41KVEQqhjBwFn5w5mZxRcOrnevxX2Q==
-Date: Fri, 5 Dec 2025 12:32:33 +0100
+	t=1764934420; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=SWOZYQsGrDg1J3+vp6k1xOjTQVzMkymrElp5NN9507Q=;
+	b=fl+vB5A9I85vOKR887p/wcdwM+2VHdnOl5KDfciiAp2AXkFJw989OeCc2NtYhW7GDEDdxs
+	Mugx0zxVOn27TwyI7pSGf58IRmTRdDGm8qlzw7ZfOyz2yNhhNAtyTko6mH9Bp+cS+qsE+m
+	X2Ka/0OPUxG9cy+v2j/XHCSb7CAtVbBjzHNK9pSDLW1lXxI13x/qWek+SMWBuORSjQkUO3
+	jCcnZveRHM5cYiUk50is0voVAX4o/J8faZpy1s8V8Y2beE2qbFM2DRVOaiCtUAvY0LnkEl
+	NErMw6R/lYCx/0WLdqfWza/STNE2T6WSTU8j4OudIIMfxZGKqdWzxQMjbefzIQ==
+Date: Fri, 5 Dec 2025 12:33:38 +0100
 From: Pavel Machek <pavel@denx.de>
-To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+To: ovidiu.panait.rb@renesas.com
 Cc: cip-dev@lists.cip-project.org, nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: Re: [PATCH 6.12.y-cip 00/11] Add initial support for RZ/V2N EVK
-Message-ID: <aTLC0VMAhf77pn8s@duo.ucw.cz>
-References: <20251203154058.33022-1-ovidiu.panait.rb@renesas.com>
+Subject: Re: [cip-dev] [PATCH 6.1.y-cip 00/12] Add initial support for RZ/V2N
+ EVK
+Message-ID: <aTLDEjd8nIFJZkr3@duo.ucw.cz>
+References: <20251203153757.32977-1-ovidiu.panait.rb@renesas.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="MHjGR06TidXtn9Zz"
+	protocol="application/pgp-signature"; boundary="EQKhpJ6D0oFMcnDR"
 Content-Disposition: inline
-In-Reply-To: <20251203154058.33022-1-ovidiu.panait.rb@renesas.com>
+In-Reply-To: <20251203153757.32977-1-ovidiu.panait.rb@renesas.com>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 05 Dec 2025 11:32:50 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20908
+ <cip-dev@lists.cip-project.org>; Fri, 05 Dec 2025 11:33:50 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20909
 
 
---MHjGR06TidXtn9Zz
+--EQKhpJ6D0oFMcnDR
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -73,15 +74,15 @@ Best regards,
 In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
 Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
---MHjGR06TidXtn9Zz
+--EQKhpJ6D0oFMcnDR
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaTLC0QAKCRAw5/Bqldv6
-8uJKAKCHSpoa6GI/QcvkrouU7YWHSvszOQCfbVw4m+EfL/Q4DN5lELFbrdOVC8c=
-=6ydA
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaTLDEgAKCRAw5/Bqldv6
+8jYTAJ0Ut2WyML+/E7ak4b1OK97Y7sKDVgCfUX9qCmqqOosmZPsOH99SsjT/jCs=
+=Pv56
 -----END PGP SIGNATURE-----
 
---MHjGR06TidXtn9Zz--
+--EQKhpJ6D0oFMcnDR--
 
