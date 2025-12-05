@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16FB3D32D7F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 253C3D32D80
 	for <webhook@archiver.kernel.org>; Fri,  5 Dec 2025 14:33:52 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.7063.1764945182570660387
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.6938.1764945225571344838
  for <cip-dev@lists.cip-project.org>;
- Fri, 05 Dec 2025 06:33:43 -0800
+ Fri, 05 Dec 2025 06:33:47 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-CSE-ConnectionGUID: QGZfkpFZSDqexlqRMRGJew==
-X-CSE-MsgGUID: O7nXnms/S+6O66DvAzJ9ew==
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+X-CSE-ConnectionGUID: X8cLNs0hSJG6A6FqLC/nTw==
+X-CSE-MsgGUID: zhZipEtlTQOjk/N/m1kLwg==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 05 Dec 2025 23:33:43 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 05 Dec 2025 23:33:46 +0900
 Received: from Ubuntu-22.. (unknown [10.24.1.60])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id BBB5D4179B99;
-	Fri,  5 Dec 2025 23:33:41 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 61FDF4179CE0;
+	Fri,  5 Dec 2025 23:33:45 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 24/38] dt-bindings: pinctrl: renesas: Document RZ/T2H and RZ/N2H SoCs
-Date: Fri,  5 Dec 2025 14:32:44 +0000
-Message-ID: <20251205143258.13748-25-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 26/38] pinctrl: renesas: rzt2h: Add support for RZ/N2H
+Date: Fri,  5 Dec 2025 14:32:46 +0000
+Message-ID: <20251205143258.13748-27-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251205143258.13748-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20251205143258.13748-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -34,239 +34,77 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 05 Dec 2025 14:33:52 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20938
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20940
 
-commit 5293e8f2a854344ef9aba2391b44c7a437889ebb upstream.
+commit d1d31e2739ff063da1e85cd9b44316ca5cccdba8 upstream.
 
-Document the pin and GPIO controller IP for the Renesas RZ/T2H
-(R9A09G077) and RZ/N2H (R9A09G087) SoCs, and add the shared DTSI header
-file used by both the bindings and the driver.
+The Renesas RZ/N2H (R9A09G087) SoC shares a similar pin controller
+architecture with the RZ/T2H (R9A09G077) SoC, differing primarily in the
+number of supported pins: 576 on RZ/N2H versus 729 on RZ/T2H.
 
-The RZ/T2H SoC supports 729 pins, while RZ/N2H supports 576 pins.
-Both share the same controller architecture; separate compatible strings
-are added for each SoC to distinguish them.
+Add the necessary pin configuration data and compatible string to enable
+support for the RZ/N2H SoC in the RZ/T2H pinctrl driver.
 
-Co-developed-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: "Rob Herring (Arm)" <robh@kernel.org>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250808133017.2053637-2-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://lore.kernel.org/20250808133017.2053637-4-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- .../pinctrl/renesas,r9a09g077-pinctrl.yaml    | 172 ++++++++++++++++++
- .../pinctrl/renesas,r9a09g077-pinctrl.h       |  22 +++
- 2 files changed, 194 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,r9a09g077-pinctrl.yaml
- create mode 100644 include/dt-bindings/pinctrl/renesas,r9a09g077-pinctrl.h
+ drivers/pinctrl/renesas/Kconfig         |  1 +
+ drivers/pinctrl/renesas/pinctrl-rzt2h.c | 16 ++++++++++++++++
+ 2 files changed, 17 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,r9a09g077-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/renesas,r9a09g077-pinctrl.yaml
-new file mode 100644
-index 0000000000000..36d6659714842
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/renesas,r9a09g077-pinctrl.yaml
-@@ -0,0 +1,172 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/renesas,r9a09g077-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/pinctrl/renesas/Kconfig b/drivers/pinctrl/renesas/Kconfig
+index 99f290ae77aaf..27ddc5dc46194 100644
+--- a/drivers/pinctrl/renesas/Kconfig
++++ b/drivers/pinctrl/renesas/Kconfig
+@@ -45,6 +45,7 @@ config PINCTRL_RENESAS
+ 	select PINCTRL_RZG2L if ARCH_R9A09G056
+ 	select PINCTRL_RZG2L if ARCH_R9A09G057
+ 	select PINCTRL_RZT2H if ARCH_R9A09G077
++	select PINCTRL_RZT2H if ARCH_R9A09G087
+ 	select PINCTRL_PFC_SH7203 if CPU_SUBTYPE_SH7203
+ 	select PINCTRL_PFC_SH7264 if CPU_SUBTYPE_SH7264
+ 	select PINCTRL_PFC_SH7269 if CPU_SUBTYPE_SH7269
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzt2h.c b/drivers/pinctrl/renesas/pinctrl-rzt2h.c
+index 02dcd79247cd3..d567612b30953 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzt2h.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzt2h.c
+@@ -760,17 +760,33 @@ static const u8 r9a09g077_gpio_configs[] = {
+ 	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f,
+ };
+ 
++static const u8 r9a09g087_gpio_configs[] = {
++	0x1f, 0xff, 0xff, 0x1f, 0x00, 0xfe, 0xff, 0x00, 0x7e, 0xf0, 0xff, 0x01,
++	0xff, 0xff, 0xff, 0x00, 0xe0, 0xff, 0xff, 0x00, 0xff, 0xff, 0xff, 0x01,
++	0xe0, 0xff, 0xff, 0x7f, 0x00, 0xfe, 0xff, 0x7f, 0x00, 0xfc, 0x7f,
++};
 +
-+title: Renesas RZ/T2H and RZ/N2H Pin and GPIO controller
+ static struct rzt2h_pinctrl_data r9a09g077_data = {
+ 	.n_port_pins = ARRAY_SIZE(r9a09g077_gpio_configs) * RZT2H_PINS_PER_PORT,
+ 	.port_pin_configs = r9a09g077_gpio_configs,
+ 	.n_ports = ARRAY_SIZE(r9a09g077_gpio_configs),
+ };
+ 
++static struct rzt2h_pinctrl_data r9a09g087_data = {
++	.n_port_pins = ARRAY_SIZE(r9a09g087_gpio_configs) * RZT2H_PINS_PER_PORT,
++	.port_pin_configs = r9a09g087_gpio_configs,
++	.n_ports = ARRAY_SIZE(r9a09g087_gpio_configs),
++};
 +
-+maintainers:
-+  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-+
-+description:
-+  The Renesas RZ/T2H and RZ/N2H SoCs feature a combined Pin and GPIO controller.
-+  Pin multiplexing and GPIO configuration are performed on a per-pin basis.
-+  Each port supports up to 8 pins, each configurable for either GPIO (port mode)
-+  or alternate function mode. Each pin supports function mode values ranging from
-+  0x0 to 0x2A, allowing selection from up to 43 different functions.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - renesas,r9a09g077-pinctrl # RZ/T2H
-+      - renesas,r9a09g087-pinctrl # RZ/N2H
-+
-+  reg:
-+    minItems: 1
-+    items:
-+      - description: Non-safety I/O Port base
-+      - description: Safety I/O Port safety region base
-+      - description: Safety I/O Port Non-safety region base
-+
-+  reg-names:
-+    minItems: 1
-+    items:
-+      - const: nsr
-+      - const: srs
-+      - const: srn
-+
-+  gpio-controller: true
-+
-+  '#gpio-cells':
-+    const: 2
-+    description:
-+      The first cell contains the global GPIO port index, constructed using the
-+      RZT2H_GPIO() helper macro from <dt-bindings/pinctrl/renesas,r9a09g077-pinctrl.h>
-+      (e.g. "RZT2H_GPIO(3, 0)" for P03_0). The second cell represents the consumer
-+      flag. Use the macros defined in include/dt-bindings/gpio/gpio.h.
-+
-+  gpio-ranges:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  power-domains:
-+    maxItems: 1
-+
-+definitions:
-+  renesas-rzt2h-n2h-pins-node:
-+    type: object
-+    allOf:
-+      - $ref: pincfg-node.yaml#
-+      - $ref: pinmux-node.yaml#
-+    properties:
-+      pinmux:
-+        description:
-+          Values are constructed from I/O port number, pin number, and
-+          alternate function configuration number using the RZT2H_PORT_PINMUX()
-+          helper macro from <dt-bindings/pinctrl/renesas,r9a09g077-pinctrl.h>.
-+      pins: true
-+      phandle: true
-+      input: true
-+      input-enable: true
-+      output-enable: true
-+    oneOf:
-+      - required: [pinmux]
-+      - required: [pins]
-+    additionalProperties: false
-+
-+patternProperties:
-+  # Grouping nodes: allow multiple "-pins" subnodes within a "-group"
-+  '.*-group$':
-+    type: object
-+    description:
-+      Pin controller client devices can organize pin configuration entries into
-+      grouping nodes ending in "-group". These group nodes may contain multiple
-+      child nodes each ending in "-pins" to configure distinct sets of pins.
-+    additionalProperties: false
-+    patternProperties:
-+      '-pins$':
-+        $ref: '#/definitions/renesas-rzt2h-n2h-pins-node'
-+
-+  # Standalone "-pins" nodes under client devices or groups
-+  '-pins$':
-+    $ref: '#/definitions/renesas-rzt2h-n2h-pins-node'
-+
-+  '-hog$':
-+    type: object
-+    description: GPIO hog node
-+    properties:
-+      gpio-hog: true
-+      gpios: true
-+      input: true
-+      output-high: true
-+      output-low: true
-+      line-name: true
-+    required:
-+      - gpio-hog
-+      - gpios
-+    additionalProperties: false
-+
-+allOf:
-+  - $ref: pinctrl.yaml#
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - gpio-controller
-+  - '#gpio-cells'
-+  - gpio-ranges
-+  - clocks
-+  - power-domains
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h>
-+    #include <dt-bindings/pinctrl/renesas,r9a09g077-pinctrl.h>
-+
-+    pinctrl@802c0000 {
-+        compatible = "renesas,r9a09g077-pinctrl";
-+        reg = <0x802c0000 0x2000>,
-+              <0x812c0000 0x2000>,
-+              <0x802b0000 0x2000>;
-+        reg-names = "nsr", "srs", "srn";
-+        clocks = <&cpg CPG_CORE R9A09G077_CLK_PCLKM>;
-+        gpio-controller;
-+        #gpio-cells = <2>;
-+        gpio-ranges = <&pinctrl 0 0 288>;
-+        power-domains = <&cpg>;
-+
-+        serial0-pins {
-+            pinmux = <RZT2H_PORT_PINMUX(38, 0, 1)>, /* Tx */
-+                     <RZT2H_PORT_PINMUX(38, 1, 1)>; /* Rx */
-+        };
-+
-+        sd1-pwr-en-hog {
-+            gpio-hog;
-+            gpios = <RZT2H_GPIO(39, 2) 0>;
-+            output-high;
-+            line-name = "sd1_pwr_en";
-+        };
-+
-+        i2c0-pins {
-+            pins = "RIIC0_SDA", "RIIC0_SCL";
-+            input-enable;
-+        };
-+
-+        sd0-sd-group {
-+            ctrl-pins {
-+                pinmux = <RZT2H_PORT_PINMUX(12, 0, 0x29)>, /* SD0_CLK */
-+                         <RZT2H_PORT_PINMUX(12, 1, 0x29)>; /* SD0_CMD */
-+            };
-+
-+            data-pins {
-+                pinmux = <RZT2H_PORT_PINMUX(12, 0, 0x29)>, /* SD0_CLK */
-+                         <RZT2H_PORT_PINMUX(12, 1, 0x29)>; /* SD0_CMD */
-+            };
-+        };
-+    };
-diff --git a/include/dt-bindings/pinctrl/renesas,r9a09g077-pinctrl.h b/include/dt-bindings/pinctrl/renesas,r9a09g077-pinctrl.h
-new file mode 100644
-index 0000000000000..f088793f23eed
---- /dev/null
-+++ b/include/dt-bindings/pinctrl/renesas,r9a09g077-pinctrl.h
-@@ -0,0 +1,22 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * This header provides constants for Renesas RZ/T2H family pinctrl bindings.
-+ *
-+ * Copyright (C) 2025 Renesas Electronics Corp.
-+ */
-+
-+#ifndef __DT_BINDINGS_PINCTRL_RENESAS_R9A09G077_PINCTRL_H__
-+#define __DT_BINDINGS_PINCTRL_RENESAS_R9A09G077_PINCTRL_H__
-+
-+#define RZT2H_PINS_PER_PORT	8
-+
-+/*
-+ * Create the pin index from its bank and position numbers and store in
-+ * the upper 16 bits the alternate function identifier
-+ */
-+#define RZT2H_PORT_PINMUX(b, p, f)	((b) * RZT2H_PINS_PER_PORT + (p) | ((f) << 16))
-+
-+/* Convert a port and pin label to its global pin index */
-+#define RZT2H_GPIO(port, pin)	((port) * RZT2H_PINS_PER_PORT + (pin))
-+
-+#endif /* __DT_BINDINGS_PINCTRL_RENESAS_R9A09G077_PINCTRL_H__ */
+ static const struct of_device_id rzt2h_pinctrl_of_table[] = {
+ 	{
+ 		.compatible = "renesas,r9a09g077-pinctrl",
+ 		.data = &r9a09g077_data,
+ 	},
++	{
++		.compatible = "renesas,r9a09g087-pinctrl",
++		.data = &r9a09g087_data,
++	},
+ 	{ /* sentinel */ }
+ };
+ 
 -- 
 2.43.0
 
