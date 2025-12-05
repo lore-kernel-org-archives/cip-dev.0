@@ -1,88 +1,71 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <adithya.balakumar@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D013D2F7E1
-	for <webhook@archiver.kernel.org>; Fri,  5 Dec 2025 11:33:50 +0000 (UTC)
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.3687.1764934422666223177
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EF74D2F7FE
+	for <webhook@archiver.kernel.org>; Fri,  5 Dec 2025 14:15:51 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.152])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.6505.1764944143097773645
  for <cip-dev@lists.cip-project.org>;
- Fri, 05 Dec 2025 03:33:43 -0800
+ Fri, 05 Dec 2025 06:15:43 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=fl+vB5A9;
- spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: pavel@denx.de)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D330210092110;
-	Fri,  5 Dec 2025 12:33:39 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1764934420; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=SWOZYQsGrDg1J3+vp6k1xOjTQVzMkymrElp5NN9507Q=;
-	b=fl+vB5A9I85vOKR887p/wcdwM+2VHdnOl5KDfciiAp2AXkFJw989OeCc2NtYhW7GDEDdxs
-	Mugx0zxVOn27TwyI7pSGf58IRmTRdDGm8qlzw7ZfOyz2yNhhNAtyTko6mH9Bp+cS+qsE+m
-	X2Ka/0OPUxG9cy+v2j/XHCSb7CAtVbBjzHNK9pSDLW1lXxI13x/qWek+SMWBuORSjQkUO3
-	jCcnZveRHM5cYiUk50is0voVAX4o/J8faZpy1s8V8Y2beE2qbFM2DRVOaiCtUAvY0LnkEl
-	NErMw6R/lYCx/0WLdqfWza/STNE2T6WSTU8j4OudIIMfxZGKqdWzxQMjbefzIQ==
-Date: Fri, 5 Dec 2025 12:33:38 +0100
-From: Pavel Machek <pavel@denx.de>
-To: ovidiu.panait.rb@renesas.com
-Cc: cip-dev@lists.cip-project.org, nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: Re: [cip-dev] [PATCH 6.1.y-cip 00/12] Add initial support for RZ/V2N
- EVK
-Message-ID: <aTLDEjd8nIFJZkr3@duo.ucw.cz>
-References: <20251203153757.32977-1-ovidiu.panait.rb@renesas.com>
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.152, mailfrom: adithya.balakumar@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1802) id 5B5EFe373238448; Fri, 5 Dec 2025 23:15:41 +0900
+X-Iguazu-Qid: 2yAaGFzRaE4QRF3EJs
+X-Iguazu-QSIG: v=2; s=0; t=1764944140; q=2yAaGFzRaE4QRF3EJs; m=MyUWSv1CJEwCNZwfAe19PplAVpcNSQdwTMvQbsDgwFw=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	 id 4dND1S0hDbz1xnc; Fri,  5 Dec 2025 23:15:39 +0900 (JST)
+From: Adithya.Balakumar@toshiba-tsip.com
+To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
+Cc: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>,
+        shivanand.kunijadar@toshiba-tsip.com, dinesh.kumar@toshiba-tsip.com,
+        kazuhiro3.hayashi@toshiba.co.jp, akunuri.sahithi@toshiba-tsip.com
+Subject: [isar-cip-core][PATCH v1 0/3] Fix Reproducible build tests in the CI
+Date: Fri,  5 Dec 2025 09:29:24 -0500
+X-TSB-HOP2: ON
+Message-Id: <20251205142927.4087770-1-Adithya.Balakumar@toshiba-tsip.com>
+X-Mailer: git-send-email 2.39.5
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="EQKhpJ6D0oFMcnDR"
-Content-Disposition: inline
-In-Reply-To: <20251203153757.32977-1-ovidiu.panait.rb@renesas.com>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 05 Dec 2025 14:15:37.0845 (UTC) FILETIME=[A1173A50:01DC65F1]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 05 Dec 2025 11:33:50 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20909
+ <cip-dev@lists.cip-project.org>; Fri, 05 Dec 2025 14:15:51 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20911
+
+From: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
+
+Recent updates to the CI for moving to trixie based build and tests led 
+to the reproducible build test in the CI to break. This patchset fixes 
+the issues in the reproducible build tests in the CI and while at it 
+also fixes a bug in the reproducible build test script that came to 
+light because of the issues.
+
+Now, I did do a test run[1] with these patches and found the reproducible build 
+test still fails but the failure is due to a reproducibility issue 
+(best discussed in a separate thread) and not a CI issue.
+
+[1] https://gitlab.com/cip-project/cip-core/isar-cip-core/-/pipelines/2195307991  
+
+Adithya Balakumar (3):
+  .reproducible-check-ci.yml: Align with recent changes in
+    deploy-cip-core.sh
+  scripts/deploy-cip-core.sh: Check for the existence of the broken swu
+    file before uploading
+  scripts/repro-tests.sh: Remove return value from run_diffoscope
+    function
+
+ .reproducible-check-ci.yml | 2 +-
+ scripts/deploy-cip-core.sh | 4 +++-
+ scripts/repro-tests.sh     | 9 ++-------
+ 3 files changed, 6 insertions(+), 9 deletions(-)
+
+-- 
+2.39.5
 
 
---EQKhpJ6D0oFMcnDR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> This series adds initial support for the Renesas RZ/V2N EVK platform. It
-> provides the basic SoC and board dts files and enables the following core
-> functionality:
->   - CPU (Cortex-A55 cores with operating points)
->   - External clocks (audio, qextal, rtxin)
->   - Pin controller (GPIO support)
->   - Clock Pulse Generator (CPG)
->   - System controller (SYS)
->   - Serial Communication Interface (SCIF)
->   - Secure Digital Host Interface and eMMC (SDHI)
->   - Generic Interrupt Controller (GIC)
->   - ARMv8 timer
->=20
-> Note that the RZ/V2N SoC shares most functionality with the RZ/V2H SoC,
-> which is already supported in the CIP kernels, so most of the required
-> driver infrastructure is already available.
-
-Thank you, applied.
-
-Best regards,
-								Pavel
---=20
-In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
-Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---EQKhpJ6D0oFMcnDR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaTLDEgAKCRAw5/Bqldv6
-8jYTAJ0Ut2WyML+/E7ak4b1OK97Y7sKDVgCfUX9qCmqqOosmZPsOH99SsjT/jCs=
-=Pv56
------END PGP SIGNATURE-----
-
---EQKhpJ6D0oFMcnDR--
 
