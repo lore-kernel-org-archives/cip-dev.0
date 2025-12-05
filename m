@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6B83D32D6D
-	for <webhook@archiver.kernel.org>; Fri,  5 Dec 2025 14:33:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A52C7D32D65
+	for <webhook@archiver.kernel.org>; Fri,  5 Dec 2025 14:33:21 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.msgproc01-g2.7063.1764945182570660387
  for <cip-dev@lists.cip-project.org>;
- Fri, 05 Dec 2025 06:33:06 -0800
+ Fri, 05 Dec 2025 06:33:13 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-CSE-ConnectionGUID: tB4rZHCASLCZS+fky48/zA==
-X-CSE-MsgGUID: eQ9143mFQIOGdAkHKGd+0w==
+X-CSE-ConnectionGUID: AHzabFgmTb2rgSGhz522dA==
+X-CSE-MsgGUID: zsIDUjz/TyWoDTI/A87ZWQ==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 05 Dec 2025 23:33:06 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 05 Dec 2025 23:33:13 +0900
 Received: from Ubuntu-22.. (unknown [10.24.1.60])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id CDC6C4179B99;
-	Fri,  5 Dec 2025 23:33:04 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 160834179B99;
+	Fri,  5 Dec 2025 23:33:11 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 03/38] dt-bindings: serial: rsci: Update maintainer entry
-Date: Fri,  5 Dec 2025 14:32:23 +0000
-Message-ID: <20251205143258.13748-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 07/38] serial: sh-sci: Introduced sci_of_data
+Date: Fri,  5 Dec 2025 14:32:27 +0000
+Message-ID: <20251205143258.13748-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251205143258.13748-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20251205143258.13748-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -33,37 +33,394 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 05 Dec 2025 14:33:11 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20917
+ <cip-dev@lists.cip-project.org>; Fri, 05 Dec 2025 14:33:21 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20921
 
-commit 64a2e41b8ef7771554374a0ac8386648fc6db2ba upstream.
+From: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
 
-Add myself as the maintainer for the Renesas RSCI device tree binding,
-as Thierry Bultel no longer works for Renesas.
+commit 043806bc9dbc6597dd15e6ca9220ae2746425f2f upstream.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+The aim here is to provide an easier support to more different SCI
+controllers, like the RZ/T2H one.
+
+The existing .data field of_sci_match is changed to a structure containing
+all what that can be statically initialized, and avoid a call to
+'sci_probe_regmap', in both 'sci_init_single', and 'early_console_setup'.
+
+'sci_probe_regmap' is now assumed to be called in the only case where the
+device description is from a board file instead of a dts.
+
+In this way, there is no need to patch 'sci_probe_regmap' for adding new
+SCI type, and also, the specific sci_port_params for a new SCI type can be
+provided by an external file.
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: "Rob Herring (Arm)" <robh@kernel.org>
-Link: https://lore.kernel.org/r/20250630202323.279809-3-prabhakar.mahadev-lad.rj@bp.renesas.com
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+Link: https://lore.kernel.org/r/20250403212919.1137670-10-thierry.bultel.yh@bp.renesas.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/serial/renesas,rsci.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/serial/sh-sci-common.h |  10 +-
+ drivers/tty/serial/sh-sci.c        | 164 +++++++++++++++++++++--------
+ 2 files changed, 131 insertions(+), 43 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/serial/renesas,rsci.yaml b/Documentation/devicetree/bindings/serial/renesas,rsci.yaml
-index 1bf255407df0e..548225e509e51 100644
---- a/Documentation/devicetree/bindings/serial/renesas,rsci.yaml
-+++ b/Documentation/devicetree/bindings/serial/renesas,rsci.yaml
-@@ -8,7 +8,7 @@ title: Renesas RSCI Serial Communication Interface
+diff --git a/drivers/tty/serial/sh-sci-common.h b/drivers/tty/serial/sh-sci-common.h
+index 2ed742bca83fa..bd9d9cfac1c83 100644
+--- a/drivers/tty/serial/sh-sci-common.h
++++ b/drivers/tty/serial/sh-sci-common.h
+@@ -89,6 +89,14 @@ struct sci_port_ops {
+ 	size_t (*suspend_regs_size)(void);
+ };
  
- maintainers:
-   - Geert Uytterhoeven <geert+renesas@glider.be>
--  - Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-+  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
++struct sci_of_data {
++	const struct sci_port_params *params;
++	const struct uart_ops *uart_ops;
++	const struct sci_port_ops *ops;
++	unsigned short regtype;
++	unsigned short type;
++};
++
+ struct sci_port {
+ 	struct uart_port	port;
  
- allOf:
-   - $ref: serial.yaml#
+@@ -153,7 +161,7 @@ void sci_shutdown(struct uart_port *port);
+ #define max_sr(_port)		fls((_port)->sampling_rate_mask)
+ 
+ #ifdef CONFIG_SERIAL_SH_SCI_EARLYCON
+-int __init scix_early_console_setup(struct earlycon_device *device, int);
++int __init scix_early_console_setup(struct earlycon_device *device, const struct sci_of_data *data);
+ #endif
+ 
+ #endif /* __SH_SCI_COMMON_H__ */
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 21d8078399100..576303dc0fbae 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -2997,10 +2997,13 @@ static int sci_init_clocks(struct sci_port *sci_port, struct device *dev)
+ }
+ 
+ static const struct sci_port_params *
+-sci_probe_regmap(const struct plat_sci_port *cfg)
++sci_probe_regmap(const struct plat_sci_port *cfg, struct sci_port *sci_port)
+ {
+ 	unsigned int regtype;
+ 
++	sci_port->ops = &sci_port_ops;
++	sci_port->port.ops = &sci_uart_ops;
++
+ 	if (cfg->regtype != SCIx_PROBE_REGTYPE)
+ 		return &sci_port_params[cfg->regtype];
+ 
+@@ -3047,9 +3050,7 @@ static int sci_init_single(struct platform_device *dev,
+ 	int ret;
+ 
+ 	sci_port->cfg	= p;
+-	sci_port->ops	= &sci_port_ops;
+ 
+-	port->ops	= &sci_uart_ops;
+ 	port->iotype	= UPIO_MEM;
+ 	port->line	= index;
+ 	port->has_sysrq = IS_ENABLED(CONFIG_SERIAL_SH_SCI_CONSOLE);
+@@ -3089,10 +3090,6 @@ static int sci_init_single(struct platform_device *dev,
+ 		for (i = 1; i < ARRAY_SIZE(sci_port->irqs); i++)
+ 			sci_port->irqs[i] = sci_port->irqs[0];
+ 
+-	sci_port->params = sci_probe_regmap(p);
+-	if (unlikely(sci_port->params == NULL))
+-		return -EINVAL;
+-
+ 	switch (p->type) {
+ 	case PORT_SCIFB:
+ 		sci_port->rx_trigger = 48;
+@@ -3278,13 +3275,18 @@ static struct console early_serial_console = {
+ static int sci_probe_earlyprintk(struct platform_device *pdev)
+ {
+ 	const struct plat_sci_port *cfg = dev_get_platdata(&pdev->dev);
++	struct sci_port *sp = &sci_ports[pdev->id];
+ 
+ 	if (early_serial_console.data)
+ 		return -EEXIST;
+ 
+ 	early_serial_console.index = pdev->id;
+ 
+-	sci_init_single(pdev, &sci_ports[pdev->id], pdev->id, cfg, true);
++	sp->params = sci_probe_regmap(cfg, sp);
++	if (!sp->params)
++		return -ENODEV;
++
++	sci_init_single(pdev, sp, pdev->id, cfg, true);
+ 
+ 	if (!strstr(early_serial_buf, "keep"))
+ 		early_serial_console.flags |= CON_BOOT;
+@@ -3333,58 +3335,126 @@ static void sci_remove(struct platform_device *dev)
+ 		device_remove_file(&dev->dev, &dev_attr_rx_fifo_timeout);
+ }
+ 
+-#define SCI_OF_DATA(type, regtype)	(void *)((type) << 16 | (regtype))
+-#define SCI_OF_TYPE(data)		((unsigned long)(data) >> 16)
+-#define SCI_OF_REGTYPE(data)		((unsigned long)(data) & 0xffff)
++static const struct sci_of_data of_sci_scif_sh2 = {
++	.type = PORT_SCIF,
++	.regtype = SCIx_SH2_SCIF_FIFODATA_REGTYPE,
++	.ops = &sci_port_ops,
++	.uart_ops = &sci_uart_ops,
++	.params = &sci_port_params[SCIx_SH2_SCIF_FIFODATA_REGTYPE],
++};
++
++static const struct sci_of_data of_sci_scif_rz_scifa = {
++	.type = PORT_SCIF,
++	.regtype = SCIx_RZ_SCIFA_REGTYPE,
++	.ops = &sci_port_ops,
++	.uart_ops = &sci_uart_ops,
++	.params = &sci_port_params[SCIx_RZ_SCIFA_REGTYPE],
++};
++
++static const struct sci_of_data of_sci_scif_rzv2h = {
++	.type = PORT_SCIF,
++	.regtype = SCIx_RZV2H_SCIF_REGTYPE,
++	.ops = &sci_port_ops,
++	.uart_ops = &sci_uart_ops,
++	.params = &sci_port_params[SCIx_RZV2H_SCIF_REGTYPE],
++};
++
++static const struct sci_of_data of_sci_rcar_scif = {
++	.type = PORT_SCIF,
++	.regtype = SCIx_SH4_SCIF_BRG_REGTYPE,
++	.ops = &sci_port_ops,
++	.uart_ops = &sci_uart_ops,
++	.params = &sci_port_params[SCIx_SH4_SCIF_BRG_REGTYPE],
++};
++
++static const struct sci_of_data of_sci_scif_sh4 = {
++	.type = PORT_SCIF,
++	.regtype = SCIx_SH4_SCIF_REGTYPE,
++	.ops = &sci_port_ops,
++	.uart_ops = &sci_uart_ops,
++	.params = &sci_port_params[SCIx_SH4_SCIF_REGTYPE],
++};
++
++static const struct sci_of_data of_sci_scifa = {
++	.type = PORT_SCIFA,
++	.regtype = SCIx_SCIFA_REGTYPE,
++	.ops = &sci_port_ops,
++	.uart_ops = &sci_uart_ops,
++	.params = &sci_port_params[SCIx_SCIFA_REGTYPE],
++};
++
++static const struct sci_of_data of_sci_scifb = {
++	.type = PORT_SCIFB,
++	.regtype = SCIx_SCIFB_REGTYPE,
++	.ops = &sci_port_ops,
++	.uart_ops = &sci_uart_ops,
++	.params = &sci_port_params[SCIx_SCIFB_REGTYPE],
++};
++
++static const struct sci_of_data of_sci_hscif = {
++	.type = PORT_HSCIF,
++	.regtype = SCIx_HSCIF_REGTYPE,
++	.ops = &sci_port_ops,
++	.uart_ops = &sci_uart_ops,
++	.params = &sci_port_params[SCIx_HSCIF_REGTYPE],
++};
++
++static const struct sci_of_data of_sci_sci = {
++	.type = PORT_SCI,
++	.regtype = SCIx_SCI_REGTYPE,
++	.ops = &sci_port_ops,
++	.uart_ops = &sci_uart_ops,
++	.params = &sci_port_params[SCIx_SCI_REGTYPE],
++};
+ 
+ static const struct of_device_id of_sci_match[] __maybe_unused = {
+ 	/* SoC-specific types */
+ 	{
+ 		.compatible = "renesas,scif-r7s72100",
+-		.data = SCI_OF_DATA(PORT_SCIF, SCIx_SH2_SCIF_FIFODATA_REGTYPE),
++		.data = &of_sci_scif_sh2,
+ 	},
+ 	{
+ 		.compatible = "renesas,scif-r7s9210",
+-		.data = SCI_OF_DATA(PORT_SCIF, SCIx_RZ_SCIFA_REGTYPE),
++		.data = &of_sci_scif_rz_scifa,
+ 	},
+ 	{
+ 		.compatible = "renesas,scif-r9a07g044",
+-		.data = SCI_OF_DATA(PORT_SCIF, SCIx_RZ_SCIFA_REGTYPE),
++		.data = &of_sci_scif_rz_scifa,
+ 	},
+ 	{
+ 		.compatible = "renesas,scif-r9a09g057",
+-		.data = SCI_OF_DATA(PORT_SCIF, SCIx_RZV2H_SCIF_REGTYPE),
++		.data = &of_sci_scif_rzv2h,
+ 	},
+ 	/* Family-specific types */
+ 	{
+ 		.compatible = "renesas,rcar-gen1-scif",
+-		.data = SCI_OF_DATA(PORT_SCIF, SCIx_SH4_SCIF_BRG_REGTYPE),
++		.data = &of_sci_rcar_scif,
+ 	}, {
+ 		.compatible = "renesas,rcar-gen2-scif",
+-		.data = SCI_OF_DATA(PORT_SCIF, SCIx_SH4_SCIF_BRG_REGTYPE),
++		.data = &of_sci_rcar_scif,
+ 	}, {
+ 		.compatible = "renesas,rcar-gen3-scif",
+-		.data = SCI_OF_DATA(PORT_SCIF, SCIx_SH4_SCIF_BRG_REGTYPE),
++		.data = &of_sci_rcar_scif
+ 	}, {
+ 		.compatible = "renesas,rcar-gen4-scif",
+-		.data = SCI_OF_DATA(PORT_SCIF, SCIx_SH4_SCIF_BRG_REGTYPE),
++		.data = &of_sci_rcar_scif
+ 	},
+ 	/* Generic types */
+ 	{
+ 		.compatible = "renesas,scif",
+-		.data = SCI_OF_DATA(PORT_SCIF, SCIx_SH4_SCIF_REGTYPE),
++		.data = &of_sci_scif_sh4,
+ 	}, {
+ 		.compatible = "renesas,scifa",
+-		.data = SCI_OF_DATA(PORT_SCIFA, SCIx_SCIFA_REGTYPE),
++		.data = &of_sci_scifa,
+ 	}, {
+ 		.compatible = "renesas,scifb",
+-		.data = SCI_OF_DATA(PORT_SCIFB, SCIx_SCIFB_REGTYPE),
++		.data = &of_sci_scifb,
+ 	}, {
+ 		.compatible = "renesas,hscif",
+-		.data = SCI_OF_DATA(PORT_HSCIF, SCIx_HSCIF_REGTYPE),
++		.data = &of_sci_hscif,
+ 	}, {
+ 		.compatible = "renesas,sci",
+-		.data = SCI_OF_DATA(PORT_SCI, SCIx_SCI_REGTYPE),
++		.data = &of_sci_sci,
+ 	}, {
+ 		/* Terminator */
+ 	},
+@@ -3403,7 +3473,7 @@ static struct plat_sci_port *sci_parse_dt(struct platform_device *pdev,
+ 	struct reset_control *rstc;
+ 	struct plat_sci_port *p;
+ 	struct sci_port *sp;
+-	const void *data;
++	const struct sci_of_data *data;
+ 	int id, ret;
+ 
+ 	if (!IS_ENABLED(CONFIG_OF) || !np)
+@@ -3450,8 +3520,12 @@ static struct plat_sci_port *sci_parse_dt(struct platform_device *pdev,
+ 	sp->rstc = rstc;
+ 	*dev_id = id;
+ 
+-	p->type = SCI_OF_TYPE(data);
+-	p->regtype = SCI_OF_REGTYPE(data);
++	p->type = data->type;
++	p->regtype = data->regtype;
++
++	sp->ops = data->ops;
++	sp->port.ops = data->uart_ops;
++	sp->params = data->params;
+ 
+ 	sp->has_rtscts = of_property_read_bool(np, "uart-has-rtscts");
+ 
+@@ -3558,6 +3632,7 @@ static int sci_probe(struct platform_device *dev)
+ 		p = sci_parse_dt(dev, &dev_id);
+ 		if (IS_ERR(p))
+ 			return PTR_ERR(p);
++		sp = &sci_ports[dev_id];
+ 	} else {
+ 		p = dev->dev.platform_data;
+ 		if (p == NULL) {
+@@ -3566,9 +3641,12 @@ static int sci_probe(struct platform_device *dev)
+ 		}
+ 
+ 		dev_id = dev->id;
++		sp = &sci_ports[dev_id];
++		sp->params = sci_probe_regmap(p, sp);
++		if (!sp->params)
++			return -ENODEV;
+ 	}
+ 
+-	sp = &sci_ports[dev_id];
+ 	sp->suspend_regs = devm_kzalloc(&dev->dev,
+ 					sp->ops->suspend_regs_size(),
+ 					GFP_KERNEL);
+@@ -3715,19 +3793,23 @@ static int early_console_exit(struct console *co)
+ }
+ 
+ int __init scix_early_console_setup(struct earlycon_device *device,
+-				      int type)
++				    const struct sci_of_data *data)
+ {
+ 	const struct sci_common_regs *regs;
+ 
+ 	if (!device->port.membase)
+ 		return -ENODEV;
+ 
+-	device->port.type = type;
++	device->port.type = data->type;
+ 	sci_ports[0].port = device->port;
+-	port_cfg.type = type;
++
++	port_cfg.type = data->type;
++	port_cfg.regtype = data->regtype;
++
+ 	sci_ports[0].cfg = &port_cfg;
+-	sci_ports[0].ops = &sci_port_ops;
+-	sci_ports[0].params = sci_probe_regmap(&port_cfg);
++	sci_ports[0].params = data->params;
++	sci_ports[0].ops = data->ops;
++	sci_ports[0].port.ops = data->uart_ops;
+ 	sci_uart_earlycon = true;
+ 	regs = sci_ports[0].params->common_regs;
+ 
+@@ -3744,41 +3826,39 @@ int __init scix_early_console_setup(struct earlycon_device *device,
+ static int __init sci_early_console_setup(struct earlycon_device *device,
+ 					  const char *opt)
+ {
+-	return scix_early_console_setup(device, PORT_SCI);
++	return scix_early_console_setup(device, &of_sci_sci);
+ }
+ static int __init scif_early_console_setup(struct earlycon_device *device,
+ 					  const char *opt)
+ {
+-	return scix_early_console_setup(device, PORT_SCIF);
++	return scix_early_console_setup(device, &of_sci_scif_sh4);
+ }
+ static int __init rzscifa_early_console_setup(struct earlycon_device *device,
+ 					  const char *opt)
+ {
+-	port_cfg.regtype = SCIx_RZ_SCIFA_REGTYPE;
+-	return scix_early_console_setup(device, PORT_SCIF);
++	return scix_early_console_setup(device, &of_sci_scif_rz_scifa);
+ }
+ 
+ static int __init rzv2hscif_early_console_setup(struct earlycon_device *device,
+ 						const char *opt)
+ {
+-	port_cfg.regtype = SCIx_RZV2H_SCIF_REGTYPE;
+-	return scix_early_console_setup(device, PORT_SCIF);
++	return scix_early_console_setup(device, &of_sci_scif_rzv2h);
+ }
+ 
+ static int __init scifa_early_console_setup(struct earlycon_device *device,
+ 					  const char *opt)
+ {
+-	return scix_early_console_setup(device, PORT_SCIFA);
++	return scix_early_console_setup(device, &of_sci_scifa);
+ }
+ static int __init scifb_early_console_setup(struct earlycon_device *device,
+ 					  const char *opt)
+ {
+-	return scix_early_console_setup(device, PORT_SCIFB);
++	return scix_early_console_setup(device, &of_sci_scifb);
+ }
+ static int __init hscif_early_console_setup(struct earlycon_device *device,
+ 					  const char *opt)
+ {
+-	return scix_early_console_setup(device, PORT_HSCIF);
++	return scix_early_console_setup(device, &of_sci_hscif);
+ }
+ 
+ OF_EARLYCON_DECLARE(sci, "renesas,sci", sci_early_console_setup);
 -- 
 2.43.0
 
