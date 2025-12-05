@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FC23D32D80
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FC64D32D8A
 	for <webhook@archiver.kernel.org>; Fri,  5 Dec 2025 14:34:12 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.msgproc02-g2.6944.1764945237663626403
  for <cip-dev@lists.cip-project.org>;
- Fri, 05 Dec 2025 06:34:04 -0800
+ Fri, 05 Dec 2025 06:34:02 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-CSE-ConnectionGUID: GogewcLMSmmiJUg2XD7dkQ==
-X-CSE-MsgGUID: dRfSfDb9TJmI6ReauIjHAA==
+X-CSE-ConnectionGUID: ZM/FvaNXSXiFcLYS2z9qXA==
+X-CSE-MsgGUID: 0WgSkiSERV+s7mxNtzkKaA==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 05 Dec 2025 23:34:04 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 05 Dec 2025 23:34:02 +0900
 Received: from Ubuntu-22.. (unknown [10.24.1.60])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id CB8F8417EAD9;
-	Fri,  5 Dec 2025 23:34:02 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 1651D4179CE0;
+	Fri,  5 Dec 2025 23:34:00 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 36/38] arm64: dts: renesas: r9a09g077m44-rzt2h-evk: Add user LEDs
-Date: Fri,  5 Dec 2025 14:32:56 +0000
-Message-ID: <20251205143258.13748-37-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 35/38] arm64: dts: renesas: Add initial support for the RZ/N2H EVK
+Date: Fri,  5 Dec 2025 14:32:55 +0000
+Message-ID: <20251205143258.13748-36-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251205143258.13748-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20251205143258.13748-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -34,126 +34,61 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 05 Dec 2025 14:34:12 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20950
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20949
 
-commit 77aae5255c6d2ef4981f7fcedf35333466abcb06 upstream.
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
 
-Add USER LED0-LED8, which are available on RZ/T2H EVK.
+commit 8d0b6ca38f942292d9c1ae557150c58eaae63052 upstream.
 
-In addition, move the header file inclusion into the common
-rzt2h-n2h-evk-common.dtsi, so that both RZ/T2H and RZ/N2H EVK DTS/I
-files share the same set of bindings.  This avoids duplication and keeps
-the board files consistent.
+Add an initial device tree file for the Renesas RZ/N2H Evaluation Board
+(EVK).
 
+Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250820200659.2048755-3-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://lore.kernel.org/20250617171957.162145-5-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- .../dts/renesas/r9a09g077m44-rzt2h-evk.dts    | 75 +++++++++++++++++++
- .../dts/renesas/rzt2h-n2h-evk-common.dtsi     |  4 +
- 2 files changed, 79 insertions(+)
+ arch/arm64/boot/dts/renesas/Makefile             |  2 ++
+ .../boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts  | 16 ++++++++++++++++
+ 2 files changed, 18 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts
-index 486584fefeadf..dd65eb2904058 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts
-@@ -13,4 +13,79 @@
- / {
- 	model = "Renesas RZ/T2H EVK Board based on r9a09g077m44";
- 	compatible = "renesas,rzt2h-evk", "renesas,r9a09g077m44", "renesas,r9a09g077";
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		led-0 {
-+			/* SW8-9: ON, SW8-10: OFF */
-+			gpios = <&pinctrl RZT2H_GPIO(23, 1) GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_GREEN>;
-+			function = LED_FUNCTION_DEBUG;
-+			function-enumerator = <0>;
-+		};
-+
-+		led-1 {
-+			/* SW5-1: OFF, SW5-2: ON */
-+			gpios = <&pinctrl RZT2H_GPIO(32, 2) GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_GREEN>;
-+			function = LED_FUNCTION_DEBUG;
-+			function-enumerator = <1>;
-+		};
-+
-+		led-2 {
-+			gpios = <&pinctrl RZT2H_GPIO(6, 7) GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_YELLOW>;
-+			function = LED_FUNCTION_DEBUG;
-+			function-enumerator = <2>;
-+		};
-+
-+		led-3 {
-+			/* SW2-3: OFF */
-+			gpios = <&pinctrl RZT2H_GPIO(8, 5) GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_RED>;
-+			function = LED_FUNCTION_DEBUG;
-+			function-enumerator = <3>;
-+		};
-+
-+		led-4 {
-+			/* SW8-3: ON, SW8-4: OFF */
-+			gpios = <&pinctrl RZT2H_GPIO(18, 0) GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_GREEN>;
-+			function = LED_FUNCTION_DEBUG;
-+			function-enumerator = <4>;
-+		};
-+
-+		led-5 {
-+			/* SW8-1: ON, SW8-2: OFF */
-+			gpios = <&pinctrl RZT2H_GPIO(18, 1) GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_RED>;
-+			function = LED_FUNCTION_DEBUG;
-+			function-enumerator = <5>;
-+		};
-+
-+		led-6 {
-+			/* SW5-9: OFF, SW5-10: ON */
-+			gpios = <&pinctrl RZT2H_GPIO(22, 7) GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_GREEN>;
-+			function = LED_FUNCTION_DEBUG;
-+			function-enumerator = <6>;
-+		};
-+
-+		led-7 {
-+			/* SW5-7: OFF, SW5-8: ON */
-+			gpios = <&pinctrl RZT2H_GPIO(23, 0) GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_GREEN>;
-+			function = LED_FUNCTION_DEBUG;
-+			function-enumerator = <7>;
-+		};
-+
-+		led-8 {
-+			/* SW7-5: OFF, SW7-6: ON */
-+			gpios = <&pinctrl RZT2H_GPIO(23, 5) GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_GREEN>;
-+			function = LED_FUNCTION_DEBUG;
-+			function-enumerator = <8>;
-+		};
-+	};
- };
-diff --git a/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi b/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
-index 5f17996bcd6bc..66d97059c47c9 100644
---- a/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
-@@ -5,6 +5,10 @@
-  * Copyright (C) 2025 Renesas Electronics Corp.
-  */
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index 2626f8c18f904..6f626da866eab 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -166,5 +166,7 @@ dtb-$(CONFIG_ARCH_R9A09G057) += r9a09g057h44-rzv2h-evk-cn15-sd.dtb
  
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/leds/common.h>
-+#include <dt-bindings/pinctrl/renesas,r9a09g077-pinctrl.h>
+ dtb-$(CONFIG_ARCH_R9A09G077) += r9a09g077m44-rzt2h-evk.dtb
+ 
++dtb-$(CONFIG_ARCH_R9A09G087) += r9a09g087m44-rzn2h-evk.dtb
 +
- / {
- 	aliases {
- 		serial0 = &sci0;
+ dtb-$(CONFIG_ARCH_RCAR_GEN3) += draak-ebisu-panel-aa104xd12.dtbo
+ dtb-$(CONFIG_ARCH_RCAR_GEN3) += salvator-panel-aa104xd12.dtbo
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
+new file mode 100644
+index 0000000000000..d6ba14a26f031
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
+@@ -0,0 +1,16 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++/*
++ * Device Tree Source for the RZ/N2H EVK board
++ *
++ * Copyright (C) 2025 Renesas Electronics Corp.
++ */
++
++/dts-v1/;
++
++#include "r9a09g087m44.dtsi"
++#include "rzt2h-n2h-evk-common.dtsi"
++
++/ {
++	model = "Renesas RZ/N2H EVK Board based on r9a09g087m44";
++	compatible = "renesas,rzn2h-evk", "renesas,r9a09g087m44", "renesas,r9a09g087";
++};
 -- 
 2.43.0
 
