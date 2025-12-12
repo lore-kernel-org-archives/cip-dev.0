@@ -1,95 +1,111 @@
-Return-Path: <ovidiu.panait.rb@renesas.com>
+Return-Path: <iwamatsu@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61EEBD59F4E
-	for <webhook@archiver.kernel.org>; Fri, 12 Dec 2025 21:39:04 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.4863.1765575534934041713
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4DBDD59F53
+	for <webhook@archiver.kernel.org>; Fri, 12 Dec 2025 22:59:57 +0000 (UTC)
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.706.1765580391696872463
  for <cip-dev@lists.cip-project.org>;
- Fri, 12 Dec 2025 13:38:58 -0800
+ Fri, 12 Dec 2025 14:59:51 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: k7hR/oRXQfGg76xsd7NAyQ==
-X-CSE-MsgGUID: gxPBd4/YR2qjW0e7iUMTOA==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 13 Dec 2025 06:38:57 +0900
-Received: from vm01.adwin.renesas.com (unknown [10.226.93.53])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 793CE475F1E5;
-	Sat, 13 Dec 2025 06:38:56 +0900 (JST)
-From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-To: cip-dev@lists.cip-project.org,
-	pavel@denx.de,
-	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.12.y-cip 2/4] clk: renesas: r9a09g056: Add clock and reset entries for WDT controllers
-Date: Fri, 12 Dec 2025 21:38:41 +0000
-Message-ID: <20251212213843.24018-3-ovidiu.panait.rb@renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251212213843.24018-1-ovidiu.panait.rb@renesas.com>
-References: <20251212213843.24018-1-ovidiu.panait.rb@renesas.com>
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=bKp6PQMB;
+ spf=pass (domain: gmail.com, ip: 209.85.222.175, mailfrom: iwamatsu@gmail.com)
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-8b9d2e33e2dso248344785a.3
+        for <cip-dev@lists.cip-project.org>; Fri, 12 Dec 2025 14:59:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1765580391; x=1766185191; darn=lists.cip-project.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uNDcjEPevgS4r6SgZw2dp69UBhv6R8l0J9tbCqpykhk=;
+        b=bKp6PQMBTqG42ygMwdddrL780kVTPKv7Dg5mRHHn5+Rmipwz/CJWTnxbeAJf64s7QW
+         5gMXXcu/YBiihrmjPc4EHcSH483OMeKVnwf36DrLYmc63OMl+hT0bwf/xu0He1kIlUye
+         vUcaHhmtf95j5Hp8qpGuE8MvMdfGz+WWsUsTqFlipMm0aI3HOVQGxYnjAn1NlBij/hmd
+         lLeXFMuuxQ0qF4UpmmqYkEcQc85JC150+SICde4BLes/1qA+F/3eayTxnP6duv/5wU8X
+         7ZoX0Dg2wqEVo8OpybbhM+vC3ezsHJRy8SkzsBZdRAudcEWQuzYo0sc67WJJ6L0rPdxX
+         jNOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765580391; x=1766185191;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=uNDcjEPevgS4r6SgZw2dp69UBhv6R8l0J9tbCqpykhk=;
+        b=T89ffUZdgzBhFik4r6Ivvlkr18YLLZN6R/0/OAoHcUepn9j5NKvhJL2t/wOS8CD1FI
+         1ULcvRoBqZgo54BTRIVg+ckSMef6Nm9mBmbWHEav6yAlqhCgkJoE8qu/L88F8jT5B/bb
+         Qplr5m9v3A2Wc9wxYRIuM/Y6RFOghn7hkR8eD1w2s2l/WzfhteDtrYwxGmZoETUv6JzS
+         X2LqTSTOb2W4lllcIZF6QQW3C5vGR71krX0YCN7VSa425kf1ZBfJ7tpIR3rY5bmq+rJj
+         wdZQe1aa9+J197K7m3A8GOisWUYOYuaZz+91O4BGWQmOZGfUg+xdWeW41LZPG7365cAw
+         ykuw==
+X-Gm-Message-State: AOJu0YxJNnwYpEDtdlK1/U4iACKw0Hp4fxBfEfDT75E8Rr9OMZgptYfz
+	rPPYozcbtPNniu42fkVs9IvYiq3EJ3hpaRhBzq/2zR0IgsJRSSEEKr30dS+XtHjEigw5KU4pOpV
+	Qh9OZDR0oXLrov4NVd8qlO6U1P7ln0LU=
+X-Gm-Gg: AY/fxX4Q1mVLYOwB2mKYRZ6sG1j5h5X+Bkccn81xqtriZ8ODtwitod6uY9sNStpCRJ3
+	PFEcU9Y8ziQCfygTrbEb8TceVZVp2Uz1N9BIOFsFC84ivlQc/xG7faIiN6YyOHDDKu6ivok7fs2
+	Eq6+r3qmPp2/JUJqj7l9UbVU77QEZc9FohAj6UTZdsFamTOcfUDCESSCCeIhFL6aTLx40RIrhxZ
+	BsdGmJ2Pb6+kYlwAopRpexYCxqAmQdrGXJBKzqvcXVzXdXlZ6ish9h8mCtHrs/DshEO
+X-Google-Smtp-Source: AGHT+IGaSF9VzNzhu/V92KWiZvpj6tGBJzh9lW7rS7qudZAQqBvYDbvF9GSmrt36AMLjWwncLkI/+xwDNTyHssAG5q0=
+X-Received: by 2002:a05:622a:5819:b0:4e8:93a1:7464 with SMTP id
+ d75a77b69052e-4f1d0467e81mr46457551cf.15.1765580390647; Fri, 12 Dec 2025
+ 14:59:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251212091928.22009-1-ovidiu.panait.rb@renesas.com>
+In-Reply-To: <20251212091928.22009-1-ovidiu.panait.rb@renesas.com>
+From: "Nobuhiro Iwamatsu (Toshiba)" <iwamatsu@gmail.com>
+Date: Sat, 13 Dec 2025 07:59:39 +0900
+X-Gm-Features: AQt7F2pFAD2oamkaDtPHtfHirNaNKMCeUvr9gikNFc8CmMrOCMxRouIj1Bwu5G8
+Message-ID: <CACe6DC6jXh96DxOZitzSNkWAS60Z2gLsKaPwxXT3ynbJw5GLPw@mail.gmail.com>
+Subject: Re: [cip-dev] [PATCH 6.1.y-cip 0/5] Add RZ/V2N General Timer (GTM) support
+To: ovidiu.panait.rb@renesas.com
+Cc: cip-dev@lists.cip-project.org, pavel@denx.de, 
+	nobuhiro.iwamatsu.x90@mail.toshiba
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 12 Dec 2025 21:39:04 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21001
+ <cip-dev@lists.cip-project.org>; Fri, 12 Dec 2025 22:59:57 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21004
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi all,
 
-commit e018f9f8973760faacbdf9bf678fdb46c1f591c8 upstream.
+2025=E5=B9=B412=E6=9C=8812=E6=97=A5(=E9=87=91) 18:19 Ovidiu Panait via list=
+s.cip-project.org
+<ovidiu.panait.rb=3Drenesas.com@lists.cip-project.org>:
+>
+> Hi,
+>
+> This series adds General Timer (GTM) support for the Renesas RZ/V2N SoC.
+>
+> Patches were cherry-picked from mainline kernel.
+>
+> Best regards,
+> Ovidiu
+>
+> Lad Prabhakar (5):
+>   clk: renesas: r9a09g056-cpg: Add clock and reset entries for OSTM
+>     instances
+>   dt-bindings: timer: renesas,ostm: Document RZ/V2N (R9A09G056) support
+>   clocksource/drivers/renesas-ostm: Unconditionally enable reprobe
+>     support
+>   arm64: dts: renesas: r9a09g056: Add OSTM0-OSTM7 nodes
+>   arm64: dts: renesas: r9a09g056n48-rzv2n-evk: Enable OSTM timers on
+>     RZ/V2N EVK
+>
+>  .../bindings/timer/renesas,ostm.yaml          | 12 +--
+>  arch/arm64/boot/dts/renesas/r9a09g056.dtsi    | 80 +++++++++++++++++++
+>  .../dts/renesas/r9a09g056n48-rzv2n-evk.dts    | 32 ++++++++
+>  drivers/clk/renesas/r9a09g056-cpg.c           | 26 ++++++
+>  drivers/clocksource/renesas-ostm.c            |  4 +-
+>  5 files changed, 145 insertions(+), 9 deletions(-)
+>
 
-Add module clock and reset definitions for WDT0-3, which are available
-on the RZ/V2N (R9A09G056) SoC.
+I reviewed this series, LGTM.
+I applied with Pavel's  reviewed-by tag.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250513154635.273664-5-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
----
- drivers/clk/renesas/r9a09g056-cpg.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+Best regards,
+  Nobuhiro
 
-diff --git a/drivers/clk/renesas/r9a09g056-cpg.c b/drivers/clk/renesas/r9a09g056-cpg.c
-index 5cabaa3237eb..e4c1c74f56b5 100644
---- a/drivers/clk/renesas/r9a09g056-cpg.c
-+++ b/drivers/clk/renesas/r9a09g056-cpg.c
-@@ -112,6 +112,22 @@ static const struct rzv2h_mod_clk r9a09g056_mod_clks[] __initconst = {
- 						BUS_MSTOP(11, BIT(15))),
- 	DEF_MOD("gtm_7_pclk",			CLK_PLLCLN_DIV16, 4, 10, 2, 10,
- 						BUS_MSTOP(12, BIT(0))),
-+	DEF_MOD("wdt_0_clkp",			CLK_PLLCM33_DIV16, 4, 11, 2, 11,
-+						BUS_MSTOP(3, BIT(10))),
-+	DEF_MOD("wdt_0_clk_loco",		CLK_QEXTAL, 4, 12, 2, 12,
-+						BUS_MSTOP(3, BIT(10))),
-+	DEF_MOD("wdt_1_clkp",			CLK_PLLCLN_DIV16, 4, 13, 2, 13,
-+						BUS_MSTOP(1, BIT(0))),
-+	DEF_MOD("wdt_1_clk_loco",		CLK_QEXTAL, 4, 14, 2, 14,
-+						BUS_MSTOP(1, BIT(0))),
-+	DEF_MOD("wdt_2_clkp",			CLK_PLLCLN_DIV16, 4, 15, 2, 15,
-+						BUS_MSTOP(5, BIT(12))),
-+	DEF_MOD("wdt_2_clk_loco",		CLK_QEXTAL, 5, 0, 2, 16,
-+						BUS_MSTOP(5, BIT(12))),
-+	DEF_MOD("wdt_3_clkp",			CLK_PLLCLN_DIV16, 5, 1, 2, 17,
-+						BUS_MSTOP(5, BIT(13))),
-+	DEF_MOD("wdt_3_clk_loco",		CLK_QEXTAL, 5, 2, 2, 18,
-+						BUS_MSTOP(5, BIT(13))),
- 	DEF_MOD("scif_0_clk_pck",		CLK_PLLCM33_DIV16, 8, 15, 4, 15,
- 						BUS_MSTOP(3, BIT(14))),
- 	DEF_MOD("sdhi_0_imclk",			CLK_PLLCLN_DIV8, 10, 3, 5, 3,
-@@ -152,6 +168,10 @@ static const struct rzv2h_reset r9a09g056_resets[] __initconst = {
- 	DEF_RST(7, 2, 3, 3),		/* GTM_5_PRESETZ */
- 	DEF_RST(7, 3, 3, 4),		/* GTM_6_PRESETZ */
- 	DEF_RST(7, 4, 3, 5),		/* GTM_7_PRESETZ */
-+	DEF_RST(7, 5, 3, 6),		/* WDT_0_RESET */
-+	DEF_RST(7, 6, 3, 7),		/* WDT_1_RESET */
-+	DEF_RST(7, 7, 3, 8),		/* WDT_2_RESET */
-+	DEF_RST(7, 8, 3, 9),		/* WDT_3_RESET */
- 	DEF_RST(9, 5, 4, 6),		/* SCIF_0_RST_SYSTEM_N */
- 	DEF_RST(10, 7, 4, 24),		/* SDHI_0_IXRST */
- 	DEF_RST(10, 8, 4, 25),		/* SDHI_1_IXRST */
--- 
-2.51.0
-
+--=20
+Nobuhiro Iwamatsu
 
