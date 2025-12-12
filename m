@@ -2,60 +2,75 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 477D4D59F46
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 454C6D59F44
 	for <webhook@archiver.kernel.org>; Fri, 12 Dec 2025 21:38:24 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.4825.1765575497661740180
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.4887.1765575500391931403
  for <cip-dev@lists.cip-project.org>;
- Fri, 12 Dec 2025 13:38:18 -0800
+ Fri, 12 Dec 2025 13:38:20 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: F7VrVdkgQn+SR1D/ThMciQ==
-X-CSE-MsgGUID: ysPYuQFHQ3KlwPUiJCCifQ==
+ dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
+X-CSE-ConnectionGUID: 11z/7RAVQRKlQnsPyM/1Cg==
+X-CSE-MsgGUID: jvR5nLKTTl6LOxD/EYplPQ==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 13 Dec 2025 06:38:15 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 13 Dec 2025 06:38:19 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.93.53])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id AC06D407379E;
-	Sat, 13 Dec 2025 06:38:14 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 39B934073794;
+	Sat, 13 Dec 2025 06:38:17 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@denx.de,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.1.y-cip 0/4] Add RZ/V2N WDT support
-Date: Fri, 12 Dec 2025 21:38:00 +0000
-Message-ID: <20251212213804.24005-1-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.1.y-cip 2/4] dt-bindings: watchdog: renesas,wdt: Document RZ/V2N (R9A09G056) support
+Date: Fri, 12 Dec 2025 21:38:02 +0000
+Message-ID: <20251212213804.24005-3-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251212213804.24005-1-ovidiu.panait.rb@renesas.com>
+References: <20251212213804.24005-1-ovidiu.panait.rb@renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 12 Dec 2025 21:38:24 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20994
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20996
 
-Hi,
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-This series adds watchdog timer support for the Renesas RZ/V2N SoC.
+commit f55937e42c9951b615e291d9b7e6337747804463 upstream.
 
-Patches were cherry-picked from mainline kernel.
+Document support for the watchdog IP found on the Renesas RZ/V2N
+(R9A09G056) SoC. The watchdog IP is identical to that on RZ/V2H(P),
+so `renesas,r9a09g057-wdt` will be used as a fallback compatible,
+enabling reuse of the existing driver without changes.
 
-Best regards,
-Ovidiu
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Link: https://lore.kernel.org/r/20250502120054.47323-1-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+---
+ Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Lad Prabhakar (4):
-  clk: renesas: r9a09g056: Add clock and reset entries for WDT
-    controllers
-  dt-bindings: watchdog: renesas,wdt: Document RZ/V2N (R9A09G056)
-    support
-  arm64: dts: renesas: r9a09g056: Add WDT0-WDT3 nodes
-  arm64: dts: renesas: r9a09g056n48-rzv2n-evk: Enable WDT1
-
- .../bindings/watchdog/renesas,wdt.yaml        |  4 +-
- arch/arm64/boot/dts/renesas/r9a09g056.dtsi    | 40 +++++++++++++++++++
- .../dts/renesas/r9a09g056n48-rzv2n-evk.dts    |  4 ++
- drivers/clk/renesas/r9a09g056-cpg.c           | 20 ++++++++++
- 4 files changed, 67 insertions(+), 1 deletion(-)
-
+diff --git a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
+index b8dddcafdc54..7fa0dc2d80f9 100644
+--- a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
++++ b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
+@@ -74,7 +74,9 @@ properties:
+           - const: renesas,rcar-gen4-wdt # R-Car Gen4
+ 
+       - items:
+-          - const: renesas,r9a09g047-wdt # RZ/G3E
++          - enum:
++              - renesas,r9a09g047-wdt # RZ/G3E
++              - renesas,r9a09g056-wdt # RZ/V2N
+           - const: renesas,r9a09g057-wdt # RZ/V2H(P)
+ 
+       - const: renesas,r9a09g057-wdt       # RZ/V2H(P)
 -- 
 2.51.0
 
