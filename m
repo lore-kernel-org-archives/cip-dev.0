@@ -2,65 +2,79 @@ Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38693D4921F
-	for <webhook@archiver.kernel.org>; Fri, 12 Dec 2025 12:18:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63145D49222
+	for <webhook@archiver.kernel.org>; Fri, 12 Dec 2025 12:54:25 +0000 (UTC)
 Received: from mx.denx.de (mx.denx.de [89.58.32.78])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.11330.1765541874864381006
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.12019.1765544062210191627
  for <cip-dev@lists.cip-project.org>;
- Fri, 12 Dec 2025 04:17:55 -0800
+ Fri, 12 Dec 2025 04:54:22 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: pavel@denx.de)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 85F8010041086;
-	Fri, 12 Dec 2025 13:17:17 +0100 (CET)
-Date: Fri, 12 Dec 2025 13:17:14 +0100
+ dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=JFW0Gzr2;
+ spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: pavel@denx.de)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5FD4D1004E46E;
+	Fri, 12 Dec 2025 13:54:04 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1765544058; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=qjNfpwRFiEyI5mmrvhmjzYT2fuiHEts9/RH9UIb1A0k=;
+	b=JFW0Gzr2rvR72YhP9DXv10dHlgi5lFMAU8KGPWbraCAkk4L5th4floOGN3h+DOkF+5jKa8
+	Qiu2pMFDpE4SiFbnAr1mky8d+WAiaflMdu0EDDt9VOJlhJxFCqG8tJyruUWfxCKOaAkJ/z
+	yEDx/aVr/CTnQ4ZrTg7Xy1OxusbCTFGMWWVdf805GfrIzDpyDhsdcW7SkLJGlPF39t4ZKH
+	R09gXp58hLmvfcSyfJCNJ6Sz+Kj4LPf8Xn/5OeUQCMT1INdthzt5pbytHlz2ge1A9t3vA+
+	4BYrVdeMo+IZKaEylSPVjreFYJ4XN2MGGrdmSXKDphutPKObzkrfxA7CDvyVrw==
+Date: Fri, 12 Dec 2025 13:53:59 +0100
 From: Pavel Machek <pavel@denx.de>
-To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-Cc: cip-dev@lists.cip-project.org, nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: Re: [PATCH 6.12.y-cip 0/5] Add RZ/V2N General Timer (GTM) support
-Message-ID: <aTwHsY50UE33lrbh@duo.ucw.cz>
-References: <20251212091959.22073-1-ovidiu.panait.rb@renesas.com>
+To: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc: cip-dev@lists.cip-project.org,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	Biju Das <biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH 6.12.y-cip 16/38] soc: renesas: Add RZ/N2H (R9A09G087)
+ config option
+Message-ID: <aTwQZyolWR8CqoOz@duo.ucw.cz>
+References: <20251205143258.13748-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20251205143258.13748-17-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="/3R6URFURUIzMfx7"
+	protocol="application/pgp-signature"; boundary="i911/pgd0RVH9XKa"
 Content-Disposition: inline
-In-Reply-To: <20251212091959.22073-1-ovidiu.panait.rb@renesas.com>
+In-Reply-To: <20251205143258.13748-17-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 12 Dec 2025 12:18:05 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20983
+ <cip-dev@lists.cip-project.org>; Fri, 12 Dec 2025 12:54:25 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20984
 
 
---/3R6URFURUIzMfx7
+--i911/pgd0RVH9XKa
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> This series adds General Timer (GTM) support for the Renesas RZ/V2N SoC.
+> commit c7968f5e7c7c7b46cad1e92294c211417a7ba90f upstream.
 >=20
-> Patches were cherry-picked from mainline kernel.
+> Add a new Kconfig option, ARCH_R9A09G087, to enable ARM64 platform
+> support for the Renesas RZ/N2H SoC.
 
-This looks okay	to me, I can apply it if it passes testing and there
-are no other comments.
+I would not mind 15/ and 16/ to be the last, so that config option
+works when it is introduced.
 
 Best regards,
-     								Pavel
+								Pavel=20
 --=20
 In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
 Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
---/3R6URFURUIzMfx7
+--i911/pgd0RVH9XKa
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaTwHygAKCRAw5/Bqldv6
-8ujSAKC1P5AjMRZobfjdqddloJe2sI5RnACeMreLKW89VolcjY5W831I2YK+Bbk=
-=ZypF
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaTwQZwAKCRAw5/Bqldv6
+8inkAKCJkFTofAkLFbI3lUhdTM/bxvQaXwCbB/tJvOs3jImeYQx5AXNZZlKot2Q=
+=ZqBF
 -----END PGP SIGNATURE-----
 
---/3R6URFURUIzMfx7--
+--i911/pgd0RVH9XKa--
 
