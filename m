@@ -2,28 +2,28 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57286D59F4A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46584D59D9C
 	for <webhook@archiver.kernel.org>; Fri, 12 Dec 2025 21:38:24 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.4830.1765575501749638790
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.4826.1765575498196369851
  for <cip-dev@lists.cip-project.org>;
- Fri, 12 Dec 2025 13:38:21 -0800
+ Fri, 12 Dec 2025 13:38:18 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: epmh+/SsSzyl3MlIF+XcLA==
-X-CSE-MsgGUID: O/3I81GmRW+wEVgpyY+bQA==
+X-CSE-ConnectionGUID: I+g6HhfKQbCHZ01hq1mrnQ==
+X-CSE-MsgGUID: m3TAUG6rQnO65tpam9s7fQ==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 13 Dec 2025 06:38:21 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 13 Dec 2025 06:38:17 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.93.53])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id F33A5407378F;
-	Sat, 13 Dec 2025 06:38:19 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 735654073794;
+	Sat, 13 Dec 2025 06:38:16 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@denx.de,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.1.y-cip 3/4] arm64: dts: renesas: r9a09g056: Add WDT0-WDT3 nodes
-Date: Fri, 12 Dec 2025 21:38:03 +0000
-Message-ID: <20251212213804.24005-4-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.1.y-cip 1/4] clk: renesas: r9a09g056: Add clock and reset entries for WDT controllers
+Date: Fri, 12 Dec 2025 21:38:01 +0000
+Message-ID: <20251212213804.24005-2-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251212213804.24005-1-ovidiu.panait.rb@renesas.com>
 References: <20251212213804.24005-1-ovidiu.panait.rb@renesas.com>
@@ -33,74 +33,62 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 12 Dec 2025 21:38:24 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20997
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20995
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit 7db958983c8dd14d65efdf64dd9cdcd9ce2ad2c6 upstream.
+commit e018f9f8973760faacbdf9bf678fdb46c1f591c8 upstream.
 
-Add WDT0-WDT3 nodes to RZ/V2N ("R9A09G056") SoC DTSI.
+Add module clock and reset definitions for WDT0-3, which are available
+on the RZ/V2N (R9A09G056) SoC.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250514101528.41663-8-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://lore.kernel.org/20250513154635.273664-5-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a09g056.dtsi | 40 ++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+ drivers/clk/renesas/r9a09g056-cpg.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g056.dtsi b/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
-index 64420fbdf959..068f966d571c 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
-@@ -257,6 +257,46 @@ ostm7: timer@12c03000 {
- 			status = "disabled";
- 		};
- 
-+		wdt0: watchdog@11c00400 {
-+			compatible = "renesas,r9a09g056-wdt", "renesas,r9a09g057-wdt";
-+			reg = <0 0x11c00400 0 0x400>;
-+			clocks = <&cpg CPG_MOD 0x4b>, <&cpg CPG_MOD 0x4c>;
-+			clock-names = "pclk", "oscclk";
-+			resets = <&cpg 0x75>;
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
-+		wdt1: watchdog@14400000 {
-+			compatible = "renesas,r9a09g056-wdt", "renesas,r9a09g057-wdt";
-+			reg = <0 0x14400000 0 0x400>;
-+			clocks = <&cpg CPG_MOD 0x4d>, <&cpg CPG_MOD 0x4e>;
-+			clock-names = "pclk", "oscclk";
-+			resets = <&cpg 0x76>;
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
-+		wdt2: watchdog@13000000 {
-+			compatible = "renesas,r9a09g056-wdt", "renesas,r9a09g057-wdt";
-+			reg = <0 0x13000000 0 0x400>;
-+			clocks = <&cpg CPG_MOD 0x4f>, <&cpg CPG_MOD 0x50>;
-+			clock-names = "pclk", "oscclk";
-+			resets = <&cpg 0x77>;
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
-+		wdt3: watchdog@13000400 {
-+			compatible = "renesas,r9a09g056-wdt", "renesas,r9a09g057-wdt";
-+			reg = <0 0x13000400 0 0x400>;
-+			clocks = <&cpg CPG_MOD 0x51>, <&cpg CPG_MOD 0x52>;
-+			clock-names = "pclk", "oscclk";
-+			resets = <&cpg 0x78>;
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
- 		scif: serial@11c01400 {
- 			compatible = "renesas,scif-r9a09g056",
- 				     "renesas,scif-r9a09g057";
+diff --git a/drivers/clk/renesas/r9a09g056-cpg.c b/drivers/clk/renesas/r9a09g056-cpg.c
+index 5cabaa3237eb..e4c1c74f56b5 100644
+--- a/drivers/clk/renesas/r9a09g056-cpg.c
++++ b/drivers/clk/renesas/r9a09g056-cpg.c
+@@ -112,6 +112,22 @@ static const struct rzv2h_mod_clk r9a09g056_mod_clks[] __initconst = {
+ 						BUS_MSTOP(11, BIT(15))),
+ 	DEF_MOD("gtm_7_pclk",			CLK_PLLCLN_DIV16, 4, 10, 2, 10,
+ 						BUS_MSTOP(12, BIT(0))),
++	DEF_MOD("wdt_0_clkp",			CLK_PLLCM33_DIV16, 4, 11, 2, 11,
++						BUS_MSTOP(3, BIT(10))),
++	DEF_MOD("wdt_0_clk_loco",		CLK_QEXTAL, 4, 12, 2, 12,
++						BUS_MSTOP(3, BIT(10))),
++	DEF_MOD("wdt_1_clkp",			CLK_PLLCLN_DIV16, 4, 13, 2, 13,
++						BUS_MSTOP(1, BIT(0))),
++	DEF_MOD("wdt_1_clk_loco",		CLK_QEXTAL, 4, 14, 2, 14,
++						BUS_MSTOP(1, BIT(0))),
++	DEF_MOD("wdt_2_clkp",			CLK_PLLCLN_DIV16, 4, 15, 2, 15,
++						BUS_MSTOP(5, BIT(12))),
++	DEF_MOD("wdt_2_clk_loco",		CLK_QEXTAL, 5, 0, 2, 16,
++						BUS_MSTOP(5, BIT(12))),
++	DEF_MOD("wdt_3_clkp",			CLK_PLLCLN_DIV16, 5, 1, 2, 17,
++						BUS_MSTOP(5, BIT(13))),
++	DEF_MOD("wdt_3_clk_loco",		CLK_QEXTAL, 5, 2, 2, 18,
++						BUS_MSTOP(5, BIT(13))),
+ 	DEF_MOD("scif_0_clk_pck",		CLK_PLLCM33_DIV16, 8, 15, 4, 15,
+ 						BUS_MSTOP(3, BIT(14))),
+ 	DEF_MOD("sdhi_0_imclk",			CLK_PLLCLN_DIV8, 10, 3, 5, 3,
+@@ -152,6 +168,10 @@ static const struct rzv2h_reset r9a09g056_resets[] __initconst = {
+ 	DEF_RST(7, 2, 3, 3),		/* GTM_5_PRESETZ */
+ 	DEF_RST(7, 3, 3, 4),		/* GTM_6_PRESETZ */
+ 	DEF_RST(7, 4, 3, 5),		/* GTM_7_PRESETZ */
++	DEF_RST(7, 5, 3, 6),		/* WDT_0_RESET */
++	DEF_RST(7, 6, 3, 7),		/* WDT_1_RESET */
++	DEF_RST(7, 7, 3, 8),		/* WDT_2_RESET */
++	DEF_RST(7, 8, 3, 9),		/* WDT_3_RESET */
+ 	DEF_RST(9, 5, 4, 6),		/* SCIF_0_RST_SYSTEM_N */
+ 	DEF_RST(10, 7, 4, 24),		/* SDHI_0_IXRST */
+ 	DEF_RST(10, 8, 4, 25),		/* SDHI_1_IXRST */
 -- 
 2.51.0
 
