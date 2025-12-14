@@ -2,57 +2,56 @@ Return-Path: <yoshitake.kobayashi.x25@mail.toshiba>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DCA7D59D99
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DD03D5B170
 	for <webhook@archiver.kernel.org>; Sun, 14 Dec 2025 22:59:20 +0000 (UTC)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.24305.1765714591300262554
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.24217.1765714014325858312
  for <cip-dev@lists.cip-project.org>;
- Sun, 14 Dec 2025 04:16:31 -0800
+ Sun, 14 Dec 2025 04:06:54 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=CVRC7xYJ;
- spf=pass (domain: gmail.com, ip: 209.85.128.52, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-47118259fd8so26476715e9.3
-        for <cip-dev@lists.cip-project.org>; Sun, 14 Dec 2025 04:16:31 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=EKsivmE7;
+ spf=pass (domain: gmail.com, ip: 209.85.167.53, mailfrom: biju.das.au@gmail.com)
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5957c929a5eso3765228e87.1
+        for <cip-dev@lists.cip-project.org>; Sun, 14 Dec 2025 04:06:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765714589; x=1766319389; darn=lists.cip-project.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6bD7fo6AkoFMBFa79fGCBETtqzNmFLSJdAfeTCdA3lg=;
-        b=CVRC7xYJmSXgqyi1dFuNZhJF0eFcX8Rjv8/WKDpcbzMrRqDcW7Zuwayu1nwL91n8K3
-         /HG5/5TBWI23GkCKDP73UkgnSPG5sx3qWOYU4xo1ayo26fSLw/Zqet2tqzpKMtTSxWIh
-         cWXGZwYYJ5a9H5h6Cs5B5WotNtjCdSVTNjt0981YxDtJ04SdMIu71lVzLZMAD28uGJhf
-         T3lPPLfnuDZC96dU9fZ6IG490iWPJf6VSzwgSOaQBIblC7a3F6t7jwchn4bTRgmewhrp
-         Q+zQ9gH9wbk2IsBAaJnoxPhWT8DYb2Z4xS76UG55Dk7lbgVYg6RaNPxl8BkasjX6vsEP
-         wfbQ==
+        d=gmail.com; s=20230601; t=1765714012; x=1766318812; darn=lists.cip-project.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4ajJCT1gHe9+hETCuvtewJVsj++JxnZ8ojTy1eYcEXE=;
+        b=EKsivmE7kMx+pP2eXuP/sadmtgdmXKfoO4q+bapjY2N8ns0gfENXG3RV3D2ZiR3bEB
+         K/6DlL5MmlCq8o3NZTcYEjOiX1GdlK7JskE9kXVuqBuNy8DjOmQ4rn2Wv4YPne2XZWdI
+         8e/B96w47DQ2NFR7qIGPr5sy+tFCsxOvfVPGgF1+aRi5ieAUXcSXa8xtGx+11nJrJijm
+         sAXNUAqWu5+8D9pGGRmyIw9SbIc6j9myHF3TfpLuxFlrqnmu/BxXGwHU1vS3xNTqrCCM
+         VqlDCHmZ00GGsQ7dluVb6jsK4G36R528c1D9GQXwQKM6xam3Wz7ghpOd8UW+G++aDLFz
+         cJbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765714589; x=1766319389;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=6bD7fo6AkoFMBFa79fGCBETtqzNmFLSJdAfeTCdA3lg=;
-        b=HHOxxCc5AF+4h8h6BQr/PG1XihYxuFCnlFSsSsn8VuKys3+rw5c0IbFQl6dgDVVsib
-         TAiWXsQUaNHdKiqz2f3G01ifkhfquMnSqy2EGqlO8AbE+kNJlEFvkJZISZJbU1CR6Uic
-         +PhhDAH3AOhqOJd9+l/M5huAONFDCPzPcAPreNTK/QFa3UBh0uuxEjxoLHJJ1JBLh/XU
-         CvVMNnAi5meXfX9xJfGbXezfa4BzPXAgJOJUtpy8HYxDNTPSNRb+Erwh3wiJ6P+KRDwf
-         WHVzlNv3ezOBJYVBd9yvXDiGbPyE6Fkmo5pXgJX4riV5a0Tb78E1zTB10HaPTw43RhFD
-         NpTA==
-X-Gm-Message-State: AOJu0YzdQaiHFIQZipDcNIaCQhdMpU3slzcc3/2TW6Sq5U/STk2RzWla
-	Yiyr6O58z3YAW2np0lz6Zw2d48r9BCG4Vn5Chuw6L/bsSjLCENblwKMZLkPN3g==
-X-Gm-Gg: AY/fxX7/3jFjTdyB5l7hVk6ovVItJHWXee4RGgdDjy8bKBKoZEk34ecDwsD+K7MxU+s
-	XZl++cqAGxc0TQ6Dckb2qNEFKkMg/c+42EdizW8yzQjlK26zuYeZcnTutw6ZECetWZlkWrVEsyQ
-	7Xj/sVvW6SKV4TWkWBoYtZM6PrdM/AabepCE2qi2n5N2/g5xmsbxFnHeJsyLEJkWRzKU05+M9kB
-	pEyfyfZA4ZaamAmODomDV0Cc1MLhDWRt04680Vn8/SrCW+q558F7NTNxxuK0jE9ZUToIrwwyE3/
-	yP2hUBakHm4DdBHtzs9goPRQ3+HmHaypOj9+4L23fQmduN/wopJiTZJR0b+k2yItV0DlYfTzgb9
-	CNkphS15k9yLyagWjUr4EUKH1E0vGFIef77Dm1F/dotBQ6riiPHAtBGymiNQh0qX1m93T7NkFgZ
-	GQjYat+AwaQafKkwLepvZda8LWPO2nN/ZAFXNzjy+21uSDtcqR1+gLEmn0fC9ggQZhiwTmomU=
-X-Google-Smtp-Source: AGHT+IHsdj/uIj+b2bL19iRbWkuFmFdpdeMdRuBte2ztDJkzhiYGWorFghib1weSWlTzGQGfm53cyg==
-X-Received: by 2002:a05:600c:470a:b0:479:3a86:dc1c with SMTP id 5b1f17b1804b1-47a8f916db9mr74967545e9.36.1765714589378;
-        Sun, 14 Dec 2025 04:16:29 -0800 (PST)
+        d=1e100.net; s=20230601; t=1765714012; x=1766318812;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4ajJCT1gHe9+hETCuvtewJVsj++JxnZ8ojTy1eYcEXE=;
+        b=I7MNJE1RpSQXJ89ZPuV0H7BmPTsZes1gS8QiFbAg2yXKr0co/mhj82nUCsbzpox8Yf
+         aoPrUZ/3moQaFTCIjYibo9W9Ph85hzd9OpypyFneZGkidFLvnqFJrKzdK38o9MBqw5mz
+         Ca4XN+9/l8K7ECtECeguE5z5fxWGv9xs6eoEl8yFCivYytwUgZBIZ/EVXvWqLrRIkNEY
+         2qjCAas//Bd2vfTjGyZMbIqLkilxcI4ZHziXxPI8ifbbDHaIP5ZQ1DfELurhlpEpZ++G
+         AH4dbGn8HbDpYWGGRNxxE+pzNFGKUpgDk3p7US+KrTfiqITxq6t/qMF56Pydyd022P9X
+         QRlQ==
+X-Gm-Message-State: AOJu0YzHBXMF18+4OlZlI6Buxqr9dBXgkRRT1iTdgTGzLe71ESamAU2h
+	JAQMzaLsS2BmKjCI2vXbWEbMTTUpdIQhNaQHIJlxhI4JrK1mSrzKCrPU1IPfyQ==
+X-Gm-Gg: AY/fxX6ezCppc/ziLP9RA2xhar5C3rbCH9alTj39Dpox8omOjbgWDTmF8I8KseN45o6
+	Z6ehRMsdaWYN94/0NXMkAmjdp1uLe1Hb+7RErKlXPEZyeaEzmJvO87ei4alK4+Fd0ebA1TE6lLI
+	ZDcO9PX+QrB6pwrj1UFzk2CL9TTFoQ2UykZIt3AI7mskXXwn4nPrrsAxjEBUbe5mMHnuKcBvuSI
+	/SiaacVv1yEPpKJpNYgDO9grLp9zCCFXgrfosJjkCZs+7O1kJNNL38OtF8hnpZVO+IZjMSAh9fa
+	q0+Qxwm7rbjHWbCqzzC41ObUJ9FS1IrE7kjj5/mx+Qlb/Eb6jPM6caLNo2cMZO0e94BQjt/ZrvW
+	Q8c841Y6yqTntVN6EpY9Or50kvSnlPjLOyHb/VNde7ySjsEQgGdURXGkWmTo8y+gb6KAS7jEwLH
+	AIhU8yXelk5A7M/WekQrId4+4PlgoHAUzUshnKGnB1e/I73su/yMjSD1Lkg1Jsc7KTj3DNoJA=
+X-Google-Smtp-Source: AGHT+IHHePQPtK8u32yuXK6HnRJWatyQLuL5gbYIuix+trx5WJsz8S6K5rFKcFj6UEK7WaVn8OGvnw==
+X-Received: by 2002:a05:600c:8b16:b0:477:7975:30ea with SMTP id 5b1f17b1804b1-47a8f90e81fmr82253415e9.29.1765713683590;
+        Sun, 14 Dec 2025 04:01:23 -0800 (PST)
 Received: from biju.lan (host81-152-191-146.range81-152.btcentralplus.com. [81.152.191.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47a8f3352a0sm49112485e9.0.2025.12.14.04.16.29
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42fb68866f3sm14523386f8f.36.2025.12.14.04.01.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Dec 2025 04:16:29 -0800 (PST)
+        Sun, 14 Dec 2025 04:01:23 -0800 (PST)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -60,51 +59,35 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 2/3] mmc: renesas_sdhi: Enable 64-bit polling mode
-Date: Sun, 14 Dec 2025 12:16:18 +0000
-Message-ID: <20251214121627.4656-3-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 0/3] Add suspend/resume support for RZ/G3E ethernet
+Date: Sun, 14 Dec 2025 12:01:16 +0000
+Message-ID: <20251214120122.3784-1-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251214121627.4656-1-biju.das.jz@bp.renesas.com>
-References: <20251214121627.4656-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Sun, 14 Dec 2025 22:59:20 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21025
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21016
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[ Upstream commit 709fe7aa5aaf8047b528561a0082db8a3a29010c ]
+This patch series adds support for suspend/resume support for RZ/G3E
+ethernet
 
-Enable 64-bit polling mode for R-Car gen3 and RZ/G2L SoCs.
+Biju Das (2):
+  net: phy: micrel: Add ksz9131_resume()
+  net: stmmac: dwmac-renesas-gbeth: Add PM suspend/resume callbacks
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/r/20250730164618.233117-3-biju.das.jz@bp.renesas.com
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Raju Lakkaraju (1):
+  net: phy: micrel: Add PHY Auto/MDI/MDI-X set driver for KSZ9131
 
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index 1dcaa050f264..5652979e09ed 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -107,7 +107,8 @@ static const struct renesas_sdhi_of_data of_data_rza2 = {
- 
- static const struct renesas_sdhi_of_data of_data_rcar_gen3 = {
- 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
--			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2,
-+			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2 |
-+			  TMIO_MMC_64BIT_DATA_PORT,
- 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
- 			  MMC_CAP_CMD23 | MMC_CAP_WAIT_WHILE_BUSY,
- 	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT | MMC_CAP2_MERGE_CAPABLE,
--- 
+ .../stmicro/stmmac/dwmac-renesas-gbeth.c      |  1 +
+ drivers/net/phy/micrel.c                      | 91 ++++++++++++++++++-
+ 2 files changed, 91 insertions(+), 1 deletion(-)
+
+--
 2.43.0
 
 
