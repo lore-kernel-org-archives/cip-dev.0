@@ -2,56 +2,58 @@ Return-Path: <yoshitake.kobayashi.x25@mail.toshiba>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AB28D5B173
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22653D5B16E
 	for <webhook@archiver.kernel.org>; Sun, 14 Dec 2025 22:59:20 +0000 (UTC)
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.24386.1765714590479016724
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.24306.1765714591839628296
  for <cip-dev@lists.cip-project.org>;
- Sun, 14 Dec 2025 04:16:30 -0800
+ Sun, 14 Dec 2025 04:16:32 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=Vghs3TWW;
- spf=pass (domain: gmail.com, ip: 209.85.128.44, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4775895d69cso10159775e9.0
-        for <cip-dev@lists.cip-project.org>; Sun, 14 Dec 2025 04:16:30 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=FwPKiqm3;
+ spf=pass (domain: gmail.com, ip: 209.85.128.49, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-47755de027eso18556185e9.0
+        for <cip-dev@lists.cip-project.org>; Sun, 14 Dec 2025 04:16:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765714588; x=1766319388; darn=lists.cip-project.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=X58vvix3iTedcnZETlrW0C32vILbQbjYXzFGL+RXfbI=;
-        b=Vghs3TWWQI6zfm5ALboaEoc2uZn/e7D6MhnqIg6AaAZONsdQOng8UZvhh/9fORs7s6
-         I3JZr1pOifUSH5SmTf/hIVPseapgXxzz1ZYVjYw42MDWJmLwoWRC8NUKyFU0iAwzxXmL
-         2UBTgNXANQn+bzW3KbQghpLo/j4x/nkfaB8ljtXokPtTSpTZneXlF4rB+iAk5pqwejuM
-         aHlmk4VqHooAat7JuQY8Sb3R2yxO+ZK1SGbD3bDsQSAAjXN1/j+VzEQ8zLrTcU1A3qoK
-         WxLijdsuWpDmYpRx5nT09q27D3KPqUGr4YSEfHdmF6nDdoFINTpfEm7dQFU2LePXh7mm
-         oZ4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765714588; x=1766319388;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1765714590; x=1766319390; darn=lists.cip-project.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=X58vvix3iTedcnZETlrW0C32vILbQbjYXzFGL+RXfbI=;
-        b=H2M9cvRYD90tQiYNDPzOM4kQq9LZfO0d6QaPIXeiLOGPhQJ8DyLvGI+pbEX0qg0fPx
-         F+qiAqOfb7DeRciAwVjFP4mzih4PF5Fs4kE8d8PmEk7e541TVfMObrXh3ixJbIMOov+6
-         agGPSRsVMv9m6AGmZUhIQYSZHPmhC8BmO2r/1wqj7KgVOj2I1/TO8Jr0VhzkVRYORHWt
-         o0NntpTsQkfj9n3pHcBrVoLKNxnrhApoHnid3UFt3KPkcWN9QO98cFxNc8Y5ZgieZj8I
-         bB4ovuO6jdREhdCNSpEWRot4cPwlvVti2q4RfBK09UHf0rggqIqi92IDPJGhUpduXXFv
-         KHsw==
-X-Gm-Message-State: AOJu0Yy8A0YB/JC1N4hVNqm36GEmB9R/Lk5f46aWQCBraSjelvNpwi5H
-	oBkfCG8S4CLbF2KzBOvMBWNrvYb5855Sofs7WTlBDG4ouTg6Nv00HyLp51ht2A==
-X-Gm-Gg: AY/fxX4myqzzPjRnyQg4L8HY538hcg9fxE8KuzeJ8CB+KKQZ5aTxbn4aV26W6OE8qAZ
-	LYWCkarTOd0CYB6oG/OZcZlKyUr3V+hsdx6nq9lQ9NS0zzvDudubPO9FNn4049+TDeJfTtF1+NF
-	q03iD59bko4JDKvWBSSMAfHXihGAWXrOetkJuCU7WNhmzL1tTkI30YZBUfcvJbeY+veqJMbvec5
-	K0qKwxt39fYIvMPObglNQtKo0d6anafMOI/MW0C1Qlq/+9TMdOLI9a9YEouHuc8qrI1XiC96bHV
-	ZpsJQanyOzfLhbbwlPXjloHpDybpegTibEpusiz0N69EPkUMUgv85/tgA58nyzP+qj/0nu4gmBk
-	4Km28WYjvII7pk4lDnISACfUfWZ/xk/F0q9oz0544f9dlwBKesSSRoHX+NH0HjyNFiT3HE3695A
-	xTwpA2XjVW3rSqYOMNkfpyj+sBLxrg5XQfK04pYK6QsnK1LjMWmCsnLhU4+gfujDupf5KVEEo=
-X-Google-Smtp-Source: AGHT+IHywr5APX55A61+2cHir+sBea+nt3BeIYET5uIwRpowBv+N7ZApy3yaZORANxLNTS0g7wx0uw==
-X-Received: by 2002:a05:600c:3e0d:b0:477:7658:572a with SMTP id 5b1f17b1804b1-47a8f907acamr75334675e9.20.1765714588514;
-        Sun, 14 Dec 2025 04:16:28 -0800 (PST)
+        bh=gZnBIRXBG+UMfBu0l+e1/iwDLueHSBVjEM7HflRVQCU=;
+        b=FwPKiqm3noHWIfPpixItOw+T/kKw3sX6KzVgY92lJDzvG7sCYphnmPx8Pks0F+HOLs
+         KHnmxkGK1teAVSot1zi7NfCWGZtwUYPNj2ribnU8DpWVi+v/VYlzx8bPMhO8A7q6QNAW
+         d2FZWqrENU3sHq6LPRb5hWxLQpJy7eQ8MXU6BJx1QT1xGiK9cD+QFYwH29akdkUL49Tq
+         sRdw5F8UAJP0ODJ3L6z9DXjt5mDPbCbV0c03j7k2xvIjZUt3j7ojpi6i0B0QtTuZa+yE
+         tHefkyaNvWsD/rCjOTiDRoRXDcY5FkwENCu36GS8K1/79K70QK+N0USsQsjK66ndi+33
+         8woQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765714590; x=1766319390;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=gZnBIRXBG+UMfBu0l+e1/iwDLueHSBVjEM7HflRVQCU=;
+        b=h1Rz1vEigdqd6imBdN6u9PIBdMzD0eTXaiH6iFyGa/O7bw9DT6GPyxxLRy0HKC7yjM
+         RWUFnPq5suL7cOqVvHYc64uPX0IwDhmsrVsEaB55k9at2y0PxV8FULgRaLsydbzhTYNY
+         fdhFqYSf2ezba9/fzNNecNg1mMMfnxKr0jL54dnYF6bD29T5xnN/Erl0nKgtyT9wRyeV
+         uwqIMPNV+7Wz18tBsqhgLCgOvnMBpjiS9V7NEeXKOG0PZidjoKhilgqny1N7+kYJj96m
+         fmSJ/n+H1EeUgb2ptPtL/L/g5eXABvhUn1o2eqtGU3wycay0AHR+rmIkLGz/MkjU/3Ip
+         Oflg==
+X-Gm-Message-State: AOJu0Yxk2WFThryT72LBVRg8vsbWP3DQbMOSrvG/PBuf9gunHvhVHcLf
+	HPiWuOZtzwSB/KNP8aYDXvwdjjaTzdudMzz+kDMzeAoM2QKC2nthfrTB+M5KSw==
+X-Gm-Gg: AY/fxX4s+pTvAZ9bRH/9N+Nu9JW70DIuBb0bnFAOfIwlIO/1EZ0gMvdOchqCqnmCn6W
+	/xjdrYPsPmEjqlx5nqd2wA9+fpwWV1kqC/a1LtUyvjd3eQ81IM4hp5KE952FbI0vAA6iVcJfwtu
+	uTZnsGrdYYbJ1gV0YdK1QeFOiatJUvSn6fs47TXumU//GasAWD/2nVOOvOsoaXxgH3R2+7qyBuE
+	I1KlG+Y/hWQAfjTMeXbMELPqBNCTwgsir82F4qxPJKK1XPPeFuMwGVhV7LJVQ53RepCJ4uGd9il
+	rYZw/8l6271Ad7bvVkDBWp8Xw3EH4o4XbQiF12EXMbHn/eQs7+kS/qQ9M3XTg0v6so38OAh7xNT
+	Ff6cGq7OW4izNClavciVYvSHFeYtHM5CaUyapXA9p4+e1ywH0NJkZadhGriiZtuuaMwsNtYUEGq
+	KGqyfe5Y3bNoN2/v+2zySu2sTQFboQs56pPRFIhAVsl14cJVE3szkgMgnv/V5qHoVjzOLbjDPHo
+	sMXoeU3sA==
+X-Google-Smtp-Source: AGHT+IFTVJkMehG3imVgOxTDrzg5ffjcSDQfe1kUWGuDKqfCI7emX804Kj0qsu6nhMJIa/Ns4Z0zEw==
+X-Received: by 2002:a05:600c:444a:b0:465:a51d:d4 with SMTP id 5b1f17b1804b1-47a8f8a7570mr78085365e9.6.1765714589956;
+        Sun, 14 Dec 2025 04:16:29 -0800 (PST)
 Received: from biju.lan (host81-152-191-146.range81-152.btcentralplus.com. [81.152.191.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47a8f3352a0sm49112485e9.0.2025.12.14.04.16.28
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47a8f3352a0sm49112485e9.0.2025.12.14.04.16.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Dec 2025 04:16:28 -0800 (PST)
+        Sun, 14 Dec 2025 04:16:29 -0800 (PST)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,39 +61,49 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 0/3] mmc: renesas_sdhi: Add 64-bit polling support
-Date: Sun, 14 Dec 2025 12:16:16 +0000
-Message-ID: <20251214121627.4656-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 3/3] mmc: renesas_sdhi: Replace magic number '0xff' in renesas_sdhi_set_clock()
+Date: Sun, 14 Dec 2025 12:16:19 +0000
+Message-ID: <20251214121627.4656-4-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251214121627.4656-1-biju.das.jz@bp.renesas.com>
+References: <20251214121627.4656-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Sun, 14 Dec 2025 22:59:20 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21023
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21026
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-As per the RZ/{G2L,G3E} HW manual SD_BUF0 can be accessed by 16/32/64
-bits. Most of the data transfer in SD/SDIO/eMMC mode is more than 8 bytes.
-During testing it is found that, if the DMA buffer is not aligned to 128
-bit it fallback to PIO mode. In such cases, 64-bit access is much more
-efficient than the current 16-bit.
+[ Upstream commit 5d0702dc9c2f6700140b7366dd9ec6c78cde3aa1 ]
 
-Biju Das (3):
-  mmc: tmio: Add 64-bit read/write support for SD_BUF0 in polling mode
-  mmc: renesas_sdhi: Enable 64-bit polling mode
-  mmc: renesas_sdhi: Replace magic number '0xff' in
-    renesas_sdhi_set_clock()
+Replace the magic number '0xff' with CLK_CTL_DIV_MASK macro for finding
+actual clock in renesas_sdhi_set_clock().
 
- drivers/mmc/host/renesas_sdhi_core.c          |  2 +-
- drivers/mmc/host/renesas_sdhi_internal_dmac.c |  3 +-
- drivers/mmc/host/tmio_mmc.h                   | 15 +++++++++
- drivers/mmc/host/tmio_mmc_core.c              | 33 +++++++++++++++++++
- include/linux/platform_data/tmio.h            |  3 ++
- 5 files changed, 54 insertions(+), 2 deletions(-)
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20250820104808.94562-1-biju.das.jz@bp.renesas.com
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/mmc/host/renesas_sdhi_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index f123fcb8e01e..8b898d0229c8 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -223,7 +223,7 @@ static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
+ 	}
+ 
+ 	clock = clk & CLK_CTL_DIV_MASK;
+-	if (clock != 0xff)
++	if (clock != CLK_CTL_DIV_MASK)
+ 		host->mmc->actual_clock /= (1 << (ffs(clock) + 1));
+ 
+ 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, clock);
 -- 
 2.43.0
 
