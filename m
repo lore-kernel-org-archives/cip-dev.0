@@ -2,108 +2,126 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD0F1D65544
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0EDFD6553A
 	for <webhook@archiver.kernel.org>; Wed, 17 Dec 2025 10:32:35 +0000 (UTC)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.11768.1765967546001904123
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.11769.1765967547264238151
  for <cip-dev@lists.cip-project.org>;
- Wed, 17 Dec 2025 02:32:26 -0800
+ Wed, 17 Dec 2025 02:32:27 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=I8f3ilSq;
- spf=pass (domain: tuxon.dev, ip: 209.85.218.51, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b713c7096f9so929959466b.3
-        for <cip-dev@lists.cip-project.org>; Wed, 17 Dec 2025 02:32:25 -0800 (PST)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=b3ZdK3ur;
+ spf=pass (domain: tuxon.dev, ip: 209.85.218.47, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b735e278fa1so1020827466b.0
+        for <cip-dev@lists.cip-project.org>; Wed, 17 Dec 2025 02:32:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1765967544; x=1766572344; darn=lists.cip-project.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4DkC23jSofmo5i9gBcHMZSR1s037o84DY3V7tY/fvb4=;
-        b=I8f3ilSqWeQ4RqsWYCK7OsJmCUTjQrmXeurDDP3LAqMQTmBUUDGMd8RnRZIeZz9xS1
-         k5QAxmIWR5PazSd0fPD7t1eC7pIjQlNDjZlZXzlWa6l3DQKO6+PxGkDCC7G/F8soScpJ
-         69AHSexqMPAHRde2aBmJuLf8qOaDhTnUgDhZOiBrxA+3A5TY98q0XhWnr+1ErsPA7Ovk
-         KQ3Dl3acADYip8bvR9fPatOvlbRXQEGn+KVRwMz23hMhn4AZYso7Je426lIZM1A/Gdw4
-         FUu/TJRaJPXIV/d38JvKmJPGBvjGLANkWYkbmYlpIm484t8Cc5oBkTK7Bf/pDxBztIvY
-         prYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765967544; x=1766572344;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=tuxon.dev; s=google; t=1765967545; x=1766572345; darn=lists.cip-project.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4DkC23jSofmo5i9gBcHMZSR1s037o84DY3V7tY/fvb4=;
-        b=EHsDKxGVk1OB2P1jsZT0kkLFQC1xD0vfq+y/juJ2007nwC4RIZI04mUR8U/Vpv4C/m
-         78NTVnDP5hJ9f8p5xKlSu+Jor1KX65Pmb2yNYul3X06vh2Qgt8ApPAsLItZcwUI7jcpm
-         ci+23YHp+LSmVM5NrPGhEuvnphTEtVZTr34EHo+zpBLHu8mcV75EijcBCtgaxJldFEvZ
-         ZQZaElTXe7RGJiHv8Hd8ey/o4o6pRBsgmC4CGEAbvybvnjKTFtj+c3Ahfyv1Q5pKtb5R
-         HPQHoOZ4P/rw802CoBz+Uapos6umd30bfAKpF0qsQtWl977j4lIcwCsDAzeJM+JWW/CO
-         H2LA==
-X-Forwarded-Encrypted: i=1; AJvYcCWzqXmFLPujrarbST7ZTMR4M7wbZYLP92R/+MO/0G4mg4HOGFAGtyN9Dmy52TTw1byqj7rf06v5@lists.cip-project.org
-X-Gm-Message-State: AOJu0YwwRUnpilg6nssbDgEtfPQLYhVkNjIf06B35ki2rtAuZ9UBjmiv
-	0GMxbdRjFClkGs96NCMM/yncg5XtUXAP2ycIvUQFcSUV9ASvyMfhL8SRJR/PLh7md/KcV4fTrjR
-	A0NOS
-X-Gm-Gg: AY/fxX5USGVHD8yj+GDDAKBaJE9N2zdeDVWBtEvX21Fq5jhzsh7DqfFK7jE2N6aA3c7
-	viaxT9/nIW2aQcwGB1Xs2OOijbWCf/HDSv2OJm36jYlM1AEHUyWr5ELv5CRXQGeh9+VJhlnofbd
-	6PpefQiPcfOW8PtbS3/Atft5OTxzRW9jEwbJwPtPy756JpBSAq/GF2Kp7g8P4426Nzh5ml1Prgv
-	rDpIBe8DfxLh8cDYFBRam+K+WZBSEyQevGkJMxvsaDfmt3ncBsVlZPCge318h4nNlqPxof0rVkI
-	BSHEALvIDtHy74m2i928w+xeRozE1IJUzDwayqlv9Y1wiJpHoimb+ehdwSDPp4x5psJqScr9fsS
-	IUv3vlDy24BJ+dhhFH30LAVeBJJ5YDNzW+oQfxYPJwktAan+1e88Sb1OPE6CoVG9K6EPnwAclkV
-	IzSTQA37tqYrlG3OKz68kAJpkl/RBo1uMh1q8N6XcRsYq2ZV0D3U4=
-X-Google-Smtp-Source: AGHT+IE8TGQqFkP/2tL8kLEtrTBbpqzGdW1JQwN/TVG4o7uGTDb/g8KYqHgqUg00tHV2IE7+E7ISMA==
-X-Received: by 2002:a17:907:3e11:b0:b1d:285c:e0ef with SMTP id a640c23a62f3a-b7d23665c6cmr1977974966b.26.1765967544310;
-        Wed, 17 Dec 2025 02:32:24 -0800 (PST)
+        bh=VZ1QUy7p9pe972g2x2+icyG+6tl6ql8lmi7JgS33RGo=;
+        b=b3ZdK3urtjcJ01CukS8hUQ4PaqXQkp1hZAU4+sOxFRoJKaEdpe+nzU3gXcqrNT9mC0
+         7w/KX/uZiSZKWWhXfurRI7HZZUYXXhDLt3VRvmt37gdV0OCY7sWwMKaZ2Ki6xHjX7e4p
+         mQHUyrQdqNmS2AjFIDPQRdEURkPYjpoWXQin/BPo50o9jm+/H8b6PepxGzshWUIusYjQ
+         Kdr7GmpNnXzxawJfuhij4yWqrN3E5WVsrhmXZwDZ1kBOe6fQ2TRLgNGp8KiY0MxREk1X
+         wm3DYRraFbIVDipCikHUGpjqCEfNnZZPRff2Fa7QkoKqe5+pXG38fDBLXMKzx9wG3rFM
+         No1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765967545; x=1766572345;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=VZ1QUy7p9pe972g2x2+icyG+6tl6ql8lmi7JgS33RGo=;
+        b=ivk/9KRPKLMBjv6zO5lZBS0r2psc9ZgKcT61cYWkCvvO1COQSdPOItW7+Kw2z/R1Qs
+         H3PhhCDoFML1xU4oxpbM5009+Y9ewL3rbqs8HhkjmhzrnPspbvVQ4Lk+jKs+C/w4zXw5
+         Z21jNvsa7TyJgyECP0PsVlzfvGY+zdhnOEF2cwUOXQCLHJGwK7JB8CbMwaZEGKYtS3vg
+         fXcmCzQ6caU6/alFPi9x4HeO4gLUNQMHDQTGSD7kEcGnkgynPoxrbVYDXfhaqzNv23WZ
+         8bf/7k7ziaFNYeURaVZMzsQE5N/u5a8oDGTuDThevb1nEtXOfWwwvZNL1YFDNF0rWC5+
+         9VDg==
+X-Forwarded-Encrypted: i=1; AJvYcCVV9Ra5S5mjJ9sLGqyRJwa3ax0j3shox9+ASgXQlhIcd73JDaZrKzbUpQ0rxaHq39hBQ1c44Gtu@lists.cip-project.org
+X-Gm-Message-State: AOJu0YzZCaz1H0Wn1yGwEzXvLnGQmoUlBj0tRmHz2qJPJyB9BaXParaW
+	nFLW7pTmMJyGIX5CyS+S43aNfbZ72wwnA8oOcL00VdCd0079Sm5SuDy8KGgT/oc28Hs=
+X-Gm-Gg: AY/fxX69s5Yb6YDxPljbS33vRZ2LqNd0FHLt0bJz8x+6JcPwSm/Db+uzHL0C/7uN/wZ
+	JE5Tx8cjIvtUT3+7r7dbz1x9DgJ2QKnbOxN13ny94LKQMfi2JulL9uAAI57Pj1Dpq5PNDq1d6/g
+	+3BLRafKyN20/w01INg2wIcp751Ug3H1CBDWqUQDJeUDd12UjqBBfr9Uo2mj+TFhV0wy31ebznL
+	/+Gv3QxWOqXL6MpZcQk0RJ1F/U8+0U0wtP0AisLvn1iFAuEbLK/gMCs3MbhgO8f4xxmwlx7ZYsh
+	XtCZeeMQmCafxhl1umRGdFs9XEqz/RhfhK02NLmV7kIR5HJwJEb4qkHm5uhnduhwxeZWIImsMEX
+	1cKaW4meghn/NHPaX4mTpeAVdtRPYgWB4WLmWsRtnG65dV0p9xTBfqA+4Yx7yVqKb+ZkWsVajFA
+	/b8prjZknjnyWHWKLarejqAsgkbydtEX4hTrMEf+OI0rNKeSxPDsU=
+X-Google-Smtp-Source: AGHT+IFq5LoZrlBK5FL+fox0SI1vrAnExSc17eYdbpmkI/fwBnkZJroG0UpTEnr3H4LYjbBLqcQu3Q==
+X-Received: by 2002:a17:907:94c3:b0:b73:8b79:a31a with SMTP id a640c23a62f3a-b7d23627315mr1780852566b.16.1765967545516;
+        Wed, 17 Dec 2025 02:32:25 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7cfa2e6edesm1955414166b.18.2025.12.17.02.32.23
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7cfa2e6edesm1955414166b.18.2025.12.17.02.32.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Dec 2025 02:32:23 -0800 (PST)
+        Wed, 17 Dec 2025 02:32:24 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: pavel@denx.de,
 	nobuhiro.iwamatsu.x90@mail.toshiba
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 6.12.y-cip 0/6] RZ/G3S: Backport TSU support
-Date: Wed, 17 Dec 2025 12:32:16 +0200
-Message-ID: <20251217103222.4183089-1-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 1/6] clk: renesas: r9a08g045: Add clocks, resets and power domain support for the TSU IP
+Date: Wed, 17 Dec 2025 12:32:17 +0200
+Message-ID: <20251217103222.4183089-2-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251217103222.4183089-1-claudiu.beznea.uj@bp.renesas.com>
+References: <20251217103222.4183089-1-claudiu.beznea.uj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 17 Dec 2025 10:32:35 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21113
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21114
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Hi,
+commit 5599c7c4b4df440aa4a470a5b72669081413981f upstream.
 
-Series backports the TSU (Thermal Sensor Unit) support for RZ/G3S.
+Add clocks, resets and power domains for the TSU IP available on the
+Renesas RZ/G3S SoC.
 
-Thank you,
-Claudiu
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/20250103163805.1775705-2-claudiu.beznea.uj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[claudiu.beznea: fixed conflict by using RZG2L_PD_F_NONE instead of 0
+ for adc and tsu power domains]
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
+ drivers/clk/renesas/r9a08g045-cpg.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Claudiu Beznea (6):
-  clk: renesas: r9a08g045: Add clocks, resets and power domain support
-    for the TSU IP
-  dt-bindings: thermal: r9a08g045-tsu: Document the TSU unit
-  thermal/drivers/renesas/rzg3s: Add thermal driver for the Renesas
-    RZ/G3S SoC
-  arm64: dts: renesas: r9a08g045: Add OPP table
-  arm64: dts: renesas: r9a08g045: Add TSU node
-  arm64: defconfig: Enable Renesas RZ/G3S thermal driver
-
- .../thermal/renesas,r9a08g045-tsu.yaml        |  93 ++++++
- MAINTAINERS                                   |   7 +
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |  77 ++++-
- .../boot/dts/renesas/rzg3s-smarc-som.dtsi     |   4 -
- arch/arm64/configs/defconfig                  |   1 +
- drivers/clk/renesas/r9a08g045-cpg.c           |   5 +
- drivers/thermal/renesas/Kconfig               |   8 +
- drivers/thermal/renesas/Makefile              |   1 +
- drivers/thermal/renesas/rzg3s_thermal.c       | 274 ++++++++++++++++++
- 9 files changed, 465 insertions(+), 5 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/thermal/renesas,r9a08g045-tsu.yaml
- create mode 100644 drivers/thermal/renesas/rzg3s_thermal.c
-
+diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9a08g045-cpg.c
+index 5156032f9fd9..7cdce3cd7dc0 100644
+--- a/drivers/clk/renesas/r9a08g045-cpg.c
++++ b/drivers/clk/renesas/r9a08g045-cpg.c
+@@ -241,6 +241,7 @@ static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
+ 	DEF_MOD("gpio_hclk",		R9A08G045_GPIO_HCLK, R9A08G045_OSCCLK, 0x598, 0),
+ 	DEF_MOD("adc_adclk",		R9A08G045_ADC_ADCLK, R9A08G045_CLK_TSU, 0x5a8, 0),
+ 	DEF_MOD("adc_pclk",		R9A08G045_ADC_PCLK, R9A08G045_CLK_TSU, 0x5a8, 1),
++	DEF_MOD("tsu_pclk",		R9A08G045_TSU_PCLK, R9A08G045_CLK_TSU, 0x5ac, 0),
+ 	DEF_MOD("vbat_bclk",		R9A08G045_VBAT_BCLK, R9A08G045_OSCCLK, 0x614, 0),
+ };
+ 
+@@ -279,6 +280,7 @@ static const struct rzg2l_reset r9a08g045_resets[] = {
+ 	DEF_RST(R9A08G045_GPIO_SPARE_RESETN, 0x898, 2),
+ 	DEF_RST(R9A08G045_ADC_PRESETN, 0x8a8, 0),
+ 	DEF_RST(R9A08G045_ADC_ADRST_N, 0x8a8, 1),
++	DEF_RST(R9A08G045_TSU_PRESETN, 0x8ac, 0),
+ 	DEF_RST(R9A08G045_VBAT_BRESETN, 0x914, 0),
+ };
+ 
+@@ -376,6 +378,9 @@ static const struct rzg2l_cpg_pm_domain_init_data r9a08g045_pm_domains[] = {
+ 	DEF_PD("adc",		R9A08G045_PD_ADC,
+ 				DEF_REG_CONF(CPG_BUS_MCPU2_MSTOP, BIT(14)),
+ 				RZG2L_PD_F_NONE),
++	DEF_PD("tsu",		R9A08G045_PD_TSU,
++				DEF_REG_CONF(CPG_BUS_MCPU2_MSTOP, BIT(15)),
++				RZG2L_PD_F_NONE),
+ 	DEF_PD("vbat",		R9A08G045_PD_VBAT,
+ 				DEF_REG_CONF(CPG_BUS_MCPU3_MSTOP, BIT(8)),
+ 				RZG2L_PD_F_ALWAYS_ON),
 -- 
 2.43.0
 
