@@ -1,426 +1,188 @@
-Return-Path: <claudiu.beznea@tuxon.dev>
+Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE06FD65549
-	for <webhook@archiver.kernel.org>; Wed, 17 Dec 2025 10:32:35 +0000 (UTC)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.11322.1765967550284875340
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4379D65C62
+	for <webhook@archiver.kernel.org>; Wed, 17 Dec 2025 15:13:47 +0000 (UTC)
+Received: from TYVP286CU001.outbound.protection.outlook.com (TYVP286CU001.outbound.protection.outlook.com [52.101.125.13])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.16838.1765984420870698686
  for <cip-dev@lists.cip-project.org>;
- Wed, 17 Dec 2025 02:32:30 -0800
+ Wed, 17 Dec 2025 07:13:41 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=E/wylPyj;
- spf=pass (domain: tuxon.dev, ip: 209.85.218.42, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b7ffa5d1b80so199112466b.0
-        for <cip-dev@lists.cip-project.org>; Wed, 17 Dec 2025 02:32:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1765967549; x=1766572349; darn=lists.cip-project.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oq8yonWcaNIlaf41yJfohXFkAiQXTFBXgkcONeW9SxU=;
-        b=E/wylPyjO/GG+roRYqM5Af+EN2V2+zwjCW+ZyYRxCOZfcCXnClQ3ezU0ag7udoI5TT
-         oG4lbfZeuSB+xzypmjdHW/uYspfXgkSOLi17IZjXtlNgmGfkbxLzIXVgQMSp/wLE/zcH
-         7xNfrhBAor0mvJDftrgpO1R4Ylx9JzBD9ilEOHVQcnCWB7H2ilS9MQp3nM2K47TfoabU
-         Xwhk0gg4lKeAHYuqMr+UFp/FCOFpVRT+nxgcJwYqlvtoGCg8SpjOsQGuHeRtR9scBo2F
-         Ecw084rGb651OnSZmSj/IZYf7IsT1tz3UC6ouBpk1EHOEbLb5mOU4zb309f1gjT2Qypl
-         OECQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765967549; x=1766572349;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=oq8yonWcaNIlaf41yJfohXFkAiQXTFBXgkcONeW9SxU=;
-        b=SZFvYxJ2gl+xoRpwWsMP+73kxie1866iNUjbA2sZW/AeyAfXV2xBG2Bj0+zVYmKoXt
-         vfukbRsCg2arCbBoFpzNCiU+v/igxEF2L0+Sf5D7nf9IrUk02EPOPfPwdVklyR2UxGKg
-         1a0W/fQz5zJ/JVmHncL0nvP5RwKc2i9rbORpsXFIK8RmlV1n+AUBbEcfR7Z0rWy4+0rR
-         kyfgTQoyalaVkDOjKyrtKukSwZTBXgAuBNcCKKapQfwit0ErGyJzWbTrTOJQNfGmCGgn
-         bLgM0W3vn6v8RIiRGwIHBA8Yr/6GOt702kQmlqpuMmdKFxPwX1J2wlwK3WM2u8sTkNRx
-         BPSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXbwYRp4Em34IxNVxOBeATz73jfdhHoxQRKOkG/4OxqT6+7zlBZBKH//6/A6OuzVJJjQNP+L6gB@lists.cip-project.org
-X-Gm-Message-State: AOJu0Yz+BH0vbk4AYaRBh2mYakSdxK0HM5p5gF/1kGHlEFLOBUckvBLL
-	00ndfKulAyz5iGNia0pPla20fAYCyKUtted49jdU0LSRUEwZ0y98r4EK1JOzRO+Yjvo=
-X-Gm-Gg: AY/fxX7GThozQPsQ/wuBi9cSR7Hzst3yq60XqHlhhuXanHm6pt98QXJhaDBO5Y/Gj5z
-	1ZM3ZK1tlcnuQ6GfDUWLxTWQwNz39y5hh9Fv1Zl3KFaiEL43POF+h9oU9fx0YK1C4KS+LVkS3n5
-	0MR9R4gVhdtSXh5FUrMtjccD2gyH2XN3id+4/Mrwr9z16g3/vaZHJnaPyz6TkEuf8b3M9N2/ujf
-	4jUHx9pFbiqnXJ6el7hGfCNWUrh+n5wL5yXb3sO0DCGS936vq4dKJVmehpjuPI5yH0DmMMDlT+/
-	xxR05cyhRndRTRihRr8KcbdKVavu2SQz/mGG/HtlJz8L5HUuClqT9ZjWkYWHAKmM2IawyKfWGW1
-	/a5n4Lp6a8udylP0ACnV4S8YZkGJF7NWv1N+icHI0xmZ11XzBWL4lmU+NgHXopSiSv7ull55HPh
-	2ssCUrx+jyPiflM0pyYqE/wiIgcDYOmN2RCKc0JI2CtKkXix3LPQc=
-X-Google-Smtp-Source: AGHT+IGDJ4ZMT3PHUGFezHF9yv08VlvS83mlRUc5BFb3KPhHZHDF3i2m6g/XaWGhK3Zwd9biCs6Dkg==
-X-Received: by 2002:a17:907:3d9e:b0:b73:8792:c3ca with SMTP id a640c23a62f3a-b7d238fc403mr2084504966b.32.1765967548531;
-        Wed, 17 Dec 2025 02:32:28 -0800 (PST)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7cfa2e6edesm1955414166b.18.2025.12.17.02.32.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Dec 2025 02:32:27 -0800 (PST)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: pavel@denx.de,
-	nobuhiro.iwamatsu.x90@mail.toshiba
-Cc: claudiu.beznea@tuxon.dev,
-	cip-dev@lists.cip-project.org
-Subject: [PATCH 6.12.y-cip 3/6] thermal/drivers/renesas/rzg3s: Add thermal driver for the Renesas RZ/G3S SoC
-Date: Wed, 17 Dec 2025 12:32:19 +0200
-Message-ID: <20251217103222.4183089-4-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251217103222.4183089-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20251217103222.4183089-1-claudiu.beznea.uj@bp.renesas.com>
+ dkim=pass header.i=@renesas.com header.s=selector1 header.b=a2hfc0IH;
+ spf=pass (domain: renesas.com, ip: 52.101.125.13, mailfrom: ovidiu.panait.rb@renesas.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PPzLVfm+FyOIaL3eAtsuaIkT9wElmB63zQ1LAHendZqX7qd1w7VTtYg0RLaX5ZQCuFr03XsjG1SbRNF3Fj7tUSDMY5MDwzkWAy18dev+ZsaHPRKlEJIWjKyVlevfWq4yChCEiefJfczRTudH0hMNcmTTNFwK7gQCNqMFg0yvhb86OaZnjbGAs6+tzSBmuOFSBmRUXuAe6FQokirxvkR4nCLBANiLawQDw+OYMz8RlgyleGhUFsGV6oBiMylkJSwvNzJtxYDhbGlNYUQ/1nVsHvjbNZ+yw4LvB2H+bhic1M1c/fjYcKYU1Pthdk+6YnnPiHMrFagecqv+y1iWPM5NDQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xiPbOJairddrW1HmFBVFoyHkYG3lw0tsigHX67zLM9o=;
+ b=cXnBtVSDenoSIs9H2qunJiZnJtbmwumoQTq24/3rpVYRJvX0IRb81TVMZlwBlVuk4E+SmBj8Henw9KFQnVaT0ewAm7cg6vpAPfa1nouS8VjmBH9GW33bJw9yDTsrNr+2YyeuS94QsYNXT7TZHo2xePM9fdYeHZ7r+iRxmRAJ8GrcQ9qLPCY9BoAisswV2JxjxKLcoMB8Kj1E2+hNlt2v2Bte7Ksep37Vc1rv9ZfACF5KI2q9my+jBImY8lBsiADljc4o59+EvRT2n2dDD9sUrRu7fx0WfLYHMIUeB/BUzSmrVzYSgopUQwCX3bk0RUglbLmF4Sc2GvKVa4Sq/PTsqw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xiPbOJairddrW1HmFBVFoyHkYG3lw0tsigHX67zLM9o=;
+ b=a2hfc0IHBxfHpbx6HegS8bQmGBSGpPUZzleoYL8gQ4eCKHdG168c9PxDScVDBwgXs7mO6AvYcnGekveX+z6hb6DUGCRXoTH8YcHPW4RnEP1HumqHj+62jVfcFQQhXV5Iw4obq2tdTIYwmBlkhseszDZlivYAEnHQywsobHRxjMU=
+Received: from TYWPR01MB9277.jpnprd01.prod.outlook.com (2603:1096:400:1a1::12)
+ by TY4PR01MB12879.jpnprd01.prod.outlook.com (2603:1096:405:1e7::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9434.7; Wed, 17 Dec
+ 2025 15:13:32 +0000
+Received: from TYWPR01MB9277.jpnprd01.prod.outlook.com
+ ([fe80::b8bf:9f91:41af:6596]) by TYWPR01MB9277.jpnprd01.prod.outlook.com
+ ([fe80::b8bf:9f91:41af:6596%7]) with mapi id 15.20.9434.001; Wed, 17 Dec 2025
+ 15:13:27 +0000
+From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+To: Pavel Machek <pavel@denx.de>, "iwamatsu@gmail.com" <iwamatsu@gmail.com>
+CC: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+	"nobuhiro.iwamatsu.x90@mail.toshiba" <nobuhiro.iwamatsu.x90@mail.toshiba>
+Subject: RE: [cip-dev] [PATCH 6.1.y-cip 0/6] Add RZ/V2H DMAC support
+Thread-Topic: [cip-dev] [PATCH 6.1.y-cip 0/6] Add RZ/V2H DMAC support
+Thread-Index: AQHcYLdMr6+DiXojL0m3X6wpcTUvPbUOSTKAgBfBqTA=
+Date: Wed, 17 Dec 2025 15:13:27 +0000
+Message-ID: 
+ <TYWPR01MB9277CB6CCA408B8B70158CD1D3ABA@TYWPR01MB9277.jpnprd01.prod.outlook.com>
+References: <20251127112941.55300-1-ovidiu.panait.rb@renesas.com>
+ <CACe6DC4HpsHngXRgjpt+MmR1Qi211fgDWv=+3vx7n9d9EXq=6Q@mail.gmail.com>
+ <aS7YU1FbxmmtywFT@duo.ucw.cz>
+In-Reply-To: <aS7YU1FbxmmtywFT@duo.ucw.cz>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYWPR01MB9277:EE_|TY4PR01MB12879:EE_
+x-ms-office365-filtering-correlation-id: 1d998270-8b7d-4c65-7b80-08de3d7ed464
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700021;
+x-microsoft-antispam-message-info: 
+ =?us-ascii?Q?bSsgZERje6eB+JSh1NpTWqBWSqFFGY8pZ0tG61xymMlAFtAXn3ZDoJSyWMY3?=
+ =?us-ascii?Q?vEXsLTNpca9Y18gPLSxdL/kKClqXIgpOITscDBk37Xewx7JgUnT/73nNNnHh?=
+ =?us-ascii?Q?TnreihbkuzQiHmAUzcuLgA0zeYvXh25CZCpd3BUvixB567CjDkSb+GWf/TZ2?=
+ =?us-ascii?Q?R/MbP7E3PhEADZSmtxH9plRhzlUjrq/XEmswa8IheZ/PnGyZVyO/oPEtWJir?=
+ =?us-ascii?Q?2z6OYx8+ckfcE+9o5yIRn2BC0HL3BhaFlgPTqIgiTV2XJjp1yCU7Ve1rlRwa?=
+ =?us-ascii?Q?Jtv1cDJ4iA4UWSgGbDFfOi2d1g2vA580X5Aa3rr/AVWERcNK0TicoPKob6OS?=
+ =?us-ascii?Q?PTn8HolVFWS+1SMEmRPQhFTjOP/wyVvScZWUCwJwJ1m+veeGi2UlNzVFLktT?=
+ =?us-ascii?Q?IoTeyhuGpOS/XF7WRsTxhVbZyitwKtCzW95VtUs+dz4V+AcXizDxq+tAVl/P?=
+ =?us-ascii?Q?alRX4psFZpBL+SgEF8y7T7zkZzmAnKEEpZowHMDd4aNkRu8RDPOOi4EYQEiZ?=
+ =?us-ascii?Q?M0L359VuH+tQ2M0I5VlkV8vOXjRrE13avOpI+0AT0qUWJhThY+X3jpJ+qT0R?=
+ =?us-ascii?Q?t9PzUAi0JV67z9OP6UYq192JggKFMT3vhI4n4wo43zTFeNFW5bMMoIRcWdVE?=
+ =?us-ascii?Q?Nv+i7lZEkurcgkdYjg7nBDtWME/DgGYZ+eydlrlS5NTuFIClmeZ1UysfCa5a?=
+ =?us-ascii?Q?JL9IJzwzsE+AXd6Ibcw6CaZB7NiXPA+eC9qB/ubYBmGu6BEB4t3V9E973dC/?=
+ =?us-ascii?Q?FA8PMAkIXsW5aakwBP5mRl/1LwHeMgTwBlzBuf6M8+5tgyq3yliHstyFt7V8?=
+ =?us-ascii?Q?FuRAYdNezjiS5jQ0xDfbDmZMCRPZp2OeOSozdc5XEYyv/B+5Al+xfyqy+Yaj?=
+ =?us-ascii?Q?mFyXsx6f38lK63kChbxuUSBIFvsKFSf6QIgfDHHzSoNqWNPmsmqBEBHXZYsM?=
+ =?us-ascii?Q?CWANlClkiY3ZhVhNQom8wz5gELXwBP+0XpPfeEpOPAn5tNQBqW1Onu5iREN6?=
+ =?us-ascii?Q?Onj+v3l0td2FZr8sd5B48PK0yDv3XmwNQi7Iwtt7GN9fg9wRY0MsqzK7dHQ4?=
+ =?us-ascii?Q?cnYAs80gJZ7obwJyy0Jn9GcdiGDFq62wAfLWXpDRWB2LVv331k6QvAV4VXV5?=
+ =?us-ascii?Q?NSoqF71tVjih0TVh3aMtaOGBaAPNDMxhnN2RfDar0dcxhWusjZt0JdzLZJ80?=
+ =?us-ascii?Q?z0OqhaoUTwYjILjXyEUsLidgUR8X1XM4pAcBPppRL/etRKmREMPvSHeUxNZj?=
+ =?us-ascii?Q?C+Lhysrwb6JZgowfZPynPovuoXyWalCrY9sppitUfpxkHUEV69OANdzqzVW/?=
+ =?us-ascii?Q?f09g27bIALiEzhKziJG2JVn92HKTZeP4eWyTN5qQIxA8dvpLrddF9hyuPYVu?=
+ =?us-ascii?Q?NMu4LW/XTN4NNbg00233ELGIxtxQYdnS4hXRm844wJP2VmI3jJ5iRSjV1FH9?=
+ =?us-ascii?Q?ih88VBFxvJjp0K+du41dkzvLFyJ8g3xfdPa5w9mQ9wVpuFdAWDx354qzcN0h?=
+ =?us-ascii?Q?d+zxTqHC7baHLAd9NxLzPcYJ+iO03hfN82aR?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYWPR01MB9277.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?us-ascii?Q?G8X0QTq6lm3wioy0bnKAy7uWsu7cAzaikLvSjdGJ7rCG9jI57oI5BjnbJ9Dv?=
+ =?us-ascii?Q?CcEzxKjxemmCpzLmDj75VMyBrKA2YR7kWxuSeumavWFjgr/VEoi98giN+Y5m?=
+ =?us-ascii?Q?uzl28bG/tHXZsGNRXibs9PGlnAirfaxGHxiC0Q6lpOgFJOFkdLZ50xxDye57?=
+ =?us-ascii?Q?SBAmADUHZuQw4/FeTPoumBV/kaN7r1MArEB19hrK1zJ2tP3Iz3LVxrFIpviC?=
+ =?us-ascii?Q?fWetANy9DKmdmsfdh+RZ6g3AY6VGxWVLJCCc5YCjQc94TKWbedLUvJ24j3Ln?=
+ =?us-ascii?Q?DHm+9UDXIBUtgFKeYgUZEaWzwDDLgLXNsCjEUEaxfQenHnb2XjiY4Qrg2HWE?=
+ =?us-ascii?Q?Lt/s9g/Ml1O1SI2XAtMp2QFzVmbbqYK8Oy8y0WEOHOwc/6ekPbwnhSPA5Rfm?=
+ =?us-ascii?Q?kzWoOUvl90YkYf3mhr+A1rGkFgUPZQfq5MphRTa0yC4bXmlOJPhZeY2bgVun?=
+ =?us-ascii?Q?0pZ9zeZJ+fCRuAecEfHhIA1HcOH+gWZkLobZEGsHIM6i1/yAcNynoTV4Jr/K?=
+ =?us-ascii?Q?AvyjX/PJ2OuIi/7fI5q05JhQO8h4aHPt75BWN1DMo/rb1tDGvzcBEvJArwOa?=
+ =?us-ascii?Q?GCHff37efrxcB02Kolf/U+UfphssKny1CH3d/EHgTt49V1y1WpuME/jDtUGQ?=
+ =?us-ascii?Q?SoQx29SSC1OH7eDRPUnYgTdWU51AXUjzMyuad48ChaF+HCiCEAxNLLFfHRFc?=
+ =?us-ascii?Q?w9HZETs70Npfoqc/gkLO7gXk9OiyJmQmBEMOY1ZTXsuSQL+chdUWnYeHOA0Q?=
+ =?us-ascii?Q?OW3L0ApZP5aGg76afzF+c4CqiucUgpel/Iq0rLKWJ8A5IXh9ruuGw+gNJG66?=
+ =?us-ascii?Q?dCu564Y5d5KN4maYMgqaNSo2nyNFA4fjI6Lt4/VM7ya7wUdNH53FRxtBuqt1?=
+ =?us-ascii?Q?S+CakNiEyjFQmGCucwQ3ve+fQL1+DaXLnwwp19guSMwdkSjDCtkUFEyhL4V0?=
+ =?us-ascii?Q?ppfpjuuxSZyuTiKKBZFatJbL5/R5K6hDvbB/PcWY0sIuZPbmlUNtMFhQEvU1?=
+ =?us-ascii?Q?Zywi1cN5t20gHj3xym1M+yT1P1cOf9rwvld2hso3GDybgsx1PlioxLfL0r14?=
+ =?us-ascii?Q?OKlE8V+6EJ7ktrf46JBe5k6NiC4/v+u9iSEboalLSG9fznbyk8lUkr1OM9/O?=
+ =?us-ascii?Q?grG+gUyCT649bSpsX9JBfsvoHNkTAQqqIALbBqYPbi9HrJkBdaoAHFH7pM+z?=
+ =?us-ascii?Q?68Bf0lilELIESuSqj1lBOEsVaVMVc6ky98JAWBujMxU0lGNWYzcCBfSzNtmK?=
+ =?us-ascii?Q?H+trvAqcM/lCANHm8Q256Y06eSopHyEoh9ailf8wAAG3ccdkJEeVo4Apel1N?=
+ =?us-ascii?Q?lkD2ogwFErxdA8A5RpjQkS01fWwa19YksF+9/d8CIg3ITTS4YT5DG/g0T51Q?=
+ =?us-ascii?Q?UwyKHChs8WCCcv8sKjiEj14Gh06iaqV8NRuVKW+Z3Aw7ZPX0lUmvZaUh4lQj?=
+ =?us-ascii?Q?RbI4xVvXDj++3aSo+2ADPavHPBjxRo1tXZS/Vbdhw9xS9UAgMpo0Y26I+gv2?=
+ =?us-ascii?Q?zFuyg1ewUty993amXhK/LM5bTWDj0O1VV3IagXO0jy1Zt026I+w4qg7OVele?=
+ =?us-ascii?Q?jpadmjQFJsER68HFkmwb7fLV5C0+8PZ7Os2iYEsqzFI/9960Q8fP6xLrksqR?=
+ =?us-ascii?Q?BA=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYWPR01MB9277.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1d998270-8b7d-4c65-7b80-08de3d7ed464
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Dec 2025 15:13:27.1093
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: +ygZ1Yw2mhhHRrHQoRKl1RjvIRPuXokITLYWNk6dACdn1yKU8jS6yfOlXUrUatTtN+XoguLXrNXErwLvI5an/nBjtBT3jeTfklPTBmTImUI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB12879
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 17 Dec 2025 10:32:35 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21116
+ <cip-dev@lists.cip-project.org>; Wed, 17 Dec 2025 15:13:47 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21120
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Hi Pavel,
 
-commit dc095b37b09e1abbdb6daf5e69dbd0cd5265087e upstream.
+> -----Original Message-----
+> From: Pavel Machek <pavel@denx.de>
+> Sent: Tuesday, December 2, 2025 2:15 PM
+> To: iwamatsu@gmail.com
+> Cc: Ovidiu Panait <ovidiu.panait.rb@renesas.com>; cip-dev@lists.cip-
+> project.org; nobuhiro.iwamatsu.x90@mail.toshiba
+> Subject: Re: [cip-dev] [PATCH 6.1.y-cip 0/6] Add RZ/V2H DMAC support
+>=20
+> Hi!
+>=20
+> > > This series adds DMAC support for the Renesas RZ/V2H SoC.
+> > >
+> > > Upstream commit 1b86d3ecde5c ("dmaengine: dmatest: prevent using
+> swiotlb
+> > > buffer with nobounce parameter") was cherry-picked to allow dmatest t=
+o
+> > > validate DMA controller functionality with and without swiotlb. The
+> > > remaining patches add the actual support for the RZ/V2H DMAC.
+> >
+> > I reviewed this series, looks good to me.
+> > I can apply this series if there are no other comments.
+> >
+> > Reviewed-by: Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
+>=20
+> Thank you, applied.
+>=20
 
-The Renesas RZ/G3S SoC features a Thermal Sensor Unit (TSU) that reports
-the junction temperature. The temperature is reported through a dedicated
-ADC channel. Add a driver for the Renesas RZ/G3S TSU.
+I just noticed that all commits in this series were applied to 6.1-cip,
+except for this one:
+https://lore.kernel.org/cip-dev/20251127112941.55300-7-ovidiu.panait.rb@ren=
+esas.com/
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Link: https://lore.kernel.org/r/20250810122125.792966-3-claudiu.beznea.uj@bp.renesas.com
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-[claudiu.beznea: added pm_runtime_mark_last_busy() as it is not embedded in
- pm_runtime_put_autosuspend() on v6.12 CIP]
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
- MAINTAINERS                             |   7 +
- drivers/thermal/renesas/Kconfig         |   8 +
- drivers/thermal/renesas/Makefile        |   1 +
- drivers/thermal/renesas/rzg3s_thermal.c | 274 ++++++++++++++++++++++++
- 4 files changed, 290 insertions(+)
- create mode 100644 drivers/thermal/renesas/rzg3s_thermal.c
+Could you please check this?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8e5467865d18..0f82f70a78c0 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19760,6 +19760,13 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/iio/potentiometer/renesas,x9250.yaml
- F:	drivers/iio/potentiometer/x9250.c
- 
-+RENESAS RZ/G3S THERMAL SENSOR UNIT DRIVER
-+M:	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-+L:	linux-pm@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/thermal/renesas,r9a08g045-tsu.yaml
-+F:	drivers/thermal/renesas/rzg3s_thermal.c
-+
- RESET CONTROLLER FRAMEWORK
- M:	Philipp Zabel <p.zabel@pengutronix.de>
- S:	Maintained
-diff --git a/drivers/thermal/renesas/Kconfig b/drivers/thermal/renesas/Kconfig
-index dcf5fc5ae08e..566478797095 100644
---- a/drivers/thermal/renesas/Kconfig
-+++ b/drivers/thermal/renesas/Kconfig
-@@ -26,3 +26,11 @@ config RZG2L_THERMAL
- 	help
- 	  Enable this to plug the RZ/G2L thermal sensor driver into the Linux
- 	  thermal framework.
-+
-+config RZG3S_THERMAL
-+	tristate "Renesas RZ/G3S thermal driver"
-+	depends on ARCH_R9A08G045 || COMPILE_TEST
-+	depends on OF && IIO && RZG2L_ADC
-+	help
-+	  Enable this to plug the RZ/G3S thermal sensor driver into the Linux
-+	  thermal framework.
-diff --git a/drivers/thermal/renesas/Makefile b/drivers/thermal/renesas/Makefile
-index bf9cb3cb94d6..1feb5ab78827 100644
---- a/drivers/thermal/renesas/Makefile
-+++ b/drivers/thermal/renesas/Makefile
-@@ -3,3 +3,4 @@
- obj-$(CONFIG_RCAR_GEN3_THERMAL)	+= rcar_gen3_thermal.o
- obj-$(CONFIG_RCAR_THERMAL)	+= rcar_thermal.o
- obj-$(CONFIG_RZG2L_THERMAL)	+= rzg2l_thermal.o
-+obj-$(CONFIG_RZG3S_THERMAL)	+= rzg3s_thermal.o
-diff --git a/drivers/thermal/renesas/rzg3s_thermal.c b/drivers/thermal/renesas/rzg3s_thermal.c
-new file mode 100644
-index 000000000000..d184dccc882f
---- /dev/null
-+++ b/drivers/thermal/renesas/rzg3s_thermal.c
-@@ -0,0 +1,274 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Renesas RZ/G3S TSU Thermal Sensor Driver
-+ *
-+ * Copyright (C) 2024 Renesas Electronics Corporation
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/delay.h>
-+#include <linux/iio/consumer.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/reset.h>
-+#include <linux/thermal.h>
-+#include <linux/units.h>
-+
-+#include "../thermal_hwmon.h"
-+
-+#define TSU_SM			0x0
-+#define TSU_SM_EN		BIT(0)
-+#define TSU_SM_OE		BIT(1)
-+#define OTPTSUTRIM_REG(n)	(0x18 + (n) * 0x4)
-+#define OTPTSUTRIM_EN_MASK	BIT(31)
-+#define OTPTSUTRIM_MASK		GENMASK(11, 0)
-+
-+#define TSU_READ_STEPS		8
-+
-+/* Default calibration values, if FUSE values are missing. */
-+#define SW_CALIB0_VAL		1297
-+#define SW_CALIB1_VAL		751
-+
-+#define MCELSIUS(temp)		((temp) * MILLIDEGREE_PER_DEGREE)
-+
-+/**
-+ * struct rzg3s_thermal_priv - RZ/G3S thermal private data structure
-+ * @base: TSU base address
-+ * @dev: device pointer
-+ * @tz: thermal zone pointer
-+ * @rstc: reset control
-+ * @channel: IIO channel to read the TSU
-+ * @mode: current device mode
-+ * @calib0: calibration value
-+ * @calib1: calibration value
-+ */
-+struct rzg3s_thermal_priv {
-+	void __iomem *base;
-+	struct device *dev;
-+	struct thermal_zone_device *tz;
-+	struct reset_control *rstc;
-+	struct iio_channel *channel;
-+	enum thermal_device_mode mode;
-+	u16 calib0;
-+	u16 calib1;
-+};
-+
-+static int rzg3s_thermal_get_temp(struct thermal_zone_device *tz, int *temp)
-+{
-+	struct rzg3s_thermal_priv *priv = thermal_zone_device_priv(tz);
-+	int ts_code_ave = 0;
-+
-+	if (priv->mode != THERMAL_DEVICE_ENABLED)
-+		return -EAGAIN;
-+
-+	for (u8 i = 0; i < TSU_READ_STEPS; i++) {
-+		int ret, val;
-+
-+		ret = iio_read_channel_raw(priv->channel, &val);
-+		if (ret < 0)
-+			return ret;
-+
-+		ts_code_ave += val;
-+		/*
-+		 * According to the HW manual (Rev.1.10, section 40.4.4 Procedure for Measuring
-+		 * the Temperature) we need to wait here at leat 3us.
-+		 */
-+		usleep_range(5, 10);
-+	}
-+
-+	ts_code_ave = DIV_ROUND_CLOSEST(MCELSIUS(ts_code_ave), TSU_READ_STEPS);
-+
-+	/*
-+	 * According to the HW manual (Rev.1.10, section 40.4.4 Procedure for Measuring the
-+	 * Temperature) the computation formula is as follows:
-+	 *
-+	 * Tj = (ts_code_ave - priv->calib1) * 165 / (priv->calib0 - priv->calib1) - 40
-+	 *
-+	 * Convert everything to milli Celsius before applying the formula to avoid
-+	 * losing precision.
-+	 */
-+
-+	*temp = div_s64((s64)(ts_code_ave - MCELSIUS(priv->calib1)) * MCELSIUS(165),
-+			MCELSIUS(priv->calib0 - priv->calib1)) - MCELSIUS(40);
-+
-+	/* Report it in milli degrees Celsius and round it up to 0.5 degrees Celsius. */
-+	*temp = roundup(*temp, 500);
-+
-+	return 0;
-+}
-+
-+static void rzg3s_thermal_set_mode(struct rzg3s_thermal_priv *priv,
-+				   enum thermal_device_mode mode)
-+{
-+	struct device *dev = priv->dev;
-+	int ret;
-+
-+	ret = pm_runtime_resume_and_get(dev);
-+	if (ret)
-+		return;
-+
-+	if (mode == THERMAL_DEVICE_DISABLED) {
-+		writel(0, priv->base + TSU_SM);
-+	} else {
-+		writel(TSU_SM_EN, priv->base + TSU_SM);
-+		/*
-+		 * According to the HW manual (Rev.1.10, section 40.4.1 Procedure for
-+		 * Starting the TSU) we need to wait here 30us or more.
-+		 */
-+		usleep_range(30, 40);
-+
-+		writel(TSU_SM_OE | TSU_SM_EN, priv->base + TSU_SM);
-+		/*
-+		 * According to the HW manual (Rev.1.10, section 40.4.1 Procedure for
-+		 * Starting the TSU) we need to wait here 50us or more.
-+		 */
-+		usleep_range(50, 60);
-+	}
-+
-+	pm_runtime_mark_last_busy(dev);
-+	pm_runtime_put_autosuspend(dev);
-+}
-+
-+static int rzg3s_thermal_change_mode(struct thermal_zone_device *tz,
-+				     enum thermal_device_mode mode)
-+{
-+	struct rzg3s_thermal_priv *priv = thermal_zone_device_priv(tz);
-+
-+	if (priv->mode == mode)
-+		return 0;
-+
-+	rzg3s_thermal_set_mode(priv, mode);
-+	priv->mode = mode;
-+
-+	return 0;
-+}
-+
-+static const struct thermal_zone_device_ops rzg3s_tz_of_ops = {
-+	.get_temp = rzg3s_thermal_get_temp,
-+	.change_mode = rzg3s_thermal_change_mode,
-+};
-+
-+static int rzg3s_thermal_read_calib(struct rzg3s_thermal_priv *priv)
-+{
-+	struct device *dev = priv->dev;
-+	u32 val;
-+	int ret;
-+
-+	ret = pm_runtime_resume_and_get(dev);
-+	if (ret)
-+		return ret;
-+
-+	val = readl(priv->base + OTPTSUTRIM_REG(0));
-+	if (val & OTPTSUTRIM_EN_MASK)
-+		priv->calib0 = FIELD_GET(OTPTSUTRIM_MASK, val);
-+	else
-+		priv->calib0 = SW_CALIB0_VAL;
-+
-+	val = readl(priv->base + OTPTSUTRIM_REG(1));
-+	if (val & OTPTSUTRIM_EN_MASK)
-+		priv->calib1 = FIELD_GET(OTPTSUTRIM_MASK, val);
-+	else
-+		priv->calib1 = SW_CALIB1_VAL;
-+
-+	pm_runtime_mark_last_busy(dev);
-+	pm_runtime_put_autosuspend(dev);
-+
-+	return 0;
-+}
-+
-+static int rzg3s_thermal_probe(struct platform_device *pdev)
-+{
-+	struct rzg3s_thermal_priv *priv;
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(priv->base))
-+		return PTR_ERR(priv->base);
-+
-+	priv->channel = devm_iio_channel_get(dev, "tsu");
-+	if (IS_ERR(priv->channel))
-+		return dev_err_probe(dev, PTR_ERR(priv->channel), "Failed to get IIO channel!\n");
-+
-+	priv->rstc = devm_reset_control_get_exclusive_deasserted(dev, NULL);
-+	if (IS_ERR(priv->rstc))
-+		return dev_err_probe(dev, PTR_ERR(priv->rstc), "Failed to get reset!\n");
-+
-+	priv->dev = dev;
-+	priv->mode = THERMAL_DEVICE_DISABLED;
-+	platform_set_drvdata(pdev, priv);
-+
-+	pm_runtime_set_autosuspend_delay(dev, 300);
-+	pm_runtime_use_autosuspend(dev);
-+	ret = devm_pm_runtime_enable(dev);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to enable runtime PM!\n");
-+
-+	ret = rzg3s_thermal_read_calib(priv);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to read calibration data!\n");
-+
-+	priv->tz = devm_thermal_of_zone_register(dev, 0, priv, &rzg3s_tz_of_ops);
-+	if (IS_ERR(priv->tz))
-+		return dev_err_probe(dev, PTR_ERR(priv->tz), "Failed to register thermal zone!\n");
-+
-+	ret = devm_thermal_add_hwmon_sysfs(dev, priv->tz);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to add hwmon sysfs!\n");
-+
-+	return 0;
-+}
-+
-+static int rzg3s_thermal_suspend(struct device *dev)
-+{
-+	struct rzg3s_thermal_priv *priv = dev_get_drvdata(dev);
-+
-+	rzg3s_thermal_set_mode(priv, THERMAL_DEVICE_DISABLED);
-+
-+	return reset_control_assert(priv->rstc);
-+}
-+
-+static int rzg3s_thermal_resume(struct device *dev)
-+{
-+	struct rzg3s_thermal_priv *priv = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = reset_control_deassert(priv->rstc);
-+	if (ret)
-+		return ret;
-+
-+	if (priv->mode != THERMAL_DEVICE_DISABLED)
-+		rzg3s_thermal_set_mode(priv, priv->mode);
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops rzg3s_thermal_pm_ops = {
-+	SYSTEM_SLEEP_PM_OPS(rzg3s_thermal_suspend, rzg3s_thermal_resume)
-+};
-+
-+static const struct of_device_id rzg3s_thermal_dt_ids[] = {
-+	{ .compatible = "renesas,r9a08g045-tsu" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, rzg3s_thermal_dt_ids);
-+
-+static struct platform_driver rzg3s_thermal_driver = {
-+	.driver = {
-+		.name = "rzg3s-thermal",
-+		.of_match_table = rzg3s_thermal_dt_ids,
-+		.pm = pm_ptr(&rzg3s_thermal_pm_ops),
-+	},
-+	.probe = rzg3s_thermal_probe,
-+};
-+module_platform_driver(rzg3s_thermal_driver);
-+
-+MODULE_DESCRIPTION("Renesas RZ/G3S Thermal Sensor Unit Driver");
-+MODULE_AUTHOR("Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>");
-+MODULE_LICENSE("GPL");
--- 
-2.43.0
+Thanks!
+Ovidiu
 
+
+> Best regards,
+> 								Pavel
+> --
+> In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
+> Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
