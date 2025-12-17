@@ -2,105 +2,108 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC07D65543
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD0F1D65544
 	for <webhook@archiver.kernel.org>; Wed, 17 Dec 2025 10:32:35 +0000 (UTC)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.11775.1765967554444622845
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.11768.1765967546001904123
  for <cip-dev@lists.cip-project.org>;
- Wed, 17 Dec 2025 02:32:34 -0800
+ Wed, 17 Dec 2025 02:32:26 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=KAZZYSYM;
- spf=pass (domain: tuxon.dev, ip: 209.85.218.42, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b79e7112398so1094964866b.3
-        for <cip-dev@lists.cip-project.org>; Wed, 17 Dec 2025 02:32:34 -0800 (PST)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=I8f3ilSq;
+ spf=pass (domain: tuxon.dev, ip: 209.85.218.51, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b713c7096f9so929959466b.3
+        for <cip-dev@lists.cip-project.org>; Wed, 17 Dec 2025 02:32:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1765967553; x=1766572353; darn=lists.cip-project.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tyiKtQNMoQqs3fHJwiwv2QJBQoMsgTPu5ZpIui7IeBo=;
-        b=KAZZYSYMfmT74+BfHesBopo5MCDIQs+t3ua7qgxg63ONVC5Gg+v4fPqgu6a/MyJjOS
-         vciddxD3TlnxWLHRGxJDFh6XJQ5rS9BGjbtf0j4JdiULBdVGSANaiIZoZIQCc8X7E04/
-         J0rFMiyzRwZ3yGz14oSK+274/J35N+BsHyuuFdqPkhhlt4BUUuSeXVnIlGANtphI5yt9
-         h2cPsc5tfXNvkIoqOIMZ5bRhGgxzN3UW+KR/cTHkqLtwlMmCzsQHqgTgLar0OqRJ9ngf
-         nfb1ObbiEn8dkPJ0Rxidt5z68Xvt64JXpQuVPZ//b/HQvqRbZomvY/UasELtVgKPrsUk
-         Xqyw==
+        d=tuxon.dev; s=google; t=1765967544; x=1766572344; darn=lists.cip-project.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4DkC23jSofmo5i9gBcHMZSR1s037o84DY3V7tY/fvb4=;
+        b=I8f3ilSqWeQ4RqsWYCK7OsJmCUTjQrmXeurDDP3LAqMQTmBUUDGMd8RnRZIeZz9xS1
+         k5QAxmIWR5PazSd0fPD7t1eC7pIjQlNDjZlZXzlWa6l3DQKO6+PxGkDCC7G/F8soScpJ
+         69AHSexqMPAHRde2aBmJuLf8qOaDhTnUgDhZOiBrxA+3A5TY98q0XhWnr+1ErsPA7Ovk
+         KQ3Dl3acADYip8bvR9fPatOvlbRXQEGn+KVRwMz23hMhn4AZYso7Je426lIZM1A/Gdw4
+         FUu/TJRaJPXIV/d38JvKmJPGBvjGLANkWYkbmYlpIm484t8Cc5oBkTK7Bf/pDxBztIvY
+         prYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765967553; x=1766572353;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=tyiKtQNMoQqs3fHJwiwv2QJBQoMsgTPu5ZpIui7IeBo=;
-        b=rbYgrpV9I8dFDtM6MZC6gJG1z++1t/uFyyWH/Xgjtzw3GY+Iimmam8XB71M0ir51SW
-         oHnBgwKmDG2jx5MsWTYjLASC0NZteZFNcCglrmCSvvxnZu2Y9vV1StKqckSREvNRDF3G
-         KHharmz82Bdu7JyEA7Pbsg+lUXRZM+1v2C6wDMHsiFsLPyapacMW1Hyr11B9203vaBhO
-         3C3LoBUs9hg4NngL7J97Mu0iQrQbapj3b0ikXXuplIUWxbmVMtD6m6OA32z5pcRaTYH8
-         I/chgrPlpGwHfJVq5JjEmrUGlcaMQMN5gR4q5OkrYxl3HjXb0gHIUeJ0Mi9G/otDo8Fz
-         23DA==
-X-Forwarded-Encrypted: i=1; AJvYcCWlonc8K63b4bZnMe1n15pvnrNFZOsAD45jMUifQ3hcSamlXPeA/mujrP2HuShfG29hh49qqpDm@lists.cip-project.org
-X-Gm-Message-State: AOJu0YzaFo1uj+6C3DvM+l3SHx3PHtrI6vAvBR/GABrx1gUWmOvSl1Ds
-	KjFm/DWknJh0a+20n4TLXummZl7M3xMOQrF/3qrXQROCIIMmVIJO0SdIZ5SFqm13I3A=
-X-Gm-Gg: AY/fxX58zwb7TKP+gKBbrYSSoNwirAaioxNFB//oHstULy/taiN7L4EB5+mGE8/17Tb
-	9FBiPqp0uikURkenNME+Sa7lkJ79yxe/BwPaeFGA8NAFreKXis6S8eN3nA9UHZFLPesXpoFN8sE
-	HWOxFYAH2vDIS3AAm0Vbo3nsGZ+j39dM5rr/yLeZuOeegD98JfJjCu+pYLXxyOkIKBpuEEisnmE
-	1d6iiiHAO2JYl48n/XQSZpICQv94WGNNjhKKMF/2WBHSsgwCBPO17Dl5UoZsd6oX2QFjJDEZBMv
-	YvdCJzo2cGPyfoxK/kNffP4HgiE0LuawD09APqaIUtTj9/kcRPldMOyjSFhXhFEGmgvaemMoEPc
-	CAbWuiwdmFtnOaA26L12uTqmcykW9hGSBoFZQFdcvjgFwEpziIWiGGzlLbJgWIGpNgTp18odylt
-	q3eNcIAR5sXhLh8GUx6KrF2PyU13n9HRddH5hSXekHS9C0UngcACI=
-X-Google-Smtp-Source: AGHT+IEOKw7Iyc/gw/YIq+KQufXg3nYPTxC6jZfjbWgwIVvMmgG94gC3SXgB3ZLHFzSU5xJNJ2UrJw==
-X-Received: by 2002:a17:907:1c29:b0:b79:e4db:2e9 with SMTP id a640c23a62f3a-b7d23a8d20dmr1812725066b.60.1765967552755;
-        Wed, 17 Dec 2025 02:32:32 -0800 (PST)
+        d=1e100.net; s=20230601; t=1765967544; x=1766572344;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4DkC23jSofmo5i9gBcHMZSR1s037o84DY3V7tY/fvb4=;
+        b=EHsDKxGVk1OB2P1jsZT0kkLFQC1xD0vfq+y/juJ2007nwC4RIZI04mUR8U/Vpv4C/m
+         78NTVnDP5hJ9f8p5xKlSu+Jor1KX65Pmb2yNYul3X06vh2Qgt8ApPAsLItZcwUI7jcpm
+         ci+23YHp+LSmVM5NrPGhEuvnphTEtVZTr34EHo+zpBLHu8mcV75EijcBCtgaxJldFEvZ
+         ZQZaElTXe7RGJiHv8Hd8ey/o4o6pRBsgmC4CGEAbvybvnjKTFtj+c3Ahfyv1Q5pKtb5R
+         HPQHoOZ4P/rw802CoBz+Uapos6umd30bfAKpF0qsQtWl977j4lIcwCsDAzeJM+JWW/CO
+         H2LA==
+X-Forwarded-Encrypted: i=1; AJvYcCWzqXmFLPujrarbST7ZTMR4M7wbZYLP92R/+MO/0G4mg4HOGFAGtyN9Dmy52TTw1byqj7rf06v5@lists.cip-project.org
+X-Gm-Message-State: AOJu0YwwRUnpilg6nssbDgEtfPQLYhVkNjIf06B35ki2rtAuZ9UBjmiv
+	0GMxbdRjFClkGs96NCMM/yncg5XtUXAP2ycIvUQFcSUV9ASvyMfhL8SRJR/PLh7md/KcV4fTrjR
+	A0NOS
+X-Gm-Gg: AY/fxX5USGVHD8yj+GDDAKBaJE9N2zdeDVWBtEvX21Fq5jhzsh7DqfFK7jE2N6aA3c7
+	viaxT9/nIW2aQcwGB1Xs2OOijbWCf/HDSv2OJm36jYlM1AEHUyWr5ELv5CRXQGeh9+VJhlnofbd
+	6PpefQiPcfOW8PtbS3/Atft5OTxzRW9jEwbJwPtPy756JpBSAq/GF2Kp7g8P4426Nzh5ml1Prgv
+	rDpIBe8DfxLh8cDYFBRam+K+WZBSEyQevGkJMxvsaDfmt3ncBsVlZPCge318h4nNlqPxof0rVkI
+	BSHEALvIDtHy74m2i928w+xeRozE1IJUzDwayqlv9Y1wiJpHoimb+ehdwSDPp4x5psJqScr9fsS
+	IUv3vlDy24BJ+dhhFH30LAVeBJJ5YDNzW+oQfxYPJwktAan+1e88Sb1OPE6CoVG9K6EPnwAclkV
+	IzSTQA37tqYrlG3OKz68kAJpkl/RBo1uMh1q8N6XcRsYq2ZV0D3U4=
+X-Google-Smtp-Source: AGHT+IE8TGQqFkP/2tL8kLEtrTBbpqzGdW1JQwN/TVG4o7uGTDb/g8KYqHgqUg00tHV2IE7+E7ISMA==
+X-Received: by 2002:a17:907:3e11:b0:b1d:285c:e0ef with SMTP id a640c23a62f3a-b7d23665c6cmr1977974966b.26.1765967544310;
+        Wed, 17 Dec 2025 02:32:24 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7cfa2e6edesm1955414166b.18.2025.12.17.02.32.31
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7cfa2e6edesm1955414166b.18.2025.12.17.02.32.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Dec 2025 02:32:32 -0800 (PST)
+        Wed, 17 Dec 2025 02:32:23 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: pavel@denx.de,
 	nobuhiro.iwamatsu.x90@mail.toshiba
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 6.12.y-cip 6/6] arm64: defconfig: Enable Renesas RZ/G3S thermal driver
-Date: Wed, 17 Dec 2025 12:32:22 +0200
-Message-ID: <20251217103222.4183089-7-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 0/6] RZ/G3S: Backport TSU support
+Date: Wed, 17 Dec 2025 12:32:16 +0200
+Message-ID: <20251217103222.4183089-1-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251217103222.4183089-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20251217103222.4183089-1-claudiu.beznea.uj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 17 Dec 2025 10:32:35 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21119
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21113
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 823062d153851a944e61768014d7458d609fa4ca upstream.
+Hi,
 
-Enable the CONFIG_RZG3S_THERMAL flag for the RZ/G3S SoC.
+Series backports the TSU (Thermal Sensor Unit) support for RZ/G3S.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://patch.msgid.link/20250810122125.792966-5-claudiu.beznea.uj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Thank you,
+Claudiu
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index affd0e1f107a..789830ba9870 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -703,6 +703,7 @@ CONFIG_ROCKCHIP_THERMAL=m
- CONFIG_RCAR_THERMAL=y
- CONFIG_RCAR_GEN3_THERMAL=y
- CONFIG_RZG2L_THERMAL=y
-+CONFIG_RZG3S_THERMAL=m
- CONFIG_ARMADA_THERMAL=y
- CONFIG_MTK_THERMAL=m
- CONFIG_MTK_LVTS_THERMAL=m
+Claudiu Beznea (6):
+  clk: renesas: r9a08g045: Add clocks, resets and power domain support
+    for the TSU IP
+  dt-bindings: thermal: r9a08g045-tsu: Document the TSU unit
+  thermal/drivers/renesas/rzg3s: Add thermal driver for the Renesas
+    RZ/G3S SoC
+  arm64: dts: renesas: r9a08g045: Add OPP table
+  arm64: dts: renesas: r9a08g045: Add TSU node
+  arm64: defconfig: Enable Renesas RZ/G3S thermal driver
+
+ .../thermal/renesas,r9a08g045-tsu.yaml        |  93 ++++++
+ MAINTAINERS                                   |   7 +
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |  77 ++++-
+ .../boot/dts/renesas/rzg3s-smarc-som.dtsi     |   4 -
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/clk/renesas/r9a08g045-cpg.c           |   5 +
+ drivers/thermal/renesas/Kconfig               |   8 +
+ drivers/thermal/renesas/Makefile              |   1 +
+ drivers/thermal/renesas/rzg3s_thermal.c       | 274 ++++++++++++++++++
+ 9 files changed, 465 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/thermal/renesas,r9a08g045-tsu.yaml
+ create mode 100644 drivers/thermal/renesas/rzg3s_thermal.c
+
 -- 
 2.43.0
 
