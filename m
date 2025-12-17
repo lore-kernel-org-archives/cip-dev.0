@@ -2,67 +2,67 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1840D6554D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE06FD65549
 	for <webhook@archiver.kernel.org>; Wed, 17 Dec 2025 10:32:35 +0000 (UTC)
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.11774.1765967553277969105
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.11322.1765967550284875340
  for <cip-dev@lists.cip-project.org>;
- Wed, 17 Dec 2025 02:32:33 -0800
+ Wed, 17 Dec 2025 02:32:30 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=HkYCeKYx;
- spf=pass (domain: tuxon.dev, ip: 209.85.218.53, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b7cee045187so82723066b.0
-        for <cip-dev@lists.cip-project.org>; Wed, 17 Dec 2025 02:32:33 -0800 (PST)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=E/wylPyj;
+ spf=pass (domain: tuxon.dev, ip: 209.85.218.42, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b7ffa5d1b80so199112466b.0
+        for <cip-dev@lists.cip-project.org>; Wed, 17 Dec 2025 02:32:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1765967552; x=1766572352; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1765967549; x=1766572349; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gCrbZ4Ua4zv3UBgXJD9JjFfC1WmrpN40VT3m+rc4xOQ=;
-        b=HkYCeKYxlG8W172YA81ZMuPSUWa7zWgWSq0tga7eLE02QMSEnAj+tKKahC6vLRDJjp
-         FxYfhZu6C6mMuc7OXShlqbGteztS6o8WLXg/it8Hv2IisBHN+oML5hu98zXgULFNGkPZ
-         HwRpD4+wmRn8Qg2rBOWDjI0KvxZp0wVnfasCZzRZsW/EAGprhSI9XDtdBPsUeni6V/fW
-         6zKgen5WjQVITv048hntJ3RGn746SISAQUzqgOyNssT5yR2/9mtBY9v5UWSYHny5Vv74
-         H5ODLulZPDnMRnssBTykQXOnWZ27ujtnSwVmbsMLlYYlAXoPcDyRZQbsRh7A9CdHIabI
-         Vf0w==
+        bh=oq8yonWcaNIlaf41yJfohXFkAiQXTFBXgkcONeW9SxU=;
+        b=E/wylPyjO/GG+roRYqM5Af+EN2V2+zwjCW+ZyYRxCOZfcCXnClQ3ezU0ag7udoI5TT
+         oG4lbfZeuSB+xzypmjdHW/uYspfXgkSOLi17IZjXtlNgmGfkbxLzIXVgQMSp/wLE/zcH
+         7xNfrhBAor0mvJDftrgpO1R4Ylx9JzBD9ilEOHVQcnCWB7H2ilS9MQp3nM2K47TfoabU
+         Xwhk0gg4lKeAHYuqMr+UFp/FCOFpVRT+nxgcJwYqlvtoGCg8SpjOsQGuHeRtR9scBo2F
+         Ecw084rGb651OnSZmSj/IZYf7IsT1tz3UC6ouBpk1EHOEbLb5mOU4zb309f1gjT2Qypl
+         OECQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765967552; x=1766572352;
+        d=1e100.net; s=20230601; t=1765967549; x=1766572349;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=gCrbZ4Ua4zv3UBgXJD9JjFfC1WmrpN40VT3m+rc4xOQ=;
-        b=Kj6x9D2zNJVff1/FqZQBEOHPuTjiOnmmBVFc+0quJUf9V3DUegGFTbj6cO2t7khiC1
-         MbNAaf58X3v+pkT5AA7ZgPCpVdGNGTQlUPotIz9j3ZViSRpE5xk3kopy8mint3dYQEDM
-         UsC20h8w7teiZkn9ShyG7YMo5h45I+z8HixLyYVLgLxkN5L1xxgHbrONtzfVvaPoFKH/
-         H70C5fPPojFY5WtCIMw6ReTfeS3BBR5zytsOEAm9v8efRzuc5YiwKxbVBoJMVxWJhRRu
-         ia6SjfyO+Xz7eY7MLRI1Kg34wIz5LIkc4vsWSiYxHccQU/2/yZGjNDjnuq78Krq6y9eH
-         tzHA==
-X-Forwarded-Encrypted: i=1; AJvYcCVW6ny71q0ZPj2Xincs0kVW1HgUkwz3kJ7V01W0qXnaHDgukFdnhOMi6gTk+Fhz4JUtbhiqP7Jg@lists.cip-project.org
-X-Gm-Message-State: AOJu0YwIdntGaGepg20dLSiyctz8t5JSQjbmZN9xS+0WzX8vumf6DY5g
-	IXSRYxjNYCjeOrt6WcSg/d7A15Him4CCch7qi1Yx6hAiFMqm4bF5jrivyA36h1Hhj2g=
-X-Gm-Gg: AY/fxX7BJjK5ykCqYfnGHgx37Bk+BQLPDXVwsXtuLjE7V3tvaiDSbHvIXKN4RYs/a7/
-	UwdeP3s2kA6psKO6QYYiukKWVlq3NdjLKiQN9aOUVibThXTFFbnj+onsB5ys8OdDaKSG74DyRzT
-	rx97Sb+rhIdmiRAB7HWphr/Q7w58FVsXizaaDpbAWL3o1MTTaiOp6H2TPhtH4xoiXzzoZ9eUz1z
-	PBdwBFRXjUO2foWC7UeDGoG/14HTeoFn1Gv4FaYCB0KMZgF+2Ivxfr0B5+em5kMPOQYdGklaMVH
-	hJ0E9Gfxqmlrkw0IfdsRbwfcQczM2O8rBId5WYgV/d/hMmHbkRczKr0bx69hCNFi56q8QIFq+jx
-	fw0CK8hrXhZfqymQiwfoNL9xcFCRnmHf8QR9+U6ZBB/rM0VnBOg/OvNR1nxFeTCL41irzd7W4mJ
-	z8aNk3Lc8OxOTAzK/V/Oy7aSa5YXLI7ea/BHqe3jYZ
-X-Google-Smtp-Source: AGHT+IFwiYkRCMETn0L1aGSQwMvADQXiw+r1T14tQAi2/NX5hO9v2jEpufClPYAJJVAdElDUAkP3JQ==
-X-Received: by 2002:a17:907:3fa5:b0:b79:ff60:8205 with SMTP id a640c23a62f3a-b7d217ed002mr2105881966b.19.1765967551611;
-        Wed, 17 Dec 2025 02:32:31 -0800 (PST)
+        bh=oq8yonWcaNIlaf41yJfohXFkAiQXTFBXgkcONeW9SxU=;
+        b=SZFvYxJ2gl+xoRpwWsMP+73kxie1866iNUjbA2sZW/AeyAfXV2xBG2Bj0+zVYmKoXt
+         vfukbRsCg2arCbBoFpzNCiU+v/igxEF2L0+Sf5D7nf9IrUk02EPOPfPwdVklyR2UxGKg
+         1a0W/fQz5zJ/JVmHncL0nvP5RwKc2i9rbORpsXFIK8RmlV1n+AUBbEcfR7Z0rWy4+0rR
+         kyfgTQoyalaVkDOjKyrtKukSwZTBXgAuBNcCKKapQfwit0ErGyJzWbTrTOJQNfGmCGgn
+         bLgM0W3vn6v8RIiRGwIHBA8Yr/6GOt702kQmlqpuMmdKFxPwX1J2wlwK3WM2u8sTkNRx
+         BPSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXbwYRp4Em34IxNVxOBeATz73jfdhHoxQRKOkG/4OxqT6+7zlBZBKH//6/A6OuzVJJjQNP+L6gB@lists.cip-project.org
+X-Gm-Message-State: AOJu0Yz+BH0vbk4AYaRBh2mYakSdxK0HM5p5gF/1kGHlEFLOBUckvBLL
+	00ndfKulAyz5iGNia0pPla20fAYCyKUtted49jdU0LSRUEwZ0y98r4EK1JOzRO+Yjvo=
+X-Gm-Gg: AY/fxX7GThozQPsQ/wuBi9cSR7Hzst3yq60XqHlhhuXanHm6pt98QXJhaDBO5Y/Gj5z
+	1ZM3ZK1tlcnuQ6GfDUWLxTWQwNz39y5hh9Fv1Zl3KFaiEL43POF+h9oU9fx0YK1C4KS+LVkS3n5
+	0MR9R4gVhdtSXh5FUrMtjccD2gyH2XN3id+4/Mrwr9z16g3/vaZHJnaPyz6TkEuf8b3M9N2/ujf
+	4jUHx9pFbiqnXJ6el7hGfCNWUrh+n5wL5yXb3sO0DCGS936vq4dKJVmehpjuPI5yH0DmMMDlT+/
+	xxR05cyhRndRTRihRr8KcbdKVavu2SQz/mGG/HtlJz8L5HUuClqT9ZjWkYWHAKmM2IawyKfWGW1
+	/a5n4Lp6a8udylP0ACnV4S8YZkGJF7NWv1N+icHI0xmZ11XzBWL4lmU+NgHXopSiSv7ull55HPh
+	2ssCUrx+jyPiflM0pyYqE/wiIgcDYOmN2RCKc0JI2CtKkXix3LPQc=
+X-Google-Smtp-Source: AGHT+IGDJ4ZMT3PHUGFezHF9yv08VlvS83mlRUc5BFb3KPhHZHDF3i2m6g/XaWGhK3Zwd9biCs6Dkg==
+X-Received: by 2002:a17:907:3d9e:b0:b73:8792:c3ca with SMTP id a640c23a62f3a-b7d238fc403mr2084504966b.32.1765967548531;
+        Wed, 17 Dec 2025 02:32:28 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7cfa2e6edesm1955414166b.18.2025.12.17.02.32.29
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7cfa2e6edesm1955414166b.18.2025.12.17.02.32.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Dec 2025 02:32:29 -0800 (PST)
+        Wed, 17 Dec 2025 02:32:27 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: pavel@denx.de,
 	nobuhiro.iwamatsu.x90@mail.toshiba
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 6.12.y-cip 5/6] arm64: dts: renesas: r9a08g045: Add TSU node
-Date: Wed, 17 Dec 2025 12:32:21 +0200
-Message-ID: <20251217103222.4183089-6-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 3/6] thermal/drivers/renesas/rzg3s: Add thermal driver for the Renesas RZ/G3S SoC
+Date: Wed, 17 Dec 2025 12:32:19 +0200
+Message-ID: <20251217103222.4183089-4-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251217103222.4183089-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20251217103222.4183089-1-claudiu.beznea.uj@bp.renesas.com>
@@ -72,117 +72,354 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 17 Dec 2025 10:32:35 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21118
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21116
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit ee9bfab464247edd9a3f0f65e7ed96053e4b1095 upstream.
+commit dc095b37b09e1abbdb6daf5e69dbd0cd5265087e upstream.
 
-Add TSU node along with thermal zones and keep it enabled in the SoC DTSI.
-The temperature reported by the TSU can only be read through channel 8 of
-the ADC. Therefore, enable the ADC by default.
+The Renesas RZ/G3S SoC features a Thermal Sensor Unit (TSU) that reports
+the junction temperature. The temperature is reported through a dedicated
+ADC channel. Add a driver for the Renesas RZ/G3S TSU.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://patch.msgid.link/20250810122125.792966-4-claudiu.beznea.uj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[claudiu.beznea: fixed conflict around the i3c node as this is not yet in
- v6.12 CIP]
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Link: https://lore.kernel.org/r/20250810122125.792966-3-claudiu.beznea.uj@bp.renesas.com
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+[claudiu.beznea: added pm_runtime_mark_last_busy() as it is not embedded in
+ pm_runtime_put_autosuspend() on v6.12 CIP]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi    | 49 ++++++++++++++++++-
- .../boot/dts/renesas/rzg3s-smarc-som.dtsi     |  4 --
- 2 files changed, 48 insertions(+), 5 deletions(-)
+ MAINTAINERS                             |   7 +
+ drivers/thermal/renesas/Kconfig         |   8 +
+ drivers/thermal/renesas/Makefile        |   1 +
+ drivers/thermal/renesas/rzg3s_thermal.c | 274 ++++++++++++++++++++++++
+ 4 files changed, 290 insertions(+)
+ create mode 100644 drivers/thermal/renesas/rzg3s_thermal.c
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-index 0364f89776e6..3f56fff7d9b0 100644
---- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-@@ -233,7 +233,6 @@ adc: adc@10058000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			#io-channel-cells = <1>;
--			status = "disabled";
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8e5467865d18..0f82f70a78c0 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -19760,6 +19760,13 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/iio/potentiometer/renesas,x9250.yaml
+ F:	drivers/iio/potentiometer/x9250.c
  
- 			channel@0 {
- 				reg = <0>;
-@@ -272,6 +271,17 @@ channel@8 {
- 			};
- 		};
- 
-+		tsu: thermal@10059000 {
-+			compatible = "renesas,r9a08g045-tsu";
-+			reg = <0 0x10059000 0 0x1000>;
-+			clocks = <&cpg CPG_MOD R9A08G045_TSU_PCLK>;
-+			resets = <&cpg R9A08G045_TSU_PRESETN>;
-+			power-domains = <&cpg>;
-+			#thermal-sensor-cells = <0>;
-+			io-channels = <&adc 8>;
-+			io-channel-names = "tsu";
-+		};
++RENESAS RZ/G3S THERMAL SENSOR UNIT DRIVER
++M:	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
++L:	linux-pm@vger.kernel.org
++S:	Maintained
++F:	Documentation/devicetree/bindings/thermal/renesas,r9a08g045-tsu.yaml
++F:	drivers/thermal/renesas/rzg3s_thermal.c
 +
- 		vbattb: clock-controller@1005c000 {
- 			compatible = "renesas,r9a08g045-vbattb";
- 			reg = <0 0x1005c000 0 0x1000>;
-@@ -717,6 +727,43 @@ timer {
- 				  "hyp-virt";
- 	};
- 
-+	thermal-zones {
-+		cpu_thermal: cpu-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+			thermal-sensors = <&tsu>;
-+			sustainable-power = <423>;
+ RESET CONTROLLER FRAMEWORK
+ M:	Philipp Zabel <p.zabel@pengutronix.de>
+ S:	Maintained
+diff --git a/drivers/thermal/renesas/Kconfig b/drivers/thermal/renesas/Kconfig
+index dcf5fc5ae08e..566478797095 100644
+--- a/drivers/thermal/renesas/Kconfig
++++ b/drivers/thermal/renesas/Kconfig
+@@ -26,3 +26,11 @@ config RZG2L_THERMAL
+ 	help
+ 	  Enable this to plug the RZ/G2L thermal sensor driver into the Linux
+ 	  thermal framework.
 +
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert0>;
-+					cooling-device = <&cpu0 0 2>;
-+					contribution = <1024>;
-+				};
-+			};
++config RZG3S_THERMAL
++	tristate "Renesas RZ/G3S thermal driver"
++	depends on ARCH_R9A08G045 || COMPILE_TEST
++	depends on OF && IIO && RZG2L_ADC
++	help
++	  Enable this to plug the RZ/G3S thermal sensor driver into the Linux
++	  thermal framework.
+diff --git a/drivers/thermal/renesas/Makefile b/drivers/thermal/renesas/Makefile
+index bf9cb3cb94d6..1feb5ab78827 100644
+--- a/drivers/thermal/renesas/Makefile
++++ b/drivers/thermal/renesas/Makefile
+@@ -3,3 +3,4 @@
+ obj-$(CONFIG_RCAR_GEN3_THERMAL)	+= rcar_gen3_thermal.o
+ obj-$(CONFIG_RCAR_THERMAL)	+= rcar_thermal.o
+ obj-$(CONFIG_RZG2L_THERMAL)	+= rzg2l_thermal.o
++obj-$(CONFIG_RZG3S_THERMAL)	+= rzg3s_thermal.o
+diff --git a/drivers/thermal/renesas/rzg3s_thermal.c b/drivers/thermal/renesas/rzg3s_thermal.c
+new file mode 100644
+index 000000000000..d184dccc882f
+--- /dev/null
++++ b/drivers/thermal/renesas/rzg3s_thermal.c
+@@ -0,0 +1,274 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Renesas RZ/G3S TSU Thermal Sensor Driver
++ *
++ * Copyright (C) 2024 Renesas Electronics Corporation
++ */
 +
-+			trips {
-+				cpu_crit: cpu-critical {
-+					temperature = <110000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
++#include <linux/bitfield.h>
++#include <linux/delay.h>
++#include <linux/iio/consumer.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
++#include <linux/reset.h>
++#include <linux/thermal.h>
++#include <linux/units.h>
 +
-+				cpu_alert1: trip-point1 {
-+					temperature = <90000>;
-+					hysteresis = <1000>;
-+					type = "passive";
-+				};
++#include "../thermal_hwmon.h"
 +
-+				cpu_alert0: trip-point0 {
-+					temperature = <85000>;
-+					hysteresis = <1000>;
-+					type = "passive";
-+				};
-+			};
-+		};
-+	};
++#define TSU_SM			0x0
++#define TSU_SM_EN		BIT(0)
++#define TSU_SM_OE		BIT(1)
++#define OTPTSUTRIM_REG(n)	(0x18 + (n) * 0x4)
++#define OTPTSUTRIM_EN_MASK	BIT(31)
++#define OTPTSUTRIM_MASK		GENMASK(11, 0)
 +
- 	vbattb_xtal: vbattb-xtal {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
-diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-index 39845faec894..6f25ab617982 100644
---- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-@@ -84,10 +84,6 @@ x3_clk: x3-clock {
- 	};
- };
- 
--&adc {
--	status = "okay";
--};
--
- #if SW_CONFIG3 == SW_ON
- &eth0 {
- 	pinctrl-0 = <&eth0_pins>;
++#define TSU_READ_STEPS		8
++
++/* Default calibration values, if FUSE values are missing. */
++#define SW_CALIB0_VAL		1297
++#define SW_CALIB1_VAL		751
++
++#define MCELSIUS(temp)		((temp) * MILLIDEGREE_PER_DEGREE)
++
++/**
++ * struct rzg3s_thermal_priv - RZ/G3S thermal private data structure
++ * @base: TSU base address
++ * @dev: device pointer
++ * @tz: thermal zone pointer
++ * @rstc: reset control
++ * @channel: IIO channel to read the TSU
++ * @mode: current device mode
++ * @calib0: calibration value
++ * @calib1: calibration value
++ */
++struct rzg3s_thermal_priv {
++	void __iomem *base;
++	struct device *dev;
++	struct thermal_zone_device *tz;
++	struct reset_control *rstc;
++	struct iio_channel *channel;
++	enum thermal_device_mode mode;
++	u16 calib0;
++	u16 calib1;
++};
++
++static int rzg3s_thermal_get_temp(struct thermal_zone_device *tz, int *temp)
++{
++	struct rzg3s_thermal_priv *priv = thermal_zone_device_priv(tz);
++	int ts_code_ave = 0;
++
++	if (priv->mode != THERMAL_DEVICE_ENABLED)
++		return -EAGAIN;
++
++	for (u8 i = 0; i < TSU_READ_STEPS; i++) {
++		int ret, val;
++
++		ret = iio_read_channel_raw(priv->channel, &val);
++		if (ret < 0)
++			return ret;
++
++		ts_code_ave += val;
++		/*
++		 * According to the HW manual (Rev.1.10, section 40.4.4 Procedure for Measuring
++		 * the Temperature) we need to wait here at leat 3us.
++		 */
++		usleep_range(5, 10);
++	}
++
++	ts_code_ave = DIV_ROUND_CLOSEST(MCELSIUS(ts_code_ave), TSU_READ_STEPS);
++
++	/*
++	 * According to the HW manual (Rev.1.10, section 40.4.4 Procedure for Measuring the
++	 * Temperature) the computation formula is as follows:
++	 *
++	 * Tj = (ts_code_ave - priv->calib1) * 165 / (priv->calib0 - priv->calib1) - 40
++	 *
++	 * Convert everything to milli Celsius before applying the formula to avoid
++	 * losing precision.
++	 */
++
++	*temp = div_s64((s64)(ts_code_ave - MCELSIUS(priv->calib1)) * MCELSIUS(165),
++			MCELSIUS(priv->calib0 - priv->calib1)) - MCELSIUS(40);
++
++	/* Report it in milli degrees Celsius and round it up to 0.5 degrees Celsius. */
++	*temp = roundup(*temp, 500);
++
++	return 0;
++}
++
++static void rzg3s_thermal_set_mode(struct rzg3s_thermal_priv *priv,
++				   enum thermal_device_mode mode)
++{
++	struct device *dev = priv->dev;
++	int ret;
++
++	ret = pm_runtime_resume_and_get(dev);
++	if (ret)
++		return;
++
++	if (mode == THERMAL_DEVICE_DISABLED) {
++		writel(0, priv->base + TSU_SM);
++	} else {
++		writel(TSU_SM_EN, priv->base + TSU_SM);
++		/*
++		 * According to the HW manual (Rev.1.10, section 40.4.1 Procedure for
++		 * Starting the TSU) we need to wait here 30us or more.
++		 */
++		usleep_range(30, 40);
++
++		writel(TSU_SM_OE | TSU_SM_EN, priv->base + TSU_SM);
++		/*
++		 * According to the HW manual (Rev.1.10, section 40.4.1 Procedure for
++		 * Starting the TSU) we need to wait here 50us or more.
++		 */
++		usleep_range(50, 60);
++	}
++
++	pm_runtime_mark_last_busy(dev);
++	pm_runtime_put_autosuspend(dev);
++}
++
++static int rzg3s_thermal_change_mode(struct thermal_zone_device *tz,
++				     enum thermal_device_mode mode)
++{
++	struct rzg3s_thermal_priv *priv = thermal_zone_device_priv(tz);
++
++	if (priv->mode == mode)
++		return 0;
++
++	rzg3s_thermal_set_mode(priv, mode);
++	priv->mode = mode;
++
++	return 0;
++}
++
++static const struct thermal_zone_device_ops rzg3s_tz_of_ops = {
++	.get_temp = rzg3s_thermal_get_temp,
++	.change_mode = rzg3s_thermal_change_mode,
++};
++
++static int rzg3s_thermal_read_calib(struct rzg3s_thermal_priv *priv)
++{
++	struct device *dev = priv->dev;
++	u32 val;
++	int ret;
++
++	ret = pm_runtime_resume_and_get(dev);
++	if (ret)
++		return ret;
++
++	val = readl(priv->base + OTPTSUTRIM_REG(0));
++	if (val & OTPTSUTRIM_EN_MASK)
++		priv->calib0 = FIELD_GET(OTPTSUTRIM_MASK, val);
++	else
++		priv->calib0 = SW_CALIB0_VAL;
++
++	val = readl(priv->base + OTPTSUTRIM_REG(1));
++	if (val & OTPTSUTRIM_EN_MASK)
++		priv->calib1 = FIELD_GET(OTPTSUTRIM_MASK, val);
++	else
++		priv->calib1 = SW_CALIB1_VAL;
++
++	pm_runtime_mark_last_busy(dev);
++	pm_runtime_put_autosuspend(dev);
++
++	return 0;
++}
++
++static int rzg3s_thermal_probe(struct platform_device *pdev)
++{
++	struct rzg3s_thermal_priv *priv;
++	struct device *dev = &pdev->dev;
++	int ret;
++
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(priv->base))
++		return PTR_ERR(priv->base);
++
++	priv->channel = devm_iio_channel_get(dev, "tsu");
++	if (IS_ERR(priv->channel))
++		return dev_err_probe(dev, PTR_ERR(priv->channel), "Failed to get IIO channel!\n");
++
++	priv->rstc = devm_reset_control_get_exclusive_deasserted(dev, NULL);
++	if (IS_ERR(priv->rstc))
++		return dev_err_probe(dev, PTR_ERR(priv->rstc), "Failed to get reset!\n");
++
++	priv->dev = dev;
++	priv->mode = THERMAL_DEVICE_DISABLED;
++	platform_set_drvdata(pdev, priv);
++
++	pm_runtime_set_autosuspend_delay(dev, 300);
++	pm_runtime_use_autosuspend(dev);
++	ret = devm_pm_runtime_enable(dev);
++	if (ret)
++		return dev_err_probe(dev, ret, "Failed to enable runtime PM!\n");
++
++	ret = rzg3s_thermal_read_calib(priv);
++	if (ret)
++		return dev_err_probe(dev, ret, "Failed to read calibration data!\n");
++
++	priv->tz = devm_thermal_of_zone_register(dev, 0, priv, &rzg3s_tz_of_ops);
++	if (IS_ERR(priv->tz))
++		return dev_err_probe(dev, PTR_ERR(priv->tz), "Failed to register thermal zone!\n");
++
++	ret = devm_thermal_add_hwmon_sysfs(dev, priv->tz);
++	if (ret)
++		return dev_err_probe(dev, ret, "Failed to add hwmon sysfs!\n");
++
++	return 0;
++}
++
++static int rzg3s_thermal_suspend(struct device *dev)
++{
++	struct rzg3s_thermal_priv *priv = dev_get_drvdata(dev);
++
++	rzg3s_thermal_set_mode(priv, THERMAL_DEVICE_DISABLED);
++
++	return reset_control_assert(priv->rstc);
++}
++
++static int rzg3s_thermal_resume(struct device *dev)
++{
++	struct rzg3s_thermal_priv *priv = dev_get_drvdata(dev);
++	int ret;
++
++	ret = reset_control_deassert(priv->rstc);
++	if (ret)
++		return ret;
++
++	if (priv->mode != THERMAL_DEVICE_DISABLED)
++		rzg3s_thermal_set_mode(priv, priv->mode);
++
++	return 0;
++}
++
++static const struct dev_pm_ops rzg3s_thermal_pm_ops = {
++	SYSTEM_SLEEP_PM_OPS(rzg3s_thermal_suspend, rzg3s_thermal_resume)
++};
++
++static const struct of_device_id rzg3s_thermal_dt_ids[] = {
++	{ .compatible = "renesas,r9a08g045-tsu" },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, rzg3s_thermal_dt_ids);
++
++static struct platform_driver rzg3s_thermal_driver = {
++	.driver = {
++		.name = "rzg3s-thermal",
++		.of_match_table = rzg3s_thermal_dt_ids,
++		.pm = pm_ptr(&rzg3s_thermal_pm_ops),
++	},
++	.probe = rzg3s_thermal_probe,
++};
++module_platform_driver(rzg3s_thermal_driver);
++
++MODULE_DESCRIPTION("Renesas RZ/G3S Thermal Sensor Unit Driver");
++MODULE_AUTHOR("Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>");
++MODULE_LICENSE("GPL");
 -- 
 2.43.0
 
