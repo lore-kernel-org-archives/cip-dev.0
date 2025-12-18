@@ -1,161 +1,125 @@
-Return-Path: <masami.ichikawa@miraclelinux.com>
+Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80378D68BE8
-	for <webhook@archiver.kernel.org>; Thu, 18 Dec 2025 07:29:22 +0000 (UTC)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.36513.1766042961098991328
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FC38D6D237
+	for <webhook@archiver.kernel.org>; Thu, 18 Dec 2025 15:32:25 +0000 (UTC)
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.44876.1766071943056625932
  for <cip-dev@lists.cip-project.org>;
- Wed, 17 Dec 2025 23:29:21 -0800
+ Thu, 18 Dec 2025 07:32:23 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@miraclelinux-com.20230601.gappssmtp.com header.s=20230601 header.b=ChuI89JS;
- spf=pass (domain: miraclelinux.com, ip: 209.85.128.171, mailfrom: masami.ichikawa@miraclelinux.com)
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-78d6dc596eeso2093737b3.0
-        for <cip-dev@lists.cip-project.org>; Wed, 17 Dec 2025 23:29:20 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=DutA2sZv;
+ spf=pass (domain: gmail.com, ip: 209.85.128.51, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4779ce2a624so7155575e9.2
+        for <cip-dev@lists.cip-project.org>; Thu, 18 Dec 2025 07:32:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20230601.gappssmtp.com; s=20230601; t=1766042960; x=1766647760; darn=lists.cip-project.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1766071941; x=1766676741; darn=lists.cip-project.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OaIJ+f7LVKuJOxxHHO+ts9f4N/+4kTBuPMa7bCmWgR0=;
-        b=ChuI89JSv08395rMGrEm3AKRj5C+jV2OvZMfjGlzdS0w5nFvM4xg29pzgjHF97KV1c
-         WeMVqlG4FEfTiuvQkAnkTBp6/pZ8ebger5wsc9HaZIPJe2Bals/w6qixWZU0ebRZXQIe
-         37UZ/P7DfW1TOt3Z6u+iK392y0JchxDsnfe6086Gp8X8xfmMnMNcUniLTTyIuLz6ahQG
-         CToC4Epu0z3/4shpz0rsZFsQhkLYY1xOpJxiC+F/sMUuH7rTG9uf2R+n90YMqC6mpUSR
-         IhVzWTy2UeaI5dJKcf/XWzBsHrmEDGWeIhjm2PSjjJ6Gs71QGk0obk5TZ/viIBxkhnw4
-         sdbg==
+        bh=ZEf8BhaEqIkoXFhuH4yOrS21hTk8juRb5eJGyncmfew=;
+        b=DutA2sZvbyD1C+mhHTu8knzDw1HwXe6gPzMY1S0dBofuVOG503bE4oWDLtp4G6xFpU
+         NNJXyZvISZgVikVBXb+yMgieinkl3EECXWCnDn1tI5bL0ZzpHDGNAaLquBvpJOH+W6gC
+         eOCK2LfMCBocmDOzWvSQXtwDl1NWwHl3boG+grloKR0IuuvA/OQrbj6ex364/SQ1S7D2
+         kesMNeuSEsVeMKlTzN0t7KcSQkuytCKElfcTG0q7ZAzNiD1BCqULKN0v5q0ser1Zhy9M
+         IliSnsE6P9HS68vH9fFpoMR4CMXWbQT2o/VdoUTno6KGE4h5zh4EsNAj4vuw2M39UAQD
+         wi1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766042960; x=1766647760;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20230601; t=1766071941; x=1766676741;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=OaIJ+f7LVKuJOxxHHO+ts9f4N/+4kTBuPMa7bCmWgR0=;
-        b=c9jJLP8RNpst7tFShIEy16uoBco8Z+IpX1VQMeYJ4pdtoMS+8LoFA+RJDeubnfJTzx
-         wNg73XuOb2wsz08DTdHP5e5cBgFnDjcJSOEdPdmprr2mK6+KQxKZLvDge8/eQTOoYDvV
-         7rQFNlzL/yzIEyc+i1Y7oIpWy587SVaII2EucXlIjlixfQMAcMC5J/mdQRt9eKXkedgl
-         X5hA2Pk+qyaH6pktaAOX5xsfYXjjjW88lA6OUJwNSIQy4STUjMKTPPc/6rEhIqlxrWX8
-         oXdWZ4CkCegccTsRjAnT52/1t3fsdsrX2kYbcnv7UtRaMXZ9rbqrWSymXvP4SKgV4qCJ
-         5KAw==
-X-Gm-Message-State: AOJu0YxIf2khkf+3X+yPzHkRWJ0qt6IHb0E0WaU7gZL4lAhvaF0feh9p
-	XhQfZGomYWW5Z732HXMDKYceoIcrz1jDzQ0y4zwFB9vvBHt8HgdEC8cOIfjDjaX1wVhWkcEJNlc
-	ieuyGlbXpF6sOlsDdGfQVx28au/9ZrDh58qykEiIUwJTOecLLRpWg
-X-Gm-Gg: AY/fxX4sEoelutdwIip1XsYcLaj2On3LQLU6EfWp+/hhZV17wqpFZWN0WK10hd0U1lx
-	abNh1mTl2UO0JWt8zWJpnRmIt9X6zqaLS9dVFGRQ5aTQJ/hwHNSzdncUymZetFS/VCkx4HjVp1b
-	bikfzP4lQHFfqWgpbKtwp3e+2IC9T8YiFiio9AWmUygt4O2nAuv01QOgIlu5aA5BIukSQ7E+XMs
-	WlExX+Y5SSFnagg+W3piHiISI/52N+F2GOJ/bGmkmh43FK8pFlSLLy59DcFW61QMMqGetyD
-X-Google-Smtp-Source: AGHT+IE6vc05mgMprutLhP8F+S2l88lh5fOMoydoQQmSwDQCSJuRdhoPA7+pY0OO9tfsOE8XHMlJsi7sfdD5ENWjkk4=
-X-Received: by 2002:a05:690c:7208:b0:783:71ee:8977 with SMTP id
- 00721157ae682-78e66d4d412mr182516977b3.11.1766042959989; Wed, 17 Dec 2025
- 23:29:19 -0800 (PST)
+        bh=ZEf8BhaEqIkoXFhuH4yOrS21hTk8juRb5eJGyncmfew=;
+        b=ZMb+0AgU1317kyUn3EJ6y/IQcLvp8ZlKgFghmtHejI2+7m5nY5HbUfRjBC8nEjCkCr
+         AFMkfzskCzHRg9GWsjwMHUHF0kXwkPeuZzGGW2tYRN+Lg6Knr01oopioAe6FA1/UnVmt
+         yMdxHMFhH9NnPvJfIArtB86XD0SNtnKQGu/s4kcJwuMkU0LYbyKVIkGGJv8k4Yk1AApV
+         HRiI5SkRV3g4bg/pdDbB/FNZuuMKbJlNkCSAGDf9hPmvNrF6DGaU1jAa1y7wSN1/DrYB
+         dNZZ5RAYBDDse4vlAUgwT/qsHMjedspVBw5g7xe7fs614yTTzoX/UIAg25XnQMDdnDll
+         PqVQ==
+X-Gm-Message-State: AOJu0YwlK8rfyDzcxYfo35KxLHNOmiLPladrL+0gUBETKdjcEAc08CAm
+	Lle2SkkELCGbJrvpSO1Qi9jnpp8nH/erCwDzi+Xk/tslcE0jNX68J4ksAuugIg==
+X-Gm-Gg: AY/fxX4Uspy5Cgn7DWJZHN6zlJXSyYCXB+ooRfSM0xDzwbnVCpc+WrWf7rY2u+y1gQE
+	6juAXk5NMIPeZKPmjLGfxArpCt+utF8hPZs5zYThVq002j0PMYhvVDfqfPhJxKsp97MYEnYd6YP
+	OlQylSrKASWGUTdsBya2xfbmxDN9WBMYCEFHAaZpyqyZS5bVgwWm11rfNc9mkoRwWcWy5Wt2Ml3
+	DKQlqOza+HvLCvFAmRhKFyiUR/7zXk+vJcvqy0kP2afvVYbQODvhl+dQ9xZE7d8ghV/VAeQVyaw
+	KGZPfUQAGr9dvmr83NaMGvrOk05XKUM9LuBSTiTgrvjX34GQAE17Q6CwuQACM/BlKAyj+Ity11/
+	EK/trnKCWuzjkQXbPDxz4ZYSOFYWVq7dNazmFkqxo6WPH588kk5/efMrhcjs7g30jw9qpw5HvYR
+	KOTyjAhaghcGHAFaK3WA==
+X-Google-Smtp-Source: AGHT+IHqwtceIlfMLKuH2kp3kNbJ5mmtr7rrhcTO+/Jxtw55/5+eBJnEb9T0AbvzuLDzAmlTN2pCrg==
+X-Received: by 2002:a05:600c:8115:b0:477:a36f:1a57 with SMTP id 5b1f17b1804b1-47a8f8a9c26mr222381175e9.3.1766071941098;
+        Thu, 18 Dec 2025 07:32:21 -0800 (PST)
+Received: from biju.lan ([2a00:23c4:a758:8a01:a534:2aa6:4ac4:7963])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-432449af076sm5637772f8f.40.2025.12.18.07.32.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Dec 2025 07:32:20 -0800 (PST)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: cip-dev@lists.cip-project.org,
+	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
+	Pavel Machek <pavel@denx.de>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 02/12] pinctrl: renesas: Mark local variable with const in ->set_mux()
+Date: Thu, 18 Dec 2025 15:31:51 +0000
+Message-ID: <20251218153219.228506-3-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251218153219.228506-1-biju.das.jz@bp.renesas.com>
+References: <20251218153219.228506-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-References: <258113dc-28cf-4348-9555-02eaf6741132@siemens.com>
-In-Reply-To: <258113dc-28cf-4348-9555-02eaf6741132@siemens.com>
-From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
-Date: Thu, 18 Dec 2025 16:28:44 +0900
-X-Gm-Features: AQt7F2q3IFJeuwzOrR0yKYJzHx4e96dDt8xyi2sakhVbu5g4XE-OyonuozWExAg
-Message-ID: <CAODzB9pGXNGhwRMgE-ZgAmcTfnLTop23o80+OdJijCv-qVAB5Q@mail.gmail.com>
-Subject: Re: [cip-dev] CIP IRC weekly meeting today on libera.chat
-To: cip-dev <cip-dev@lists.cip-project.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 18 Dec 2025 07:29:22 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21124
+ <cip-dev@lists.cip-project.org>; Thu, 18 Dec 2025 15:32:25 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21127
 
-Hi
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-I'm sorry. I'll be absent today.
+[ Upstream commit 731b30f6aab7c45bb89372c3c05b711cee362b69 ]
 
-On Thu, Dec 18, 2025 at 4:02=E2=80=AFPM Jan Kiszka via lists.cip-project.or=
-g
-<jan.kiszka=3Dsiemens.com@lists.cip-project.org> wrote:
->
-> Hi all,
->
-> Kindly be reminded to attend the weekly meeting through IRC to discuss
-> technical topics with CIP kernel today. Our channel is the following:
->
->     irc:irc.libera.chat:6667/cip
->
-> The IRC meeting is scheduled to UTC (GMT) 12:00:
->
-> https://www.timeanddate.com/worldclock/meetingdetails.html?year=3D2025&mo=
-nth=3D12&day=3D18&hour=3D12&min=3D0&sec=3D0&p1=3D224&p2=3D179&p3=3D136&p4=
-=3D37&p5=3D241&p6=3D248
->
-> USWest    USEast    UK        DE        TW        JP
-> 04:00     07:00     12:00     13:00     20:00     21:00
->
-> Last meeting minutes:
-> https://ircbot.wl.linuxfoundation.org/meetings/cip/2025/12/cip.2025-12-11=
--12.01.log.html
->
-> * Action items
-> * Kernel maintenance updates
-> * Kernel release status [*]
-> * Kernel testing
-> * AOB
->
-> Jan
->
-> [*]
-> Date the data is created: Thu Dec 18 07:01:39 AM UTC 2025
-> linux-4.4.y-cip: interval 30 day
->   latest version release date: Thu Nov 27 12:52:11 AM UTC 2025
->   limit date: Sat Dec 27 12:52:11 AM UTC 2025
->   Status: On track
-> linux-4.4.y-cip-rt: interval 60 day
->   latest version release date: Wed Nov  5 10:07:00 AM UTC 2025
->   limit date: Sun Jan  4 10:07:00 AM UTC 2026
->   Status: On track
-> linux-4.19.y-cip: interval 30 day
->   latest version release date: Thu Nov 20 10:20:08 AM UTC 2025
->   limit date: Sat Dec 20 10:20:08 AM UTC 2025
->   Status: On track
-> linux-4.19.y-cip-rt: interval 60 day
->   latest version release date: Tue Sep 23 10:53:07 AM UTC 2025
->   limit date: Sat Nov 22 10:53:07 AM UTC 2025
->   Status: *Late*
-> linux-5.10.y-cip: interval 30 day
->   latest version release date: Wed Dec 10 10:14:17 PM UTC 2025
->   limit date: Fri Jan  9 10:14:17 PM UTC 2026
->   Status: On track
-> linux-5.10.y-cip-rt: interval 60 day
->   latest version release date: Fri Nov  7 09:45:57 AM UTC 2025
->   limit date: Tue Jan  6 09:45:57 AM UTC 2026
->   Status: On track
-> linux-6.1.y-cip: interval 30 day
->   latest version release date: Tue Dec  9 09:48:21 PM UTC 2025
->   limit date: Thu Jan  8 09:48:21 PM UTC 2026
->   Status: On track
-> linux-6.1.y-cip-rt: interval 60 day
->   latest version release date: Wed Nov  5 06:50:13 PM UTC 2025
->   limit date: Sun Jan  4 06:50:13 PM UTC 2026
->   Status: On track
-> linux-6.12.y-cip: interval 15 day
->   latest version release date: Tue Dec  2 05:29:12 AM UTC 2025
->   limit date: Wed Dec 17 05:29:12 AM UTC 2025
->   Status: *Late*
->
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#21123): https://lists.cip-project.org/g/cip-dev/messa=
-ge/21123
-> Mute This Topic: https://lists.cip-project.org/mt/116839064/4520416
-> Group Owner: cip-dev+owner@lists.cip-project.org
-> Unsubscribe: https://lists.cip-project.org/g/cip-dev/unsub [masami.ichika=
-wa@miraclelinux.com]
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
->
+We are not going to change pins in the ->set_mux() callback. Mark
+the local variable with a const qualifier. While at it, make it
+also unsigned.
 
-Regards,
---
-Masami Ichikawa
-Cybertrust Japan Co., Ltd.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20231204160033.1872569-2-andriy.shevchenko@linux.intel.com
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 2 +-
+ drivers/pinctrl/renesas/pinctrl-rzv2m.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Email :masami.ichikawa@cybertrust.co.jp
-          :masami.ichikawa@miraclelinux.com
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index b196105ab293..062e109126a4 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -559,7 +559,7 @@ static int rzg2l_pinctrl_set_mux(struct pinctrl_dev *pctldev,
+ 	struct function_desc *func;
+ 	unsigned int i, *psel_val;
+ 	struct group_desc *group;
+-	int *pins;
++	const unsigned int *pins;
+ 
+ 	func = pinmux_generic_get_function(pctldev, func_selector);
+ 	if (!func)
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzv2m.c b/drivers/pinctrl/renesas/pinctrl-rzv2m.c
+index 593b03bacad2..2e58495b26f3 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzv2m.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzv2m.c
+@@ -165,7 +165,7 @@ static int rzv2m_pinctrl_set_mux(struct pinctrl_dev *pctldev,
+ 	struct function_desc *func;
+ 	unsigned int i, *psel_val;
+ 	struct group_desc *group;
+-	int *pins;
++	const unsigned int *pins;
+ 
+ 	func = pinmux_generic_get_function(pctldev, func_selector);
+ 	if (!func)
+-- 
+2.43.0
+
 
