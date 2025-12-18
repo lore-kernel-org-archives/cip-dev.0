@@ -2,57 +2,57 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01B4AD6E2DE
-	for <webhook@archiver.kernel.org>; Thu, 18 Dec 2025 16:56:18 +0000 (UTC)
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.1414.1766076971585737239
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFBF9D6E2DC
+	for <webhook@archiver.kernel.org>; Thu, 18 Dec 2025 16:56:17 +0000 (UTC)
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.1398.1766076971393264240
  for <cip-dev@lists.cip-project.org>;
  Thu, 18 Dec 2025 08:56:11 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=L1VpP1Ai;
- spf=pass (domain: gmail.com, ip: 209.85.128.47, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-477a219dbcaso8201445e9.3
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=V9Q4lnnj;
+ spf=pass (domain: gmail.com, ip: 209.85.128.45, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-477b5e0323bso11078025e9.0
         for <cip-dev@lists.cip-project.org>; Thu, 18 Dec 2025 08:56:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766076970; x=1766681770; darn=lists.cip-project.org;
+        d=gmail.com; s=20230601; t=1766076969; x=1766681769; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lYhkJmWBkOvWPkJ/Ua9ayCgCj1HpKn8j1HZMtZ59MuY=;
-        b=L1VpP1Aiwtag1Onw4DYHz22XN4J3FjxhbJoH8wn/WNubIkP8cixmgz0zub/Q845GLz
-         qjDtzDY1ykaw8d0Wy1T3/ApRRbJowOiEtuIVBaaWvz7EyLpd9Wf5uQqxGBnxOV3D7KLi
-         q3WnfMPbGfXaspbhlaj85ZOm+lYa5AGbFJ/FoZI+TIUuSNwT1zgJi1VNuJWiYbsULuE4
-         mjQivN5yHbiqM0BWNki6lfrN+wqlIeczkEGg/7YE4lqG/n0PcnptAhe4ykDLtKtZ8MnL
-         rkZ1sy3W06zBuJ4aaagwhRwvx/Bfzr47Nghms8fvhbuITyyTAcQXQLXsJPhwliCMntGq
-         YWYQ==
+        bh=2Zk6ll8BefAKD9k2NaJ4gnwoUt5KBY12bfN9KOR6VSg=;
+        b=V9Q4lnnj/7U2UHGvKcOkT6L+7wOuGSS6Iy2i9tmDNVNA53ZW8tMG0tspdJgdqzj25t
+         /feRutfjrRkP630usBh+Jzk4wO9xFWX4pIIftLYm3YZXgP9jODPz4/5f1lRpZeYIW8Wv
+         NbEHNukU0A43vqCvEcwFujTAKV+R6Bf0PyIESIvNIJL89CdnEW24FTb3Gy4CBm7Wj+4w
+         ly4VNFuj3UjxKOpTs/g+hJxdJ8evvHgJADw4pr0FUdv351jCjkzvQwQvFAg8lJuRVDKh
+         sKfivlZGLlBQoBLbE53EWzFYHYR/nmLWjcKYsS1IEM6Pz9yXsiGm6BYTwkgaWL6V3YUY
+         Q2rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766076970; x=1766681770;
+        d=1e100.net; s=20230601; t=1766076969; x=1766681769;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=lYhkJmWBkOvWPkJ/Ua9ayCgCj1HpKn8j1HZMtZ59MuY=;
-        b=W9bp/wUcb2T64EnekHipN8C3IEJ2cWIltX7qCKZdQzg5k7W8kbV+9lAmAwfQg/UMQl
-         Bp0/LfvTukFBrg1i4ryviHKVd1hjCsyxNbsh2tz+zN/Jtv53fuY3DMMEyQFzUDTMY4yC
-         JEuDddF2nPDDPcrIbsL4oXjqRw4G8l9AKqNFKpCOjO70IOu1JClhwA4qHEV7WKtTWpDd
-         Mbu6jAeuxnIM726kDcqm8fTv5RNIZ5dFCxMWjbyI5PH8iyUQqqt1jLoEXPqgl8U1VbpV
-         96075kfGaiOVMByOiYM8iDZ5RMxHo/oSeDiScceTvnO4UrtY/4tBGHl/wyHQH/9UIt72
-         28AA==
-X-Gm-Message-State: AOJu0YxgoN2PlvFquVurSnNS5lpMuLNGBeBCP3E6U+iUYVNA+2r72eoF
-	ICssrj670qNdv8iF+5WJsXD2rbppIw4WLlsnAapKO5pzW86t8APfwvkEuOqmag==
-X-Gm-Gg: AY/fxX50fowG/YPNZC1d7SZ7GAKwzzni/zr3rYXbRDMS1F8rK9F2UI/D1jN6ndgkJiD
-	QBURDkX+JEGbJysuaD+dQogHk1yVk5D7NzMPRlRnTFY1zpSUmfAlQyS2m3bVmDEBlvSyH3Oajdw
-	BMb75+7N4UVHj+nwgW9jGLrEWLj0/Ut16F8ZZwHOAL+tLU3zcl6lvrKPifICPUIauw/tWUcMzQP
-	rlNaIIdeNa06F/5vkaXdCTzHiMjB8roOwW4p0OgHNOW70nidONLJfqK4jupIMv6Y7Db2IB5DmaJ
-	TJZ9sYjOXSXHQAlHU4Tn92uLLlEY2yRDCeB86CFxQaXgWmHpsiiHr/1BXht03Kq2KzmzUsCbEfq
-	JvHoRjnY5+kIMV+yuzlQtyrQu8teL0BuLs6t1r+OTVsTHGC2UTbHwgGk73xqPx2CINeGMuZGdrn
-	SyKH08ggZFABm9q8G68Q==
-X-Google-Smtp-Source: AGHT+IE1CCXJA273BfiBq4kmM8kmvXuzMas/gCWvpZKWSh8ZGOg9KXOm9XMpj9fl3bdkAMowyh98Kg==
-X-Received: by 2002:a05:600c:3f18:b0:477:93f7:bbc5 with SMTP id 5b1f17b1804b1-47a992e2ed8mr187766635e9.10.1766076967918;
-        Thu, 18 Dec 2025 08:56:07 -0800 (PST)
+        bh=2Zk6ll8BefAKD9k2NaJ4gnwoUt5KBY12bfN9KOR6VSg=;
+        b=DFWjVYRZfnBTxoQJ04FG2wpMUK98PR5eiqGhdBL/m03sKRL7KHJR5OB01I9m6ulYHh
+         DOdK6DaeBVrmAO+Kq0qYT7A6Z9nb6VlGtEoym6xogyPsUmwhTXynX4LzTzsw4JB9cE+u
+         bSX81mggLUdIMzlfNWnh9Ot+xu8n9F1bKTew46q6H1zYjRaWtrhnwk/NQECUZUXksZMj
+         Pgw8YzuL0dX5MG9yGVTeL4CZp0Zlv3m5sxMh9c2HQ14so2pEUswnFuQuV42sqQ77DSfk
+         iD0X5gtAr5uXFs4opzZj7mNZcsgrtw4RWvOI6cUWiMXDtsQdEwmSwwQxlpSRojvynrCL
+         TzOw==
+X-Gm-Message-State: AOJu0Yz6mLQVwhzQKGzFsUCLZznvNSexqqSqxuqVNq7aiVboPOxmWD8w
+	X457WYPPE7QWK+X5inVq1vmOGKmvKdxeI2sxWSjXcghCwN57ztulZMoLmClvvA==
+X-Gm-Gg: AY/fxX7iQyCDIBbFXyo+Uhmsp6habvnVeeU3O1AupzP5pnNr81jBOAWDoYsAM9C6FaD
+	LYv2xPwM9qls6NH6T9v2k/ww87cQc3kpWYt9ydv20bUG9muPEWQAPvq33mwmuxQcbWvXVA/H9fi
+	GEaaZ6YRVMxJlxOdzqibN3lPeza4CAbt0clQvMTljIhvnYixxz7ma7hlrME1qvHNCSexff6Xe+R
+	UoTkoAUj8cvkRuTic+SC5J45UbxkiHk8E6VwFmQsmR+E0MgccsLJZ5M5MBXZTlW6TqWH0Z/wtQH
+	SzhdVH2i3IGNvXZnq+q89NZee9OPfI2zYdndY9qu2VT/KNaIlDs7hThBEkmBKuhE5Q59aMrGpGR
+	oYEYbaPPP9eMCwKC6QICOacuFdGipoh9Fxrj9KrL2FJXUtCA6kai1lUhWxstQDHX125Mc6vUQfE
+	aPj1K62BXm5aORRu99VIFvXmdGf8Ol
+X-Google-Smtp-Source: AGHT+IE6otKFlnWz9HsvR8EqaqRQqfaeBfS0S2hSuMStTBFbIoY4Sy2wSa2yAlmy1Zleqo9Dfw0ODQ==
+X-Received: by 2002:a05:6000:420c:b0:431:8bf:f08c with SMTP id ffacd0b85a97d-4324e42e651mr287465f8f.21.1766076969480;
+        Thu, 18 Dec 2025 08:56:09 -0800 (PST)
 Received: from biju.lan ([2a00:23c4:a758:8a01:a534:2aa6:4ac4:7963])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43244934b1fsm6180351f8f.8.2025.12.18.08.56.07
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43244934b1fsm6180351f8f.8.2025.12.18.08.56.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Dec 2025 08:56:07 -0800 (PST)
+        Thu, 18 Dec 2025 08:56:09 -0800 (PST)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -60,9 +60,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 15/24] can: rcar_canfd: Simplify nominal bit rate config
-Date: Thu, 18 Dec 2025 16:55:14 +0000
-Message-ID: <20251218165600.258194-16-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 18/24] can: rcar_canfd: Invert global vs. channel teardown
+Date: Thu, 18 Dec 2025 16:55:17 +0000
+Message-ID: <20251218165600.258194-19-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251218165600.258194-1-biju.das.jz@bp.renesas.com>
 References: <20251218165600.258194-1-biju.das.jz@bp.renesas.com>
@@ -71,93 +71,49 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 18 Dec 2025 16:56:18 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21156
+ <cip-dev@lists.cip-project.org>; Thu, 18 Dec 2025 16:56:17 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21155
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 02d274adf485a0b3454dbedb4b4a36d97cb98fa8 ]
+[ Upstream commit 790ec4c453890f1221ea595674a1206bbee41dc4 ]
 
-Introduce rcar_canfd_compute_nominal_bit_rate_cfg() for simplifying
-nominal bit rate configuration by replacing function-like macros.
+Global state is initialized and torn down before per-channel state.
+Invert the order to restore symmetry.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Vincent Mailhol <mailhol@kernel.org>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://patch.msgid.link/20250908120940.147196-4-biju.das.jz@bp.renesas.com
+Link: https://patch.msgid.link/20251124102837.106973-3-biju.das.jz@bp.renesas.com
 Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/net/can/rcar/rcar_canfd.c | 43 +++++++++++++++++--------------
- 1 file changed, 24 insertions(+), 19 deletions(-)
+ drivers/net/can/rcar/rcar_canfd.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
-index 848fdd820438..38f679cc35ec 100644
+index 9029275eba8b..e6a90fd94f4f 100644
 --- a/drivers/net/can/rcar/rcar_canfd.c
 +++ b/drivers/net/can/rcar/rcar_canfd.c
-@@ -110,16 +110,7 @@
- #define RCANFD_CFG_BRP		GENMASK(9, 0)
+@@ -2205,14 +2205,14 @@ static int rcar_canfd_remove(struct platform_device *pdev)
+ 	struct rcar_canfd_global *gpriv = platform_get_drvdata(pdev);
+ 	u32 ch;
  
- /* RSCFDnCFDCmNCFG - CAN FD only */
--#define RCANFD_NCFG_NTSEG2(gpriv, x) \
--	(((x) & ((gpriv)->info->nom_bittiming->tseg2_max - 1)) << (gpriv)->info->sh->ntseg2)
+-	rcar_canfd_reset_controller(gpriv);
+-	rcar_canfd_disable_global_interrupts(gpriv);
 -
--#define RCANFD_NCFG_NTSEG1(gpriv, x) \
--	(((x) & ((gpriv)->info->nom_bittiming->tseg1_max - 1)) << (gpriv)->info->sh->ntseg1)
--
--#define RCANFD_NCFG_NSJW(gpriv, x) \
--	(((x) & ((gpriv)->info->nom_bittiming->sjw_max - 1)) << (gpriv)->info->sh->nsjw)
--
--#define RCANFD_NCFG_NBRP(x)		(((x) & 0x3ff) << 0)
-+#define RCANFD_NCFG_NBRP	GENMASK(9, 0)
+ 	for_each_set_bit(ch, &gpriv->channels_mask, gpriv->info->max_channels) {
+ 		rcar_canfd_disable_channel_interrupts(gpriv->ch[ch]);
+ 		rcar_canfd_channel_remove(gpriv, ch);
+ 	}
  
- /* RSCFDnCFDCmCTR / RSCFDnCmCTR */
- #define RCANFD_CCTR_CTME		BIT(24)
-@@ -1390,6 +1381,28 @@ static irqreturn_t rcar_canfd_channel_interrupt(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
-+static inline u32 rcar_canfd_compute_nominal_bit_rate_cfg(struct rcar_canfd_channel *priv,
-+							  u16 tseg1, u16 tseg2, u16 sjw, u16 brp)
-+{
-+	struct rcar_canfd_global *gpriv = priv->gpriv;
-+	const struct rcar_canfd_hw_info *info = gpriv->info;
-+	u32 ntseg1, ntseg2, nsjw, nbrp;
++	rcar_canfd_disable_global_interrupts(gpriv);
++	rcar_canfd_reset_controller(gpriv);
 +
-+	if ((priv->can.ctrlmode & CAN_CTRLMODE_FD) || gpriv->info->shared_can_regs) {
-+		ntseg1 = (tseg1 & (info->nom_bittiming->tseg1_max - 1)) << info->sh->ntseg1;
-+		ntseg2 = (tseg2 & (info->nom_bittiming->tseg2_max - 1)) << info->sh->ntseg2;
-+		nsjw = (sjw & (info->nom_bittiming->sjw_max - 1)) << info->sh->nsjw;
-+		nbrp = FIELD_PREP(RCANFD_NCFG_NBRP, brp);
-+	} else {
-+		ntseg1 = FIELD_PREP(RCANFD_CFG_TSEG1, tseg1);
-+		ntseg2 = FIELD_PREP(RCANFD_CFG_TSEG2, tseg2);
-+		nsjw = FIELD_PREP(RCANFD_CFG_SJW, sjw);
-+		nbrp = FIELD_PREP(RCANFD_CFG_BRP, brp);
-+	}
-+
-+	return (ntseg1 | ntseg2 | nsjw | nbrp);
-+}
-+
- static void rcar_canfd_set_bittiming(struct net_device *ndev)
- {
- 	u32 mask = RCANFD_FDCFG_TDCO | RCANFD_FDCFG_TDCE | RCANFD_FDCFG_TDCOC;
-@@ -1408,15 +1421,7 @@ static void rcar_canfd_set_bittiming(struct net_device *ndev)
- 	sjw = bt->sjw - 1;
- 	tseg1 = bt->prop_seg + bt->phase_seg1 - 1;
- 	tseg2 = bt->phase_seg2 - 1;
--
--	if ((priv->can.ctrlmode & CAN_CTRLMODE_FD) || gpriv->info->shared_can_regs) {
--		cfg = (RCANFD_NCFG_NTSEG1(gpriv, tseg1) | RCANFD_NCFG_NBRP(brp) |
--		       RCANFD_NCFG_NSJW(gpriv, sjw) | RCANFD_NCFG_NTSEG2(gpriv, tseg2));
--	} else {
--		cfg = FIELD_PREP(RCANFD_CFG_TSEG1, tseg1) | FIELD_PREP(RCANFD_CFG_BRP, brp) |
--		      FIELD_PREP(RCANFD_CFG_SJW, sjw) | FIELD_PREP(RCANFD_CFG_TSEG2, tseg2);
--	}
--
-+	cfg = rcar_canfd_compute_nominal_bit_rate_cfg(priv, tseg1, tseg2, sjw, brp);
- 	rcar_canfd_write(priv->base, RCANFD_CCFG(ch), cfg);
- 
- 	if (!(priv->can.ctrlmode & CAN_CTRLMODE_FD))
+ 	/* Enter global sleep mode */
+ 	rcar_canfd_set_bit(gpriv->base, RCANFD_GCTR, RCANFD_GCTR_GSLPR);
+ 	clk_disable_unprepare(gpriv->clkp);
 -- 
 2.43.0
 
