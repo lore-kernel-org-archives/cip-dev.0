@@ -2,56 +2,57 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80D0DD6D230
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D47ED6E2A9
 	for <webhook@archiver.kernel.org>; Thu, 18 Dec 2025 15:32:25 +0000 (UTC)
-Received: from mail-wr1-f65.google.com (mail-wr1-f65.google.com [209.85.221.65])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.44874.1766071942639565727
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.44877.1766071945203170078
  for <cip-dev@lists.cip-project.org>;
- Thu, 18 Dec 2025 07:32:22 -0800
+ Thu, 18 Dec 2025 07:32:25 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=HysA0Sor;
- spf=pass (domain: gmail.com, ip: 209.85.221.65, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wr1-f65.google.com with SMTP id ffacd0b85a97d-42b3d7c1321so452741f8f.3
-        for <cip-dev@lists.cip-project.org>; Thu, 18 Dec 2025 07:32:22 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=Opz26cs5;
+ spf=pass (domain: gmail.com, ip: 209.85.128.52, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-47a8195e515so6839015e9.0
+        for <cip-dev@lists.cip-project.org>; Thu, 18 Dec 2025 07:32:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766071941; x=1766676741; darn=lists.cip-project.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YPsc/IkawCpUntfFZypieqcDhQ2jVpNqs4EYsLlbhDo=;
-        b=HysA0Sorz7rWkhi0WiqkXlQePJ1refvSZtyW9a5ol05LFGJvEq7h9y5CxIc16K2hC2
-         jpheF26TaVHKZhYNWPdLQ3Yn+rIvIDYk3wkir/H/bxMuUx6Ep3/aSrzuMBgiiVIFhLwM
-         n91BNOAyzVRLD7TuE1Pqko7k/r+bKJIo8+rOr9GsR7ug15mu69Ml9hC8yvl7am44VsVZ
-         tm0+V90PXqxSMrZyYfADvylWlL8eqTsASO6SlAc7QgSkXz6zyVlj8VlxZTz6EFEHF5p7
-         ZhZ9ONSeCjcV4iylWaYCYCsQHSdSt50BRQ8KO/LUF1a5WEu9Ft8fA4Kv6xZVAl9OVnTU
-         PmZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766071941; x=1766676741;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1766071943; x=1766676743; darn=lists.cip-project.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YPsc/IkawCpUntfFZypieqcDhQ2jVpNqs4EYsLlbhDo=;
-        b=X66oeoMxH9WvvCqCb/HZdkExSE9t4Gw/fk1QlgQ6CTpw26JG73aOZrHzWfJGnl8hIS
-         WdhlYKTibmA8jTICrki1/KepBMcWcyC+LgLV/CyNvxe6X3PYu+S9+Ugr6sHm/ovYWCD9
-         hs97V+fA2ZhtzU5XxC1Nn8pzVB31JsVq30AIo59S0cbJ/FYjai+LephptMmMO1EWXB4E
-         /mv5V+XtHsulI60CyDOZRAmnnEhXqUJ0f1XbPpu30CSUNsxxB3ltuVUAWV4hwD20vG5a
-         kIpG98h/gegho1XYhFjvDueyQ8XMZd9BF5nAQy+5e2/oWbfaXDPJzIft03Ui9gROvaS7
-         1lhA==
-X-Gm-Message-State: AOJu0Yz8nY3VZwns5IAWRMgZg4xDJehuBasDsauhLya96sG9kdS5zG3p
-	Qrqd5lxCwKD37qNWmhMqGadnRz5la+1clIWZ/61Ui40suiJIzwtW8d4O+kfMErmS
-X-Gm-Gg: AY/fxX6fZoJtxfKEwA+OxzFFkILtGHgsz68aBhfB6IG6Qksgf25xnT7jjkQ1LkQaN8f
-	X24WYrDaRHrm+frduHujofm1jJ3BvbNWEWQqhTyr6bufkBOU1LJX89CMp5VxMzuqfACUYqTDarw
-	+VJaV9I/N0VukOET6nHS+KU4K8WON0n6QFmEHq1kKm52BYGjWmhbmfsgwJf6yYqLJshe3jyrN7X
-	SExijiwAeOOhZdZi1K0UUms1qV9VGtviPAjQppjMthnAEADNW+ohBC91lbsskP54sRhH/RN7PjK
-	YwnSOD09VRiOoCsGfuQUH8xN3DpXcC09NSkhoapRSiaV7QcBGX9y2dd1+yRuRPRQm3crACPSHXQ
-	Jq62V2im2G84Pb7+ruluzCLeqlss8W1zsVdE4xjDbAwzheN5izRa/wpMM/zdwIz/EiMwGQRAzcl
-	BXtldth+7O5/p5YvhaMQ==
-X-Google-Smtp-Source: AGHT+IGxkfdMSB3flhvu+8XdkkBi2h+TtvdqRJupnzL7FcAb9QB9oz0Kl8RdgZ0E+bmRVDALonP3FA==
-X-Received: by 2002:a5d:5d0e:0:b0:430:f3ab:56af with SMTP id ffacd0b85a97d-430f3ab5950mr20784396f8f.48.1766071940267;
-        Thu, 18 Dec 2025 07:32:20 -0800 (PST)
+        bh=W9cxxDTq0ZzRikcy2fC/Yfj5SqrBiS8HWxQiJdkqF8s=;
+        b=Opz26cs5fVcBtJVlgO5M1jajLrO8U6AKBkGhvsXZndKDGfn1Cq/HGcYhQZDRIEaftE
+         7nLQziddY4pf8H2Bqx6TNC3RGg7yg1331RDK/FYyTfb16y/DqGNyHGloXrxLC7YvEltg
+         zJXGy+aRuxJVxBBlUZvi1IOhPG5KQiWFXPf0JETsvrDnnpc9jrsZ1FnpKCcGbvQ87w4V
+         jFXJKpNsm7IKCy0kI7IEvTgeS6o3Dg1kMu/X3PMDdvuoM7nQjBbD9ifLQQbQrfTbKupt
+         p6IACiHpfr7n2Ksx9BZVPO4JmYn9uFbvjFobX1f2uhZnOfWPu8hSWFDugvc8YawsrU4r
+         Slpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1766071943; x=1766676743;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=W9cxxDTq0ZzRikcy2fC/Yfj5SqrBiS8HWxQiJdkqF8s=;
+        b=YPUKli4MARcznYW5jvD1cZ+50gn3k5OGpsjkLrEezUzC/YbF1ov/4absCikmpQ/qN7
+         RQ3HZdsj3/5W5SA5eDjRtm68VvXAA9KT0NOSC1wQWW7HZ6Nl1Tn5Tirl2FIvFG+kOSoa
+         0Wquh1QfwWYxOpG67dVTjOvYmCZndpmfZFPPTyr2prVq5AW+C5cJoJ6bq0pL52APlMTw
+         W3C07KViwZdfX7GiKK6bDMIQEU/d2ClnoKkCnKg5SccEALgM3UqItixr4QFF3ymV9DQW
+         y7A9e+RbVozag2aaWLsmVOplk+jLaFRQUv7yIAby9w+tBylZWEebyHEOT6dp2F/eA3TY
+         WcYg==
+X-Gm-Message-State: AOJu0YyRLoKmhwoIVzwF1JmX1fYI8OT+63/X76h2uwG04X5N5rvMM5z7
+	0zYZjVG7CRW7WTwNlkbhKJbXxTjS/mcIFVmj/4ombrOLU6fSG+Eu/Nl6p3u3Ng==
+X-Gm-Gg: AY/fxX5SLcVrT+KebUBV+l+uaPKwwuZryLMrZQqaq3bV0JDCduePuu1weEB6E/MbqZI
+	rSwhpqkIfzwubCae7nZtnXOch8WM1ZOa6lW0iYNxZaKcYkOH5KA0zfM1QnJzf+ViRvw76y/yRAG
+	mUoSoHaKfyOSbIbVWaEYJdOJyTmu1PgQnsXjAluQmEe5YoYbPWX2nvZpUIF8l63423c4qKSZv2n
+	VMzDqex4x4J/q5qZpvAUPlPUbGiH8aNqy6+6+3qniu6RfpOL4nlxybgegf5GeYcco58MdZaK2aC
+	0En9qwkzfYo/nfBA7JPmJBNj8L0tDFdrFSwYGv/A7bYvm+qqM5t3v2Nuf6zsSc/H6i+MQlYnhdT
+	rCruCiADG9GvCV7zyrrv8So/BljfQWit019Y2Hgz7OYvLDhF8yNaqG1a9CTK3/uYoI0BggwckNo
+	vq32Be07oIZm9/OvccZA==
+X-Google-Smtp-Source: AGHT+IH5gVAi6lfXQEg7lqcDhjESxBKcO/YRyDNQJV2h0g4oGrEgggRjCMFHy8AtzI29TUWPBk3Orw==
+X-Received: by 2002:a05:600c:c490:b0:477:9650:3175 with SMTP id 5b1f17b1804b1-47a9877c6f1mr158101945e9.0.1766071943316;
+        Thu, 18 Dec 2025 07:32:23 -0800 (PST)
 Received: from biju.lan ([2a00:23c4:a758:8a01:a534:2aa6:4ac4:7963])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-432449af076sm5637772f8f.40.2025.12.18.07.32.19
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-432449af076sm5637772f8f.40.2025.12.18.07.32.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Dec 2025 07:32:19 -0800 (PST)
+        Thu, 18 Dec 2025 07:32:23 -0800 (PST)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,153 +60,105 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 00/12] Add gpio keys/sleep button support for RZ/G3E
-Date: Thu, 18 Dec 2025 15:31:49 +0000
-Message-ID: <20251218153219.228506-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 06/12] pinctrl: renesas: rzg2l: Drop unnecessary pin configurations
+Date: Thu, 18 Dec 2025 15:31:55 +0000
+Message-ID: <20251218153219.228506-7-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251218153219.228506-1-biju.das.jz@bp.renesas.com>
+References: <20251218153219.228506-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 18 Dec 2025 15:32:25 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21125
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21131
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Add gpio keys support for waking up from s2idle and sleep button support
-for entering to STR. Wakeup of STR is by pressing and holding power
-button. All the patches in this series are cherry-picked from mainline.
+[ Upstream commit fb8a7900dcba3764902ff9f0b3824f8818b3f4df ]
 
-STR logs:
-root@smarc-rzg3e:~# [   29.494903] PM: suspend entry (deep)
-[   29.498785] Filesystems sync: 0.000 seconds
-[   29.507624] Freezing user space processes
-[   29.513571] Freezing user space processes completed (elapsed 0.001 seconds)
-[   29.520595] OOM killer disabled.
-[   29.523926] Freezing remaining freezable tasks
-[   29.529647] Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
-[   29.537053] printk: Suspending console(s) (use no_console_suspend to debug)
-NOTICE:  BL2: v2.10.5(release):b288fa6dd
-NOTICE:  BL2: Built : 11:10:41, Dec 11 2025
-NOTICE:  BL2: SYS_LSI_MODE: 0x13e06
-NOTICE:  BL2: SYS_LSI_DEVID: 0x8679447
-NOTICE:  BL2: SYS_LSI_PRR: 0x0
-NOTICE:  BL2: Booting BL31
-[   29.585148] renesas-gbeth 15c30000.ethernet eth0: Link is Down
-[   29.592508] Disabling non-boot CPUs ...
-[   29.595376] psci: CPU1 killed (polled 0 ms)
-[   29.599955] psci: CPU2 killed (polled 4 ms)
-[   29.604606] psci: CPU3 killed (polled 4 ms)
-[   29.606199] Enabling non-boot CPUs ...
-[   29.606372] Detected VIPT I-cache on CPU1
-[   29.606410] GICv3: CPU1: found redistributor 100 region 0:0x0000000014960000
-[   29.606448] CPU1: Booted secondary processor 0x0000000100 [0x412fd050]
-[   29.606836] CPU1 is up
-[   29.606919] Detected VIPT I-cache on CPU2
-[   29.606936] GICv3: CPU2: found redistributor 200 region 0:0x0000000014980000
-[   29.606954] CPU2: Booted secondary processor 0x0000000200 [0x412fd050]
-[   29.607194] CPU2 is up
-[   29.607285] Detected VIPT I-cache on CPU3
-[   29.607302] GICv3: CPU3: found redistributor 300 region 0:0x00000000149a0000
-[   29.607320] CPU3: Booted secondary processor 0x0000000300 [0x412fd050]
-[   29.607621] CPU3 is up
-[   29.608732] renesas-gbeth 15c30000.ethernet eth0: configuring for phy/rgmii-id link mode
-[   29.619764] dwmac4: Master AXI performs any burst length
-[   29.619792] renesas-gbeth 15c30000.ethernet eth0: No Safety Features support found
-[   29.619808] renesas-gbeth 15c30000.ethernet eth0: IEEE 1588-2008 Advanced Timestamp supported
-[   29.619954] renesas-gbeth 15c40000.ethernet end1: configuring for phy/rgmii-id link mode
-[   29.631758] dwmac4: Master AXI performs any burst length
-[   29.631784] renesas-gbeth 15c40000.ethernet end1: No Safety Features support found
-[   29.631797] renesas-gbeth 15c40000.ethernet end1: IEEE 1588-2008 Advanced Timestamp supported
-[   29.822347] OOM killer enabled.
-[   29.825484] Restarting tasks ... done.
-[   29.830257] random: crng reseeded on system resumption
-[   29.835470] PM: suspend exit
-[   32.179888] renesas-gbeth 15c30000.ethernet eth0: Link is Up - 1Gbps/Full - flow control rx/tx
-[   33.298192] 8021q: 802.1Q VLAN Support v1.8
-[   33.302491] 8021q: adding VLAN 0 to HW filter on device eth0
-[   33.308233] 8021q: adding VLAN 0 to HW filter on device end1
-[   33.736280] Process accounting resumed
-[   35.807912] SDHI2-VQMMC: disabling
+There is no need to reconfigure a pin if the pin's configuration
+values are the same as the reset values.  E.g. the PS0 pin configuration
+for the NMI function is PMC = 1 and PFC = 0, which is the same as the
+reset values.  Currently the code is first setting it to GPIO HI-Z state
+and then again reconfiguring to the NMI function, leading to spurious
+IRQs.  Fix this by dropping unnecessary pin configuration from the
+driver.
 
-root@smarc-rzg3e:~# ping 192.168.10.1
-PING 192.168.10.1 (192.168.10.1): 56 data bytes
-64 bytes from 192.168.10.1: seq=0 ttl=64 time=0.774 ms
-64 bytes from 192.168.10.1: seq=1 ttl=64 time=0.817 ms
-^C
---- 192.168.10.1 ping statistics ---
-2 packets transmitted, 2 packets received, 0% packet loss
-round-trip min/avg/max = 0.774/0.795/0.817 ms
-root@smarc-rzg3e:~#
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://patch.msgid.link/20250909104247.3309-1-biju.das.jz@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 25 +++++++++++++++++++------
+ 1 file changed, 19 insertions(+), 6 deletions(-)
 
-S2Idle logs:
-root@smarc-rzg3e:~# echo freeze > /sys/power/state
-[  111.068509] PM: suspend entry (s2idle)
-[  111.072640] Filesystems sync: 0.000 seconds
-[  111.082051] Freezing user space processes
-[  111.087963] Freezing user space processes completed (elapsed 0.001 seconds)
-[  111.094972] OOM killer disabled.
-[  111.098342] Freezing remaining freezable tasks
-[  111.104018] Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
-[  111.111547] printk: Suspending console(s) (use no_console_suspend to debug)
-[  111.145422] renesas-gbeth 15c30000.ethernet eth0: Link is Down
-[  112.607442] renesas-gbeth 15c30000.ethernet eth0: configuring for phy/rgmii-id link mode
-[  112.613010] dwmac4: Master AXI performs any burst length
-[  112.613084] renesas-gbeth 15c30000.ethernet eth0: No Safety Features support found
-[  112.613140] renesas-gbeth 15c30000.ethernet eth0: IEEE 1588-2008 Advanced Timestamp supported
-[  112.613497] renesas-gbeth 15c40000.ethernet end1: configuring for phy/rgmii-id link mode
-[  112.618886] dwmac4: Master AXI performs any burst length
-[  112.618954] renesas-gbeth 15c40000.ethernet end1: No Safety Features support found
-[  112.619005] renesas-gbeth 15c40000.ethernet end1: IEEE 1588-2008 Advanced Timestamp supported
-[  112.732789] OOM killer enabled.
-[  112.735946] Restarting tasks ... done.
-[  112.740635] random: crng reseeded on system resumption
-[  112.745890] PM: suspend exit
-[  115.175862] renesas-gbeth 15c30000.ethernet eth0: Link is Up - 1Gbps/Full - flow control rx/tx
-root@smarc-rzg3e:~#  ping 192.168.10.1
-PING 192.168.10.1 (192.168.10.1): 56 data bytes
-64 bytes from 192.168.10.1: seq=0 ttl=64 time=0.915 ms
-64 bytes from 192.168.10.1: seq=1 ttl=64 time=0.915 ms
-^C
---- 192.168.10.1 ping statistics ---
-2 packets transmitted, 2 packets received, 0% packet loss
-round-trip min/avg/max = 0.915/0.915/0.915 ms
-root@smarc-rzg3e:~#
-
-
-Andy Shevchenko (1):
-  pinctrl: renesas: Mark local variable with const in ->set_mux()
-
-Biju Das (5):
-  pinctrl: renesas: rzg2l: Add suspend/resume support for Schmitt
-    control registers
-  pinctrl: renesas: rzg2l: Drop unnecessary pin configurations
-  pinctrl: renesas: rzg2l: Fix PMC restore
-  arm64: dts: renesas: r9a09g047e57-smarc: Add gpio keys
-  arm64: dts: renesas: r9a09g047e57-smarc: Use Schmitt input for NMI
-    function
-
-Claudiu Beznea (2):
-  pinctrl: renesas: rzg2l: Add suspend/resume support for pull up/down
-  pinctrl: renesas: rzg2l: Fix ISEL restore on resume
-
-Cosmin Tanislav (2):
-  pinctrl: renesas: rzg2l: Remove extra semicolons
-  pinctrl: renesas: rzg2l: Remove useless wrappers
-
-John Madieu (1):
-  pinctrl: renesas: rzg2l: Refactor OEN register PWPR handling
-
-Lad Prabhakar (1):
-  pinctrl: renesas: rzg2l: Validate pins before setting mux function
-
- .../boot/dts/renesas/r9a09g047e57-smarc.dts   |  38 +++
- .../boot/dts/renesas/renesas-smarc2.dtsi      |  31 +++
- drivers/pinctrl/renesas/pinctrl-rzg2l.c       | 247 +++++++++++-------
- drivers/pinctrl/renesas/pinctrl-rzv2m.c       |   2 +-
- 4 files changed, 228 insertions(+), 90 deletions(-)
-
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index 7b22921e6840..6a87da0ee50e 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -540,9 +540,16 @@ static void rzg2l_pinctrl_set_pfc_mode(struct rzg2l_pinctrl *pctrl,
+ 				       u8 pin, u8 off, u8 func)
+ {
+ 	unsigned long flags;
+-	u32 reg;
++	u32 reg, pfc;
+ 
++	/* Switching to GPIO is not required if reset value is same as func */
+ 	raw_spin_lock_irqsave(&pctrl->lock, flags);
++	reg = readb(pctrl->base + PMC(off));
++	pfc = readl(pctrl->base + PFC(off));
++	if ((reg & BIT(pin)) && (((pfc >> (pin * 4)) & PFC_MASK) == func)) {
++		raw_spin_unlock_irqrestore(&pctrl->lock, flags);
++		return;
++	}
+ 
+ 	/* Set pin to 'Non-use (Hi-Z input protection)'  */
+ 	reg = readw(pctrl->base + PM(off));
+@@ -556,9 +563,8 @@ static void rzg2l_pinctrl_set_pfc_mode(struct rzg2l_pinctrl *pctrl,
+ 	writeb(reg & ~BIT(pin), pctrl->base + PMC(off));
+ 
+ 	/* Select Pin function mode with PFC register */
+-	reg = readl(pctrl->base + PFC(off));
+-	reg &= ~(PFC_MASK << (pin * 4));
+-	writel(reg | (func << (pin * 4)), pctrl->base + PFC(off));
++	pfc &= ~(PFC_MASK << (pin * 4));
++	writel(pfc | (func << (pin * 4)), pctrl->base + PFC(off));
+ 
+ 	/* Switch to Peripheral pin function with PMC register */
+ 	reg = readb(pctrl->base + PMC(off));
+@@ -3128,11 +3134,18 @@ static void rzg2l_pinctrl_pm_setup_pfc(struct  rzg2l_pinctrl *pctrl)
+ 		pm = readw(pctrl->base + PM(off));
+ 		for_each_set_bit(pin, &pinmap, max_pin) {
+ 			struct rzg2l_pinctrl_reg_cache *cache = pctrl->cache;
++			u32 pfc_val, pfc_mask;
+ 
+ 			/* Nothing to do if PFC was not configured before. */
+ 			if (!(cache->pmc[port] & BIT(pin)))
+ 				continue;
+ 
++			pfc_val = readl(pctrl->base + PFC(off));
++			pfc_mask = PFC_MASK << (pin * 4);
++			/* Nothing to do if reset value of the pin is same as cached value */
++			if ((cache->pfc[port] & pfc_mask) == (pfc_val & pfc_mask))
++				continue;
++
+ 			/* Set pin to 'Non-use (Hi-Z input protection)' */
+ 			pm &= ~(PM_MASK << (pin * 2));
+ 			writew(pm, pctrl->base + PM(off));
+@@ -3142,8 +3155,8 @@ static void rzg2l_pinctrl_pm_setup_pfc(struct  rzg2l_pinctrl *pctrl)
+ 			writeb(pmc, pctrl->base + PMC(off));
+ 
+ 			/* Select Pin function mode. */
+-			pfc &= ~(PFC_MASK << (pin * 4));
+-			pfc |= (cache->pfc[port] & (PFC_MASK << (pin * 4)));
++			pfc &= ~pfc_mask;
++			pfc |= (cache->pfc[port] & pfc_mask);
+ 			writel(pfc, pctrl->base + PFC(off));
+ 
+ 			/* Switch to Peripheral pin function. */
 -- 
 2.43.0
 
