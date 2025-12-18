@@ -2,57 +2,57 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2003D6E2C7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC220D6E2CD
 	for <webhook@archiver.kernel.org>; Thu, 18 Dec 2025 16:56:17 +0000 (UTC)
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.1415.1766076971825870800
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.1418.1766076972929788372
  for <cip-dev@lists.cip-project.org>;
- Thu, 18 Dec 2025 08:56:12 -0800
+ Thu, 18 Dec 2025 08:56:13 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=ItjzscGV;
- spf=pass (domain: gmail.com, ip: 209.85.221.43, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-430f2ee2f00so422087f8f.3
-        for <cip-dev@lists.cip-project.org>; Thu, 18 Dec 2025 08:56:11 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=GA1O4iKo;
+ spf=pass (domain: gmail.com, ip: 209.85.221.53, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-42fb2314f52so527366f8f.0
+        for <cip-dev@lists.cip-project.org>; Thu, 18 Dec 2025 08:56:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766076970; x=1766681770; darn=lists.cip-project.org;
+        d=gmail.com; s=20230601; t=1766076971; x=1766681771; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CZ8ARQeiZdoK8n8/6yZVOoQn7O/zelHr7XBlEJrXBwA=;
-        b=ItjzscGVFmFOzGbAi8/fUg/h6BlejIQQygyW35Xo79IZeT/cwJUbWMQeTeRXmBKkr9
-         S/c25y2XztbGm1jcddzH/36jcqcHlBHQF1zp27wjXwjLi/Hw56V4e4Z8tFKlmwZNAKhQ
-         g+qVXJfq9apk7BoKbKnHrviBSDdHJ6JmXvKB96zIo7wlXJ2yPvaW/LdOhj/mbXcDJUYJ
-         RYRLu8HNB7VDOart1dWz9/enm/RR03gD9lLCGp51p8wFnSofqhqOYaqDwntCogepnwae
-         Lm8XWMHpQBvSeHRIXH8xAIaheXoH+k/LAuB/GPOJkmNaojd2QHhyPs9gCaVLsHOpslVl
-         UCFA==
+        bh=2lEtBSCZDcx5QCbThpVO+h7D8IVxPTd8/qBbQc0ejPw=;
+        b=GA1O4iKofK7zlOvdapcJRx2+oOw1pFAQSX6wpiNr8B2HANcIJdgIQ8Nfolt19nTPGD
+         QBVrmgnqAC6bsD1y0RkS2JogmAcvWZIfyh287H58mWTNx8q5DJkHgs59R0aGEoFeTrcy
+         KUg2qy3AFgrkbhGcb9JJ8lGTB/3njZE2wztSrxRvSzUkdu3Iwf3+ragH2v4yZq84rTyz
+         UbdGoVAaPsPLXSHlQm2IsB9qkK2+mKyDZVS/5NmDYJTRaqWQB2xjkEwuUe8lqttHJBS0
+         xNHZLpiBZikXRBPpXdBjEDkXFBzxITF5gqA4MmA2hXcxPZQyiux4jReWQklzf2x7x2Bk
+         MHbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766076970; x=1766681770;
+        d=1e100.net; s=20230601; t=1766076971; x=1766681771;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=CZ8ARQeiZdoK8n8/6yZVOoQn7O/zelHr7XBlEJrXBwA=;
-        b=K1L138G2ce4u1RUQqJ4AV8C1lviCC0qHhRG3J0nnIeBPpmvwYzshYWTrbRZtys4K2i
-         tfLGvWopANhK2atGJJfndi1FsTUvegY/dBh/RI/VM8IEDU56zdvaklvSpJcs30bTD8xZ
-         Owj4cYwBgqzPtPd09GpgP5K+/ZBDImmR66/Yx2r9AOR8AuAmI6H63/JzhRemexFcAYYN
-         NY1Yt5Jo/pLyTDIQNbnARyX5MlrCEb5Yablpqc8JhBYD58u6Xpmfb9ycxXXyj71dahFw
-         YRFLzqNYZQTx9Xoa1xFpHG4CnoCkSRFYgKaSTfWD0X1DO81VHiTVZvgnW9jlV2lUwUa1
-         kdmA==
-X-Gm-Message-State: AOJu0Yx7diRb53ETBhxr6kwXgeqFupA1iPJ4SOyPpFJv8qAHF+qHtCVM
-	k2a5k+z9a87/8Sm+FQQp2oC3TrsA6Qux4jPwMk6nvh9/iYRyBTXibfxucMFtoA==
-X-Gm-Gg: AY/fxX6j+9qd6pVT4QDdzWWlD8Oo0dU2YyWTRsyQOw++1h3LnDcD2exzBfcFx5SVJCE
-	2lJixPCEff4f9L2IaTTQO3Ei0O71mtbER5Dmmc5LylJtIW3/cz2pXnDYFEN7bjt5OMHi5ND8hsi
-	Vq23sueYAgJkhd1dzb7g4yXE2xx3dpHLBfOL4m0yiWq+E+uhoT5h9+3QJXawspSYapkfNv8POzS
-	IyamCJsgNzFUc982LW+BhL+A7Efrw6IG/FWxzi4dUiJdRg2wPJG8x2+yjDY+rHLxpDgUNrvkqcU
-	nq7V8mpWTBu9jp2SMOZjEVwpYlQfO1CRqRnkcriQxbHvaXBB8G7RzMTMsXmXhg1Jn3RcLtrH9ei
-	nPZto6HwxoTYtDJ9PSeRfUa76piY453m9LZtuSrC1hZIFVA1Wqg9isn9B7QOgGvlX3GtL0KV0GW
-	Pfl3Wo3P5c47KyoZB5WQ==
-X-Google-Smtp-Source: AGHT+IGWqiWNNyI44vIGBKlbeHSMvD3CK8UClvhsXJqpfiTM/fOD03KXJdMxm9b9DINiCUkf9Ju9Nw==
-X-Received: by 2002:a05:6000:1ac7:b0:431:a38:c2f9 with SMTP id ffacd0b85a97d-4324e715c6bmr143104f8f.63.1766076969938;
-        Thu, 18 Dec 2025 08:56:09 -0800 (PST)
+        bh=2lEtBSCZDcx5QCbThpVO+h7D8IVxPTd8/qBbQc0ejPw=;
+        b=wcK44kpm8dV6EIV2JY9Xkfx9yCt1B6H7cqSTB3kFVe49CzBUtA98xU+/xrKXemTTik
+         IvgpajplGZvrHhZTkUOYp3yUitjAWh0b/HXBjgARaNbaeq04uV0XYSBw0oGOyjIgXQ2S
+         uBUYbk+7mhgSqPbEhkBX5EhN0AAPjm4QuWx0w2zBGaJXn/d33RnqjB7E/hOs83IPIOkN
+         bVis1O2TxTnSc84UgOLCBp9kPz+MnkWO0kuLMt3w1MskcQVtAuAxXLALCO57adrmX747
+         ut6c+7HfM9RUMk0h4Gc2VQtrOyXUQ275y2aKE5T723KJmRDPP+2g833JSnZ0D+I5Nfyt
+         pqVQ==
+X-Gm-Message-State: AOJu0YwtoMeLNmyRTgIo4YKz2mQNYYJ6dYRzHG1XpTt83K/Lko2dNJty
+	X74OOiJQlBT48MT47KOjHmYhsm8gaM7h3OgAyb96+Hyk+jHf3OGtri4a87+KIA==
+X-Gm-Gg: AY/fxX4r78Sxf0a2ECsvSPwmiYi3MIC/bFWhZ1BcER33IPOIUi3xuf4pDA9d+DxB/ay
+	3x7Dd4/7vprGePoz0mpMPQvPvsb6NwTVyug6ybxo8wQMweoppjVXXOPnbyVyCW5HDKCQsfWyeZE
+	Idsu13Bw8QtySDOmWsFrM2bnDyUj+bvuHN7tGZQf9Q3XGheDJWiyo/mwDdkv5H72sPvZAORtQF3
+	bajxoZGzaCAzsrayT4C+80kJnSWmMCnIp/mkT9Wr4hy7gIMDXh6Oqfw6CDLHN5+N4HWFjF+Pa3r
+	6LF1ZC7LhhAzhYLURUFLqnxeE4lSIGgmaUAh3wldgLtXd7hUDac4z+hVjVnE9Mvsw3k3uf3dzZK
+	VTQeSbJpWg6rC+g0sYQx0Ht7ZCS73mgd5Tt11LEwEgzkEzEAGUkCYES+BY3y4xW0NqaWabPGnru
+	NoEsjke4Ne5yPb9vNouA==
+X-Google-Smtp-Source: AGHT+IHKe8VgEtykRp0rdLy1yAufnCo84FH6YqCrlot31CtN1La+aZFzv9aFZ72tpQS4l5X6D3l8tA==
+X-Received: by 2002:a05:6000:2305:b0:430:f68f:ee82 with SMTP id ffacd0b85a97d-4324e709bf7mr188594f8f.54.1766076970989;
+        Thu, 18 Dec 2025 08:56:10 -0800 (PST)
 Received: from biju.lan ([2a00:23c4:a758:8a01:a534:2aa6:4ac4:7963])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43244934b1fsm6180351f8f.8.2025.12.18.08.56.09
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43244934b1fsm6180351f8f.8.2025.12.18.08.56.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Dec 2025 08:56:09 -0800 (PST)
+        Thu, 18 Dec 2025 08:56:10 -0800 (PST)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -60,9 +60,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 19/24] can: rcar_canfd: Use devm_clk_get_optional() for RAM clk
-Date: Thu, 18 Dec 2025 16:55:18 +0000
-Message-ID: <20251218165600.258194-20-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 21/24] can: rcar_canfd: Invert CAN clock and close_candev() order
+Date: Thu, 18 Dec 2025 16:55:20 +0000
+Message-ID: <20251218165600.258194-22-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251218165600.258194-1-biju.das.jz@bp.renesas.com>
 References: <20251218165600.258194-1-biju.das.jz@bp.renesas.com>
@@ -72,97 +72,40 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 18 Dec 2025 16:56:17 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21157
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21159
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit eda3d6c8d784835cec86f42b3f8118c9eb0cc58c ]
+[ Upstream commit ddf9bbf22b70d6b1a10e7d45de8ec3b94de7c54c ]
 
-Replace devm_clk_get_optional_enabled()->devm_clk_get_optional() as the
-RAM clk needs to be enabled in resume for proper operation in STR mode
-for RZ/G3E SoC.
+The CAN clock is enabled before calling open_candev(), and disabled
+before calling close_candev().  Invert the order of the latter, to
+restore symmetry.
 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20251124102837.106973-4-biju.das.jz@bp.renesas.com
+Link: https://patch.msgid.link/20251124102837.106973-6-biju.das.jz@bp.renesas.com
 Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/net/can/rcar/rcar_canfd.c | 23 +++++++++++++++++------
- 1 file changed, 17 insertions(+), 6 deletions(-)
+ drivers/net/can/rcar/rcar_canfd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
-index e6a90fd94f4f..668980e986f0 100644
+index a3d1f6a2940d..9f47367c155b 100644
 --- a/drivers/net/can/rcar/rcar_canfd.c
 +++ b/drivers/net/can/rcar/rcar_canfd.c
-@@ -469,6 +469,7 @@ struct rcar_canfd_global {
- 	struct platform_device *pdev;	/* Respective platform device */
- 	struct clk *clkp;		/* Peripheral clock */
- 	struct clk *can_clk;		/* fCAN clock */
-+	struct clk *clk_ram;		/* Clock RAM */
- 	unsigned long channels_mask;	/* Enabled channels mask */
- 	bool extclk;			/* CANFD or Ext clock */
- 	bool fdmode;			/* CAN FD or Classical CAN only mode */
-@@ -1977,7 +1978,6 @@ static int rcar_canfd_probe(struct platform_device *pdev)
- 	u32 rule_entry = 0;
- 	bool fdmode = true;			/* CAN FD only mode - default */
- 	char name[9] = "channelX";
--	struct clk *clk_ram;
- 	int i;
- 
- 	info = of_device_get_match_data(dev);
-@@ -2067,10 +2067,10 @@ static int rcar_canfd_probe(struct platform_device *pdev)
- 		gpriv->extclk = gpriv->info->external_clk;
- 	}
- 
--	clk_ram = devm_clk_get_optional_enabled(dev, "ram_clk");
--	if (IS_ERR(clk_ram))
--		return dev_err_probe(dev, PTR_ERR(clk_ram),
--				     "cannot get enabled ram clock\n");
-+	gpriv->clk_ram = devm_clk_get_optional(dev, "ram_clk");
-+	if (IS_ERR(gpriv->clk_ram))
-+		return dev_err_probe(dev, PTR_ERR(gpriv->clk_ram),
-+				     "cannot get ram clock\n");
- 
- 	addr = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(addr)) {
-@@ -2136,10 +2136,18 @@ static int rcar_canfd_probe(struct platform_device *pdev)
- 		goto fail_reset;
- 	}
- 
-+	/* Enable RAM clock  */
-+	err = clk_prepare_enable(gpriv->clk_ram);
-+	if (err) {
-+		dev_err(dev, "failed to enable RAM clock: %pe\n",
-+			ERR_PTR(err));
-+		goto fail_clk;
-+	}
-+
- 	err = rcar_canfd_reset_controller(gpriv);
- 	if (err) {
- 		dev_err(dev, "reset controller failed: %pe\n", ERR_PTR(err));
--		goto fail_clk;
-+		goto fail_ram_clk;
- 	}
- 
- 	/* Controller in Global reset & Channel reset mode */
-@@ -2191,6 +2199,8 @@ static int rcar_canfd_probe(struct platform_device *pdev)
- 		rcar_canfd_channel_remove(gpriv, ch);
- fail_mode:
- 	rcar_canfd_disable_global_interrupts(gpriv);
-+fail_ram_clk:
-+	clk_disable_unprepare(gpriv->clk_ram);
- fail_clk:
- 	clk_disable_unprepare(gpriv->clkp);
- fail_reset:
-@@ -2215,6 +2225,7 @@ static int rcar_canfd_remove(struct platform_device *pdev)
- 
- 	/* Enter global sleep mode */
- 	rcar_canfd_set_bit(gpriv->base, RCANFD_GCTR, RCANFD_GCTR_GSLPR);
-+	clk_disable_unprepare(gpriv->clk_ram);
- 	clk_disable_unprepare(gpriv->clkp);
- 	reset_control_assert(gpriv->rstc2);
- 	reset_control_assert(gpriv->rstc1);
+@@ -1571,8 +1571,8 @@ static int rcar_canfd_close(struct net_device *ndev)
+ 	netif_stop_queue(ndev);
+ 	rcar_canfd_stop(ndev);
+ 	napi_disable(&priv->napi);
+-	clk_disable_unprepare(gpriv->can_clk);
+ 	close_candev(ndev);
++	clk_disable_unprepare(gpriv->can_clk);
+ 	phy_power_off(priv->transceiver);
+ 	return 0;
+ }
 -- 
 2.43.0
 
