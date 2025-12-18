@@ -2,57 +2,57 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81C7FD6E2A1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EFDAD6E2A5
 	for <webhook@archiver.kernel.org>; Thu, 18 Dec 2025 15:32:25 +0000 (UTC)
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.44880.1766071942652580856
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.44883.1766071944282676100
  for <cip-dev@lists.cip-project.org>;
- Thu, 18 Dec 2025 07:32:22 -0800
+ Thu, 18 Dec 2025 07:32:24 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=ZS+8mq2p;
- spf=pass (domain: gmail.com, ip: 209.85.221.44, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-42fbad1fa90so693265f8f.0
-        for <cip-dev@lists.cip-project.org>; Thu, 18 Dec 2025 07:32:22 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=X4JF0W/h;
+ spf=pass (domain: gmail.com, ip: 209.85.128.51, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-477619f8ae5so5183115e9.3
+        for <cip-dev@lists.cip-project.org>; Thu, 18 Dec 2025 07:32:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766071941; x=1766676741; darn=lists.cip-project.org;
+        d=gmail.com; s=20230601; t=1766071942; x=1766676742; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=q1E4DlRS3Sz6wQ7ZqQJrCzeZLgMNxxjPnWbnZCMK03g=;
-        b=ZS+8mq2pvd214z/lj79kd5V0+bO1VnWQ6xa3fpdKZTTWWaee7+Dx/WAVOSycste0sf
-         2ju5Wxg7RQCNvNqx5DuKyZyAm5892zDY99U1fZODfUb5VfqB7jWQQOAUsyM0QAP7TNGg
-         gRpBwrq0SXulmaAkk4sPCodTxVgYQ/Wm8oAk5lM6EgQEFURLzb2Z7tfXhy2cmU9cs77V
-         LJkrow9+9yZmB3YpIXRIVECpk1CV3YU0T8i/GwIgPLpWE/VRJw704YCRYZseKCREkInI
-         bY1Cytb4UmU5lb90N0FHjXfOHGSZU6erZS7Igmz7gwWybZ3bGiL1nX7BYLPWL9iWtm+n
-         dauA==
+        bh=fKPkBHXsyZyeouh0JT1tfkB3YXfMz2HfII4lb6pFafM=;
+        b=X4JF0W/hRua3JwWaX2qgWs4RUE92d5c4DYcJqorf5B+Bx9j3YVFpJUYPWjPbkeHY2l
+         Uee1plFOGAUBWPHZBgt2DnimJOcWRglX0xdlhJGoPLsjvJsLWUTfRorBXsfgjZRTL+cJ
+         OOncebmmWz5/dyCF8k9kxPVfAfatr28H9vCgS2cd6kEvqDVR0AHt5bSzTjbiBoMtyYpY
+         4T6JNDEHuSD0JrpIzWwts+jLy3029vXqT6a9C7q/I7bzDwhzPnlu9+wvX8vwiShDWnXg
+         JCv+skYg5NsnHRE6Ptq22QdUE21WYrYl0l0W9ELJ1cix5/QAWlWUEgHYxyjXWZcnoAtO
+         HLsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766071941; x=1766676741;
+        d=1e100.net; s=20230601; t=1766071942; x=1766676742;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=q1E4DlRS3Sz6wQ7ZqQJrCzeZLgMNxxjPnWbnZCMK03g=;
-        b=j4MSz9LKjVeBMRNP757uvG87NaYW9PVxvFJkJdJdE3R4bsLw/1QpGN2weU1BGCv/gZ
-         ZilEEWiAX+aoNqKD0NRn6yCdgCmnZ+raQ78fbD4BS/cR78FnX3SquVA8woRm1BeN3hPA
-         tNh0M+CxHcwnWJkNSSR4t+6wj5vopvH3PUqEai6J7dMunFIUpGCkg5vj2xegpVRxWnUN
-         zpfMY43DYM4nuvEw7SKo88zC+ibubCvOpCrO4fDcLcScxqyn+VTKocInZeYSZuwKebJM
-         Avbb+B19S9/i5aISNrlogWORe094CMK3m4b/M0ajn9ThhRYcRX7nQI/3lP+/Ira2Kb31
-         0KvQ==
-X-Gm-Message-State: AOJu0Yw5o5x80fQnzYRiPMF0QJ48ctPx+BjN0SfahE3aUlJvlhoANMYH
-	/hD21e1P038KBswvwPYBy90i0pjwDK0X+tt/jbeAI61Wcug3kP5GFyLeBs8YVg==
-X-Gm-Gg: AY/fxX5je3iGrIV9tPvTyXQ9b3ag+59sGZi1g+XylpDjak2uXT/KAWSUA4TZNumUleN
-	XVkVG8q9TIuw1zM4PBxugsLjIqkd8hFPqry0DrPyWxywG659yDv2DfLlr39MuRtms328/bY8dCV
-	jJ54sQEJ4XhmxP3cT18LPQzg+WLqu8X5VNGyqCCWyU3DXXgFeTNgBxzKqfYPZxtQepG3HZUtqt9
-	sI5cKYEz/I623EpoUMAyLrw6ctwCd5XCvC2wG6norzl85FsrgZToUqL6EZ3J090A4kPJ4wi3Qai
-	wiB5ojmTokaIm3TTSWd1UU7rPtHctb2OobtxsAakoAscHCnKqWDkAp/z+5BUgtSAIV/NOmzkIO9
-	EL5mbzz+JAc2Qcc+h9wrFsIZ1tppyUPluFTiWhmSy4auP+DVWiDTrjPiraojKiEoiOdbNt28DyP
-	eHAJyyVUIUH0nFF0xjlg==
-X-Google-Smtp-Source: AGHT+IH6Fnrb5ZYT2CvgD/eHgOqiu87G3Rd2tUAn09nP7uA5wM6vGs47k7wqSkM1pf5yJ6cHH0i8eA==
-X-Received: by 2002:a05:6000:220c:b0:430:fdc1:ffd2 with SMTP id ffacd0b85a97d-430fdc2001bmr13652534f8f.55.1766071940671;
-        Thu, 18 Dec 2025 07:32:20 -0800 (PST)
+        bh=fKPkBHXsyZyeouh0JT1tfkB3YXfMz2HfII4lb6pFafM=;
+        b=hb29Sb+iMkLQpxcR9FHzOsTs/tL3LqWjhXDW41o3PqQdkqmlfh1W9NIbWows7SxUCe
+         V72BeDPjVQHURHcPSltbep42oYbiZHFtt6ztoQQyZTJaLz4CW3nBug8V9HkQbPzDfYX7
+         LK07lKO4g5jXRhnXUahPESbvovWxIFNxtLTey/IMt/QuBineGno+zK227LwYKut5kdnu
+         Lrnalwd/gc0iIhlFunQfiEgSNK+FFgC+zj88N82zDeJncaVLCfQg+Z6iBSZ0JfTYov49
+         WK6gI97gMp6u+0tcj3zvxeFdUa3Dd8j+JBhFKYsYnRWyAyXFJvvxKTT+uLJj303zeWEO
+         59PA==
+X-Gm-Message-State: AOJu0YzrCQKKiUw2szwz3PkTzXkVb9nWah4z5Ly0V043wAKU+sLV2R5Y
+	U36SqvrKJe6+0w4QNB7zmJ7m11lyarZRBsPBu+ctisTbrK1y/zvW4nAnCDY5pw==
+X-Gm-Gg: AY/fxX5MgARhz/qT/8c08H9o2pD9yLZdhDavmqH52O30Gvxez1h0wR8mO161AS6iOtV
+	c0IYEPotUTABGk9s7RCiW1ZZNwU4GefLMIz8JHjJEypCVwAtcHmSKPy3H/NKFdvNmzvv1mT4nfq
+	4foA7EgXNFgbq3S9pQI4Bw464ZDYzbRJttkisC7mat/GpPO3sHBPVPDFKYfqw3tUYz018mdVTZo
+	Cycfv8PVxg4QeAzpUwhtcJ9UmbVk+TvCu1Xyz57XiqcIiqt3yyMgqxS1J7jOAax5vbLsXAY1cFN
+	ijZAT1WS777pjzleevUXLF4pfl3ZWBreqJVuaC7ZiQ7lSXYO7U0gc6solLG1cMHE4pWg+LwtaUz
+	tQrx5OGPZPlxjTm8LK9cpQDz/HtrVesgHkBd9swCgJHbkBGIG++B1SBsB2LG74sIM/5Fn/+oolN
+	or9eTTyYHzTWv6LjDkjg==
+X-Google-Smtp-Source: AGHT+IHsQJKXAomWspBx37pwwIvsFoTYZUqQgK5D96y805c2zusyCcg+IhJbNm8Pb+/eOYCH4IjOIA==
+X-Received: by 2002:a05:600c:1991:b0:479:3a89:121e with SMTP id 5b1f17b1804b1-47a8f9182ecmr218040545e9.37.1766071942200;
+        Thu, 18 Dec 2025 07:32:22 -0800 (PST)
 Received: from biju.lan ([2a00:23c4:a758:8a01:a534:2aa6:4ac4:7963])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-432449af076sm5637772f8f.40.2025.12.18.07.32.20
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-432449af076sm5637772f8f.40.2025.12.18.07.32.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Dec 2025 07:32:20 -0800 (PST)
+        Thu, 18 Dec 2025 07:32:21 -0800 (PST)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -60,9 +60,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 01/12] pinctrl: renesas: rzg2l: Add suspend/resume support for pull up/down
-Date: Thu, 18 Dec 2025 15:31:50 +0000
-Message-ID: <20251218153219.228506-2-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 04/12] pinctrl: renesas: rzg2l: Add suspend/resume support for Schmitt control registers
+Date: Thu, 18 Dec 2025 15:31:53 +0000
+Message-ID: <20251218153219.228506-5-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251218153219.228506-1-biju.das.jz@bp.renesas.com>
 References: <20251218153219.228506-1-biju.das.jz@bp.renesas.com>
@@ -72,91 +72,85 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 18 Dec 2025 15:32:25 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21126
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21129
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[ Upstream commit b2bd65fbb617353e3c46ba5206b3b030fa0f260c ]
+[ Upstream commit 837afa592c6234be82acb5d23e0a39e9befdaa85 ]
 
-The Renesas RZ/G3S supports a power-saving mode where power to most of
-the SoC components is lost, including the PIN controller.  Save and
-restore the pull-up/pull-down register contents to ensure the
-functionality is preserved after a suspend/resume cycle.
+Renesas RZ/G3E supports a power-saving mode where power to most of the
+SoC components is lost, including the PIN controller.  Save and restore
+the Schmitt control register contents to ensure the functionality is
+preserved after a suspend/resume cycle.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com> # on RZ/G3S
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250205100116.2032765-1-claudiu.beznea.uj@bp.renesas.com
+Link: https://lore.kernel.org/20250819084022.20512-1-biju.das.jz@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index 8475a1f5fcc0..b196105ab293 100644
+index f8330265336e..c7d6914098f8 100644
 --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
 +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -318,6 +318,7 @@ struct rzg2l_pinctrl_pin_settings {
-  * @pmc: PMC registers cache
-  * @pfc: PFC registers cache
+@@ -320,6 +320,7 @@ struct rzg2l_pinctrl_pin_settings {
   * @iolh: IOLH registers cache
-+ * @pupd: PUPD registers cache
+  * @pupd: PUPD registers cache
   * @ien: IEN registers cache
++ * @smt: SMT registers cache
   * @sd_ch: SD_CH registers cache
   * @eth_poc: ET_POC registers cache
-@@ -331,6 +332,7 @@ struct rzg2l_pinctrl_reg_cache {
- 	u32	*pfc;
+  * @oen: Output Enable register cache
+@@ -333,6 +334,7 @@ struct rzg2l_pinctrl_reg_cache {
  	u32	*iolh[2];
  	u32	*ien[2];
-+	u32	*pupd[2];
+ 	u32	*pupd[2];
++	u32	*smt;
  	u8	sd_ch[2];
  	u8	eth_poc[2];
  	u8	oen;
-@@ -2708,6 +2710,11 @@ static int rzg2l_pinctrl_reg_cache_alloc(struct rzg2l_pinctrl *pctrl)
- 		if (!cache->ien[i])
- 			return -ENOMEM;
+@@ -2702,6 +2704,10 @@ static int rzg2l_pinctrl_reg_cache_alloc(struct rzg2l_pinctrl *pctrl)
+ 	if (!cache->pfc)
+ 		return -ENOMEM;
  
-+		cache->pupd[i] = devm_kcalloc(pctrl->dev, nports, sizeof(*cache->pupd[i]),
-+					      GFP_KERNEL);
-+		if (!cache->pupd[i])
-+			return -ENOMEM;
++	cache->smt = devm_kcalloc(pctrl->dev, nports, sizeof(*cache->smt), GFP_KERNEL);
++	if (!cache->smt)
++		return -ENOMEM;
 +
- 		/* Allocate dedicated cache. */
- 		dedicated_cache->iolh[i] = devm_kcalloc(pctrl->dev, n_dedicated_pins,
- 							sizeof(*dedicated_cache->iolh[i]),
-@@ -2951,7 +2958,7 @@ static void rzg2l_pinctrl_pm_setup_regs(struct rzg2l_pinctrl *pctrl, bool suspen
+ 	for (u8 i = 0; i < 2; i++) {
+ 		u32 n_dedicated_pins = pctrl->data->n_dedicated_pins;
+ 
+@@ -2963,7 +2969,7 @@ static void rzg2l_pinctrl_pm_setup_regs(struct rzg2l_pinctrl *pctrl, bool suspen
  	struct rzg2l_pinctrl_reg_cache *cache = pctrl->cache;
  
  	for (u32 port = 0; port < nports; port++) {
--		bool has_iolh, has_ien;
-+		bool has_iolh, has_ien, has_pupd;
+-		bool has_iolh, has_ien, has_pupd;
++		bool has_iolh, has_ien, has_pupd, has_smt;
  		u32 off, caps;
  		u8 pincnt;
  		u64 cfg;
-@@ -2963,6 +2970,7 @@ static void rzg2l_pinctrl_pm_setup_regs(struct rzg2l_pinctrl *pctrl, bool suspen
- 		caps = FIELD_GET(PIN_CFG_MASK, cfg);
+@@ -2976,6 +2982,7 @@ static void rzg2l_pinctrl_pm_setup_regs(struct rzg2l_pinctrl *pctrl, bool suspen
  		has_iolh = !!(caps & (PIN_CFG_IOLH_A | PIN_CFG_IOLH_B | PIN_CFG_IOLH_C));
  		has_ien = !!(caps & PIN_CFG_IEN);
-+		has_pupd = !!(caps & PIN_CFG_PUPD);
+ 		has_pupd = !!(caps & PIN_CFG_PUPD);
++		has_smt = !!(caps & PIN_CFG_SMT);
  
  		if (suspend)
  			RZG2L_PCTRL_REG_ACCESS32(suspend, pctrl->base + PFC(off), cache->pfc[port]);
-@@ -2981,6 +2989,15 @@ static void rzg2l_pinctrl_pm_setup_regs(struct rzg2l_pinctrl *pctrl, bool suspen
+@@ -3014,6 +3021,9 @@ static void rzg2l_pinctrl_pm_setup_regs(struct rzg2l_pinctrl *pctrl, bool suspen
+ 							 cache->ien[1][port]);
  			}
  		}
- 
-+		if (has_pupd) {
-+			RZG2L_PCTRL_REG_ACCESS32(suspend, pctrl->base + PUPD(off),
-+						 cache->pupd[0][port]);
-+			if (pincnt >= 4) {
-+				RZG2L_PCTRL_REG_ACCESS32(suspend, pctrl->base + PUPD(off),
-+							 cache->pupd[1][port]);
-+			}
-+		}
 +
- 		RZG2L_PCTRL_REG_ACCESS16(suspend, pctrl->base + PM(off), cache->pm[port]);
- 		RZG2L_PCTRL_REG_ACCESS8(suspend, pctrl->base + P(off), cache->p[port]);
++		if (has_smt)
++			RZG2L_PCTRL_REG_ACCESS32(suspend, pctrl->base + SMT(off), cache->smt[port]);
+ 	}
+ }
  
 -- 
 2.43.0
