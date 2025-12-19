@@ -2,37 +2,35 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6443CD767D2
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C730D767D1
 	for <webhook@archiver.kernel.org>; Fri, 19 Dec 2025 10:33:58 +0000 (UTC)
-Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.14211.1766140433331955003
+Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.14145.1766140433256703657
  for <cip-dev@lists.cip-project.org>;
  Fri, 19 Dec 2025 02:33:54 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm2 header.b=a0g/w/Je;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-51332-20251219103350cd8cdc7ca8000207de-f2krm7@rts-flowmailer.siemens.com)
-Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 20251219103350cd8cdc7ca8000207de
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm2 header.b=Ypm8tRuM;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.225, mailfrom: fm-51332-20251219103350bb8c0fd64500020765-8bf8tt@rts-flowmailer.siemens.com)
+Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 20251219103350bb8c0fd64500020765
         for <cip-dev@lists.cip-project.org>;
         Fri, 19 Dec 2025 11:33:51 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
  d=siemens.com; i=Quirin.Gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=OlE8PKPETAnpgefIIrHIfVbDx62iJ9lKQnzGCJM3APU=;
- b=a0g/w/JefnGseyPMkYwxuTBGvtW6HcMb7B7xRxpqL52mfdgjIC7dyoppZwfiPWFsjwfV4j
- 7FfzgIur/e80AsxqNdE2nujejD4xsAo5fjxsbRtBk1d1I4Y/7J+1QgG/0seh6wWV/w/VoL7F
- 7PMoud/pCmC9QRZb+UEJIPw9YqKQ8X1kYwrhfPSzi8fNw04G3Eg3IXIjLui3PtVMNNd69HwA
- 5yT7RJLU0FOIiGnluQK61MvhHcnov/KvablZY3EXugiYAzVfiSYpvEL9yIlqahMJYVyl1YiG
- p+zzJ2oQ26RWwQhZat+QN2P+pfQnYZSQ86x4hbneGvgLUDeQhiuIcs+w==;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
+ bh=B+uIjz9tin0xPFITnFjLSKVEGjNVxKov4LP3njaxU2U=;
+ b=Ypm8tRuMHk/k5Eoe3cW6AOh4pVIfNqPjMx7jmiGAizpgrPeEk4gEnwTYE2eswakgfjiZUR
+ vvqXhgatOwY0EqJlGY98kIM4R0T8x4QfYstovsOW/ckhOvll3596LYjeNc5MeMlsHwgrkiEz
+ 2iTCmPnGgDotoKqpC+uXCR5SAgRd73cujs1CUjN/7iYLEFco9n0pFr3weYCHNbjzN0wmkimS
+ gmULkShtTD7HvNvit2pLHCH4nfb0g2YtipQ7dsk7vYap/Lv2IuVHZdrSXBRBImbS4+4A2rin
+ /nWSqNb2udFKBe7/jPxrrY4xIj002ZG5eC/V6Lc0IkTzQXO+xc/kEN5Q==;
 From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
 To: jan.kiszka@siemens.com,
 	clara.kowalsky@siemens.com,
 	cip-dev@lists.cip-project.org,
 	benedikt.niedermayr@siemens.com
-Subject: [cip-dev][isar-cip-core][RFC 2/6] Move RO_ROOTFS Options to swupdate.inc
-Date: Fri, 19 Dec 2025 11:31:22 +0100
-Message-ID: <20251219103349.1227710-3-Quirin.Gylstorff@siemens.com>
-In-Reply-To: <20251219103349.1227710-1-Quirin.Gylstorff@siemens.com>
-References: <20251219103349.1227710-1-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][RFC 0/6] Simplify the use of
+Date: Fri, 19 Dec 2025 11:31:20 +0100
+Message-ID: <20251219103349.1227710-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Flowmailer-Platform: Siemens
@@ -41,66 +39,37 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 19 Dec 2025 10:33:58 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21169
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21167
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-These defaults should always be set and there should not be
-part of the kas option file.
+The goal is to document and simplify the necessary steps to create
+a A/B Root file system which can be update with SWUpdate.
 
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
----
- kas/opt/swupdate.yml                                       | 5 -----
- recipes-core/images/swupdate.inc                           | 6 ++++++
- recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb | 2 ++
- 3 files changed, 8 insertions(+), 5 deletions(-)
+Quirin Gylstorff (6):
+  kas: move initramfs-tool specific recipes to cip-core-initramfs
+  Move RO_ROOTFS Options to swupdate.inc
+  Default SWUPDATE_BOOTLOADER to efibootguard
+  Move efibootguard to swupdate-efibootguard.inc
+  Add swupdate-config to swupdate.inc
+  Add documentation how to integrate isar-cip-core
 
-diff --git a/kas/opt/swupdate.yml b/kas/opt/swupdate.yml
-index f1f3f77..4a128f1 100644
---- a/kas/opt/swupdate.yml
-+++ b/kas/opt/swupdate.yml
-@@ -20,11 +20,6 @@ local_conf_header:
-     OVERRIDES .= ":swupdate"
- 
-   wic-swu: |
--    RO_ROOTFS_TYPE ??= "squashfs"
--    IMAGE_TYPEDEP:wic += "${RO_ROOTFS_TYPE}"
--    IMAGE_FSTYPES:append = " swu"
--    # input is already compressed
--    SWU_COMPRESSION_TYPE = ""
-     WKS_FILE ?= "${MACHINE}-${SWUPDATE_BOOTLOADER}.wks.in"
-     ABROOTFS_PART_UUID_A ?= "fedcba98-7654-3210-cafe-5e0710000001"
-     ABROOTFS_PART_UUID_B ?= "fedcba98-7654-3210-cafe-5e0710000002"
-diff --git a/recipes-core/images/swupdate.inc b/recipes-core/images/swupdate.inc
-index 75be566..696ee7d 100644
---- a/recipes-core/images/swupdate.inc
-+++ b/recipes-core/images/swupdate.inc
-@@ -12,6 +12,12 @@
- inherit image_uuid
- inherit read-only-rootfs
- 
-+RO_ROOTFS_TYPE ??= "squashfs"
-+IMAGE_TYPEDEP:wic += "${RO_ROOTFS_TYPE}"
-+IMAGE_FSTYPES:append = " swu"
-+# input is already compressed
-+SWU_COMPRESSION_TYPE = ""
-+
- # read-only rootfs with /home and /var
- # as separate partitions is used
- # /boot is excluded as an unified kernel image
-diff --git a/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
-index 9d53394..076f14a 100644
---- a/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
-+++ b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
-@@ -11,6 +11,8 @@
- 
- inherit initramfs
- 
-+RO_ROOTFS_TYPE ??= "squashfs"
-+
- INITRAMFS_INSTALL += " \
-     initramfs-overlay-hook \
-     "
+ classes-recipe/efibootguard.bbclass           | 64 ++---------------
+ doc/README.usage.md                           | 55 +++++++++++++++
+ kas/opt/ebg-secure-boot-snakeoil.yml          |  3 -
+ kas/opt/ebg-swu.yml                           |  5 --
+ kas/opt/swupdate.yml                          |  6 --
+ recipes-core/customizations/common.inc        |  2 -
+ recipes-core/images/efibootguard.inc          | 13 +---
+ recipes-core/images/swupdate-efibootguard.inc | 70 +++++++++++++++++++
+ recipes-core/images/swupdate.inc              | 16 +++++
+ .../swupdate-handler-roundrobin_0.1.bb        |  1 +
+ .../cip-core-initramfs/cip-core-initramfs.bb  |  7 ++
+ 11 files changed, 155 insertions(+), 87 deletions(-)
+ create mode 100644 doc/README.usage.md
+ mode change 100644 => 120000 recipes-core/images/efibootguard.inc
+ create mode 100644 recipes-core/images/swupdate-efibootguard.inc
+
 -- 
 2.51.2
 
