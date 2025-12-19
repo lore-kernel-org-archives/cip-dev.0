@@ -2,57 +2,57 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57070D7876E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57219D7876F
 	for <webhook@archiver.kernel.org>; Fri, 19 Dec 2025 12:29:29 +0000 (UTC)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.15748.1766147361113686517
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.15743.1766147360141645515
  for <cip-dev@lists.cip-project.org>;
- Fri, 19 Dec 2025 04:29:21 -0800
+ Fri, 19 Dec 2025 04:29:20 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=ecHto8Gb;
- spf=pass (domain: gmail.com, ip: 209.85.218.41, mailfrom: biju.das.au@gmail.com)
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b735487129fso299650966b.0
-        for <cip-dev@lists.cip-project.org>; Fri, 19 Dec 2025 04:29:20 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=demvCbqv;
+ spf=pass (domain: gmail.com, ip: 209.85.208.51, mailfrom: biju.das.au@gmail.com)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-640e9f5951aso4105478a12.1
+        for <cip-dev@lists.cip-project.org>; Fri, 19 Dec 2025 04:29:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766147359; x=1766752159; darn=lists.cip-project.org;
+        d=gmail.com; s=20230601; t=1766147358; x=1766752158; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kpBlHOFgyECFugPPqbLrjL7Xh4V+JnofWU4/JLoX/b4=;
-        b=ecHto8GbT9mioEYCUb4EGs152ouGbac1vYEM0WZLecGSzaKAR84uLUUa4um5+84Pkv
-         sdLquV8NUlgbtBkus+COw+PPl7SUkcQYjjO6qPjhgDlpbeVGYU1Ce1PB5CFZUXhBW1Jq
-         y+SDUUL3LysFJWwUpd6YRFQwSaPmePDdYbjg7ie5cPQqNBOuaUHVhWGsCWoOiyBJyldI
-         mIgSQAG4djEjWGSHro9LYQ8GRGJkkk+eSxvY53dr2trEixUR2QWBsBrsDbnLtGlzFCxq
-         X1VJCZylRuhQNdKUsXWE0ufhvN1lI4n+SwwNo9OsHv2TQpqK1W+UCKv2hEAYxCPQ6+yQ
-         qHyg==
+        bh=OeBxl70KsEQQz8/OgDuuAxbLm9HKxqvQ80GXg2zQ1EQ=;
+        b=demvCbqvvNUsyaWH4Mlc99W7zgQ0ux7wVAlxEttA17WYuVEkbtIMSSU6vF8aqJXiF5
+         JdDvn6PNhAKMP9AmgASPq6J+UG4QvhhDwBpL92RUAx2kUFiqE5ACSCbaSmDoWQyNdDp2
+         8g3rnd4TmVHbaflrMfDCMWtDb6tFMZcQW0kDN4hdI6SfKfLfWkhbdd41WhrZ4sFyN+PE
+         Q85I//sNeeuTDPVXVosHuhaRAFRaiHBvryI9cx7D9BuuzYkKXlLIPGuZUl+e3pP7zGti
+         2DOtVsm2mcFeGir7RVIV9KNyU1za38M13XISKr067JsJii0YB12mMF6j+QbxVwrx1Z+q
+         Kuiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766147359; x=1766752159;
+        d=1e100.net; s=20230601; t=1766147358; x=1766752158;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=kpBlHOFgyECFugPPqbLrjL7Xh4V+JnofWU4/JLoX/b4=;
-        b=sK/Q0akSz2alSlsJ0xRaPRgohhj90eK+g5jKB7gzDTrAmBmVrxM9M3dC2A42KJWr2I
-         XdtmKkunhj/pU1q4tRt/YLu9qzIPUOXWlYWdnz4qKuBTH1FA1F3rpGtxhfrn2Hhei+EZ
-         ym0YYzbO1IwUZnVoVxJh8Jzv44paEElMhEsbem5lXtJJNnNtsmUOSSCItKv13KvPUSvC
-         7TVE0sj8uEAFbBOulZ8epH7ns9JneEh9Vws/R0QOSNBnuPRRwFNrsToNaTm7Yb75NRyw
-         FPd9K3pOCeqhVGFGxiJZ0UFhzkovBwjrZZ6ztIq968CZN0CO1kPaPsmWR92YYBye59e8
-         vGdA==
-X-Gm-Message-State: AOJu0Ywn0GHH5v0MdbdZ2QIPTnn0P5hRmv7O4rPaq2uN/DIF+BgN8xKc
-	A0jRWM1Y0/GjLfr3qAD7d+HxJ3ioP83dIplcLciFJlL2mMO129ArCT597EH4rw==
-X-Gm-Gg: AY/fxX7XeXk0kt3bPQE4YzvXOcEDvnFc1y2ND/KDRMT3ES7vze514IMdwwlKSkf6Tf6
-	004yOTWeJctaoX5Fq9DufwG/XRSYOKEKP5M1QvNYITUCaJ/NIecVnrHrLf80X7wyPzT03UtCHbK
-	KCExYUXnRjb2qBnl6GG95ekkkRbCiEIU6qS4erM5+SrfBWjawkQE3LH+yBnPMwMWlvfR1vu0lIp
-	4IiXK9xv7FFW1GY6ezM05rk0+qaBbk8IjsdpL3pCQdBheTI5vgAPZcfucTC9j4XWM9b7QR98XbK
-	kOhbgvyKLnehlOPQxGQmNe3Uqv2pPb2WWRszjQa0Cfil7XUw6yKGnPr8c3OktpqwNMJqhUbgSzS
-	BGFepVxsdFu4FU9WD5BkUIuNB2+YJp9rUWJaoTBJu4QaT9K0dezclYiKXiH6+2L2yw6sVpW0rF4
-	Y8+rK3zpqERWVYe+ih5N8EnoJfdytMyXml5w==
-X-Google-Smtp-Source: AGHT+IFpYOQjU+ctlhsXvwM+m3uC2wczGfKH3NrkgZSh/NQqwv+YemDASHJrMOOJetxsvsrqLR4cdg==
-X-Received: by 2002:a17:907:3d42:b0:b73:a0b9:181a with SMTP id a640c23a62f3a-b80371df391mr278492866b.54.1766147358926;
-        Fri, 19 Dec 2025 04:29:18 -0800 (PST)
+        bh=OeBxl70KsEQQz8/OgDuuAxbLm9HKxqvQ80GXg2zQ1EQ=;
+        b=J65t9Vxtp+XxMMrbSHY48MqqWbX8fcfYx0erYG2CyHWPDtxsGXsgumQvx4iu+HTOdA
+         GTAJ3Koew5HCKy+e52Pe70IiKKWzDvageyOFwPw2PD/R8o7C7g5AdrT3Ek6XfZPtuuIF
+         oEI7DQ/xfsl5Vypw4I0zB62Kb4e2yWyoByLgAmDUQK5EVeLXIiEFDk5Um5MTh0wrAHWp
+         CMKnKbabLu5Yh5nAkYqR+1XqusLM0K2smxG5yQ4Jkln0G8OorK4HndS+28hVhSp7iOLg
+         35lg2FPDDOe8qUDRMhHwTErPe5u2+NdCGkULpbSFBWvTavJcll/vvI1hiwiKZyFLbsv2
+         kq6g==
+X-Gm-Message-State: AOJu0Ywt2k3mqj4Z8+cisESIfzZjgcBphPrybVAZkNSdMoRh10x9yN4G
+	H5OyNjSm3BDxLIg4WZcp5mTo2cSdNG9PBNokfiXEfUlca47c+BbFUnKz/50jAQ==
+X-Gm-Gg: AY/fxX4Bpxin9mKnWo1+64+lwCLX5Q67YMr3pWkIfsdOi/xjMu9iMIKVz3ePr68YhZ4
+	c6s5HsuVFbPpaWHHmfbRDF/94SXXy+HDhBeU+WqzjyLuSgPa8LVhgaCzUVv7Y/R9ubLzGoJDHoj
+	H664ael9Knl2ETCswav5XdyQ36RgH4oozmfXTybZHCZ4UOsg77GK75zUhQdb+ApPeT4D/VGaS2Z
+	ddMNDwgNa66HJxcIbwwg+HLABu8EyZAa8XEMrEMVtK5+cS4bh4AoxVMKqsJhcrN626MV2ts8rEr
+	PHB4ZVcwYtOoloG8cT31iv/nbHkroEKIef+/n6vAMDy+RGedNyOQUowE7Pnt5GvuHuTJWWykQY8
+	8vbQH0JGTjF/9aKe3L40Be6WNxXF+shHe6UYDo7HziXvARODl2JO/GoKYCwAbC5flw0Q3U1ln9n
+	a14rU57ndMeB/fHRbXH8tT3PAbgaGFoZMF3w==
+X-Google-Smtp-Source: AGHT+IEdJvr8RB6piLDZ8M4kN9wm0U2/PbQ8VIv9JuMwAH2Q7I4hI9HzsPJ2wtEZyWWBOCE6Em8fcg==
+X-Received: by 2002:a17:907:940e:b0:b72:d577:11cc with SMTP id a640c23a62f3a-b8035641f7dmr335388966b.12.1766147357958;
+        Fri, 19 Dec 2025 04:29:17 -0800 (PST)
 Received: from localhost.localdomain ([2a00:23c4:a758:8a01:bb1:f7ee:1376:35e4])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8037f511fesm223648666b.65.2025.12.19.04.29.18
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8037f511fesm223648666b.65.2025.12.19.04.29.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Dec 2025 04:29:18 -0800 (PST)
+        Fri, 19 Dec 2025 04:29:17 -0800 (PST)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -60,9 +60,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 3/5] pinctrl: renesas: rzg2l: Drop unnecessary pin configurations
-Date: Fri, 19 Dec 2025 12:29:09 +0000
-Message-ID: <20251219122916.129256-4-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 1/5] pinctrl: renesas: rzg2l: Validate pins before setting mux function
+Date: Fri, 19 Dec 2025 12:29:07 +0000
+Message-ID: <20251219122916.129256-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251219122916.129256-1-biju.das.jz@bp.renesas.com>
 References: <20251219122916.129256-1-biju.das.jz@bp.renesas.com>
@@ -72,95 +72,126 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 19 Dec 2025 12:29:29 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21177
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21175
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-[ Upstream commit fb8a7900dcba3764902ff9f0b3824f8818b3f4df ]
+[ Upstream commit 52161035571cd62be9865039b4be65615860dce0 ]
 
-There is no need to reconfigure a pin if the pin's configuration
-values are the same as the reset values.  E.g. the PS0 pin configuration
-for the NMI function is PMC = 1 and PFC = 0, which is the same as the
-reset values.  Currently the code is first setting it to GPIO HI-Z state
-and then again reconfiguring to the NMI function, leading to spurious
-IRQs.  Fix this by dropping unnecessary pin configuration from the
-driver.
+Ensure only valid pins are configured by validating pin mappings before
+setting the mux function.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Rename rzg2l_validate_gpio_pin() to rzg2l_validate_pin() to reflect its
+broader purpose validating both GPIO pins and muxed pins. This helps
+avoid invalid configurations.
+
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20250909104247.3309-1-biju.das.jz@bp.renesas.com
+Link: https://lore.kernel.org/20250616132750.216368-1-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[ Biju: replaced raw_spin_unlock_irqrestore()->spin_unlock_irqrestore() as
-there will be a stable fixes patch later to use raw_spin_*()]
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 25 +++++++++++++++++++------
- 1 file changed, 19 insertions(+), 6 deletions(-)
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 45 ++++++++++++++-----------
+ 1 file changed, 25 insertions(+), 20 deletions(-)
 
 diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index 8b5a8f0b2c4d..d6f69532a0e7 100644
+index 1ea2dc1608b3..a8887acfdef8 100644
 --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
 +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -541,9 +541,16 @@ static void rzg2l_pinctrl_set_pfc_mode(struct rzg2l_pinctrl *pctrl,
+@@ -518,6 +518,23 @@ static void rzv2h_pmc_writeb(struct rzg2l_pinctrl *pctrl, u8 val, u16 offset)
+ 	writeb(pwpr & ~PWPR_REGWE_A, pctrl->base + regs->pwpr);
+ }
+ 
++static int rzg2l_validate_pin(struct rzg2l_pinctrl *pctrl,
++			      u64 cfg, u32 port, u8 bit)
++{
++	u8 pinmap = FIELD_GET(PIN_CFG_PIN_MAP_MASK, cfg);
++	u32 off = RZG2L_PIN_CFG_TO_PORT_OFFSET(cfg);
++	u64 data;
++
++	if (!(pinmap & BIT(bit)) || port >= pctrl->data->n_port_pins)
++		return -EINVAL;
++
++	data = pctrl->data->port_pin_configs[port];
++	if (off != RZG2L_PIN_CFG_TO_PORT_OFFSET(data))
++		return -EINVAL;
++
++	return 0;
++}
++
+ static void rzg2l_pinctrl_set_pfc_mode(struct rzg2l_pinctrl *pctrl,
  				       u8 pin, u8 off, u8 func)
  {
- 	unsigned long flags;
--	u32 reg;
-+	u32 reg, pfc;
+@@ -561,6 +578,7 @@ static int rzg2l_pinctrl_set_mux(struct pinctrl_dev *pctldev,
+ 	unsigned int i, *psel_val;
+ 	struct group_desc *group;
+ 	const unsigned int *pins;
++	int ret;
  
-+	/* Switching to GPIO is not required if reset value is same as func */
- 	spin_lock_irqsave(&pctrl->lock, flags);
-+	reg = readb(pctrl->base + PMC(off));
-+	pfc = readl(pctrl->base + PFC(off));
-+	if ((reg & BIT(pin)) && (((pfc >> (pin * 4)) & PFC_MASK) == func)) {
-+		spin_unlock_irqrestore(&pctrl->lock, flags);
-+		return;
-+	}
+ 	func = pinmux_generic_get_function(pctldev, func_selector);
+ 	if (!func)
+@@ -577,6 +595,10 @@ static int rzg2l_pinctrl_set_mux(struct pinctrl_dev *pctldev,
+ 		u32 off = RZG2L_PIN_CFG_TO_PORT_OFFSET(*pin_data);
+ 		u32 pin = RZG2L_PIN_ID_TO_PIN(pins[i]);
  
- 	/* Set pin to 'Non-use (Hi-Z input protection)'  */
- 	reg = readw(pctrl->base + PM(off));
-@@ -557,9 +564,8 @@ static void rzg2l_pinctrl_set_pfc_mode(struct rzg2l_pinctrl *pctrl,
- 	writeb(reg & ~BIT(pin), pctrl->base + PMC(off));
- 
- 	/* Select Pin function mode with PFC register */
--	reg = readl(pctrl->base + PFC(off));
--	reg &= ~(PFC_MASK << (pin * 4));
--	writel(reg | (func << (pin * 4)), pctrl->base + PFC(off));
-+	pfc &= ~(PFC_MASK << (pin * 4));
-+	writel(pfc | (func << (pin * 4)), pctrl->base + PFC(off));
- 
- 	/* Switch to Peripheral pin function with PMC register */
- 	reg = readb(pctrl->base + PMC(off));
-@@ -3111,11 +3117,18 @@ static void rzg2l_pinctrl_pm_setup_pfc(struct rzg2l_pinctrl *pctrl)
- 		pm = readw(pctrl->base + PM(off));
- 		for_each_set_bit(pin, &pinmap, max_pin) {
- 			struct rzg2l_pinctrl_reg_cache *cache = pctrl->cache;
-+			u32 pfc_val, pfc_mask;
- 
- 			/* Nothing to do if PFC was not configured before. */
- 			if (!(cache->pmc[port] & BIT(pin)))
- 				continue;
- 
-+			pfc_val = readl(pctrl->base + PFC(off));
-+			pfc_mask = PFC_MASK << (pin * 4);
-+			/* Nothing to do if reset value of the pin is same as cached value */
-+			if ((cache->pfc[port] & pfc_mask) == (pfc_val & pfc_mask))
-+				continue;
++		ret = rzg2l_validate_pin(pctrl, *pin_data, RZG2L_PIN_ID_TO_PORT(pins[i]), pin);
++		if (ret)
++			return ret;
 +
- 			/* Set pin to 'Non-use (Hi-Z input protection)' */
- 			pm &= ~(PM_MASK << (pin * 2));
- 			writew(pm, pctrl->base + PM(off));
-@@ -3125,8 +3138,8 @@ static void rzg2l_pinctrl_pm_setup_pfc(struct rzg2l_pinctrl *pctrl)
- 			writeb(pmc, pctrl->base + PMC(off));
+ 		dev_dbg(pctrl->dev, "port:%u pin: %u off:%x PSEL:%u\n",
+ 			RZG2L_PIN_ID_TO_PORT(pins[i]), pin, off, psel_val[i] - hwcfg->func_base);
  
- 			/* Select Pin function mode. */
--			pfc &= ~(PFC_MASK << (pin * 4));
--			pfc |= (cache->pfc[port] & (PFC_MASK << (pin * 4)));
-+			pfc &= ~pfc_mask;
-+			pfc |= (cache->pfc[port] & pfc_mask);
- 			writel(pfc, pctrl->base + PFC(off));
+@@ -831,23 +853,6 @@ static int rzg2l_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	return ret;
+ }
  
- 			/* Switch to Peripheral pin function. */
+-static int rzg2l_validate_gpio_pin(struct rzg2l_pinctrl *pctrl,
+-				   u64 cfg, u32 port, u8 bit)
+-{
+-	u8 pinmap = FIELD_GET(PIN_CFG_PIN_MAP_MASK, cfg);
+-	u32 off = RZG2L_PIN_CFG_TO_PORT_OFFSET(cfg);
+-	u64 data;
+-
+-	if (!(pinmap & BIT(bit)) || port >= pctrl->data->n_port_pins)
+-		return -EINVAL;
+-
+-	data = pctrl->data->port_pin_configs[port];
+-	if (off != RZG2L_PIN_CFG_TO_PORT_OFFSET(data))
+-		return -EINVAL;
+-
+-	return 0;
+-}
+-
+ static u32 rzg2l_read_pin_config(struct rzg2l_pinctrl *pctrl, u32 offset,
+ 				 u8 bit, u32 mask)
+ {
+@@ -1275,7 +1280,7 @@ static int rzg2l_pinctrl_pinconf_get(struct pinctrl_dev *pctldev,
+ 	} else {
+ 		bit = RZG2L_PIN_ID_TO_PIN(_pin);
+ 
+-		if (rzg2l_validate_gpio_pin(pctrl, *pin_data, RZG2L_PIN_ID_TO_PORT(_pin), bit))
++		if (rzg2l_validate_pin(pctrl, *pin_data, RZG2L_PIN_ID_TO_PORT(_pin), bit))
+ 			return -EINVAL;
+ 	}
+ 
+@@ -1434,7 +1439,7 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_dev *pctldev,
+ 	} else {
+ 		bit = RZG2L_PIN_ID_TO_PIN(_pin);
+ 
+-		if (rzg2l_validate_gpio_pin(pctrl, *pin_data, RZG2L_PIN_ID_TO_PORT(_pin), bit))
++		if (rzg2l_validate_pin(pctrl, *pin_data, RZG2L_PIN_ID_TO_PORT(_pin), bit))
+ 			return -EINVAL;
+ 	}
+ 
+@@ -1672,7 +1677,7 @@ static int rzg2l_gpio_request(struct gpio_chip *chip, unsigned int offset)
+ 	u8 reg8;
+ 	int ret;
+ 
+-	ret = rzg2l_validate_gpio_pin(pctrl, *pin_data, port, bit);
++	ret = rzg2l_validate_pin(pctrl, *pin_data, port, bit);
+ 	if (ret)
+ 		return ret;
+ 
 -- 
 2.43.0
 
