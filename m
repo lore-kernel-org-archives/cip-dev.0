@@ -1,70 +1,71 @@
-Return-Path: <adithya.balakumar@toshiba-tsip.com>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67454D767C3
-	for <webhook@archiver.kernel.org>; Fri, 19 Dec 2025 10:29:48 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.134])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.14156.1766140186509550508
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B49DD767CB
+	for <webhook@archiver.kernel.org>; Fri, 19 Dec 2025 10:33:58 +0000 (UTC)
+Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.14212.1766140433426305686
  for <cip-dev@lists.cip-project.org>;
- Fri, 19 Dec 2025 02:29:47 -0800
+ Fri, 19 Dec 2025 02:33:54 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.134, mailfrom: adithya.balakumar@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 5BJATiqI3036588; Fri, 19 Dec 2025 19:29:44 +0900
-X-Iguazu-Qid: 2yAakGMokhTRWwLSxE
-X-Iguazu-QSIG: v=2; s=0; t=1766140184; q=2yAakGMokhTRWwLSxE; m=gAYT6Mn9QmALQOYDnQG/4t61HVj5kP3YZljavzx84Nk=
-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	 id 4dXkLJ0hjBz1xnc; Fri, 19 Dec 2025 19:29:43 +0900 (JST)
-From: Adithya.Balakumar@toshiba-tsip.com
-To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
-Cc: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>,
-        shivanand.kunijadar@toshiba-tsip.com, dinesh.kumar@toshiba-tsip.com,
-        kazuhiro3.hayashi@toshiba.co.jp, akunuri.sahithi@toshiba-tsip.com
-Subject: [isar-cip-core][PATCH v1] start-qemu.sh: Check FTPM_STMM instead of TPM2_DEVICE before setting RPMB options for arm64
-Date: Fri, 19 Dec 2025 05:44:03 -0500
-X-TSB-HOP2: ON
-Message-Id: <20251219104403.191807-1-Adithya.Balakumar@toshiba-tsip.com>
-X-Mailer: git-send-email 2.39.5
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm2 header.b=Gq6pt8d0;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.225, mailfrom: fm-51332-20251219103351462bc5f7b5000207e5-fjlwx1@rts-flowmailer.siemens.com)
+Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 20251219103351462bc5f7b5000207e5
+        for <cip-dev@lists.cip-project.org>;
+        Fri, 19 Dec 2025 11:33:51 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
+ d=siemens.com; i=Quirin.Gylstorff@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
+ bh=tZ0Rbu+qeuyx35Ew4Z+Kbx27Lhzt6hxmYPehpLwRu8Y=;
+ b=Gq6pt8d0gZl0M0ItMeDJpPNUAcsyTsZlqM8POw03dYswZtD/q0IEdZo8TTKqiBngOCSbST
+ zu58PryDj39aw1Rr66UdINu7j8NKSeqXak9ruLqSEWng7tPV4t0TwYt9C5IRI8/TUscPTXnr
+ IMY1wUoIPBAaMLyMw1MlLCmnSGyL2v3ZofLhiwSkZ7Yy/EsxNMGmc/uCyqS5aaxmys4fF1ic
+ Tz2jmrYnk9968Nmo8xSqmejO3w5TDWAmkkaMOoDyHJkZ4fQp/6N4Ua8/Z41eXnJgQctrbvA3
+ BIkGYKZHCj7ysKr0xttu0ypwDg1OmETmHYNsnkEg5RfOAEZm+u+0vGiA==;
+From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
+To: jan.kiszka@siemens.com,
+	clara.kowalsky@siemens.com,
+	cip-dev@lists.cip-project.org,
+	benedikt.niedermayr@siemens.com
+Subject: [cip-dev][isar-cip-core][RFC 3/6] Default SWUPDATE_BOOTLOADER to efibootguard
+Date: Fri, 19 Dec 2025 11:31:23 +0100
+Message-ID: <20251219103349.1227710-4-Quirin.Gylstorff@siemens.com>
+In-Reply-To: <20251219103349.1227710-1-Quirin.Gylstorff@siemens.com>
+References: <20251219103349.1227710-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 19 Dec 2025 10:29:42.0481 (UTC) FILETIME=[633F5410:01DC70D2]
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 19 Dec 2025 10:29:48 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21165
+ <cip-dev@lists.cip-project.org>; Fri, 19 Dec 2025 10:33:58 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21172
 
-From: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-Current script checks for the absence of TPM2_DEVICE to set RPMB options
-for QEMU arm64. TPM2_DEVICE may not be set for a SWUPDATE only boot as well and
-the script looks for the RPMB image even if FTPM_STMM is not set.
+The variable SWUPDATE_BOOTLOADER is used to select the A/B root file
+system bootloader. In isar-cip-core we default to efibootguard.
 
-Instead, let's check if FTPM_STMM is set.
-
-Signed-off-by: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- start-qemu.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../swupdate-handler-roundrobin_0.1.bb                           | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/start-qemu.sh b/start-qemu.sh
-index 0eb306a..7ccbefe 100755
---- a/start-qemu.sh
-+++ b/start-qemu.sh
-@@ -124,7 +124,7 @@ case "${arch}" in
- 			-device virtio-serial-device \
- 			-device virtconsole,chardev=con -chardev vc,id=con \
- 			-device virtio-net-device,netdev=net"
--		if [ -z "${TPM2_DEVICE}" ]; then
-+		if grep -s -q "FTPM_STMM: true" .config.yaml; then
- 			QEMU_EXTRA_ARGS="${QEMU_EXTRA_ARGS} \
- 				-machine virt,secure=on \
- 				-device sdhci-pci -device emmc,drive=disk,rpmb-partition-size=2097152 \
+diff --git a/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb b/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb
+index d2edbbd..f5e513f 100644
+--- a/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb
++++ b/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb
+@@ -17,6 +17,7 @@ SRCREV_swupdate-handler-roundrobin ?= "5deb75df5469c5a66cdd727eb72af83ce0784054"
+ 
+ SWUPDATE_LUASCRIPT = "swupdate-handler-roundrobin/swupdate_handlers_roundrobin.lua"
+ 
++SWUPDATE_BOOTLOADER ??= "efibootguard"
+ SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG ?= "${@ 'swupdate.handler.efibootguard.ini' if d.getVar('SWUPDATE_BOOTLOADER') == 'efibootguard' else ''}"
+ SRC_URI += "${@('file://' + d.getVar('SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG')) if d.getVar('SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG') else ''}"
+ 
 -- 
-2.39.5
-
+2.51.2
 
 
