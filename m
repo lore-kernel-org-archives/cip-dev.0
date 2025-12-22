@@ -2,57 +2,57 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50109E674A4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A9C3E674A7
 	for <webhook@archiver.kernel.org>; Mon, 22 Dec 2025 11:17:21 +0000 (UTC)
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.78275.1766402233234820375
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.78195.1766402231289550757
  for <cip-dev@lists.cip-project.org>;
- Mon, 22 Dec 2025 03:17:13 -0800
+ Mon, 22 Dec 2025 03:17:11 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=UwzW0QIi;
- spf=pass (domain: gmail.com, ip: 209.85.208.47, mailfrom: biju.das.au@gmail.com)
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-64c893f3a94so3183327a12.0
-        for <cip-dev@lists.cip-project.org>; Mon, 22 Dec 2025 03:17:13 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=Y+JSli3p;
+ spf=pass (domain: gmail.com, ip: 209.85.218.48, mailfrom: biju.das.au@gmail.com)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b79f8f7ea43so872415166b.2
+        for <cip-dev@lists.cip-project.org>; Mon, 22 Dec 2025 03:17:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766402231; x=1767007031; darn=lists.cip-project.org;
+        d=gmail.com; s=20230601; t=1766402229; x=1767007029; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mNn8FzentyE3/sqOVmootMTp2N4dqaj/OxJhtmmytIY=;
-        b=UwzW0QIii1U0pIqXx12kKvC7KLmdsRCFgQWjFeTSsqm+rXg3MCRm8Ekd7/tiQc/7i7
-         hSwtH3IOSaqnpt/2xQ0kpALupRW9Y0a7uqlNhtwykU7CP/oWpv6J09o8XOz/6tJkLae0
-         igyLKBd5NH9iGhMQMqkbGM/5V8xiG+xmT48hniLfsGT6OK8x+n3f8/oqan9rXAHxPtwx
-         vdXuh8PEGH7zJ89BqPYJhqjjvyyugeO1CESvM6W/hkcR43rJXfAopW85jZZqdXKyIRS9
-         rukn+Hu99yz7XW6to9RjAiEBZ/H7vWRYuCKLGsW2u+Q1lJmxolfZvbI6gesSUKuyQEQB
-         LM5Q==
+        bh=CAtTBdKzsxOsOVr4atbb2dwTJjX3hCGLyVen256jQBk=;
+        b=Y+JSli3pohU2ZOl5Rb0+d6Y8OmhhnWgo0xfMGsYeHrZA7JXTYoxqn7C1BnkY8lzUqB
+         dnyiAG/fmLRO1B7Gj4DAn/byK7ACsXG8i+HyQq2MnO4YaqxghkfX80yDz+2/y6ATFUGb
+         LYWf3jgc7NSM5f5/NpyAbIiw5TbsV7g/ZPNwPU4+/apKzuyUdjy7SHEfcLrTfbtfGpXx
+         N4Vy3FzosQSueYntvGlVICWyxXLXgLNRzyYpyShZ0juO5NW2GgYP5w1YDeYIZDOuGvYM
+         gMu/4Zyvu1QrREDDlTUpfXSNYMtRToZawuX98q526GGlKln2LWdfZrbagvM8crPBMAia
+         vPjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766402231; x=1767007031;
+        d=1e100.net; s=20230601; t=1766402229; x=1767007029;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=mNn8FzentyE3/sqOVmootMTp2N4dqaj/OxJhtmmytIY=;
-        b=idIGmhiz9KalT3vqIX8oaXQ8AgOuq1k7/XSok4c3RKQXj9mywkjuFfedK+zVmcE7bE
-         TAeW9Rli2Ls+Ofcd27Uq9gT8qTZTkXj3hAvHpYACNiXicU8ULuSqrbOduRYXiT57ejFp
-         3m8bGUMj635aiNFOkZKmndqSiYULkyxXkJNwLfplA1p9PjLAgzT9xBb6QTx1lP44uINQ
-         z9mkPSdDhoFBhOlFnwDT9rMeyTB+RMZeM23bKO2ZgCumFDr6/pLung2vCS+9RnsbJYB3
-         ABotrczTMl6VC1Jq2Ms9k1SnNoV4AK8SB3dH1r/N4rOrl7q22+sxggrp40tXxKNvfB3+
-         BShw==
-X-Gm-Message-State: AOJu0Ywe7Z2XifPrxxyta2CXjOercb0e1hzw6kzR4M6eWTBdJJYqL+E1
-	vjluDbGZKLVTULKqI6vIM07NFjWbuPKTM9whpqDBtcbKTEsAkiaFWSXk2uJlng==
-X-Gm-Gg: AY/fxX7FEX7AY6D87j2tHwTjfVNzaaYuQDBrod8FU3Bk1/tlDFgkPQgde+/KQIYL6M3
-	J+ZflLv+Nt5NtC6D+0gXXW5GhancYKey1K33e+4+yp3peiVXtIMNyAIOza2L/C+iBs2EsnRjBVk
-	vF7Toijr3ST1kmz2KYW219Lq0+VsLoqKt69QOAQX8EhCX9DemGdk/suuD6sUXA2GwOV6RwAfRMt
-	TgBn1GElnNLV8u4UEiuGjm83QlTqRrdSwxqt66/qglzPWiA73Q0Rk4ruKuUx6S0FhUuVyC8EwLf
-	U95f/v8Z3Sih7oL/Sm0LPRMojMJlZ96cVkfPO8zgw/SfMa/FYiFTU2nyHW+L95bdZChli1PhrII
-	EW4cA4ryXxF/q9Nq1oMsb7YXdcNJ3NmzMNsEmuq0o28S9Ou7f40QaFJK2hvFFd/9xo27ZSBxpSs
-	HiBVDdJv2BoKc1GhjK7yhF2kZ8RyWmOboep7c=
-X-Google-Smtp-Source: AGHT+IHN7v6IAAvXU4jd+3RSMStHBqBKtXHRj4UWd/Dyrdf4Ub/dlvP/TOMvN9m1wJE1pXRzvNfQ0A==
-X-Received: by 2002:a17:907:7743:b0:b7d:1372:fb1d with SMTP id a640c23a62f3a-b802043fa1bmr1065294466b.9.1766402231194;
-        Mon, 22 Dec 2025 03:17:11 -0800 (PST)
+        bh=CAtTBdKzsxOsOVr4atbb2dwTJjX3hCGLyVen256jQBk=;
+        b=Gt/abMCL5zX8zje2s3TOjkqrbBhd8hMsPfRL/u2V/UQNn7wbdULNfw6TbEcm1kO9rK
+         B2J6DjT9WtbP2QAE9NAg7duFudHPJWTkkXt+SV7/ryrmyROzRapxl6iXwSXWLeDw4Mbe
+         jZRPY1Ax9L+qb+2r6k4nU+5Tlu0LniNMLl7HsfztZ6ZSzo6PLnouOm5E0jrFJVlfqWkP
+         tpeh1FKCgy8S6XQ6SB9wucuHSJgYZyFyjsLjTY61Bu569q43CqS04pqnd9IoxDEJIB55
+         4JwLqXr6zgagqVwZeKhm7Re1ew8Pa+qFCDG+3lj7kCLkmEfv0V0t6xSDNG7ObXz5JU/u
+         HBWQ==
+X-Gm-Message-State: AOJu0Ywr7PAZFdDjnZUPgZyeT/C7RXnbH/gCeyMbflzmZf/YZtWKRuk4
+	XPZztn6D0JUVLIPbR0ZqQiTc9oDpR2W9wSWwtGse4eZ+gMOBFC2AqWY+HZqGGg==
+X-Gm-Gg: AY/fxX4tGEFhqcsn5E8nEWyismUrY1lHOa6aWmnWADoMdIL5N43HQXs+sYQODUnCplG
+	hxak7dysecACt7UP6fmMGvOJWQPUzJKu0lLfmSspAh2Keuc5f3NsvS6hYbPm6vIW2x/2Ka2aZxY
+	w8+dYKsv7/Nzfltc6hBZB2SbdZAMgD/U5kMixzQY1oa5EtO0BNADM/NC1B2h062QnRzt14OpCYW
+	1+zaZPj11jEIzW6c1TWDiCP6bd52JIjEkPtgUY6k286uwMA9/Tl9Qo1xJkw9LmXCVg6dbUGLRGd
+	EFRGadL/CfN9VhuT5iZy6/4AyfHLpVLW6X6V7sveflv/u3sKdMRTcqCutHWOotJr50Z4DfbOIXg
+	Ay9qrohkKn9X//XgpucRbka1GSd+RttZfuPfa3xV3m8gEYhdVo/08iwDj8Sr5bs1PTwAWcZ1kn2
+	65kkn2mokRsz95fnKG7jW4k7qKjls4VHn6ynI=
+X-Google-Smtp-Source: AGHT+IHYCnNALb3SnGfSPOaaozZVjts31tuUqNda7OykLSQkeQkVOP5DMU6HE6fEqE+AewtN3KzV4A==
+X-Received: by 2002:a17:906:9f88:b0:b73:6d3c:e0f2 with SMTP id a640c23a62f3a-b8037152a24mr1193271066b.37.1766402229274;
+        Mon, 22 Dec 2025 03:17:09 -0800 (PST)
 Received: from localhost.localdomain ([2a00:23c4:a758:8a01:46ab:7c54:6a94:818c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8037f13847sm1023592566b.57.2025.12.22.03.17.10
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8037f13847sm1023592566b.57.2025.12.22.03.17.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Dec 2025 03:17:10 -0800 (PST)
+        Mon, 22 Dec 2025 03:17:09 -0800 (PST)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -60,9 +60,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 10/24] can: rcar_canfd: Add support for Transceiver Delay Compensation
-Date: Mon, 22 Dec 2025 11:16:42 +0000
-Message-ID: <20251222111705.27028-11-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 06/24] can: rcar_canfd: Repurpose f_dcfg base for other registers
+Date: Mon, 22 Dec 2025 11:16:38 +0000
+Message-ID: <20251222111705.27028-7-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251222111705.27028-1-biju.das.jz@bp.renesas.com>
 References: <20251222111705.27028-1-biju.das.jz@bp.renesas.com>
@@ -72,211 +72,141 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 22 Dec 2025 11:17:21 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21196
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21192
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 586d5eecdf1479b9ab861ab16438ba236fb2f383 ]
+[ Upstream commit e4d8eb97a469d2397d3ab23f3b32f26e7e6853f2 ]
 
-The Renesas CAN-FD hardware block supports configuring Transceiver Delay
-Compensation, and reading back the Transceiver Delay Compensation
-Result, which is needed to support high transfer rates like 8 Mbps.
-The Secondary Sample Point is either the measured delay plus the
-configured offset, or just the configured offset.
+Reuse the existing Channel Data Bitrate Configuration Register offset
+member in the register configuration as the base offset for all related
+channel-specific registers.
+Rename the member and update the (incorrect) comment to reflect this.
+Replace the function-like channel-specific register offset macros by
+inline functions.
 
-Fix the existing RCANFD_FDCFG_TDCO() macro for the intended use case
-(writing instead of reading the field).  Add register definition bits
-for the Channel n CAN-FD Status Register.
+This fixes the offsets of all other (currently unused) channel-specific
+registers on R-Car Gen4 and RZ/G3E, and allows us to replace
+RCANFD_GEN4_FDCFG() by the more generic rcar_canfd_f_cfdcfg().
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Link: https://patch.msgid.link/69db727d5f728d679ba691d20854e7d963d0f323.1749655315.git.geert+renesas@glider.be
+Link: https://patch.msgid.link/75c8197c849fc9e360a75d4fa55bc01c1d850433.1749655315.git.geert+renesas@glider.be
 Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
-[Biju: Dropped using newly introduced struct data_bittiming_params
-as it requires more changes on 6.1.cip]
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/net/can/rcar/rcar_canfd.c | 85 +++++++++++++++++++++++++++++--
- 1 file changed, 82 insertions(+), 3 deletions(-)
+ drivers/net/can/rcar/rcar_canfd.c | 52 ++++++++++++++++++++++---------
+ 1 file changed, 37 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
-index e76e5d76f836..ec6790d11fec 100644
+index 1e37f685d9b5..6bdac418795c 100644
 --- a/drivers/net/can/rcar/rcar_canfd.c
 +++ b/drivers/net/can/rcar/rcar_canfd.c
-@@ -191,9 +191,19 @@
- /* RSCFDnCFDCmFDCFG */
- #define RCANFD_GEN4_FDCFG_CLOE		BIT(30)
- #define RCANFD_GEN4_FDCFG_FDOE		BIT(28)
-+#define RCANFD_FDCFG_TDCO		GENMASK(23, 16)
- #define RCANFD_FDCFG_TDCE		BIT(9)
- #define RCANFD_FDCFG_TDCOC		BIT(8)
--#define RCANFD_FDCFG_TDCO(x)		(((x) & 0x7f) >> 16)
-+
-+/* RSCFDnCFDCmFDSTS */
-+#define RCANFD_FDSTS_SOC		GENMASK(31, 24)
-+#define RCANFD_FDSTS_EOC		GENMASK(23, 16)
-+#define RCANFD_GEN4_FDSTS_TDCVF		BIT(15)
-+#define RCANFD_GEN4_FDSTS_PNSTS		GENMASK(13, 12)
-+#define RCANFD_FDSTS_SOCO		BIT(9)
-+#define RCANFD_FDSTS_EOCO		BIT(8)
-+#define RCANFD_FDSTS_TDCVF		BIT(7)
-+#define RCANFD_FDSTS_TDCR		GENMASK(7, 0)
+@@ -425,19 +425,10 @@
+ #define RCANFD_C_RPGACC(r)		(0x1900 + (0x04 * (r)))
  
- /* RSCFDnCFDRFCCx */
- #define RCANFD_RFCC_RFIM		BIT(12)
-@@ -520,6 +530,7 @@ struct rcar_canfd_shift_data {
- struct rcar_canfd_hw_info {
- 	const struct can_bittiming_const *nom_bittiming;
- 	const struct can_bittiming_const *data_bittiming;
-+	const struct can_tdc_const *tdc_const;
- 	const struct rcar_canfd_regs *regs;
- 	const struct rcar_canfd_shift_data *sh;
- 	u8 rnc_field_width;
-@@ -627,6 +638,25 @@ static const struct can_bittiming_const rcar_canfd_bittiming_const = {
- 	.brp_inc = 1,
+ /* R-Car Gen4 Classical and CAN FD mode specific register map */
+-#define RCANFD_GEN4_FDCFG(m)		(0x1404 + (0x20 * (m)))
+-
+ #define RCANFD_GEN4_GAFL_OFFSET		(0x1800)
+ 
+ /* CAN FD mode specific register map */
+ 
+-/* RSCFDnCFDCmXXX -> RCANFD_F_XXX(m) */
+-#define RCANFD_F_DCFG(gpriv, m)		((gpriv)->info->regs->f_dcfg + (0x20 * (m)))
+-#define RCANFD_F_CFDCFG(m)		(0x0504 + (0x20 * (m)))
+-#define RCANFD_F_CFDCTR(m)		(0x0508 + (0x20 * (m)))
+-#define RCANFD_F_CFDSTS(m)		(0x050c + (0x20 * (m)))
+-#define RCANFD_F_CFDCRC(m)		(0x0510 + (0x20 * (m)))
+-
+ /* RSCFDnCFDGAFLXXXj offset */
+ #define RCANFD_F_GAFL_OFFSET		(0x1000)
+ 
+@@ -510,7 +501,7 @@ struct rcar_canfd_regs {
+ 	u16 cfcc;	/* Common FIFO Configuration/Control Register */
+ 	u16 cfsts;	/* Common FIFO Status Register */
+ 	u16 cfpctr;	/* Common FIFO Pointer Control Register */
+-	u16 f_dcfg;	/* Global FD Configuration Register */
++	u16 coffset;	/* Channel Data Bitrate Configuration Register */
+ 	u16 rfoffset;	/* Receive FIFO buffer access ID register */
+ 	u16 cfoffset;	/* Transmit/receive FIFO buffer access ID register */
  };
- 
-+/* CAN FD Transmission Delay Compensation constants */
-+static const struct can_tdc_const rcar_canfd_gen3_tdc_const = {
-+	.tdcv_min = 1,
-+	.tdcv_max = 128,
-+	.tdco_min = 1,
-+	.tdco_max = 128,
-+	.tdcf_min = 0,	/* Filter window not supported */
-+	.tdcf_max = 0,
-+};
-+
-+static const struct can_tdc_const rcar_canfd_gen4_tdc_const = {
-+	.tdcv_min = 1,
-+	.tdcv_max = 256,
-+	.tdco_min = 1,
-+	.tdco_max = 256,
-+	.tdcf_min = 0,	/* Filter window not supported */
-+	.tdcf_max = 0,
-+};
-+
- static const struct rcar_canfd_regs rcar_gen3_regs = {
- 	.rfcc = 0x00b8,
+@@ -641,7 +632,7 @@ static const struct rcar_canfd_regs rcar_gen3_regs = {
  	.cfcc = 0x0118,
-@@ -672,6 +702,7 @@ static const struct rcar_canfd_shift_data rcar_gen4_shift_data = {
- static const struct rcar_canfd_hw_info rcar_gen3_hw_info = {
- 	.nom_bittiming = &rcar_canfd_gen3_nom_bittiming_const,
- 	.data_bittiming = &rcar_canfd_gen3_data_bittiming_const,
-+	.tdc_const = &rcar_canfd_gen3_tdc_const,
- 	.regs = &rcar_gen3_regs,
- 	.sh = &rcar_gen3_shift_data,
- 	.rnc_field_width = 8,
-@@ -688,6 +719,7 @@ static const struct rcar_canfd_hw_info rcar_gen3_hw_info = {
- static const struct rcar_canfd_hw_info rcar_gen4_hw_info = {
- 	.nom_bittiming = &rcar_canfd_gen4_nom_bittiming_const,
- 	.data_bittiming = &rcar_canfd_gen4_data_bittiming_const,
-+	.tdc_const = &rcar_canfd_gen4_tdc_const,
- 	.regs = &rcar_gen4_regs,
- 	.sh = &rcar_gen4_shift_data,
- 	.rnc_field_width = 16,
-@@ -704,6 +736,7 @@ static const struct rcar_canfd_hw_info rcar_gen4_hw_info = {
- static const struct rcar_canfd_hw_info rzg2l_hw_info = {
- 	.nom_bittiming = &rcar_canfd_gen3_nom_bittiming_const,
- 	.data_bittiming = &rcar_canfd_gen3_data_bittiming_const,
-+	.tdc_const = &rcar_canfd_gen3_tdc_const,
- 	.regs = &rcar_gen3_regs,
- 	.sh = &rcar_gen3_shift_data,
- 	.rnc_field_width = 8,
-@@ -720,6 +753,7 @@ static const struct rcar_canfd_hw_info rzg2l_hw_info = {
- static const struct rcar_canfd_hw_info r9a09g047_hw_info = {
- 	.nom_bittiming = &rcar_canfd_gen4_nom_bittiming_const,
- 	.data_bittiming = &rcar_canfd_gen4_data_bittiming_const,
-+	.tdc_const = &rcar_canfd_gen4_tdc_const,
- 	.regs = &rcar_gen4_regs,
- 	.sh = &rcar_gen4_shift_data,
- 	.rnc_field_width = 16,
-@@ -1461,12 +1495,15 @@ static irqreturn_t rcar_canfd_channel_interrupt(int irq, void *dev_id)
- 
- static void rcar_canfd_set_bittiming(struct net_device *ndev)
- {
-+	u32 mask = RCANFD_FDCFG_TDCO | RCANFD_FDCFG_TDCE | RCANFD_FDCFG_TDCOC;
- 	struct rcar_canfd_channel *priv = netdev_priv(ndev);
- 	struct rcar_canfd_global *gpriv = priv->gpriv;
- 	const struct can_bittiming *bt = &priv->can.bittiming;
- 	const struct can_bittiming *dbt = &priv->can.data_bittiming;
-+	const struct can_tdc_const *tdc_const = priv->can.tdc_const;
-+	const struct can_tdc *tdc = &priv->can.tdc;
-+	u32 cfg, tdcmode = 0, tdco = 0;
- 	u16 brp, sjw, tseg1, tseg2;
--	u32 cfg;
- 	u32 ch = priv->channel;
- 
- 	/* Nominal bit timing settings */
-@@ -1498,6 +1535,20 @@ static void rcar_canfd_set_bittiming(struct net_device *ndev)
- 	       RCANFD_DCFG_DSJW(gpriv, sjw) | RCANFD_DCFG_DTSEG2(gpriv, tseg2));
- 
- 	rcar_canfd_write(priv->base, rcar_canfd_f_dcfg(gpriv, ch), cfg);
-+
-+	/* Transceiver Delay Compensation */
-+	if (priv->can.ctrlmode & CAN_CTRLMODE_TDC_AUTO) {
-+		/* TDC enabled, measured + offset */
-+		tdcmode = RCANFD_FDCFG_TDCE;
-+		tdco = tdc->tdco - 1;
-+	} else if (priv->can.ctrlmode & CAN_CTRLMODE_TDC_MANUAL) {
-+		/* TDC enabled, offset only */
-+		tdcmode = RCANFD_FDCFG_TDCE | RCANFD_FDCFG_TDCOC;
-+		tdco = min(tdc->tdcv + tdc->tdco, tdc_const->tdco_max) - 1;
-+	}
-+
-+	rcar_canfd_update_bit(gpriv->base, rcar_canfd_f_cfdcfg(gpriv, ch), mask,
-+			      tdcmode | FIELD_PREP(RCANFD_FDCFG_TDCO, tdco));
+ 	.cfsts = 0x0178,
+ 	.cfpctr = 0x01d8,
+-	.f_dcfg = 0x0500,
++	.coffset = 0x0500,
+ 	.rfoffset = 0x3000,
+ 	.cfoffset = 0x3400,
+ };
+@@ -651,7 +642,7 @@ static const struct rcar_canfd_regs rcar_gen4_regs = {
+ 	.cfcc = 0x0120,
+ 	.cfsts = 0x01e0,
+ 	.cfpctr = 0x0240,
+-	.f_dcfg = 0x1400,
++	.coffset = 0x1400,
+ 	.rfoffset = 0x6000,
+ 	.cfoffset = 0x6400,
+ };
+@@ -800,6 +791,37 @@ static void rcar_canfd_put_data(struct rcar_canfd_channel *priv,
+ 		rcar_canfd_write(priv->base, off + i * sizeof(u32), data[i]);
  }
  
- static int rcar_canfd_start(struct net_device *ndev)
-@@ -1808,6 +1859,29 @@ static int rcar_canfd_rx_poll(struct napi_struct *napi, int quota)
- 	return num_pkts;
- }
- 
-+static unsigned int rcar_canfd_get_tdcr(struct rcar_canfd_global *gpriv,
-+					unsigned int ch)
++/* RSCFDnCFDCmXXX -> rcar_canfd_f_xxx(gpriv, ch) */
++static inline unsigned int rcar_canfd_f_dcfg(struct rcar_canfd_global *gpriv,
++					     unsigned int ch)
 +{
-+	u32 sts = rcar_canfd_read(gpriv->base, rcar_canfd_f_cfdsts(gpriv, ch));
-+	u32 tdcr = FIELD_GET(RCANFD_FDSTS_TDCR, sts);
-+
-+	return tdcr & (gpriv->info->tdc_const->tdcv_max - 1);
++	return gpriv->info->regs->coffset + 0x00 + 0x20 * ch;
 +}
 +
-+static int rcar_canfd_get_auto_tdcv(const struct net_device *ndev, u32 *tdcv)
++static inline unsigned int rcar_canfd_f_cfdcfg(struct rcar_canfd_global *gpriv,
++					       unsigned int ch)
 +{
-+	struct rcar_canfd_channel *priv = netdev_priv(ndev);
-+	u32 tdco = priv->can.tdc.tdco;
-+	u32 tdcr;
-+
-+	/* Transceiver Delay Compensation Result */
-+	tdcr = rcar_canfd_get_tdcr(priv->gpriv, priv->channel) + 1;
-+
-+	*tdcv = tdcr < tdco ? 0 : tdcr - tdco;
-+
-+	return 0;
++	return gpriv->info->regs->coffset + 0x04 + 0x20 * ch;
 +}
 +
- static int rcar_canfd_do_set_mode(struct net_device *ndev, enum can_mode mode)
++static inline unsigned int rcar_canfd_f_cfdctr(struct rcar_canfd_global *gpriv,
++					       unsigned int ch)
++{
++	return gpriv->info->regs->coffset + 0x08 + 0x20 * ch;
++}
++
++static inline unsigned int rcar_canfd_f_cfdsts(struct rcar_canfd_global *gpriv,
++					       unsigned int ch)
++{
++	return gpriv->info->regs->coffset + 0x0c + 0x20 * ch;
++}
++
++static inline unsigned int rcar_canfd_f_cfdcrc(struct rcar_canfd_global *gpriv,
++					       unsigned int ch)
++{
++	return gpriv->info->regs->coffset + 0x10 + 0x20 * ch;
++}
++
+ static void rcar_canfd_tx_failure_cleanup(struct net_device *ndev)
  {
- 	int err;
-@@ -1930,12 +2004,17 @@ static int rcar_canfd_channel_probe(struct rcar_canfd_global *gpriv, u32 ch,
- 	if (gpriv->fdmode) {
- 		priv->can.bittiming_const = gpriv->info->nom_bittiming;
- 		priv->can.data_bittiming_const = gpriv->info->data_bittiming;
-+		priv->can.tdc_const = gpriv->info->tdc_const;
+ 	u32 i;
+@@ -827,8 +849,8 @@ static void rcar_canfd_set_mode(struct rcar_canfd_global *gpriv)
  
- 		/* Controller starts in CAN FD only mode */
- 		err = can_set_static_ctrlmode(ndev, CAN_CTRLMODE_FD);
- 		if (err)
- 			goto fail;
--		priv->can.ctrlmode_supported = CAN_CTRLMODE_BERR_REPORTING;
-+
-+		priv->can.ctrlmode_supported = CAN_CTRLMODE_BERR_REPORTING |
-+					       CAN_CTRLMODE_TDC_AUTO |
-+					       CAN_CTRLMODE_TDC_MANUAL;
-+		priv->can.do_get_auto_tdcv = rcar_canfd_get_auto_tdcv;
+ 		for_each_set_bit(ch, &gpriv->channels_mask,
+ 				 gpriv->info->max_channels)
+-			rcar_canfd_set_bit(gpriv->base, RCANFD_GEN4_FDCFG(ch),
+-					   val);
++			rcar_canfd_set_bit(gpriv->base,
++					   rcar_canfd_f_cfdcfg(gpriv, ch), val);
  	} else {
- 		/* Controller starts in Classical CAN only mode */
- 		priv->can.bittiming_const = &rcar_canfd_bittiming_const;
+ 		if (gpriv->fdmode)
+ 			rcar_canfd_set_bit(gpriv->base, RCANFD_GRMCFG,
+@@ -1469,7 +1491,7 @@ static void rcar_canfd_set_bittiming(struct net_device *ndev)
+ 		cfg = (RCANFD_DCFG_DTSEG1(gpriv, tseg1) | RCANFD_DCFG_DBRP(brp) |
+ 		       RCANFD_DCFG_DSJW(gpriv, sjw) | RCANFD_DCFG_DTSEG2(gpriv, tseg2));
+ 
+-		rcar_canfd_write(priv->base, RCANFD_F_DCFG(gpriv, ch), cfg);
++		rcar_canfd_write(priv->base, rcar_canfd_f_dcfg(gpriv, ch), cfg);
+ 	} else {
+ 		/* Classical CAN only mode */
+ 		if (gpriv->info->shared_can_regs) {
 -- 
 2.43.0
 
