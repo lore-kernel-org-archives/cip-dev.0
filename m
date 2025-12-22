@@ -2,57 +2,57 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8A81E6749A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E892FE67498
 	for <webhook@archiver.kernel.org>; Mon, 22 Dec 2025 11:17:10 +0000 (UTC)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.78193.1766402230210967892
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.78192.1766402229047716927
  for <cip-dev@lists.cip-project.org>;
- Mon, 22 Dec 2025 03:17:10 -0800
+ Mon, 22 Dec 2025 03:17:09 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=hSlYYgfq;
- spf=pass (domain: gmail.com, ip: 209.85.218.51, mailfrom: biju.das.au@gmail.com)
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b79f98adea4so565129466b.0
-        for <cip-dev@lists.cip-project.org>; Mon, 22 Dec 2025 03:17:09 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=LcnLdQpl;
+ spf=pass (domain: gmail.com, ip: 209.85.218.42, mailfrom: biju.das.au@gmail.com)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b7a72874af1so664261566b.3
+        for <cip-dev@lists.cip-project.org>; Mon, 22 Dec 2025 03:17:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766402228; x=1767007028; darn=lists.cip-project.org;
+        d=gmail.com; s=20230601; t=1766402227; x=1767007027; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=j9+x4UKcJM/cEIpawfZFrS9iUdgnOicdjvDkB26MYZY=;
-        b=hSlYYgfqfWXOmObShKE/CKx7JmNOnCmZWR7G75E28MazhwVCo4KcgnGJQbyd2Yi+rw
-         tKMNJPV7H3T9ZuXundXCbLskXPxMw8CTnYnXUgjKOtrhrkOvyDZDml5vNkqIei+mafRj
-         t0rSbTUeq0FklXFgQvHkmTYMf4iOTn2pSEbVTSRHbuOI6Mr8nAAkvk+jDxcfVq/GWqu5
-         0l3hNBlNZFBoegf37x6UBXvXoIfZATZM5cmJb664gZk7oYP2CJPwwoulYZOsOX+cloxw
-         BLPbqTYuZ/ZtZErleZCNlecTnXjzmnUROg0TxRahsVAnc4JpFFB4rJMcyjDXvD+rlDYx
-         jiSA==
+        bh=dZ1vx1ETvzlbyCGbzG4GePVBBDJUExM0m2iod0Q18ZY=;
+        b=LcnLdQplf/Nkv4/RPBm/HdVsRFctmlyTxvy8h4aImYGKgQNGhzLbZuHvAgcJgbempu
+         VrQeqa7oGz1wO/u4A6mfGjzUwerpNshHk1QfkCX+TC13pfZjAvCUKYbCRJY3e7Z7+k5v
+         d185AwszhhHJKt+et+SJ/2JssNZNWdOTjIFqeOUmButOIvoO27xhjZ1jnTQviy3j187z
+         vAy0W+wXVu6wt/pv18RxkfY/3Fy2YZM/ElE+q0UmIkN9QTlfdreePJ3HBz7GPStdnJ8H
+         yGGIojxY1vEIHpVLLJ9qnLnBRAjiVtX+Z5d81QwzhKcBPrMWpRwGhRxJQl2deQqwIuNN
+         fvfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766402228; x=1767007028;
+        d=1e100.net; s=20230601; t=1766402227; x=1767007027;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=j9+x4UKcJM/cEIpawfZFrS9iUdgnOicdjvDkB26MYZY=;
-        b=HqOJEotr76HsedlQJznR0P+E0Ra+9W8lpI0LjdIy9Js/QluqdtPd9pOtzKJ1riEOlc
-         tD71q1rGVS4n2LqxO7e55cd57DzTtdgvNEtC8ghoh+jpo3RPM9Ktc/mFvaCv/kP1zqUO
-         1SsJxPbjYOZAYXTB8DX+USDLFwO/DZ1gWGKOZsrI8Koths1yr8Lo8aaPgflv+hqBKE60
-         DRGMHK64/FS//UZlEqF38AE09MSwzxVj7Dld4VQd+6JavLWPjPQ5drZ0xsyUqx5B6sTO
-         UpQ+ymUpPvlKj7RUjWl98rAMB7gSkgTGGwRwxN585op9MBICubXK3OCT266bmHdAGLr9
-         uTbg==
-X-Gm-Message-State: AOJu0Yy/NPZewnTeGEUxT0TkSTixdDLkc8QbAut7+qZCga6ljzG30iVi
-	GaUmFj0324i0jro4lWduXVIAjfXJyNlypGp/P5F+7iu6qC1iUvNkh2LALXYf7g==
-X-Gm-Gg: AY/fxX5MTP3R253w978NEBa4jGS4k5/Xm8vSs4QJ10j84Y/NyDhMgOaSA6AdUX1WXgx
-	TW/OtbpA8kW3aee+HtAWmxfufS8FSl0U/3DjrT/EW+921ENvIancuF0KuMi6vPNy4O1HYnAkIhE
-	rrrHtpoiwjwOBH7rZWWh5oTzXnrMUNsXjSZMhKxPuLxIaxuK//ePBIl7fBQNPrkKr5vTKCLJecP
-	z2qsQ3kKtVPJr/Swq5P7tpCt43xlX9tZ9NXvUTMt7HndFA421OfUrVhWhvqwAMYWJG95nXlvSJ0
-	T8bfjXhJld+XegyFPVeAHLAO7Zb5WuYJ+t6OBSJRl2rKdy51PcgrerwuBotITfgY+oSiMYQexsb
-	/MS88Zb0xt0nWRG2ebPTjHpXc/kChpVx0KF6BnYnsDx/e1S7cH/J2BTgvrXMcAdqi8w2xL30Ack
-	6njktLLYr3e5ozPX1zbOgjiaTozZaf0SSWq+c=
-X-Google-Smtp-Source: AGHT+IHBRO58bZr0XactCl8p0us/cqduy6++1+8QyRnQ6IVwUrnKo3Yw24S+AG/z4n8d/mH0fItniw==
-X-Received: by 2002:a17:907:3ea1:b0:b76:74b6:da75 with SMTP id a640c23a62f3a-b805ab8bb56mr562102766b.38.1766402228230;
-        Mon, 22 Dec 2025 03:17:08 -0800 (PST)
-Received: from localhost.localdomain ([2a00:23c4:a758:8a01:46ab:7c54:6a94:818c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8037f13847sm1023592566b.57.2025.12.22.03.17.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        bh=dZ1vx1ETvzlbyCGbzG4GePVBBDJUExM0m2iod0Q18ZY=;
+        b=sficqWhdZrayqGw1U44y/0R50coYCtLW5DgAnxvWBOzGN8asjsbntgp6X5nGEZGcrL
+         06TtwbfhZX4WFp6To6MMz1vfJVuoE7s1xZmMpXBeM95kLIpiZTT3GfdcrwAMxBWzPrNi
+         ryJPWtVYEfJroPMNNpGNy95Z6WLhTMkMtc7UD58HoyPu6nbt643jTWpQKEAQLPZ2T9MW
+         UF6C+lScFJukRySizm2ku23fq2CrF/WGAoFecfQipnfG1qco3SmVZJgBIeFS/ODFMDuK
+         NLK2RVFNF6IK1/d6CHTg0TXrkaxcfjs499JPTcLhdnrBtA2N+EmhMCM/3fOSYMkVskup
+         bi6w==
+X-Gm-Message-State: AOJu0Yxm0K2vfnmg8lOaFbZ7abb/be6pV/zsWbS2I96w2QIJxN9wWZ8z
+	t4X57lcsPga2EiacjFp7BH68Ys7pUS/2xif5QP4PRoMFt3YDbrq3SQRRa0X0pw==
+X-Gm-Gg: AY/fxX57gzOH0vHZkat0JYeRHZuUwkyqLhcx4w1jAQgMz9nhVnvbIg0LJv536IZPwxp
+	Yf14BvPwVugGrO8JTfgLwauEn5VLxqstQf7tmgwDFW/Z0SKtHWooupDapuvkVEYx7LLq4+h/gPj
+	kfzhY4uR4lbNZLNtD2ouY3N6Zi7SHbMMukg9DOMemBQ1scFLHXcSaXW53Rnah+V3JTISay4jHeU
+	VtcGGHiK+m2yo4eYjx9q8Daq3vNoWVDUlLAHucNt0hszTBfYxQOMIN8SH6mcQVqxQY8Y6ggAzru
+	GaFagfJQxVKfZo7l0FapflUXUSx5viYAj5pEgefZozxsaDu1bHNb18ex4MVh9yt+fArag122D5O
+	vsfxxI1Y3DL7So1KrLvwyMiY9qkz2PERAwFl32mn33ToyXq+meMKYLGdOg/XditWJhy4kXooYZn
+	fL4Q7AeahY3KsI2vtwk/UcQwd9Enla3bjiLICsJ1PlN88rIQ==
+X-Google-Smtp-Source: AGHT+IFTpKdb6wko8nS1TfX+3M/+BwMMaToNkxfTE00JdKPCP+HfkIloQAhtpFYy40oUDOyE5ZQhew==
+X-Received: by 2002:a17:907:7eaa:b0:b73:1e09:7377 with SMTP id a640c23a62f3a-b80371d6c10mr1200237066b.58.1766402227076;
         Mon, 22 Dec 2025 03:17:07 -0800 (PST)
+Received: from localhost.localdomain ([2a00:23c4:a758:8a01:46ab:7c54:6a94:818c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8037f13847sm1023592566b.57.2025.12.22.03.17.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Dec 2025 03:17:06 -0800 (PST)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -60,9 +60,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 04/24] can: rcar_canfd: Add helper variable dev to rcar_canfd_reset_controller()
-Date: Mon, 22 Dec 2025 11:16:36 +0000
-Message-ID: <20251222111705.27028-5-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 02/24] can: rcar_canfd: Remove bittiming debug prints
+Date: Mon, 22 Dec 2025 11:16:34 +0000
+Message-ID: <20251222111705.27028-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251222111705.27028-1-biju.das.jz@bp.renesas.com>
 References: <20251222111705.27028-1-biju.das.jz@bp.renesas.com>
@@ -72,64 +72,57 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 22 Dec 2025 11:17:10 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21190
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21187
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 1f9b5003d4baf72055371fcdb15dda5759a8e908 ]
+[ Upstream commit a627813431600c5582e59022659f11790f94a25c ]
 
-rcar_canfd_reset_controller() has many users of "pdev->dev".  Introduce
-a shorthand to simplify the code.
+There is no need to have debug code to print the bittiming values, as
+the user can get all values through the netlink interface.
 
+Suggested-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Link: https://patch.msgid.link/21e64816808eb3eba722f4c547f4f5112d5d62a6.1749655315.git.geert+renesas@glider.be
+Link: https://patch.msgid.link/a8b9f2c8938dc5e63b8faf1d0cdc91dadc12117e.1749655315.git.geert+renesas@glider.be
 Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/net/can/rcar/rcar_canfd.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/can/rcar/rcar_canfd.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
 diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
-index 0427219b4564..60ee6e82af52 100644
+index 5136454a1300..11a1d1b992c6 100644
 --- a/drivers/net/can/rcar/rcar_canfd.c
 +++ b/drivers/net/can/rcar/rcar_canfd.c
-@@ -841,6 +841,7 @@ static void rcar_canfd_set_mode(struct rcar_canfd_global *gpriv)
+@@ -1459,8 +1459,6 @@ static void rcar_canfd_set_bittiming(struct net_device *ndev)
+ 		       RCANFD_NCFG_NSJW(gpriv, sjw) | RCANFD_NCFG_NTSEG2(gpriv, tseg2));
  
- static int rcar_canfd_reset_controller(struct rcar_canfd_global *gpriv)
- {
-+	struct device *dev = &gpriv->pdev->dev;
- 	u32 sts, ch;
- 	int err;
+ 		rcar_canfd_write(priv->base, RCANFD_CCFG(ch), cfg);
+-		netdev_dbg(priv->ndev, "nrate: brp %u, sjw %u, tseg1 %u, tseg2 %u\n",
+-			   brp, sjw, tseg1, tseg2);
  
-@@ -850,7 +851,7 @@ static int rcar_canfd_reset_controller(struct rcar_canfd_global *gpriv)
- 	err = readl_poll_timeout((gpriv->base + RCANFD_GSTS), sts,
- 				 !(sts & RCANFD_GSTS_GRAMINIT), 2, 500000);
- 	if (err) {
--		dev_dbg(&gpriv->pdev->dev, "global raminit failed\n");
-+		dev_dbg(dev, "global raminit failed\n");
- 		return err;
- 	}
+ 		/* Data bit timing settings */
+ 		brp = dbt->brp - 1;
+@@ -1472,8 +1470,6 @@ static void rcar_canfd_set_bittiming(struct net_device *ndev)
+ 		       RCANFD_DCFG_DSJW(gpriv, sjw) | RCANFD_DCFG_DTSEG2(gpriv, tseg2));
  
-@@ -863,7 +864,7 @@ static int rcar_canfd_reset_controller(struct rcar_canfd_global *gpriv)
- 	err = readl_poll_timeout((gpriv->base + RCANFD_GSTS), sts,
- 				 (sts & RCANFD_GSTS_GRSTSTS), 2, 500000);
- 	if (err) {
--		dev_dbg(&gpriv->pdev->dev, "global reset failed\n");
-+		dev_dbg(dev, "global reset failed\n");
- 		return err;
- 	}
- 
-@@ -884,8 +885,7 @@ static int rcar_canfd_reset_controller(struct rcar_canfd_global *gpriv)
- 					 (sts & RCANFD_CSTS_CRSTSTS),
- 					 2, 500000);
- 		if (err) {
--			dev_dbg(&gpriv->pdev->dev,
--				"channel %u reset failed\n", ch);
-+			dev_dbg(dev, "channel %u reset failed\n", ch);
- 			return err;
+ 		rcar_canfd_write(priv->base, RCANFD_F_DCFG(gpriv, ch), cfg);
+-		netdev_dbg(priv->ndev, "drate: brp %u, sjw %u, tseg1 %u, tseg2 %u\n",
+-			   brp, sjw, tseg1, tseg2);
+ 	} else {
+ 		/* Classical CAN only mode */
+ 		if (gpriv->info->shared_can_regs) {
+@@ -1489,9 +1485,6 @@ static void rcar_canfd_set_bittiming(struct net_device *ndev)
  		}
+ 
+ 		rcar_canfd_write(priv->base, RCANFD_CCFG(ch), cfg);
+-		netdev_dbg(priv->ndev,
+-			   "rate: brp %u, sjw %u, tseg1 %u, tseg2 %u\n",
+-			   brp, sjw, tseg1, tseg2);
  	}
+ }
+ 
 -- 
 2.43.0
 
