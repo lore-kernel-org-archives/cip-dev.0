@@ -2,28 +2,28 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8D03D3B7E5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDB49E8FDB1
 	for <webhook@archiver.kernel.org>; Mon, 29 Dec 2025 08:43:10 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.msgproc02-g2.40127.1766997760871127584
  for <cip-dev@lists.cip-project.org>;
- Mon, 29 Dec 2025 00:42:46 -0800
+ Mon, 29 Dec 2025 00:42:42 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: 5WzMauHNR7a09Hvmq1EPqg==
-X-CSE-MsgGUID: dWJ3gyqMTEu48iekthJBuQ==
+X-CSE-ConnectionGUID: ObnK374HQI61kijctBGjLA==
+X-CSE-MsgGUID: JcICDayiSraMNxz49Usfrg==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 29 Dec 2025 17:42:45 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 29 Dec 2025 17:42:42 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.92.6])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 726FE400494A;
-	Mon, 29 Dec 2025 17:42:44 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id D7CAB4005E3A;
+	Mon, 29 Dec 2025 17:42:40 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@denx.de,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.12-y.cip 3/5] arm64: dts: renesas: r9a09g056: Add GBETH nodes
-Date: Mon, 29 Dec 2025 08:42:35 +0000
-Message-ID: <20251229084237.3634-4-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.12-y.cip 1/5] clk: renesas: r9a09g056-cpg: Add clock and reset entries for GBETH0/1
+Date: Mon, 29 Dec 2025 08:42:33 +0000
+Message-ID: <20251229084237.3634-2-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251229084237.3634-1-ovidiu.panait.rb@renesas.com>
 References: <20251229084237.3634-1-ovidiu.panait.rb@renesas.com>
@@ -33,245 +33,151 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 29 Dec 2025 08:43:10 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21245
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21243
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit c8c8a57c5b4071a7c7d75ff3af3de7326e120bce upstream.
+commit bfb0bc6bdfdaa58abeec4c99e9b2cd25e550306d upstream.
 
-Renesas RZ/V2N SoC is equipped with 2x Synopsys DesignWare Ethernet
-Quality-of-Service IP block version 5.20. Add GBETH nodes to R9A09G056
-RZ/V2N SoC DTSI.
+Add clock and reset entries for GBETH instances. Include core clocks for
+PTP, sourced from PLLETH, and add PLLs, dividers, and static mux clocks
+used as clock sources for the GBETH IP.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250514101528.41663-2-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://lore.kernel.org/20250513154635.273664-2-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a09g056.dtsi | 209 +++++++++++++++++++++
- 1 file changed, 209 insertions(+)
+ drivers/clk/renesas/r9a09g056-cpg.c | 66 +++++++++++++++++++++++++++++
+ 1 file changed, 66 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g056.dtsi b/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
-index 068f966d571c..fe6677d6f8b8 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
-@@ -388,6 +388,215 @@ sdhi2_vqmmc: vqmmc-regulator {
- 				status = "disabled";
- 			};
- 		};
-+
-+		eth0: ethernet@15c30000 {
-+			compatible = "renesas,r9a09g056-gbeth", "renesas,rzv2h-gbeth",
-+				     "snps,dwmac-5.20";
-+			reg = <0 0x15c30000 0 0x10000>;
-+			interrupts = <GIC_SPI 765 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 767 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 766 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 772 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 773 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 774 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 775 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 768 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 769 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 770 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 771 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "macirq", "eth_wake_irq", "eth_lpi",
-+					  "rx-queue-0", "rx-queue-1", "rx-queue-2",
-+					  "rx-queue-3", "tx-queue-0", "tx-queue-1",
-+					  "tx-queue-2", "tx-queue-3";
-+			clocks =  <&cpg CPG_MOD 0xbd>, <&cpg CPG_MOD 0xbc>,
-+				  <&cpg CPG_CORE R9A09G056_GBETH_0_CLK_PTP_REF_I>,
-+				  <&cpg CPG_MOD 0xb8>, <&cpg CPG_MOD 0xb9>,
-+				  <&cpg CPG_MOD 0xba>, <&cpg CPG_MOD 0xbb>;
-+			clock-names = "stmmaceth", "pclk", "ptp_ref",
-+				      "tx", "rx", "tx-180", "rx-180";
-+			resets = <&cpg 0xb0>;
-+			power-domains = <&cpg>;
-+			snps,multicast-filter-bins = <256>;
-+			snps,perfect-filter-entries = <128>;
-+			rx-fifo-depth = <8192>;
-+			tx-fifo-depth = <8192>;
-+			snps,fixed-burst;
-+			snps,no-pbl-x8;
-+			snps,force_thresh_dma_mode;
-+			snps,axi-config = <&stmmac_axi_setup>;
-+			snps,mtl-rx-config = <&mtl_rx_setup0>;
-+			snps,mtl-tx-config = <&mtl_tx_setup0>;
-+			snps,txpbl = <32>;
-+			snps,rxpbl = <32>;
-+			status = "disabled";
-+
-+			mdio0: mdio {
-+				compatible = "snps,dwmac-mdio";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+			};
-+
-+			mtl_rx_setup0: rx-queues-config {
-+				snps,rx-queues-to-use = <4>;
-+				snps,rx-sched-sp;
-+
-+				queue0 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x1>;
-+					snps,map-to-dma-channel = <0>;
-+				};
-+
-+				queue1 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x2>;
-+					snps,map-to-dma-channel = <1>;
-+				};
-+
-+				queue2 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x4>;
-+					snps,map-to-dma-channel = <2>;
-+				};
-+
-+				queue3 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x8>;
-+					snps,map-to-dma-channel = <3>;
-+				};
-+			};
-+
-+			mtl_tx_setup0: tx-queues-config {
-+				snps,tx-queues-to-use = <4>;
-+
-+				queue0 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x1>;
-+				};
-+
-+				queue1 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x2>;
-+				};
-+
-+				queue2 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x4>;
-+				};
-+
-+				queue3 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x8>;
-+				};
-+			};
-+		};
-+
-+		eth1: ethernet@15c40000 {
-+			compatible = "renesas,r9a09g056-gbeth", "renesas,rzv2h-gbeth",
-+				     "snps,dwmac-5.20";
-+			reg = <0 0x15c40000 0 0x10000>;
-+			interrupts = <GIC_SPI 780 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 782 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 781 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 787 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 788 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 789 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 790 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 783 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 784 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 785 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 786 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "macirq", "eth_wake_irq", "eth_lpi",
-+					  "rx-queue-0", "rx-queue-1", "rx-queue-2",
-+					  "rx-queue-3", "tx-queue-0", "tx-queue-1",
-+					  "tx-queue-2", "tx-queue-3";
-+			clocks =  <&cpg CPG_MOD 0xc3>, <&cpg CPG_MOD 0xc2>,
-+				  <&cpg CPG_CORE R9A09G056_GBETH_1_CLK_PTP_REF_I>,
-+				  <&cpg CPG_MOD 0xbe>, <&cpg CPG_MOD 0xbf>,
-+				  <&cpg CPG_MOD 0xc0>, <&cpg CPG_MOD 0xc1>;
-+			clock-names = "stmmaceth", "pclk", "ptp_ref",
-+				      "tx", "rx", "tx-180", "rx-180";
-+			resets = <&cpg 0xb1>;
-+			power-domains = <&cpg>;
-+			snps,multicast-filter-bins = <256>;
-+			snps,perfect-filter-entries = <128>;
-+			rx-fifo-depth = <8192>;
-+			tx-fifo-depth = <8192>;
-+			snps,fixed-burst;
-+			snps,no-pbl-x8;
-+			snps,force_thresh_dma_mode;
-+			snps,axi-config = <&stmmac_axi_setup>;
-+			snps,mtl-rx-config = <&mtl_rx_setup1>;
-+			snps,mtl-tx-config = <&mtl_tx_setup1>;
-+			snps,txpbl = <32>;
-+			snps,rxpbl = <32>;
-+			status = "disabled";
-+
-+			mdio1: mdio {
-+				compatible = "snps,dwmac-mdio";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+			};
-+
-+			mtl_rx_setup1: rx-queues-config {
-+				snps,rx-queues-to-use = <4>;
-+				snps,rx-sched-sp;
-+
-+				queue0 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x1>;
-+					snps,map-to-dma-channel = <0>;
-+				};
-+
-+				queue1 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x2>;
-+					snps,map-to-dma-channel = <1>;
-+				};
-+
-+				queue2 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x4>;
-+					snps,map-to-dma-channel = <2>;
-+				};
-+
-+				queue3 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x8>;
-+					snps,map-to-dma-channel = <3>;
-+				};
-+			};
-+
-+			mtl_tx_setup1: tx-queues-config {
-+				snps,tx-queues-to-use = <4>;
-+
-+				queue0 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x1>;
-+				};
-+
-+				queue1 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x2>;
-+				};
-+
-+				queue2 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x4>;
-+				};
-+
-+				queue3 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x8>;
-+				};
-+			};
-+		};
-+	};
-+
-+	stmmac_axi_setup: stmmac-axi-config {
-+		snps,lpi_en;
-+		snps,wr_osr_lmt = <0xf>;
-+		snps,rd_osr_lmt = <0xf>;
-+		snps,blen = <16 8 4 0 0 0 0>;
- 	};
+diff --git a/drivers/clk/renesas/r9a09g056-cpg.c b/drivers/clk/renesas/r9a09g056-cpg.c
+index e4c1c74f56b5..6ac4b62a5e56 100644
+--- a/drivers/clk/renesas/r9a09g056-cpg.c
++++ b/drivers/clk/renesas/r9a09g056-cpg.c
+@@ -28,6 +28,7 @@ enum clk_ids {
+ 	CLK_PLLCLN,
+ 	CLK_PLLDTY,
+ 	CLK_PLLCA55,
++	CLK_PLLETH,
  
- 	timer {
+ 	/* Internal Core Clocks */
+ 	CLK_PLLCM33_DIV16,
+@@ -36,6 +37,15 @@ enum clk_ids {
+ 	CLK_PLLCLN_DIV16,
+ 	CLK_PLLDTY_ACPU,
+ 	CLK_PLLDTY_ACPU_DIV4,
++	CLK_PLLDTY_DIV8,
++	CLK_PLLETH_DIV_250_FIX,
++	CLK_PLLETH_DIV_125_FIX,
++	CLK_CSDIV_PLLETH_GBE0,
++	CLK_CSDIV_PLLETH_GBE1,
++	CLK_SMUX2_GBE0_TXCLK,
++	CLK_SMUX2_GBE0_RXCLK,
++	CLK_SMUX2_GBE1_TXCLK,
++	CLK_SMUX2_GBE1_RXCLK,
+ 
+ 	/* Module Clocks */
+ 	MOD_CLK_BASE,
+@@ -58,6 +68,19 @@ static const struct clk_div_table dtable_2_64[] = {
+ 	{0, 0},
+ };
+ 
++static const struct clk_div_table dtable_2_100[] = {
++	{0, 2},
++	{1, 10},
++	{2, 100},
++	{0, 0},
++};
++
++/* Mux clock tables */
++static const char * const smux2_gbe0_rxclk[] = { ".plleth_gbe0", "et0_rxclk" };
++static const char * const smux2_gbe0_txclk[] = { ".plleth_gbe0", "et0_txclk" };
++static const char * const smux2_gbe1_rxclk[] = { ".plleth_gbe1", "et1_rxclk" };
++static const char * const smux2_gbe1_txclk[] = { ".plleth_gbe1", "et1_txclk" };
++
+ static const struct cpg_core_clk r9a09g056_core_clks[] __initconst = {
+ 	/* External Clock Inputs */
+ 	DEF_INPUT("audio_extal", CLK_AUDIO_EXTAL),
+@@ -69,6 +92,7 @@ static const struct cpg_core_clk r9a09g056_core_clks[] __initconst = {
+ 	DEF_FIXED(".pllcln", CLK_PLLCLN, CLK_QEXTAL, 200, 3),
+ 	DEF_FIXED(".plldty", CLK_PLLDTY, CLK_QEXTAL, 200, 3),
+ 	DEF_PLL(".pllca55", CLK_PLLCA55, CLK_QEXTAL, PLLCA55),
++	DEF_FIXED(".plleth", CLK_PLLETH, CLK_QEXTAL, 125, 3),
+ 
+ 	/* Internal Core Clocks */
+ 	DEF_FIXED(".pllcm33_div16", CLK_PLLCM33_DIV16, CLK_PLLCM33, 1, 16),
+@@ -79,6 +103,18 @@ static const struct cpg_core_clk r9a09g056_core_clks[] __initconst = {
+ 
+ 	DEF_DDIV(".plldty_acpu", CLK_PLLDTY_ACPU, CLK_PLLDTY, CDDIV0_DIVCTL2, dtable_2_64),
+ 	DEF_FIXED(".plldty_acpu_div4", CLK_PLLDTY_ACPU_DIV4, CLK_PLLDTY_ACPU, 1, 4),
++	DEF_FIXED(".plldty_div8", CLK_PLLDTY_DIV8, CLK_PLLDTY, 1, 8),
++
++	DEF_FIXED(".plleth_250_fix", CLK_PLLETH_DIV_250_FIX, CLK_PLLETH, 1, 4),
++	DEF_FIXED(".plleth_125_fix", CLK_PLLETH_DIV_125_FIX, CLK_PLLETH_DIV_250_FIX, 1, 2),
++	DEF_CSDIV(".plleth_gbe0", CLK_CSDIV_PLLETH_GBE0,
++		  CLK_PLLETH_DIV_250_FIX, CSDIV0_DIVCTL0, dtable_2_100),
++	DEF_CSDIV(".plleth_gbe1", CLK_CSDIV_PLLETH_GBE1,
++		  CLK_PLLETH_DIV_250_FIX, CSDIV0_DIVCTL1, dtable_2_100),
++	DEF_SMUX(".smux2_gbe0_txclk", CLK_SMUX2_GBE0_TXCLK, SSEL0_SELCTL2, smux2_gbe0_txclk),
++	DEF_SMUX(".smux2_gbe0_rxclk", CLK_SMUX2_GBE0_RXCLK, SSEL0_SELCTL3, smux2_gbe0_rxclk),
++	DEF_SMUX(".smux2_gbe1_txclk", CLK_SMUX2_GBE1_TXCLK, SSEL1_SELCTL0, smux2_gbe1_txclk),
++	DEF_SMUX(".smux2_gbe1_rxclk", CLK_SMUX2_GBE1_RXCLK, SSEL1_SELCTL1, smux2_gbe1_rxclk),
+ 
+ 	/* Core Clocks */
+ 	DEF_FIXED("sys_0_pclk", R9A09G056_SYS_0_PCLK, CLK_QEXTAL, 1, 1),
+@@ -91,6 +127,10 @@ static const struct cpg_core_clk r9a09g056_core_clks[] __initconst = {
+ 	DEF_DDIV("ca55_0_coreclk3", R9A09G056_CA55_0_CORE_CLK3, CLK_PLLCA55,
+ 		 CDDIV1_DIVCTL3, dtable_1_8),
+ 	DEF_FIXED("iotop_0_shclk", R9A09G056_IOTOP_0_SHCLK, CLK_PLLCM33_DIV16, 1, 1),
++	DEF_FIXED("gbeth_0_clk_ptp_ref_i", R9A09G056_GBETH_0_CLK_PTP_REF_I,
++		  CLK_PLLETH_DIV_125_FIX, 1, 1),
++	DEF_FIXED("gbeth_1_clk_ptp_ref_i", R9A09G056_GBETH_1_CLK_PTP_REF_I,
++		  CLK_PLLETH_DIV_125_FIX, 1, 1),
+ };
+ 
+ static const struct rzv2h_mod_clk r9a09g056_mod_clks[] __initconst = {
+@@ -154,6 +194,30 @@ static const struct rzv2h_mod_clk r9a09g056_mod_clks[] __initconst = {
+ 						BUS_MSTOP(8, BIT(4))),
+ 	DEF_MOD("sdhi_2_aclk",			CLK_PLLDTY_ACPU_DIV4, 10, 14, 5, 14,
+ 						BUS_MSTOP(8, BIT(4))),
++	DEF_MOD_MUX_EXTERNAL("gbeth_0_clk_tx_i", CLK_SMUX2_GBE0_TXCLK, 11, 8, 5, 24,
++						BUS_MSTOP(8, BIT(5)), 1),
++	DEF_MOD_MUX_EXTERNAL("gbeth_0_clk_rx_i", CLK_SMUX2_GBE0_RXCLK, 11, 9, 5, 25,
++						BUS_MSTOP(8, BIT(5)), 1),
++	DEF_MOD_MUX_EXTERNAL("gbeth_0_clk_tx_180_i", CLK_SMUX2_GBE0_TXCLK, 11, 10, 5, 26,
++						BUS_MSTOP(8, BIT(5)), 1),
++	DEF_MOD_MUX_EXTERNAL("gbeth_0_clk_rx_180_i", CLK_SMUX2_GBE0_RXCLK, 11, 11, 5, 27,
++						BUS_MSTOP(8, BIT(5)), 1),
++	DEF_MOD("gbeth_0_aclk_csr_i",		CLK_PLLDTY_DIV8, 11, 12, 5, 28,
++						BUS_MSTOP(8, BIT(5))),
++	DEF_MOD("gbeth_0_aclk_i",		CLK_PLLDTY_DIV8, 11, 13, 5, 29,
++						BUS_MSTOP(8, BIT(5))),
++	DEF_MOD_MUX_EXTERNAL("gbeth_1_clk_tx_i", CLK_SMUX2_GBE1_TXCLK, 11, 14, 5, 30,
++						BUS_MSTOP(8, BIT(6)), 1),
++	DEF_MOD_MUX_EXTERNAL("gbeth_1_clk_rx_i", CLK_SMUX2_GBE1_RXCLK, 11, 15, 5, 31,
++						BUS_MSTOP(8, BIT(6)), 1),
++	DEF_MOD_MUX_EXTERNAL("gbeth_1_clk_tx_180_i", CLK_SMUX2_GBE1_TXCLK, 12, 0, 6, 0,
++						BUS_MSTOP(8, BIT(6)), 1),
++	DEF_MOD_MUX_EXTERNAL("gbeth_1_clk_rx_180_i", CLK_SMUX2_GBE1_RXCLK, 12, 1, 6, 1,
++						BUS_MSTOP(8, BIT(6)), 1),
++	DEF_MOD("gbeth_1_aclk_csr_i",		CLK_PLLDTY_DIV8, 12, 2, 6, 2,
++						BUS_MSTOP(8, BIT(6))),
++	DEF_MOD("gbeth_1_aclk_i",		CLK_PLLDTY_DIV8, 12, 3, 6, 3,
++						BUS_MSTOP(8, BIT(6))),
+ };
+ 
+ static const struct rzv2h_reset r9a09g056_resets[] __initconst = {
+@@ -176,6 +240,8 @@ static const struct rzv2h_reset r9a09g056_resets[] __initconst = {
+ 	DEF_RST(10, 7, 4, 24),		/* SDHI_0_IXRST */
+ 	DEF_RST(10, 8, 4, 25),		/* SDHI_1_IXRST */
+ 	DEF_RST(10, 9, 4, 26),		/* SDHI_2_IXRST */
++	DEF_RST(11, 0, 5, 1),		/* GBETH_0_ARESETN_I */
++	DEF_RST(11, 1, 5, 2),		/* GBETH_1_ARESETN_I */
+ };
+ 
+ const struct rzv2h_cpg_info r9a09g056_cpg_info __initconst = {
 -- 
 2.51.0
 
