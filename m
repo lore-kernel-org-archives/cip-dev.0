@@ -1,104 +1,85 @@
-Return-Path: <uli@fpond.eu>
+Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F7DBD3B7E5
-	for <webhook@archiver.kernel.org>; Mon, 29 Dec 2025 05:57:00 +0000 (UTC)
-Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [81.169.146.161])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.38383.1766987815528675700
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C016EE8FDB1
+	for <webhook@archiver.kernel.org>; Mon, 29 Dec 2025 08:40:00 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.40083.1766997598492293871
  for <cip-dev@lists.cip-project.org>;
- Sun, 28 Dec 2025 21:56:56 -0800
+ Mon, 29 Dec 2025 00:39:58 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@fpond.eu header.s=strato-dkim-0002 header.b=nC2o4eiL;
- dkim=pass header.i=@fpond.eu header.s=strato-dkim-0003 header.b=+vrpxAFt;
- spf=none, err=permanent DNS error (domain: fpond.eu, ip: 81.169.146.161, mailfrom: uli@fpond.eu)
-ARC-Seal: i=1; a=rsa-sha256; t=1766987804; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=Uyc99pVlQ2eBU0b/FyzsH493SibSxrTM2xzFtw5KlPe1JPL2gbk2/60/Y3yWwahaBh
-    zo+t7jjCIGutA6WdnTapEyiMvZsVM4UxoXBYdw+flvT9AI8BrqOEIeYwkHlPSmEiAwCL
-    +bjoFkJ46uY+deHK46vBFeA/CGIXYZNaqWHMdYi6Te6WSxhvMLIMqnRiSWAnIY2tYVle
-    jGsayE/rOqxkEn9muQ8ISMVjUhbNtv7ueICAHQLlaVbwU+gKKHgoTdQYDVSiTBdv7JrT
-    xilK/0SkI5qElNnl2lWKCbU92PyY1Op2M7/L51DqpukJj2wOZKwNWOhoVagJtVIjfN6k
-    98dQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1766987804;
-    s=strato-dkim-0002; d=strato.com;
-    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
-    bh=YCPO3BiZesVWDDDx4Df2IL1mUir6DQ4/Zk8rl3bCpKg=;
-    b=H0SwyoPzeFc/+NLXi9342STnRz2AD3NCA0hLAsXgmH52ZVXbCPDnzDIAujScjQ14ka
-    tLx8wIdnL1nJFNfLGgZa2afncIPJn2xkY+vSz7xP1Dmdo+GkfXkF3GpKuZKdigG7QboG
-    XEIwzuP8GWHJFsqkn010/COMuCMi8XERXV7dvUZSjLkHeJV3QwKryT9csJ0XruBwA3Fd
-    WUlZiV+cQhzJ/CEoo1WUK6mqrQZoF4Xb9I1NA6Mr5bPEjmjMt7RtT9DVhbAIIQw7g+BA
-    q8vmig/5tMZKYrFE03emnI1XVcoqHMb3GYO5GNeo6CxvHUJzAR91+RIk0+HNK2xSy2hm
-    xxLw==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo00
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1766987804;
-    s=strato-dkim-0002; d=fpond.eu;
-    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
-    bh=YCPO3BiZesVWDDDx4Df2IL1mUir6DQ4/Zk8rl3bCpKg=;
-    b=nC2o4eiLO4rQFk9TgQO50ldU/3DeEeIFc+nnOmsm16SmiWhrwoESlFsex9V0SJGd84
-    Ug4t8gZ64iXPLL0xwOBp1tjZVzLGm9cIsVMvOaKRSDxFI41YjohyDO56hkYiS71fXglW
-    LfywVuOT37+1oSMxxfYeN0m44JqOyW2EfLAH6kynKCtKeZ4z9u5ELpeTgqS5p/Ky/Gvh
-    Lg3hR9mDYFzsGKRj8ZjNHMtt97tRLjAFVcihLBjqNLrnEhIDHSXfoheabPSQ4ownuh/z
-    6Vrvw3s31mpXWBWZJF5uAfa2k0YrKoajYks+fMuGfeWmJZQ2UAQkJy7EuEbY6FsKqPyF
-    cnlQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1766987804;
-    s=strato-dkim-0003; d=fpond.eu;
-    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
-    bh=YCPO3BiZesVWDDDx4Df2IL1mUir6DQ4/Zk8rl3bCpKg=;
-    b=+vrpxAFtiK7IZ25Kd2xx9Q7IYnHcAOAsApfzndcNflnrYJ3sOM6ErHHJWdaaLwiIfY
-    VauCjZ2hmVMeGgguydBg==
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzvtHhj3fsqaRxGvRy6JA=="
-Received: from open-xchange-core-mw-gw-11.open-xchange-core-mw-hazelcast-headless.open-xchange.svc.cluster.local
-    by smtp-ox.front (RZmta 54.1.0 AUTH)
-    with ESMTPSA id zfda171BT5ui0oQ
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256 bits))
-	(Client did not present a certificate);
-    Mon, 29 Dec 2025 06:56:44 +0100 (CET)
-Date: Mon, 29 Dec 2025 06:56:44 +0100 (CET)
-From: Ulrich Hecht <uli@fpond.eu>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	"pavel@denx.de" <pavel@denx.de>,
-	"nobuhiro.iwamatsu.x90@mail.toshiba" <nobuhiro.iwamatsu.x90@mail.toshiba>
-Message-ID: <1675394165.12181.1766987804067@webmail.strato.de>
-Subject: Request for review for 4.4-st71, 4.4-cip106
+ dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
+X-CSE-ConnectionGUID: dug5YrAzQ8CyzFt8UqewVg==
+X-CSE-MsgGUID: 5bWw8CMiQpKz+OgoYAM3vQ==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 29 Dec 2025 17:39:56 +0900
+Received: from vm01.adwin.renesas.com (unknown [10.226.92.6])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 89437400494A;
+	Mon, 29 Dec 2025 17:39:55 +0900 (JST)
+From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+To: cip-dev@lists.cip-project.org,
+	pavel@denx.de,
+	nobuhiro.iwamatsu.x90@mail.toshiba
+Subject: [PATCH 6.1.y-cip 0/3] net: stmmac: Fix EEE-related issues
+Date: Mon, 29 Dec 2025 08:39:50 +0000
+Message-ID: <20251229083954.3598-1-ovidiu.panait.rb@renesas.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v8.42.74
-X-Originating-Port: 46500
-X-Originating-Client: open-xchange-appsuite
+Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 29 Dec 2025 05:57:00 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21222
+ <cip-dev@lists.cip-project.org>; Mon, 29 Dec 2025 08:40:00 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21223
 
-Hi!
+Hi,
 
-Here are the manual backports for the upcoming 4.4 kernel release. As always they can be found in https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-4.4.y-st-rc
+When testing Ethernet on the Renesas RZ/V2H and RZ/V2N platforms with
+6.1-cip, LPI interrupt storms and VLAN register access timeouts were
+observed.
 
-eec045863d21a wifi: ath10k: Fix connection after GTK rekeying
-a48589643bfdd iommu/amd: Skip enabling command/event buffers for kdump
-ff08d7a8c5806 net: netpoll: fix incorrect refcount handling causing incorrect cleanup
-713eab81a91ae net: ravb: Enforce descriptor type ordering
-e5614027881ba net/sched: sch_qfq: Fix null-deref in agg_dequeue
-05a9484527b6c ata: libata-scsi: Fix system suspend for a security locked drive
-7af6c5e760217 fs/proc: fix uaf in proc_readdir_de()
-a3c1eb2bab5a6 Bluetooth: 6lowpan: Don't hold spin lock over sleeping functions
-648881139872a Bluetooth: bcsp: receive data only if registered
-a84ba2b7b6f69 nfs4_setup_readdir(): insufficient locking for ->d_parent->d_inode dereferencing
-31db58f15a066 net/cls_cgroup: Fix task_get_classid() during qdisc run
-2711f9d9013eb usb: gadget: f_ncm: Fix MAC assignment NCM ethernet
-9d0655d33b789 net: usb: asix_devices: Check return value of usbnet_get_endpoints
-8299fa5409dc6 Bluetooth: btusb: reorder cleanup in btusb_disconnect to avoid UAF
+Both issues are caused by the RX clock stop feature being enabled by
+default. When EEE is active and the link is idle, the PHY stops the
+RX clock to save power. However, the stmmac hardware requires the RX
+clock to be running when accessing certain registers.
 
-Thanks for having a look!
+More specifically, VLAN operations fail with:
 
-CU
-Uli
+    # ip link add link end1 name end1.5 type vlan id 5
+    15c40000.ethernet end1: Timeout accessing MAC_VLAN_Tag_Filter
+    RTNETLINK answers: Device or resource busy
+
+Also, LPI interrupt storms occur because the RX clock may be stopped when
+the driver attempts to clear the pending interrupt. The interrupt is
+not cleared and keeps re-triggering until the RX clock resumes.
+
+A comprehensive overview of RX clock related issues in stmmac can be
+found in these threads:
+https://lore.kernel.org/all/20251026122905.29028-1-laurent.pinchart@ideasonboard.com/
+https://lore.kernel.org/all/Z9ySeo61VYTClIJJ@shell.armlinux.org.uk/
+
+These issues are already fixed in mainline. This series backports the
+relevant stmmac EEE fixes to 6.1-cip.
+
+Best regards,
+Ovidiu
+
+
+Ovidiu Panait (2):
+  net: stmmac: Fix VLAN 0 deletion in vlan_del_hw_rx_fltr()
+  net: stmmac: Disable EEE RX clock stop when VLAN is enabled
+
+Russell King (Oracle) (1):
+  net: phy: add configuration of rx clock stop mode
+
+ .../net/ethernet/stmicro/stmmac/dwmac4_core.c |  3 +-
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c |  8 ++++-
+ drivers/net/phy/phy.c                         | 32 +++++++++++++++----
+ include/linux/phy.h                           |  1 +
+ 4 files changed, 36 insertions(+), 8 deletions(-)
+
+-- 
+2.51.0
+
 
