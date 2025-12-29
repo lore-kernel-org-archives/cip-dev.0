@@ -2,28 +2,28 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99B38E8FDB1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A03CED3B7E5
 	for <webhook@archiver.kernel.org>; Mon, 29 Dec 2025 08:40:30 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.msgproc02-g2.40094.1766997621683495022
  for <cip-dev@lists.cip-project.org>;
- Mon, 29 Dec 2025 00:40:23 -0800
+ Mon, 29 Dec 2025 00:40:21 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: h4BkyVqFRHOqih40g+crsg==
-X-CSE-MsgGUID: Ller78T7TWi5CECe9ZPaFA==
+X-CSE-ConnectionGUID: hq2NC++JT0WjOKjFm3XG6A==
+X-CSE-MsgGUID: wwh21s2bRgO5pfJyN7TSHA==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 29 Dec 2025 17:40:22 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 29 Dec 2025 17:40:21 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.92.6])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id B0DAE4005E3A;
-	Mon, 29 Dec 2025 17:40:21 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id EC3E3400494A;
+	Mon, 29 Dec 2025 17:40:19 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@denx.de,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.1.y-cip 5/5] arm64: dts: renesas: r9a09g056n48-rzv2n-evk: Fix pinctrl node name for GBETH1
-Date: Mon, 29 Dec 2025 08:40:11 +0000
-Message-ID: <20251229084011.3611-6-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.1.y-cip 4/5] arm64: dts: renesas: r9a09g056n48-rzv2n-evk: Enable GBETH
+Date: Mon, 29 Dec 2025 08:40:10 +0000
+Message-ID: <20251229084011.3611-5-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251229084011.3611-1-ovidiu.panait.rb@renesas.com>
 References: <20251229084011.3611-1-ovidiu.panait.rb@renesas.com>
@@ -33,38 +33,114 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 29 Dec 2025 08:40:30 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21232
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21231
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit ed62c3807d3310f555ff02c1cd9b071d69faa38e upstream.
+commit f111192baa80bb33b67270bb987c1be639843c82 upstream.
 
-Rename the GBETH1 pinctrl node from "eth0" to "eth1" to avoid duplicate
-node names in the DT and correctly reflect the label "eth1_pins".
+Enable GBETH nodes on RZ/V2N EVK.
 
-Fixes: f111192baa80 ("arm64: dts: renesas: r9a09g056n48-rzv2n-evk: Enable GBETH")
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250703235544.715433-3-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://lore.kernel.org/20250514101528.41663-3-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../dts/renesas/r9a09g056n48-rzv2n-evk.dts    | 66 +++++++++++++++++++
+ 1 file changed, 66 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
-index d6c392f79f33..b3e68e1a9f03 100644
+index 3e0606a8c034..d6c392f79f33 100644
 --- a/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
 +++ b/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
-@@ -157,7 +157,7 @@ eth0_pins: eth0 {
- 		output-enable;
- 	};
+@@ -15,6 +15,8 @@ / {
+ 	compatible = "renesas,rzv2n-evk", "renesas,r9a09g056n48", "renesas,r9a09g056";
  
--	eth1_pins: eth0 {
-+	eth1_pins: eth1 {
- 		pins = "ET1_TXC_TXCLK";
- 		output-enable;
+ 	aliases {
++		ethernet0 = &eth0;
++		ethernet1 = &eth1;
+ 		mmc1 = &sdhi1;
+ 		serial0 = &scif;
  	};
+@@ -63,6 +65,60 @@ &audio_extal_clk {
+ 	clock-frequency = <22579200>;
+ };
+ 
++&eth0 {
++	pinctrl-0 = <&eth0_pins>;
++	pinctrl-names = "default";
++	phy-handle = <&phy0>;
++	phy-mode = "rgmii-id";
++	status = "okay";
++};
++
++&eth1 {
++	pinctrl-0 = <&eth1_pins>;
++	pinctrl-names = "default";
++	phy-handle = <&phy1>;
++	phy-mode = "rgmii-id";
++	status = "okay";
++};
++
++&mdio0 {
++	phy0: ethernet-phy@0 {
++		compatible = "ethernet-phy-id0022.1640", "ethernet-phy-ieee802.3-c22";
++		reg = <0>;
++		rxc-skew-psec = <0>;
++		txc-skew-psec = <0>;
++		rxdv-skew-psec = <0>;
++		txdv-skew-psec = <0>;
++		rxd0-skew-psec = <0>;
++		rxd1-skew-psec = <0>;
++		rxd2-skew-psec = <0>;
++		rxd3-skew-psec = <0>;
++		txd0-skew-psec = <0>;
++		txd1-skew-psec = <0>;
++		txd2-skew-psec = <0>;
++		txd3-skew-psec = <0>;
++	};
++};
++
++&mdio1 {
++	phy1: ethernet-phy@1 {
++		compatible = "ethernet-phy-id0022.1640", "ethernet-phy-ieee802.3-c22";
++		reg = <0>;
++		rxc-skew-psec = <0>;
++		txc-skew-psec = <0>;
++		rxdv-skew-psec = <0>;
++		txdv-skew-psec = <0>;
++		rxd0-skew-psec = <0>;
++		rxd1-skew-psec = <0>;
++		rxd2-skew-psec = <0>;
++		rxd3-skew-psec = <0>;
++		txd0-skew-psec = <0>;
++		txd1-skew-psec = <0>;
++		txd2-skew-psec = <0>;
++		txd3-skew-psec = <0>;
++	};
++};
++
+ &ostm0 {
+ 	status = "okay";
+ };
+@@ -96,6 +152,16 @@ &ostm7 {
+ };
+ 
+ &pinctrl {
++	eth0_pins: eth0 {
++		pins = "ET0_TXC_TXCLK";
++		output-enable;
++	};
++
++	eth1_pins: eth0 {
++		pins = "ET1_TXC_TXCLK";
++		output-enable;
++	};
++
+ 	scif_pins: scif {
+ 		pins = "SCIF_TXD", "SCIF_RXD";
+ 		renesas,output-impedance = <1>;
 -- 
 2.51.0
 
