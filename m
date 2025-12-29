@@ -2,28 +2,28 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A22A4D3B7E5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B5CCE8FDB1
 	for <webhook@archiver.kernel.org>; Mon, 29 Dec 2025 08:40:20 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.msgproc02-g2.40093.1766997616193236737
  for <cip-dev@lists.cip-project.org>;
- Mon, 29 Dec 2025 00:40:17 -0800
+ Mon, 29 Dec 2025 00:40:19 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: F87e4r9oQY2KfHcLx4xgNQ==
-X-CSE-MsgGUID: MtJuV7w1TjeY3G1dq6o4xw==
+X-CSE-ConnectionGUID: 5WHO0odwQm6bUzMjGtcTUQ==
+X-CSE-MsgGUID: NhjEDOgGTmmco71TyMs06Q==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 29 Dec 2025 17:40:17 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 29 Dec 2025 17:40:19 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.92.6])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0CF024005E3A;
-	Mon, 29 Dec 2025 17:40:15 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id C670E400494A;
+	Mon, 29 Dec 2025 17:40:17 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@denx.de,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.1.y-cip 2/5] dt-bindings: net: renesas-gbeth: Add support for RZ/V2N (R9A09G056) SoC
-Date: Mon, 29 Dec 2025 08:40:08 +0000
-Message-ID: <20251229084011.3611-3-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.1.y-cip 3/5] arm64: dts: renesas: r9a09g056: Add GBETH nodes
+Date: Mon, 29 Dec 2025 08:40:09 +0000
+Message-ID: <20251229084011.3611-4-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251229084011.3611-1-ovidiu.panait.rb@renesas.com>
 References: <20251229084011.3611-1-ovidiu.panait.rb@renesas.com>
@@ -33,46 +33,245 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 29 Dec 2025 08:40:20 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21229
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21230
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit 6b466efc6365e904b4b7eb65218a5b2969f978e2 upstream.
+commit c8c8a57c5b4071a7c7d75ff3af3de7326e120bce upstream.
 
-Document support for the GBETH IP found on the Renesas RZ/V2N (R9A09G056)
-SoC. The GBETH controller on the RZ/V2N SoC is functionally identical to
-the one found on the RZ/V2H(P) (R9A09G057) SoC, so `renesas,rzv2h-gbeth`
-will be used as a fallback compatible.
+Renesas RZ/V2N SoC is equipped with 2x Synopsys DesignWare Ethernet
+Quality-of-Service IP block version 5.20. Add GBETH nodes to R9A09G056
+RZ/V2N SoC DTSI.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20250507173551.100280-1-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Link: https://lore.kernel.org/20250514101528.41663-2-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- Documentation/devicetree/bindings/net/renesas,rzv2h-gbeth.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/boot/dts/renesas/r9a09g056.dtsi | 209 +++++++++++++++++++++
+ 1 file changed, 209 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/net/renesas,rzv2h-gbeth.yaml b/Documentation/devicetree/bindings/net/renesas,rzv2h-gbeth.yaml
-index ee8fbb6c7994..23e39bcea96b 100644
---- a/Documentation/devicetree/bindings/net/renesas,rzv2h-gbeth.yaml
-+++ b/Documentation/devicetree/bindings/net/renesas,rzv2h-gbeth.yaml
-@@ -15,6 +15,7 @@ select:
-       contains:
-         enum:
-           - renesas,r9a09g047-gbeth
-+          - renesas,r9a09g056-gbeth
-           - renesas,r9a09g057-gbeth
-           - renesas,rzv2h-gbeth
-   required:
-@@ -25,6 +26,7 @@ properties:
-     items:
-       - enum:
-           - renesas,r9a09g047-gbeth # RZ/G3E
-+          - renesas,r9a09g056-gbeth # RZ/V2N
-           - renesas,r9a09g057-gbeth # RZ/V2H(P)
-       - const: renesas,rzv2h-gbeth
-       - const: snps,dwmac-5.20
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g056.dtsi b/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
+index 068f966d571c..fe6677d6f8b8 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
+@@ -388,6 +388,215 @@ sdhi2_vqmmc: vqmmc-regulator {
+ 				status = "disabled";
+ 			};
+ 		};
++
++		eth0: ethernet@15c30000 {
++			compatible = "renesas,r9a09g056-gbeth", "renesas,rzv2h-gbeth",
++				     "snps,dwmac-5.20";
++			reg = <0 0x15c30000 0 0x10000>;
++			interrupts = <GIC_SPI 765 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 767 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 766 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 772 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 773 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 774 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 775 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 768 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 769 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 770 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 771 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "macirq", "eth_wake_irq", "eth_lpi",
++					  "rx-queue-0", "rx-queue-1", "rx-queue-2",
++					  "rx-queue-3", "tx-queue-0", "tx-queue-1",
++					  "tx-queue-2", "tx-queue-3";
++			clocks =  <&cpg CPG_MOD 0xbd>, <&cpg CPG_MOD 0xbc>,
++				  <&cpg CPG_CORE R9A09G056_GBETH_0_CLK_PTP_REF_I>,
++				  <&cpg CPG_MOD 0xb8>, <&cpg CPG_MOD 0xb9>,
++				  <&cpg CPG_MOD 0xba>, <&cpg CPG_MOD 0xbb>;
++			clock-names = "stmmaceth", "pclk", "ptp_ref",
++				      "tx", "rx", "tx-180", "rx-180";
++			resets = <&cpg 0xb0>;
++			power-domains = <&cpg>;
++			snps,multicast-filter-bins = <256>;
++			snps,perfect-filter-entries = <128>;
++			rx-fifo-depth = <8192>;
++			tx-fifo-depth = <8192>;
++			snps,fixed-burst;
++			snps,no-pbl-x8;
++			snps,force_thresh_dma_mode;
++			snps,axi-config = <&stmmac_axi_setup>;
++			snps,mtl-rx-config = <&mtl_rx_setup0>;
++			snps,mtl-tx-config = <&mtl_tx_setup0>;
++			snps,txpbl = <32>;
++			snps,rxpbl = <32>;
++			status = "disabled";
++
++			mdio0: mdio {
++				compatible = "snps,dwmac-mdio";
++				#address-cells = <1>;
++				#size-cells = <0>;
++			};
++
++			mtl_rx_setup0: rx-queues-config {
++				snps,rx-queues-to-use = <4>;
++				snps,rx-sched-sp;
++
++				queue0 {
++					snps,dcb-algorithm;
++					snps,priority = <0x1>;
++					snps,map-to-dma-channel = <0>;
++				};
++
++				queue1 {
++					snps,dcb-algorithm;
++					snps,priority = <0x2>;
++					snps,map-to-dma-channel = <1>;
++				};
++
++				queue2 {
++					snps,dcb-algorithm;
++					snps,priority = <0x4>;
++					snps,map-to-dma-channel = <2>;
++				};
++
++				queue3 {
++					snps,dcb-algorithm;
++					snps,priority = <0x8>;
++					snps,map-to-dma-channel = <3>;
++				};
++			};
++
++			mtl_tx_setup0: tx-queues-config {
++				snps,tx-queues-to-use = <4>;
++
++				queue0 {
++					snps,dcb-algorithm;
++					snps,priority = <0x1>;
++				};
++
++				queue1 {
++					snps,dcb-algorithm;
++					snps,priority = <0x2>;
++				};
++
++				queue2 {
++					snps,dcb-algorithm;
++					snps,priority = <0x4>;
++				};
++
++				queue3 {
++					snps,dcb-algorithm;
++					snps,priority = <0x8>;
++				};
++			};
++		};
++
++		eth1: ethernet@15c40000 {
++			compatible = "renesas,r9a09g056-gbeth", "renesas,rzv2h-gbeth",
++				     "snps,dwmac-5.20";
++			reg = <0 0x15c40000 0 0x10000>;
++			interrupts = <GIC_SPI 780 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 782 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 781 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 787 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 788 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 789 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 790 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 783 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 784 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 785 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 786 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "macirq", "eth_wake_irq", "eth_lpi",
++					  "rx-queue-0", "rx-queue-1", "rx-queue-2",
++					  "rx-queue-3", "tx-queue-0", "tx-queue-1",
++					  "tx-queue-2", "tx-queue-3";
++			clocks =  <&cpg CPG_MOD 0xc3>, <&cpg CPG_MOD 0xc2>,
++				  <&cpg CPG_CORE R9A09G056_GBETH_1_CLK_PTP_REF_I>,
++				  <&cpg CPG_MOD 0xbe>, <&cpg CPG_MOD 0xbf>,
++				  <&cpg CPG_MOD 0xc0>, <&cpg CPG_MOD 0xc1>;
++			clock-names = "stmmaceth", "pclk", "ptp_ref",
++				      "tx", "rx", "tx-180", "rx-180";
++			resets = <&cpg 0xb1>;
++			power-domains = <&cpg>;
++			snps,multicast-filter-bins = <256>;
++			snps,perfect-filter-entries = <128>;
++			rx-fifo-depth = <8192>;
++			tx-fifo-depth = <8192>;
++			snps,fixed-burst;
++			snps,no-pbl-x8;
++			snps,force_thresh_dma_mode;
++			snps,axi-config = <&stmmac_axi_setup>;
++			snps,mtl-rx-config = <&mtl_rx_setup1>;
++			snps,mtl-tx-config = <&mtl_tx_setup1>;
++			snps,txpbl = <32>;
++			snps,rxpbl = <32>;
++			status = "disabled";
++
++			mdio1: mdio {
++				compatible = "snps,dwmac-mdio";
++				#address-cells = <1>;
++				#size-cells = <0>;
++			};
++
++			mtl_rx_setup1: rx-queues-config {
++				snps,rx-queues-to-use = <4>;
++				snps,rx-sched-sp;
++
++				queue0 {
++					snps,dcb-algorithm;
++					snps,priority = <0x1>;
++					snps,map-to-dma-channel = <0>;
++				};
++
++				queue1 {
++					snps,dcb-algorithm;
++					snps,priority = <0x2>;
++					snps,map-to-dma-channel = <1>;
++				};
++
++				queue2 {
++					snps,dcb-algorithm;
++					snps,priority = <0x4>;
++					snps,map-to-dma-channel = <2>;
++				};
++
++				queue3 {
++					snps,dcb-algorithm;
++					snps,priority = <0x8>;
++					snps,map-to-dma-channel = <3>;
++				};
++			};
++
++			mtl_tx_setup1: tx-queues-config {
++				snps,tx-queues-to-use = <4>;
++
++				queue0 {
++					snps,dcb-algorithm;
++					snps,priority = <0x1>;
++				};
++
++				queue1 {
++					snps,dcb-algorithm;
++					snps,priority = <0x2>;
++				};
++
++				queue2 {
++					snps,dcb-algorithm;
++					snps,priority = <0x4>;
++				};
++
++				queue3 {
++					snps,dcb-algorithm;
++					snps,priority = <0x8>;
++				};
++			};
++		};
++	};
++
++	stmmac_axi_setup: stmmac-axi-config {
++		snps,lpi_en;
++		snps,wr_osr_lmt = <0xf>;
++		snps,rd_osr_lmt = <0xf>;
++		snps,blen = <16 8 4 0 0 0 0>;
+ 	};
+ 
+ 	timer {
 -- 
 2.51.0
 
