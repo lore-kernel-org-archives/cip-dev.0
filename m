@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8416AEEB56D
-	for <webhook@archiver.kernel.org>; Wed, 31 Dec 2025 17:00:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B898EEB565
+	for <webhook@archiver.kernel.org>; Wed, 31 Dec 2025 17:01:03 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.msgproc02-g2.88804.1767200431635644184
  for <cip-dev@lists.cip-project.org>;
- Wed, 31 Dec 2025 09:00:45 -0800
+ Wed, 31 Dec 2025 09:00:59 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-CSE-ConnectionGUID: PBcYYaXKQdCVazHhg9TUjQ==
-X-CSE-MsgGUID: 5sRurHuNQUqXPwF0xo4fwg==
+X-CSE-ConnectionGUID: DLcx53L6RlWnngrRT7i28w==
+X-CSE-MsgGUID: Z6u+uKLfQlieFh7BjLnNdw==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 01 Jan 2026 02:00:44 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 01 Jan 2026 02:00:58 +0900
 Received: from Ubuntu-22.. (unknown [10.24.0.9])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 53905402412E;
-	Thu,  1 Jan 2026 02:00:43 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3E5D0402412E;
+	Thu,  1 Jan 2026 02:00:57 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 09/17] clk: renesas: r9a09g077: Add PLL2 and SDHI clock support
-Date: Wed, 31 Dec 2025 17:00:18 +0000
-Message-ID: <20251231170026.17006-10-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 17/17] arm64: dts: renesas: rzt2h-n2h-evk-common: Enable WDT2
+Date: Wed, 31 Dec 2025 17:00:26 +0000
+Message-ID: <20251231170026.17006-18-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251231170026.17006-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20251231170026.17006-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -33,96 +33,35 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 31 Dec 2025 17:00:53 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21288
+ <cip-dev@lists.cip-project.org>; Wed, 31 Dec 2025 17:01:03 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21296
 
-commit 09d50e09fab65f42d4656e9b01f225db7d311348 upstream.
+commit da23f1bdce81712096601d9e5e59cfe071aa1c92 upstream.
 
-Add support for PLL2 to the R9A09G077 (RZ/T2H) clock definitions and
-register it as the source for the high-speed SDHI clock (SDHI_CLKHS)
-operating at 800MHz.
-
-Also add fixed-factor clock PCLKAM derived from CLK_PLL4D1, and define
-module clocks for SDHI0 and SDHI1, both of which use PCLKAM as their
-clock source.
+Enable watchdog (WDT2) on RZ/T2H and RZ/N2H EVKs.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250625141705.151383-3-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://lore.kernel.org/20250821161946.1096033-4-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[PL:manually applied the changes.]
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/clk/renesas/r9a09g077-cpg.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/clk/renesas/r9a09g077-cpg.c b/drivers/clk/renesas/r9a09g077-cpg.c
-index 5e39f3afc3b7f..cb792aa5877ba 100644
---- a/drivers/clk/renesas/r9a09g077-cpg.c
-+++ b/drivers/clk/renesas/r9a09g077-cpg.c
-@@ -67,7 +67,7 @@ enum rzt2h_clk_types {
- 
- enum clk_ids {
- 	/* Core Clock Outputs exported to DT */
--	LAST_DT_CORE_CLK = R9A09G077_CLK_PCLKL,
-+	LAST_DT_CORE_CLK = R9A09G077_SDHI_CLKHS,
- 
- 	/* External Input Clocks */
- 	CLK_EXTAL,
-@@ -76,9 +76,11 @@ enum clk_ids {
- 	CLK_LOCO,
- 	CLK_PLL0,
- 	CLK_PLL1,
-+	CLK_PLL2,
- 	CLK_PLL4,
- 	CLK_SEL_CLK_PLL0,
- 	CLK_SEL_CLK_PLL1,
-+	CLK_SEL_CLK_PLL2,
- 	CLK_SEL_CLK_PLL4,
- 	CLK_PLL4D1,
- 	CLK_SCI0ASYNC,
-@@ -105,6 +107,7 @@ static const struct clk_div_table dtable_24_25_30_32[] = {
- 
- static const char * const sel_clk_pll0[] = { ".loco", ".pll0" };
- static const char * const sel_clk_pll1[] = { ".loco", ".pll1" };
-+static const char * const sel_clk_pll2[] = { ".loco", ".pll2" };
- static const char * const sel_clk_pll4[] = { ".loco", ".pll4" };
- 
- static const struct cpg_core_clk r9a09g077_core_clks[] __initconst = {
-@@ -115,12 +118,15 @@ static const struct cpg_core_clk r9a09g077_core_clks[] __initconst = {
- 	DEF_RATE(".loco", CLK_LOCO, 1000 * 1000),
- 	DEF_FIXED(".pll0", CLK_PLL0, CLK_EXTAL, 1, 48),
- 	DEF_FIXED(".pll1", CLK_PLL1, CLK_EXTAL, 1, 40),
-+	DEF_FIXED(".pll2", CLK_PLL2, CLK_EXTAL, 1, 32),
- 	DEF_FIXED(".pll4", CLK_PLL4, CLK_EXTAL, 1, 96),
- 
- 	DEF_MUX(".sel_clk_pll0", CLK_SEL_CLK_PLL0, SEL_PLL,
- 		sel_clk_pll0, ARRAY_SIZE(sel_clk_pll0), CLK_MUX_READ_ONLY),
- 	DEF_MUX(".sel_clk_pll1", CLK_SEL_CLK_PLL1, SEL_PLL,
- 		sel_clk_pll1, ARRAY_SIZE(sel_clk_pll1), CLK_MUX_READ_ONLY),
-+	DEF_MUX(".sel_clk_pll2", CLK_SEL_CLK_PLL2, SEL_PLL,
-+		sel_clk_pll2, ARRAY_SIZE(sel_clk_pll2), CLK_MUX_READ_ONLY),
- 	DEF_MUX(".sel_clk_pll4", CLK_SEL_CLK_PLL4, SEL_PLL,
- 		sel_clk_pll4, ARRAY_SIZE(sel_clk_pll4), CLK_MUX_READ_ONLY),
- 
-@@ -142,6 +148,8 @@ static const struct cpg_core_clk r9a09g077_core_clks[] __initconst = {
- 	DEF_FIXED("PCLKGPTL", R9A09G077_CLK_PCLKGPTL, CLK_SEL_CLK_PLL1, 2, 1),
- 	DEF_FIXED("PCLKM", R9A09G077_CLK_PCLKM, CLK_SEL_CLK_PLL1, 8, 1),
- 	DEF_FIXED("PCLKL", R9A09G077_CLK_PCLKL, CLK_SEL_CLK_PLL1, 16, 1),
-+	DEF_FIXED("PCLKAM", R9A09G077_CLK_PCLKAM, CLK_PLL4D1, 12, 1),
-+	DEF_FIXED("SDHI_CLKHS", R9A09G077_SDHI_CLKHS, CLK_SEL_CLK_PLL2, 1, 1),
+diff --git a/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi b/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
+index 8b9d04dce8ae0..91068042bec05 100644
+--- a/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
+@@ -217,3 +217,8 @@ &sdhi1 {
+ 	status = "okay";
  };
- 
- static const struct mssr_mod_clk r9a09g077_mod_clks[] __initconst = {
-@@ -149,6 +157,8 @@ static const struct mssr_mod_clk r9a09g077_mod_clks[] __initconst = {
- 	DEF_MOD("iic0", 100, R9A09G077_CLK_PCLKL),
- 	DEF_MOD("iic1", 101, R9A09G077_CLK_PCLKL),
- 	DEF_MOD("iic2", 601, R9A09G077_CLK_PCLKL),
-+	DEF_MOD("sdhi0", 1212, R9A09G077_CLK_PCLKAM),
-+	DEF_MOD("sdhi1", 1213, R9A09G077_CLK_PCLKAM),
- };
- 
- static struct clk * __init
+ #endif
++
++&wdt2 {
++	status = "okay";
++	timeout-sec = <60>;
++};
 -- 
 2.43.0
 
