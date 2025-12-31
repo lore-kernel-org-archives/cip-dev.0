@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E8FEE645E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C001EEB564
 	for <webhook@archiver.kernel.org>; Wed, 31 Dec 2025 17:00:43 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.msgproc02-g2.88804.1767200431635644184
  for <cip-dev@lists.cip-project.org>;
- Wed, 31 Dec 2025 09:00:34 -0800
+ Wed, 31 Dec 2025 09:00:38 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-CSE-ConnectionGUID: CTxeA0rZQOmaMw/puFpT1Q==
-X-CSE-MsgGUID: MA6n/sEuSEKBArwSQqhUPA==
+X-CSE-ConnectionGUID: LxoZKPjLQoSfsg3JO4ooKg==
+X-CSE-MsgGUID: EgvUfQmOQgumrtqtNB3W8Q==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 01 Jan 2026 02:00:34 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 01 Jan 2026 02:00:37 +0900
 Received: from Ubuntu-22.. (unknown [10.24.0.9])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id E3BED402412E;
-	Thu,  1 Jan 2026 02:00:32 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 613314024131;
+	Thu,  1 Jan 2026 02:00:36 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 03/17] watchdog: rzv2h: Make "oscclk" and reset controller optional
-Date: Wed, 31 Dec 2025 17:00:12 +0000
-Message-ID: <20251231170026.17006-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 05/17] watchdog: rzv2h: Add support for RZ/T2H
+Date: Wed, 31 Dec 2025 17:00:14 +0000
+Message-ID: <20251231170026.17006-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251231170026.17006-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20251231170026.17006-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -34,22 +34,21 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 31 Dec 2025 17:00:43 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21282
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21284
 
-commit 6229b35298af8c3cb983d866e9da1c1ad4803cc6 upstream.
+commit 2b20697635276b0281a2a4abf70099c4377c51dc upstream.
 
-Update the rzv2h_wdt driver to make the "oscclk" clock and reset
-controller optional.
+Add support for the RZ/T2H watchdog timer. The RZ/T2H requires control of
+the watchdog counter using the WDT Debug Control Register (WDTDCR), which
+allows explicitly stopping and starting the counter. This behavior differs
+from RZ/V2H, which doesn't have WDTDCR, so the driver is extended to handle
+this requirement.
 
-Use devm_clk_get_optional_prepared() to obtain the "oscclk" clock,
-allowing the driver to work on platforms that do not provide this clock,
-such as the RZ/T2H SoC.
-
-Similarly, use devm_reset_control_get_optional_exclusive() to allow the
-driver to function on platforms that lack a reset controller.
-
-These changes are preparatory steps for supporting the RZ/T2H SoC, which
-does not provide an "oscclk" clock or a reset controller.
+To support this, a new `wdtdcr` flag is introduced in the `rzv2h_of_data`
+structure. When set, the driver maps the WDTDCR register and uses it to
+control the watchdog counter in the start, stop, and restart callbacks.
+Additionally, the clock divisor and count source for RZ/T2H are defined
+to match its hardware configuration.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
@@ -58,27 +57,196 @@ Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/watchdog/rzv2h_wdt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/watchdog/rzv2h_wdt.c | 84 ++++++++++++++++++++++++++++++++++--
+ 1 file changed, 81 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/watchdog/rzv2h_wdt.c b/drivers/watchdog/rzv2h_wdt.c
-index 755067800ebb9..3c02960b65cf8 100644
+index e71d1e108f697..ee3ed5a6d98ea 100644
 --- a/drivers/watchdog/rzv2h_wdt.c
 +++ b/drivers/watchdog/rzv2h_wdt.c
-@@ -230,11 +230,11 @@ static int rzv2h_wdt_probe(struct platform_device *pdev)
- 	if (IS_ERR(priv->pclk))
- 		return dev_err_probe(dev, PTR_ERR(priv->pclk), "no pclk");
+@@ -21,11 +21,17 @@
+ #define WDTSR			0x04	/* WDT Status Register RW, 16 */
+ #define WDTRCR			0x06	/* WDT Reset Control Register RW, 8  */
  
--	priv->oscclk = devm_clk_get_prepared(dev, "oscclk");
-+	priv->oscclk = devm_clk_get_optional_prepared(dev, "oscclk");
- 	if (IS_ERR(priv->oscclk))
- 		return dev_err_probe(dev, PTR_ERR(priv->oscclk), "no oscclk");
++/* This register is only available on RZ/T2H and RZ/N2H SoCs */
++#define WDTDCR			0x00	/* WDT Debug Control Register RW, 32  */
++
+ #define WDTCR_TOPS_1024		0x00
++#define WDTCR_TOPS_4096		0x01
+ #define WDTCR_TOPS_16384	0x03
  
--	priv->rstc = devm_reset_control_get_exclusive(dev, NULL);
-+	priv->rstc = devm_reset_control_get_optional_exclusive(dev, NULL);
- 	if (IS_ERR(priv->rstc))
- 		return dev_err_probe(dev, PTR_ERR(priv->rstc),
- 				     "failed to get cpg reset");
+ #define WDTCR_CKS_CLK_1		0x00
++#define WDTCR_CKS_CLK_4		0x10
+ #define WDTCR_CKS_CLK_256	0x50
++#define WDTCR_CKS_CLK_8192	0x80
+ 
+ #define WDTCR_RPES_0		0x300
+ #define WDTCR_RPES_75		0x000
+@@ -35,6 +41,8 @@
+ 
+ #define WDTRCR_RSTIRQS		BIT(7)
+ 
++#define WDTDCR_WDTSTOPCTRL	BIT(0)
++
+ #define WDT_DEFAULT_TIMEOUT	60U
+ 
+ static bool nowayout = WATCHDOG_NOWAYOUT;
+@@ -54,10 +62,12 @@ struct rzv2h_of_data {
+ 	u8 tops;
+ 	u16 timeout_cycles;
+ 	enum rzv2h_wdt_count_source count_source;
++	bool wdtdcr;
+ };
+ 
+ struct rzv2h_wdt_priv {
+ 	void __iomem *base;
++	void __iomem *wdtdcr;
+ 	struct clk *pclk;
+ 	struct clk *oscclk;
+ 	struct reset_control *rstc;
+@@ -79,6 +89,20 @@ static int rzv2h_wdt_ping(struct watchdog_device *wdev)
+ 	return 0;
+ }
+ 
++static void rzt2h_wdt_wdtdcr_count_stop(struct rzv2h_wdt_priv *priv)
++{
++	u32 reg = readl(priv->wdtdcr + WDTDCR);
++
++	writel(reg | WDTDCR_WDTSTOPCTRL, priv->wdtdcr + WDTDCR);
++}
++
++static void rzt2h_wdt_wdtdcr_count_start(struct rzv2h_wdt_priv *priv)
++{
++	u32 reg = readl(priv->wdtdcr + WDTDCR);
++
++	writel(reg & ~WDTDCR_WDTSTOPCTRL, priv->wdtdcr + WDTDCR);
++}
++
+ static void rzv2h_wdt_setup(struct watchdog_device *wdev, u16 wdtcr)
+ {
+ 	struct rzv2h_wdt_priv *priv = watchdog_get_drvdata(wdev);
+@@ -114,14 +138,21 @@ static int rzv2h_wdt_start(struct watchdog_device *wdev)
+ 
+ 	/*
+ 	 * WDTCR
+-	 * - CKS[7:4] - Clock Division Ratio Select - 0101b: oscclk/256
++	 * - CKS[7:4] - Clock Division Ratio Select
++	 *     - 0101b: oscclk/256 for RZ/V2H(P)
++	 *     - 1000b: pclkl/8192 for RZ/T2H
+ 	 * - RPSS[13:12] - Window Start Position Select - 11b: 100%
+ 	 * - RPES[9:8] - Window End Position Select - 11b: 0%
+-	 * - TOPS[1:0] - Timeout Period Select - 11b: 16384 cycles (3FFFh)
++	 * - TOPS[1:0] - Timeout Period Select
++	 *     - 11b: 16384 cycles (3FFFh) for RZ/V2H(P)
++	 *     - 01b: 4096 cycles (0FFFh) for RZ/T2H
+ 	 */
+ 	rzv2h_wdt_setup(wdev, of_data->cks_max | WDTCR_RPSS_100 |
+ 			WDTCR_RPES_0 | of_data->tops);
+ 
++	if (priv->of_data->wdtdcr)
++		rzt2h_wdt_wdtdcr_count_start(priv);
++
+ 	/*
+ 	 * Down counting starts after writing the sequence 00h -> FFh to the
+ 	 * WDTRR register. Hence, call the ping operation after loading the counter.
+@@ -140,6 +171,9 @@ static int rzv2h_wdt_stop(struct watchdog_device *wdev)
+ 	if (ret)
+ 		return ret;
+ 
++	if (priv->of_data->wdtdcr)
++		rzt2h_wdt_wdtdcr_count_stop(priv);
++
+ 	ret = pm_runtime_put(wdev->parent);
+ 	if (ret < 0)
+ 		return ret;
+@@ -192,7 +226,9 @@ static int rzv2h_wdt_restart(struct watchdog_device *wdev,
+ 
+ 	/*
+ 	 * WDTCR
+-	 * - CKS[7:4] - Clock Division Ratio Select - 0000b: oscclk/1
++	 * - CKS[7:4] - Clock Division Ratio Select
++	 *     - 0000b: oscclk/1 for RZ/V2H(P)
++	 *     - 0100b: pclkl/4 for RZ/T2H
+ 	 * - RPSS[13:12] - Window Start Position Select - 00b: 25%
+ 	 * - RPES[9:8] - Window End Position Select - 00b: 75%
+ 	 * - TOPS[1:0] - Timeout Period Select - 00b: 1024 cycles (03FFh)
+@@ -200,6 +236,9 @@ static int rzv2h_wdt_restart(struct watchdog_device *wdev,
+ 	rzv2h_wdt_setup(wdev, priv->of_data->cks_min | WDTCR_RPSS_25 |
+ 			WDTCR_RPES_75 | WDTCR_TOPS_1024);
+ 
++	if (priv->of_data->wdtdcr)
++		rzt2h_wdt_wdtdcr_count_start(priv);
++
+ 	rzv2h_wdt_ping(wdev);
+ 
+ 	/* wait for underflow to trigger... */
+@@ -216,6 +255,28 @@ static const struct watchdog_ops rzv2h_wdt_ops = {
+ 	.restart = rzv2h_wdt_restart,
+ };
+ 
++static int rzt2h_wdt_wdtdcr_init(struct platform_device *pdev,
++				 struct rzv2h_wdt_priv *priv)
++{
++	int ret;
++
++	priv->wdtdcr = devm_platform_ioremap_resource(pdev, 1);
++	if (IS_ERR(priv->wdtdcr))
++		return PTR_ERR(priv->wdtdcr);
++
++	ret = pm_runtime_resume_and_get(&pdev->dev);
++	if (ret)
++		return ret;
++
++	rzt2h_wdt_wdtdcr_count_stop(priv);
++
++	ret = pm_runtime_put(&pdev->dev);
++	if (ret < 0)
++		return ret;
++
++	return 0;
++}
++
+ static int rzv2h_wdt_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -265,6 +326,12 @@ static int rzv2h_wdt_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
++	if (priv->of_data->wdtdcr) {
++		ret = rzt2h_wdt_wdtdcr_init(pdev, priv);
++		if (ret)
++			return dev_err_probe(dev, ret, "WDTDCR init failed\n");
++	}
++
+ 	priv->wdev.min_timeout = 1;
+ 	priv->wdev.timeout = WDT_DEFAULT_TIMEOUT;
+ 	priv->wdev.info = &rzv2h_wdt_ident;
+@@ -281,6 +348,16 @@ static int rzv2h_wdt_probe(struct platform_device *pdev)
+ 	return devm_watchdog_register_device(dev, &priv->wdev);
+ }
+ 
++static const struct rzv2h_of_data rzt2h_wdt_of_data = {
++	.cks_min = WDTCR_CKS_CLK_4,
++	.cks_max = WDTCR_CKS_CLK_8192,
++	.cks_div = 8192,
++	.tops = WDTCR_TOPS_4096,
++	.timeout_cycles = 4096,
++	.count_source = COUNT_SOURCE_PCLK,
++	.wdtdcr = true,
++};
++
+ static const struct rzv2h_of_data rzv2h_wdt_of_data = {
+ 	.cks_min = WDTCR_CKS_CLK_1,
+ 	.cks_max = WDTCR_CKS_CLK_256,
+@@ -292,6 +369,7 @@ static const struct rzv2h_of_data rzv2h_wdt_of_data = {
+ 
+ static const struct of_device_id rzv2h_wdt_ids[] = {
+ 	{ .compatible = "renesas,r9a09g057-wdt", .data = &rzv2h_wdt_of_data },
++	{ .compatible = "renesas,r9a09g077-wdt", .data = &rzt2h_wdt_of_data },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, rzv2h_wdt_ids);
 -- 
 2.43.0
 
