@@ -2,56 +2,56 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5993DC79F90
-	for <webhook@archiver.kernel.org>; Mon,  5 Jan 2026 13:40:31 +0000 (UTC)
-Received: from TY3P286CU002.outbound.protection.outlook.com (TY3P286CU002.outbound.protection.outlook.com [52.101.229.34])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.64027.1767620429325598189
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B10F0C79F9A
+	for <webhook@archiver.kernel.org>; Mon,  5 Jan 2026 14:10:51 +0000 (UTC)
+Received: from TYVP286CU001.outbound.protection.outlook.com (TYVP286CU001.outbound.protection.outlook.com [52.101.125.71])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.64671.1767622249455061174
  for <cip-dev@lists.cip-project.org>;
- Mon, 05 Jan 2026 05:40:30 -0800
+ Mon, 05 Jan 2026 06:10:50 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bp.renesas.com header.s=selector1 header.b=DVBq7REN;
- spf=pass (domain: bp.renesas.com, ip: 52.101.229.34, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+ dkim=pass header.i=@bp.renesas.com header.s=selector1 header.b=bzDTzFxX;
+ spf=pass (domain: bp.renesas.com, ip: 52.101.125.71, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Xc8LscFdD1jV8wH0NUE6r+V9r1SKfhLYYlnojxE4u5zYUaBZZhC7rxvXmE4dmRsHGTqaNh91CfXTP8MLmwlft8OP6u/kgdu8/kS//GtWeYezyfzYo6OANK9UiJIY5GW4yB2ewIlP8cH9uzyeOpgv1xyUZrbYK6SFjpmGDnhwJidCb1zjnBnVa2gvlTydTrpJd/9e4FKpfpQXgyo+sJWsDF93tIuMNkgnOBJhHn8/Nd/rWJW7YaiIKj8FKSJbGaSKjUZIckTEixGWecQtxwcPKXNVpJFjPEbj8rozBC0JQ7KcEZ88mKWYY+Pv7q2hFE5Nl5DU3HLifiPKDTHsHi4SGQ==
+ b=jLLPXOEaBuBWwlkbGF6AwfNK4wASeFqzpRV3N531Qbmpq40A56UhB1cYfOhjOduBnnJt3hFs0hAllDxKiIsixPiKPGgheeWRKsXWhAQdntorRc2kFdAkaymMX8I3CZgPzKXCxoVTC71nwWFJxt4qqDEk0Gv/rwZew4uQkjwMZBcpnDfUVBxj03D1TZVCWFc+70AnDVqlc086EglQ7Qpe9PLB39eUEyz2OGFs1aVLTRA/yHuIuHG9jCd/pELe6tNbN28m5+Q/ZBwtC2ebo1l9wwX3AAzZtYYbUg2NfQCkZ64ddiTnWlyhjOXbu2ItJUxm6nPiSywEd4f7mdcr4/wiQg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HZs3PHLAv79AXJoMHvXmhchYikz172wKPJplu4yFvHQ=;
- b=BLngEVTneCzVHDE/+LTp9HjfzppNNnqGgvYgLRNjVA3Amwik613Xl1L9GDSOFV81UtdX+aNMAIEv1wwmOgdX8x+QCftIbXUlUSRgvYap/UGpVdlFDs/5wpRcIj7/10CG0Ya5xQURe41KJ0DIUKfnUHty4Rtlpdz9aelTL1M7JBpoEPeZV3tiMdKmV/54iy4vws1IknAj89zGJz6/sdNEZpR5gdyDUtM2Hw5M4LsKP0K33Qqw3wjLQtDliTgMovx5Wmwl1qS3tb/JKa3sFxjEz/0ZOZBjnFumZPGzAbCwlH/3ZU0ajHIrHp5bQqPuZwR2ucZbb0rXf3qXTYdbc9v6rg==
+ bh=AwpunhIU7JsmPFlS0HTlwEjygDARJ0e/wkkIPZ0jr9w=;
+ b=rLjhl1ZbRuti7sUlMmUc6wJEzMI6cUqwj/1cy3qV2AuGDckj9It9ToyGX3m6JKMjzq6MmVRcOygWoMGp9QPdosIJzmC1jlMWmGzpl1p2VHTMNxJMS5VGrWFD5+3ky9KpDTf0bg/FZtv6rg1Gej0OheDy4/e3p/+2Py508th6FWA/nMuWK4WLOt1beUO5QyFPI52b51w3jE19oyWeSFB0jdviRdB1IrnfRPBKqDqSDUfLqrd8LnowEMA0aQK+xQTwcvF5/vtH8mB7Q032NxdpX69wnQi4Ziw822ZEvIQc1tDLPW/BlI7BhCpvKVx4XeYE0xQFLWZ+ItWFeCmwKPjhhA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HZs3PHLAv79AXJoMHvXmhchYikz172wKPJplu4yFvHQ=;
- b=DVBq7RENrlfN2ACrAT8bNsdCBy1lASB/YQfJRJAFcwpy18i3kS53+13sL9coEKJV7E7zm3M8baXKDsUb54ULfzoMKx6JrUsmwYan2J/0Y842XS080JZa+qxENUZFOrIx1HunxX0klhob/CdBvTnbW4BCIa5LMoItUI3vI1N2rnA=
+ bh=AwpunhIU7JsmPFlS0HTlwEjygDARJ0e/wkkIPZ0jr9w=;
+ b=bzDTzFxXd1+51Q9n7fGN3J6st1lJy0qdYh0PIqeKPmlN7PFw8bTegrJxH8zHGhwb6kpdJLLezM/VTPEmLJGBSO3Rn0CzRBeN0Tm7zYubrLThK1CIeCDuAvb8+TjK+JkBKVPUCAjioq0JGXrm8TnY0Zbzm4FDWPs4pJxifSmHhgU=
 Received: from OSZPR01MB7019.jpnprd01.prod.outlook.com (2603:1096:604:13c::8)
- by OS9PR01MB12520.jpnprd01.prod.outlook.com (2603:1096:604:2f9::10) with
+ by TYCPR01MB6717.jpnprd01.prod.outlook.com (2603:1096:400:9e::11) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9499.1; Mon, 5 Jan
- 2026 13:40:24 +0000
+ 2026 14:10:45 +0000
 Received: from OSZPR01MB7019.jpnprd01.prod.outlook.com
  ([fe80::8a27:ee0d:d7a4:9d10]) by OSZPR01MB7019.jpnprd01.prod.outlook.com
  ([fe80::8a27:ee0d:d7a4:9d10%2]) with mapi id 15.20.9499.001; Mon, 5 Jan 2026
- 13:40:19 +0000
+ 14:10:45 +0000
 From: Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Pavel Machek <pavel@nabladev.com>
 CC: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>, Nobuhiro
  Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>, Biju Das
 	<biju.das.jz@bp.renesas.com>
-Subject: RE: [cip-dev] [PATCH 6.12.y-cip 05/17] watchdog: rzv2h: Add support
- for RZ/T2H
-Thread-Topic: [cip-dev] [PATCH 6.12.y-cip 05/17] watchdog: rzv2h: Add support
- for RZ/T2H
-Thread-Index: AQHcfjclhuo3NIxhXkuEumPn5CO+m7VDlN6w
-Date: Mon, 5 Jan 2026 13:40:19 +0000
+Subject: RE: [PATCH 6.12.y-cip 04/17] clk: renesas: cpg-mssr: Add module reset
+ support for RZ/T2H
+Thread-Topic: [PATCH 6.12.y-cip 04/17] clk: renesas: cpg-mssr: Add module
+ reset support for RZ/T2H
+Thread-Index: AQHcfjgD2Smj0CZ3DkCLj9O9GFHTlLVDnVwQ
+Date: Mon, 5 Jan 2026 14:10:45 +0000
 Message-ID: 
- <OSZPR01MB7019B74B463D9AC6DD6B4AF8AA86A@OSZPR01MB7019.jpnprd01.prod.outlook.com>
-References: <20251231170026.17006-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20251231170026.17006-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <aVuhl9TJVs6rlwNT@duo.ucw.cz>
-In-Reply-To: <aVuhl9TJVs6rlwNT@duo.ucw.cz>
+ <OSZPR01MB7019C155E0F339D26DC2AC56AA86A@OSZPR01MB7019.jpnprd01.prod.outlook.com>
+References: <20251229223911.8663-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20251229223911.8663-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <aVujAQJSDn6WyORK@duo.ucw.cz>
+In-Reply-To: <aVujAQJSDn6WyORK@duo.ucw.cz>
 Accept-Language: en-US, en-GB
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -59,140 +59,150 @@ X-MS-TNEF-Correlator:
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=bp.renesas.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OSZPR01MB7019:EE_|OS9PR01MB12520:EE_
-x-ms-office365-filtering-correlation-id: ffdb8e4b-9377-4fd8-5144-08de4c5ff7e1
+x-ms-traffictypediagnostic: OSZPR01MB7019:EE_|TYCPR01MB6717:EE_
+x-ms-office365-filtering-correlation-id: 36fc12ca-03c7-4002-569e-08de4c6437db
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700021;
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700021;
 x-microsoft-antispam-message-info: 
- =?us-ascii?Q?2lgm9yMLXw+B5WxE4DlrVEopdnbHdcFYDcLo71u5D24kIWB1vToQI/z4EQEZ?=
- =?us-ascii?Q?c7xUP5w6qjjTOYaFl6e6ixwFsSnVRm4QSGX0FrmAafkGzqZVuW3sjSHbbTX/?=
- =?us-ascii?Q?585jtsXGKK9T0PLIlcpTcv+AWjlMnnE6O9vlS98AYiQYMG4jFnb2nig4TneV?=
- =?us-ascii?Q?mt05Zd4FSEOD21ml3asBoAxF83WrfRFijnw7ZQSZliSUPpzmMKPBV825oNFZ?=
- =?us-ascii?Q?zOzCVLrOan3uviSVoRwfrFxR+YR7drLFWkdJNxHkvM6hmpEJM7UbA+mpL72L?=
- =?us-ascii?Q?imrj5CZo0P4nRedl4mDkAX4cwmsbLRCQi/oreT2mj6HpQOe1/5Vrhf0rWdCQ?=
- =?us-ascii?Q?V+QFmljXiQS3dx8WzEH4pg83JOYsJYpr7S2LnQYBr49hWJ4M0P6m18DL3miQ?=
- =?us-ascii?Q?/D4zredcQF4k+UqqqGcihi5AJuULiu8h4qSGrgi0ryR0z6WazUWm+4SZ3uwB?=
- =?us-ascii?Q?L6vgViuGqagZO1WAOsN2xqxRUMjChbNpTVAuCJDsUSsch5nV/f+z/jmiEra8?=
- =?us-ascii?Q?XfcnH3hAwPaMxvcAdKArQWxc5GOhYblAqe8/1pWpU/MHm+HGuM87GVJnSXlk?=
- =?us-ascii?Q?FiXZHEc+7iFyriTXH5rmDyAT88HO2MUBKpCkcsR98H+tP/Ehn82TR5D5056L?=
- =?us-ascii?Q?2oFA9XaekLUDU1Tbh1zd7XiynpbQW/iS8RKtEngCt1xoZin2m2XNcWFOQPHA?=
- =?us-ascii?Q?ylvETpRlEuRLfQN8utpbNavUtkawpUxByfMGAOGlOKPY9u5MrziJri5dj4Ah?=
- =?us-ascii?Q?XC2TWDlQYM+1bpSEuwW1MSgvEVWvxmJalFtUXSs0vkGq304THJ1zK6ndo/sw?=
- =?us-ascii?Q?NrHsY+Ik/1hNoEKX54it1q5EkPnkgoBX3KH2vWbQLuo3L41OgAPGweeNkRHT?=
- =?us-ascii?Q?Z3F8C2z6UKdIJvnrBveSZcN87Es2vttYYuXr+zTB9f0LtM/OMJlRbkXD4VSb?=
- =?us-ascii?Q?ylk8KVyqxUCPC/sHhhtemKaJYWeDFl3FS46Tw/Pzm/lC9+F/zlY9/ECq2YbL?=
- =?us-ascii?Q?ecjX3pHX8zDpgvXMaKYnPOov8cwUPbx3fMQFGmh729XQopJUwIxnnXmaQHN7?=
- =?us-ascii?Q?P5oDWlYsv1rcecrjovQP61eA89D/AaaazrYC18Ki8yQALx3+he6QtpZSykMx?=
- =?us-ascii?Q?FCLlIuZTzrq0uTbdxLAk0dOiF8++o3EIO54/at+5Vu5gdmodbNzRdzaorIDe?=
- =?us-ascii?Q?/mWZFDgJPoZyDZLbfxd2NYKScWo4EydZM4DHIt8KDSsJlW9aD30xfJDdbQjs?=
- =?us-ascii?Q?+I77vKJpWpanfigPW8TP7kETcN3ioWSfgIDtB3j//zqdUDIKt4hZBMOd8Ziz?=
- =?us-ascii?Q?ZznvN44JuX6BXPTPY1K3sKmWuA7eUfbTTgtD+G+OjVCBKDO4Zc1R2bdW8bU5?=
- =?us-ascii?Q?onqtrJWLfaw8HCiPP3Hn8UW8b8CoLyvG5076TmVjbGzyA3KEiCk2FB+Nc09f?=
- =?us-ascii?Q?/GrgS3IAkH1zwI/UksIgq2oURTt2P+wfuV5kcUtvpI7ClW1Ftdm0ghSjgp2Y?=
- =?us-ascii?Q?KAihyigwsWTyP+yZjX07WPMUEfl+Zb5j3a1M?=
+ =?us-ascii?Q?ad6CCuIQ2s8XTA1xrFeZKYH28XfuRxaOgCzYLwvkyOWtVoKoWZylqsiwUvFK?=
+ =?us-ascii?Q?piR0ptsVm8+GJvYPIPZcIRVRE7mOYhtuCrMs60KBIFVxfHl6qN3o8uCorr2/?=
+ =?us-ascii?Q?C/hve6StkzIo2eSL2ZqwnLb47W9JPcPIfjQfe8DJleQ1rGdkgeBjoikT7uuH?=
+ =?us-ascii?Q?6B8BYWtwm8174H3/O5zGJRSkJEjj7ujvsnt4CmGwZGgZmR1xXL/SNNvY9wJX?=
+ =?us-ascii?Q?Hbr8NWKmIRdoYLqt6KCQPz+de1/Vp0xtipMDsThWd1DlH/smbboIV3RcP7+y?=
+ =?us-ascii?Q?+dSIbfMRiDswiUDGCjQNlgXYvPLwcqDkrnGNYCjB9/81bvgMwS6D7T/13N+5?=
+ =?us-ascii?Q?n7IZ1lGF4yuWd+Do+xqWBug3qCjesNpDmLD4zi+U7POBtcgYVKZZz5FD2gWf?=
+ =?us-ascii?Q?1ja9Vo5iUt+SkLMIeV1o2N0J6ap+1rtTG1h9/JtGtElt/XlZysVuxvlPyVCL?=
+ =?us-ascii?Q?V/G99ISSRypowL2OWB6SIxWrSuTM9K7sJzFajdlXUlKORjWgPiRGdCkE409O?=
+ =?us-ascii?Q?gNuN+065xm/yZe6yjqadmg60bfJLW6nRNsF4KQ9tKK+Q/F+Wa690p5W/i3+t?=
+ =?us-ascii?Q?qfbEpEIt0aXcXU/D2aDl6If3HPqIyYwMu/s3tEeNrJJ/DGRKlUrHjb+bepfu?=
+ =?us-ascii?Q?3Vq6dQ3qTY4HM9p17L7pdO9+reL8Tnv8SXOHEVXulKbi2TmlzadLBmQdK1uP?=
+ =?us-ascii?Q?gX/OSTtemoFsKvONB7QHwIxMz2JkSt8UO8bbIpVV18/t8Ton528Hyc7BciFz?=
+ =?us-ascii?Q?qD1v+Vwqh78tXYdkK0a8LEzK1GR8GBu3RKJ/xY0nylL0ucEq1g4BE5MZT5u2?=
+ =?us-ascii?Q?yk6Jr04sZkci/D95OF1OZnUwG/XpYh7ZITUNi45FGMLG1ZvPFVKU38h58Voj?=
+ =?us-ascii?Q?v/nQkEoJ821JoS256psouXbtrVvGEUpxrqgsWif3c+JEBadNC7ouHtjXdtSr?=
+ =?us-ascii?Q?dxt2Cp0WucYkeYTdlZ/xQFPghMR2vjNoSBNvJEvAR7ETVhS8k1EL3L96sEWX?=
+ =?us-ascii?Q?ScJuG2nFrDpo9P2JkbLbZlicn0UuYX7GIWCZ5/s5nzMa+EIy+lScdMhoPuhd?=
+ =?us-ascii?Q?0kxM4wZPjUG5RmcPUQ6vWNpO3qS1pVDSKlPd8fHGquHSDOkNEt9j4BBHzwpX?=
+ =?us-ascii?Q?hbSPW06UejlJe+ou1P3J1f2IN8D+jS6Y1gG6MjQvQr5MFRtHBF1bMxnCGYAW?=
+ =?us-ascii?Q?pFmD+qMVM40g3ZDWstRkSJWGjGt7K4glfxpOwHJkOGjyl1iinb3JFUQuU9e4?=
+ =?us-ascii?Q?d4DVQMQY/OMFOA8EKGmq3Oos8Mj4PVLRrP1SYldxCmUVFijw+NuiFlAs7wTT?=
+ =?us-ascii?Q?eYZxNoK+7tC5x9oP6ttHuhJSgdDRbyj8ymJKgUts3iOyT5JFA5TeaBQp0/Rw?=
+ =?us-ascii?Q?I4v/Ms2EmDiA7+YRb2v0XR1otJ1GqC4gD3tcOuvKhUgPwOF4fRbCuXcyryQe?=
+ =?us-ascii?Q?mDazdKpTL/9ffaPY6ewvNCZH3OTZmoej8dEn3re2MuRgjkmptiwJpMc6wkSd?=
+ =?us-ascii?Q?qt2cGYADyYV3hpgJPyqBVVxnMryb1hAlAJqn?=
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZPR01MB7019.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700021);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZPR01MB7019.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700021);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?us-ascii?Q?0qF5DnpiqsGILdnI9O4jT3fjkcwB4nMZW5Iw+tFCQcOd4T4ZkUk/yETcmdGU?=
- =?us-ascii?Q?H8t5OT3TRLJ397Vb2aKeZmbT0HKzEmwBuBB446CNeTDl3+LOp11mTysABJDr?=
- =?us-ascii?Q?rSm22YxPsPhksPXbqRQN5MuoJyZLBXRiE6bxmig45k5Ah0p7iD6x/+06QS+L?=
- =?us-ascii?Q?EZNgzw6N/TT98RjDhlaM8TijDsTXv5Vdv/jK2qO9naO7580ylqw0n13jo3Ih?=
- =?us-ascii?Q?89Wz5ATKexCg7NCSGGKyNdCsGSBrt7qSmfKEFXY8kDn3uqQLTFHLoKIXq7Pr?=
- =?us-ascii?Q?m9ANcNx+uEF4JZqCYymYSbVqyFEjNwuDqcpNbIOEOyjSlTJIUvXAnSO+sbsO?=
- =?us-ascii?Q?8K8raxcGATceIw6wVQiZ9mEDVt1ToOy4x/5F7YZh4jIa5+N207Lt7MkTZByQ?=
- =?us-ascii?Q?U0fzYCufTO29ngftkCSc126lo01L4Manh4CsoXx/xVpQH12oX3sxd8jzyEy2?=
- =?us-ascii?Q?eMIRfJ7SrTYll3b3z22+C28aLdL8yd4S0WgwBvAg0/zx0Jq26kkq6B1dlGGW?=
- =?us-ascii?Q?NBEeAuMA4dvlFTG6toVnikyXQxqCEYlgr4zOSFA4wAA7QVZ+X+7lBrxM93Dg?=
- =?us-ascii?Q?TfP+wdTsQzq7947/2PnR9x5lQmHzbynrShx1KRvQtRX+wDJIc28eauLXfsOx?=
- =?us-ascii?Q?LPK1tiarTDpjsa7M/ypCB51ChnKMCF8C+K1DDsLhtc69mRcFW7urIv4sgTqY?=
- =?us-ascii?Q?o9YzyRBeqkb+LFLEbfpzck7r4yx66WJo1Yx2abOJ+Pp+dIdH8BRKOxvgbpj1?=
- =?us-ascii?Q?p9BrKstAYEBhGWYHfET1vtLXkbmM1QbFGZUN+7IfWu3j2B86Uji3aTwIi4V/?=
- =?us-ascii?Q?OuT11kEPxWd9Myj7b1wIx5bUb2Yu+mEeiOy0qrBBqTs/FepnTXE2rEtNjg+l?=
- =?us-ascii?Q?Ot7aReluOC4yZPG0zdNw/8ypsiaJc6/FKrYy/+peb3he7z1hROUJwA0sMuAw?=
- =?us-ascii?Q?O/u5Xo5IufGvtsNG1+i8YdDntLI2UQjQpIzIeNxHIDZGyl8v6Osu3KNByVeA?=
- =?us-ascii?Q?gfZP5+mXHyD9lHGd0JO6QXcrXWJ8OKsoHlad5uq3/c7q/XwIv+VEmqvl/n2K?=
- =?us-ascii?Q?7UG8YrKElVi1NZNZAbmzjJa01OcfbzNMvhJSFGXDQYqZUIuZcomE8+10ygYR?=
- =?us-ascii?Q?x+n3D/+pM8p0BDZRxsoCVNfxyHiBdzYHYCM9FbqLq5P1AzFPE4LD36+OQNCB?=
- =?us-ascii?Q?2c/2sX8YX8DoMJY8VrTH9Dq7oVOpoK2WqaPjwJB+skNncX73HDYKAyK9TvKH?=
- =?us-ascii?Q?M+V+mFLr7YhHVgaHbemtdc6kJzBzsMtWrL4+mjehxrUVhaX2/Qbs3LUizb2j?=
- =?us-ascii?Q?1Okd+uJqKs3xFE0yWyOYYpttxCpXdL7RmP3SqTbSx0sKvSf2H7U9uIFaGexD?=
- =?us-ascii?Q?ZUzXxSwoUB9i1GeC3HQoUTtxbuAKyaO3S49YYsHvDi30/QkfTSWUi1XyntyC?=
- =?us-ascii?Q?hS9lhq3LSR6hWp5dw2MqjY1PUZ0upfx8h/g2TBc/TJ3vknmXXMVvSzRRjdt+?=
- =?us-ascii?Q?v/GqQufd8BZKbvgUV823dv+gqfKLle6Mk4PlnwimBqvy1xds93KMVSnabEsG?=
- =?us-ascii?Q?RO7F0o3xqK2qPikk3bDwhY+TcbytweyifVSpe/ZBtxJUL0wwEuunGTee8oMV?=
- =?us-ascii?Q?1yEjP7GPzSfpAuv1lRBnvDavwdAnVP13fBugZJs8iLhdPYy3/oBqq2YfWWIv?=
- =?us-ascii?Q?Mmp5zMWGFfDU0b+5CtAJdkFh+IxtJh1s6y0LQJagn4ma60cNOVr6EdllwPQv?=
- =?us-ascii?Q?+EKE/CmCxFYYxvXgvjl8ou3Ff9/oDYSApUCMasZB1U/18KoFypHp?=
+ =?us-ascii?Q?Ww6CvcRVYBRF0f9y4gIkcU1/3p1s+mveW6UlAMTYXE3OnyVlcmyQt72UFhzL?=
+ =?us-ascii?Q?f+oVsnFJEBMZsmBPOBUXzBFBktyDJQO8yxpNFsjWewmCH0Mo2dO6GE4ej5va?=
+ =?us-ascii?Q?qjXIQTSyhWC3d2tdkYwjki0Kh9WR3/ssjNKd/ZJfZch2uIsK0OVNOtibM1T+?=
+ =?us-ascii?Q?2qNkhr6MRh/gyesWUBzgKdswmsxYF5sem18sNAfTkqv2Ik71jJ0yLdYiAm6U?=
+ =?us-ascii?Q?1D5hSHy7llwEb6YDim4IOPTKKu+vz+wSzFIfQ+5fO2qOGzSKrMLOG2qDa08W?=
+ =?us-ascii?Q?Wbx7GQoU7ZwYz+akYq7cXMIc1WIkcde27wZF3gnrcn8cCd32QqJ4iT3yv4e4?=
+ =?us-ascii?Q?EGeNOY2qQU2+VuCFcPcx7oAwAfe3dnLMMCij3qtX4KiKWljE59r2ZeO+6v52?=
+ =?us-ascii?Q?5oHw/Ji46OzIRTIP32raD2hEKN8DGu1EUJurSr1T39d1ZnI4Jl0dQo/B+al3?=
+ =?us-ascii?Q?YzBbKl82Famk6E837DC7I0iAYpA2Bo71xoM4Fh+ULPM/SbuLEgiihxs9DX+y?=
+ =?us-ascii?Q?RIHCHaiP1eko6bTDbBJ9RaTZoKJH8jI2+J05AmbG9kOnxOQXApYcCV/ObI6l?=
+ =?us-ascii?Q?NSQGNCRCTisd8qhxVq4qaXi1zOgS9gaSHNJDEgcxA4DLVkYqtAmIdaf2LkWA?=
+ =?us-ascii?Q?kaF2SbmKDH+w5vdNtDz84KSk2xAK5JNgGYfoP3gRZlV5RDAXQ1rruKbaisyv?=
+ =?us-ascii?Q?qveWADES1ACcfb9R/4gpspX1T22QAJ62i/CJStQBoBshZJfW/nrqDsRv10Sa?=
+ =?us-ascii?Q?97qRbiwqXdeHOkXkEhnJaPP52/n5icVljmttndcQyLbo5E06bYYrhKcpeFhP?=
+ =?us-ascii?Q?fvggiWzK3abbMFpFQvI2nCydLBwiTGpW4O/hyIyjknICQ9Buay2ECpZktrlf?=
+ =?us-ascii?Q?xLY9c+Z12R7AcsPsrBq5K7IkBQIXqKNmV7Ml8OtmaOrfLiP2M5vFxd5+sAEA?=
+ =?us-ascii?Q?rCyzqyyzt1sbzyucUmd8+1bw2g6X56Vuv1MTI5Pu7x8bYsTAADIOJt35bSCB?=
+ =?us-ascii?Q?IQMIJAdbt39be8qc/et07UIwiLfujIeNbhLeOjTCe+svkXrKIvsCcCU6ZzWL?=
+ =?us-ascii?Q?KhUQBCZ4+csvd1Gaq1lNxjyEKx/c7LNYkg19mbI5XCEJY05Egrs/YRG7LYjN?=
+ =?us-ascii?Q?E8S717ecXBF1m6kV54Tlngx/fw1s5StdyRKo/4vQKYIhvw9UNbmUR/yA3Z2W?=
+ =?us-ascii?Q?xXyHxEZHbN3U56nz1fyqaExqhD6bPGn+vRTCfVGEcig3wO4EoxOX47ybC6HD?=
+ =?us-ascii?Q?JW0j2ISejBDybMWc/eC/x1c/a51pCDSMJjqqJsX+ujPVX1i23YhEqcP3G7my?=
+ =?us-ascii?Q?XK86/3lykfwRwTm+2W4ppEHo71S0hUvnRAFh8nJjLa6JW3sKJiuR7U679QjJ?=
+ =?us-ascii?Q?U6Vwg6K2jL50tHGhRgCEwPU5SuUCR/2NVPANWVBmLPn2th/65sK48A/y6sgb?=
+ =?us-ascii?Q?xJJ0UEPTrMR2nGbvu2vSkwELLKl8RQebx8Jg5TE5fYdukBniBkmdRY1Uu4IH?=
+ =?us-ascii?Q?/ywYqcwYWIxsiV9cx6oHYFdOyuuDw3p8vSh+RiHnsW3vnbGJnRSN3dK/aG31?=
+ =?us-ascii?Q?1zHHXlAi4mxto1u8YwNki1JwN7k6uIVP2Qc67g0xC/uMl2MWrpgO08iBkXIV?=
+ =?us-ascii?Q?/GHcCgxtvG5YcgPvIRZqjuai+WIN6fTfpPuwjiS6tAfV53M/b34ulA+a7/sT?=
+ =?us-ascii?Q?IXgQcBoaywR6nGLP7xD2f2f+Q9udFdwODrcWJuSQR4oI3XHC/k+jmhj8FpEy?=
+ =?us-ascii?Q?Qs/DYoNXPxB0iLrZBDgRVaMm/lC/nfFmrgLFHGDLmoWAMo05yzYd?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: bp.renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: OSZPR01MB7019.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ffdb8e4b-9377-4fd8-5144-08de4c5ff7e1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jan 2026 13:40:19.7505
+X-MS-Exchange-CrossTenant-Network-Message-Id: 36fc12ca-03c7-4002-569e-08de4c6437db
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jan 2026 14:10:45.0700
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: LfyuQ5UYxsQ7F2CgEolbMcz0CWCZhTAUhYQAw6fmtIte7Vk/u43Q9fNd3N2aVyTuP96ZvktmEVeYmDiRFxT5r+uL8KHfzsG5NyRy3nb78w9XyrYbAq84x4AWx/Jktocu
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB12520
+X-MS-Exchange-CrossTenant-userprincipalname: nrR+InhiSFL8OrEC4bSWMUXCKwVowJMckQIjpLhl4NWLt/yoqWQTjk5aSAuhqxgVJhXogpl2N+BasJJIyJmHANGjmzZWWzaVACHsQd0pIBMhPzuYEamp6JwYYxD6Kq6Y
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB6717
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 05 Jan 2026 13:40:31 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21313
+ <cip-dev@lists.cip-project.org>; Mon, 05 Jan 2026 14:10:51 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21314
 
 Hi Pavel,
 
 Thank you for the review.
 
-> Subject: Re: [cip-dev] [PATCH 6.12.y-cip 05/17] watchdog: rzv2h: Add
-> support for RZ/T2H
+> Subject: Re: [PATCH 6.12.y-cip 04/17] clk: renesas: cpg-mssr: Add module
+> reset support for RZ/T2H
 >=20
 > Hi!
 >=20
-> Minor nit below:
+> There's a cleanup possible, see below.
 >=20
-> > --- a/drivers/watchdog/rzv2h_wdt.c
-> > +++ b/drivers/watchdog/rzv2h_wdt.c
-> > +static int rzt2h_wdt_wdtdcr_init(struct platform_device *pdev,
-> > +				 struct rzv2h_wdt_priv *priv)
-> > +{
-> > +	int ret;
-> > +
-> > +	priv->wdtdcr =3D devm_platform_ioremap_resource(pdev, 1);
-> > +	if (IS_ERR(priv->wdtdcr))
-> > +		return PTR_ERR(priv->wdtdcr);
-> > +
-> > +	ret =3D pm_runtime_resume_and_get(&pdev->dev);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	rzt2h_wdt_wdtdcr_count_stop(priv);
-> > +
-> > +	ret =3D pm_runtime_put(&pdev->dev);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	return 0;
-> > +}
+> > commit 3b37979dcbef0dc3fc1aaba75b21ff9a21799055 upstream.
+> >
+> > Add support for module reset handling on the RZ/T2H SoC. Unlike
+> > earlier CPG/MSSR variants, RZ/T2H uses a unified set of Module Reset
+> > Control Registers (MRCR) where both reset and deassert actions are
+> > done via read-modify-write (RMW) to the same register.
 >=20
-> I believe this can be simply "return pm_runtime_put()".
+> > diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c
+> > b/drivers/clk/renesas/renesas-cpg-mssr.c
+> > index 9ea544d00634b..4d2d945b3f5e2 100644
+> > --- a/drivers/clk/renesas/renesas-cpg-mssr.c
+> > +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+> > +	/*
+> > +	 * For secure processing after release from a module reset, one must
+> > +	 * perform multiple dummy reads of the same register.
+> > +	 */
+> > +	for (i =3D 0; !set && i < RZT2H_RESET_REG_READ_COUNT; i++)
+> > +		readl(reg_addr);
+> > +
+> > +	/* Verify the operation */
+> > +	val =3D readl(reg_addr);
+> > +	if (set =3D=3D !(bitmask & val)) {
+> > +		dev_err(priv->dev, "Reset register %u%02u operation failed\n",
+> reg, bit);
+> > +		spin_unlock_irqrestore(&priv->pub.rmw_lock, flags);
+> > +		return -EIO;
+> > +	}
+> > +
+> > +	spin_unlock_irqrestore(&priv->pub.rmw_lock, flags);
 >=20
-pm_runtime_put() may return 1 if the device is already suspended.
-call trace:
-pm_runtime_put() ->
-   __pm_runtime_idle() ->
-       rpm_idle() ->
-           rpm_suspend() ->
-               rpm_check_suspend_allowed() [0]
+> "(set =3D=3D !(bitmask & val))" is only using local variables, so does no=
+t
+> need spinlock protection AFAICT.
+>=20
+> And dev_err really should not be run under spinlock.
+>=20
+> So I believe spin_unlock...() can be simply moved before the if() for tin=
+y
+> bit faster and cleaner code.
+>=20
+Agreed, I've now posted a patch [0] with this improvement.
 
-[0] https://elixir.bootlin.com/linux/v6.19-rc3/source/drivers/base/power/ru=
-ntime.c#L292
+[0] https://lore.kernel.org/all/20260105140625.2590685-1-prabhakar.mahadev-=
+lad.rj@bp.renesas.com/
+
 
 Cheers,
 Prabhakar
+
 
