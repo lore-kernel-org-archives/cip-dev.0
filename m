@@ -1,78 +1,93 @@
-Return-Path: <yoshitake.kobayashi.x25@mail.toshiba>
+Return-Path: <nobuhiro.iwamatsu.x90@mail.toshiba>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C65BC2A070
-	for <webhook@archiver.kernel.org>; Sun,  4 Jan 2026 23:54:56 +0000 (UTC)
-Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.46621.1767547889654477137
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0E52C2A062
+	for <webhook@archiver.kernel.org>; Mon,  5 Jan 2026 01:03:26 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.135])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.55123.1767574998808349108
  for <cip-dev@lists.cip-project.org>;
- Sun, 04 Jan 2026 09:31:30 -0800
+ Sun, 04 Jan 2026 17:03:19 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=VlO5oFhj;
- spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 55387FFF10;
-	Sun,  4 Jan 2026 18:31:27 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1767547887;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=QDVnMOzTDS5yk+3AvlpukCKtlUspHKW6L351GwlJOCY=;
-	b=VlO5oFhjKtYTx9M26bmstWm1Ca2o9ngrZJxUgeFq2qhRyMQnpaGIEgifv/fWG91nwcZKNX
-	TxQjUQLDS7u3TnX8D+dsQBJRBLMV0PD981YpkQ8Hsl6MrzLcWFJoowMUclFcym4sBWLJ1H
-	T1AUWWURxRPcuBxkbGAjwJdajBVcuzEx40zhl34aBrk0sHECmbapVR3daBHX6YDJwRb6rM
-	jHu5plr8Z4n0SNxvdV6bgYq2yzP8cAy9gIp+W93iiV+wo2UCqsCPOTEMUAZA1Cv00Z3avj
-	ipXLfE42S0NEhoNXQv8uYpU6ZO2T8ds/kMW6I6SvHW00kVuKq3E3MBgo/kTtBQ==
-Date: Sun, 4 Jan 2026 18:31:25 +0100
-From: Pavel Machek <pavel@nabladev.com>
-To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-Cc: cip-dev@lists.cip-project.org, nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: Re: [PATCH 6.1.y-cip 0/5] Add RZ/V2N GBETH support
-Message-ID: <aVqj7ZbsHPUgtG/7@duo.ucw.cz>
-References: <20251229084011.3611-1-ovidiu.panait.rb@renesas.com>
+ dkim=pass header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.s=key1.smx header.b=V+xHCaUs;
+ spf=pass (domain: mail.toshiba, ip: 210.130.202.135, mailfrom: nobuhiro.iwamatsu.x90@mail.toshiba)
+DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=mail.toshiba;h=From:To:Cc:
+	Subject:Date:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding;
+	i=nobuhiro.iwamatsu.x90@mail.toshiba;s=key1.smx;t=1767574983;x=1768784583;bh=
+	DNwD3I6UJAbFWlw5UcKnsyTuZh8+JOdi3c0IYHyz/os=;b=V+xHCaUsVp4krJcjqzuNHVPZnZmhKj
+	jx6hnLbXR/hNwxIkHHvW7OUuoBHIceyyOEOVxnYwjFMyJBAlhqn0eWzFUDC7DIUa1gL8l2+QhalVM
+	pMYQKsQmlho5f49uGoPUEDZo+IECnpgRQnJltUcf9Gq+IPL64YpR0W5XEiO0JcN/sweFbmOPsKpYe
+	lZ9NVmRp/bk/GPldb6eO2m7WXedkKmBLjgpVRDgB9k1OQckcIkcpKENqoHUPCk7rGTd6rClpiHLLW
+	h5gVeiPqmCOVH95rnaivcxTP1Wgg+Hw6v5i14NEl0MLsVmGEXzY72rWgUijmVG+rdmu9f4AZHtSkf
+	Dl3w==;
+Received: by mo-csw.securemx.jp (mx-mo-csw1801) id 605132uG3326267; Mon, 5 Jan 2026 10:03:02 +0900
+X-Iguazu-Qid: 2yAaYMbrivEC6pDlog
+X-Iguazu-QSIG: v=2; s=0; t=1767574982; q=2yAaYMbrivEC6pDlog; m=dOJO2+5N5XGEdD8ZNxPBv6Jlw82V6U+W12JuSMDUF3A=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	 id 4dkwyY2S8vz1xnZ; Mon,  5 Jan 2026 10:03:00 +0900 (JST)
+From: Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
+To: cip-dev@lists.cip-project.org
+Cc: pavel@nabladev.com, uli@kernel.org, biju.das.jz@bp.renesas.co,
+        Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
+Subject: [PATCH for 6.12.y-cip + 6.12.63 ] can: rcar_canfd: Fix build error caused by is_gen4()
+Date: Mon,  5 Jan 2026 10:02:46 +0900
+X-TSB-HOP2: ON
+Message-Id: <1767574966-5745-1-git-send-email-nobuhiro.iwamatsu.x90@mail.toshiba>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20251229084011.3611-1-ovidiu.panait.rb@renesas.com>
-X-Last-TLS-Session-Version: TLSv1.3
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="qV01ejRFpjWyuKvP"
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Sun, 04 Jan 2026 23:54:56 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21303
+ <cip-dev@lists.cip-project.org>; Mon, 05 Jan 2026 01:03:26 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21304
 
---qV01ejRFpjWyuKvP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+is_gen4() is undefined because it was modified by commit: f0b37f2cb224 
+("can: rcar_canfd: Add sh variable to struct rcar_canfd_hw_info").
+This replaces is_gen4() with 'gpriv->info->shared_can_regs'.
 
-Hi!
+```
+drivers/net/can/rcar/rcar_canfd.c: In function ‘rcar_canfd_reset_controller’:
+drivers/net/can/rcar/rcar_canfd.c:874:14: error: implicit declaration of function ‘is_gen4’ [-Wimplicit-function-declaration]
+  874 |         if (!is_gen4(gpriv)) {
+      |              ^~~~~~~
+drivers/net/can/rcar/rcar_canfd.c: At top level:
+```
 
-> This patch series adds GBETH support for the Renesas RZ/V2N SoC.
->=20
-> Patches were cherry-picked from mainline kernel.
+Fixes: f88ba5098e83 ("can: rcar_canfd: Fix CAN-FD mode as default")
+Signed-off-by: Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
+---
+ drivers/net/can/rcar/rcar_canfd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-This looks okay to me.
+diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
+index b58895084ea2a..99d0cbe863213 100644
+--- a/drivers/net/can/rcar/rcar_canfd.c
++++ b/drivers/net/can/rcar/rcar_canfd.c
+@@ -851,7 +851,7 @@ static int rcar_canfd_reset_controller(struct rcar_canfd_global *gpriv)
+ 	rcar_canfd_write(gpriv->base, RCANFD_GERFL, 0x0);
+ 
+ 	/* Set the controller into appropriate mode */
+-	if (!is_gen4(gpriv)) {
++	if (!gpriv->info->shared_can_regs) {
+ 		if (gpriv->fdmode)
+ 			rcar_canfd_set_bit(gpriv->base, RCANFD_GRMCFG,
+ 					   RCANFD_GRMCFG_RCMC);
+@@ -880,7 +880,7 @@ static int rcar_canfd_reset_controller(struct rcar_canfd_global *gpriv)
+ 		}
+ 
+ 		/* Set the controller into appropriate mode */
+-		if (is_gen4(gpriv)) {
++		if (gpriv->info->shared_can_regs) {
+ 			/* Do not set CLOE and FDOE simultaneously */
+ 			if (!gpriv->fdmode) {
+ 				rcar_canfd_clear_bit(gpriv->base,
+-- 
+2.51.0
 
-Reviewed-by: Pavel Machek <pavel@nabladev.com>
 
-I can apply the series if it passes testing and there are no other
-comments.
-
-Best regards,
-                                                                Pavel
---=20
-In cooperation with Nabla.
-
---qV01ejRFpjWyuKvP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaVqj7QAKCRAw5/Bqldv6
-8s1ZAJ0TQkVBZ+toCj1K8i8C82jRPFW7QwCfcy3NQKWmg/st3Ey3eODEw2ROb1o=
-=BnKk
------END PGP SIGNATURE-----
-
---qV01ejRFpjWyuKvP--
 
