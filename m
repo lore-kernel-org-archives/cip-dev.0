@@ -2,57 +2,57 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 836F1C98331
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92640C9833E
 	for <webhook@archiver.kernel.org>; Tue,  6 Jan 2026 11:45:08 +0000 (UTC)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.88211.1767699904617893136
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.88169.1767699903170884277
  for <cip-dev@lists.cip-project.org>;
- Tue, 06 Jan 2026 03:45:04 -0800
+ Tue, 06 Jan 2026 03:45:03 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=Ey+9JRT5;
- spf=pass (domain: gmail.com, ip: 209.85.128.51, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4775ae77516so9559275e9.1
-        for <cip-dev@lists.cip-project.org>; Tue, 06 Jan 2026 03:45:04 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=Fm4TYKch;
+ spf=pass (domain: gmail.com, ip: 209.85.128.54, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4779adb38d3so6641605e9.2
+        for <cip-dev@lists.cip-project.org>; Tue, 06 Jan 2026 03:45:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767699903; x=1768304703; darn=lists.cip-project.org;
+        d=gmail.com; s=20230601; t=1767699901; x=1768304701; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fDQ+EK7+Mz+xI6NX6PGnWiApQlNfEiuwXCx1U2BS/NQ=;
-        b=Ey+9JRT5yEH18SA0fMgGfpDGtsSq5nMSOACdvHMYRlf6jaLFT4yH3ev16wQSUHj1Qw
-         M58V6Qhg/JpZgnyI2IuNehOhgsZH4jVh+xA/R15FyxzUb9UDFJBrmSYpJC7Ads5kWs+r
-         muSxg6KiFOoHUX1kuWANyyAc4lpNQbcfZ9OtxI/COX1GEzXWkTsAl2hp3d4Y4wty4LSU
-         euGvxp0ZXG8umLSu0h1zXmoEIMZYtbrWSjvxVXI6mkydIl0Bwf+w59QankgP1sRJR8E7
-         iMlbOiE+Jzqy791EnsKTR6wtVI8S5tDQ8oerBwbwqJfwlquqZ3sI+DTbRjm+Av8yJFm4
-         jDMQ==
+        bh=cr7Pz2avPp7AUH1p+oihwPe4+XKum4LUM/JAalKJlhE=;
+        b=Fm4TYKchrsAjkhBUULr4wYzISnj5HRx8Wg+rLXlR8LqKaK0EwRkTW7D48uGap6Y+6Z
+         hZyBXcvBvas7AcjSeQQiYmfbrhQgp5/Q7EAVZgKMyOyYyy8+e/K0RazPRWOnimafsFve
+         AhusUIavWfZ3H/n7Eph9MIza5QSb5tpd2cnsBTyr9FEtETGdbNTVPhHoV18ezh7rne+k
+         hlst0j6oFyeQptTFL9V2w98QKJUHsmX5UtV5MSlONhyHbysLroJpdTSh02roemi2fKMJ
+         Jy5NN5oa71gZJ3qnMUdv2sTY4twQqrq4F0zORtyySjI64QI2sVFeT29ZINTwovSbJgi/
+         PMVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767699903; x=1768304703;
+        d=1e100.net; s=20230601; t=1767699901; x=1768304701;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=fDQ+EK7+Mz+xI6NX6PGnWiApQlNfEiuwXCx1U2BS/NQ=;
-        b=cTKKUqdCvI5L+fhBF4OWAC/YLNGIcV0TtKaElkdJNy1WbFnz5XQC+riLz45gLf9Tms
-         rtgloWaWZKxohlrHN0M+cuUMypRC5qEcbpVkIbK7UXi/oLF7SD384QK14MZ6Jt2aSstu
-         MpzhEhVsSZdFCC9lTZXgIzOfUVBSUdwHp5l0zv3VeG+6Cwlkf8KG02flpcSbAWkOmvkU
-         2tBCspgB5JPnae0rPuaTgjX/Q2n9WmfjmIJIccX1osrQHRVOn/fh41DBOzi404SadYBX
-         /BDeyujcaahrhHTozQ36gc426xg0p0HIgMy5DaHYAVaIBX+NnLEyogPFK4bt7DVnD43d
-         vK2g==
-X-Gm-Message-State: AOJu0YyWmi+lMLrI63Olm8WVdtuHdIaPW0GJ/N539rYXhoM+wuWTttMt
-	Kq8aHrhpVBLDi8DOSsNz5n1nvfv/KpTf3gbPYosYq8UC44X5WVwdYuH9VokV3A==
-X-Gm-Gg: AY/fxX56hrW1UnR9QQ0WUmhiMxq5uBZO1owQm604pvr5CMLPDOQpfMGzt1TkNbUDeeJ
-	p9XNFdKfG1zERzYZBcZsEbA/X6W38Ve3GgKknOgGJh1gZLZwEYjEciH7cCYFlGZGXmMJM8I+09j
-	mWzYj3NROZE69yqpRxNVj2nwRGDZSPQPCKX/2SXpmFe/HzKj0BNn7ZGzPTrgrw6BrJDO6ld09Dy
-	+WIWearuNRey7iW/LQ/S9RpuZUJpijM9YjBXacr9TxuUSdSGPC7njFfx2ijOt5KG/E0iJ+167n4
-	C5awPmgsvg1DuXDfK73CBI3JCenYj5K35lhKTAy0snX3qRmV6O6wjFprYY7wp1RoI/mq3YpTPuq
-	Zp/gE8BqJPAdR5jQC+yJQAIemv/A8ZaaQE93XazS0Qj/VrGchN96h0wPxL7ZxdbvGlbs7t9OSKk
-	EHnoTH+l3L0epQTwEggQ==
-X-Google-Smtp-Source: AGHT+IHJ/wTyN82OfeEhujySSUegVVlZQrBL7u5cEOJb1OjLSIsal7hv/trttgc7qI+FH4ZEuPXsEw==
-X-Received: by 2002:a05:600c:5395:b0:47b:de05:aa28 with SMTP id 5b1f17b1804b1-47d7f06c8e2mr29325295e9.2.1767699902711;
-        Tue, 06 Jan 2026 03:45:02 -0800 (PST)
+        bh=cr7Pz2avPp7AUH1p+oihwPe4+XKum4LUM/JAalKJlhE=;
+        b=ITFRMu+JexJudBq4gkZdDmWORjxv5xtImMuzYZ6G3TMSeHmdaomWx/eOr/dtjGSODo
+         rwRgsrtxfSmYsbjTDw2iVpHaVw2t0wXhUjA0mdTceqSkZqNYeKkadm3KEljM1Z9pqwDl
+         gSMgoIzBGd+B7HQJbzfdBgX7L9vBp854qZZdeXrnI9gclfVEfso4yASoknwpeWfcRj9I
+         x9pgXL1jUIi8NsAAqgf8fepS2hDK/C+FtI4w6XlVFfbBJvHzPFho0Fe1waoWMs35dnLS
+         1vXlcneeC2TECr4+58gMPIXdaiWT2oD9Hsnk/wxpykUbPGtjtXkTl3rAHPLbgvWgs3Zm
+         uIfw==
+X-Gm-Message-State: AOJu0YxRHciIKihE3r7Y4emDkTOlHOeBpousZsOc/p3DCuOjhhZjVfCp
+	IumsvCvo4lkFoMNt1hQMW4RKygXwGlkSvFEAf2VftgKrLI1xihZ1MarUfKOPCA==
+X-Gm-Gg: AY/fxX53gsl64sc/FxVGUW9GhJnr+9CqQy6pblD6Wx2gi3+rqQBhwErH18J6nvhwFoE
+	r39UCPoSvxqXZIrX+/G03PoCj6HJVZMv81dju64FDEgW/KxpAYtaoxKq1WwyerDugynd3MfgbUc
+	wkkTsCNkgjbpWN9zqrBlcg9ZdXDpKdDCIyVpSAIf/ZKXiJCtJZfls2UQ+/DIOkykk2AcL8ulaWk
+	U4Zsyss4bxCWt4dm6qgj2/2cm8tLmU281sEfp7tRC8uzKrQH4J3ZhW8v6zCRFg5NbMxeg535aMl
+	O86qUA91wzDECVCnrBG7tj01mWXUROw7r2EKTtihtxofEpX3I++PqD9UJz9yy+mxSF5l/DOx0Bj
+	GEBjtvPDnnGFERT9SdsGXExIODiXfQvAa2PDIRAj3tRbViUq/POyOpSoyoL1QDI5TcbmteS4tV3
+	px8IRoK3bhThCdVRmJZtgVrtA2Jj/G
+X-Google-Smtp-Source: AGHT+IGqJHCkw3b47+rOalLvmP74jAzwY9fhsy71HlY1dv+9pYPQEYpJ+yL9GMjVO2doRnvoiT05OQ==
+X-Received: by 2002:a05:600c:a4a:b0:477:7658:572a with SMTP id 5b1f17b1804b1-47d7f09299emr28113635e9.20.1767699901290;
+        Tue, 06 Jan 2026 03:45:01 -0800 (PST)
 Received: from biju.lan ([2a00:23c4:a758:8a01:8a99:e76a:4e83:ddf8])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47d7f982cdesm18170205e9.0.2026.01.06.03.45.02
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47d7f982cdesm18170205e9.0.2026.01.06.03.45.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Jan 2026 03:45:02 -0800 (PST)
+        Tue, 06 Jan 2026 03:45:01 -0800 (PST)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -60,9 +60,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip v2 07/24] can: rcar_canfd: Rename rcar_canfd_setrnc() to rcar_canfd_set_rnc()
-Date: Tue,  6 Jan 2026 11:44:30 +0000
-Message-ID: <20260106114458.122333-8-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip v2 04/24] can: rcar_canfd: Add helper variable dev to rcar_canfd_reset_controller()
+Date: Tue,  6 Jan 2026 11:44:27 +0000
+Message-ID: <20260106114458.122333-5-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260106114458.122333-1-biju.das.jz@bp.renesas.com>
 References: <20260106114458.122333-1-biju.das.jz@bp.renesas.com>
@@ -72,48 +72,64 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 06 Jan 2026 11:45:08 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21339
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21336
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 1b76dca8fd892a8ced41d980e123b4701ad3cf10 ]
+[ Upstream commit 1f9b5003d4baf72055371fcdb15dda5759a8e908 ]
 
-Insert an underscore in the function's name, for consistency with other
-getter and setter helper functions.
+rcar_canfd_reset_controller() has many users of "pdev->dev".  Introduce
+a shorthand to simplify the code.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Link: https://patch.msgid.link/9fdc2584ce27b2784ecea76390d2a81eab289d0d.1749655315.git.geert+renesas@glider.be
+Link: https://patch.msgid.link/21e64816808eb3eba722f4c547f4f5112d5d62a6.1749655315.git.geert+renesas@glider.be
 Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/net/can/rcar/rcar_canfd.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/can/rcar/rcar_canfd.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
-index 3133ef64f537..2f84393d95c1 100644
+index 9b40b787d913..ac6a942c3c85 100644
 --- a/drivers/net/can/rcar/rcar_canfd.c
 +++ b/drivers/net/can/rcar/rcar_canfd.c
-@@ -830,8 +830,8 @@ static void rcar_canfd_tx_failure_cleanup(struct net_device *ndev)
- 		can_free_echo_skb(ndev, i, NULL);
- }
+@@ -821,6 +821,7 @@ static void rcar_canfd_setrnc(struct rcar_canfd_global *gpriv, unsigned int ch,
  
--static void rcar_canfd_setrnc(struct rcar_canfd_global *gpriv, unsigned int ch,
--			      unsigned int num_rules)
-+static void rcar_canfd_set_rnc(struct rcar_canfd_global *gpriv, unsigned int ch,
-+			       unsigned int num_rules)
+ static int rcar_canfd_reset_controller(struct rcar_canfd_global *gpriv)
  {
- 	unsigned int rnc_stride = 32 / gpriv->info->rnc_field_width;
- 	unsigned int shift = 32 - (ch % rnc_stride + 1) * gpriv->info->rnc_field_width;
-@@ -968,7 +968,7 @@ static void rcar_canfd_configure_afl_rules(struct rcar_canfd_global *gpriv,
- 			    RCANFD_GAFLECTR_AFLDAE));
++	struct device *dev = &gpriv->pdev->dev;
+ 	u32 sts, ch;
+ 	int err;
  
- 	/* Write number of rules for channel */
--	rcar_canfd_setrnc(gpriv, ch, num_rules);
-+	rcar_canfd_set_rnc(gpriv, ch, num_rules);
- 	if (gpriv->info->shared_can_regs)
- 		offset = RCANFD_GEN4_GAFL_OFFSET;
- 	else if (gpriv->fdmode)
+@@ -830,7 +831,7 @@ static int rcar_canfd_reset_controller(struct rcar_canfd_global *gpriv)
+ 	err = readl_poll_timeout((gpriv->base + RCANFD_GSTS), sts,
+ 				 !(sts & RCANFD_GSTS_GRAMINIT), 2, 500000);
+ 	if (err) {
+-		dev_dbg(&gpriv->pdev->dev, "global raminit failed\n");
++		dev_dbg(dev, "global raminit failed\n");
+ 		return err;
+ 	}
+ 
+@@ -843,7 +844,7 @@ static int rcar_canfd_reset_controller(struct rcar_canfd_global *gpriv)
+ 	err = readl_poll_timeout((gpriv->base + RCANFD_GSTS), sts,
+ 				 (sts & RCANFD_GSTS_GRSTSTS), 2, 500000);
+ 	if (err) {
+-		dev_dbg(&gpriv->pdev->dev, "global reset failed\n");
++		dev_dbg(dev, "global reset failed\n");
+ 		return err;
+ 	}
+ 
+@@ -874,8 +875,7 @@ static int rcar_canfd_reset_controller(struct rcar_canfd_global *gpriv)
+ 					 (sts & RCANFD_CSTS_CRSTSTS),
+ 					 2, 500000);
+ 		if (err) {
+-			dev_dbg(&gpriv->pdev->dev,
+-				"channel %u reset failed\n", ch);
++			dev_dbg(dev, "channel %u reset failed\n", ch);
+ 			return err;
+ 		}
+ 
 -- 
 2.43.0
 
