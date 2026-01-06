@@ -2,56 +2,57 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57F4EC47BF4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 612FEC47BF5
 	for <webhook@archiver.kernel.org>; Tue,  6 Jan 2026 11:45:08 +0000 (UTC)
 Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.88167.1767699901634108582
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.88168.1767699902720531712
  for <cip-dev@lists.cip-project.org>;
- Tue, 06 Jan 2026 03:45:01 -0800
+ Tue, 06 Jan 2026 03:45:03 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=V0Wz6LU2;
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=UGq39MSt;
  spf=pass (domain: gmail.com, ip: 209.85.128.48, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-47774d3536dso8283705e9.0
-        for <cip-dev@lists.cip-project.org>; Tue, 06 Jan 2026 03:45:01 -0800 (PST)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-47d3ffb0f44so5533145e9.3
+        for <cip-dev@lists.cip-project.org>; Tue, 06 Jan 2026 03:45:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767699900; x=1768304700; darn=lists.cip-project.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cwqpdd3UpGaXvzFXwpy/6bF/9sqGsMYwDJKUK09IK84=;
-        b=V0Wz6LU2BCNNmWra/NyhC7fjVvOOLTvfmOdIFfw3EpFnLQGWROfzZbmNTzIWV3n6dQ
-         XSUzYZJZ86YQkZqPFUBehTC7iQ8hFPXswD4QEGWhwRi1Kdwvuy6on8iwJYwlnFuaKIEa
-         qsq2PpAsKy3h7/20lmENh5gbGO5EvLj+/XZWAXfPQx1rl2c24C2oxPflMx9bDNI7Plp1
-         l7zg8yuoadlOItRPjutf+wEiPQ9pamO7sey9cY8DnT0vaM5+oWyQj02ssY0sWtSS52+0
-         ArFGbXJh5lXS6L4FmYb1w4Ts2bOXVv59QcnJGD0FsKC4zD1plDXJDFsSXkyLSHjE8xvk
-         EuxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767699900; x=1768304700;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1767699901; x=1768304701; darn=lists.cip-project.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cwqpdd3UpGaXvzFXwpy/6bF/9sqGsMYwDJKUK09IK84=;
-        b=i9EUfxiYeTY9uRIoFdjO8SYi8stKPWUsZuWDkAerNl+SptZ8hX3uOTzrgU/UMDIZBz
-         gEOlxvq2LuDt+oBZ+tGbERzGI4hjYc/R9MI2jjMDOn0CRQCDqmYq7yqAtJYHarb4WNiV
-         kQKrPl/uVwsJVUh5im+NxD5RkVzbI3Ud3qegLP0evTFNWcSQeCM0WgCZBlX5XXL8n9L2
-         LTdrg5IXCqWb+hMKCus9kzgiVFfFL67ol0Tqf8reZ83PQw7JQ4ZFACC9uCosxwQ3t9x4
-         Y5Hn8OfAkGKGcXPCJ5Dh6kKgklsFd/PlYcSb/gsKdxFB+Y3OS9rs9XTY9qh/zFPU/d6L
-         Zjiw==
-X-Gm-Message-State: AOJu0Yzw/MvFvzalFZzwfZKGxE0Sth6vCzcm5P8XFw9YloUYaIHDZ52F
-	gM9DF+EtDexTnSxvbrtZKiWpdCAwE0DB7SFDdt+xQ37YCzhEGmtwKjFG6uLIMA==
-X-Gm-Gg: AY/fxX5z4ARP08dwq5W0XP6pG5UYPATE6CjkWCyFom4il+kF1Pzcnk+xD/vOX1cNxgw
-	VKvNfiZ13z2kz2+Ry9e//srHwwgsSIfgNdrGjVBSGotuBkxIEVa/sVa7qlcMOFV1sq4QoXe/IOX
-	mJAdtype1FWGjSzUz5lwjCbX16b17Fe0BdEBZOYtTEc53JrtkQhzXkHtojzumTJrvgNr3QluXfr
-	aqsVc3EJBgg7rlcfT5zpRJH1H3RLLHXlnHt9dbP4kgV8Y8C/TR5Cs1iASbnTxAu+hRvgmRXu1yV
-	PoyXaeWeruU2/CFIp5wzLtXVM2fi7u4G4fbGQZ5p6Pa21qsEsiNQS07/JgX/7KxPFmHRb23x58q
-	PgPmVa0vdwd78ihiK4FXlbpEc2rtfe/p+oADPjv9LcfbLvdhL7fAZJTw4sNFKEInCuqBsLdBxqM
-	xl96u1RBEqqPjk2DItYw==
-X-Google-Smtp-Source: AGHT+IFsDJrGihkaB0iCgEjretUuo/VdfpuSa2zFCujjv/6C4lRHN5B7OiitPURtP1tqJnn17tMaXg==
-X-Received: by 2002:a05:600c:4755:b0:47d:6c36:a125 with SMTP id 5b1f17b1804b1-47d7f425bbfmr31521845e9.17.1767699899527;
-        Tue, 06 Jan 2026 03:44:59 -0800 (PST)
+        bh=KZaipRN7jVU+yWzB97HP/+GlbsmQoZLbxqUjQFLJAwg=;
+        b=UGq39MStM7G0sh7FGlnFjX9m8VWpSsv3/0RDHnBIx8JIloWYn0W8SwyvpuZTh/FJDM
+         RMyBKzsa4lBWz5YGmLczasyuT9MscqG2Z30vHBZvATAVwwHi3qXOTXBg9PtL1lWyqX38
+         Ni52M7uFdxlWZ+8c4Vgi6x9y18cHmDQZ4heXGsmVpfWuS8uj4HrQXtUfLKLSvyk+NC7R
+         y992OpCODc5XtEhJUy9bV8anPZVVng4c4gUG/IyoPWSVerdnJzkuCEjIG1BUj48GEach
+         +QSlZ46hECnQITRUwsqKjEM28SQPf1MfjOGi8AezcraEpmTvFPDWAWhrv3Syl76ZiMOK
+         iJ7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767699901; x=1768304701;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=KZaipRN7jVU+yWzB97HP/+GlbsmQoZLbxqUjQFLJAwg=;
+        b=q8mDCRF2NouxVoWNCSDVu6KfQBbvjUdGoiz4OA/WTcExY9PpOuhiRNXTZwGe5lrL5h
+         hpT7KRrVpnU8Gco7vcSrTnw/TQeXUPh77iRNj2qvqHc6rGXV3iiaPPYccHeLMsxxk9Dj
+         0HxcHGyWILrRn25+3CvJgl+lcMorOi/PzhRsHwbzRbAzhWp6x2lE+/ACZ7Sfcx0vYETk
+         Abwn6vmiJWt3yctgW949QXJejc4qp6WMOkvGw7CcltqLIp42X2pbKxY0dX54AQuMpTTQ
+         qcVaPEoCQmqPZ3z3NV0QyraBs69ijcIGCRZaT5JKuasNiA6gKhP6ll1C3Czcn00I5v0K
+         J7lw==
+X-Gm-Message-State: AOJu0YzsXPosom22TMGj4mOPxX0J4tJThtx4pGEXRy5Y+1DxsmmXTSsY
+	yjofqGcG256C0r2O9nqSCn0/Ny8NQ0ej9H8ryLB0N8xHwlprn/dY9EcSViUkyg==
+X-Gm-Gg: AY/fxX7Tvwxp1bngZbFa7XYkfMkYHu3+2xf56mE30gUSsG8HRwPwyXxuHoq0WXarD7Q
+	E6AOpPi7ONbcpIcegnUObD88DIFNR5k2VfgCerKSi1csAb7NF4m3XfVAJu+Y22GUDTZhDBfHN7E
+	S1R5Notbin9B+uyATp7rALc/710lNNYPeZafMqZY4/e941pBRAp3MwY8ItAdbfoFdFPC22VzPMJ
+	vXIcv/dXXR93babTdfvyyskCFDqXsPN0AcGuC/RTsj4J57H+0SDw2fAhAVXfxtFv67fxiWDhw+S
+	QXVo1vSbJisMtEXcNZEuZsklx0rEKPbSWPtmS1suimoOxD0xT1YCGV7aiUqCA5R4+0zTsbp7z8D
+	LA5uttYkSjZwmY492juAR6Fffr6JuuWDKWlmsWfR5UZYTlBnjZb80swStja//seJZ5VWN0qIpVj
+	85M2K7rPr3BZV5tQkdU7kDM7CfObUC
+X-Google-Smtp-Source: AGHT+IEApLMRWTFpKurnXTpdA9oNMgTJAxZ72/u3xnc7E2d2O+l1e7bo44b/eD59Ne6zMl0ffCerCQ==
+X-Received: by 2002:a05:600c:154c:b0:477:6374:6347 with SMTP id 5b1f17b1804b1-47d7f098beamr30276985e9.22.1767699900829;
+        Tue, 06 Jan 2026 03:45:00 -0800 (PST)
 Received: from biju.lan ([2a00:23c4:a758:8a01:8a99:e76a:4e83:ddf8])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47d7f982cdesm18170205e9.0.2026.01.06.03.44.59
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47d7f982cdesm18170205e9.0.2026.01.06.03.45.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Jan 2026 03:44:59 -0800 (PST)
+        Tue, 06 Jan 2026 03:45:00 -0800 (PST)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,62 +60,77 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip v2 00/24] Add suspend/resume support for RZ/G3E CANFD
-Date: Tue,  6 Jan 2026 11:44:23 +0000
-Message-ID: <20260106114458.122333-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip v2 03/24] can: rcar_canfd: Add helper variable ndev to rcar_canfd_rx_pkt()
+Date: Tue,  6 Jan 2026 11:44:26 +0000
+Message-ID: <20260106114458.122333-4-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260106114458.122333-1-biju.das.jz@bp.renesas.com>
+References: <20260106114458.122333-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 06 Jan 2026 11:45:08 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21332
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21335
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add suspend/resume support for RZ/G3E CANFD. On RZ/G3E using PSCI, s2ram
-powers down the SoC. After resume, reinitialize the hardware for
-CANFD operations. All the patches in this series are cherry picked
-from mainline.
+[ Upstream commit 4e5974f5515bf631f4f39c3f53f5bdb8ba7746a3 ]
 
-v1->v2:
- * Rebased on latest 6.12.y-cip
- * Synced patch#24 with mainline.
+rcar_canfd_rx_pkt() has many users of "priv->ndev".  Introduce a
+shorthand to simplify the code.
 
-Biju Das (7):
-  can: rcar_canfd: Drop unused macros
-  can: rcar_canfd: Update bit rate constants for RZ/G3E and R-Car Gen4
-  can: rcar_canfd: Update RCANFD_CFG_* macros
-  can: rcar_canfd: Simplify nominal bit rate config
-  can: rcar_canfd: Simplify data bit rate config
-  can: rcar_canfd: Use devm_clk_get_optional() for RAM clk
-  can: rcar_canfd: Fix CAN-FD mode as default
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Link: https://patch.msgid.link/22afe32a65f7c3e64ce3917aec943ac24d6e185a.1749655315.git.geert+renesas@glider.be
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/net/can/rcar/rcar_canfd.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Geert Uytterhoeven (17):
-  can: rcar_canfd: Consistently use ndev for net_device pointers
-  can: rcar_canfd: Remove bittiming debug prints
-  can: rcar_canfd: Add helper variable ndev to rcar_canfd_rx_pkt()
-  can: rcar_canfd: Add helper variable dev to
-    rcar_canfd_reset_controller()
-  can: rcar_canfd: Simplify data access in rcar_canfd_{ge,pu}t_data()
-  can: rcar_canfd: Repurpose f_dcfg base for other registers
-  can: rcar_canfd: Rename rcar_canfd_setrnc() to rcar_canfd_set_rnc()
-  can: rcar_canfd: Share config code in rcar_canfd_set_bittiming()
-  can: rcar_canfd: Return early in rcar_canfd_set_bittiming() when not
-    FD
-  can: rcar_canfd: Add support for Transceiver Delay Compensation
-  can: rcar_canfd: Describe channel-specific FD registers using C struct
-  can: rcar_canfd: Invert reset assert order
-  can: rcar_canfd: Invert global vs. channel teardown
-  can: rcar_canfd: Extract rcar_canfd_global_{,de}init()
-  can: rcar_canfd: Invert CAN clock and close_candev() order
-  can: rcar_canfd: Convert to DEFINE_SIMPLE_DEV_PM_OPS()
-  can: rcar_canfd: Add suspend/resume support
-
- drivers/net/can/rcar/rcar_canfd.c | 647 +++++++++++++++++-------------
- 1 file changed, 365 insertions(+), 282 deletions(-)
-
+diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
+index fe72f7680fbd..9b40b787d913 100644
+--- a/drivers/net/can/rcar/rcar_canfd.c
++++ b/drivers/net/can/rcar/rcar_canfd.c
+@@ -1692,7 +1692,8 @@ static netdev_tx_t rcar_canfd_start_xmit(struct sk_buff *skb,
+ 
+ static void rcar_canfd_rx_pkt(struct rcar_canfd_channel *priv)
+ {
+-	struct net_device_stats *stats = &priv->ndev->stats;
++	struct net_device *ndev = priv->ndev;
++	struct net_device_stats *stats = &ndev->stats;
+ 	struct rcar_canfd_global *gpriv = priv->gpriv;
+ 	struct canfd_frame *cf;
+ 	struct sk_buff *skb;
+@@ -1708,14 +1709,13 @@ static void rcar_canfd_rx_pkt(struct rcar_canfd_channel *priv)
+ 
+ 		if ((priv->can.ctrlmode & CAN_CTRLMODE_FD) &&
+ 		    sts & RCANFD_RFFDSTS_RFFDF)
+-			skb = alloc_canfd_skb(priv->ndev, &cf);
++			skb = alloc_canfd_skb(ndev, &cf);
+ 		else
+-			skb = alloc_can_skb(priv->ndev,
+-					    (struct can_frame **)&cf);
++			skb = alloc_can_skb(ndev, (struct can_frame **)&cf);
+ 	} else {
+ 		id = rcar_canfd_read(priv->base, RCANFD_C_RFID(ridx));
+ 		dlc = rcar_canfd_read(priv->base, RCANFD_C_RFPTR(ridx));
+-		skb = alloc_can_skb(priv->ndev, (struct can_frame **)&cf);
++		skb = alloc_can_skb(ndev, (struct can_frame **)&cf);
+ 	}
+ 
+ 	if (!skb) {
+@@ -1736,7 +1736,7 @@ static void rcar_canfd_rx_pkt(struct rcar_canfd_channel *priv)
+ 
+ 		if (sts & RCANFD_RFFDSTS_RFESI) {
+ 			cf->flags |= CANFD_ESI;
+-			netdev_dbg(priv->ndev, "ESI Error\n");
++			netdev_dbg(ndev, "ESI Error\n");
+ 		}
+ 
+ 		if (!(sts & RCANFD_RFFDSTS_RFFDF) && (id & RCANFD_RFID_RFRTR)) {
 -- 
 2.43.0
 
