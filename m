@@ -2,57 +2,57 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9240C47BEF
-	for <webhook@archiver.kernel.org>; Tue,  6 Jan 2026 10:41:57 +0000 (UTC)
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.87303.1767696115103203292
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5690CC47BF2
+	for <webhook@archiver.kernel.org>; Tue,  6 Jan 2026 11:45:08 +0000 (UTC)
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.88216.1767699907698499148
  for <cip-dev@lists.cip-project.org>;
- Tue, 06 Jan 2026 02:41:55 -0800
+ Tue, 06 Jan 2026 03:45:08 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=jp+Y9NN7;
- spf=pass (domain: gmail.com, ip: 209.85.221.47, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-43260a5a096so502288f8f.0
-        for <cip-dev@lists.cip-project.org>; Tue, 06 Jan 2026 02:41:54 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=dpgLp61K;
+ spf=pass (domain: gmail.com, ip: 209.85.128.49, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-477563e28a3so6095845e9.1
+        for <cip-dev@lists.cip-project.org>; Tue, 06 Jan 2026 03:45:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767696113; x=1768300913; darn=lists.cip-project.org;
+        d=gmail.com; s=20230601; t=1767699906; x=1768304706; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TkvbV20gFs70TE6qsmDsKKm4mxx2PzRo5Na2GL3iDSA=;
-        b=jp+Y9NN7OzC0qfTisiuCpmWC+LTP7+2f92ZfZwS36Mlm8x115gXw+Kh0fP1DAZhAo8
-         luEFHum8bnTUKgg/K1dliVuVG6fCeieTwfOvAaEA4fmfvs6NUCxtLlJzex9IR1j46NWw
-         gb8lCDowt+/AhHMQVLXQH3PLFYtlOGcJnYAZuk+ZYOhgX45M3k37u0N7oE7pZ9udNo9H
-         htd5nBPqHN/ZheFZgTAFe0N9+EPQDTBqGIecXdZ+ma6nk9vkxzVIoJSIUaRj66p9+UvG
-         E5MjUG6dP4Y12ViIinPbZM7loTeUCCPca1HRe+06J0xSW2E7GfIybEITPaIOA306GCM4
-         oKmg==
+        bh=jX+FMcXjNFK75t6JICmHeYUXxC2n2WB5MvYjsXZ6iyM=;
+        b=dpgLp61K1x34TFYDo7Y7ElO9135ZMDbCNjc7qxd9OVet21Nx4HzfDc2/5ETrCT0JSI
+         kv/QoU070Vb4PVO37gZ+XeCAbnVv711LSpT8uMjhZa1aA2HB1PqZYwWsli+Z+LHKLZ/1
+         bZdlB+VCvf32gEp63OCltQr4YZeLfaoP9z9LhOK96UWjD3Thlj0RXlre7IArPsh5hgnQ
+         LTeJRIflmr01+P4UUQT+U9USy9jBhS5ZP5y1frzTWbD0UYcE2fquvoUoVKXk57W6Vnc3
+         C96sGiqbpq62LDTf9qnbfyWY5LL9TtVXG4Ej3ak79V59hd+ikeiLSrPHL0qjmThABvAw
+         1TSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767696113; x=1768300913;
+        d=1e100.net; s=20230601; t=1767699906; x=1768304706;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=TkvbV20gFs70TE6qsmDsKKm4mxx2PzRo5Na2GL3iDSA=;
-        b=q6SOp8v3xMbcoFwbVhlKFdC+1omxllyezSn//8z4uaxlbOZ51RhUy8hg70Sf9nXwvE
-         ZR/XYw9WOr5sEcrKELYJF+8wFJm2ygygCou+rn0eh1PEnZZ0GAjbA/tZfxH8vzh0XF4y
-         lewmLLP/1dSNq1Mzb6i7rVAUy9DetDVLSu60IG2pEpqAAgdfuE3MAUzeYvYZfm2gM2Vp
-         JagCoTL4h2DG38+fg/DT8zElKOj3GD2I1AfGkK3FI0yi9sJXLHGmFZ5J0b1Jl7FfArAg
-         NdLmFfFBkVrtrNjjMX908Qpl6IEICOu7hi2t8iyAA24G/NNNAVqjpLhsDGanYriSJeR/
-         cXrg==
-X-Gm-Message-State: AOJu0YxikKgE0VSJHWIbEZuOGJVICnt/H1WOThVTXGsmiTxADUic43Oa
-	wKSEb9C7yiiJXBAhrOCziKRGk7gogM2/FE/Jz46U9v49FnFW9Q1hZZ/EfmzWRg==
-X-Gm-Gg: AY/fxX5bYIDeDr0ev4FNGYxNccRYq9Oqv/VNDlVR+HtftRng8mvVid+pfThxhkxUt/U
-	F6T1oSx1oQQTy64JfCX5LFtfHD18EWqSl9hSCqj4jShNDX8z7uR1PwVMJKG21ZWjkSaAU6TmoDL
-	JMJt7ZLPCE+hbsH1a+S1adQdrR8zaFRk5L0xZLnWTfxQ/htJSQapcXJlZhgUrhIWb51JEj+JNHM
-	OWYvheO+SjJ8v/xY5mMR8gHotmS5jSIrIi3Df33TnHD3LsPgP1EwKWPR1dVMsr5P5cPJFDaYDVB
-	YnE++2SEhuVskEOQNjZ/ZHm9ByYB4sAbxsd7sAkH18B+27CpeMGcYBtt3BI7sUCOPs2acRL5xw/
-	l6GKBYUh8I4YfQ4Mp/dUG2eaqY3kOa2UN8BnC4IZa2t6HBB7sDQrXvSu4N8C6DwHVI7QTP0PYkO
-	eP7syPVR7TGdZLWmCjXw==
-X-Google-Smtp-Source: AGHT+IEV9mItW+lsOjXlugDQIJl+sx8ULKsW87vde5b4JGLGhiZ+aFOAWdbVHsNUOXWF5CjTd7JL9g==
-X-Received: by 2002:a05:6000:604:b0:430:fc5a:40ac with SMTP id ffacd0b85a97d-432bca566d2mr3996898f8f.54.1767696113109;
-        Tue, 06 Jan 2026 02:41:53 -0800 (PST)
+        bh=jX+FMcXjNFK75t6JICmHeYUXxC2n2WB5MvYjsXZ6iyM=;
+        b=UjMJJJTbS1uud/rCQwjyQj9582xSNiBLvUHsT3L9t/lXw0jYwXzWfFNS025ypKYhL7
+         PtunY5NsZRAqJKn2DTSiJcfvAFv/xQerh5Na942vGRAJAWls6T8Ya1hIxKRBuXTIkOA+
+         4eTCTDyHCDDBNQjrj8spW4nCqR2maqwFEgDYZCF0E3CAWo5Ig/zS4nZOF7+2VnldpocK
+         XaWZUfrIW3XoaaQXHYkA8/TpyGbwDkicRWLr+Gx3ybIPto5mR2rWTR1IJeceYNXRXhjd
+         9xoLlaYTaS9e2MzDhhUt/GC4CndJl+8B9Ho/5RMP2lDBzkfZW3PhDZU0HELPZwLS6Hb/
+         I1nw==
+X-Gm-Message-State: AOJu0YzcQFqvktvX/2l/anlMBZ7cKDG2NQT94HBcZ0nOV49zcRtQMSgK
+	RmIVOVwAkYyjDc2Zb4FPZ2nAuLf3Ne9W2S+PQ5qPD06UE47welsHhJ70g5stnQ==
+X-Gm-Gg: AY/fxX61iQQeaDVV32nqkT1a6oLnivY0UO6b0g1CBn4FvTPqyBW1HZFoMeuJz9dDoXQ
+	9QbPkeNDeKKR8snXtb4xSFZvswGuV04lczCkZtEY+LGnMP84s5aSLkZbFfhsk+5YUhd8sDGuAqI
+	iYFJL7DpCe6YzijYjzR56ARZ3XTxN0Iz0vDYy4C04yHEzV/tLSRx41kp60Z6DLenWBnJiWm91Lc
+	uiVjeuyy18eWWng3AfXuvTgthfOGsCmkoDQaslnHQtBaTk3eZj16V6ityAVsgswklRB/bKYX28K
+	IhN0vkSPR3XkUQtwXXpaFF9AnwxoFX/BIC9DQfyJ4NBUSTDPOwBY+CnBpVHyd3JhO5yDm/w5nuy
+	o+zKIzCBJF62scJ486W/Ay4V59m/2lg/DqbR7P9VrO3leFuQMI++c/idli068ddlqu+k1GXX6QF
+	xSSWHVZmOj4bUSsYyu6A==
+X-Google-Smtp-Source: AGHT+IFZ975ClxWI+zVHoYeDmei9MAJFezJAUgg96QLd7T/WKeFtmPCY1IGILDvSHZRBX0vxUPqViQ==
+X-Received: by 2002:a05:600c:46ce:b0:475:d9de:952e with SMTP id 5b1f17b1804b1-47d7f40a986mr30384415e9.1.1767699905814;
+        Tue, 06 Jan 2026 03:45:05 -0800 (PST)
 Received: from biju.lan ([2a00:23c4:a758:8a01:8a99:e76a:4e83:ddf8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-432bd5feaf8sm3583184f8f.39.2026.01.06.02.41.52
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47d7f982cdesm18170205e9.0.2026.01.06.03.45.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Jan 2026 02:41:52 -0800 (PST)
+        Tue, 06 Jan 2026 03:45:05 -0800 (PST)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -60,138 +60,53 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip v2 1/6] pinctrl: renesas: rzg2l: Validate pins before setting mux function
-Date: Tue,  6 Jan 2026 10:41:43 +0000
-Message-ID: <20260106104151.88020-2-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip v2 13/24] can: rcar_canfd: Update bit rate constants for RZ/G3E and R-Car Gen4
+Date: Tue,  6 Jan 2026 11:44:36 +0000
+Message-ID: <20260106114458.122333-14-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260106104151.88020-1-biju.das.jz@bp.renesas.com>
-References: <20260106104151.88020-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20260106114458.122333-1-biju.das.jz@bp.renesas.com>
+References: <20260106114458.122333-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 06 Jan 2026 10:41:57 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21326
+ <cip-dev@lists.cip-project.org>; Tue, 06 Jan 2026 11:45:08 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21345
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[ Upstream commit 52161035571cd62be9865039b4be65615860dce0 ]
+[ Upstream commit 100fafc3e46138cb5a6526ddc03dcede8b020c8c ]
 
-Ensure only valid pins are configured by validating pin mappings before
-setting the mux function.
+The calculation formula for nominal bit rate of classical CAN is the same as
+that of nominal bit rate of CANFD on the RZ/G3E and R-Car Gen4 SoCs
+compared to other SoCs. Update nominal bit rate constants.
 
-Rename rzg2l_validate_gpio_pin() to rzg2l_validate_pin() to reflect its
-broader purpose validating both GPIO pins and muxed pins. This helps
-avoid invalid configurations.
-
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250616132750.216368-1-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Pavel Machek <pavel@denx.de>
+Link: https://patch.msgid.link/20250908120940.147196-2-biju.das.jz@bp.renesas.com
+[mkl: slightly improve wording of commit message]
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 45 ++++++++++++++-----------
- 1 file changed, 25 insertions(+), 20 deletions(-)
+ drivers/net/can/rcar/rcar_canfd.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index 9935de108d57..be46f02c7c03 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -518,6 +518,23 @@ static void rzv2h_pmc_writeb(struct rzg2l_pinctrl *pctrl, u8 val, u16 offset)
- 	writeb(pwpr & ~PWPR_REGWE_A, pctrl->base + regs->pwpr);
- }
- 
-+static int rzg2l_validate_pin(struct rzg2l_pinctrl *pctrl,
-+			      u64 cfg, u32 port, u8 bit)
-+{
-+	u8 pinmap = FIELD_GET(PIN_CFG_PIN_MAP_MASK, cfg);
-+	u32 off = RZG2L_PIN_CFG_TO_PORT_OFFSET(cfg);
-+	u64 data;
-+
-+	if (!(pinmap & BIT(bit)) || port >= pctrl->data->n_port_pins)
-+		return -EINVAL;
-+
-+	data = pctrl->data->port_pin_configs[port];
-+	if (off != RZG2L_PIN_CFG_TO_PORT_OFFSET(data))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
- static void rzg2l_pinctrl_set_pfc_mode(struct rzg2l_pinctrl *pctrl,
- 				       u8 pin, u8 off, u8 func)
- {
-@@ -561,6 +578,7 @@ static int rzg2l_pinctrl_set_mux(struct pinctrl_dev *pctldev,
- 	unsigned int i, *psel_val;
- 	struct group_desc *group;
- 	const unsigned int *pins;
-+	int ret;
- 
- 	func = pinmux_generic_get_function(pctldev, func_selector);
- 	if (!func)
-@@ -577,6 +595,10 @@ static int rzg2l_pinctrl_set_mux(struct pinctrl_dev *pctldev,
- 		u32 off = RZG2L_PIN_CFG_TO_PORT_OFFSET(*pin_data);
- 		u32 pin = RZG2L_PIN_ID_TO_PIN(pins[i]);
- 
-+		ret = rzg2l_validate_pin(pctrl, *pin_data, RZG2L_PIN_ID_TO_PORT(pins[i]), pin);
-+		if (ret)
-+			return ret;
-+
- 		dev_dbg(pctrl->dev, "port:%u pin: %u off:%x PSEL:%u\n",
- 			RZG2L_PIN_ID_TO_PORT(pins[i]), pin, off, psel_val[i] - hwcfg->func_base);
- 
-@@ -831,23 +853,6 @@ static int rzg2l_dt_node_to_map(struct pinctrl_dev *pctldev,
- 	return ret;
- }
- 
--static int rzg2l_validate_gpio_pin(struct rzg2l_pinctrl *pctrl,
--				   u64 cfg, u32 port, u8 bit)
--{
--	u8 pinmap = FIELD_GET(PIN_CFG_PIN_MAP_MASK, cfg);
--	u32 off = RZG2L_PIN_CFG_TO_PORT_OFFSET(cfg);
--	u64 data;
--
--	if (!(pinmap & BIT(bit)) || port >= pctrl->data->n_port_pins)
--		return -EINVAL;
--
--	data = pctrl->data->port_pin_configs[port];
--	if (off != RZG2L_PIN_CFG_TO_PORT_OFFSET(data))
--		return -EINVAL;
--
--	return 0;
--}
--
- static u32 rzg2l_read_pin_config(struct rzg2l_pinctrl *pctrl, u32 offset,
- 				 u8 bit, u32 mask)
- {
-@@ -1275,7 +1280,7 @@ static int rzg2l_pinctrl_pinconf_get(struct pinctrl_dev *pctldev,
+diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
+index 4133ede60575..e67a808c7fa0 100644
+--- a/drivers/net/can/rcar/rcar_canfd.c
++++ b/drivers/net/can/rcar/rcar_canfd.c
+@@ -1921,7 +1921,10 @@ static int rcar_canfd_channel_probe(struct rcar_canfd_global *gpriv, u32 ch,
+ 		priv->can.do_get_auto_tdcv = rcar_canfd_get_auto_tdcv;
  	} else {
- 		bit = RZG2L_PIN_ID_TO_PIN(_pin);
- 
--		if (rzg2l_validate_gpio_pin(pctrl, *pin_data, RZG2L_PIN_ID_TO_PORT(_pin), bit))
-+		if (rzg2l_validate_pin(pctrl, *pin_data, RZG2L_PIN_ID_TO_PORT(_pin), bit))
- 			return -EINVAL;
+ 		/* Controller starts in Classical CAN only mode */
+-		priv->can.bittiming_const = &rcar_canfd_bittiming_const;
++		if (gpriv->info->shared_can_regs)
++			priv->can.bittiming_const = gpriv->info->nom_bittiming;
++		else
++			priv->can.bittiming_const = &rcar_canfd_bittiming_const;
+ 		priv->can.ctrlmode_supported = CAN_CTRLMODE_BERR_REPORTING;
  	}
- 
-@@ -1434,7 +1439,7 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_dev *pctldev,
- 	} else {
- 		bit = RZG2L_PIN_ID_TO_PIN(_pin);
- 
--		if (rzg2l_validate_gpio_pin(pctrl, *pin_data, RZG2L_PIN_ID_TO_PORT(_pin), bit))
-+		if (rzg2l_validate_pin(pctrl, *pin_data, RZG2L_PIN_ID_TO_PORT(_pin), bit))
- 			return -EINVAL;
- 	}
- 
-@@ -1672,7 +1677,7 @@ static int rzg2l_gpio_request(struct gpio_chip *chip, unsigned int offset)
- 	u8 reg8;
- 	int ret;
- 
--	ret = rzg2l_validate_gpio_pin(pctrl, *pin_data, port, bit);
-+	ret = rzg2l_validate_pin(pctrl, *pin_data, port, bit);
- 	if (ret)
- 		return ret;
  
 -- 
 2.43.0
