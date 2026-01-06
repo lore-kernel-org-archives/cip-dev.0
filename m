@@ -1,81 +1,88 @@
-Return-Path: <pavel@nabladev.com>
+Return-Path: <yoshitake.kobayashi.x25@mail.toshiba>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B5C0CEFD01
-	for <webhook@archiver.kernel.org>; Tue,  6 Jan 2026 19:45:22 +0000 (UTC)
-Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.98820.1767728717769076319
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A9CDCEFD1D
+	for <webhook@archiver.kernel.org>; Tue,  6 Jan 2026 23:01:38 +0000 (UTC)
+Received: from ewsoutbound.kpnmail.nl (ewsoutbound.kpnmail.nl [195.121.94.183])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.92738.1767714362057032170
  for <cip-dev@lists.cip-project.org>;
- Tue, 06 Jan 2026 11:45:18 -0800
+ Tue, 06 Jan 2026 07:46:02 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=DoWqIaOy;
- spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C5CD110C8A8;
-	Tue,  6 Jan 2026 20:45:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1767728715;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=OYjTfvwIyDCRn+KnT2jfO7AHbZiSOGOC+7c/t+s2WWU=;
-	b=DoWqIaOy0pZ6ZggKowPI9D0Shd9kZBPPPoh/RaraNL5PfGoOWneQ1rOh5j67zi2/FPaMc2
-	GtduODi4WJsnQtz8s6craTBHyDh7p4HdkqzxitBfrGBN5dFbjVyk6SMb04lEA+4M8SLNTO
-	qVXMmpjODmG2CB0FXAiWxFftjED2wFqo7M41Q76fg8EZ9/dU1Ofp6X03uvj3d96BOiiKPn
-	gvGLhbNDLYzDBqzKsQt40/rqJgTHBszDmi/DHBf4igitK5CNR+emuovubWjW6qMxGXtLnd
-	M6z3lYa2aQ3Pw52wLW1mizc+KCtfmAo6jbq+ip6KEZMJfWfF3BNE/M7iXQsN7Q==
-Date: Tue, 6 Jan 2026 20:45:09 +0100
-From: Pavel Machek <pavel@nabladev.com>
-To: prabhakar.mahadev-lad.rj@bp.renesas.com
-Cc: cip-dev@lists.cip-project.org,
-	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
-	Biju Das <biju.das.jz@bp.renesas.com>
-Subject: Re: [cip-dev] [PATCH 6.12.y-cip 00/17] Add SDHI/eMMC and WDT support
- for RZ/T2H and RZ/N2H
-Message-ID: <aV1mRc+5axWmoPGi@duo.ucw.cz>
-References: <20251231170026.17006-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="r4/3paMMTakRJgtJ"
-Content-Disposition: inline
-In-Reply-To: <20251231170026.17006-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Last-TLS-Session-Version: TLSv1.3
+ dkim=pass header.i=@xs4all.nl header.s=xs4all01 header.b=TtzInC68;
+ spf=pass (domain: xs4all.nl, ip: 195.121.94.183, mailfrom: mark.kettenis@xs4all.nl)
+X-KPN-MessageId: 43534ba1-eb15-11f0-be9a-005056992ed3
+Received: from smtp.kpnmail.nl (unknown [10.31.155.6])
+	by ewsoutbound.so.kpn.org (Halon) with ESMTPS
+	id 43534ba1-eb15-11f0-be9a-005056992ed3;
+	Tue, 06 Jan 2026 16:35:00 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=xs4all.nl; s=xs4all01;
+	h=subject:to:from:message-id:date;
+	bh=nPsnwIvNJZfZl6Ue6gHviHxOLLQ24w4b336Fg0ueJRY=;
+	b=TtzInC68wJXsfr5UWL6nld2gzwCXx8WFZ67tLi8lU+wNQ2lsZbnw6kRv/K8/PulXu4SLs0XQcGg+6
+	 D2dVXB669gP6AtzZ9NNr3G8fc7upkpUgsLfC8Siu6bSdzDVvjiCKl4S8sf9pKbYpRs79tNF7U0zyjC
+	 PcDewTrSm3k5DMmN6i0ZVmKQWzKKknV9+xhpv2cVl3LuOUEQYO185u4PWG/K4DsHMffv4qnmMbK8Gn
+	 8gZhcnLiPGDX1a4Tjfq19Vm0gPuUjM8I1fv1kl5gBaaxID1jgBmNmvOK2+yrNFVBlt3AqvrvoUHOhb
+	 I38tOrWILrVMacR0YLBd61Ug1gj/Z2w==
+X-KPN-MID: 33|ahTo6/xTWEhQQNPwwIr987qDgesKlmcJORAa+HYQDAVOkwRjOVrvpDMHvagT3vy
+ i7u9nvLQg4CTaQ+IsJB4V0ifiTAJBH5V6deu0xmqfKHI=
+X-KPN-VerifiedSender: Yes
+X-CMASSUN: 33|yf0a9eMZ/EU6Hi1segogGjyaykBK7XM87E+pz8ocDB7EnW0M8DqO7gL3yem1F+L
+ 82qnM/dMdjNrvh1OAKJiFAg==
+X-Originating-IP: 80.61.163.207
+Received: from bloch.sibelius.xs4all.nl (80-61-163-207.fixed.kpn.net [80.61.163.207])
+	by smtp.xs4all.nl (Halon) with ESMTPSA
+	id 3f4e7069-eb15-11f0-bff6-00505699772e;
+	Tue, 06 Jan 2026 16:34:55 +0100 (CET)
+Date: Tue, 06 Jan 2026 16:34:53 +0100
+Message-Id: <87ms2qah5u.fsf@bloch.sibelius.xs4all.nl>
+From: Mark Kettenis <mark.kettenis@xs4all.nl>
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: u-boot@lists.denx.de, xypron.glpk@gmx.de,
+	cip-dev@lists.cip-project.org
+In-Reply-To: <c999bfc3-e95c-4a1a-98a2-952ae66959d1@siemens.com> (message from
+	Jan Kiszka on Tue, 6 Jan 2026 14:47:30 +0100)
+Subject: Re: Drop default y from CONFIG_EFI_GRUB_ARM32_WORKAROUND?
+References: <c999bfc3-e95c-4a1a-98a2-952ae66959d1@siemens.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 06 Jan 2026 19:45:22 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21391
+ <cip-dev@lists.cip-project.org>; Tue, 06 Jan 2026 23:01:38 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21392
 
+> Date: Tue, 6 Jan 2026 14:47:30 +0100
+> From: Jan Kiszka <jan.kiszka@siemens.com>
 
---r4/3paMMTakRJgtJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Jan,
 
-Hi!
+> Hi,
+> 
+> it seems that some kernel configs can cause problems with the
+> CONFIG_EFI_GRUB_ARM32_WORKAROUND. Namely, 6.1-cip and 5.10-cip with its
+> current defconfigs [1] no longer boot on the BeagleBone Black (other
+> boards still need validation), both with the more recommendable
+> systemd-boot and grub. I do not have the motivation to debug the reason
+> in the kernel / its config, given that everything works fine once the
+> firmware behaves according to the UEFI spec.
+> 
+> Meanwhile, grub reached 2.12 now which is far away from the old, broken
+> version of 2019. So, should we rather make this workaround opt-in in 2026?
 
-> This series of patches adds support for the SDHI/eMMC controller as well =
-as
-> the Watchdog Timer (WDT) found on the Renesas RZ/T2H (R9A09G077) and RZ/N=
-2H
-> (R9A09G087) SoCs. The series includes device tree bindings, clock control=
-ler
-> support, and device tree nodes for the respective peripherals.
+This isn't just about GRUB though.  There is also the issue with the
+the non-architected caches that are typically found on systems that
+use Cortex-A9 cores such as i.MX6.
 
-Thank you, applied.
+The OpenBSD bootloader used to have the same problem as those older
+versions of GRUB.  I fixed that back in 2019, and there shouldn't be
+any users left with a broken version.
 
-Best regards,
-									Pavel
---=20
-In cooperation with Nabla.
-
---r4/3paMMTakRJgtJ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaV1mRQAKCRAw5/Bqldv6
-8qVlAKDDdeO7pejCULAHZguQ55OVXQaRsQCfbJPhruHCnoCey/wpVo10Lj0smi8=
-=fWjs
------END PGP SIGNATURE-----
-
---r4/3paMMTakRJgtJ--
+> [1]
+> https://gitlab.com/cip-project/cip-kernel/cip-kernel-config/-/blob/cda3f5841dec33b81f24cedcc32ea09bb58bbfb5/6.1.y-cip/arm/cip_merged_defconfig
+> 
+> -- 
+> Siemens AG, Foundational Technologies
+> Linux Expert Center
+> 
+> 
 
