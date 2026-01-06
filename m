@@ -2,53 +2,53 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D980C47BFC
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 836F1C98331
 	for <webhook@archiver.kernel.org>; Tue,  6 Jan 2026 11:45:08 +0000 (UTC)
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.88212.1767699905219901460
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.88211.1767699904617893136
  for <cip-dev@lists.cip-project.org>;
- Tue, 06 Jan 2026 03:45:05 -0800
+ Tue, 06 Jan 2026 03:45:04 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=dy6oGE1K;
- spf=pass (domain: gmail.com, ip: 209.85.128.54, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4779ce2a624so7306945e9.2
-        for <cip-dev@lists.cip-project.org>; Tue, 06 Jan 2026 03:45:05 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=Ey+9JRT5;
+ spf=pass (domain: gmail.com, ip: 209.85.128.51, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4775ae77516so9559275e9.1
+        for <cip-dev@lists.cip-project.org>; Tue, 06 Jan 2026 03:45:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1767699903; x=1768304703; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=onFEcyP8+N8HP3XCVMuLIs6Opk/yTGFLcJlecqmdl4Y=;
-        b=dy6oGE1KcxxMwm0X2FbSV0FtQLtJ5kfqo9MFkg6gbnLiZbIveRra1KAq2C4khsPe3F
-         paNKrCzyOMg84q15CltkcYTeLzCvlxPcew9swohK/eK2QlTlYdLlIkMWYU5b/WZFrr26
-         5T08nzILffo7ghHwCky5X+jg9tFT+5tBtko7AdHH8sHGnyTq08wK9g1oMdDJO7HhUuuS
-         Mnj7XRfGxn7KE+r1S5ss6ajZFMEZvEEr92L3DzujkqhfA8/RJZhXhQovtbOFc8Pyxn/N
-         4XJaW9Y4E8xB/UTrpLn1CuriNsYm5Gfj3lucX7FSFBLdxRP63NGvNJ9nCnvSUN9lXI//
-         Io8w==
+        bh=fDQ+EK7+Mz+xI6NX6PGnWiApQlNfEiuwXCx1U2BS/NQ=;
+        b=Ey+9JRT5yEH18SA0fMgGfpDGtsSq5nMSOACdvHMYRlf6jaLFT4yH3ev16wQSUHj1Qw
+         M58V6Qhg/JpZgnyI2IuNehOhgsZH4jVh+xA/R15FyxzUb9UDFJBrmSYpJC7Ads5kWs+r
+         muSxg6KiFOoHUX1kuWANyyAc4lpNQbcfZ9OtxI/COX1GEzXWkTsAl2hp3d4Y4wty4LSU
+         euGvxp0ZXG8umLSu0h1zXmoEIMZYtbrWSjvxVXI6mkydIl0Bwf+w59QankgP1sRJR8E7
+         iMlbOiE+Jzqy791EnsKTR6wtVI8S5tDQ8oerBwbwqJfwlquqZ3sI+DTbRjm+Av8yJFm4
+         jDMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1767699903; x=1768304703;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=onFEcyP8+N8HP3XCVMuLIs6Opk/yTGFLcJlecqmdl4Y=;
-        b=v1mAHESniekZsRat4qB0ukBNCqruTQIzudhdRqo6Yf8pRZ8YGxyR8LxFF/1CDELSYu
-         f348arwBpsfPkTUdYMwT9QBiigdYi/krtyUwd3RnLm0K7/IlK0AyZliMfa/PG/fThsMR
-         CLBYan5WlCC+7E3rCB+MZRgfeXsiVvoYgEzOwB91WbHcfG+q7IQYPx4IkWR2c2Z3m+Fc
-         g61ZSJY+g+vRp10CmXSvldtxwQe7KD0rgYGUxjhDNUgtV20mtggc54U9sjFvE+J/qlmc
-         OQRwe033baC/H/3KICQ51aOwWXCU7pYVNXH8Ccut4DLJAtRKE8mId60Bj8MC4omzCEtw
-         gaWQ==
-X-Gm-Message-State: AOJu0Yxqw77PhjNv+IykevvMrPWLVgP7S2rjiE1KcYoJgH7R02h6GnKJ
-	s64ExETG6xDsTta2G29HE3+GXxHj/PNbaKJYn7CXfJFBr722uttR2nCtBhVqtA==
-X-Gm-Gg: AY/fxX4UNBQqOD+b0LYPSBxR8rM40HgtEJfAzt/fJFWbGIR4LEh9jb8smAByitcjUxq
-	JAMGggKyFfiKe+EXOEjpbygHsf3y3E7aPVRccgQ7JwLV826dxSLlJZFy7eaj5qmT8zWqYFugXsg
-	3FUTaBu7xmDocw+G2I2Jy5RSOldt8cfimCD3O/n1w9MOmTlQt8h+a/pT9Dgh9TanTioi6s9Ljot
-	KkumHDVRX0ihJ7zGsKBRuGtPvG0TBM5VplcuCx+nuLXdl1pA4jRmskAMH9l5rU3/o645aRaKAOC
-	SWismYiaRvgGXXzwP2KXOp3vr5dygdQ4vt4vPwgeSNbxWPz996py+QDeuz+tjehbIHHScDkr4NY
-	P7nlS07zLul4IOLrfScGuI476x/YbGLfBRWd2/eV2VpO0o28Lp6+qlPzbO8rODXPZGnXszbHKU4
-	EMWttX69HpqQ5SkINvWg==
-X-Google-Smtp-Source: AGHT+IFOIyllXSOKB39A8jFU24vEaIJF0F9YLok6B5b438mftZSOu5gzAmrxTRN27mRhtBwhyCozzw==
-X-Received: by 2002:a05:600c:1f8b:b0:477:55ce:f3bc with SMTP id 5b1f17b1804b1-47d7f098aabmr28930735e9.19.1767699903298;
-        Tue, 06 Jan 2026 03:45:03 -0800 (PST)
+        bh=fDQ+EK7+Mz+xI6NX6PGnWiApQlNfEiuwXCx1U2BS/NQ=;
+        b=cTKKUqdCvI5L+fhBF4OWAC/YLNGIcV0TtKaElkdJNy1WbFnz5XQC+riLz45gLf9Tms
+         rtgloWaWZKxohlrHN0M+cuUMypRC5qEcbpVkIbK7UXi/oLF7SD384QK14MZ6Jt2aSstu
+         MpzhEhVsSZdFCC9lTZXgIzOfUVBSUdwHp5l0zv3VeG+6Cwlkf8KG02flpcSbAWkOmvkU
+         2tBCspgB5JPnae0rPuaTgjX/Q2n9WmfjmIJIccX1osrQHRVOn/fh41DBOzi404SadYBX
+         /BDeyujcaahrhHTozQ36gc426xg0p0HIgMy5DaHYAVaIBX+NnLEyogPFK4bt7DVnD43d
+         vK2g==
+X-Gm-Message-State: AOJu0YyWmi+lMLrI63Olm8WVdtuHdIaPW0GJ/N539rYXhoM+wuWTttMt
+	Kq8aHrhpVBLDi8DOSsNz5n1nvfv/KpTf3gbPYosYq8UC44X5WVwdYuH9VokV3A==
+X-Gm-Gg: AY/fxX56hrW1UnR9QQ0WUmhiMxq5uBZO1owQm604pvr5CMLPDOQpfMGzt1TkNbUDeeJ
+	p9XNFdKfG1zERzYZBcZsEbA/X6W38Ve3GgKknOgGJh1gZLZwEYjEciH7cCYFlGZGXmMJM8I+09j
+	mWzYj3NROZE69yqpRxNVj2nwRGDZSPQPCKX/2SXpmFe/HzKj0BNn7ZGzPTrgrw6BrJDO6ld09Dy
+	+WIWearuNRey7iW/LQ/S9RpuZUJpijM9YjBXacr9TxuUSdSGPC7njFfx2ijOt5KG/E0iJ+167n4
+	C5awPmgsvg1DuXDfK73CBI3JCenYj5K35lhKTAy0snX3qRmV6O6wjFprYY7wp1RoI/mq3YpTPuq
+	Zp/gE8BqJPAdR5jQC+yJQAIemv/A8ZaaQE93XazS0Qj/VrGchN96h0wPxL7ZxdbvGlbs7t9OSKk
+	EHnoTH+l3L0epQTwEggQ==
+X-Google-Smtp-Source: AGHT+IHJ/wTyN82OfeEhujySSUegVVlZQrBL7u5cEOJb1OjLSIsal7hv/trttgc7qI+FH4ZEuPXsEw==
+X-Received: by 2002:a05:600c:5395:b0:47b:de05:aa28 with SMTP id 5b1f17b1804b1-47d7f06c8e2mr29325295e9.2.1767699902711;
+        Tue, 06 Jan 2026 03:45:02 -0800 (PST)
 Received: from biju.lan ([2a00:23c4:a758:8a01:8a99:e76a:4e83:ddf8])
         by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47d7f982cdesm18170205e9.0.2026.01.06.03.45.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
@@ -60,9 +60,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip v2 08/24] can: rcar_canfd: Share config code in rcar_canfd_set_bittiming()
-Date: Tue,  6 Jan 2026 11:44:31 +0000
-Message-ID: <20260106114458.122333-9-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip v2 07/24] can: rcar_canfd: Rename rcar_canfd_setrnc() to rcar_canfd_set_rnc()
+Date: Tue,  6 Jan 2026 11:44:30 +0000
+Message-ID: <20260106114458.122333-8-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260106114458.122333-1-biju.das.jz@bp.renesas.com>
 References: <20260106114458.122333-1-biju.das.jz@bp.renesas.com>
@@ -72,75 +72,48 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 06 Jan 2026 11:45:08 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21340
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21339
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 0a0c94c682fd2606b65a512ba24478a3b5e73d7d ]
+[ Upstream commit 1b76dca8fd892a8ced41d980e123b4701ad3cf10 ]
 
-The configuration register format for nominal bit timings in CAN-FD mode
-and the format for bit timings in CAN mode on CAN-FD controllers with
-shared Classical CAN registers are the same.
-
-Restructure the code to make this clear, also reducing kernel size by 80
-bytes.
+Insert an underscore in the function's name, for consistency with other
+getter and setter helper functions.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Link: https://patch.msgid.link/b7643a3c49777989d02145a85b85cf773ec2123f.1749655315.git.geert+renesas@glider.be
+Link: https://patch.msgid.link/9fdc2584ce27b2784ecea76390d2a81eab289d0d.1749655315.git.geert+renesas@glider.be
 Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/net/can/rcar/rcar_canfd.c | 25 +++++++------------------
- 1 file changed, 7 insertions(+), 18 deletions(-)
+ drivers/net/can/rcar/rcar_canfd.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
-index 2f84393d95c1..c7306c93d16b 100644
+index 3133ef64f537..2f84393d95c1 100644
 --- a/drivers/net/can/rcar/rcar_canfd.c
 +++ b/drivers/net/can/rcar/rcar_canfd.c
-@@ -1482,13 +1482,17 @@ static void rcar_canfd_set_bittiming(struct net_device *ndev)
- 	tseg1 = bt->prop_seg + bt->phase_seg1 - 1;
- 	tseg2 = bt->phase_seg2 - 1;
- 
--	if (priv->can.ctrlmode & CAN_CTRLMODE_FD) {
--		/* CAN FD only mode */
-+	if ((priv->can.ctrlmode & CAN_CTRLMODE_FD) || gpriv->info->shared_can_regs) {
- 		cfg = (RCANFD_NCFG_NTSEG1(gpriv, tseg1) | RCANFD_NCFG_NBRP(brp) |
- 		       RCANFD_NCFG_NSJW(gpriv, sjw) | RCANFD_NCFG_NTSEG2(gpriv, tseg2));
-+	} else {
-+		cfg = (RCANFD_CFG_TSEG1(tseg1) | RCANFD_CFG_BRP(brp) |
-+		       RCANFD_CFG_SJW(sjw) | RCANFD_CFG_TSEG2(tseg2));
-+	}
- 
--		rcar_canfd_write(priv->base, RCANFD_CCFG(ch), cfg);
-+	rcar_canfd_write(priv->base, RCANFD_CCFG(ch), cfg);
- 
-+	if (priv->can.ctrlmode & CAN_CTRLMODE_FD) {
- 		/* Data bit timing settings */
- 		brp = dbt->brp - 1;
- 		sjw = dbt->sjw - 1;
-@@ -1499,21 +1503,6 @@ static void rcar_canfd_set_bittiming(struct net_device *ndev)
- 		       RCANFD_DCFG_DSJW(gpriv, sjw) | RCANFD_DCFG_DTSEG2(gpriv, tseg2));
- 
- 		rcar_canfd_write(priv->base, rcar_canfd_f_dcfg(gpriv, ch), cfg);
--	} else {
--		/* Classical CAN only mode */
--		if (gpriv->info->shared_can_regs) {
--			cfg = (RCANFD_NCFG_NTSEG1(gpriv, tseg1) |
--			       RCANFD_NCFG_NBRP(brp) |
--			       RCANFD_NCFG_NSJW(gpriv, sjw) |
--			       RCANFD_NCFG_NTSEG2(gpriv, tseg2));
--		} else {
--			cfg = (RCANFD_CFG_TSEG1(tseg1) |
--			       RCANFD_CFG_BRP(brp) |
--			       RCANFD_CFG_SJW(sjw) |
--			       RCANFD_CFG_TSEG2(tseg2));
--		}
--
--		rcar_canfd_write(priv->base, RCANFD_CCFG(ch), cfg);
- 	}
+@@ -830,8 +830,8 @@ static void rcar_canfd_tx_failure_cleanup(struct net_device *ndev)
+ 		can_free_echo_skb(ndev, i, NULL);
  }
  
+-static void rcar_canfd_setrnc(struct rcar_canfd_global *gpriv, unsigned int ch,
+-			      unsigned int num_rules)
++static void rcar_canfd_set_rnc(struct rcar_canfd_global *gpriv, unsigned int ch,
++			       unsigned int num_rules)
+ {
+ 	unsigned int rnc_stride = 32 / gpriv->info->rnc_field_width;
+ 	unsigned int shift = 32 - (ch % rnc_stride + 1) * gpriv->info->rnc_field_width;
+@@ -968,7 +968,7 @@ static void rcar_canfd_configure_afl_rules(struct rcar_canfd_global *gpriv,
+ 			    RCANFD_GAFLECTR_AFLDAE));
+ 
+ 	/* Write number of rules for channel */
+-	rcar_canfd_setrnc(gpriv, ch, num_rules);
++	rcar_canfd_set_rnc(gpriv, ch, num_rules);
+ 	if (gpriv->info->shared_can_regs)
+ 		offset = RCANFD_GEN4_GAFL_OFFSET;
+ 	else if (gpriv->fdmode)
 -- 
 2.43.0
 
