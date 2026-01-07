@@ -1,151 +1,271 @@
-Return-Path: <claudiu.beznea@tuxon.dev>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DE33CF6BEC
-	for <webhook@archiver.kernel.org>; Wed,  7 Jan 2026 12:22:05 +0000 (UTC)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.4497.1767788515541154909
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C437CFD62D
+	for <webhook@archiver.kernel.org>; Wed,  7 Jan 2026 13:27:25 +0000 (UTC)
+Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.5707.1767792443621605772
  for <cip-dev@lists.cip-project.org>;
- Wed, 07 Jan 2026 04:21:56 -0800
+ Wed, 07 Jan 2026 05:27:25 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=Mcj9IoKN;
- spf=pass (domain: tuxon.dev, ip: 209.85.128.51, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-47aa03d3326so16960285e9.3
-        for <cip-dev@lists.cip-project.org>; Wed, 07 Jan 2026 04:21:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1767788513; x=1768393313; darn=lists.cip-project.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=i9KcKzWWk+FYpYcESsWrkK3ZN6OAJgrAgHCLT2SD3SQ=;
-        b=Mcj9IoKNNt8tEz3isCokEfvU9Z5Sf4THXKelDZKmxdGiZB40SLHBDEa08k2Cc/vdW0
-         kdaRVBlxEw7Ok/JV29t17KzXXZ0vAdXUcsACZ0qac+2ULqC5pBqg7kIOohcZw88JL1BR
-         7YL8Ly7kMY2xzI+dIwJNPBAhWbgrTMeYB7Nqqj8q5I+kWJv81TW4JI6VryATYsOi7yBW
-         VVYqQWaFU+VPb28JlX0R4Tj3q/T3WehNKSpRQWUuhO0USdo3do3KO/gg9Cz48lhli1nG
-         OB4kZgTLxxgyn32gPjZYztTfVUT2/SFw/nfzfWjC8QPDA4ItnoS9lE05lUYKN0IsIrnz
-         +UPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767788513; x=1768393313;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=i9KcKzWWk+FYpYcESsWrkK3ZN6OAJgrAgHCLT2SD3SQ=;
-        b=tin7DQ0fQq0/fXbL9Ijq6OuCZp4FKagd7iR+XC6IwZCrJ5O4mqriISK8cU0uMyp6SB
-         mU8JtDAcQKbe/NFPHh1ogrb6QLVcy2vpstUy+A2oKRxJjQbGyPEBZJIrzNqVFzmoCQ60
-         QYK1aPNC6L5K6I0r+KM1F7ONxJYgJVsu5sFr245EXnVcoHf4u2ymJ5YDpXbQEFcLB15q
-         /Y+LWK2QxbZt9of7xmP3gXiEyOP6BvzaQfSvmQ50CJWcXd1FONx0dArB45qZ9svgoSIu
-         8vyXkth+AF1W8FsSk1QbnN57kY0ntKAlKsD+SqifgtegY5Bk2tB22cKWLpMpyQZqzjAN
-         /Chw==
-X-Forwarded-Encrypted: i=1; AJvYcCWhPIotxRUPYBi23Ct5DjFJR8Lxasi6emHF4tViHKT2tpyl0okm89uD0nlZmatGMbdnI/mAXZbr@lists.cip-project.org
-X-Gm-Message-State: AOJu0Yx+LZCcsvbYRb/GyDc2m6dv9lLipH71BgWt+C/iavP0qAmg6hzi
-	tX8P7/Uijm1+dYYEDvrYmKDHmjuW8K1bpkX5M9+Jpp0Ah9Yxk0EXK1ARBxoEveHTwy0=
-X-Gm-Gg: AY/fxX526WbUpYzcn7MFsHsEGW9Aa/h7jFvmi6cr/1BnH3vsXpAque9efAuBUBXc3XR
-	mcGf5u2BfsCm0Xa/t34gAh7cx2wSS9j/SwCQaOrVO1hgYpUZ46KfZllw6MKaKvLmS5+f6+Buray
-	xPQfK/8az8ybCGlOSji8/X3hooo9Yks0FSV6qseRUmUXefy5UTmV/ACy+9pEfH0tp87GDsD82aQ
-	+rPwcvQ5Z4G43C9Q9d6+5huSyAMLEIu02a6Wj8uvWQMJ+wJrXQgsIPaVP4c9bzd28Hm5VpLIDKU
-	BhiJ3uwri4P2X9q9yXxOFro7P2lwLV0rPQhxpstkQoqdMYOlOFjOKzji+PduC5HWTYCni1aVD+7
-	3CYIXl04JBxahTQFGw62R8XzOWk6iQWxfW8zEq0SzhO1hokntpTYA1pwgCzFNGpBhi6HAEr/O6X
-	F+nyUXg1P5HmqqcGktwA==
-X-Google-Smtp-Source: AGHT+IFXWsNwNqyPYC0qW/XnO/o1EO3q2zNhZO4LptLEJvPk3fT+iZvF7lgXwpP07bvFqzM/faH3Ow==
-X-Received: by 2002:a05:600c:8484:b0:47a:8cce:2940 with SMTP id 5b1f17b1804b1-47d84b1a095mr24141425e9.14.1767788513384;
-        Wed, 07 Jan 2026 04:21:53 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.17])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47d7f668e03sm98081965e9.14.2026.01.07.04.21.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Jan 2026 04:21:52 -0800 (PST)
-Message-ID: <dec35e63-55cf-46d6-a69c-894f460ea7a1@tuxon.dev>
-Date: Wed, 7 Jan 2026 14:21:51 +0200
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=aSTfAFtu;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-51332-20260107132717ea12c70aee000207fb-_kvyct@rts-flowmailer.siemens.com)
+Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 20260107132717ea12c70aee000207fb
+        for <cip-dev@lists.cip-project.org>;
+        Wed, 07 Jan 2026 14:27:21 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=Quirin.Gylstorff@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
+ bh=H/T+r+8m2lA32ZKZK3R4XXBp7rlGgEhLudb0VPIdl2Q=;
+ b=aSTfAFtuWIeHYIsdervyZCimlZ9UsfUoZxOunYwUOkWWzZ5SdgTyfWgmGiTPRcsoiGLQE+
+ MZlNdguWTsSZcciWjblZ/QlU91Kn8NgVrZUDDtK+P3LfSizBI5bS6tqwWJK/QaxBVGfv4KCF
+ yXoVQMChFzMunixQ/AcWq/9elf02pe0/gqQ4++YDGK1ylp4RnG9bMSLhxUJ7glmeLsfQvhWU
+ g1Iq2a+flSxIinAh3i625emcwG864XmODC8RXKCoCT4TC52wnYFwlQQOIIFNKHDRqdF9PRHL
+ M8oDEvJnVW1WaBQfdUxp9wibGiNpd/A25LAYrNHNSljYD7tfcj2gdwbA==;
+From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
+To: jan.kiszka@siemens.com,
+	clara.kowalsky@siemens.com,
+	cip-dev@lists.cip-project.org,
+	benedikt.niedermayr@siemens.com
+Subject: [cip-dev][isar-cip-core][PATCH v2 4/7] Move efibootguard to swupdate-efibootguard.inc
+Date: Wed,  7 Jan 2026 14:26:27 +0100
+Message-ID: <20260107132707.733180-5-Quirin.Gylstorff@siemens.com>
+In-Reply-To: <20260107132707.733180-1-Quirin.Gylstorff@siemens.com>
+References: <20260107132707.733180-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.12.y-cip 3/6] thermal/drivers/renesas/rzg3s: Add thermal
- driver for the Renesas RZ/G3S SoC
-To: Pavel Machek <pavel@denx.de>
-Cc: nobuhiro.iwamatsu.x90@mail.toshiba, cip-dev@lists.cip-project.org
-References: <20251217103222.4183089-1-claudiu.beznea.uj@bp.renesas.com>
- <20251217103222.4183089-4-claudiu.beznea.uj@bp.renesas.com>
- <aVLi32qigJKR3NcP@duo.ucw.cz>
-Content-Language: en-US
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <aVLi32qigJKR3NcP@duo.ucw.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 07 Jan 2026 12:22:05 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21402
+ <cip-dev@lists.cip-project.org>; Wed, 07 Jan 2026 13:27:25 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21410
 
-Hi, Pavel,
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-Sorry for the late reply, I was off for a while.
+Simplify the generation of A/B root file system with SWUpdate including
+efibootguard into swupdate.inc.
 
-On 12/29/25 22:21, Pavel Machek wrote:
-> Hi!
-> 
-> I have some comments below.
-> 
->> index 000000000000..d184dccc882f
->> --- /dev/null
->> +++ b/drivers/thermal/renesas/rzg3s_thermal.c
->> +static int rzg3s_thermal_get_temp(struct thermal_zone_device *tz, int *temp)
->> +{
->> +	struct rzg3s_thermal_priv *priv = thermal_zone_device_priv(tz);
->> +	int ts_code_ave = 0;
->> +
->> +	if (priv->mode != THERMAL_DEVICE_ENABLED)
->> +		return -EAGAIN;
-> 
-> I'm pretty sure -EAGAIN is wrong error code here. -EBUSY or something?
+With this change it is possible to prepare to rootfs by adding:
 
--EAGAIN is something that the thermal core expects here in case the 
-temperature reading is failing:
+```
+require recipes-core/images/swupdate.inc
+```
 
-https://elixir.bootlin.com/linux/v6.18.3/source/drivers/thermal/thermal_core.c#L319
+Also rename the file to swupdate-efibootguard to indictate the indended
+use.
 
-https://elixir.bootlin.com/linux/v6.18.3/source/drivers/thermal/thermal_sysfs.c#L46
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+---
+ classes-recipe/efibootguard.bbclass           | 64 ++---------------
+ kas/opt/ebg-swu.yml                           |  3 -
+ recipes-core/images/efibootguard.inc          | 13 +---
+ recipes-core/images/swupdate-efibootguard.inc | 70 +++++++++++++++++++
+ 4 files changed, 76 insertions(+), 74 deletions(-)
+ mode change 100644 => 120000 recipes-core/images/efibootguard.inc
+ create mode 100644 recipes-core/images/swupdate-efibootguard.inc
 
+diff --git a/classes-recipe/efibootguard.bbclass b/classes-recipe/efibootguard.bbclass
+index cbd2376..4e7a2a6 100644
+--- a/classes-recipe/efibootguard.bbclass
++++ b/classes-recipe/efibootguard.bbclass
+@@ -1,7 +1,7 @@
+ #
+ # CIP Core, generic profile
+ #
+-# Copyright (c) Siemens AG, 2024
++# Copyright (c) Siemens AG, 2024 - 2025
+ #
+ # Authors:
+ #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
+@@ -9,62 +9,8 @@
+ # SPDX-License-Identifier: MIT
+ #
+ 
+-IMAGE_INSTALL:append = " efibootguard-tools libebgenv0"
+-IMAGER_INSTALL:wic:append = " efibootguard:${DISTRO_ARCH} efibootguard-tools:${DISTRO_ARCH}"
+-WDOG_TIMEOUT ?= "60"
+-WICVARS += "WDOG_TIMEOUT KERNEL_IMAGE INITRD_DEPLOY_FILE DTB_FILES EFI_ARCH EFI_LIB_ARCH UKI_FILENAME"
+-IMAGE_TYPEDEP:swu:append = " wic"
+-
+-def distro_to_efi_arch(d):
+-    DISTRO_TO_EFI_ARCH = {
+-        "amd64": "x64",
+-        "arm64": "aa64",
+-        "armhf": "arm",
+-        "i386": "ia32",
+-        "riscv64": "riscv64"
+-    }
+-    distro_arch = d.getVar('DISTRO_ARCH')
+-    return DISTRO_TO_EFI_ARCH[distro_arch]
+-
+-EFI_ARCH := "${@distro_to_efi_arch(d)}"
+-
+-def distro_to_lib_arch(d):
+-    DISTRO_TO_LIB_ARCH = {
+-        "amd64": "x86_64-linux-gnu",
+-        "arm64": "aarch64-linux-gnu",
+-        "armhf": "arm-linux-gnueabihf",
+-        "i386": "i386-linux-gnu",
+-        "riscv64": "riscv64-linux-gnu",
+-    }
+-    distro_arch = d.getVar('DISTRO_ARCH')
+-    return DISTRO_TO_LIB_ARCH[distro_arch]
+-
+-EFI_LIB_ARCH := "${@distro_to_lib_arch(d)}"
+-
+-# Add the bootloader file
+-def efi_bootloader_name(d):
+-    efi_arch = distro_to_efi_arch(d)
+-    return "boot{}.efi".format(efi_arch)
+-
+-SWU_EXTEND_SW_DESCRIPTION += "add_ebg_update"
+-python add_ebg_update() {
+-    efi_boot_loader_file = efi_bootloader_name(d)
+-    efi_boot_device = d.getVar('SWU_EFI_BOOT_DEVICE')
+-    swu_ebg_update_node = f"""
+-    {{
+-        filename = "{efi_boot_loader_file}";
+-        path = "EFI/BOOT/{efi_boot_loader_file}";
+-        device = "{efi_boot_device}";
+-        filesystem = "vfat";
+-        sha256 = "{efi_boot_loader_file}-sha256";
+-        properties: {{
+-            atomic-install = "true";
+-        }};
+-    }}
+-    """
+-
+-    d.setVar('SWU_BOOTLOADER_FILE_NODE', swu_ebg_update_node)
+-    ebg_update = d.getVar('SWU_EBG_UPDATE') or ""
+-    if ebg_update:
+-        d.appendVar('SWU_FILE_NODES', "," + swu_ebg_update_node)
++require recipes-core/images/swupdate-efibootguard.inc
++do_warn_custom_inc() {
++    bbwarn "Please migrate from \"inherit efibootguard\" to \"recipes-core/images/swupdate-efibootguard.inc\""
+ }
++addtask warn_custom_inc before do_unpack
+diff --git a/kas/opt/ebg-swu.yml b/kas/opt/ebg-swu.yml
+index 9b8a0e8..c3733d3 100644
+--- a/kas/opt/ebg-swu.yml
++++ b/kas/opt/ebg-swu.yml
+@@ -16,11 +16,8 @@ header:
+ 
+ local_conf_header:
+   ebg_swu_bootloader: |
+-    WKS_FILE ?= "${MACHINE}-efibootguard.wks.in"
+     SWUPDATE_BOOTLOADER = "efibootguard"
+     IMAGE_INSTALL:remove = "u-boot-script"
+-  ebg_swu_image_options: |
+-    CIP_IMAGE_OPTIONS:append = " recipes-core/images/efibootguard.inc"
+   firmware-binaries: |
+     # Add ovmf binaries for qemu
+     CIP_IMAGE_OPTIONS:append:qemu-amd64 = " recipes-core/images/deploy-ovmf.inc"
+diff --git a/recipes-core/images/efibootguard.inc b/recipes-core/images/efibootguard.inc
+deleted file mode 100644
+index f512b3c..0000000
+--- a/recipes-core/images/efibootguard.inc
++++ /dev/null
+@@ -1,12 +0,0 @@
+-#
+-# CIP Core, generic profile
+-#
+-# Copyright (c) Siemens AG, 2020, 2024
+-#
+-# Authors:
+-#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
+-#
+-# SPDX-License-Identifier: MIT
+-#
+-
+-inherit efibootguard
+diff --git a/recipes-core/images/efibootguard.inc b/recipes-core/images/efibootguard.inc
+new file mode 120000
+index 0000000..0bb31dc
+--- /dev/null
++++ b/recipes-core/images/efibootguard.inc
+@@ -0,0 +1 @@
++swupdate-efibootguard.inc
+\ No newline at end of file
+diff --git a/recipes-core/images/swupdate-efibootguard.inc b/recipes-core/images/swupdate-efibootguard.inc
+new file mode 100644
+index 0000000..5b69144
+--- /dev/null
++++ b/recipes-core/images/swupdate-efibootguard.inc
+@@ -0,0 +1,70 @@
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2024 - 2025
++#
++# Authors:
++#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
++#
++# SPDX-License-Identifier: MIT
++#
++
++IMAGE_INSTALL:append = " efibootguard-tools libebgenv0"
++IMAGER_INSTALL:wic:append = " efibootguard:${DISTRO_ARCH} efibootguard-tools:${DISTRO_ARCH}"
++WDOG_TIMEOUT ?= "60"
++WICVARS += "WDOG_TIMEOUT KERNEL_IMAGE INITRD_DEPLOY_FILE DTB_FILES EFI_ARCH EFI_LIB_ARCH UKI_FILENAME"
++IMAGE_TYPEDEP:swu:append = " wic"
++
++def distro_to_efi_arch(d):
++    DISTRO_TO_EFI_ARCH = {
++        "amd64": "x64",
++        "arm64": "aa64",
++        "armhf": "arm",
++        "i386": "ia32",
++        "riscv64": "riscv64"
++    }
++    distro_arch = d.getVar('DISTRO_ARCH')
++    return DISTRO_TO_EFI_ARCH[distro_arch]
++
++EFI_ARCH := "${@distro_to_efi_arch(d)}"
++
++def distro_to_lib_arch(d):
++    DISTRO_TO_LIB_ARCH = {
++        "amd64": "x86_64-linux-gnu",
++        "arm64": "aarch64-linux-gnu",
++        "armhf": "arm-linux-gnueabihf",
++        "i386": "i386-linux-gnu",
++        "riscv64": "riscv64-linux-gnu",
++    }
++    distro_arch = d.getVar('DISTRO_ARCH')
++    return DISTRO_TO_LIB_ARCH[distro_arch]
++
++EFI_LIB_ARCH := "${@distro_to_lib_arch(d)}"
++
++# Add the bootloader file
++def efi_bootloader_name(d):
++    efi_arch = distro_to_efi_arch(d)
++    return "boot{}.efi".format(efi_arch)
++
++SWU_EXTEND_SW_DESCRIPTION += "add_ebg_update"
++python add_ebg_update() {
++    efi_boot_loader_file = efi_bootloader_name(d)
++    efi_boot_device = d.getVar('SWU_EFI_BOOT_DEVICE')
++    swu_ebg_update_node = f"""
++    {{
++        filename = "{efi_boot_loader_file}";
++        path = "EFI/BOOT/{efi_boot_loader_file}";
++        device = "{efi_boot_device}";
++        filesystem = "vfat";
++        sha256 = "{efi_boot_loader_file}-sha256";
++        properties: {{
++            atomic-install = "true";
++        }};
++    }}
++    """
++
++    d.setVar('SWU_BOOTLOADER_FILE_NODE', swu_ebg_update_node)
++    ebg_update = d.getVar('SWU_EBG_UPDATE') or ""
++    if ebg_update:
++        d.appendVar('SWU_FILE_NODES', "," + swu_ebg_update_node)
++}
+-- 
+2.51.2
 
-> 
->> +	/*
->> +	 * According to the HW manual (Rev.1.10, section 40.4.4 Procedure for Measuring the
->> +	 * Temperature) the computation formula is as follows:
->> +	 *
->> +	 * Tj = (ts_code_ave - priv->calib1) * 165 / (priv->calib0 - priv->calib1) - 40
->> +	 *
->> +	 * Convert everything to milli Celsius before applying the formula to avoid
->> +	 * losing precision.
->> +	 */
->> +
->> +	*temp = div_s64((s64)(ts_code_ave - MCELSIUS(priv->calib1)) * MCELSIUS(165),
->> +			MCELSIUS(priv->calib0 - priv->calib1)) - MCELSIUS(40);
->> +
->> +	/* Report it in milli degrees Celsius and round it up to 0.5 degrees Celsius. */
->> +	*temp = roundup(*temp, 500);
-> 
-> If we did the computation in high precision, and interface wants
-> millicelsius, is rounding good idea?
-
-If I remember correctly, not adjusting the above code for precision lead 
-to temperature variation at degree level not be detected. I chose to 
-round it to 0.5 milli degrees to follow similar Renesas thermal drivers.
-
-> 
->> +static void rzg3s_thermal_set_mode(struct rzg3s_thermal_priv *priv,
->> +				   enum thermal_device_mode mode)
->> +{
->> +	struct device *dev = priv->dev;
->> +	int ret;
->> +
->> +	ret = pm_runtime_resume_and_get(dev);
->> +	if (ret)
->> +		return;
-> 
-> Now caller does not know if we failed or not. Should this return errno?
-
-Yes, this one could be improved to return the error code.
-
-Thank you,
-Claudiu
 
