@@ -2,47 +2,54 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51488D148B3
-	for <webhook@archiver.kernel.org>; Thu,  8 Jan 2026 07:02:49 +0000 (UTC)
-Received: from GVXPR05CU001.outbound.protection.outlook.com (GVXPR05CU001.outbound.protection.outlook.com [52.101.83.3])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.1273.1767855763472565913
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B88F5CFD65A
+	for <webhook@archiver.kernel.org>; Thu,  8 Jan 2026 08:19:29 +0000 (UTC)
+Received: from OSPPR02CU001.outbound.protection.outlook.com (OSPPR02CU001.outbound.protection.outlook.com [40.107.159.42])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.2223.1767860368560567669
  for <cip-dev@lists.cip-project.org>;
- Wed, 07 Jan 2026 23:02:44 -0800
+ Thu, 08 Jan 2026 00:19:29 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=wofMhqFN;
- spf=pass (domain: siemens.com, ip: 52.101.83.3, mailfrom: jan.kiszka@siemens.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=SdXojGeB;
+ spf=pass (domain: siemens.com, ip: 40.107.159.42, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MHRR2taAN3uk0Dd6QSj9g36pgbv/K+HzxPYw8E8n/9EX6s+CoXPI8RXla6skBjPY/oVwKVcwzyNPnvExWXd1HbtcFBTbeztpZjBushKtLOpK9Fd3l+pKbZZNwSEAGUlrAobarDtSrljhrVDJUTC5Gg0JHTZNj7goldTqmMUUhhtUM79YutHAtHglAr9U71MWccUmda7Nr3vLayYwJJRutd8lvi31cmS3us5Ze8QKOJuwP1own6XN6MRDPgc6dvSh+1+mPMBeDMag8dYl1exX2WstHVsR5XWS4W6oi06B6xoBCqCuSkCA4UiE1pQ9aunz7+UgHvY9aXmlVIq27bXFtQ==
+ b=MLu9M2AtZEk5h2t7L/zF9ExHJ+u6d28K6glj6EweeNS5EruN7Yz5q7hiXJIYtctCOWWyHy/KsWO2VUZjzo5IJLKzuksbm+HK5lEutJGY7tltc4MERi9j8ZIoppsRvZOKfTut9BUNRs+XVjQ1Nh10E+2JRzSoewDLZRR4hao+dJhc08jFQXYKiGSoy9oOSLPN+iLlBWVmloaHs215Wyr9EPQW9uJ6qfOMN9R0U8bUgvcnyej+POmsDta/clzVSchAoHAEhEm4Wa5Qd0t8l0hfPHo8MZIt/ZNv1XCQhM0bnnmM3Vpd2RNfB2ht3YbcHyMnBdFir7Dg+Kd2L5qOkpcCgw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2MOqw+ONlSVLFUV9/aaNx84c7dLKX6sh7RZGH0BBmEI=;
- b=Fk2cOA0Vo19TnPXaOGfT5QDc3Aabyd0Rdm2XXAZs6MGSSNVa5f6VymoJrkr616+FW2dVNryXOtypDYNtLTkEJk4ndW9LbZjODPzyih8T0aa6ECfQ2NAjKg/xgz2hlNGv021U1xeY+yJcXWUdoP91/dKKGvLLfPcUKoqnQfa06mCvKDi8YmKOp3zlC/U3cUS8M58zmIZ6PDm987SHcglX2ik0HjAR+BNDP7wgp66Qy0oF7MgiMgQ1SIESgou16FzPem8sMrHnjZaLUNBmdx1d0ZkGkcY0HdJWqgp5Zca7eiWXH+yJUX4vtIpSB9w6ti9RWBmcj7Ku8UmEt4im/5K83g==
+ bh=u6EZnjAbfBeqFAFdgN9yCoMwln6tkLytJikdNmaKJ2I=;
+ b=Ht0BqCEx7g5bbQ03/CeIUSx+Fy7Y3EJQlyFvqg8mUli1xaTDuJMls83saUjYxRhJDOkjiqmu7PZ1qP2QHBtRglbCqFDFlNVw0Ye6ib/r8uJC8afivDW8QCbnt4tTKGux5PPGbpGgjcb6rr2r4RxqzmNmE1o/EFGXPsDuvADiUGfe8oZc4MUXckuqiUAcy7/IkbR+rztnP1ebhf+95xj9ZLa9sVtmT7sgahgyMj55H9bkVVcoUt5O0J8e0cbIqmh7WvvGRrZCKYnNMpKdTaiOBDotVTLnKua407PlulPzPUqUkyRDdO3MMfBb8FgrwNps9nK2yTFZ7jyljILQKgndJQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2MOqw+ONlSVLFUV9/aaNx84c7dLKX6sh7RZGH0BBmEI=;
- b=wofMhqFNJMeb7YzYyY7jiAJr+2yllkQGC2uj+42kVuyAqvLzPllU3+0gE6MVtXsBlj03aR/BuQGEljUCrywVpHI5YUuKWmWoZscMkN8wwNbquYBTnt9u1EdwpdHhjQTo+dqt6dp/mIvq7i494d6VChmfgCFmFrMPVLOhuCjvUSjw29BEZ8M02Wvh0ZIETWe2NYpdsZB9knkKEQyB+MrmUeWR83qDKwmQGzYjGPn4Io3z+mZh9obQYE8CCMOhfbhJ39mDdq8MPPUMfvI0k2cEILSYrhc+lcB+ckSEbxSYKtMHapYDwV9X0iiAJwlz2NAjsZi+fZwSVkiaslPkcCM47w==
+ bh=u6EZnjAbfBeqFAFdgN9yCoMwln6tkLytJikdNmaKJ2I=;
+ b=SdXojGeBaWqnjMf1CNavB1QYv7JWVrPv6fFIHs/VVpSPcL9lv4m6/Y9fLtbupDZ1yAjcrdVxOGHLrcJn1ydiSNT5mo4JXhFtiFwH/t9U6ZBDv9lU4H66wvV0MNUXIFLehjic3z8oiT5E8n3EbuaHESuVqhhnFFhAfSXGn7EceepRAX0rw6TAKKXOSLnRVHhcSxkdKbgLPxjY0CiSsMVUaA6GH0gvuJc7JBH7uC5C3pPHuvqdNm3l6pfi3WY+kSKPI962/FNxbGYLfoEzgeEVrYitc15Bkzszi0osLSxAHz6Z+CUHbwOI3bYw56juX5JleVmsyMHrR595/4lyU0nRKQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by VI0PR10MB9012.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:800:233::13) with
+ by DU0PR10MB6978.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:416::22) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9499.2; Thu, 8 Jan
- 2026 07:02:39 +0000
+ 2026 08:19:24 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8fe1:7e71:cf4a:7408%6]) with mapi id 15.20.9478.004; Thu, 8 Jan 2026
- 07:02:39 +0000
-Message-ID: <bbf71485-0d01-4462-a132-ffee4f76854f@siemens.com>
-Date: Thu, 8 Jan 2026 08:02:38 +0100
+ 08:19:24 +0000
+Message-ID: <ebd61bd3-1160-459f-b3b3-f186719fa5f3@siemens.com>
+Date: Thu, 8 Jan 2026 09:19:23 +0100
 User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.12 242/262] ext4: fix checks for orphan inodes
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
+ Jan Kara <jack@suse.cz>, Theodore Tso <tytso@mit.edu>
+CC: patches@lists.linux.dev, stable@kernel.org, Zhang Yi
+ <yi.zhang@huawei.com>, linux-ext4@vger.kernel.org,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ cip-dev <cip-dev@lists.cip-project.org>
+References: <20251013144326.116493600@linuxfoundation.org>
+ <20251013144334.953291810@linuxfoundation.org>
 From: Jan Kiszka <jan.kiszka@siemens.com>
-Subject: CIP IRC weekly meeting today on libera.chat
-To: cip-dev <cip-dev@lists.cip-project.org>
 Content-Language: en-US
 Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  xsFNBGZY+hkBEACkdtFD81AUVtTVX+UEiUFs7ZQPQsdFpzVmr6R3D059f+lzr4Mlg6KKAcNZ
@@ -87,173 +94,281 @@ Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  qH4kDzsqKX8zzTzfAWFxrkXA/kFpR3JsMzNmvextkN2kOLCCHkym0zz5Y3vxaYtbXG2wTrqJ
  8WpkWIE8STUhQa9AkezgucXN7r6uSrzW8IQXxBInZwFIyBgM0f/fzyNqzThFT15QMrYUqhhW
  ZffO4PeNJOUYfXdH13A6rbU0y6xE7Okuoa01EqNi9yqyLA8gPgg/DhOpGtK8KokCsdYsTbk=
+In-Reply-To: <20251013144334.953291810@linuxfoundation.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0302.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:f6::8) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: FR4P281CA0422.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:d1::16) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|VI0PR10MB9012:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8c774ff8-9518-496b-2f0a-08de4e83e8f2
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DU0PR10MB6978:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7f341bad-139b-4d9c-43d5-08de4e8ea1c2
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam: 
+	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|7053199007;
 X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?djFGczZjM212L3B4QmdONkZVdmJoaEZydjlyWGYxWmVOaGt3YzZOb1NEeW9m?=
- =?utf-8?B?NHZLR29raForajMrWnNoc2ZHdXZ2WG95bTE5K1dlSktscXZ1UzMydmsya2c0?=
- =?utf-8?B?RFJNYlBjQXlGOUoyT3Y3SlA5ZEwzbzlESExkcm41YVlJUVE5OTNxbE1MN3E0?=
- =?utf-8?B?NElXM2NoUnVWQjVnMEhWZFdzNVpRbkIzS25Tc3ZlV1c5TlI2NzB6c2FCaFVK?=
- =?utf-8?B?Q3hKM1hDVnpmZndQQVZaL0ZtYmJWNGZ5NHBIc3V0NjU2ck83Zmt6QlZ5dTJ1?=
- =?utf-8?B?aVlPOTkrRzRwQi8ySGRYWWE4TnJMWmFITTBrU0hpY1l3clhpSERvZG1KZUsw?=
- =?utf-8?B?bzhQYzNJd1h5cGRDZGhWanhxbEtKWnNzNmRSMDAwUXpwcHF1VzhMSnNPbEI5?=
- =?utf-8?B?dTBMeldjem41d2pIa0NoZzBBVTdiU1FqWmdtNjlxQ0treGZjZ3JJTlVGelI4?=
- =?utf-8?B?dUE2dXoxSFByZHdMc21uQno2UHQwNzNFcFI1eFVlVC9yTG5mcFBMRmwzTzd2?=
- =?utf-8?B?SjVLdHJSbWZkNTVYUTVNazBFblFSWGRzTVlnbVM1b0pISjZvNHlvNzd3Mytu?=
- =?utf-8?B?aEg4ekxCV1llVVFrNG1aRWxNVjlWOXkwK2g1cjhuL29IOEl0RExoU1ZUUi9w?=
- =?utf-8?B?M3V6U3VqYnRqUEpIeDZGWlBlUm9JUVlPZWRqZUVQR25RUm5rVkNFdm9ZaGNr?=
- =?utf-8?B?czNnQVUyYzIyRnJSRXBRZTR3UkJTbTJ0YmVrOW5QdDMzamRzZERnM3VKcmpR?=
- =?utf-8?B?Mk83cXlqNUtudjFlLytpRWFmRkFaUzlCSlBQL2JvNVlVK0VsV0UzMmo3RkRE?=
- =?utf-8?B?dGVidzZ0THcrWEN6U05lVkcxRzRvUWJQZ2tkTmtxY0luVnRjMXlvQzJVNDF4?=
- =?utf-8?B?N3ZRMzlwMUFIeHp5U09qNTNXUEFBOUdiRXB5d0F0akZoNGxjS0JPR0tPTElR?=
- =?utf-8?B?R0Fxck9oN29LTDhVZEMrdm84a0xQS3lSWVd5QVZlSzFjcHU4SHdLcUQwS1lZ?=
- =?utf-8?B?c1EyNGN4a2R3d3BoM01kbCtobTA2djYraHA2Zjk5RzhSQjlsejZmdkdSdXoy?=
- =?utf-8?B?bnN5dXR4S3k2M2ZKMGhqZjFWcGhWTncrelpNSWYzaFJUekFWNzUxaUpVdHpK?=
- =?utf-8?B?aDNkeXdCV0Vrd20vK0d2VmQ2dkt1dm93MnNJdFpOQzFKbFRoa0hUdlFPaWds?=
- =?utf-8?B?aTcwUXBHTHVUS1REb1ArZU5zWGtSb0VGc0NYbit1ZDBVdVVvWjBoL25QMlB0?=
- =?utf-8?B?dGtBdFpkV3ZvT3FMcE5yb2M4blZIakcrayt0WXVPbG5PaG1lM1ByV0FORjRY?=
- =?utf-8?B?M1BjZ3d4dUtJeTlxS3ExZXprYmZ6STdxRzhJWWJPOEJqdjVhR3BkeCtDNGdH?=
- =?utf-8?B?RWRrTUNPcmQ3eERBaXlCYXA2cGxkeWpPZTVKampjM1BiTmxCUVB4WS82Qngw?=
- =?utf-8?B?YmowQlo5VXFvTUZHKysvQ3o2TkxoYkF5cHNheERjMGNDUExzczFnVzRkM2g2?=
- =?utf-8?B?ZDF0NE1EVllYOE8xcVU0ekRrSG83RU9oem51Yk00Mk1RQ3pIOUhOa3g4ZUZC?=
- =?utf-8?B?Y3RuSVozUnpjMS90eXk1K3pRa1NWUWpvZjYrRkZvZy9xWTdmU3lLLzZGN3ZO?=
- =?utf-8?B?N1B2QmlpbDZqMWg0Q0tmaUhnTEhrVVpsNDhKTEZXdm5JTk1SdHplSS9ML3JU?=
- =?utf-8?B?K0N4OHc4R1FSWUk5RjRHUjBoQ08weW5PSStYcEMrK3dWZXFjQXRrT0RsNk1i?=
- =?utf-8?B?SjJlbnBrVmJETmFPRnUzZUlseXVqNTJOM1ExRENFSExuUC9GaVpxOTF5azVF?=
- =?utf-8?B?RXVZV2M5U1pTVlM0RTVYeTdweGV2NEhXMlhhbVNGUXpGdDUzWFVzSXZQMkxh?=
- =?utf-8?B?bVFHWiszMXB5QTRSeDFrZHh5Mm93ZGg3M2lQekVjeXRUMHc9PQ==?=
+	=?us-ascii?Q?0CQU2evcFsYVACTGCwf5cIkyr6NDCpEFQTAiEv7WIoMf3QfqfSFhVafyA21x?=
+ =?us-ascii?Q?JFO11wTxwJBvq6kfxy5ZHQ/wNB0pSkx4BpSNdRnyXE2oCsW9SUhgkAibCkTt?=
+ =?us-ascii?Q?z6zFcM6SMQ6zY9uU3JoeAsDMiICTyw/OyUw4ldmGyTWcNF1hz0oP5lRZwI6n?=
+ =?us-ascii?Q?l4nWKH1nj5EntmeIyYwbFdEMyLFlkwcY0ohdiSdy8FZX0qtHBMPRJqI/Ow6N?=
+ =?us-ascii?Q?fVBoXwP+NmqR9KevqhxcmZL4K0cYqpak6+NapRjDW9un6QmHUuQltFmgpVNh?=
+ =?us-ascii?Q?2llWP2Fc4xkAa9cEsdzy4SlkG73YcWH9EOsow0tN26mAuxgvSMUgYTK8Ac9Y?=
+ =?us-ascii?Q?+IcN08OAAHhzvmTEnZvBuTktg2eXhpMKjOozfATUCYC+cckTENfRp+6rixQB?=
+ =?us-ascii?Q?JS4E3Jw/rTjyw+CadKd5s3IWoa7omn/woCs2U5E/tJX9v31MDl/VhGfzxa6r?=
+ =?us-ascii?Q?5uemqFGJRYZPPmLv8QNHKKtEIhIKdNV5pM0xeNKIUt7h6y8YxFyCUlFAt7+w?=
+ =?us-ascii?Q?+CjySj/StkbDl9m7GIaMEYWOoagWX2Ug127uUvSBhe9yiyAI261Xd8iyCgRc?=
+ =?us-ascii?Q?4flvA62wzMOPm9najmFFg89/tqTdr9sLux0rrTvnDrrqzvNLOMPpUxb6Svlq?=
+ =?us-ascii?Q?rNkO3Bw60xW/r59ayhvpZZ+j7tb3FmkxkeBZnTYOqU4+z0tHPCz18Nhh3buI?=
+ =?us-ascii?Q?vsRe3ASEfvs+vnMlsu5iQYy6PRtaH+3g8gK9JzIKBeWWLlfpY63pcJHv9H7g?=
+ =?us-ascii?Q?oxj0hIcci9cSDzxuPcJ7IpAVN0RUxOHxzxZQebcQGlq1eplR08Y/74Y65U6N?=
+ =?us-ascii?Q?IqTgDAMUDAFperJxTVb4reAkhiTWX46KOHj8MfbIue6oXehuaoZCTj76v+uz?=
+ =?us-ascii?Q?uKlaUOnsmAHV9tnxv3/uRZsYdyQvfOiO0jqMNx731ZFeWoENsaeNREYGmq+f?=
+ =?us-ascii?Q?Sv6Eyo9ni+8dz/Jm2ZchJAABfv/V5n+qxjUQupgrkeueG0jdegQatFR2awMm?=
+ =?us-ascii?Q?jEbQ+iDge7XoCHdMCCf4uLL5PSqglBpBmH3//cEfZXWlusY2zShmQOFNVFdl?=
+ =?us-ascii?Q?wxaSV35+wMdfcUkTr6XveYqmfUmKSet0GRsftrY622d8FURdTPyzO8rQRKhr?=
+ =?us-ascii?Q?RXsqWvoij8jpPx7XJ/GgWOP+MiSnJ07d3z+1IG4/YHnNDx31kQSLrBHbwpY5?=
+ =?us-ascii?Q?rwJNE33Noe72GXiIOqLBIQ20+1wDxuQG2cDDSkg4XYGhroIgI681+QIohapO?=
+ =?us-ascii?Q?u5DdbMXnF9XYleLHo9bv8ARwdX8X3INDL88hn422xMQulPuzRgqhAxlu4ecn?=
+ =?us-ascii?Q?Ls8Sy7SBp5vKlWBeCLYZHUMhZTPMP8kFn57eRAFHvwAoMrrV+AuVHOZ27VBy?=
+ =?us-ascii?Q?xA5PyXY5ba05IPoMkvvGJVlXQp+VehUm03LWCtRywmbIIf/v8CcKQ+9w4Fxm?=
+ =?us-ascii?Q?wrA1+97h+ExsvvMrfUF/yQvC+UjN+Hj5y/9tCaUlHVsxI2eaZNqj8Q=3D=3D?=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?SmlKN3ZvTWpHVG1sZitpaWF2T1d5T3RGekpZenhhRW9PMSthZUtnbCs5U1NN?=
- =?utf-8?B?bk1NcW1TRDRTMkl4N2k2SFRxa0dzUkwwVE1ETk92K0xOWW4rV2V6b1UvNlJZ?=
- =?utf-8?B?MGhxTlJnTFJTWjdKRk9EMmxMWGxLRk1aTDBQbDkwdDc5SUM3eHFGTTc3alFD?=
- =?utf-8?B?SzArTXRzaEMrMUxYMnNhMU51aStmUUtaWkdQVFVQZHlyZWtvK0N5VitRTU5q?=
- =?utf-8?B?ZzVDY0xsWDlJUXVIakhBdGl2cmFZRlY0dytDbHpCNlZpYno4TlZPZlJUa1Rt?=
- =?utf-8?B?N1IxSFhUOVU0VzdwakN5RzlGTW9wbThnN2EzdHoweEMzaVNjZ1BIbnM3a052?=
- =?utf-8?B?L1JhRHRsNW5QTlRRTlhrR3k1eHkxZDN1a05wVUFqcUxNakYyZjhPRXp3TWxW?=
- =?utf-8?B?QjZKMXk1Vys3UndTa3crSURoK1YreGJBVDZyRk9tV0lSMElGdXB1TXl4TkFz?=
- =?utf-8?B?U3lvakI2V2pzZGNLSHk1U1pndTNQSFZxS0N4RzM1eG9rekJWUnMrSVM2LzJr?=
- =?utf-8?B?NDZuYjJzM0FHYmtHbU83cExzNG0vRVJEeWtWZ21WbXJ2ZXNuUzZucitQcVov?=
- =?utf-8?B?UWRsUXo1Z3M4T3pzdmlLWXB2WUpVQmNoT2NlTnZYOWpWcm9QUTlIejFkOG1V?=
- =?utf-8?B?MXNDclJKOUdwckNJTHN3Sjl6alNyeWFmd1ZSNVdGNUUwMGxqcDV6b1FxOHl6?=
- =?utf-8?B?dUJMK2k3dnJUZ21rdUkreXU3TnczdlVtVnYyRUwxVHlsV2R4RkNFbWp1dXg4?=
- =?utf-8?B?bDhwMVdwWE92Und3QXFlYVhXQWlCOFRuL3dUZWYxYkJISjZ4R3FxOC96cnVK?=
- =?utf-8?B?SGo3bFQyU1BRN0l4YkxkdE1DUjhXeEVkNTN6T2VKYks4cXJxSkNnNi9ydHhV?=
- =?utf-8?B?cCtmUHhtanFXM3pnSW50am9DYndudVFEOU1sdkE2RFk5TTgrbUFqcWkwMXEr?=
- =?utf-8?B?MVBHdVhXQmJOeHIvMjJyRnNrOU8wRnE0aERkMmVOUnNtK1N0SngyaHhJbDFk?=
- =?utf-8?B?RDVNS0YxVWltbGJPR2tXTDRFMjhhT2hBMUpGRnA2VDVEK2JsSzNCcm1CVEFI?=
- =?utf-8?B?LzVOKzBMRTlhRUZwb2lVNERmMGpnK3NPMXd3dGc0TGdUbFFzK3VnVVZSd0Zh?=
- =?utf-8?B?ZjhCNWJhL1h6N1NVdjV2ZHN1cEFrQTZ4QW82aVNudUh2U01VakwyL3Nxbm1E?=
- =?utf-8?B?VGx6ekhidWhUR0h2Vk9vYk85c2tXdDdSc1h6UjJ2WUJHK0FwMS9veXRjdTZO?=
- =?utf-8?B?UG1BTDVzMHc2b1VTdElSaTgyblNpQVE0RDl1M3NjcU45R2dZY3NLR3hLZmJm?=
- =?utf-8?B?ek1yTmpmTXUrdzJFdGlHZTk1NWZNdTlIanFrM3hsWGVubUJJdkNPVFpnbGVh?=
- =?utf-8?B?WXUza3Q2VFVKbXFlTkNKbkVyN3BWZ3hSSjUyeDRzSm1pMElRTHBldCtNM1kr?=
- =?utf-8?B?aHROa245Zjd0UDA1WGZDY1ZtbmExZnJwV3d6bHd2RitKMGlZaWhJS0VMWmVo?=
- =?utf-8?B?Y2g1WUpMSmwrVnJ0TFVLYVVzUzJYTVhCUWxscFd5ZlNPS1hvT0xkMC9XTUNB?=
- =?utf-8?B?am52Ky9raUJ1clVXMWdvQXk4bDdGeG44eml2ZkZxcGtqcEFnY2ZiTXN1dlNj?=
- =?utf-8?B?d01BaVhPb3FTeUtVYlA3NEszQmdGWS81T2l1V0hkQnd4YW1YdHl2VFdZZEVH?=
- =?utf-8?B?ME45OG11bmF5eENVT0dsUWMyQWpzVGQvamFxMEdlcWhDNTZyMk55TmV2ZW50?=
- =?utf-8?B?YzdkSXhqTGRNYkJyaThoUlI4TkRDYmlUTTh2eFpUdEVUZWllS21tVVZOQ0xN?=
- =?utf-8?B?L0JFOTE5OWhsWnBmNkFiWFZHTE5FaFpVRDZlaU9RWWwwY2FUc0dzdjREMitk?=
- =?utf-8?B?VkhnODRoeDdDek5xRFF4WUw0dzNzUmFpL0kxSUorL3lEV042dEs5Slh2dStU?=
- =?utf-8?B?dHV2aFVNTnpvYWdJb2crMm5MbnpjUDlNbk80SUpDNHlKRm1STG8zMDV2NFk1?=
- =?utf-8?B?dnFvYk9WS0hnQXVxbUx1UmtJbzA1eEJrcENOYlQ4bUVYM2t3ZVNQSnkrQ3Ju?=
- =?utf-8?B?Y3I2RGJxWjVNM1JablQ4MlNRYWJhdThqV1NheGF0MmFoei9IMTh3L1BDMURz?=
- =?utf-8?B?YktpTjhsZUt1cmMwdHk5NHh5cWpnNy9sdWgybjhxWVVDT0xYWGxEZjBMd04x?=
- =?utf-8?B?dWEydTNnUXFJZHpYc0RMeiszM0tzRHdYK0YvT2U5ZmpOdlZwYWFxeEgza091?=
- =?utf-8?B?Z1BhZmJ2NExiZ3IvUFUwM1c4bGxBYmR3OW9yOWJOOUtKdVVYWXAva0RTM0Nk?=
- =?utf-8?B?TGIyTlhLS1VTeis3eTdBdVpVd2ZmZVVoMDhOZ1Q3TmNmbTIzSTMxQT09?=
+	=?us-ascii?Q?xhnorcgoE81S8dwImL7/6oFuPXZv+E7ytMPtq7zN97U22G/UOv6o//WsPRRw?=
+ =?us-ascii?Q?gMfFSoWz2lGY/e4ZpV1JGSsXlBOabgfOxOBke/eARpv36Cww8PZh9Uny0GEH?=
+ =?us-ascii?Q?LCm1c7hEDXrs+KGQtKtFm7JC5wyD+myfeeDahoxdCYaxz2Zhq8zYMJ2UBxaK?=
+ =?us-ascii?Q?ee4C8yQ2/GQWBXT6Uypdmh+jaZd+r37MVb1rtSMZzVKg24P88h5hacTFV/me?=
+ =?us-ascii?Q?jo5D3n76X7z1unVbG71/HF9nNIVW7/H+3iHC1EYebFIfDyy9zkHwijHAKtqP?=
+ =?us-ascii?Q?MH2wxu0BzFaY0o6UI+wECpEzxDnvmKAC4pJF1s06KmNohS/lICdm56938TEO?=
+ =?us-ascii?Q?SmSlRqyZNX2tlzrk7U8PNkJYR2z3aRH8Q2qLkJNQVYiP8j8X2X8urXUZr8IU?=
+ =?us-ascii?Q?Lk98E0L9mKi7Opd7Qs0Kr2D3tJMn9OOsrPod+Rs7VvcLjpOC2XF8vkD4j0MO?=
+ =?us-ascii?Q?zrc77bj0eAQ87E9Gkxj4EWVUobkxcaNOj/ugJ5kQjhclY6oeD9TNAoQZxt5U?=
+ =?us-ascii?Q?QIBY9WDBb+hh42NxZr3qKE8CpXPTXaqgqpJMivpoxgOvkXXMflDojIxWd8wE?=
+ =?us-ascii?Q?fVQyYdDJ76GCZ8oLtTSMwW3sNCfWIN8tE7eZuxNvqFu6DVzIJMHeqkvJmel5?=
+ =?us-ascii?Q?zxWA3CqBTnBoCn8VtItZOVOzDWdxFyxzQeTioeLD2oU7apxrifuvX1xv/lB9?=
+ =?us-ascii?Q?kKAYpEVex7k8ZguSqly/0yFJwHzJ8u4JAwsXu/JnVKuE56RHOfJwV9u9lMDj?=
+ =?us-ascii?Q?VFDrWqXIhYkkMcdHLqT8Cnio96ZFU8GEOT3s5C0OuLWSzskzqlSXfXBdpKpT?=
+ =?us-ascii?Q?D+g+610wJWvv8G+wSvIY8y7zuZT9kn81b9lG1DuRWVL+SNqXj8lPzpJXh9Oj?=
+ =?us-ascii?Q?60oOEKws/25gDSV3B0V00UIxW5Swtqy+7yjc+vpJXW61qsBF5SjNn7tBe88l?=
+ =?us-ascii?Q?IEYZF0/P+Xsm71PmguRdSTKBz/nZpCzFqFjjQ4Qu1SeBEggmiF4ZOIgnd0oj?=
+ =?us-ascii?Q?+dCmErm8BKuFobE2diXeRSOrG9yM0wR3vceqSNmBEFSeIxg+4lOJWdKTkBi8?=
+ =?us-ascii?Q?1doF17ZhKqI6/fzOkFNZaYLLacoIAyfSuTAxA1jhaL4OkciN+rPlIg8T7J5S?=
+ =?us-ascii?Q?TC2GDRb0yrgWQBzsxuHQPcMuj4RSLzi9D4hQ/qbbSjWHy/QrVofshl8UMium?=
+ =?us-ascii?Q?W1amSHOVKsKol7z8qdaAhwWqBicB954300GpJcvVn4K+SwT1be9B0xAshV7K?=
+ =?us-ascii?Q?nDx9+ANJXgURkRzP0YfCPMfsaPOCDJzFTGa7YqSLarRHtb7ET8njfYwNO/KK?=
+ =?us-ascii?Q?LYBWonO9jw/Ub+J5yc7qz1GLz3P1CV76uF8Fe9DopbNIZqZGPla16DUbQrV8?=
+ =?us-ascii?Q?rzm1AAy+5RvPludbAmWhL5gjPCjhqQVxsFsJxBcZtPjFdsAvMit7yITeS4Sp?=
+ =?us-ascii?Q?BSI06F6WXtFvD1j2jj2QfUgCj4sqkoqjR9pnDREy73AhPvGBrrhs/PQcHMMh?=
+ =?us-ascii?Q?zbeNx+AUPAGptutqhUJQPg/+Rs8ojEk5EdkzVooFBhlB9MPMLBSz6C5z05/H?=
+ =?us-ascii?Q?TLbVOMKVrFEzYd+948Mjcl/63mjmDjRzUzALugL7VyWuDYigNuOj9bucwOzu?=
+ =?us-ascii?Q?SIwPZDJyUIgw7PcX4OG6hwF+lI1GZsh5ABgPz5lEMXnlyt3TCefJyo5lcH8P?=
+ =?us-ascii?Q?nuWY+haN4fbtLoF4U0ciagHXVX6ECJnELSCDR6jd4tJcTHu+1zlkRr+IiXDP?=
+ =?us-ascii?Q?Q9bvglhisg=3D=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8c774ff8-9518-496b-2f0a-08de4e83e8f2
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7f341bad-139b-4d9c-43d5-08de4e8ea1c2
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jan 2026 07:02:39.0875
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jan 2026 08:19:24.1180
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: G5TYEnu8FjbkRr4DQmN74S6ksbNxomnCDwPXFDFSl3YCZmVGad1JTKy9aJWYrQlrV9BgGbWUFNoQFNg1VAaumQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR10MB9012
+X-MS-Exchange-CrossTenant-UserPrincipalName: fh7jGQjzxQnq/m+wJhCD3L1hhjAMX7gJBzS3irnKLucon769VxoH5z1kKKVrOs/Sy1EfyvIvfKgEvI3snnmCTw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB6978
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 08 Jan 2026 07:02:49 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21433
+ <cip-dev@lists.cip-project.org>; Thu, 08 Jan 2026 08:19:29 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21434
 
-Hi all,
+On 13.10.25 16:46, Greg Kroah-Hartman wrote:
+> 6.12-stable review patch.  If anyone has any objections, please let me kn=
+ow.
+>=20
+> ------------------
+>=20
+> From: Jan Kara <jack@suse.cz>
+>=20
+> commit acf943e9768ec9d9be80982ca0ebc4bfd6b7631e upstream.
+>=20
+> When orphan file feature is enabled, inode can be tracked as orphan
+> either in the standard orphan list or in the orphan file. The first can
+> be tested by checking ei->i_orphan list head, the second is recorded by
+> EXT4_STATE_ORPHAN_FILE inode state flag. There are several places where
+> we want to check whether inode is tracked as orphan and only some of
+> them properly check for both possibilities. Luckily the consequences are
+> mostly minor, the worst that can happen is that we track an inode as
+> orphan although we don't need to and e2fsck then complains (resulting in
+> occasional ext4/307 xfstest failures). Fix the problem by introducing a
+> helper for checking whether an inode is tracked as orphan and use it in
+> appropriate places.
+>=20
+> Fixes: 4a79a98c7b19 ("ext4: Improve scalability of ext4 orphan file handl=
+ing")
+> Cc: stable@kernel.org
+> Signed-off-by: Jan Kara <jack@suse.cz>
+> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+> Message-ID: <20250925123038.20264-2-jack@suse.cz>
+> Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  fs/ext4/ext4.h   |   10 ++++++++++
+>  fs/ext4/file.c   |    2 +-
+>  fs/ext4/inode.c  |    2 +-
+>  fs/ext4/orphan.c |    6 +-----
+>  fs/ext4/super.c  |    4 ++--
+>  5 files changed, 15 insertions(+), 9 deletions(-)
+>=20
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -1970,6 +1970,16 @@ static inline bool ext4_verity_in_progre
+>  #define NEXT_ORPHAN(inode) EXT4_I(inode)->i_dtime
+> =20
+>  /*
+> + * Check whether the inode is tracked as orphan (either in orphan file o=
+r
+> + * orphan list).
+> + */
+> +static inline bool ext4_inode_orphan_tracked(struct inode *inode)
+> +{
+> +	return ext4_test_inode_state(inode, EXT4_STATE_ORPHAN_FILE) ||
+> +		!list_empty(&EXT4_I(inode)->i_orphan);
+> +}
+> +
+> +/*
+>   * Codes for operating systems
+>   */
+>  #define EXT4_OS_LINUX		0
+> --- a/fs/ext4/file.c
+> +++ b/fs/ext4/file.c
+> @@ -354,7 +354,7 @@ static void ext4_inode_extension_cleanup
+>  	 * to cleanup the orphan list in ext4_handle_inode_extension(). Do it
+>  	 * now.
+>  	 */
+> -	if (!list_empty(&EXT4_I(inode)->i_orphan) && inode->i_nlink) {
+> +	if (ext4_inode_orphan_tracked(inode) && inode->i_nlink) {
+>  		handle_t *handle =3D ext4_journal_start(inode, EXT4_HT_INODE, 2);
+> =20
+>  		if (IS_ERR(handle)) {
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -4330,7 +4330,7 @@ static int ext4_fill_raw_inode(struct in
+>  		 * old inodes get re-used with the upper 16 bits of the
+>  		 * uid/gid intact.
+>  		 */
+> -		if (ei->i_dtime && list_empty(&ei->i_orphan)) {
+> +		if (ei->i_dtime && !ext4_inode_orphan_tracked(inode)) {
+>  			raw_inode->i_uid_high =3D 0;
+>  			raw_inode->i_gid_high =3D 0;
+>  		} else {
+> --- a/fs/ext4/orphan.c
+> +++ b/fs/ext4/orphan.c
+> @@ -109,11 +109,7 @@ int ext4_orphan_add(handle_t *handle, st
+> =20
+>  	WARN_ON_ONCE(!(inode->i_state & (I_NEW | I_FREEING)) &&
+>  		     !inode_is_locked(inode));
+> -	/*
+> -	 * Inode orphaned in orphan file or in orphan list?
+> -	 */
+> -	if (ext4_test_inode_state(inode, EXT4_STATE_ORPHAN_FILE) ||
+> -	    !list_empty(&EXT4_I(inode)->i_orphan))
+> +	if (ext4_inode_orphan_tracked(inode))
+>  		return 0;
+> =20
+>  	/*
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -1461,9 +1461,9 @@ static void ext4_free_in_core_inode(stru
+> =20
+>  static void ext4_destroy_inode(struct inode *inode)
+>  {
+> -	if (!list_empty(&(EXT4_I(inode)->i_orphan))) {
+> +	if (ext4_inode_orphan_tracked(inode)) {
+>  		ext4_msg(inode->i_sb, KERN_ERR,
+> -			 "Inode %lu (%p): orphan list check failed!",
+> +			 "Inode %lu (%p): inode tracked as orphan!",
+>  			 inode->i_ino, EXT4_I(inode));
+>  		print_hex_dump(KERN_INFO, "", DUMP_PREFIX_ADDRESS, 16, 4,
+>  				EXT4_I(inode), sizeof(struct ext4_inode_info),
+>=20
+>=20
 
-Kindly be reminded to attend the weekly meeting through IRC to discuss
-technical topics with CIP kernel today. Our channel is the following:
+Since this patch, I'm getting "inode tracked as orphan" warnings on ARM=20
+32-bit boards (not qemu, other archs not tested yet) when rebooting or=20
+shutting down. The affected partition is used as backing storage for an=20
+overlayfs (Debian image built from [1]). Still, systemd reports to have=20
+sucessfully unmounted the partition.
 
-    irc:irc.libera.chat:6667/cip
+[  OK  ] Stopped systemd-journal-flush.serv=E2=80=A6lush Journal to Persist=
+ent Storage.
+[  OK  ] Unmounted run-lock.mount - Legacy Locks Directory /run/lock.
+[  OK  ] Unmounted tmp.mount - Temporary Directory /tmp.
+[  OK  ] Stopped target swap.target - Swaps.
+         Unmounting var.mount - /var...
+[  OK  ] Unmounted var.mount - /var.
+[  OK  ] Stopped target local-fs-pre.target=E2=80=A6Preparation for Local F=
+ile Systems.
+[  OK  ] Reached target umount.target - Unmount All Filesystems.
+[  OK  ] Stopped systemd-remount-fs.service=E2=80=A6mount Root and Kernel F=
+ile Systems.
+[  OK  ] Stopped systemd-tmpfiles-setup-dev=E2=80=A6Create Static Device No=
+des in /dev.
+[  OK  ] Stopped systemd-tmpfiles-setup-dev=E2=80=A6ic Device Nodes in /dev=
+ gracefully.
+[  OK  ] Reached target shutdown.target - System Shutdown.
+[  OK  ] Reached target final.target - Late Shutdown Services.
+[  OK  ] Finished systemd-poweroff.service - System Power Off.
+[  OK  ] Reached target poweroff.target - System Power Off.
+[   52.948231] watchdog: watchdog0: watchdog did not stop!
+[   53.440970] EXT4-fs (mmcblk0p6): Inode 1 (b6b2dba9): inode tracked as or=
+phan!
+[   53.449709] CPU: 0 UID: 0 PID: 412 Comm: (sd-umount) Not tainted 6.12.52=
+-00240-gf50bece98c66 #12
+[   53.449728] Hardware name: ti TI AM335x BeagleBone Black/TI AM335x Beagl=
+eBone Black, BIOS 2025.07 07/01/2025
+[   53.449740] Call trace:=20
+[   53.449757]  unwind_backtrace from show_stack+0x18/0x1c
+[   53.449807]  show_stack from dump_stack_lvl+0x68/0x74
+[   53.449839]  dump_stack_lvl from ext4_destroy_inode+0x7c/0x10c
+[   53.449870]  ext4_destroy_inode from destroy_inode+0x5c/0x70
+[   53.449897]  destroy_inode from ext4_mb_release+0xc8/0x268
+[   53.449936]  ext4_mb_release from ext4_put_super+0xe4/0x308
+[   53.449962]  ext4_put_super from generic_shutdown_super+0x84/0x154
+[   53.449996]  generic_shutdown_super from kill_block_super+0x18/0x34
+[   53.450023]  kill_block_super from ext4_kill_sb+0x28/0x3c
+[   53.450059]  ext4_kill_sb from deactivate_locked_super+0x58/0x90
+[   53.450086]  deactivate_locked_super from cleanup_mnt+0x74/0xd0
+[   53.450113]  cleanup_mnt from task_work_run+0x88/0xa0
+[   53.450136]  task_work_run from do_work_pending+0x394/0x3cc
+[   53.450156]  do_work_pending from slow_work_pending+0xc/0x24
+[   53.450175] Exception stack(0xe093dfb0 to 0xe093dff8)
+[   53.450190] dfa0:                                     00000000 00000009 =
+00000000 00000000
+[   53.450205] dfc0: be9e0b2c 004e2aa0 be9e0a20 00000034 be9e0a04 00000000 =
+be9e0a20 00000000
+[   53.450218] dfe0: 00000034 be9e095c b6ba609b b6b0f736 00030030 004e2ac0
+[   53.730379] reboot: Power down
 
-The IRC meeting is scheduled to UTC (GMT) 12:00:
+I'm not getting the warning with the same image but kernels 6.18+ or=20
+also 6.17.13 (the latter received this as backport as well). I do get=20
+the warning with 6.1.159 as well, and also when moving up to 6.12.63=20
+which received further ext4 backports. I didn't test 6.6 or 5.15 so far,=20
+but I suspect they are equally affected.
 
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=2026&month=1&day=8&hour=12&min=0&sec=0&p1=224&p2=179&p3=136&p4=37&p5=241&p6=248
-
-USWest    USEast    UK        DE        TW        JP
-04:00     07:00     12:00     13:00     20:00     21:00
-
-Last meeting minutes:
-https://ircbot.wl.linuxfoundation.org/meetings/cip/2025/12/cip.2025-12-18-12.00.log.html
-
-* Action items
-* Kernel maintenance updates
-* Kernel release status [*]
-* Kernel testing
-* AOB
+Before digging deep into this to me unfamiliar subsystem: Could we miss=20
+some backport(s) to 6.12 and below that 6.17+ have? Any suggestions to=20
+try out first?
 
 Jan
 
-[*]
-Date the data is created: Thu Jan  8 07:01:35 AM UTC 2026
-linux-4.4.y-cip: interval 30 day
-  latest version release date: Thu Jan  8 02:18:47 AM UTC 2026
-  limit date: Sat Feb  7 02:18:47 AM UTC 2026
-  Status: On track
-linux-4.4.y-cip-rt: interval 60 day
-  latest version release date: Wed Nov  5 10:07:00 AM UTC 2025
-  limit date: Sun Jan  4 10:07:00 AM UTC 2026
-  Status: *Late*
-linux-4.19.y-cip: interval 30 day
-  latest version release date: Wed Jan  7 03:16:59 AM UTC 2026
-  limit date: Fri Feb  6 03:16:59 AM UTC 2026
-  Status: On track
-linux-4.19.y-cip-rt: interval 60 day
-  latest version release date: Thu Dec 18 11:41:27 AM UTC 2025
-  limit date: Mon Feb 16 11:41:27 AM UTC 2026
-  Status: On track
-linux-5.10.y-cip: interval 30 day
-  latest version release date: Wed Dec 10 10:14:17 PM UTC 2025
-  limit date: Fri Jan  9 10:14:17 PM UTC 2026
-  Status: On track
-linux-5.10.y-cip-rt: interval 60 day
-  latest version release date: Fri Nov  7 09:45:57 AM UTC 2025
-  limit date: Tue Jan  6 09:45:57 AM UTC 2026
-  Status: *Late*
-linux-6.1.y-cip: interval 30 day
-  latest version release date: Tue Dec  9 09:48:21 PM UTC 2025
-  limit date: Thu Jan  8 09:48:21 PM UTC 2026
-  Status: On track
-linux-6.1.y-cip-rt: interval 60 day
-  latest version release date: Wed Nov  5 06:50:13 PM UTC 2025
-  limit date: Sun Jan  4 06:50:13 PM UTC 2026
-  Status: *Late*
-linux-6.12.y-cip: interval 15 day
-  latest version release date: Tue Jan  6 02:25:59 AM UTC 2026
-  limit date: Wed Jan 21 02:25:59 AM UTC 2026
-  Status: On track
+[1] https://gitlab.com/cip-project/cip-core/isar-cip-core
+
+--=20
+Siemens AG, Foundational Technologies
+Linux Expert Center
 
