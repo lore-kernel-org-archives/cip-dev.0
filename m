@@ -2,41 +2,41 @@ Return-Path: <tommaso.merciai.xr@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E6D6CF6AA2
-	for <webhook@archiver.kernel.org>; Thu,  8 Jan 2026 09:29:50 +0000 (UTC)
-Received: from OS0P286CU010.outbound.protection.outlook.com (OS0P286CU010.outbound.protection.outlook.com [40.107.74.65])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.3011.1767864588915271349
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B6A7CF6AA3
+	for <webhook@archiver.kernel.org>; Thu,  8 Jan 2026 09:30:00 +0000 (UTC)
+Received: from OS0P286CU010.outbound.protection.outlook.com (OS0P286CU010.outbound.protection.outlook.com [40.107.74.11])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.3012.1767864591212715982
  for <cip-dev@lists.cip-project.org>;
- Thu, 08 Jan 2026 01:29:49 -0800
+ Thu, 08 Jan 2026 01:29:51 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=HzZl3yh9;
- spf=pass (domain: bp.renesas.com, ip: 40.107.74.65, mailfrom: tommaso.merciai.xr@bp.renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=nUjzqBxB;
+ spf=pass (domain: bp.renesas.com, ip: 40.107.74.11, mailfrom: tommaso.merciai.xr@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MAoeBT86EzSyoTBV4EcX09sgquKvtB1e2ZATQWiYFP7q3BwBqOhoefVR/NAage6iDrJh/hIaJPaCGAqRG0vKcoChGNQ20ePVvn4RKLR6f7tC8mHHomA35PJihRc18TYVisBJwQUxlxzWesCBYGma1igS9vgBM5Ugqxd2fIqbMdhYsXlGoy0BsCDUvO8VkYIIR4RZt/plFKarMa/Edupo69aIbsdKStFwjfDF08BnU5OfvE7A9XROM5L6X5XS0Fojksu9itlZsFfzoV91oMe4Dks+4jvUzDH5N6pCEim+zspD5Q+nqd46uNkogUlyreVez58sArG/6xmtb1mWImlEXw==
+ b=xzJut6znfkzjWBpKHiX3/YZc2sK6NO9Ztufw0dqg1jlhub8KG193NmuHxdjvI7fqKTx32Qc98K5GyQ4Hti0GPza/6J+9kSDfDC5WRz3YWhIYwX62HQDh6vl3JuYpu3EU37UDffPpP5ight+kl8XtONjqPVItOR800dNI0vgXRgCS63c+VVnMGUEavFRyZjDNEDY5PIviQVRiawLiej7wY93jKN+DUPOxI0bqZ8M1UtH1jpaldh+j2mATDBR5951MF35CYL6B0UNT18RZetGgnoebazy7chZG7kRrC9/tueT0AphRX4jY+uK0xV0eo4gZtm+4n13Ih/xKxJOR77yA8A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JQ52TFnew2ScX61E9Lav1DCyEyEW0ZfMtJiIomOj3L4=;
- b=iNFoHtYOujCin5zTOXGBQ/ailOIw0BcBubnONVzQeD9QYxJ32oXe0tmtLsZttc6K4sNM8Kz9W/PzbF9st9tmtcNjyqh0mQzZBTG56QlxhPxB2DN6e+i6oc4aKNBz87av1KvMe1+SpR6tMUn/ynk8z/ERVG4pmxAnLLRXWc8LMfkF9OMisVT4ZqoSWJmTntTDn5C533DZSd98c7GX0kk/CACijSEIEav+fheEkQPy1Ts6yIwQ7Q8GMe5apWT0GLB+jFkgKPvRPUtEw1cOEUoblnKLLEk5SBRKdnX3tx9pNF0sZPrKykUJp70HYP2DGk7Zegg1x8F0zUbF58ndQ+/fSw==
+ bh=ADj1lK0OMFqILyu8pDtuWq/WclGmTL2Ly6MmLCrKcGU=;
+ b=XL0lbnbz4doXQygjuUggw9QvRSqvFliTX42PtAxIZwJT+3LE6YCZjlBRME7BUnNbB3EsW+6cUYyo88ChlyC5sKzCB9Y+yfpEQBVodzukGRc88XFnnp9Gxd3gVHrSvs65lo6e6tIMBZaHJulEEWNUZ9YEVPVgIj/k+X4r2GmxggpZRrA2DApEeChCxgiCB8L/2zg0xt65SilIAZdkd7ZexVjCIcwSz2/0Ik7gHi21thahTqDUgBN/Ig7ATTXAurcYqjCpwzO924JPed/HTKs6N2shbXe60aJTxnite9VWc+RORZHjt3MfVCnuEO9GAcs5iEYi4c/URafuQPIM1efCyQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JQ52TFnew2ScX61E9Lav1DCyEyEW0ZfMtJiIomOj3L4=;
- b=HzZl3yh9A2V0xMmAogeiqQ3TqWt5lT3K8nFN9io+xTw2Cvs2/oyC/GgeGdyJmmB3eEYvr2ZtbJg00gsgHoQc3kX0b8QH2YURMxhoS2oJYQIllPvSUM/RLDt/RwRfWdDxrhPnL5iCpaynN2uwlGUIDez3UYCddGVqiQ8Teo4Ls2s=
+ bh=ADj1lK0OMFqILyu8pDtuWq/WclGmTL2Ly6MmLCrKcGU=;
+ b=nUjzqBxBABwi0jsYSWv6hL+EgWGwWXrBNkKDjIivzZqVPb1t3d8issVyJyfdrfEth6O/QAISRZFCjogn+AQgzL41q1j6Rq7ZIFuQKOKhOF4qXB2sQk5zOevOPxacTZDJL/gn0R5vZeX90HHeo8rYpEblP4ulr9xV+Z1IaMXpKEo=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=bp.renesas.com;
 Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com (2603:1096:400:3e1::6)
  by TY7PR01MB14750.jpnprd01.prod.outlook.com (2603:1096:405:257::5) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9499.2; Thu, 8 Jan
- 2026 09:29:46 +0000
+ 2026 09:29:49 +0000
 Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com
  ([fe80::33f1:f7cd:46be:e4d8]) by TYCPR01MB11947.jpnprd01.prod.outlook.com
  ([fe80::33f1:f7cd:46be:e4d8%5]) with mapi id 15.20.9499.003; Thu, 8 Jan 2026
- 09:29:45 +0000
+ 09:29:48 +0000
 From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -44,9 +44,9 @@ To: cip-dev@lists.cip-project.org,
 CC: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	tomm.merciai@gmail.com
-Subject: [PATCH 6.1.y-cip 20/22] hwmon: (tmp108) Add support for I3C device
-Date: Thu,  8 Jan 2026 10:28:21 +0100
-Message-ID: <20260108092823.489287-21-tommaso.merciai.xr@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 21/22] hwmon: (tmp108) Do not fail in I3C probe when I3C regmap is a module
+Date: Thu,  8 Jan 2026 10:28:22 +0100
+Message-ID: <20260108092823.489287-22-tommaso.merciai.xr@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260108092823.489287-1-tommaso.merciai.xr@bp.renesas.com>
 References: <20260108092823.489287-1-tommaso.merciai.xr@bp.renesas.com>
@@ -58,172 +58,129 @@ X-ClientProxiedBy: FR4P281CA0364.DEUP281.PROD.OUTLOOK.COM
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: TYCPR01MB11947:EE_|TY7PR01MB14750:EE_
-X-MS-Office365-Filtering-Correlation-Id: f72dbb1e-0532-4495-560e-08de4e987611
+X-MS-Office365-Filtering-Correlation-Id: 5149553d-aca7-4f79-b487-08de4e9877d3
 X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
 	BCL:0;ARA:13230040|1800799024|52116014|376014|366016|38350700014;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?tvDCdisBQ+vKWhW37AMvrZi3DiWB4oAfPL8tDxzN8Efkv7H2H7Y87LNUgQsJ?=
- =?us-ascii?Q?bRYc81pO8KxYeMiBPIB0udqdFy52s1FulOf7CVqs5OMvdxuA90RQtdUlEw/E?=
- =?us-ascii?Q?ww8ucordvsLYvgIAsXrGsir85DPO66D2cOx7aOf0kaXZ1mPW8Lt3QKTus04p?=
- =?us-ascii?Q?29I/VSf//j7zYXdjIXMLoH9ViKRxBXUKMxRkm4mHHpu/dVqW+8/LuKD1Ax6V?=
- =?us-ascii?Q?cBRf/Cj8NXJ4U91xbA4gSxrsRxfiIA5LignsHqy2lXeE7iJSzxcRWIqqx/D6?=
- =?us-ascii?Q?75HlHO+pTZZuDacpT2Tj97ZZfhnYnRHaZBUudY1YPx9P6zN3lVK0aBSBKxhp?=
- =?us-ascii?Q?6h22GPvPtEyHIALNqm7e92OVTCBLVJIzRolcWimpML8EqftDD3d+NigY5iDQ?=
- =?us-ascii?Q?ZIgEQXzY7ciYjZGEyXGdeIxyImgIvgUw62hB8674GmNX0hs7PuSCWxhf0V9t?=
- =?us-ascii?Q?t8Ft8oiMjzdpzj5L41X0rA4v62g4dkegSpQ+KHyC6t8f24aMbrPXP9dRY0Qq?=
- =?us-ascii?Q?Vq1H7EhmGuXuBZM4p9gXGSbdrLSo9oWKkTjd5U2yRIbGofeQ8DojofNAkNJM?=
- =?us-ascii?Q?9nGhpW6KituD3YTXmFTs8AMwjxdHNI80C6g2+5xgtNaCdcB0RjVdaa1ur6tM?=
- =?us-ascii?Q?mx3uAib9vXkPka0+oqDcuoMxKMNcRcJocqdwp26+QuRz5VUbUDFxu7/kd//L?=
- =?us-ascii?Q?u8icM/1h1TUGLfmzYKtMOAw7dUAsEqTm2U7NbNTjzuR5lSUDUCagoyVSM6oC?=
- =?us-ascii?Q?qv2y/J2/nFjjPWZpLAjC+wVbhojwj7vaW9bHYffAIX1XWOmti38NNk35dubI?=
- =?us-ascii?Q?F/gQhPdek8b/VCDk62cGndxNSd694TDL47eDjxKQcYwKj/i8JmCx1eqYLz1S?=
- =?us-ascii?Q?rX1LzCBlzuW/e1M4Xtqdk1z/M1RJrmi99ScsZ4I34FFzdgOrhgnUu9eLL2Lt?=
- =?us-ascii?Q?P1mPdkHsN7NRkx09Kh46dm45on4VKfEiL9a63DGA+IBFNMch2BzoXYHbBKI/?=
- =?us-ascii?Q?Byv/uSBnPyvjZ/3wupIakPk/eXWl+Aj6QvDnRyDeKQuL44bW0RTGahg9mM8+?=
- =?us-ascii?Q?rdqwM+RJ/8/SufWNtxXkOziF0KGm3rJD/EaoMtculGSyOe7VaKCgw+zmoLdB?=
- =?us-ascii?Q?3mrxB7Loe5F5TEvTdYTuX/9+b0t88iUqIZe6fq0bI9VIuuLxvBqmEKRIsdfD?=
- =?us-ascii?Q?+l4lODEvSUY3LOSrsM+4ak1pQOBm6mFk20vtm+YbQbEsnx9MhzdPoL1wDkaq?=
- =?us-ascii?Q?D+VBJ2rUUExtHGPPo18LankXVzmK13cH9/CrehPgYI03+iVjg6EcwQ3VA/AF?=
- =?us-ascii?Q?ckkdF0jDzalTN2+dKpshRk6g6MdCwTg/caJiWvFx1UwUD8zPyCATSzZFLSmo?=
- =?us-ascii?Q?UPtG5CmpUm7Y/DrdIMYsMX9QozULBO1jV3uqQSCjfRJ6OpMQ1arSHVax5VZt?=
- =?us-ascii?Q?2Ve8wN0oXHRr5SvEkfYrYpYLVDIHWdD0bPICaRfMXFMq8c3vwMWGUYEi1CVP?=
- =?us-ascii?Q?CBLETGfl9fGR63DkxE8+aLs74npOx6POx9KM?=
+	=?us-ascii?Q?Gi8TlcZZmMO5SoD+b02sr3x1oL6y/LyPhgMsFA2MDBNEJLzNKS4hrXjmtshm?=
+ =?us-ascii?Q?5pY/MmS43AwSDuXmMmvYAb9j3ma6wNSnX4b6ittbfNdiIEJPas2tWFUmFXE/?=
+ =?us-ascii?Q?4NIPVNoX53Vbrf7qWSM2AyLrdUoVzRbGCAgAKiVxvwI238fqTXasOGSYhhYI?=
+ =?us-ascii?Q?xo5oyea5wWOarnxG2+xdbZyffSwjuCQrYLGu82D/EtOilZfB4faWgyEpCiWI?=
+ =?us-ascii?Q?PRR7De+7YI+p8+8DYZ493woTTayS/NKmhJdrsZ8Ci5DQU9dyJKHs2G70V0hH?=
+ =?us-ascii?Q?6y9O4WLh3p8uMTXfj/owV28CQ6/6GbPhfESWmk/FDexnaLJ3qT35PhkPnajr?=
+ =?us-ascii?Q?avPFTwSYYtaFG/VJUBFAtTTpivzIwSiIYQMD6JykHLiavixNzLBZPvvXbMwQ?=
+ =?us-ascii?Q?1QutCXdSSARvPBSi4I84bR50VceUGQSNc6vjZrrdOg82rbuq8gLOjBBC4lXT?=
+ =?us-ascii?Q?nJTmHiGRfPxvITC0AQzMrxOM8mjSRcodxXPC6NWHupJXsw+Q7oD+UtmZ4t9Z?=
+ =?us-ascii?Q?qQyQwd+4AP7IcsQc2oTdXRCQL2UVW4wvpsp+9vWn7r/kcoyhIMq76HeSz7zH?=
+ =?us-ascii?Q?INm+BC7jZ659q5FED2e9+KELf1gKJBmd9oRmFWF0gihaujr27BCipbf8AK5j?=
+ =?us-ascii?Q?5UNtsd1FICnImoRHoskNM3sbyiMCpUJ3LcQ/oidUF/KKD0kowf81PdMve2HT?=
+ =?us-ascii?Q?wlOtiuaIb6zohnv6NcqehoBubx8xruPaZ+IhN0HUwDqoIZ8D33K68oi5qgyN?=
+ =?us-ascii?Q?gB15oMZ2JkzMZ2s8zD5j7PNXzDovaURL7qeG1/Uic+yzz7n+1QSJSrH9TLrR?=
+ =?us-ascii?Q?YeL4VXG07Uj5pDeOYqcYDCl6ubWxIaqPTYPKeUoskvOyQwWrG55fK+DMByYW?=
+ =?us-ascii?Q?cIaQKGluOLEP1l4aXizydf7UzD28oOPrZR2unmq3IqwgiYt6koJHG67rE9/o?=
+ =?us-ascii?Q?eW22u/gVuULK+2lcZdb0hlAv66BJOKXDmBraKX58EhhZ3yTlukCfJqEs5gHn?=
+ =?us-ascii?Q?Kpm6Xq/LMVUlM+60GZUIqNUnS8mZlbz97bPv0vdfXMjYsajUL6PEDN+UQMZL?=
+ =?us-ascii?Q?Bc3Incp2M+XZPKu/UPjzXtIyQzVaGapOXhKBLcxySJzUHAyt131BSg6IFkcU?=
+ =?us-ascii?Q?hojyLiiSvQe7fn6v6WfOTD7Nd+uyKnUT+nTfYXVni7zXIMQJHZ7JChBPh2Ui?=
+ =?us-ascii?Q?ubjxZeXvogcBxhk5zva+KfDFyZv0r+SkmLIn6tubCrQc+xG8fBzZyQrRt2UV?=
+ =?us-ascii?Q?C2PObo5z1fOI6dx3gUNpyCgwo3zAwtssOmgAJMFbO/ViGJFTptD1KnCRSGdG?=
+ =?us-ascii?Q?6Bdf0JWBPE065k2PhOWN98n+KHkIOcWWeIal2XniaEIlWdZUzXmCcw3QctrN?=
+ =?us-ascii?Q?i9ie2IU8g5RJ/4WROY8NX4Qc3dG/kCYq99h06yp34iqCzdBDWS944tfPfVnG?=
+ =?us-ascii?Q?hVPkbRwJltca7uYizaMXq/V8Myd9JMFZbqPWG5DS1gN8bbp5joOAaGit9hOB?=
+ =?us-ascii?Q?w1kUEWlxnXBACnjVzcEjTHpDav3YJX/6KAQo?=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11947.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?GdjJblKpT3OZhakWqcPitLtS5fNmvtRqzE/MwwJCO9rWgHxPXX8PBC1Gl/Ht?=
- =?us-ascii?Q?Ve+3QfcGtiLOO0X8sEFb3Sx0fACmZYDu1tKWf7bMEa24FeDGnCmiWTJaK4Tk?=
- =?us-ascii?Q?S3M/oEpQ0TQTBtZt86dkEohu0/WhVCv/UNt8fPyOu9D6CPxKQpgtGCDHH3l/?=
- =?us-ascii?Q?KJIuiZmDQMs3dWKeunjIR04bZsfPFZydU06gkPiEzIH3N9yvaJYGvA2ycuWe?=
- =?us-ascii?Q?Q8x+bcxgYLK2WZbu/niKo36OTSrTPpK8M6jGvZLK0OQliXW5sIrEDOPPjEZ+?=
- =?us-ascii?Q?yrjwfOPt0xrKAmBs/4B/gU41zWBX2369Cmu0+3TBeP2MmaVk/z45q74oSlJB?=
- =?us-ascii?Q?qMC5xohwNRh9Euyyrcf8UIFguYKJAHoq340aFygqa173GyqEh78ttLJKzxdd?=
- =?us-ascii?Q?ErkrVbR+x0N3UXhsDpMWFi8pV8wdsJOL8Xe+/+2LCvydGDMbVcBLWUSgEL4k?=
- =?us-ascii?Q?whNfrcf2kXVeiylaWnqFZUSoI09dmfiEt0sVKiDaT8T8zLXxwoOUJig+yzb1?=
- =?us-ascii?Q?+Rda99r741smOBinR9TD5nDsNVtCen4E3RMc52tf67wIp6MjBdgbKKTPwecn?=
- =?us-ascii?Q?a6N5AleScpfyoIil7NwggewQV4XRJ38MJ/XWsWvONRn7SOOXKj5oIFA+EuBi?=
- =?us-ascii?Q?CIJtHJhsk7kiB+bx5cbZARK67lMho4FC5qgAFporFzs50b/W5bTyB9KHsPLM?=
- =?us-ascii?Q?j0qUGyc0c3Q1NYkrXPmf9E1Z/QfxwL0hiM60IpRamFwAPFHw0jx+qdyGRxsV?=
- =?us-ascii?Q?2zXM4ISimKPtetWG8H15xk17bnsuqVB68iW3OHdbG2lV7mdSMN2BfIdIU2iO?=
- =?us-ascii?Q?G98QUchwKPM3YWNlHDjMu3z/j4BSd9Rsw+vuKQSpfXF3EQnM2F7fXhdIhbMv?=
- =?us-ascii?Q?+KwNcblMQ/7zNOhj6n4D96mlT/lwNmR0X1qla3sWsjAU6sv+9fDsz57/qxXb?=
- =?us-ascii?Q?GaCeiReqHjDfIobID41q+WGb94HfpIj7HHXsoUep2LZ30plWQRc7mF5T1hhA?=
- =?us-ascii?Q?6yJsmgS6NWF7IUUWSknJ6soQS76WpBeFCDl3D7QC+AhNLsgvXvwt722LcaM+?=
- =?us-ascii?Q?x1EVD8r6T0vSGkLLIdljJ3/G5VGyfKQkV7AAfXtZ26ueJ+dH33eWsWNjW/42?=
- =?us-ascii?Q?b7ougCMt0lnkOJIzOnTb/rP7t3xeJIK5Z/Iy/xcy9coY1ybFOjLAlOw1R7+O?=
- =?us-ascii?Q?DMbrf3HzlnL4A45AdwHMj7C8ByMz8E/W4D8wBVRxeMIFRJ5HqRgdUFCxDxvq?=
- =?us-ascii?Q?Un0NWneH1YTj3Yd8dtjZ3vq9D090LFp2uLrZrCy/WieXlpffVXflPuKcM68k?=
- =?us-ascii?Q?2xE7AGaMcCiJeIdpLmCD98Z9jvjHxlibu1EG+HEL622BbobGJoFSGc0qdRlZ?=
- =?us-ascii?Q?YPcb0Ji63JPzuJuNo7ehHriSNvkSg9darp7KKVmihDnTJ3+m4raQDXkgdMuO?=
- =?us-ascii?Q?7yjJV8PrUlZ1qiF6ybAnByHCH9UE0YtLufu0wZ+v1chlplLUoZKXZ/oDV6TB?=
- =?us-ascii?Q?WtamDSV5XDuYHNIpONayLVE0JJF/ROplaThI69KsyiTUuNhXm84w70VFEv3V?=
- =?us-ascii?Q?i5oRvfRtkKqVI5GguPzCr13by30feihVpdYdzEiyss4vq8OgYFI+lxrCeUxp?=
- =?us-ascii?Q?CMTnqZFs/E7hkXPZBDFv66XjPSjy7AIiyxuSrlex0oTdS1kazDO18dqiiY7x?=
- =?us-ascii?Q?RQnwKpPy06iWY8EEXoqCtAP5YGS5BevgmeAPjg9TTqu2Dnd1/ZCTW608J//e?=
- =?us-ascii?Q?GGlnDS+IAkymB31efEVmX9AT+BbEFqwAmgfTATWADF9737j9Ayq0?=
+	=?us-ascii?Q?QE4762UAh1aMrO4U0Ddy6cPGbHujwzwCTCnmUmGxfZzWoE9c3PjAfnrkr8Xu?=
+ =?us-ascii?Q?3V8u2FSKqz3rRKXbT7Q6k8N4Tt5AjtfDYg369ibB63NHG0H0LeJ1dspnVk7u?=
+ =?us-ascii?Q?z6hA6YV7jdBo9O1YSO/lJyK2PH1WkOpEYO8Il8Ka6HtsKExcw7aROR9fJ/I/?=
+ =?us-ascii?Q?4oup9mxWyT8stH3ubjTevMMfIB0s0jrO/Jq+CaIvZxqJPCGUb8l//9ru6b44?=
+ =?us-ascii?Q?rss4p/3ppB8aYn3hRFgpevt0TbbwX0pvJ5jW61jGtu7OpQkdnVGQLrpt9+ZS?=
+ =?us-ascii?Q?VsIW9lmN81TOLI6q+LDGZRhgceGgqq5F7B7xSv+4VMARpV8O285tkDjlXsQv?=
+ =?us-ascii?Q?WeK9lVfAiH69hWg7tZPOYeWtwtKT7JmKQrW4qPzQKtHoeO92gt6/JgZ/N0v0?=
+ =?us-ascii?Q?LdkbuLilF9nBDoVXFeAEx+95VUf7iTEsgtdNGPRfykXMyKmm2o1fpxZqb3RE?=
+ =?us-ascii?Q?NcBiDDaGNoLQSh6OVUidlBpl5rRWE9f+lwXlu49MpPe1Kc2b4xABi1lGJrdq?=
+ =?us-ascii?Q?dge2Ct+onZWx4fjqE88G9m4moV53nwWGYyx6iXl2WPjFr3y/cmz3uDUaV/Ix?=
+ =?us-ascii?Q?77sq5KZhyHQx+hoxe8otBzcgnzrXMbHz07WCRxDZbFRAkQ3BYgZsVBxXqZue?=
+ =?us-ascii?Q?Yne/mlJRRWCU4L8KUM/VxIQHGoAo3pVvMcL1aFeXOp+8AClvZ1XZzDh0qP39?=
+ =?us-ascii?Q?Mj7McvZYoKBy1w9O2if5ogQZ3V6+OcV9HZ8H/B483M6XK1bfqrYxO32BWMZi?=
+ =?us-ascii?Q?v9kM5dOj7ecSHv2yQQlkhV4ROg0BQs/tkxeaLWaY6SWaPYPa/5PXMzKeqKsa?=
+ =?us-ascii?Q?Lryi3u842ffQmqH08nxqIDEgfs9uwt/5tnlOyngn/r4bkqNhazkmCXtph9uB?=
+ =?us-ascii?Q?CPkkltBx6KLkoS5LamRDobu+R5HXXdv8YX4v0GSwPktZPVvOlbwJFLpQQznK?=
+ =?us-ascii?Q?k7D9uAwfA3rzbA1sik2iTkh7IeqaYYeAeCzCl7YSsekyRHB8HY8ho0DrnGGT?=
+ =?us-ascii?Q?YkV5+UWC/PNr09qUWGEQKowCSEvEim7gkNpa/nLhKd/TX/27XX7pyckm3E/H?=
+ =?us-ascii?Q?tSFWUt4S+T5Hpb0sNvuOc7LnjfzydmyTn6e78t+lz6K78kIFogTybCj/xRfw?=
+ =?us-ascii?Q?MlDQVxGeg3mRi8o/XG60JVyWude5gpe3sVoDx+xG5LsCIilpLGKYmM/URsXh?=
+ =?us-ascii?Q?F1OanPc+AfpqgnOLtnYqqQAVIaAdjfaVaylDw5xBc8048qR6tYB3mI55zssM?=
+ =?us-ascii?Q?bKeF9gdd/wMeLmo+DBRZ9rW1lOrn63+kPwMxIqishoGHVUiltWZ0piostnhD?=
+ =?us-ascii?Q?Uip+t+zmq6cEMfv4PeOtCOrKxWU/erwsjENxvdWt5ukKdZXd7YJUvy3bQjw6?=
+ =?us-ascii?Q?k+T1axBiJovMyCqhGkFeiFZO2FEdnQ0FW6C8Er7h9VvGmREJ9g51RemQG8JL?=
+ =?us-ascii?Q?5EnAE1P89Nbgu1/4TROI6m0ewA3+4ELTR0GvFeQBpKKn1yuUl69tYFQaS32Z?=
+ =?us-ascii?Q?uBnMoF6Sq4O8BIje+uE6usmrPylQXD2+c/GSh0qrfmgrduD5pMoBsNYIycOF?=
+ =?us-ascii?Q?e92It3tnjouWwlmug5IqfdlaSMJVD7OW76ldda8tFioLY4OlRsm8gIDxWclJ?=
+ =?us-ascii?Q?MWCRYeW/Luy85T6Fw/0ImLwGeW/SZrhXJPkimmcJGUDPbsAaivlv31E3TQU9?=
+ =?us-ascii?Q?PFprHY4eydHxYZ7rU8V9844o4jDNOLZWdiHwaDYPrBaSCLZwhIsjIgjDrdhz?=
+ =?us-ascii?Q?JrotUhnpHLLWE38uuK9M8uC6bRqQ1/LpyDKGwFFPDzixQBCbiYte?=
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f72dbb1e-0532-4495-560e-08de4e987611
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5149553d-aca7-4f79-b487-08de4e9877d3
 X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11947.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jan 2026 09:29:45.9070
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jan 2026 09:29:48.6553
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /oAnLVsFEewlwvO02vesOEdY/PadoiLjKL6uf9P9QTtW/PnEDazfcBLGHSrPC2LGY3PznanEz0DHt9ILz8+DMYii0AiM/TnBLwS1vIzy+3T5tvuUOWOGD5hRICAAKyyS
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1x2K2kiWvTpyFyJyUnnagYwzTv1Sbd+CeB3yBolKibPZX64HdqP4K5BVe0S+CfhKUcrc6Rf1ZDmjISBJlaY0UJRS/2Relst2hsqHrkpPxDcxyNfZUPK7WFcMFlx7lH/q
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY7PR01MB14750
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 08 Jan 2026 09:29:50 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21456
+ <cip-dev@lists.cip-project.org>; Thu, 08 Jan 2026 09:30:00 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21457
 
-From: Frank Li <Frank.Li@nxp.com>
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
 
-commit c40655e3310649866c4ebf7a10f0d53802ebdfa9 upstream.
+commit 8281d627905dc72241ca3969ee18f3e029e96d00 upstream.
 
-Add support for I3C device in the tmp108 driver to handle the P3T1085
-sensor. Register the I3C device driver to enable I3C functionality for the
-sensor.
+I3C device probe fails when CONFIG_REGMAP_I3C=3Dm:
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
-Message-ID: <20241112-p3t1085-v4-2-a1334314b1e6@nxp.com>
+	p3t1085_i3c 0-23615290090: error -ENODEV: Failed to register i3c regmap
+
+Fix this by using the IS_ENABLED(CONFIG_REGMAP_I3C) macro in the code.
+
+Fixes: c40655e33106 ("hwmon: (tmp108) Add support for I3C device")
+Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Message-ID: <20241121121819.393104-1-jarkko.nikula@linux.intel.com>
+[groeck: Remove #ifdef entirely; it is not needed due to dead code eliminat=
+ion]
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 ---
- drivers/hwmon/Kconfig  |  1 +
- drivers/hwmon/tmp108.c | 35 ++++++++++++++++++++++++++++++++++-
- 2 files changed, 35 insertions(+), 1 deletion(-)
+ drivers/hwmon/tmp108.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-index df7a0d3b59ce..da55b19f244f 100644
---- a/drivers/hwmon/Kconfig
-+++ b/drivers/hwmon/Kconfig
-@@ -2061,6 +2061,7 @@ config SENSORS_TMP108
- 	tristate "Texas Instruments TMP108"
- 	depends on I2C
- 	select REGMAP_I2C
-+	select REGMAP_I3C if I3C
- 	help
- 	  If you say yes here you get support for Texas Instruments TMP108
- 	  sensor chips and NXP P3T1085.
 diff --git a/drivers/hwmon/tmp108.c b/drivers/hwmon/tmp108.c
-index 63c2eaa59d21..55277ec7c54b 100644
+index 55277ec7c54b..955e6cd378dd 100644
 --- a/drivers/hwmon/tmp108.c
 +++ b/drivers/hwmon/tmp108.c
-@@ -13,6 +13,7 @@
- #include <linux/mutex.h>
- #include <linux/of.h>
- #include <linux/i2c.h>
-+#include <linux/i3c/device.h>
- #include <linux/init.h>
- #include <linux/jiffies.h>
- #include <linux/regmap.h>
-@@ -440,7 +441,39 @@ static struct i2c_driver tmp108_driver =3D {
- 	.id_table	=3D tmp108_i2c_ids,
- };
+@@ -452,12 +452,7 @@ static int p3t1085_i3c_probe(struct i3c_device *i3cdev=
+)
+ 	struct device *dev =3D i3cdev_to_dev(i3cdev);
+ 	struct regmap *regmap;
 =20
--module_i2c_driver(tmp108_driver);
-+static const struct i3c_device_id p3t1085_i3c_ids[] =3D {
-+	I3C_DEVICE(0x011b, 0x1529, NULL),
-+	{}
-+};
-+MODULE_DEVICE_TABLE(i3c, p3t1085_i3c_ids);
-+
-+static int p3t1085_i3c_probe(struct i3c_device *i3cdev)
-+{
-+	struct device *dev =3D i3cdev_to_dev(i3cdev);
-+	struct regmap *regmap;
-+
-+#ifdef CONFIG_REGMAP_I3C
-+	regmap =3D devm_regmap_init_i3c(i3cdev, &tmp108_regmap_config);
-+#else
-+	regmap =3D ERR_PTR(-ENODEV);
-+#endif
-+
-+	if (IS_ERR(regmap))
-+		return dev_err_probe(dev, PTR_ERR(regmap),
-+				     "Failed to register i3c regmap\n");
-+
-+	return tmp108_common_probe(dev, regmap, "p3t1085_i3c");
-+}
-+
-+static struct i3c_driver p3t1085_driver =3D {
-+	.driver =3D {
-+		.name =3D "p3t1085_i3c",
-+	},
-+	.probe =3D p3t1085_i3c_probe,
-+	.id_table =3D p3t1085_i3c_ids,
-+};
-+
-+module_i3c_i2c_driver(p3t1085_driver, &tmp108_driver)
-=20
- MODULE_AUTHOR("John Muir <john@jmuir.com>");
- MODULE_DESCRIPTION("Texas Instruments TMP108 temperature sensor driver");
+-#ifdef CONFIG_REGMAP_I3C
+ 	regmap =3D devm_regmap_init_i3c(i3cdev, &tmp108_regmap_config);
+-#else
+-	regmap =3D ERR_PTR(-ENODEV);
+-#endif
+-
+ 	if (IS_ERR(regmap))
+ 		return dev_err_probe(dev, PTR_ERR(regmap),
+ 				     "Failed to register i3c regmap\n");
 --=20
 2.43.0
 
