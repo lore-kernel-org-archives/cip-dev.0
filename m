@@ -2,41 +2,41 @@ Return-Path: <tommaso.merciai.xr@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34D86CF6A97
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41CE5CF6A99
 	for <webhook@archiver.kernel.org>; Thu,  8 Jan 2026 09:29:20 +0000 (UTC)
-Received: from TYVP286CU001.outbound.protection.outlook.com (TYVP286CU001.outbound.protection.outlook.com [52.101.125.16])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.2997.1767864555184238165
+Received: from TYVP286CU001.outbound.protection.outlook.com (TYVP286CU001.outbound.protection.outlook.com [52.101.125.45])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.2996.1767864553150078230
  for <cip-dev@lists.cip-project.org>;
- Thu, 08 Jan 2026 01:29:15 -0800
+ Thu, 08 Jan 2026 01:29:13 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=FBtAea8n;
- spf=pass (domain: bp.renesas.com, ip: 52.101.125.16, mailfrom: tommaso.merciai.xr@bp.renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=mOtPlfal;
+ spf=pass (domain: bp.renesas.com, ip: 52.101.125.45, mailfrom: tommaso.merciai.xr@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=t5fqOHGttE7r2K9UAS84mKaSJKXq+jWrBrsqfkWr6HY1NRDqzsgYJDTVCvQTvDv/eryCk9ygcrkFZk1EifNxezBeRm1QEWZ4XXqodgwu5Qn2lwCQqAmv9sL6Pk1ZzMZqeVcIOKUBx4zbCNwNIGZ+A79SXaGQ91altICH/MYZN8HaXpiwH4+bRmbjPMDJeTSyKncjIaKNJ/erhTkzF3ArdOcC3+PpX5Fs1Xg0Ex2eLxSQvF3D83GSe4CaBDj7h1UNqKM+AQH9mYw/zOlSdJHxESV0wxAyNuVzQqKKNvIGMfB59Z2k9r5R/JTBS/8Q/eLxnQXPZ2aebkNkAl8J2A6SEA==
+ b=HjvlCuSLax1ULBiDzYhIIlgEEsYkZ8uySvg8PysteA2neZ6WLeB1VO+X+dF1yc06lykaCA/wzRZW8LdndZMIWTX8K/6ZdmYJKql1WC2smU7kaR+ah+cwPYwlsOsWqHZ52swfscxMoHVEFFXpVF9b9/lgJVb2nbjqzM4t1iIG0sp+EJIuJzE2DUqVqZViwm7s8kOZSzJfDiGfJRG5LiqWiwacMwvJH1X9JqQ0air8mRX7RTWj7SD18XET/DK7Zp9OaAb5ADHx9oBhwmsxUBGL9e6MvGFl/jcQ5/pj3L+JmdnGX/7cvnXtj7ENscvAd/X8+DYQgkwPiNttBCbMH9SIAw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vQ6oYINJU0rxnd1PDEcFmvMhqH/nxdxcshqfvXM4cZ4=;
- b=xi4/TvFZ0KfwA+plvHulO5lZdUKRfAUd2NNxTPvJ9BEG3wNz3tpR9H/wep01rhc1Z4B0eQnRoUHhPnkhMQUp5DOAx9KzrGQmQr8LeZQd2M2clZUtiI5Tminaw10kTKZgxPUqxIS/l7NO/QlWq1OiiWpumxNd51cqon9OMmHtFRyyPayBp0jserI9LGTYagzyVWbBll5/nbf1myUusGtHtjo6gDxoBaL4NVvm5JrHE+jJE+WJPMMaMI/up7h/DpJJmwVVRAxUWWquvtazySbCXrHDMOagwk+HbPj0KKkgCGa/3GHh+rujb3Y5gfbhNRW3b/N2LXBgfNPh9C+psrD9EQ==
+ bh=jZcD46vazFyYLBvFX1k8ZFTg3NwmzSNoFRVtGuuPeV0=;
+ b=vsZ+fokbVFf9kFB0yvwr9Z89bfUj9QEd594oOBg0At0Ha98hYxjNid6s0qPzHJDPveljQ0T6siGGFhoy3b0GJ7yYNW4faByWRFhN7y1GtOtVzhi5sMyJNoRCSMb3iOAhMN3paDNusGggg7xaxKa1VU9cVHDpfc/Mkp4QLCyUKnnq8YE1KXMK0f9QtCi8HQZznzxkbTKEmjP0Foy9KN97qHQk0jSry+wKSXn7djrGd+zYUNS4emtP+1qXoVnILUbzXWvpw7YfUB0NoC2O18Q3B5wFtAEIUgT3A95aAZTMnTNb/9nQVLX6w1vdrJKdlmmBu2sXXiDOaJd+IecHhX7M6Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vQ6oYINJU0rxnd1PDEcFmvMhqH/nxdxcshqfvXM4cZ4=;
- b=FBtAea8nCU9HdI7CeA2XA/J+kKRUpCOYcJduEqFcI1iGO7g2rH+BB3xv5QR2+xNN+bXZPjFiLh5W97aDm0psS/rl0kDp72Q1eQ9BW4H/ELpeFaFI4jVxz/48PHbYNWvWAgML33SUXJLpR+2VBxx3CX59LZHQLyTnzGsVAtrsLJQ=
+ bh=jZcD46vazFyYLBvFX1k8ZFTg3NwmzSNoFRVtGuuPeV0=;
+ b=mOtPlfalLSYyMU+nXf4q3mSOTnbd6WkdyDNwT0pVTPXjWpMXpoADD4SeQz55k7GqUQVpbCi7rxw32LqK6ly22olh9DaxURaGqyU8K7l0AsY+Efp8XVm/qcuf4e5q/9uUN9vtHfuMmTOrm39oyTmwN7VTv/R+l7+RifyM0XQtn84=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=bp.renesas.com;
 Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com (2603:1096:400:3e1::6)
  by TY7PR01MB14750.jpnprd01.prod.outlook.com (2603:1096:405:257::5) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9499.2; Thu, 8 Jan
- 2026 09:29:13 +0000
+ 2026 09:29:10 +0000
 Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com
  ([fe80::33f1:f7cd:46be:e4d8]) by TYCPR01MB11947.jpnprd01.prod.outlook.com
  ([fe80::33f1:f7cd:46be:e4d8%5]) with mapi id 15.20.9499.003; Thu, 8 Jan 2026
- 09:29:13 +0000
+ 09:29:10 +0000
 From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -44,9 +44,9 @@ To: cip-dev@lists.cip-project.org,
 CC: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	tomm.merciai@gmail.com
-Subject: [PATCH 6.1.y-cip 09/22] i3c: master: Add helpers for DMA mapping and bounce buffer handling
-Date: Thu,  8 Jan 2026 10:28:10 +0100
-Message-ID: <20260108092823.489287-10-tommaso.merciai.xr@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 08/22] i3c: Add more parameters for controllers to the header
+Date: Thu,  8 Jan 2026 10:28:09 +0100
+Message-ID: <20260108092823.489287-9-tommaso.merciai.xr@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260108092823.489287-1-tommaso.merciai.xr@bp.renesas.com>
 References: <20260108092823.489287-1-tommaso.merciai.xr@bp.renesas.com>
@@ -58,260 +58,122 @@ X-ClientProxiedBy: FR4P281CA0364.DEUP281.PROD.OUTLOOK.COM
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: TYCPR01MB11947:EE_|TY7PR01MB14750:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5a802ba0-dc5b-4099-f6a4-08de4e986288
+X-MS-Office365-Filtering-Correlation-Id: 6548116a-6045-4b42-8236-08de4e9860b5
 X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
 	BCL:0;ARA:13230040|1800799024|52116014|376014|366016|38350700014;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?LVopJ6K1pt4eDaP0rMcj6eNdPCw8sxvtx7vbvyyk+7v3TpFgduHsD37Heq2S?=
- =?us-ascii?Q?GIcYCwQhDLChQkmpQPPzWkUIxoe+Gw23GMbMBZ1FuYmFJ6E7f7CAXse1lRMY?=
- =?us-ascii?Q?XkE+VH2gnwxGENmsDrUaJE5sNQDa9IYK4gHNHq92dZK2E0KZ/7fiRRLiK2z4?=
- =?us-ascii?Q?C9mpMwJjUrUuFBLsfa3xKGtoLWZ1LuT7zm7/S+9mN+zI7rZP5RboiuMl/BN+?=
- =?us-ascii?Q?V5SoB7GcqSLpBKf9pPk9+5TQmkBK+LrT3OuIk5ryM/Nb1OZ1OHGZy3efHpE8?=
- =?us-ascii?Q?JcRUDC76f8nRKieSdajy8TRstVjsDpxst+UJOkvR9ERcCitDX11jHooQBX6u?=
- =?us-ascii?Q?HmH7k6L+SrDoJZgsTUSrEik6t0MaGBYqjeOFlQ5pbG+XoTpXwsfO+WpSNs+A?=
- =?us-ascii?Q?jizmCKzPIU3TYIThNkhWPCcgw1/7ZegzzyVppjoQPo3wk7PmFeg+qrU/MuvW?=
- =?us-ascii?Q?8Tr0ODyyIU3UM1TNdb0umAHOHN4GazaTbO12YZsw5LS2Zy+fDxH/ND6qHfsB?=
- =?us-ascii?Q?W0KaaOxb2bU8maN+qCYpxfS92O1e2WpqN34rW6AbJB8ns/3TU6YMXfT0J3cC?=
- =?us-ascii?Q?7/sFnVuXB71TdyzNqaI8gG/xF4KQmXTi+8nPq+oSPY08PEnRtAWtx8RJf+3C?=
- =?us-ascii?Q?2tIzCpv5pcCnQYAuHSF/eTmQQjYQC6gm46e6Ar2K+ljZwwsKYpyWpRLevK3K?=
- =?us-ascii?Q?DcEX7PBAj/TqwlYLQw8XzT9KR44SEFS+5DLuM2lAxXrwMrup2KraWToRClpt?=
- =?us-ascii?Q?/FwvlKlgkLTpmPqbSN7lBSvsQsP96JZn4iMbv3vAXcI++gdNrSWflHt5e61B?=
- =?us-ascii?Q?IPNiAAknmI3lUuDi1Cek1In+FQkMnQCm4oeJ9vJBaOoyQnsVuV3++6wB6HIs?=
- =?us-ascii?Q?IcW1wBdnWSASUgxGtrMjDRaKDGIg2iN+A+44RlKVf0oBgz4V64zZ8PSjDMCZ?=
- =?us-ascii?Q?UxpRV8U5vWZpgWt7skyhSXxzdwQL5JuhJLBFekWgwHM3CylGzEfbNuTYZrry?=
- =?us-ascii?Q?NHj6TRR61fsJTUOfwmF2UzzpXjkH8Je4Cy+GEh6BKpWljszDN6GTc+h+LvdI?=
- =?us-ascii?Q?mduN4YDnNMLFuJXBZU98P5tN176hyu6Z2GQrbiwCLLa22G7TIP6lq62jCZwE?=
- =?us-ascii?Q?UntpNnP20yX/XAIqmPwmXQtv0u62VCtHPF5ijEFfguqkfasNkYb9ab6M9FjU?=
- =?us-ascii?Q?WGXo7eJ7ZQW7QBcKqc5TUBPoIjIn8UkFeoP2YfL1KU7GSZIRf4jjiL2edWkn?=
- =?us-ascii?Q?RPxGmgz6JNAaj584Rb1BKqP8WCrKI1gJzDnWMTNnN5sqZj5Yqrs9zsKw3yLX?=
- =?us-ascii?Q?jT/Khmwumnoef9SEpYbOzNWHCYp8hhUVzvyzQIoVqfPubahSqDIGqsrZ6wbm?=
- =?us-ascii?Q?v0C/CovW75oAA8Km7PFH65jN97Xinh3tmyXMcyakZRsNtjJplMgyKavTFhJE?=
- =?us-ascii?Q?2GR01Zn6vbJvq+0lhNS+7Mom7IRCwxYZgS2sLAz4Ckds8aDC/OFsj2ND85MA?=
- =?us-ascii?Q?EetMoVHnMP6+1tMp7T9pM9FFXff/IPkmXe9c?=
+	=?us-ascii?Q?0WUc16Q6hMNKXKOu1Cpe9JcO6RgMY7DmBF4aKPqWdp3bP7un4X+dzmnHrduz?=
+ =?us-ascii?Q?wZZ8ecjIFGjk1PDoqtAJCqenLOUPc+h1KokuxAiQUdbIpGlP9Z/Y3g0x6602?=
+ =?us-ascii?Q?I8kUFadKpRNde+PruBVgXb6oQsRV3hZMQw0Dyedn9Md49jtq+R+XpXkMmsBY?=
+ =?us-ascii?Q?4V8equWmZZ/Py9X9eIke8rGo/5EWn1TetZICsBueSmPI0zd0x5g+0xzDiayC?=
+ =?us-ascii?Q?kOH+GujZRi9q2PHwgpq2UUjfaese+MCjtL5FT46fcW9A+6WmrOfrrsXaHg5g?=
+ =?us-ascii?Q?7SHzl2sPe5UkY2WXX8090uaOMYe3GD3OL0eC5reRqcG/PVS69qAITAKwCeVJ?=
+ =?us-ascii?Q?Z5kcJUZfwHXtP4o2O4bAcLWEteO8HmpZyjWY2jXGGYN86mI+3x+pv5SFchv9?=
+ =?us-ascii?Q?Oyo2MRmTxHSrrO2RgrT96/Lf6aVSDoS382w7U+5C6ZrkFMMCm+vMZ5syc9Cn?=
+ =?us-ascii?Q?BQlaJElo1woKFv/UPTm2QGG102yabvU2ltLut/sguqa8rboZp9Y+u9xxI6YQ?=
+ =?us-ascii?Q?/+C7nHArggUS/qQZSOEKDOKfavh2eMtdWspUPKPMDiSdfFT87AAAQFZgPaoM?=
+ =?us-ascii?Q?/8b1SUnXUkSnhtL21qOQAT9T0kGhuSKIMnZOZnlJ07G9jQDYOBx6xwpp9e5o?=
+ =?us-ascii?Q?eXVPELHn9qk13yirgIr4zm1eCHvslp9+nCyTL+O5RzfYbwbCuXFhLE6tI6Gv?=
+ =?us-ascii?Q?Mi03F/KkGaU8YKq7/NGphvU+ewYmNnSHTSnGVVZyJ6FozG10pr2bHx5Sddk1?=
+ =?us-ascii?Q?iI5sfiYtLCwlJQR71YmfHzW75L1XeBfLYsoLIZb5cNpu85m+2WUaQo0gJ8Wi?=
+ =?us-ascii?Q?yF4bQ/bxgYjekmNOddRJ0CFs9FKb/7ZPHalpo17Ct7gi1rjAbgMgDwrIGgJq?=
+ =?us-ascii?Q?zuq92lcuMnbH8TpaKRRzs0VWiOIcSeqGhV0wpewlMDiZiGJbf5L8qT/5LJXa?=
+ =?us-ascii?Q?k7SmUSWjWkiWAt/qzKUBfnmxg+/+QmS/gUPmvWWPSbB+Y01vT89NNBVU88UU?=
+ =?us-ascii?Q?OTva6/8/CFJy20GN0wdDFNLudTDHs5ef8XVSeh1R2eQs2gHV9mOKKOBeqWoN?=
+ =?us-ascii?Q?ALsr6K6DmFv9M0+6ho8SGtcY9hYK2waH0aj+VvW2lAY8X9qVxy3DwlRFoM78?=
+ =?us-ascii?Q?knsCEKqn57Q0zQwG0Gq1hCIB4VeGEjsi0QYcw9oTBqnYDU4UqxWw7RKGr6XI?=
+ =?us-ascii?Q?77raVUinIl+X39N0Sm2k1IHu5mUUrhykLwD6mbPCWmqerKbnzNxLCugTjs0Q?=
+ =?us-ascii?Q?vG3Ei4voujENto57kz5wNDOxxq0JQLvGnnGjBTfZHNEQge+ImsvP60UZWdlN?=
+ =?us-ascii?Q?bn1+8aDMC+iKBLyoRYMnl8KOHNOveqjbK7BVTpSHZi/q690j1kIxFwn4GsvB?=
+ =?us-ascii?Q?tDRd3VHKDW0J7/e0Utq7gVMoaVzxnS2jboAvD/4Qa6oZeIz7msAL85h2+ov6?=
+ =?us-ascii?Q?hnaVzlROts/mGOJQjYW5KSYIWIXQNA7Fxwvdhxc1RNM7sF7NweWoHhUhxmHb?=
+ =?us-ascii?Q?mMd4lBH3c67gMLUhuo+H1FzNXyIT8SlRxMnp?=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11947.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?y72WTbKAjiAfDhLzlGPjA1dZSnPEV+kEYqFssi2DDEYRFK3gK3lc9hl2QhLW?=
- =?us-ascii?Q?jdlDIRMCv1Ki252O1g5EOo+CTfVxr3A+1I9ggUPa5z/5fBmCHwvuqsXPufOz?=
- =?us-ascii?Q?XC8BBbWX4BxuK+F9eeCAIZj3p571EXJEgBNjqzHuQhCrWmQiLjydowgYflYo?=
- =?us-ascii?Q?Bdzt9LZiDr2FWmrLnwXh3UHLK+50U/sKrYJgVFuKHdVCD6ByFCjfX+6g736S?=
- =?us-ascii?Q?TzcHdXoujXTI8UPwU2QcMAoAVKhrTmGDmkOjEFE/w3oJAjEMO2XLVT8zNCaJ?=
- =?us-ascii?Q?ZrbgmoNafiH4yWrbn1D4R5zErdYVJu75rPd3rc/JqoSWruEnNWeb/hzMUaPt?=
- =?us-ascii?Q?KqPtIf+vaGny6wtsAiCmvfALM3JDr7F2St3qAN2qitjcEKLaWpHum9y4DHDY?=
- =?us-ascii?Q?gVTceltzOChjaB2MoqZTqAWCP7elQPepVc/gCw9oKCz+m9/H3aU25mrn1vgx?=
- =?us-ascii?Q?tiQzQ9+goWof1mJMRnpmoNNYr9MOthBRWobBAJeJXCCCOwi4D29kfq7N+ZLB?=
- =?us-ascii?Q?EeWHToE6yOlJCO87A86mVrQPyujg1050r4lhb1LW1sb1ThTO07+NvzraX26U?=
- =?us-ascii?Q?AcfEfp4Xo06WqT6D4FZcNQf9pMxoNUyl2kjbJaGlCa2nqw29nLD5vySQTKCS?=
- =?us-ascii?Q?BNnBQMwa4+lzHyeRAvGa1tsqo7sYLeb4MX3zzMORKB6odR3tmYQVSvRNCqbJ?=
- =?us-ascii?Q?PFVFtuOkXCwy9Uxu/ajPHXfWa4nKhcjcAWdpfWiLRAtuPOqyk3IURjiSK8CO?=
- =?us-ascii?Q?IrliCj5xSTFaZojrJzZsirLbrUE91405CDTGXHkVJBmpQ9Q40AL31B1NGRvO?=
- =?us-ascii?Q?N4ySqamYEhtWHwPrv2xy5k/hwztSFGybOy1uMNEJVcxtP7PcmiD/vP5EbjME?=
- =?us-ascii?Q?6+ObKhtm/O7lJinULUuCRQWyTvmk63YORBmIY/z5LCNoogKnKknCJ2nSmESp?=
- =?us-ascii?Q?UWB38oZ7cZ1OPqP7JjFZTSYoz8C/cFYvF2yZXToD9soj1NrDX0e9w0g3XRCl?=
- =?us-ascii?Q?E+Q3yJYbWUy24wsBkjgW9gIuDWG5d6HA6JHG8+f24qXiNax0s3Gla7Lrg3Hv?=
- =?us-ascii?Q?Vvh2KBZ2tQUpZCBkb+uRtTBCtLlrbKCQp3uZM79WPIwgs6xF3wMeonX4O3HO?=
- =?us-ascii?Q?aC6cw/bl9fN0/1RdyvhFs4eN98XGpCdPNfshqXzld2t3mLRWQ86W7+AX1o+W?=
- =?us-ascii?Q?cRtWPL2VGoG2UY9PQeTAeVXyPyQZO3XymalBoY0JwWhxtSKjhkXk2vAPsbL4?=
- =?us-ascii?Q?oRvbyIYdQvN57Y90VZNz0LQ1rCcCd1Q5VeNBry+RBrFROZNs7xkxqMDudA4d?=
- =?us-ascii?Q?imUhQthgYWw8MlbzmyGCDUczpUFG+4XIB2S3s+v5+thpLjFFCOZC3XRQsNnS?=
- =?us-ascii?Q?qTf9lO+9c82PWyqyjhuQjvsMaKN/TJ5Z0dSQkQwik6RSGT79Tmfz/1BDoc5J?=
- =?us-ascii?Q?E5Ig8bciVDyDs+XaOrMe/ToXX41BNM9YWTF/yCfhPSTCKNKILafJDuKKhL1l?=
- =?us-ascii?Q?zEeRT8vBeujDLnaGKgbaQfszYj9nvrs0AYMaRniEugbP8gBngh+DrrR3DwdX?=
- =?us-ascii?Q?7/mM4c71Elp35ZhyRVeZHIcO2IvqfS7dH0LFgkKZNkk0O9QS3aky7luq3eNt?=
- =?us-ascii?Q?pnaiStSQdhRr3l+KkWu8myiJ8A6NkvpeOggnBSW0WRzfkhldtBr9jJUzmtBB?=
- =?us-ascii?Q?b/IO+ZOtkxM3fD5ugu5sCvGBBhnyIv3gXJUfsjNS055Mc/N2WVQTALU0hgHm?=
- =?us-ascii?Q?ffayAXW9/JRueO5L3qP80O83Bv2o7dYVm3BKdkG4C13WDynVXzf+?=
+	=?us-ascii?Q?j7KZMB46ClBjEj6SNovdJcLdYXWuW2OmsXnPn5nIJfhi0OoIqQ5twC5X4WVu?=
+ =?us-ascii?Q?VELwVqtoSeEEvQO3m5L8V+V37DTY4N8jnKUtAW0vAC0GhA856SR0FilagpZz?=
+ =?us-ascii?Q?FQudhznaT57AgrPAoKXhLxR2qTv0E0ooQuF1sFk0oWNoDxD6mD1IZTR8vPuq?=
+ =?us-ascii?Q?COJ8Xjrs+qLGZYvG+kXBMZD2gW771xPNQCJeiwODrMzt3y7j2fXqCh3QiYUU?=
+ =?us-ascii?Q?ywYxNrVCD6xQZ08PRGeyy0AQymWlVbYVd5RBWzSpwX62Sy5cLqn3M9bpCO+3?=
+ =?us-ascii?Q?vWx/1wRs5zlnRUTzxbpPeh3IimNtlU8wRvBDEfScqRaAL6rh38f3RsXgO/cv?=
+ =?us-ascii?Q?eXPnXblcR7huEVp8kTlgwEM47h8o0AHUUHjCRmgskE2udqhBtMfwNLtkICOg?=
+ =?us-ascii?Q?qJS/fviibHG1BTXlr0kcQjmXwBFqiGO3a0rLy3QcOvP1jKiSmDPlGLF9b+dF?=
+ =?us-ascii?Q?zJGbr9zItG4gt+bToMivWJcG+QlMOIQdnQMFThcgoq47bT91YisqZyU6sXMo?=
+ =?us-ascii?Q?dWRGf4hI4dRYuN8FgsqiEwG8kRLQyKCGHAiUxdBz4p+D3xB7IWtqhHJf7ZRo?=
+ =?us-ascii?Q?3dZw1v01JrQzfID1pfVCkF1pYrbgjv0xFARhCoEnz9hm2KxWtnGM01/QOona?=
+ =?us-ascii?Q?Oh6IWRuD66g7S7dtIxHn/4eGr0SmXxDH94OD7SAzkg+/u3Z/sLvTNSWTFB0G?=
+ =?us-ascii?Q?DVJ/0VkehW/eSFno8WJKzdKYMXtcSgK9usDWCDqroIc4tpfPR7S/+Pwze7ao?=
+ =?us-ascii?Q?+y0UpbIgnCuX9532TgQoraUywLOjuVd8Rue5uKYbXaUEVqqpnZpfYnZxsLHB?=
+ =?us-ascii?Q?RC4+rDNlzl+3Hld5+e1ambc4T3shjOfzWhM8lydJxtEybA004foLZaFbj+Xz?=
+ =?us-ascii?Q?9jSi2a1kUx49u22f4AjZbR1/kT4VYjX7RJjhwBC0nAQhu2roXi7J1uBhNkmN?=
+ =?us-ascii?Q?Hc7egyj8v2UZ9jjotliJWyRCvvgBnQWKk1K+5K1g5AgVaaSnBdvkgvLhzkYW?=
+ =?us-ascii?Q?gor5+lrHKFvMKFh3o5liozAvbgzgXW4cNvi7kajeANGtkow7mX5/8/Jj5HUV?=
+ =?us-ascii?Q?t9mdBWDAoGoNHgNw1/Fi8C6ioq+BEWZaackipUdxtyED03DnS6ZwI2K9rFvv?=
+ =?us-ascii?Q?LS9mUMZoMq0uPOwyhSwSdf06TFZ8fBcprb5hJjDwebQ8D3spRHD6C1biRI/S?=
+ =?us-ascii?Q?i9pgHbSqyjxMwbfu1Hxd1BXtYdk6+pZqlsyh7/NScQ9QUvmy5VptQQXUgVZC?=
+ =?us-ascii?Q?2gDdo0aU6RHaeOakEFd3b9+/Wo76CcyyMJI1k0Ctrngzv0Gy87hOmgvhGzg8?=
+ =?us-ascii?Q?iKFp/1ixuvnxDWfuNq4yBgCC7JNejgsVlEF+p3EBZDAyDzY152e91S7q25U0?=
+ =?us-ascii?Q?wDmPG/CueymzsGBUjxoZpqYPmmvOwZ85qiP63mxErFtxhfgZ/LIZte8lGRdq?=
+ =?us-ascii?Q?IOMUxEEGK362FHTfWUcG1bbeG6N7ViFd5iCfQoEH+glPyvJaJmXWt8aMh5dl?=
+ =?us-ascii?Q?3gPzeGpl+lPoMcdHNq73cy71Ge9Me4HYGnYUpJh9Y18DxCFVxcZooknzfEey?=
+ =?us-ascii?Q?UnNUe6Dfa2dZ7S6GZk6XAmhmUxqQ0bHwI1ru0PGnIUDMvaD7ElQULIJQyejC?=
+ =?us-ascii?Q?fodq1OURCgA/e011F61r2XaRHgV2fZMACq23zCvfn1mkOBkMRY9Fe9SNh29D?=
+ =?us-ascii?Q?zwBgVXL7l7v6hGnA5Wi2dbjJ10ABlQgvkeAqZP0sRA/3tfBnGnYvEZqI1iin?=
+ =?us-ascii?Q?eB5LMKKL8u77pe+2LlfGqMF+qiXqYqCkZwD3n32Ss6ugscUHQvAe?=
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5a802ba0-dc5b-4099-f6a4-08de4e986288
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6548116a-6045-4b42-8236-08de4e9860b5
 X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11947.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jan 2026 09:29:13.1487
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jan 2026 09:29:10.1731
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qz/cN1s80xucsZ2f0dz5GgBhBIUqFIqtiUmcJ4EIRrFlwN35XF8irkRc1n/B5vcsDE2XYaWY3kWUgfZ+VN8H4b6yxWY48a5QlB3D1zKxoM1eP6gGZOYspWwIq/hpR8OJ
+X-MS-Exchange-CrossTenant-UserPrincipalName: iQE4i8O242qHyO6ifyidZp5APjxrw4LNIW6U3HPnxE8IYSYZ5fjyeBGbaikELw4XWgyqZPyDMa9BjNA2mlc8WNjONxzPD60AKBslpYCK3EZhMyzTK23xXysz469hB+Mt
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY7PR01MB14750
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 08 Jan 2026 09:29:20 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21445
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21444
 
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-commit f8d9e56aeb87ce82ce8636cd176cc59b69aa0e41 upstream.
+commit 8acf1f3bae1ea48949458b67d68a72a95c3244a4 upstream.
 
-Some I3C controllers such as MIPI I3C HCI may pad the last DWORD (32-bit)
-with stale data from the RX FIFO in DMA transfers if the receive length
-is not DWORD aligned and when the device DMA is IOMMU mapped.
+Add standard timing value definition from specification.
 
-In such a case, a properly sized bounce buffer is required in order to
-avoid possible data corruption. In a review discussion, proposal was to
-have a common helpers in I3C core for DMA mapping and bounce buffer
-handling.
-
-Drivers may use the helper i3c_master_dma_map_single() to map a buffer
-for a DMA transfer. It internally allocates a bounce buffer if buffer is
-not DMA'able or when the driver requires it for a transfer.
-
-Helper i3c_master_dma_unmap_single() does the needed cleanups and
-data copying from the bounce buffer.
-
-Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 Reviewed-by: Frank Li <Frank.Li@nxp.com>
-Link: https://lore.kernel.org/r/20250822105630.2820009-2-jarkko.nikula@linu=
-x.intel.com
+Link: https://lore.kernel.org/r/20250724094146.6443-3-wsa+renesas@sang-engi=
+neering.com
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 ---
- drivers/i3c/master.c       | 74 ++++++++++++++++++++++++++++++++++++++
- include/linux/i3c/master.h | 26 ++++++++++++++
- 2 files changed, 100 insertions(+)
+ include/linux/i3c/master.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
-index 3361b466c3fa..035dab33f85d 100644
---- a/drivers/i3c/master.c
-+++ b/drivers/i3c/master.c
-@@ -8,6 +8,7 @@
- #include <linux/atomic.h>
- #include <linux/bug.h>
- #include <linux/device.h>
-+#include <linux/dma-mapping.h>
- #include <linux/err.h>
- #include <linux/export.h>
- #include <linux/kernel.h>
-@@ -1669,6 +1670,79 @@ int i3c_master_do_daa(struct i3c_master_controller *=
-master)
- }
- EXPORT_SYMBOL_GPL(i3c_master_do_daa);
-=20
-+/**
-+ * i3c_master_dma_map_single() - Map buffer for single DMA transfer
-+ * @dev: device object of a device doing DMA
-+ * @buf: destination/source buffer for DMA
-+ * @len: length of transfer
-+ * @force_bounce: true, force to use a bounce buffer,
-+ *                false, function will auto check is a bounce buffer requi=
-red
-+ * @dir: DMA direction
-+ *
-+ * Map buffer for a DMA transfer and allocate a bounce buffer if required.
-+ *
-+ * Return: I3C DMA transfer descriptor or NULL in case of error.
-+ */
-+struct i3c_dma *i3c_master_dma_map_single(struct device *dev, void *buf,
-+	size_t len, bool force_bounce, enum dma_data_direction dir)
-+{
-+	struct i3c_dma *dma_xfer __free(kfree) =3D NULL;
-+	void *bounce __free(kfree) =3D NULL;
-+	void *dma_buf =3D buf;
-+
-+	dma_xfer =3D kzalloc(sizeof(*dma_xfer), GFP_KERNEL);
-+	if (!dma_xfer)
-+		return NULL;
-+
-+	dma_xfer->dev =3D dev;
-+	dma_xfer->buf =3D buf;
-+	dma_xfer->dir =3D dir;
-+	dma_xfer->len =3D len;
-+	dma_xfer->map_len =3D len;
-+
-+	if (is_vmalloc_addr(buf))
-+		force_bounce =3D true;
-+
-+	if (force_bounce) {
-+		dma_xfer->map_len =3D ALIGN(len, cache_line_size());
-+		if (dir =3D=3D DMA_FROM_DEVICE)
-+			bounce =3D kzalloc(dma_xfer->map_len, GFP_KERNEL);
-+		else
-+			bounce =3D kmemdup(buf, dma_xfer->map_len, GFP_KERNEL);
-+		if (!bounce)
-+			return NULL;
-+		dma_buf =3D bounce;
-+	}
-+
-+	dma_xfer->addr =3D dma_map_single(dev, dma_buf, dma_xfer->map_len, dir);
-+	if (dma_mapping_error(dev, dma_xfer->addr))
-+		return NULL;
-+
-+	dma_xfer->bounce_buf =3D no_free_ptr(bounce);
-+	return no_free_ptr(dma_xfer);
-+}
-+EXPORT_SYMBOL_GPL(i3c_master_dma_map_single);
-+
-+/**
-+ * i3c_master_dma_unmap_single() - Unmap buffer after DMA
-+ * @dma_xfer: DMA transfer and mapping descriptor
-+ *
-+ * Unmap buffer and cleanup DMA transfer descriptor.
-+ */
-+void i3c_master_dma_unmap_single(struct i3c_dma *dma_xfer)
-+{
-+	dma_unmap_single(dma_xfer->dev, dma_xfer->addr,
-+			 dma_xfer->map_len, dma_xfer->dir);
-+	if (dma_xfer->bounce_buf) {
-+		if (dma_xfer->dir =3D=3D DMA_FROM_DEVICE)
-+			memcpy(dma_xfer->buf, dma_xfer->bounce_buf,
-+			       dma_xfer->len);
-+		kfree(dma_xfer->bounce_buf);
-+	}
-+	kfree(dma_xfer);
-+}
-+EXPORT_SYMBOL_GPL(i3c_master_dma_unmap_single);
-+
- /**
-  * i3c_master_set_info() - set master device information
-  * @master: master used to send frames on the bus
 diff --git a/include/linux/i3c/master.h b/include/linux/i3c/master.h
-index fd5f35b2385c..4188a6bdca12 100644
+index b399ef2a9359..fd5f35b2385c 100644
 --- a/include/linux/i3c/master.h
 +++ b/include/linux/i3c/master.h
-@@ -549,6 +549,26 @@ struct i3c_master_controller {
- #define i3c_bus_for_each_i3cdev(bus, dev)				\
- 	list_for_each_entry(dev, &(bus)->devs.i3c, common.node)
+@@ -245,6 +245,10 @@ struct i3c_device {
+ #define I3C_BUS_I2C_FM_SCL_MAX_RATE		400000
+ #define I3C_BUS_I3C_SCL_MAX_RATE	12900000
+ #define I3C_BUS_I3C_SCL_TYP_RATE	12500000
++#define I3C_BUS_TAVAL_MIN_NS		1000
++#define I3C_BUS_TBUF_MIXED_FM_MIN_NS	1300
++#define I3C_BUS_THIGH_MIXED_MAX_NS	41
++#define I3C_BUS_TIDLE_MIN_NS		200000
+ #define I3C_BUS_TLOW_OD_MIN_NS		200
 =20
-+/**
-+ * struct i3c_dma - DMA transfer and mapping descriptor
-+ * @dev: device object of a device doing DMA
-+ * @buf: destination/source buffer for DMA
-+ * @len: length of transfer
-+ * @map_len: length of DMA mapping
-+ * @addr: mapped DMA address for a Host Controller Driver
-+ * @dir: DMA direction
-+ * @bounce_buf: an allocated bounce buffer if transfer needs it or NULL
-+ */
-+struct i3c_dma {
-+	struct device *dev;
-+	void *buf;
-+	size_t len;
-+	size_t map_len;
-+	dma_addr_t addr;
-+	enum dma_data_direction dir;
-+	void *bounce_buf;
-+};
-+
- int i3c_master_do_i2c_xfers(struct i3c_master_controller *master,
- 			    const struct i2c_msg *xfers,
- 			    int nxfers);
-@@ -566,6 +586,12 @@ int i3c_master_get_free_addr(struct i3c_master_control=
-ler *master,
- int i3c_master_add_i3c_dev_locked(struct i3c_master_controller *master,
- 				  u8 addr);
- int i3c_master_do_daa(struct i3c_master_controller *master);
-+struct i3c_dma *i3c_master_dma_map_single(struct device *dev, void *ptr,
-+					  size_t len, bool force_bounce,
-+					  enum dma_data_direction dir);
-+void i3c_master_dma_unmap_single(struct i3c_dma *dma_xfer);
-+DEFINE_FREE(i3c_master_dma_unmap_single, void *,
-+	    if (_T) i3c_master_dma_unmap_single(_T))
-=20
- int i3c_master_set_info(struct i3c_master_controller *master,
- 			const struct i3c_device_info *info);
+ /**
 --=20
 2.43.0
 
