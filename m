@@ -2,57 +2,49 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53881CF6ABD
-	for <webhook@archiver.kernel.org>; Thu,  8 Jan 2026 14:12:02 +0000 (UTC)
-Received: from MRWPR03CU001.outbound.protection.outlook.com (MRWPR03CU001.outbound.protection.outlook.com [40.107.130.40])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.7129.1767881520230605303
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54AA7D1488B
+	for <webhook@archiver.kernel.org>; Thu,  8 Jan 2026 14:19:32 +0000 (UTC)
+Received: from OSPPR02CU001.outbound.protection.outlook.com (OSPPR02CU001.outbound.protection.outlook.com [40.107.159.3])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.7309.1767881963671096456
  for <cip-dev@lists.cip-project.org>;
- Thu, 08 Jan 2026 06:12:00 -0800
+ Thu, 08 Jan 2026 06:19:24 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=sJj+nS4i;
- spf=pass (domain: siemens.com, ip: 40.107.130.40, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=JGhOBGZT;
+ spf=pass (domain: siemens.com, ip: 40.107.159.3, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hg9ea3E/b+KYnIDrFefkkQ3LvmPHaZCrqGdJXYsp3Axw9LcsZ64jIehAVq8PDNMVCs1hPqTJ19ebZ2qzS86zcd0cAbVMY3fqv912KIkz5+F3pKrSmVwEmYuYmP3kbH08z7O3FTl37Qulo2pvHHhKGpvpbibywQGemBhsAZOy30XvzYbP4OHfW0PXR88SPRRfg2iFzwihpnn/nhf9sd/NJwq7sNlY5uC4lEENfhtN5NMovXSTpNBnmXd7bjSKSwyHy96izaayXajQMdjRohHsTHXMITvCyUHS8PAo4fCaGbzrBs9wNoJ61Va+wSK0W4f+MhO2Hc18DtOAyK10JXrhWg==
+ b=sCPWIFZYAlsBxU+7EFhtoY3TaOYuAR7NSjlkwVIVgAeb1/xuOTCR1dUfCC+qhZ776gdlQSlgWEQYMn3Ilxdauu3H0iYpNgOlOv8gvOjawRPDQqG22yT/Afk5IlemtZyihrhNfQeg+PPWwYvX5YV841vAzml7bGFdddVvydQPSP/pr0/kasvFZFZHJhzFkwtipUJkzVH+X6Zd53W/qj5bWdeEdmQfp02zBXvIPnq4I5OQZhUK5SVZ/Xm4I1IIuH214dKtEtDkMXZbkVR/NjUHnZ+O8OtL2O1HmO1gtiHpwXFO3o0CS1RDhbLyHPIc2zM7vRUrl5onTsjc+XK2rFby+A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AYbgod6BP1o7hhnP2vGvZ33pBDedWiqB6xykFcqfQbk=;
- b=H/OZFBGYjadd4t5CvYiMEcDtuoMi9BJXD8DTMUcF1kUsXbYjzs64vP9j6vUcRxSIHFURnMB42yOnBcyfGW07U+lxsryMQTchYKQ44wVQ1dgaei8M2/G3e5VfaxY5vz0ZfmCfEKj4TtUtJHtgWTVj7qiJJEoyZwyj737mZAt/hwpiwxNkhBkUwHQvlqocLNT3hmoSNauvJD6fiMPpftn9N/USZ7i+WoUb7rxmS59Jm/YFZTfxbfhvQvj6zcdVoNm44KR5QasMWuWCiMuX811ptAfwoiptsFKqGOWBPv039jAIs2eOf49sdBnEYpm//9JeGzrj2UYL7rFMPX3twp++Fw==
+ bh=6GT2poKAQGHHPImcxOrWKxSyHsd0+n4aNlvqGp6mzvY=;
+ b=LcbaEFiLEJpbr1zfwvCtBQOgbR07IwCS4HYVjzAhg3vIVdCsiwBky+toxgdnrO4kvTU7Qyq28Kks/ZMCqBP5MhR2+wEYodVjicYBcH9GwH4iMZfXwux2FCih/12fHRQzD1sHFRk2DujHJlLnkyEeFHU1dQSBFsPfqMYIVmmfEvfQvvKwqf/IxwGLabttWEUbO3kaORHYZCZ25OoYWtc/T65wLZDh/CcGBU+yITtQPKHl8uSRZJ5UqiQyCq7L0dn5JH8oBlvKh4g9Az1Eps0yHDMvdSa9vMQ4fRk4hoiTK8+6YzwIVJuqjH3qRmBmktafgUZftqeAsSnByvij74AmZw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AYbgod6BP1o7hhnP2vGvZ33pBDedWiqB6xykFcqfQbk=;
- b=sJj+nS4i0gdocHyQeztNf+hREyqy6RrrJEpFuRUbWWABeVv4m/e3fVoTKkBzwTPd0fYpTr9TlgYOQEenh5CdxLx/DoMWXt1ajH0YaOs4JQX6XtCkdESU4d2p7XJ2IvxHi7WZNv7vWW2VotsiZGJr6bSC1kmptZiVhF8qVYJPMgDK2GvAHbhtw+AsVHRls+VeUPF0PFSGbUtbIB2JovJ4Au9/A16lN5ktQYnonLE7Vh2gFlk3byYaqNkaPtavt0TMBlw3rtqMk+03G0e6Y+55bv5MbIrBP8evGvoqKqMrVr3yDI/CJ2g0uGRsgfYwWCE5J2qjD9Lm2QxYYwN8gPSseQ==
+ bh=6GT2poKAQGHHPImcxOrWKxSyHsd0+n4aNlvqGp6mzvY=;
+ b=JGhOBGZTTEOGGh8V3Y+oAL0jz0B/sjEfOpbH2Oa9xsqpMM3ASX8d5DRhU1vjWDknc79XSDxwex4FLwA1H927A+MC/aZjM1yssTvwoFU2e3iI3k6t0pLyqqAPK1gwlazT0Ssrn6IZu5zrcu4A2p90ijY3qCKzndRfm+XQTQy+QLEJShlGfe22sHSc9p7XwhzeuY0Y7tsptVhgJnbv3jy6WHzf3lS9i+fjTkzyPS8jdVOSMzesxW7lYFx6iu3y9s6G62dKazGEAWSP0IIwk2iqXMRhjLhZ0yD1oS6yy+2rOhoInQClpuQRjWS/UEXYl6AqAnxWuMu1pLdMfXmsdTdOWA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by GVXPR10MB8861.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:1d9::9) with
+ by AS2PR10MB7885.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:64e::19) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9499.2; Thu, 8 Jan
- 2026 14:11:56 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9478.4; Thu, 8 Jan
+ 2026 14:19:18 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8fe1:7e71:cf4a:7408%6]) with mapi id 15.20.9478.004; Thu, 8 Jan 2026
- 14:11:56 +0000
-Message-ID: <b39a740d-ae58-4b83-bede-dad0845da1dd@siemens.com>
-Date: Thu, 8 Jan 2026 15:11:50 +0100
+ 14:19:18 +0000
+Message-ID: <ba08992d-17f5-4689-b05c-93af612e4539@siemens.com>
+Date: Thu, 8 Jan 2026 15:19:17 +0100
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.12 242/262] ext4: fix checks for orphan inodes
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jan Kara <jack@suse.cz>
-CC: stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
- patches@lists.linux.dev, stable@kernel.org, Zhang Yi <yi.zhang@huawei.com>,
- linux-ext4@vger.kernel.org,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- cip-dev <cip-dev@lists.cip-project.org>
-References: <20251013144326.116493600@linuxfoundation.org>
- <20251013144334.953291810@linuxfoundation.org>
- <ebd61bd3-1160-459f-b3b3-f186719fa5f3@siemens.com>
- <l36p4covbdywhdkmsxqkswww3azubmlew3imqv7acggcd3pm2k@sazu3kvtuzqn>
- <2026010845-undivided-stability-8bba@gregkh>
+Subject: Re: [isar-cip-core][PATCH] u-boot arm: Disable problematic GRUB
+ workaround
 From: Jan Kiszka <jan.kiszka@siemens.com>
+To: cip-dev <cip-dev@lists.cip-project.org>
+References: <bebb47e0-230f-4ef0-8439-a576cda865d2@siemens.com>
 Content-Language: en-US
 Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  xsFNBGZY+hkBEACkdtFD81AUVtTVX+UEiUFs7ZQPQsdFpzVmr6R3D059f+lzr4Mlg6KKAcNZ
@@ -97,308 +89,179 @@ Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  qH4kDzsqKX8zzTzfAWFxrkXA/kFpR3JsMzNmvextkN2kOLCCHkym0zz5Y3vxaYtbXG2wTrqJ
  8WpkWIE8STUhQa9AkezgucXN7r6uSrzW8IQXxBInZwFIyBgM0f/fzyNqzThFT15QMrYUqhhW
  ZffO4PeNJOUYfXdH13A6rbU0y6xE7Okuoa01EqNi9yqyLA8gPgg/DhOpGtK8KokCsdYsTbk=
-In-Reply-To: <2026010845-undivided-stability-8bba@gregkh>
+In-Reply-To: <bebb47e0-230f-4ef0-8439-a576cda865d2@siemens.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: CH0PR03CA0116.namprd03.prod.outlook.com
- (2603:10b6:610:cd::31) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR0P281CA0050.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:48::13) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|GVXPR10MB8861:EE_
-X-MS-Office365-Filtering-Correlation-Id: f487577f-da47-4ff7-336d-08de4ebfe13b
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AS2PR10MB7885:EE_
+X-MS-Office365-Filtering-Correlation-Id: e22a1802-ecf5-4378-abe6-08de4ec0e8c0
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|7053199007;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?nfqMMp6yDj/fkBGH3HT7cJjncMoAwjW4mtrzrodaZKo1aR0R/ZQsnCAeiCz0?=
- =?us-ascii?Q?+yIikc2GO7nYyzlS0VMehPUHkrnRXffrnNpPu9CphyVpdOaFMsgaPiJ22Dql?=
- =?us-ascii?Q?XEN/Ov8yeueQ/D7/3pW4Fw9NJzfH5iKfzAcdYeSFvwX017ehSV6yRiaN5rge?=
- =?us-ascii?Q?wwvaSircdkqAZ1OoT3os4jdwViOODwASww4oXTHEKGimNxxf0rxYpX/oTBIH?=
- =?us-ascii?Q?gqlyfuYqnLBSGG3msYRVZu6jfAP+WqWgLv2VH9OLBiKG/yaA+dRSM5STrIzM?=
- =?us-ascii?Q?GJ5f9UEP+X54jCEDdn76XD0PeD9wIuZ2MnlODTrchzxcOi8jp1LsfVqeXPUT?=
- =?us-ascii?Q?DPEjcSXfZ6I4ZyaWWa6vUJ4MRmLg7RjyNS3cUI/CJertXgMKIm06/cSG0M+1?=
- =?us-ascii?Q?lUjitNbg3sbfgST+lv1MzrtiH1EeRf8M7aw1R1wDCLoxpMs6j/4+XDDjWcSR?=
- =?us-ascii?Q?SMpTAIE0KekshbiOM9h8LBTbblnQc9pUsMmalKDblcK5WxbgLjQ2VrofrdGE?=
- =?us-ascii?Q?F+dMPH7lqYl702DqTh1hz5C5GdAtUUT263wT5IjxHnQPoDGHO5PSCUp9F3pp?=
- =?us-ascii?Q?X6E1ONw7p7lIsYYtNeV2sz/7SakaKGKfiEy+Kf6ipfPaZLKCUrdBrDfZzJnK?=
- =?us-ascii?Q?3EvYCHM3s+JgetonUoCHqN/AfKzrCzf0EpLo2Wi24Tx+FL7WH6RBt14fjMBb?=
- =?us-ascii?Q?RKJn6O9O3dZY5Bgdhl8VO+TGkp2CfMlUYBgTKJ8Za9HEurkE/Ra4kdcImFii?=
- =?us-ascii?Q?P9eGh7NL/W37vVNzD6q0hQsUXpQBKRddElEw4bFcJTU44RAxda/gKjP7hYQ4?=
- =?us-ascii?Q?sFpQOAYM0/HcRTzOlRwfqrvphyCwR3PKuy+1CMg1qqhPvMVoNlB8m5e1KNM4?=
- =?us-ascii?Q?nC/iyjcuiVmBMp3nSUrxuovb3Lz4lmNcFK/cIQ6eddIYxFRpjX6G7+3+7ejZ?=
- =?us-ascii?Q?p6K4bGbfjmQHfVQI7xFeR3wsKqVbsYJ3+KXD28Lw6JDdIpETZ1rJY2WJywi6?=
- =?us-ascii?Q?h9Dncorpv7YNBLohomYjgEOlBGV9DKpKx8XzhRYANDVt78H5D46+guVrvW+n?=
- =?us-ascii?Q?d2KwJpp2G7rrcQD1VUkXddFZ2YK7ehMiIRbkADpaCk9DZAjwmvd17Vxqtp1q?=
- =?us-ascii?Q?Wc7CZtV72PsLqCBComzmXDp2tDeiwGrIiJSNfSbDmAMWYOgnNyiTRBAwEv2K?=
- =?us-ascii?Q?R/PeC5BFs0a7ajJKwrOxyrkbyJ5PE1/qJblNF0yPp4YcMz3MzPAd9u/Ae917?=
- =?us-ascii?Q?Z6ZRt8YZ2mJCfJkxdeaz5B7OhsvNLe7W3WpGuNgbrMzaRgYkeXPllKujjLLE?=
- =?us-ascii?Q?dAx5s0mclceB/11lBJKiJ7/w/5Gla9C4Y23/y5HOsiqV6BZOa+A75nVFXtRt?=
- =?us-ascii?Q?liqv9wbHQsxQnt70ORYp5s8LpDHOHtv6uMB4YWDyIW/lPTJ5lL7Zvj+qXhhH?=
- =?us-ascii?Q?th5/id4faOt7UDjAm/TY8njnPSbDmh7I?=
+	=?utf-8?B?R3JMbFJkV29NdnltRlI1d0UwNnVpN2V3NEFSak9nNnpITlJTSExWNWRhVlVT?=
+ =?utf-8?B?RzBpZDJqUUNrOS96bDE0ZXkveU5BTTAxeDJNQ2ZUZkdYMWtYWEVqYTJqS2Np?=
+ =?utf-8?B?ZnkyMjQ1dFB2TW9QYUtGOHVYcHN4VE5JNlNOR0RXQTJoQU01MitIRXVtaVor?=
+ =?utf-8?B?YnYwNXdqYVJhMHcyb0luSmx6RzBlSnozWXdyTmI2UGtETjNuaDJwaGE0SUF6?=
+ =?utf-8?B?VHRZS3ZodGxIZzdNbThMakpKUERRSVJhbWdRYjVmcEZ0eTJYWFZuMGZtOFQy?=
+ =?utf-8?B?cXp3c2pPa3FzNWpJU3ROK3RVV3VVSWlQcmhoS2tFdXJIVTg4N2k0d1FzT3Bt?=
+ =?utf-8?B?TURVdGxaQjFjUVhZNWp1OUdXb1ZVckxiL051UndRdkxHbDVyeE1WeHBSdnRU?=
+ =?utf-8?B?SXlQazRVZjJpVkdFVTNsdUxPb3Y0Wk9ObEZsMnNEUWt4ZHZVRlJXZUxoOHNB?=
+ =?utf-8?B?eVlZenRLNTFHZzVTMk1sZWFEQmpFNGEySTVhK3NvL1lHcTJpRjVjMUp6OGwr?=
+ =?utf-8?B?Q2pFbkdrcmNvcWVVemREalFLQWxLelJQTnF4ZmcremRyZmJ0dS8rSXh4UVB2?=
+ =?utf-8?B?bjFBZDIvUE1jVStIYTNycUdnQ05GV0FhQ0toQzB4RXo2aUgycEx2Zmw5SndW?=
+ =?utf-8?B?OG0zaE9YUDUxYjl0S3NiNktFSkxGYzQyOWs4TjIwdGlSdGZsdnJ6V3ovR3hD?=
+ =?utf-8?B?ZCtqSjhaZ2RQV2czMGlnekNINUREQUlyOU0xYjlMV2x2NnpxUFlCakpEUmkv?=
+ =?utf-8?B?eEVWQUkydWJNRGxWbHcwZnVOWmdIeGxZMExaY0hDcHhxTloyYklnYyttM2ph?=
+ =?utf-8?B?S0FoYzBMOVdSdWNhaW81NkV1NXdVMmRsd3NXTmhMMktZbWtsL2dHTnBPTGhJ?=
+ =?utf-8?B?NTRhL1FKOFhuU0VSdEdMZnd4WEY0Q1RxUHlkQU1jZDc5aGY3czBYcFlCOTF0?=
+ =?utf-8?B?djBjL05ER1ZXZVpzTlJxeTNCNmNJdG8zYjdrSHJEVzVZaTFDaWxBeHJqRUw0?=
+ =?utf-8?B?WkZtTUVxekdUN2FtV0RrRGU3K2pjQkd3UDdtWVI2TUVqMFhiUk9QcUhQOGQr?=
+ =?utf-8?B?SFY3cTV3aUsyUzlORGRJeFFDVUtuTVdGYkV2eGtlekI2b0l1OVVEazdKYjEz?=
+ =?utf-8?B?ZHluUWtwYkFaNEVDQmFrRHY1cHpla3U5UzNUbExYWU5xQVJ0NFVrYmNYOGxq?=
+ =?utf-8?B?cklWa3dRREg3SlQvL1JHbjB0OHVQb1ZiODhOd0NoU0I3Z0dCdnAwSFNYZnA5?=
+ =?utf-8?B?cjV3NUVBblNnYm9vOWhMU3c4a0N2akJOQjdvSFZkbWR3ajVLdEFURXo2ajFK?=
+ =?utf-8?B?NFRLRVZUdDh5SkRiTk13dUJUZmpLcGtoZEZud1c3THRocDF2aGMxU1ZkT083?=
+ =?utf-8?B?NllrOGZ6cXBjRG5hYTRkZFZHY2syT01XOXlXMHhGNVdBMlBKUEFHNk1sY1pQ?=
+ =?utf-8?B?QXVPenVmT3k1SmFTcldza09vRGQ3M1ZzSGFQdGNNdGRGaDJDa0RsY2xwSXF6?=
+ =?utf-8?B?WFFEWmIvNXREM2VJSWV4K21Eb21mRHlsdjdJZ0dVUmIvOGJwTGpHTlZrNjcz?=
+ =?utf-8?B?cUZIT2dlUHI1WmwzVHI4bWF0cGhvTmIrZGRPVlVxU1BncURpUU9ENmtDb2tI?=
+ =?utf-8?B?aWp2SlB6WE11ME1WcjlRNFQ1aEkxZkpEbzlrYnFjVW5JUXhrVW5uMVA5VTNE?=
+ =?utf-8?B?TVV1MHc4aXI1RGVLR1paMzJxUzhsSndXU09kUytEYlhGZUJIZ0dmQm9jbUJN?=
+ =?utf-8?B?Uk0rakdIUjkrRzFlVy84K1JFOXlEd0R3ZWV2UnhFSG1jRUFqNnhjbnBiMHYz?=
+ =?utf-8?B?eDN4TEVjcmF0elVlUUgwZUJ1Y1lpZUMyZUx1Wnpzakg5VU5aMDlkWG1DcndR?=
+ =?utf-8?B?WlZMMkg5RWhpOEdwbUc3NXlFQTBYTkRRdEZVWDYweUdVRkl2ZnJyRWlXTXRh?=
+ =?utf-8?Q?gDJIQu8MIFvaWtlQLe7ArMx9QtmtnfwR?=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?OGFt5ySpxUGe4KDd+bMYHGmHAoraAxpHE1NuxoZgsALN47J+fGk7WjSC5t3a?=
- =?us-ascii?Q?LUH1M4H0Ql5Klx++qUIlUCfY/YxnfHLUtDwmJQ7kGDdbDXCQ+JVCfFYrmuIl?=
- =?us-ascii?Q?e390JV8Gm7dySUhWVsip94dGFmuw6SeTeGS8aPh0OA27SBkjlJ5vSOvPBHhp?=
- =?us-ascii?Q?UoyEGU1CQkSeaszMeHBoIIIwRZHNjfv9lo6zG+Lr9Prz0b0beA7rgquZYn0s?=
- =?us-ascii?Q?iRt7bXiv/h0gYJ9295vJJcC7yfGdD8rsTmWVAH7c/99ilfyb75fKspExAjfm?=
- =?us-ascii?Q?TQraHGuwaaKa/L1CasFZu4zfIm+umR/Vh0I642RXY1hKUKBeAPESnh8TcMSq?=
- =?us-ascii?Q?zCuPlyHE3qz/rP7cJrwjy5hvsP37lQyQ9wJ0sNyPj1SW2F5HHg9Ldu+nl/KE?=
- =?us-ascii?Q?gmX8s6tqkOm8Dzu0doUYl/tUlIeyN/jnrU2eM8Yi2NPEZB04vd63mB4oCSZl?=
- =?us-ascii?Q?9/YCoNyq/jBqFmboTYzcZl7IzNXI08S//IxoqjksuUbYvycabTuVMm3TuaPd?=
- =?us-ascii?Q?IHpjcdo9dVUeqhbkLQvKcubOoyJDkYUCOVekqmZYkgf09l4bcCY0cd2+WUty?=
- =?us-ascii?Q?EgiT8/G4Rck+EMsOgAMLLz2Gcm0F5fkWKRBCIbz5n+n/ByyT4IjP7QnD8x2B?=
- =?us-ascii?Q?mSp681RRbFKMxaEUavKvRW0NXAdxognBsDm5nEfg27UZe2dS0i9M9RjKEROO?=
- =?us-ascii?Q?T1kB2ZWTOcQcwW6Oam+wBNxdZbjoKencHxMOcIVgcxwYcDJowpFPi3QzYu/5?=
- =?us-ascii?Q?WHEeSxXzP5gewQmKkeWWwoP8X7zMwG3K8zfYu0CdpAIpXWmMUjS0eLGva1kl?=
- =?us-ascii?Q?z6Yj6Hxos++zNcfvAtNr9T7EW8SahyTv3KPcNGLFglu5AiQ8bvZ4XtHmZtbb?=
- =?us-ascii?Q?2JQL6OiXQfK1Aj1iR/rbRod5JJaUAF1jU7LVIUGv0C39rPuVq2XDRIjzyiLr?=
- =?us-ascii?Q?Aw+DuxDCWgay+ZpGe8p1+/N0R3y62nJTPCwWCRJ7VJPx8w6CaX/i1J/JmSjZ?=
- =?us-ascii?Q?q/PC9kUBui406lAOwsSdaNSjPFUKwMKt1zn7lmVna9ViZBwWzAzxEhNfWSM7?=
- =?us-ascii?Q?wPKshsQllng7jgokB1ePtNhRynKBf8Q/SNvPL1rGkjcQx0E0kzH7lyukulUF?=
- =?us-ascii?Q?9OqQtG3JyYbmjd8b9J+rpujoHMVASbI1eV/LJGLtzsJS1Y5oawPd/pGFfwcQ?=
- =?us-ascii?Q?KbSBeNSpi0m23KcOUipvfkDLDKEWjeXPaGaHmNP855JJQCFRf3mBYKIv7zD7?=
- =?us-ascii?Q?674u+6C6bhhExhy9i1h62sYP3o6vqvrWfw1LGn4IbieOpv4yCjto/u2Qh+Rr?=
- =?us-ascii?Q?Qoo2fld/8pHS+1pkyO7YrXbsMTV9DIxHMzFlVUqN+n9EypjfGtWtTg+EUTlz?=
- =?us-ascii?Q?Wrv5ROqG+Zx1Zi1Fc8l+YBVapWvypLroTbLp/VPbJtgRQx6mDZpdve5XBima?=
- =?us-ascii?Q?tSMg2ogGPR8p7eg+AXnU5NppLlIjPVh//mJsoYKW1AAgpq8Ws3KenAVLD8+k?=
- =?us-ascii?Q?ChhC4duFlQoh/q06xLFc5fLAjs5sdezUiTK6o5T1r6cVfqfNxmMegyBAVBp5?=
- =?us-ascii?Q?5HWisemZZjfF8J8rkgcHsX4UOvD90juTMdGN0OXJY7LNCHZ988VvVtPz49E1?=
- =?us-ascii?Q?CC2aw4hwXC4Frkcr/ie2zx6S1jSpHI3hdmZWctKOhFigGjPGgQmObEUkLFfM?=
- =?us-ascii?Q?xBOrj+k8ZUP5zghyffVuMpqoFc3Fy91lGCg9SIXwRzxkoxNPiB4W2q++UVDs?=
- =?us-ascii?Q?PmRldZJvUg=3D=3D?=
+	=?utf-8?B?SmluaHJ5NDMwaDNtY211TUw3dWRhcGhqakJzcElraG04TWl6V2xjaGQ4MVVl?=
+ =?utf-8?B?WmY0dVN5MWp1YWRNRmVrcmtYbkN1UGQ3V1hEYm9wTVZad2hIOFIyZXlidWFl?=
+ =?utf-8?B?bHZSMFdtaDY0UmtWa1QwdlZnNzg1amM5T2hGdnkwWW1EQjM5NXNHbG1wTVF0?=
+ =?utf-8?B?aEVSTzM2bFAzd05NdndFdzl6WlZBRGVTWWlPZ1FzdE9UcXZxZDY1Y1g2RVQ5?=
+ =?utf-8?B?TGt1UU5lRDczNkVmYlh0Vm9rRzBJOXBzb3hjY1VsWlhrZDhnYVF0a2F2MEoy?=
+ =?utf-8?B?SjBLTGs2UXhyNU5MdFBZMmV5VWd0diszVEpoN1JLSlJYODlyZndDY0JWK2Fh?=
+ =?utf-8?B?UVdzU3BmWGN2b05NWnAzQVZ4Mkdwd2NBYUJWTGJZT0o5Qll6U3ZDS0RQek5N?=
+ =?utf-8?B?UTd1elo2dEJJSkJ0UnZsOE1HcFE4bldqVFppWlBwZXBEQmE2bHRkZTZVRFZZ?=
+ =?utf-8?B?SlQzZCtYQit6TzBsSTlFQldGUy9OdHpWbWZNQTVjQWd2N05yUE1xaFlVRmVN?=
+ =?utf-8?B?R0ZqVmZpc0hXc3dlOHpvK1NMMkQyYlFIY29SaDJsMTYzeU9raTNEc3F5eGhp?=
+ =?utf-8?B?dGFWWS9JYVVxd3JZQkNUZ3dxeENHVVVGRUpvK3UzOWFKQ3B0TExLT0NBMGsr?=
+ =?utf-8?B?REhSRi9YTWtYc3lIam1KSFl5M2ZSenF2L0dXR0ZRZzR3YVZRWDI2WjdPdmMz?=
+ =?utf-8?B?aTkwY3FPZHdxd2JaK2tDUklIcFM2bFQrVDlxYTU1SmZxY29YZmpYd200UTg1?=
+ =?utf-8?B?eWozSU9zaGNrTXAyc1k1aHlEVVZFTCtjYkhFL2o3UWtiMEpnNTBzMlRYTy9s?=
+ =?utf-8?B?cEgwZWtsUkYxTTgzQitxSmRqUDY1OUIyQUxyR1hmaDRYQkNzd2s5dFc5b2xN?=
+ =?utf-8?B?WThqSHJwQSsrc2h6Nm92RUNQMXhSSlVUQnZWM0JFWWdDdDF1ZVFDWmd2WUho?=
+ =?utf-8?B?S2pwMVVYTEFaTXMxemRvTmNncWhoQ2JCMHJpOG1DOE5aOW1LM096WGtoaVA4?=
+ =?utf-8?B?dVpqWWZXNy9wS0tFNXltNE9yRHYxWVdGNmZHd00wME1QNmg0KzJZeWlSWnNk?=
+ =?utf-8?B?UmYrS3hIQUpSbzhndUpnS2tUZGc1WGREaDRxK0x3TjZsOHpiWmVBQU1lSXZY?=
+ =?utf-8?B?Y0NTSHdMKzFhWVlDSUpIUGNtaUNVVU9jS0QxQTdQVUl0MDFwSFZXZXAwNDhW?=
+ =?utf-8?B?RzZaeGEvVU1EZHlKaUlZWnFFbEdTaW5oa2lEVkVzLzAvUXZrdVpmU2p6N0lL?=
+ =?utf-8?B?d1VUMkhGYnkrODg0RGIzODNlNlRLd09TaHdpaWNxMHRHZFM3bnIzNnUrOGsy?=
+ =?utf-8?B?UE5NbEVmTzN0LzFGTUdtbm82TkJxTVlmRUF2VWplZWdhNDdMcUFTZTNQTzZa?=
+ =?utf-8?B?bnNJUFpLYktWbngxQUtWajN1TG55RUQyMGE3V1dYd0lFMytBYjBmWTZqb1B6?=
+ =?utf-8?B?MGZnRXNTckN4VFNLWE45WGZHSmQ4VnVaYm5kV01jRUMrdDhOdGhpL21NRys4?=
+ =?utf-8?B?VmtHRS9FT2p3VGdVdHlFc1lvdzlhNnkxc29EMHBhcFlIL3lNa0drQks0b1BS?=
+ =?utf-8?B?c2RlZjU5Zk9pb0V3dFR2b25DUnVVNzNwVFRwSXBlYTliQmZOM3NpY3JKY1Nn?=
+ =?utf-8?B?TTBSbUliaE5qdUxsbFFDcTJsWU1ONHVVczdjZStPMlJEMXN6R013eTZsSDZP?=
+ =?utf-8?B?am8rNjBaaGIyQXhKV0V1YmsrelRFaGZVTU5rNWgyMTg2UlBpQ1g2U2RBYVRS?=
+ =?utf-8?B?TXhBYVl0TkNaT3g0R2FmaUNDRGo0S2x0cWFiZU9hSHU3d1FuN2kxczFnRDhk?=
+ =?utf-8?B?UzJ5aUcxUnE3TUlUNEFLSnVlbUZpUzByNmRiK1NRSUMydzFGbUFPNzBZWi9a?=
+ =?utf-8?B?ZEZacXozeE5oNW5NRW1TdWNEWjkvYXBXSnJJS2pXd2pXVXgrZXlOVnphNHpZ?=
+ =?utf-8?B?S3U0dGpOaHJEL3MzVjdwQU8ydmZuRlZsSnY1ckp5b3lrUDhaUGdmMnFlNzU2?=
+ =?utf-8?B?WEJpNnJ0Yk9oN0YrVVFzN2k0Zmh3K0dGUWVaYWxzWVRWSEpUMTd0MjZ3eEVR?=
+ =?utf-8?B?Ykdpd0lQeUpmcW1KS1lqdmpmZTN1b1BpTTE4WVFFNURxRlc1dmIrU0QrSTlQ?=
+ =?utf-8?B?UDdrNGlRcnNnRm4yOWovV2d6TWtudG9qN1VUMndhNHAzc0xCYWJOYldKSUtJ?=
+ =?utf-8?B?L3EyUVVIQ3U5dFlLUVZDTUphRVZySVh4WndWVFdDVGpsMEJrb0lXLy9YUUhD?=
+ =?utf-8?B?VXNWRkhFaG9OSE9DM3FXWFJJZjRZMnRYcFpUb3MrR1NxRUFaMlVsdllrMkho?=
+ =?utf-8?B?MU82YkpmU2QyM1RaaGptREhLWmh4cndtaHVUcnJHSWxqRHg4bi90NHJZbVFU?=
+ =?utf-8?Q?pMx+jBpuw5bhbUV0=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f487577f-da47-4ff7-336d-08de4ebfe13b
+X-MS-Exchange-CrossTenant-Network-Message-Id: e22a1802-ecf5-4378-abe6-08de4ec0e8c0
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jan 2026 14:11:56.0404
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jan 2026 14:19:18.0288
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sI7P5kErugCGoBYelHZydxteqiK2l5UVCEP0OGfFK4DlyoOfFGmFSjsauNkOfsCdMQxGf6kkjyMCsXHmCwDhNw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR10MB8861
+X-MS-Exchange-CrossTenant-UserPrincipalName: YnvBkVYi3xBvvC5MjB4S53DAExNW20fniTMKOeU/owrwywVqnvzI0ZMjFLqOdbixNP4ry+CHW4pAi338KLlthg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR10MB7885
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 08 Jan 2026 14:12:02 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21479
+ <cip-dev@lists.cip-project.org>; Thu, 08 Jan 2026 14:19:32 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21480
 
-On 08.01.26 11:43, Greg Kroah-Hartman wrote:
-> On Thu, Jan 08, 2026 at 11:31:10AM +0100, Jan Kara wrote:
->> On Thu 08-01-26 09:19:23, Jan Kiszka wrote:
->>> On 13.10.25 16:46, Greg Kroah-Hartman wrote:
->>>> 6.12-stable review patch.  If anyone has any objections, please let me=
- know.
->>>>
->>>> ------------------
->>>>
->>>> From: Jan Kara <jack@suse.cz>
->>>>
->>>> commit acf943e9768ec9d9be80982ca0ebc4bfd6b7631e upstream.
->>>>
->>>> When orphan file feature is enabled, inode can be tracked as orphan
->>>> either in the standard orphan list or in the orphan file. The first ca=
-n
->>>> be tested by checking ei->i_orphan list head, the second is recorded b=
-y
->>>> EXT4_STATE_ORPHAN_FILE inode state flag. There are several places wher=
-e
->>>> we want to check whether inode is tracked as orphan and only some of
->>>> them properly check for both possibilities. Luckily the consequences a=
-re
->>>> mostly minor, the worst that can happen is that we track an inode as
->>>> orphan although we don't need to and e2fsck then complains (resulting =
-in
->>>> occasional ext4/307 xfstest failures). Fix the problem by introducing =
-a
->>>> helper for checking whether an inode is tracked as orphan and use it i=
-n
->>>> appropriate places.
->>>>
->>>> Fixes: 4a79a98c7b19 ("ext4: Improve scalability of ext4 orphan file ha=
-ndling")
->>>> Cc: stable@kernel.org
->>>> Signed-off-by: Jan Kara <jack@suse.cz>
->>>> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
->>>> Message-ID: <20250925123038.20264-2-jack@suse.cz>
->>>> Signed-off-by: Theodore Ts'o <tytso@mit.edu>
->>>> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>>> ---
->>>>  fs/ext4/ext4.h   |   10 ++++++++++
->>>>  fs/ext4/file.c   |    2 +-
->>>>  fs/ext4/inode.c  |    2 +-
->>>>  fs/ext4/orphan.c |    6 +-----
->>>>  fs/ext4/super.c  |    4 ++--
->>>>  5 files changed, 15 insertions(+), 9 deletions(-)
->>>>
->>>> --- a/fs/ext4/ext4.h
->>>> +++ b/fs/ext4/ext4.h
->>>> @@ -1970,6 +1970,16 @@ static inline bool ext4_verity_in_progre
->>>>  #define NEXT_ORPHAN(inode) EXT4_I(inode)->i_dtime
->>>> =20
->>>>  /*
->>>> + * Check whether the inode is tracked as orphan (either in orphan fil=
-e or
->>>> + * orphan list).
->>>> + */
->>>> +static inline bool ext4_inode_orphan_tracked(struct inode *inode)
->>>> +{
->>>> +	return ext4_test_inode_state(inode, EXT4_STATE_ORPHAN_FILE) ||
->>>> +		!list_empty(&EXT4_I(inode)->i_orphan);
->>>> +}
->>>> +
->>>> +/*
->>>>   * Codes for operating systems
->>>>   */
->>>>  #define EXT4_OS_LINUX		0
->>>> --- a/fs/ext4/file.c
->>>> +++ b/fs/ext4/file.c
->>>> @@ -354,7 +354,7 @@ static void ext4_inode_extension_cleanup
->>>>  	 * to cleanup the orphan list in ext4_handle_inode_extension(). Do i=
-t
->>>>  	 * now.
->>>>  	 */
->>>> -	if (!list_empty(&EXT4_I(inode)->i_orphan) && inode->i_nlink) {
->>>> +	if (ext4_inode_orphan_tracked(inode) && inode->i_nlink) {
->>>>  		handle_t *handle =3D ext4_journal_start(inode, EXT4_HT_INODE, 2);
->>>> =20
->>>>  		if (IS_ERR(handle)) {
->>>> --- a/fs/ext4/inode.c
->>>> +++ b/fs/ext4/inode.c
->>>> @@ -4330,7 +4330,7 @@ static int ext4_fill_raw_inode(struct in
->>>>  		 * old inodes get re-used with the upper 16 bits of the
->>>>  		 * uid/gid intact.
->>>>  		 */
->>>> -		if (ei->i_dtime && list_empty(&ei->i_orphan)) {
->>>> +		if (ei->i_dtime && !ext4_inode_orphan_tracked(inode)) {
->>>>  			raw_inode->i_uid_high =3D 0;
->>>>  			raw_inode->i_gid_high =3D 0;
->>>>  		} else {
->>>> --- a/fs/ext4/orphan.c
->>>> +++ b/fs/ext4/orphan.c
->>>> @@ -109,11 +109,7 @@ int ext4_orphan_add(handle_t *handle, st
->>>> =20
->>>>  	WARN_ON_ONCE(!(inode->i_state & (I_NEW | I_FREEING)) &&
->>>>  		     !inode_is_locked(inode));
->>>> -	/*
->>>> -	 * Inode orphaned in orphan file or in orphan list?
->>>> -	 */
->>>> -	if (ext4_test_inode_state(inode, EXT4_STATE_ORPHAN_FILE) ||
->>>> -	    !list_empty(&EXT4_I(inode)->i_orphan))
->>>> +	if (ext4_inode_orphan_tracked(inode))
->>>>  		return 0;
->>>> =20
->>>>  	/*
->>>> --- a/fs/ext4/super.c
->>>> +++ b/fs/ext4/super.c
->>>> @@ -1461,9 +1461,9 @@ static void ext4_free_in_core_inode(stru
->>>> =20
->>>>  static void ext4_destroy_inode(struct inode *inode)
->>>>  {
->>>> -	if (!list_empty(&(EXT4_I(inode)->i_orphan))) {
->>>> +	if (ext4_inode_orphan_tracked(inode)) {
->>>>  		ext4_msg(inode->i_sb, KERN_ERR,
->>>> -			 "Inode %lu (%p): orphan list check failed!",
->>>> +			 "Inode %lu (%p): inode tracked as orphan!",
->>>>  			 inode->i_ino, EXT4_I(inode));
->>>>  		print_hex_dump(KERN_INFO, "", DUMP_PREFIX_ADDRESS, 16, 4,
->>>>  				EXT4_I(inode), sizeof(struct ext4_inode_info),
->>>>
->>>>
->>>
->>> Since this patch, I'm getting "inode tracked as orphan" warnings on ARM=
-=20
->>> 32-bit boards (not qemu, other archs not tested yet) when rebooting or=
-=20
->>> shutting down. The affected partition is used as backing storage for an=
-=20
->>> overlayfs (Debian image built from [1]). Still, systemd reports to have=
-=20
->>> sucessfully unmounted the partition.
->>>
->>> [  OK  ] Stopped systemd-journal-flush.serv=E2=80=A6lush Journal to Per=
-sistent Storage.
->>> [  OK  ] Unmounted run-lock.mount - Legacy Locks Directory /run/lock.
->>> [  OK  ] Unmounted tmp.mount - Temporary Directory /tmp.
->>> [  OK  ] Stopped target swap.target - Swaps.
->>>          Unmounting var.mount - /var...
->>> [  OK  ] Unmounted var.mount - /var.
->>> [  OK  ] Stopped target local-fs-pre.target=E2=80=A6Preparation for Loc=
-al File Systems.
->>> [  OK  ] Reached target umount.target - Unmount All Filesystems.
->>> [  OK  ] Stopped systemd-remount-fs.service=E2=80=A6mount Root and Kern=
-el File Systems.
->>> [  OK  ] Stopped systemd-tmpfiles-setup-dev=E2=80=A6Create Static Devic=
-e Nodes in /dev.
->>> [  OK  ] Stopped systemd-tmpfiles-setup-dev=E2=80=A6ic Device Nodes in =
-/dev gracefully.
->>> [  OK  ] Reached target shutdown.target - System Shutdown.
->>> [  OK  ] Reached target final.target - Late Shutdown Services.
->>> [  OK  ] Finished systemd-poweroff.service - System Power Off.
->>> [  OK  ] Reached target poweroff.target - System Power Off.
->>> [   52.948231] watchdog: watchdog0: watchdog did not stop!
->>> [   53.440970] EXT4-fs (mmcblk0p6): Inode 1 (b6b2dba9): inode tracked a=
-s orphan!
->>> [   53.449709] CPU: 0 UID: 0 PID: 412 Comm: (sd-umount) Not tainted 6.1=
-2.52-00240-gf50bece98c66 #12
->>> [   53.449728] Hardware name: ti TI AM335x BeagleBone Black/TI AM335x B=
-eagleBone Black, BIOS 2025.07 07/01/2025
->>> [   53.449740] Call trace:=20
->>> [   53.449757]  unwind_backtrace from show_stack+0x18/0x1c
->>> [   53.449807]  show_stack from dump_stack_lvl+0x68/0x74
->>> [   53.449839]  dump_stack_lvl from ext4_destroy_inode+0x7c/0x10c
->>> [   53.449870]  ext4_destroy_inode from destroy_inode+0x5c/0x70
->>> [   53.449897]  destroy_inode from ext4_mb_release+0xc8/0x268
->>> [   53.449936]  ext4_mb_release from ext4_put_super+0xe4/0x308
->>> [   53.449962]  ext4_put_super from generic_shutdown_super+0x84/0x154
->>> [   53.449996]  generic_shutdown_super from kill_block_super+0x18/0x34
->>> [   53.450023]  kill_block_super from ext4_kill_sb+0x28/0x3c
->>> [   53.450059]  ext4_kill_sb from deactivate_locked_super+0x58/0x90
->>> [   53.450086]  deactivate_locked_super from cleanup_mnt+0x74/0xd0
->>> [   53.450113]  cleanup_mnt from task_work_run+0x88/0xa0
->>> [   53.450136]  task_work_run from do_work_pending+0x394/0x3cc
->>> [   53.450156]  do_work_pending from slow_work_pending+0xc/0x24
->>> [   53.450175] Exception stack(0xe093dfb0 to 0xe093dff8)
->>> [   53.450190] dfa0:                                     00000000 00000=
-009 00000000 00000000
->>> [   53.450205] dfc0: be9e0b2c 004e2aa0 be9e0a20 00000034 be9e0a04 00000=
-000 be9e0a20 00000000
->>> [   53.450218] dfe0: 00000034 be9e095c b6ba609b b6b0f736 00030030 004e2=
-ac0
->>> [   53.730379] reboot: Power down
->>>
->>> I'm not getting the warning with the same image but kernels 6.18+ or=20
->>> also 6.17.13 (the latter received this as backport as well). I do get=20
->>> the warning with 6.1.159 as well, and also when moving up to 6.12.63=20
->>> which received further ext4 backports. I didn't test 6.6 or 5.15 so far=
-,=20
->>> but I suspect they are equally affected.
->>>
->>> Before digging deep into this to me unfamiliar subsystem: Could we miss=
-=20
->>> some backport(s) to 6.12 and below that 6.17+ have? Any suggestions to=
-=20
->>> try out first?
->>
->> I suspect you're missing 4091c8206cfd ("ext4: clear i_state_flags when
->> alloc inode") (which BTW has Fixes tag to this commit).
->=20
-> That is queued up for the next round of stable releases.  Hopefully the
-> -rc releases for them will go out in a day or so.
->=20
+On 06.01.26 15:08, Jan Kiszka wrote:
+> From: Jan Kiszka <jan.kiszka@siemens.com>
+> 
+> This is on by default in U-Boot when building for arm32. We are not
+> using GRUB, we should never use it, the workaround delays the boot by
+> several seconds, and it even started to break the boot of the BBB with
+> kernel 6.1 and older since we switched to the merged defconfig. So, get
+> rid of it.
+> 
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> ---
+> 
+> This still needs validation on the DE0-Nano-SoC.
+> 
 
-Perfect. It indeed looks like that this missing commit was causing the
-issue.
+...and it looks like we need to keep it enabled on that target, if not
+more. Only targets with architected cache like the AM33xx should keep it
+on. The socfpga has a custom one, and that should be turned off - what
+the workaround does. I'm now seeing sporadic crashed in the UEFI chain
+on the DE0-Nano-SoC.
 
 Jan
 
---=20
+>  recipes-bsp/u-boot/files/no-grub-workaround.cfg | 2 ++
+>  recipes-bsp/u-boot/u-boot-common-2025.07.inc    | 8 ++++++++
+>  2 files changed, 10 insertions(+)
+>  create mode 100644 recipes-bsp/u-boot/files/no-grub-workaround.cfg
+> 
+> diff --git a/recipes-bsp/u-boot/files/no-grub-workaround.cfg b/recipes-bsp/u-boot/files/no-grub-workaround.cfg
+> new file mode 100644
+> index 00000000..dc09edd6
+> --- /dev/null
+> +++ b/recipes-bsp/u-boot/files/no-grub-workaround.cfg
+> @@ -0,0 +1,2 @@
+> +### Disable grub workaround
+> +# CONFIG_EFI_GRUB_ARM32_WORKAROUND is not set
+> diff --git a/recipes-bsp/u-boot/u-boot-common-2025.07.inc b/recipes-bsp/u-boot/u-boot-common-2025.07.inc
+> index ed44bad0..2318e033 100644
+> --- a/recipes-bsp/u-boot/u-boot-common-2025.07.inc
+> +++ b/recipes-bsp/u-boot/u-boot-common-2025.07.inc
+> @@ -28,6 +28,9 @@ SRC_URI += " \
+>      file://rules.tmpl;subdir=debian"
+>  SRC_URI[sha256sum] = "0f933f6c5a426895bf306e93e6ac53c60870e4b54cda56d95211bec99e63bec7"
+>  
+> +SRC_URI:append:armhf = " \
+> +    file://no-grub-workaround.cfg"
+> +
+>  SRC_URI:append:ftpm-stmm = " \
+>      file://ftpm-stmm.cfg"
+>  
+> @@ -54,6 +57,11 @@ SECURE_BOOT_DEPENDS:ftpm-stmm = ""
+>  DEBIAN_BUILD_DEPENDS:append:secureboot = "${SECURE_BOOT_BUILD_DEPENDS}"
+>  DEPENDS:append:secureboot = "${SECURE_BOOT_DEPENDS}"
+>  
+> +do_prepare_build:append:armhf() {
+> +    sed -ni '/### Disable grub workaround/q;p' ${S}/configs/${U_BOOT_CONFIG}
+> +    cat ${WORKDIR}/no-grub-workaround.cfg >> ${S}/configs/${U_BOOT_CONFIG}
+> +}
+> +
+>  do_prepare_build:append:ftpm-stmm() {
+>      sed -ni '/### Enable OPTEE, fTPM and StMM/q;p' ${S}/configs/${U_BOOT_CONFIG}
+>      cat ${WORKDIR}/ftpm-stmm.cfg >> ${S}/configs/${U_BOOT_CONFIG}
+
+-- 
 Siemens AG, Foundational Technologies
 Linux Expert Center
 
