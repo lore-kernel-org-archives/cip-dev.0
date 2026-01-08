@@ -2,41 +2,41 @@ Return-Path: <tommaso.merciai.xr@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9154CCF6AA8
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A628ECF6AB0
 	for <webhook@archiver.kernel.org>; Thu,  8 Jan 2026 09:31:10 +0000 (UTC)
-Received: from OS0P286CU011.outbound.protection.outlook.com (OS0P286CU011.outbound.protection.outlook.com [52.101.228.21])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.3037.1767864662688350346
+Received: from OS0P286CU011.outbound.protection.outlook.com (OS0P286CU011.outbound.protection.outlook.com [52.101.228.35])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.3032.1767864656958039376
  for <cip-dev@lists.cip-project.org>;
- Thu, 08 Jan 2026 01:31:04 -0800
+ Thu, 08 Jan 2026 01:30:57 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=junb+tGv;
- spf=pass (domain: bp.renesas.com, ip: 52.101.228.21, mailfrom: tommaso.merciai.xr@bp.renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=ZEEW+zu2;
+ spf=pass (domain: bp.renesas.com, ip: 52.101.228.35, mailfrom: tommaso.merciai.xr@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PZNtWM7W2fVeUVvG4XpAtS9+ds2fFl3A0eOpYCGPqUPv0ZEt3mE0JQzPSwuxkynpZsshGsnliXxyZiy1LnFTauRI/eTOa6D2w1ipa1aSDTvMDLgiv0jZOF1MpvpS/PbQNZgrT3VM5UJrS5r7R8i7wWJN6cz+FWSzHNkJwzerfLWAtpBWFzzSzhV6A/0JVW/ZlECe+OG+3vJWtXhO7ZRKGpYb6Q920WVz91KldLczTExyZfwXSzbZjN4UpyZHKXRrpDVaHV5VAwXV4pIyWPIdduo/rk44/RRHANLhqIUDLZlTHdnxRBbs7Jj+W/4CuK0Hyp4wofHJuJ7FywAuRBm3vg==
+ b=WCE1r0v8IgBHBWZ3lTmRKazkwDvaptZJCoVv8YnuAeMZvLsI8sCNWBv6dEYr7IA47iF0/itpyufJfG6z1DdXao/ILhdiAiu5YDD2ok1k4eZpxu/GN5buTUaO67j5ST0sGxeVTJ5UZA0PDOFFLJBT9ZYAmX2El/kCeVGGimgUUygL0cMeKclW/1Tpp7DjkNBSrLK/4GWt1Cz2mFnhWlTZ+t3/hbZOtJHBdFWmFgxRo6F20+HcZ6r9yFJYEP932lnH8S4oWgv0Ymr9EOwA2c8vtqN7ZQ7ZzlyjKMcN9QFU2TxUXGx2tbZQu/4KBbOHCwwpC18+duUYM4jynU/HOLobBw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wD+jR9mdeU8x/pOVbvqPVmUQOCuKqlWObK/kqZ8fiPc=;
- b=RPbsjISpD1IFL5Htckv5wuB3FX34pNno677tL6OFK04cLzVdZ84l0nw3uuyJW86aP8O29/uyyNH79/skAnR37V/AVXJKLkEmmnEUvnnMzgJ1bsx64/HMZWtSA0a5Az0ZbSYJ5EXk9LLxNf3hRkhpijriYISUD1HG7F/DH4KaVzLxk9lsyh+K4oQ3vhy9TEQEJemMEwZooG830T/Tb6Wnth+RnFNQo4tTQO6isKHdB9lTNGqEKu+SOauvmrZyDwE9Ly2Yg/z9e8a065OFB7gT8D9FW/6n+cuaE25cSrpi1XOJYU+ioeH3u3MXuD/tE7712z6N64M9gOyHLdWBUp5zCg==
+ bh=Mpe8s7L36hmW8woCZMx/7+TI5NjZFdsxxvq3577ZNbI=;
+ b=kZiVs8/K+NHgwNffWGwbDDf/wITAe2KGudKXu/FBebYi7tGRAzsfsnw6in2ztnd8l5WHa3tL+TX7fhjScfABr1nOCOTs6MamwE2NscqrjdfEL1keLfCvHFeEcXwo2hZ0ii48rgc97Mc6TtGk9YcXG/qHy98T8yZCR8bc0ZBYMVBjqgB9YMKhsNFIHJ6YtKI6ZmSSPEDJ7hE0ovuFSaop6rjtzh/6Ql7+qiqpWmwc28Lxcf0uKh7Y9KHXZVAcZWVMbKt7yENZVI0hLaQzH3SxsdoxShQV+FUh+aSousxWgFHWAaVHFEGmfrBFgVmsw20YkqKbVOZxYrBHk7koZTqaDw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wD+jR9mdeU8x/pOVbvqPVmUQOCuKqlWObK/kqZ8fiPc=;
- b=junb+tGvPE/MP2/RcToYmV9RAUsfx8g45bT8uteLfKKw3yB7qLds4xCg7HakaYMlZasBVFcltKs2vEC9d4n/ibStpPqDGdnm6AbCppTMhz4DxQJvTrr/Dg9GvNf7Cgj4mYSptstD5g7YoCR3ylPHO+mntVw6+OQked31z4GdkDQ=
+ bh=Mpe8s7L36hmW8woCZMx/7+TI5NjZFdsxxvq3577ZNbI=;
+ b=ZEEW+zu27epXUVNMMAaEEqEshdlMn6hP9KI6rlRwZdSvvbDbqm+J/8tpHhukXWJds/49Ur9AeN++8EQPPpkxTVYF5HImk7hjAQLa//TD8se7qJDawhvuLsTumdkTH612EXfsnm2dZHK1xyM7Dokqau+5/W/joqiRfOmWzDi2JJw=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=bp.renesas.com;
 Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com (2603:1096:400:3e1::6)
  by TY7PR01MB14326.jpnprd01.prod.outlook.com (2603:1096:405:240::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9520.1; Thu, 8 Jan
- 2026 09:31:02 +0000
+ 2026 09:30:53 +0000
 Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com
  ([fe80::33f1:f7cd:46be:e4d8]) by TYCPR01MB11947.jpnprd01.prod.outlook.com
  ([fe80::33f1:f7cd:46be:e4d8%5]) with mapi id 15.20.9499.003; Thu, 8 Jan 2026
- 09:31:02 +0000
+ 09:30:53 +0000
 From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -44,9 +44,9 @@ To: cip-dev@lists.cip-project.org,
 CC: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	tomm.merciai@gmail.com
-Subject: [PATCH 6.12.y-cip 06/19] i3c: Remove the const qualifier from i2c_msg pointer in i2c_xfers API
-Date: Thu,  8 Jan 2026 10:30:10 +0100
-Message-ID: <20260108093023.489513-7-tommaso.merciai.xr@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 03/19] i3c: controllers do not need to depend on I3C
+Date: Thu,  8 Jan 2026 10:30:07 +0100
+Message-ID: <20260108093023.489513-4-tommaso.merciai.xr@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260108093023.489513-1-tommaso.merciai.xr@bp.renesas.com>
 References: <20260108093023.489513-1-tommaso.merciai.xr@bp.renesas.com>
@@ -58,190 +58,142 @@ X-ClientProxiedBy: FR0P281CA0244.DEUP281.PROD.OUTLOOK.COM
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: TYCPR01MB11947:EE_|TY7PR01MB14326:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4c43b229-33dc-464d-fff5-08de4e98a387
+X-MS-Office365-Filtering-Correlation-Id: c109cba4-95fc-4511-f467-08de4e989e57
 X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
 	BCL:0;ARA:13230040|376014|52116014|1800799024|366016|38350700014;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?mr6cUP7KTHP14Y5q8pnhUWVQ27gH0x6mTDG5yGwVVJ+Yyipgt285+iG1B9tI?=
- =?us-ascii?Q?ofBn1sLLvrhrVNZvT2vcKosaehn4RJCA8LI9zR0tIwg0A7oZOmYis6KxZyke?=
- =?us-ascii?Q?ILTtKdbrYqqzIKsUWfYTGo9ErbG6bFJb0RFN85zI7A55/9t8/1Q11O+VmmEW?=
- =?us-ascii?Q?DkLbdSkDifPs+F8YYqQ2UHbmURXMkvEWfZ+o59MfXyyn1W6WR4/lSVc4j7ml?=
- =?us-ascii?Q?K3y1IuLYWAa0Ej1AF6P4Qllm2YjV3ZqtLGmwqCtFrFCMw0N1+0mNNlzFsjeu?=
- =?us-ascii?Q?8vn/wzBUDHc5E3XX/atVCeSP4vGS6AgT4mkDsGYGgxbGQ2EiwSxtbFWHKgwv?=
- =?us-ascii?Q?fffML0KWbuq2F4xms8Rr+8dxO8kapQlFciQbpi7Z4Dsoq/QXxokLqzRbsqP4?=
- =?us-ascii?Q?vTia0Mvg+fvXxg+BmHrqhzkwJkkHmC8smgi179HlHOnY6uKSqvANBPpa+WiL?=
- =?us-ascii?Q?jKCz8BatuDYRHR6oGk7GxFRz4+zCDLJo9qqV+DpVhw2f2tCCibchR5nhKcFt?=
- =?us-ascii?Q?pQfYqrP/D/eazaRpHL8I+GCVofXcyuUP/ulcLYSaIuUDjOdX5NfICzOrfdWh?=
- =?us-ascii?Q?WkwwBA+4le4TgLOxDf/D+Wdh1tGUwKhR3jMJJ7eyX+xDC57QrBfmJ0rSDBdM?=
- =?us-ascii?Q?g9KaVVIj7ImHM9PsQs0DhK2TMrfBpnG1+mkQXKyOQ2TaG/zCdAS5JRyqMn0Z?=
- =?us-ascii?Q?vNqTTiDheIIWO1g09RDMN2VPLX844YfHh6Wd7wgboYZ2KEvJ+c6Ztjy4JPSf?=
- =?us-ascii?Q?9eogrh7FI6eW6FClnxufkCI1O/Qf/hfbBUGDM/7R+XOxvgIFP4nj1CiAglcY?=
- =?us-ascii?Q?lqFdHC+QhhqQLr83F2l526aeMN+cnaxzuLNhfOfzmd8j07sDJ+3VKsIG/RmI?=
- =?us-ascii?Q?OYUHi+vVac6Gsr2Y9OoeCsUnWjfAMx8Vj93KZbd5riQ4kaiBVsJWXf9jF7aG?=
- =?us-ascii?Q?rhjZWbldAM4gY9TcjrObkO7wPpuH/nvIpoC+zu68AgJPQMVW58u8LcD0copP?=
- =?us-ascii?Q?JI11MG2CiLzzD7IDqwRINV/7EtWGXLMA78hLxhaKyCWtt0b47m1rSEAWqVeV?=
- =?us-ascii?Q?enxmWpX2uT3121+FyEIxKA++BxJew3po2ZZ1bJiuGFeVM+6X2cyXCvEGzXtg?=
- =?us-ascii?Q?Ao1AAuoarVEUWlUctndBKyuAfMEjoKtfphU7as7D1r7LFctGN2S505NrUBmc?=
- =?us-ascii?Q?mnUKGBD9gCBsBbcJaavX3X1vAvV9ocRITvr9cLLcX9J4iyqHeUchgSqfrKpD?=
- =?us-ascii?Q?49g7DtdQx1zaEgt2O7VZtGDU8bkKxMIPUSDpTZMPgxA07hj04sGoutq7fGgG?=
- =?us-ascii?Q?6tmc6vlMP6c92gDNu0T0suLjSBkQ31M/qvLayO8lnEu1V9jMmBSk7BlEfTn+?=
- =?us-ascii?Q?tnukgwQS/4JmlwOpZVcb5ief/9/406l/bbU9mXXyqF71tkKAQ0smxH9ucmaJ?=
- =?us-ascii?Q?zCEGBzjVO9EuWKAA2oJDc1lFIVDVrqUHlTw46GZUynxlpH7REHl2fBAL/985?=
- =?us-ascii?Q?A9JhKT2njgSGJ9IDTccfi1jC7HvyDWsmEB+w?=
+	=?us-ascii?Q?WQZTE0J52u4DL497+JFmUZDbbOW0OGFXAij/jbGFbmMolLLsaWO9yivCHAlH?=
+ =?us-ascii?Q?TVwlMQx+tmEjAH1FUiBCXR7wfI0zrfX9bMlH0CzbLIPICqhMf2HzwWUrx6Pn?=
+ =?us-ascii?Q?SlnsjWrsUYi9j0CX9n29kvrKunLKC2yN/tF7Zs3LFROdeqK7TswSwb2ZHd7a?=
+ =?us-ascii?Q?JCeC7qI9sVz3pGoppx6axLR7DoWVHzJdiAMFRvpf8YpCg44cEvZr70R4ko3f?=
+ =?us-ascii?Q?YZuHG9LGDoY+elVvD+ShinlfJiFvDa3bF7LwepmbFFh5UQKX0wrXqBz/Fned?=
+ =?us-ascii?Q?u/WQ+HneHgXcC/s6Ba4yrJZNSedEYCMU1twzFc87VZC2VWltskYProvxHPHY?=
+ =?us-ascii?Q?CGUz7ySXJ/66keCUx9pvObRsSN6NK2z3tgvmYQvSWcnNI6HcU+ugQ1va0vo7?=
+ =?us-ascii?Q?ue7az08a1O0nJJMXx7ud5kvjWPj0pp9GNvgEN4Uisg4JQJard4XCezf0PMph?=
+ =?us-ascii?Q?sylsr5mu+VgqqjcClsOsHyptvf3ZC93iBkCEUq6f3dMrZ+NLxWBUebngYIuA?=
+ =?us-ascii?Q?5y22Qfci1ueyXZAp8R3H4Mc8xq6plmQJPO89JO2my6rSpdeMjM2HgOMuLcD9?=
+ =?us-ascii?Q?ix4keoeL+oj2LBg0g7SNmKBfpGKYK1mCEyy5RgmA+wXbhZUora6xqCKePso2?=
+ =?us-ascii?Q?Mbl+Df/GFk9ZxrmTvBTMJfR6Py3UQkuOUfBGKXm/DoRnFRtsvtSy/SS52NTC?=
+ =?us-ascii?Q?1Ew6hNx7/cwAIfsZC51U50ASeX1zi1L5aAcKofP5OyCSl1dg5s/kO1L/mf9s?=
+ =?us-ascii?Q?7zPGihpLnfXT/U0Lh5BN5Arl0dMvLm3wDPets4hHVmkOjobRIM7I1s1iYcwi?=
+ =?us-ascii?Q?b6nWEZ29eYjDGxEAxOtEtK4MwaIoNMLaVj2ce/dNkDITy1nZHrnv1wcTREHX?=
+ =?us-ascii?Q?SjSYQqjCye5RDTC9erxdje2s9i3RARUZzw4ZQ7Mpgv3CD5NGITiXQdqFjDBf?=
+ =?us-ascii?Q?NWahAKt6HPnK5+uJf1vkTZTjwwxb0k0BUy8PrV7rvBQnEFQrUjF++YmAvYZr?=
+ =?us-ascii?Q?eLPPhJcNgZVLG7GfHEMVZcncCOVhY5g4FYq5EG3ubBD1wxJoPiQecqplDRvZ?=
+ =?us-ascii?Q?J+QlNhi7GYHwkjdckTgsJJYT5FRZ+iIP/EtigfQeNHKPK2wZEkqaiwdXZdZz?=
+ =?us-ascii?Q?ggKD+Vl+WpGqkRBLO2JrqwCM5yl4PgIYHLvQvM/iIvGWSRB6BFkYCw8tasSJ?=
+ =?us-ascii?Q?Nlm5i0D3yUZkQnOTAossTs8vIKLczDYYd1PlAFKdpn8ZBdLxgVyQn1CzkMcJ?=
+ =?us-ascii?Q?5lP2gI1Hxz7nOw1ukw1ScCmEtmSFD6hmzFbLldCGJMrJ4CULahuOyS7H+l6R?=
+ =?us-ascii?Q?Pvl9DYl3UVvYX18pDNGk150zPMeATM8rVLD40fIwn+H/PURgCdBVWSgTnKlc?=
+ =?us-ascii?Q?lq+oKxWqAM7wgM5oh2QRqLnYNmVUkLOdGOaYA/kWJb4oQK9n7upACS/ZcdAw?=
+ =?us-ascii?Q?iHJJ12vmH6P4sXAz80ePIF1PXwxjXRc6hbCDYCoSJTINOJWiBYXE4Sl19WZq?=
+ =?us-ascii?Q?HLeTT4WN80HH3tVXVsiH9iZVpp985koM26TD?=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11947.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?S2zEKGF2tCgv2t9oNFtghhTYLEVQwEnGkyT4weT5CRJC1GuGaA1rX1TT4nA2?=
- =?us-ascii?Q?/Ovn2hClF8IATczzkz0w6DUIK/pwqleCcNl5y7N/AuYvwkK35D1dgH0HixU0?=
- =?us-ascii?Q?Z+t8RQdRqiXNzNBeeNBOVtMMdWNe/ftyLc3R37iBG3NOUvyxFrV9Mvbb+aLZ?=
- =?us-ascii?Q?uN1U1sSwJilgetY/wHZ9FDHh8WjIqOLecgur2yL4Ap7QbwHyNh9PGb8DVUMv?=
- =?us-ascii?Q?LO4V2ZqxKpHeIlbIVg7YPgNMryaYBtgDGZGgTGKmI4Bdvg7sHpHS5grxVhLT?=
- =?us-ascii?Q?m5NlZdFOFyTK9VNhTzZvh4XU47Z9D2enOoDxEqWY0hKLbSbK/qMGfcQ7AEXy?=
- =?us-ascii?Q?Ns+QUsiPuTc42nJCQHhNpgVSxJ3Vp0sam1vJsL1fxvWsVO3CtO4ONlja6pe+?=
- =?us-ascii?Q?47yLTE5MihnwaiDfEJlqU/ZBb4V4Ha6tZvU24lWRm4Ak42KbdMDfcP8F0XKH?=
- =?us-ascii?Q?g4wERfESu1taorjniw+GFuhJm82F5LBLXueTXFIKe5R2ct91pGjLN3jjgMw5?=
- =?us-ascii?Q?VVL/lPGzRiXIPxMl8B9BP7C+xCci2kN1yAmx+1i+DL3atbS6gsggDwq2h3M5?=
- =?us-ascii?Q?pFoVAfvgGuPi9DGXGxj4Gs3b+7VoMy4YVZRJ2PsWWdhsS8Xs+CabU7peTMs6?=
- =?us-ascii?Q?iNIuSMe6AQFhcsZcdGcMLonQLnxIHDeTxJtEa7BTRKZQvn7b6yZVMh3gdUyT?=
- =?us-ascii?Q?pdBykroosCnb6VMYkP0bOlta2RurYykihR6bEgIhRmiKrRbcELPU9aWqbn+7?=
- =?us-ascii?Q?flRbEWCXEZxpcct6dht21hyU8WNz5xbtMqJCxpsa+D+x0sW72jCZnTre0Qqf?=
- =?us-ascii?Q?GYhNLj4SFw74z4xZBUjvwiqpEyCa4SVAlVA4CgD6gDKdJgiG0CU7rEo59Z7j?=
- =?us-ascii?Q?9nBvcJGDJMEVC22D+Ovh6fPKbFOh2bpfSDPT17KqL0qkOmvUUSKiK255AqaL?=
- =?us-ascii?Q?b7n+zzcLwnY8O1x+46eO54cLC5YxWsdpXKU/l02fSkwb8nu3dSEHYOy/qZsh?=
- =?us-ascii?Q?S53pK3lXS/cmmDb6dqotVmXQ5owXbb+s6tT1g7Xrwjuj7bmnflpjgNbvxJ+M?=
- =?us-ascii?Q?o3HGNGoIZ9QtZLxFEzh8MYbYEZ6lXmVSlKKE/vkeKoRhnlE0t8u0dpojO1il?=
- =?us-ascii?Q?Z3YqxhW1W3YfVkyM1fktYhoIP7+GHVDaFURO6An+Nt3g44I2CsFKpM9518Cn?=
- =?us-ascii?Q?CGzym//tYpraFFyWD8lBxniDN8P4lj0lylZVmLsgGOX9jS6T7bg+fh1W/Ety?=
- =?us-ascii?Q?yvBZPfO0Sfx1crHB1JmR9KZBiLWFeSCsgF4Q+6FE4PgIfh9SqgvM/P4MFAn1?=
- =?us-ascii?Q?/arn+PeioLAi6DlhlIRhEIWOfnuCRapapVNG/CwE4Gtuew7ux/3IfEXS6iqj?=
- =?us-ascii?Q?LQHrNzdZhHjECIYwA9JvavEzwag6MAiISHWOvTTY6ZqUP7kzX/im3Ji5Nm9C?=
- =?us-ascii?Q?E2mj6TFksoKF4Rbay92/voazUPTyBEudkHKc9JPGZSKHLsEDrTNtBTaaE7p3?=
- =?us-ascii?Q?HzcD4VaHIlcuV+7hSY+3kiNHAsgFMgHnTln5GAPC5EW+QoRhVEcHnxFsJ5sm?=
- =?us-ascii?Q?4jspV9chNX/cQvlt2lTFwJE8NIgUF/8eR3TcMl4x3p6ry1pSSlGJiwpOmsKS?=
- =?us-ascii?Q?vgcVc4hapEI3BD9mvhsgxkQDUWgXPptgyt8OAS6Nz7EeLW2GoyL+KmIGIm/8?=
- =?us-ascii?Q?hmyJVazanwMgHVtBq3ui7hMlqmc3RaQFXJszwotnv6UvuWlcrl50Su6PMi35?=
- =?us-ascii?Q?sOy0NsLWY8M7A10D3xdaE0jTw1zn8Cy/OfODyS9zTBk/LfaG40+c?=
+	=?us-ascii?Q?xl7t331qL1iMv1V+666MNiq0lhvIHuLZbysAIbfbC+NymRx18MwF+OkAWsin?=
+ =?us-ascii?Q?VEWusjEfBSpOzyyEM+BDkAf2F1N9B//jKWRG+Q0Qv50DnmCf428QkYLKDRes?=
+ =?us-ascii?Q?pLnOh6W4c0DcR81p1Be8yuZxVHZYDJEt6JAB8BohOKKgo1yiXtenIBVoQsJo?=
+ =?us-ascii?Q?CfkHzIr7BBm5ihvHSMSBQTFm0Jw7GwTiXSXBpy2o7kkS0SffDGKT6Ig5DHJz?=
+ =?us-ascii?Q?A2U1P94Ve6px9r6TwyAbX5FU3ER+4Ey8YuIeKBv/Bza7t4LxT9X6kLJJzgkd?=
+ =?us-ascii?Q?b0gohpliFUfzFUxiAptKEe4w5ZrZR6o8XVvuchOScAnJDJyYrlLKiyGaXSV0?=
+ =?us-ascii?Q?tpF7JBrNhU4lpUDL3+taqY9AUxfFXJvCz+/m8+yH6vyvpm8J/fTY2ZKZSf4F?=
+ =?us-ascii?Q?Kqm+zcY4suYy2mKkD3ihq/ZDVWTnkLA4HA6lt4z521O0bOipet1op0qRE0HV?=
+ =?us-ascii?Q?5CG7Ytc4CgmbXoBhQxRMpGg70RzXkE35c8c21IFOjNSLHXnvH6RonIb+SYpW?=
+ =?us-ascii?Q?5UgOidltFnsbjoVzmSxldLZ/3cFk5/eJB5/OtnzdCuMD2JeGH6miSEz0N1UT?=
+ =?us-ascii?Q?6Fdm7jb75c11gG5miDQ6N3L6ejTQS3e2oXnclLX+n3+cABA1mVzJiu0lP8Ah?=
+ =?us-ascii?Q?hNearT8SmyaHHIpCCtZYIqYLx2jJOMcsCo/Uz0yp5+YXFPcC7CENAyoJBZ/L?=
+ =?us-ascii?Q?l832ph9o1f974nUqb6zOM89HrmRBSL98WpSkBh40o3j667Re9TQ314cK3XOI?=
+ =?us-ascii?Q?lOCEYIKleU3O32LCDOi3JO5f+X9+C9/eKiSWXWgMWKEZyklCkL/SUB9BlFVj?=
+ =?us-ascii?Q?x9HViT9WidAMJyYVIxKUriCanYuY7KSV1pb6s80/40RJjh4QvgyWwx7Qkm0h?=
+ =?us-ascii?Q?tmZD+StZP9pjKzygPDsv33ExBKbSmjbgpUPTUpd1NCSmNqXgb4HG4GNdTNG+?=
+ =?us-ascii?Q?3hqMP2VMkTCrGinkOUYuWKhnWa9JMONYWR+FSuFc7GLKcjrmkD2H02cW2VaU?=
+ =?us-ascii?Q?kjdf9GwL4ZCSXL2+l1BVWHLuT2QVzywaWiNmmflbZtmKfB5wEngkfYPjkahQ?=
+ =?us-ascii?Q?ORQIziE7IAhYNmydXx3k9LHMS8msPV6ojXRHK4fSYZYBzjzP6LowcUFtM1WC?=
+ =?us-ascii?Q?j52XoPkikAdm1keMD4dPl0PZvgtG6SQ3ryilKQubnnKpFBpTh4srvs3OHSHy?=
+ =?us-ascii?Q?qLu8NzCrR6i/D9tylFjNj3nDeaXIe/NtnNeKJWq9FpCW4VvAzJpTht3sHlcn?=
+ =?us-ascii?Q?wN1S6h2eYfHRQZ6ebNPKx/DmQrnVuqqZh49+IWSgwqfVtF3glDzzrlY2nVmv?=
+ =?us-ascii?Q?LjID05uMhRqT9tzT/Tb2hIX4W/4q8lZfKGVfvyOylAiNscrpxMdNT7mYzqHL?=
+ =?us-ascii?Q?ryszC4xagwH5xM+Mdp7Y9FBwuPtN7W4JneZizTAt7UtmmKJtRntuCesZjkPd?=
+ =?us-ascii?Q?ejBIvUVO4cCzU4eUv8gQFLfs62pQE8pFnYnyrJG6yG6SaM6mPaGhqsMLXn91?=
+ =?us-ascii?Q?cA4/ERB5OQK44k06umKnAfJnoTIkvzx2vuNh/3WDCXGTqF3gfHFFsAzzjnYD?=
+ =?us-ascii?Q?ozHysQJaiZNk4dTUgxuTeeL4/pjqF95Ph9x+dZhyc2Ge/dPAOQK/FA8HrOLJ?=
+ =?us-ascii?Q?IQKhVr1/R5F0kv6awzO8CDVsP5dAEq1BCY0kwSTcsG34dW45y6Lwn1l1Ggoa?=
+ =?us-ascii?Q?7tWW0cqFB/RTbX2kbpWUDwztxg1n6jSjrdSUVgPV/qypNmcyE3N7r3Im0FiB?=
+ =?us-ascii?Q?jP/28Yb3SuNx8bwxPTTjMcm/934XLs5W1nr/yY4EkAnnDn3kQb2R?=
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4c43b229-33dc-464d-fff5-08de4e98a387
+X-MS-Exchange-CrossTenant-Network-Message-Id: c109cba4-95fc-4511-f467-08de4e989e57
 X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11947.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jan 2026 09:31:02.1792
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jan 2026 09:30:53.4760
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uIbzEZ/hPLGbxjy51WQZEd5FwMyNulSRRxc9QwZVXJYvgyr3VQAQbVrV3FtXfa745QVyIlc0TVWQX1YOIKDr50WAr+eNobUNX1kLIGVbvROsF1ukQ9OkT4/pbx4Spsny
+X-MS-Exchange-CrossTenant-UserPrincipalName: iWcPBA6MsfGCpbMQmXpAmW7w4uYFpCjas/FeJtoN9cJc7pAweg9HQ7Lv4SlPx2l7kPRo6msewTsVGMd2uw3HuVU72brC3obIJ93p3uG1IsEGFfdTIWkKXqbtFiM0DV+5
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY7PR01MB14326
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 08 Jan 2026 09:31:10 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21465
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21462
 
-From: Billy Tsai <billy_tsai@aspeedtech.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-commit 6866c91f8c2327546d850d5a85025fb81e2089bf upstream.
+commit 00286d7d643d3c98e48d9cc3a9f471b37154f462 upstream.
 
-The change is necessary to enable the use of the
-`i2c_get_dma_safe_msg_buf()` API, which requires a non-const
-`struct i2c_msg *` to operate. The `i2c_get_dma_safe_msg_buf()` function
-ensures safe handling of I2C messages when using DMA, making it essential
-for scenarios where DMA transfers are involved. By removing the `const`
-qualifier, this patch allows drivers to prepare and manage DMA-safe
-buffers directly.
+The Kconfig file for controller drivers is only sourced if the I3C
+symbol is enabled. No need to check for that in individual drivers.
 
-Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Acked-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-Link: https://lore.kernel.org/r/20250204091702.4014466-1-billy_tsai@aspeedt=
-ech.com
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Link: https://lore.kernel.org/r/20250506075247.1545-2-wsa+renesas@sang-engi=
+neering.com
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 ---
- drivers/i3c/master/dw-i3c-master.c     | 2 +-
- drivers/i3c/master/i3c-master-cdns.c   | 2 +-
- drivers/i3c/master/mipi-i3c-hci/core.c | 2 +-
- drivers/i3c/master/svc-i3c-master.c    | 2 +-
- include/linux/i3c/master.h             | 2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/i3c/master/Kconfig | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c=
--master.c
-index dbcd3984f257..577368467b8b 100644
---- a/drivers/i3c/master/dw-i3c-master.c
-+++ b/drivers/i3c/master/dw-i3c-master.c
-@@ -1066,7 +1066,7 @@ static void dw_i3c_master_detach_i3c_dev(struct i3c_d=
-ev_desc *dev)
- }
+diff --git a/drivers/i3c/master/Kconfig b/drivers/i3c/master/Kconfig
+index 77da199c7413..7b30db3253af 100644
+--- a/drivers/i3c/master/Kconfig
++++ b/drivers/i3c/master/Kconfig
+@@ -1,7 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config CDNS_I3C_MASTER
+ 	tristate "Cadence I3C master driver"
+-	depends on I3C
+ 	depends on HAS_IOMEM
+ 	depends on !(ALPHA || PARISC)
+ 	help
+@@ -9,7 +8,6 @@ config CDNS_I3C_MASTER
 =20
- static int dw_i3c_master_i2c_xfers(struct i2c_dev_desc *dev,
--				   const struct i2c_msg *i2c_xfers,
-+				   struct i2c_msg *i2c_xfers,
- 				   int i2c_nxfers)
- {
- 	struct dw_i3c_i2c_dev_data *data =3D i2c_dev_get_master_data(dev);
-diff --git a/drivers/i3c/master/i3c-master-cdns.c b/drivers/i3c/master/i3c-=
-master-cdns.c
-index fe4d59833ad5..ce2933c912d0 100644
---- a/drivers/i3c/master/i3c-master-cdns.c
-+++ b/drivers/i3c/master/i3c-master-cdns.c
-@@ -813,7 +813,7 @@ static int cdns_i3c_master_priv_xfers(struct i3c_dev_de=
-sc *dev,
- }
+ config DW_I3C_MASTER
+ 	tristate "Synospsys DesignWare I3C master driver"
+-	depends on I3C
+ 	depends on HAS_IOMEM
+ 	depends on !(ALPHA || PARISC)
+ 	# ALPHA and PARISC needs {read,write}sl()
+@@ -38,7 +36,6 @@ config AST2600_I3C_MASTER
 =20
- static int cdns_i3c_master_i2c_xfers(struct i2c_dev_desc *dev,
--				     const struct i2c_msg *xfers, int nxfers)
-+				     struct i2c_msg *xfers, int nxfers)
- {
- 	struct i3c_master_controller *m =3D i2c_dev_get_master(dev);
- 	struct cdns_i3c_master *master =3D to_cdns_i3c_master(m);
-diff --git a/drivers/i3c/master/mipi-i3c-hci/core.c b/drivers/i3c/master/mi=
-pi-i3c-hci/core.c
-index a82c47c9986d..5bc22d9635eb 100644
---- a/drivers/i3c/master/mipi-i3c-hci/core.c
-+++ b/drivers/i3c/master/mipi-i3c-hci/core.c
-@@ -369,7 +369,7 @@ static int i3c_hci_priv_xfers(struct i3c_dev_desc *dev,
- }
+ config SVC_I3C_MASTER
+ 	tristate "Silvaco I3C Dual-Role Master driver"
+-	depends on I3C
+ 	depends on HAS_IOMEM
+ 	depends on !(ALPHA || PARISC)
+ 	help
+@@ -46,7 +43,6 @@ config SVC_I3C_MASTER
 =20
- static int i3c_hci_i2c_xfers(struct i2c_dev_desc *dev,
--			     const struct i2c_msg *i2c_xfers, int nxfers)
-+			     struct i2c_msg *i2c_xfers, int nxfers)
- {
- 	struct i3c_master_controller *m =3D i2c_dev_get_master(dev);
- 	struct i3c_hci *hci =3D to_i3c_hci(m);
-diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/svc-i=
-3c-master.c
-index 985f30ef0c93..7b4a62efd066 100644
---- a/drivers/i3c/master/svc-i3c-master.c
-+++ b/drivers/i3c/master/svc-i3c-master.c
-@@ -1572,7 +1572,7 @@ static int svc_i3c_master_priv_xfers(struct i3c_dev_d=
-esc *dev,
- }
-=20
- static int svc_i3c_master_i2c_xfers(struct i2c_dev_desc *dev,
--				    const struct i2c_msg *xfers,
-+				    struct i2c_msg *xfers,
- 				    int nxfers)
- {
- 	struct i3c_master_controller *m =3D i2c_dev_get_master(dev);
-diff --git a/include/linux/i3c/master.h b/include/linux/i3c/master.h
-index 12d532b012c5..c67922ece617 100644
---- a/include/linux/i3c/master.h
-+++ b/include/linux/i3c/master.h
-@@ -475,7 +475,7 @@ struct i3c_master_controller_ops {
- 	int (*attach_i2c_dev)(struct i2c_dev_desc *dev);
- 	void (*detach_i2c_dev)(struct i2c_dev_desc *dev);
- 	int (*i2c_xfers)(struct i2c_dev_desc *dev,
--			 const struct i2c_msg *xfers, int nxfers);
-+			 struct i2c_msg *xfers, int nxfers);
- 	int (*request_ibi)(struct i3c_dev_desc *dev,
- 			   const struct i3c_ibi_setup *req);
- 	void (*free_ibi)(struct i3c_dev_desc *dev);
+ config MIPI_I3C_HCI
+ 	tristate "MIPI I3C Host Controller Interface driver (EXPERIMENTAL)"
+-	depends on I3C
+ 	depends on HAS_IOMEM
+ 	help
+ 	  Support for hardware following the MIPI Aliance's I3C Host Controller
 --=20
 2.43.0
 
