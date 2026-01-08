@@ -2,35 +2,35 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5E66D1D47A
-	for <webhook@archiver.kernel.org>; Thu,  8 Jan 2026 15:17:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCCD1D1D475
+	for <webhook@archiver.kernel.org>; Thu,  8 Jan 2026 15:17:12 +0000 (UTC)
 Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.8641.1767885418129901656
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.8645.1767885424463689123
  for <cip-dev@lists.cip-project.org>;
- Thu, 08 Jan 2026 07:16:59 -0800
+ Thu, 08 Jan 2026 07:17:04 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=C33zdckG;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.225, mailfrom: fm-51332-2026010815165826a9c57e0400020778-o_crwh@rts-flowmailer.siemens.com)
-Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 2026010815165826a9c57e0400020778
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=FMrao3tr;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.225, mailfrom: fm-51332-20260108151702184b8433ec000207f1-v88kpp@rts-flowmailer.siemens.com)
+Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 20260108151702184b8433ec000207f1
         for <cip-dev@lists.cip-project.org>;
-        Thu, 08 Jan 2026 16:16:59 +0100
+        Thu, 08 Jan 2026 16:17:02 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=Quirin.Gylstorff@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=G7wJys5mC5jCQgKxidag1Dj3isBHYDPWAyNPXYwNim8=;
- b=C33zdckGutKBgQBAD6f3t3HaL3z9AOdhCis/pDjufSS7nEf7sIjncBKugFF0OanceSZjqP
- 0drZMlTgTJc8tPOQvFgUMmUahXKYQ4lAbQXhkBOqVXWVzGpf0L6WqAGp15yYDi859AN+zV9J
- m/jl7a2ZQoC4w9TCZ0vGT833MKmz6tX2QRlOyI5v4Xbto9K5SOMTU/3l9IgO7VGjWV063+dn
- c4r7gqWR0UUYSRUtAsZGrpoIi9wHZs+a2vLwM1nI5zr1tz1yBrkkb5NjxhqQfD+38E1kVyX/
- wlGFuT9Lr7cWka/tysFAc6+AApqQdmDhPZIbKRTG35SVARoxpNHGlqlg==;
+ bh=Sw0xLB8QsrR2ywXMW9rYuaadCmCpUmtqloBeEp4dWec=;
+ b=FMrao3tr8Ile7Rq8cUQllqdxC5P7RE/2g8wrQxvGox1WP4FzuMJk9N+S0TmLRkEka1eBV6
+ vRZCPJi8mZpW7PDBGFa4ktFR30krLUoQ1CUC4mug1cTGVhNjj3xwm+XZHHeF2JGH8zdpA2AU
+ CGrITY6Wt+2rUulegtxb1bRcHHunUmrOEto8EJe06X5PjgzzZddkIT4wFRALYzmFhUUiYNuL
+ ys8VEtm4R6HDXdDnQqNuWNj2OQvuQSJlzDrvLhdfx8B4VCKLOi7BMmeCK/iGG4rU3NpCddPy
+ srYb8FWT9j/kzbMGlsgh7svJkKs7oQSYGjPBuTnoEEQ0cfARhYiMkqAw==;
 From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
 To: jan.kiszka@siemens.com,
 	clara.kowalsky@siemens.com,
 	benedikt.niedermayr@siemens.com,
 	cip-dev@lists.cip-project.org
-Subject: [cip-dev][isar-cip-core][PATCH v3 4/7] Move efibootguard to swupdate-efibootguard.inc
-Date: Thu,  8 Jan 2026 16:16:11 +0100
-Message-ID: <20260108151650.124306-5-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][PATCH v3 7/7] rename recipes-core/images/swupdate.inc to swupdate-ab-rootfs.inc
+Date: Thu,  8 Jan 2026 16:16:14 +0100
+Message-ID: <20260108151650.124306-8-Quirin.Gylstorff@siemens.com>
 In-Reply-To: <20260108151650.124306-1-Quirin.Gylstorff@siemens.com>
 References: <20260108151650.124306-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
@@ -40,170 +40,60 @@ Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 08 Jan 2026 15:17:02 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21485
+ <cip-dev@lists.cip-project.org>; Thu, 08 Jan 2026 15:17:12 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21488
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-Simplify the generation of A/B root file system with SWUpdate including
-efibootguard into swupdate.inc.
-
-With this change it is possible to prepare to rootfs by adding:
-
-```
-require recipes-core/images/swupdate.inc
-```
-Remove all occurances of `inherit efibootguard` or `require
-recipes-core/images/efibootguard.inc`.
-
-The file contains isar-cip-core specific default values and is therefore
-not a `bbclass`.
-
-Also rename the file to swupdate-efibootguard to indicate the intended
-use.
+This clarifies the indented use. Use a include file as some
+defaults are isar-cip-core specific.
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- classes-recipe/efibootguard.bbclass           | 64 ++---------------
- kas/opt/ebg-swu.yml                           |  3 -
- recipes-core/images/efibootguard.inc          | 13 +---
- recipes-core/images/swupdate-efibootguard.inc | 70 +++++++++++++++++++
- 4 files changed, 76 insertions(+), 74 deletions(-)
- mode change 100644 => 120000 recipes-core/images/efibootguard.inc
- create mode 100644 recipes-core/images/swupdate-efibootguard.inc
+ doc/README.layer-integration.md            |  2 +-
+ kas/opt/swupdate.yml                       |  2 +-
+ recipes-core/images/swupdate-ab-rootfs.inc | 61 +++++++++++++++++++++
+ recipes-core/images/swupdate.inc           | 62 +---------------------
+ 4 files changed, 64 insertions(+), 63 deletions(-)
+ create mode 100644 recipes-core/images/swupdate-ab-rootfs.inc
+ mode change 100644 => 120000 recipes-core/images/swupdate.inc
 
-diff --git a/classes-recipe/efibootguard.bbclass b/classes-recipe/efibootguard.bbclass
-index cbd2376..f69cd5f 100644
---- a/classes-recipe/efibootguard.bbclass
-+++ b/classes-recipe/efibootguard.bbclass
-@@ -1,7 +1,7 @@
- #
- # CIP Core, generic profile
- #
--# Copyright (c) Siemens AG, 2024
-+# Copyright (c) Siemens AG, 2024 - 2026
- #
- # Authors:
- #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-@@ -9,62 +9,8 @@
- # SPDX-License-Identifier: MIT
- #
+diff --git a/doc/README.layer-integration.md b/doc/README.layer-integration.md
+index 1e1973c..5ba6259 100644
+--- a/doc/README.layer-integration.md
++++ b/doc/README.layer-integration.md
+@@ -19,7 +19,7 @@ with /etc as overlay. It also installs and configures efibootguard and SWUpdate.
+ An additional image type is generated with contains the update artifacts.
  
--IMAGE_INSTALL:append = " efibootguard-tools libebgenv0"
--IMAGER_INSTALL:wic:append = " efibootguard:${DISTRO_ARCH} efibootguard-tools:${DISTRO_ARCH}"
--WDOG_TIMEOUT ?= "60"
--WICVARS += "WDOG_TIMEOUT KERNEL_IMAGE INITRD_DEPLOY_FILE DTB_FILES EFI_ARCH EFI_LIB_ARCH UKI_FILENAME"
--IMAGE_TYPEDEP:swu:append = " wic"
--
--def distro_to_efi_arch(d):
--    DISTRO_TO_EFI_ARCH = {
--        "amd64": "x64",
--        "arm64": "aa64",
--        "armhf": "arm",
--        "i386": "ia32",
--        "riscv64": "riscv64"
--    }
--    distro_arch = d.getVar('DISTRO_ARCH')
--    return DISTRO_TO_EFI_ARCH[distro_arch]
--
--EFI_ARCH := "${@distro_to_efi_arch(d)}"
--
--def distro_to_lib_arch(d):
--    DISTRO_TO_LIB_ARCH = {
--        "amd64": "x86_64-linux-gnu",
--        "arm64": "aarch64-linux-gnu",
--        "armhf": "arm-linux-gnueabihf",
--        "i386": "i386-linux-gnu",
--        "riscv64": "riscv64-linux-gnu",
--    }
--    distro_arch = d.getVar('DISTRO_ARCH')
--    return DISTRO_TO_LIB_ARCH[distro_arch]
--
--EFI_LIB_ARCH := "${@distro_to_lib_arch(d)}"
--
--# Add the bootloader file
--def efi_bootloader_name(d):
--    efi_arch = distro_to_efi_arch(d)
--    return "boot{}.efi".format(efi_arch)
--
--SWU_EXTEND_SW_DESCRIPTION += "add_ebg_update"
--python add_ebg_update() {
--    efi_boot_loader_file = efi_bootloader_name(d)
--    efi_boot_device = d.getVar('SWU_EFI_BOOT_DEVICE')
--    swu_ebg_update_node = f"""
--    {{
--        filename = "{efi_boot_loader_file}";
--        path = "EFI/BOOT/{efi_boot_loader_file}";
--        device = "{efi_boot_device}";
--        filesystem = "vfat";
--        sha256 = "{efi_boot_loader_file}-sha256";
--        properties: {{
--            atomic-install = "true";
--        }};
--    }}
--    """
--
--    d.setVar('SWU_BOOTLOADER_FILE_NODE', swu_ebg_update_node)
--    ebg_update = d.getVar('SWU_EBG_UPDATE') or ""
--    if ebg_update:
--        d.appendVar('SWU_FILE_NODES', "," + swu_ebg_update_node)
-+require recipes-core/images/swupdate-efibootguard.inc
-+do_warn_custom_inc() {
-+    bbwarn "Please migrate from \"inherit efibootguard\" to \"recipes-core/images/swupdate-efibootguard.inc\""
- }
-+addtask warn_custom_inc before do_unpack
-diff --git a/kas/opt/ebg-swu.yml b/kas/opt/ebg-swu.yml
-index 582c3fb..7835559 100644
---- a/kas/opt/ebg-swu.yml
-+++ b/kas/opt/ebg-swu.yml
-@@ -16,11 +16,8 @@ header:
+ ```bitbake
+-require recipes-core/images/swupdate.inc
++require recipes-core/images/swupdate-ab-rootfs.inc
+ ```
+ 
+ ## Create a image description
+diff --git a/kas/opt/swupdate.yml b/kas/opt/swupdate.yml
+index c5b7c61..3c3c93c 100644
+--- a/kas/opt/swupdate.yml
++++ b/kas/opt/swupdate.yml
+@@ -16,7 +16,7 @@ header:
  
  local_conf_header:
-   ebg_swu_bootloader: |
--    WKS_FILE ?= "${MACHINE}-efibootguard.wks.in"
-     SWUPDATE_BOOTLOADER = "efibootguard"
-     IMAGE_INSTALL:remove = "u-boot-script"
--  ebg_swu_image_options: |
--    CIP_IMAGE_OPTIONS:append = " recipes-core/images/efibootguard.inc"
-   firmware-binaries: |
-     # Add ovmf binaries for qemu
-     CIP_IMAGE_OPTIONS:append:qemu-amd64 = " recipes-core/images/deploy-ovmf.inc"
-diff --git a/recipes-core/images/efibootguard.inc b/recipes-core/images/efibootguard.inc
-deleted file mode 100644
-index f512b3c..0000000
---- a/recipes-core/images/efibootguard.inc
-+++ /dev/null
-@@ -1,12 +0,0 @@
--#
--# CIP Core, generic profile
--#
--# Copyright (c) Siemens AG, 2020, 2024
--#
--# Authors:
--#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
--#
--# SPDX-License-Identifier: MIT
--#
--
--inherit efibootguard
-diff --git a/recipes-core/images/efibootguard.inc b/recipes-core/images/efibootguard.inc
-new file mode 120000
-index 0000000..0bb31dc
---- /dev/null
-+++ b/recipes-core/images/efibootguard.inc
-@@ -0,0 +1 @@
-+swupdate-efibootguard.inc
-\ No newline at end of file
-diff --git a/recipes-core/images/swupdate-efibootguard.inc b/recipes-core/images/swupdate-efibootguard.inc
+   image-option-swupdate: |
+-    CIP_IMAGE_OPTIONS:append = " recipes-core/images/swupdate.inc"
++    CIP_IMAGE_OPTIONS:append = " recipes-core/images/swupdate-ab-rootfs.inc"
+     OVERRIDES .= ":swupdate"
+ 
+   wic-swu: |
+diff --git a/recipes-core/images/swupdate-ab-rootfs.inc b/recipes-core/images/swupdate-ab-rootfs.inc
 new file mode 100644
-index 0000000..a332dbe
+index 0000000..6858a31
 --- /dev/null
-+++ b/recipes-core/images/swupdate-efibootguard.inc
-@@ -0,0 +1,70 @@
++++ b/recipes-core/images/swupdate-ab-rootfs.inc
+@@ -0,0 +1,61 @@
 +#
 +# CIP Core, generic profile
 +#
-+# Copyright (c) Siemens AG, 2024 - 2026
++# Copyright (c) Siemens AG, 2023-2026
 +#
 +# Authors:
 +#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
@@ -211,65 +101,131 @@ index 0000000..a332dbe
 +# SPDX-License-Identifier: MIT
 +#
 +
-+IMAGE_INSTALL:append = " efibootguard-tools libebgenv0"
-+IMAGER_INSTALL:wic:append = " efibootguard:${DISTRO_ARCH} efibootguard-tools:${DISTRO_ARCH}"
-+WDOG_TIMEOUT ?= "60"
-+WICVARS += "WDOG_TIMEOUT KERNEL_IMAGE INITRD_DEPLOY_FILE DTB_FILES EFI_ARCH EFI_LIB_ARCH UKI_FILENAME"
-+IMAGE_TYPEDEP:swu:append = " wic"
++inherit image_uuid
++inherit read-only-rootfs
 +
-+def distro_to_efi_arch(d):
-+    DISTRO_TO_EFI_ARCH = {
-+        "amd64": "x64",
-+        "arm64": "aa64",
-+        "armhf": "arm",
-+        "i386": "ia32",
-+        "riscv64": "riscv64"
-+    }
-+    distro_arch = d.getVar('DISTRO_ARCH')
-+    return DISTRO_TO_EFI_ARCH[distro_arch]
-+
-+EFI_ARCH := "${@distro_to_efi_arch(d)}"
-+
-+def distro_to_lib_arch(d):
-+    DISTRO_TO_LIB_ARCH = {
-+        "amd64": "x86_64-linux-gnu",
-+        "arm64": "aarch64-linux-gnu",
-+        "armhf": "arm-linux-gnueabihf",
-+        "i386": "i386-linux-gnu",
-+        "riscv64": "riscv64-linux-gnu",
-+    }
-+    distro_arch = d.getVar('DISTRO_ARCH')
-+    return DISTRO_TO_LIB_ARCH[distro_arch]
-+
-+EFI_LIB_ARCH := "${@distro_to_lib_arch(d)}"
-+
-+# Add the bootloader file
-+def efi_bootloader_name(d):
-+    efi_arch = distro_to_efi_arch(d)
-+    return "boot{}.efi".format(efi_arch)
-+
-+SWU_EXTEND_SW_DESCRIPTION += "add_ebg_update"
-+python add_ebg_update() {
-+    efi_boot_loader_file = efi_bootloader_name(d)
-+    efi_boot_device = d.getVar('SWU_EFI_BOOT_DEVICE')
-+    swu_ebg_update_node = f"""
-+    {{
-+        filename = "{efi_boot_loader_file}";
-+        path = "EFI/BOOT/{efi_boot_loader_file}";
-+        device = "{efi_boot_device}";
-+        filesystem = "vfat";
-+        sha256 = "{efi_boot_loader_file}-sha256";
-+        properties: {{
-+            atomic-install = "true";
-+        }};
-+    }}
-+    """
-+
-+    d.setVar('SWU_BOOTLOADER_FILE_NODE', swu_ebg_update_node)
-+    ebg_update = d.getVar('SWU_EBG_UPDATE') or ""
-+    if ebg_update:
-+        d.appendVar('SWU_FILE_NODES', "," + swu_ebg_update_node)
++SWUPDATE_BOOTLOADER ??= "efibootguard"
++python __anonymous() {
++    bootloader = d.getVar("SWUPDATE_BOOTLOADER") or "None"
++    if not bootloader in ["efibootguard"]:
++        bb.error("swupdate: SWUPDATE_BOOTLOADER set to incompatible value: " + bootloader)
 +}
++
++include recipes-core/images/swupdate-${SWUPDATE_BOOTLOADER}.inc
++
++IMAGE_TYPEDEP:wic += "${RO_ROOTFS_TYPE}"
++IMAGE_FSTYPES:append = " swu"
++# input is already compressed
++SWU_COMPRESSION_TYPE = ""
++
++# read-only rootfs with /home and /var
++# as separate partitions is used
++# /boot is excluded as an unified kernel image
++# is used. This images are stored in separate partitions.
++RO_ROOTFS_EXCLUDE_DIRS = "boot var home"
++
++SWU_SIGNED ?= "1"
++SWU_HW_COMPAT ?= "cip-core-1.0"
++IMAGER_BUILD_DEPS:swu += "${@'swupdate-signer' if bb.utils.to_boolean(d.getVar('SWU_SIGNED')) else ''}"
++IMAGER_INSTALL:swu += "${@'swupdate-signer' if bb.utils.to_boolean(d.getVar('SWU_SIGNED')) else ''}"
++IMAGE_INSTALL += "${@'swupdate-certificates' if bb.utils.to_boolean(d.getVar('SWU_SIGNED')) else ''}"
++
++SWUPDATE_SELFBUILT ?= "0"
++SWUPDATE_SELFBUILT:buster = "1"
++SWUPDATE_SELFBUILT:bullseye = "1"
++SWUPDATE_SELFBUILT:bookworm = "1"
++
++python() {
++    base_distro = d.getVar('BASE_DISTRO_CODENAME')
++    if base_distro not in ['buster', 'bullseye', 'bookworm'] and \
++       bb.utils.to_boolean(d.getVar('SWUPDATE_SELFBUILT')):
++        bb.fatal(f'Self-built SWUpdate not supported for {base_distro}')
++
++    if not bb.utils.to_boolean(d.getVar('SWUPDATE_SELFBUILT')) and \
++       not bb.utils.to_boolean(d.getVar('SWU_SIGNED')):
++        bb.fatal('SWUpdate from Debian requires signed SWUs')
++}
++
++IMAGE_INSTALL:append = "${@' swupdate' if bb.utils.to_boolean(d.getVar('SWUPDATE_SELFBUILT')) else ''}"
++IMAGE_PREINSTALL:append = "${@'' if bb.utils.to_boolean(d.getVar('SWUPDATE_SELFBUILT')) else ' swupdate'}"
++
++IMAGE_INSTALL += " swupdate-handler-roundrobin"
++IMAGE_INSTALL += " swupdate-config"
+diff --git a/recipes-core/images/swupdate.inc b/recipes-core/images/swupdate.inc
+deleted file mode 100644
+index 7cd816a..0000000
+--- a/recipes-core/images/swupdate.inc
++++ /dev/null
+@@ -1,61 +0,0 @@
+-#
+-# CIP Core, generic profile
+-#
+-# Copyright (c) Siemens AG, 2023-2026
+-#
+-# Authors:
+-#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
+-#
+-# SPDX-License-Identifier: MIT
+-#
+-
+-inherit image_uuid
+-inherit read-only-rootfs
+-
+-SWUPDATE_BOOTLOADER ??= "efibootguard"
+-python __anonymous() {
+-    bootloader = d.getVar("SWUPDATE_BOOTLOADER")
+-    if not bootloader in ["efibootguard"]:
+-        bb.error(f"swupdate: SWUPDATE_BOOTLOADER set to incompatible value: '{bootloader}'")
+-}
+-
+-include recipes-core/images/swupdate-${SWUPDATE_BOOTLOADER}.inc
+-
+-IMAGE_TYPEDEP:wic += "${RO_ROOTFS_TYPE}"
+-IMAGE_FSTYPES:append = " swu"
+-# input is already compressed
+-SWU_COMPRESSION_TYPE = ""
+-
+-# read-only rootfs with /home and /var
+-# as separate partitions is used
+-# /boot is excluded as an unified kernel image
+-# is used. This images are stored in separate partitions.
+-RO_ROOTFS_EXCLUDE_DIRS = "boot var home"
+-
+-SWU_SIGNED ?= "1"
+-SWU_HW_COMPAT ?= "cip-core-1.0"
+-IMAGER_BUILD_DEPS:swu += "${@'swupdate-signer' if bb.utils.to_boolean(d.getVar('SWU_SIGNED')) else ''}"
+-IMAGER_INSTALL:swu += "${@'swupdate-signer' if bb.utils.to_boolean(d.getVar('SWU_SIGNED')) else ''}"
+-IMAGE_INSTALL += "${@'swupdate-certificates' if bb.utils.to_boolean(d.getVar('SWU_SIGNED')) else ''}"
+-
+-SWUPDATE_SELFBUILT ?= "0"
+-SWUPDATE_SELFBUILT:buster = "1"
+-SWUPDATE_SELFBUILT:bullseye = "1"
+-SWUPDATE_SELFBUILT:bookworm = "1"
+-
+-python() {
+-    base_distro = d.getVar('BASE_DISTRO_CODENAME')
+-    if base_distro not in ['buster', 'bullseye', 'bookworm'] and \
+-       bb.utils.to_boolean(d.getVar('SWUPDATE_SELFBUILT')):
+-        bb.fatal(f'Self-built SWUpdate not supported for {base_distro}')
+-
+-    if not bb.utils.to_boolean(d.getVar('SWUPDATE_SELFBUILT')) and \
+-       not bb.utils.to_boolean(d.getVar('SWU_SIGNED')):
+-        bb.fatal('SWUpdate from Debian requires signed SWUs')
+-}
+-
+-IMAGE_INSTALL:append = "${@' swupdate' if bb.utils.to_boolean(d.getVar('SWUPDATE_SELFBUILT')) else ''}"
+-IMAGE_PREINSTALL:append = "${@'' if bb.utils.to_boolean(d.getVar('SWUPDATE_SELFBUILT')) else ' swupdate'}"
+-
+-IMAGE_INSTALL += " swupdate-handler-roundrobin"
+-IMAGE_INSTALL += " swupdate-config"
+diff --git a/recipes-core/images/swupdate.inc b/recipes-core/images/swupdate.inc
+new file mode 120000
+index 0000000..f02080c
+--- /dev/null
++++ b/recipes-core/images/swupdate.inc
+@@ -0,0 +1 @@
++swupdate-ab-rootfs.inc
+\ No newline at end of file
 -- 
 2.51.2
 
