@@ -2,41 +2,41 @@ Return-Path: <tommaso.merciai.xr@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B963CF6A8E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D707CF6A8F
 	for <webhook@archiver.kernel.org>; Thu,  8 Jan 2026 09:29:00 +0000 (UTC)
-Received: from TY3P286CU002.outbound.protection.outlook.com (TY3P286CU002.outbound.protection.outlook.com [52.101.229.27])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.2987.1767864538289258226
+Received: from OS0P286CU010.outbound.protection.outlook.com (OS0P286CU010.outbound.protection.outlook.com [40.107.74.40])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.2985.1767864532451868369
  for <cip-dev@lists.cip-project.org>;
- Thu, 08 Jan 2026 01:28:58 -0800
+ Thu, 08 Jan 2026 01:28:54 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=TB5Qju6V;
- spf=pass (domain: bp.renesas.com, ip: 52.101.229.27, mailfrom: tommaso.merciai.xr@bp.renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=SwhyqL81;
+ spf=pass (domain: bp.renesas.com, ip: 40.107.74.40, mailfrom: tommaso.merciai.xr@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ibgPc89ZOCVRbGlnxB6h2757wXWpnryRs7D4yjPC0fD+23uiLf6DtgVjoN3Jk0KdtqQurqly3J9HYEluCw0yTwFn172U59/pkdaqHXaPW442UsvdKAAArUcTnL905pQ+v13Fgmuc2ciaMXCZM5E1fSMGoaw1cgBR4lQ/gKOhQ6IV/ofTkhgF43NOVn5ZboaPX9kaCsuGP8S+5KRbujfvWkSno7tAiJxwY8dbqBv0xEdUcKZyq3zve3Cwcf4pRkCjyYmGQhj8ro1TyicL6WwpEF/C4ynSBABalQ8zmyXmALbowPSYOFhjcQcOvrCWq8QO0pKK5berjrTtUlBQhLN7nQ==
+ b=wOIw5IeeJMChgBStFGGhger0R5HRDLU1Ydaov8+8smwRuq7MpttQq6DiT291fc+5Xx5I1TbB08ak2TuShxfHEh04Oz11UhRKlLbdonQF26d8NGObT3ICTY/9rtSePo9HMeWkYPlBEpqWS5IOqdiIndUXuGGeMzUzIuImag2aSmKf2cVGGee6f3V3hB1zzJ5LhyXf4ft7TzrOSKojOwtNc0iuwcRHqs5WXJEqXP8r0+IZWK6ezv6V3gaCBj8Ihu1M01zSJkuk30rD96lVtrklVbyuJrApkmKV22Q65R9LT44ZF6yR5jYzncXodb9OXV17X+rb78L1O+4xJWPGijP3Eg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=f7UHIubcT1Z4dvqc76fi+jhhHXfRZ55SjxKzr28bphY=;
- b=MRGI9scPVRnsopwGVg7gtRhBBDKcodLjuym6apRQNL/Fxyv4AFsKhHa7gsDHwpCcibbMoKdMVMlxBuD+sTKiKjJ0RtNyQRXW4cxsJWb5JI/jtqRyStCsKpQ3oRDnNZ24up983rvy++K72m8DSab74QwoBPGl+ukYpQ7qelP22jcfv4DbKRg7+xCq5mZV00ybwB9HktLr552d8/fTgQDdbM5dn+YPEgXlPGdNEqAjwF/ugLwWdEk/cNq+K6Wnao+KQ3c6WwT4X5bNdBujuoHS6bmMpvNv7PGo2TTs6Kllr1An6avxt+rYMgIWG7LMQdgv1eK2krllidzbcXglip0FSQ==
+ bh=iXvSTA4JnfYm+lAmjBjJ7EPvwCYk39ZhR2wXtCO+kPc=;
+ b=EbiFWKii38vX8eYk63kWAg3FtQ/HYnWEnZHzI15mVevWefTKKWPTU0dmkmD+nnY1re2J3pUbQficOH3xGyrGZyrbk41SkwNt2K1kZYXgNG0syDH55bafISKTyTPFfaiGYGwnGRRRSZzB5XcNwCiQe+APeFySeR/zE3ShyuFEUCbgbW3GslY/RJ/qwj9pw4SYyBCKFz/TISJmisSGHILP2fK5jd4ftR3+Q8me8YAjlrudu/uDR0mM+6NWiUTq6v9vBcgfxEInRcLT8Oojs0IgA4nyoLg7g5FhEYqR37kjh1d4JHY4H+vdiffRjHhIAvr5AgrUblS6fiHV14Bfat5h2w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f7UHIubcT1Z4dvqc76fi+jhhHXfRZ55SjxKzr28bphY=;
- b=TB5Qju6V9RsJdGFOAwrN8gmzhyKe4rQWKb8DAGrAQqwGSvjAVhOdrCOvTj4HCIoSbYrThvTJQ+UrtJZRHtK5QAF0XDVXgh9uwRFXWBvRVWZGX8nvKPl6Fxc+PmQEeSMQAGlQedrw7Ls3daVmIWzc8GsCZ6fKcNPYKm6bi1lXMvA=
+ bh=iXvSTA4JnfYm+lAmjBjJ7EPvwCYk39ZhR2wXtCO+kPc=;
+ b=SwhyqL81Bl1gv6/HrO6cj8sJujSAnbGQNFRjElwjmTWZjPuV0DX/cjMybiOAC/NVA0Qa1oL8vsozECkoRNPfuj7BigX4g1ao5c72WJwejVYAOr6rluSwKlpjMHymC5mb95t3bwganThqqXa7qVzhJa2eofKJ+cP1dg8QvS2/pC0=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=bp.renesas.com;
 Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com (2603:1096:400:3e1::6)
  by TYRPR01MB12872.jpnprd01.prod.outlook.com (2603:1096:405:1b1::5) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9520.0; Thu, 8 Jan
- 2026 09:28:54 +0000
+ 2026 09:28:51 +0000
 Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com
  ([fe80::33f1:f7cd:46be:e4d8]) by TYCPR01MB11947.jpnprd01.prod.outlook.com
  ([fe80::33f1:f7cd:46be:e4d8%5]) with mapi id 15.20.9499.003; Thu, 8 Jan 2026
- 09:28:54 +0000
+ 09:28:51 +0000
 From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -44,9 +44,9 @@ To: cip-dev@lists.cip-project.org,
 CC: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	tomm.merciai@gmail.com
-Subject: [PATCH 6.1.y-cip 03/22] i3c: controllers do not need to depend on I3C
-Date: Thu,  8 Jan 2026 10:28:04 +0100
-Message-ID: <20260108092823.489287-4-tommaso.merciai.xr@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 02/22] dt-bindings: i3c: Add Renesas I3C controller
+Date: Thu,  8 Jan 2026 10:28:03 +0100
+Message-ID: <20260108092823.489287-3-tommaso.merciai.xr@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260108092823.489287-1-tommaso.merciai.xr@bp.renesas.com>
 References: <20260108092823.489287-1-tommaso.merciai.xr@bp.renesas.com>
@@ -58,142 +58,293 @@ X-ClientProxiedBy: FR4P281CA0364.DEUP281.PROD.OUTLOOK.COM
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: TYCPR01MB11947:EE_|TYRPR01MB12872:EE_
-X-MS-Office365-Filtering-Correlation-Id: ebd7ff7a-ea2b-4280-4ed0-08de4e985766
+X-MS-Office365-Filtering-Correlation-Id: 398b1b27-9a1e-43a2-1ae0-08de4e9855b6
 X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
 	BCL:0;ARA:13230040|52116014|376014|366016|1800799024|38350700014;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?PHQfCdDb40KFKdcHMLBew4o7r7n71tckfehawhG9yqthHOzallWzf/XMPonQ?=
- =?us-ascii?Q?Ec5c+gL/mwGQ/q1A6zbikzXhM0NiW9BIhdVZig2nXK3WiNIvtjFhwiFUY1MS?=
- =?us-ascii?Q?hVjjTgJPRMAKZ9spF6NkZqBjJPaKTDOXIpIFM2TY0t71vL0jxUxrvMBCE6GF?=
- =?us-ascii?Q?dJK7tI1WNeNJxj4sla348pGHkG65w7QT6V7Y0VihflUPfToaaOOUzp5O0bPh?=
- =?us-ascii?Q?HByJ5F655XFAANFD0Y6eAtWAZBE6xCR374iyIh3nJEWy03aOgwx3sE9QUVZb?=
- =?us-ascii?Q?PHvNxo9h7mT60HLSm5aY+3/eOlyqdcUSGnNtOTINgcoUFMgpJUlNjchQE+g5?=
- =?us-ascii?Q?4e0E2TUz0KfsQqbxomKCLVOgvkxZ4IdBLepaIqXGD/8PLq7rgg/Ltxi0T2w1?=
- =?us-ascii?Q?7Ra9h3cJqHcHVkYvaZhnJBBfiRYHDaHO+CnvGNPx9vBVHkYI3eUDOdk0uYov?=
- =?us-ascii?Q?FIIWoeHFENlMHhpmVQnVlodt6DbLeqOZg5OpwzvsKBbrtgU85Gjm8O3f96aG?=
- =?us-ascii?Q?M+lHvdwiEB+sjQP+ltM7aOssX6LbVqtnHbceCf5owvCbHQ+OvUhyEU9z45lW?=
- =?us-ascii?Q?tkq8PGxB38XpOVm2ByL+pV27CRWY3/JSNR2vAPMh16CJmRFwWc50Kv2XEFPx?=
- =?us-ascii?Q?wljhxcnxhKERcg6eJghJ2XyfAtCoaZk+NtJn/NRqruXsAPaD/nQ19YfH+vMK?=
- =?us-ascii?Q?oDN8Y9aP/t2ZajjI31YXoJCUmoUJRdg2wjOi86lEZ7ylrLQCFRHqC3TFM3KH?=
- =?us-ascii?Q?YIHNQN8cZjMZDngC1jeUD1/kcqxSWxHarlz+EjF3TgJOEshYPZ0l06hPcQ8s?=
- =?us-ascii?Q?CUx3xbvv+/NvpSK4Ud7SIbP1Zmr6QiyYrH1wwUfYkrt1J8q+zYnFEZj9NkGX?=
- =?us-ascii?Q?brnEaD88O9aDCphkuC/b9LALUts1sDWFKsxv6Rn0C1kT65JMl1n6M1q5HjLq?=
- =?us-ascii?Q?E0Ul3IQZ8Cw15oyBGSKAS4WfzCwFeTOQsld3SopHsmSiudMobZ1goFXjSojt?=
- =?us-ascii?Q?/WMQqO2fORuu9ksaB/El0DkKHpHo41Tu3KuyYAKwqnMHixbEPTBVodrwhjY3?=
- =?us-ascii?Q?+qmwC8PF79yx9ou1yKmmjsi5pDBj9fwc5aITp0T86r3i9GAg/qBpfqMQg2hu?=
- =?us-ascii?Q?zT/nZlzGI5mcJDuK6GhGF139EY8HFERidjdqFYHnWmKha/gm57OTjjif174y?=
- =?us-ascii?Q?lC6GPZVks2K7rQtDyNW04Q+DL3BzF6H05Apadi1psRSQALXw5i4XCzrd3m0L?=
- =?us-ascii?Q?9mQvdPuCQaU00aAbLqvK7wLcpY9mXdbfI2G6Tb49bCPDVGzbNzcCPTsOX4GQ?=
- =?us-ascii?Q?0YXR3/JEtZYM5XZN2ahDqPEXksHonOJ0l1i9wVJxqSiW8W9rqmL5Ylr+Q3SK?=
- =?us-ascii?Q?QV/E7fZPn6vnZimqF7iTXQMSo7jKWMQuE6UiEhko3VwOhAPNJmpaQ1GNefmJ?=
- =?us-ascii?Q?7Ylaa8mgAiyjqPqvupDD7URT58kbQtyl1Z69Yc8Sum9iL7y3y0/bn12djxd4?=
- =?us-ascii?Q?QG6OLBw5Qj50ccE8adaGJs0y3uWf5zAK7O+E?=
+	=?us-ascii?Q?w6je4VLL3qam115kZvBUjxHhComMzrDipim9ej3S1FtS6tD1IGdfSqrIIHGZ?=
+ =?us-ascii?Q?Bo+L5O+5uM6uuVJrMfjm7wRyovb2mNrr/1ot5OMHs5MZ0w9YKOowGIruDH6V?=
+ =?us-ascii?Q?5ZLHmM/SZxdV/MYdvuJw6h/DRkQHVURrAm3kzgEu9/nlJ7HfjU70LBdSEm8H?=
+ =?us-ascii?Q?32ZKdHg83An+wEXsrZuxrJKgJMqtq8Rl9YosU5VR7U0yKPRbnPC2ZVQ7wvw3?=
+ =?us-ascii?Q?uXAyOvFTsN+26V3h8WgHNypzjXYNH/akQ5Q72I+7gaokLSkWWeAB8Y6ywBaH?=
+ =?us-ascii?Q?tko/JA/gdk6S4AY0Buvh96lTUxMgB8i2jfWOaY0p8MzcJ51PueOPL3n2FV+9?=
+ =?us-ascii?Q?B57C3sAeNayj2gxkjmsz6mjzMy+e66W2RQf/OcCeEApSxYTSmk2Sow0sNnVY?=
+ =?us-ascii?Q?PpvKlHqYKCpFeaCbqclupQhK4w0gpY0nh3I6TI2AiR4+B6TLw4NgofJjajok?=
+ =?us-ascii?Q?+BwC+4c3JgSAmJHZuw3PENuRj4j3pKu4Knvr9nXwG53BxTnNj0mMTh3Il1Va?=
+ =?us-ascii?Q?4j4PCNnH/nIMltkt5mQczsCmXCq4rEG0IFdmF3ZOnaPqas3JeKX02j25KmYm?=
+ =?us-ascii?Q?uCTrjb7J78fOBo9VTHph8heR8EACKGZbdpU9asMdBQIVBvgBxP4lrvmwzTqA?=
+ =?us-ascii?Q?TFmZct5vUmhgshJzJYYSCHd7bCr+XrEKscj5f4nIISu2qXFcJVuFYQXFYS0o?=
+ =?us-ascii?Q?9LdNXWvqt1bDBFxmlAMEuCQNzr/MNF5ZKX1pH3tZUxR2H4I8CIIT+p3l31qt?=
+ =?us-ascii?Q?psY4sZcqjPvvOBBvkxn/DRX4jrHEXafIXL/Uv4+T564ghzsWsS2IJC0tK40l?=
+ =?us-ascii?Q?o1aVG/UEOPj4LjxyUhw1Ps0UwpF6rRVmNn0crPJI2ltN1iqCe3q60I5V/jlM?=
+ =?us-ascii?Q?/gGAzjSRabGTn90koYE19lenPXdIh6Syj5q0yfqhSBrTXVPQ4sYXoIHfzAZp?=
+ =?us-ascii?Q?uw6agjb6MLPYVRVYA+UoVRBWseQlYXPd+q88cXRE9KdxcSJ4pxyRkuQm66oB?=
+ =?us-ascii?Q?6ekYHhgC8DXvt3HLxVGJPs4Hu03vdACIaXTl06QXyv58g92efZsA9H5FKDxH?=
+ =?us-ascii?Q?9nHcwN07gNdLcuhLKGX071FlSmnH1e8TdnWBoF6jAzq9yBSqb8OGAFxHgfj5?=
+ =?us-ascii?Q?fjIKb67nV1mXyV/1n7trMghNdLsZzpXSe+D7gFsIhhqz1y4gyRXoCDWHQCEO?=
+ =?us-ascii?Q?FHMX2/Ht7nwapP1d3qMKeyP/O3qpBgWaZOXih/pQV6mVih3xX6A3lUMwqMEH?=
+ =?us-ascii?Q?exfA3DTa48NqBOPS+336/wAgKiQIeyPWJ8SWRJt3/UZQEdYnvBdmJyw9U9dI?=
+ =?us-ascii?Q?2RKhp+BPEC+nFVIK0YgsHQnurZoRIO/Uc5HJCBPCexUIV4AZ2WMQPjCtjvTj?=
+ =?us-ascii?Q?dH1943YLTQzAuhireXLbFDsbYcWobcGvg37p6rtdtbI/Tkf9GX4lSBOTNJYY?=
+ =?us-ascii?Q?cFmLOjFsUXVKzsmILK2C2HRo7DWCGNIHetBUaszFNNferktwjrK4HA=3D=3D?=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11947.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?b1z5rQS2hctVfSD4Vr3VgRPcuOZZr1tvYO63WADJByybKpgxbgqI8LaT6EfB?=
- =?us-ascii?Q?BWOTkkTphkXcJ2daUo13l9Ry8O5xp+EzB1kqtZdQoDS3akdSKaUScFv5bC+s?=
- =?us-ascii?Q?BcPqqMh8M3VY99Ri7XT6DyY/g+MvN+Y8toL/sa4Elk6bjGf5yIeE8mIWM/RC?=
- =?us-ascii?Q?BHxPgYo5z9BhtuqeZxxcrPQo4fJd0ilKHkziLgCHOupa2NT6BWfmBNn8wwW1?=
- =?us-ascii?Q?j8byF0wkeVoeBRZ2sKTcce6Uo8eMj+F9bnqe82DA0ji0Gb7+BEi0Ps9NFw4c?=
- =?us-ascii?Q?2+MTabRWlesUQ3D3Z/qpeJrb42gh1QH3Pk++9xD2KaSFEkERIS0li5ZVIuEF?=
- =?us-ascii?Q?kxehJ5d3PHVHu56Cq9R+C56rD+2IVZK5T+EVZ/EHbysprk6FBZ7u4+8L9WFg?=
- =?us-ascii?Q?KNqKBEA51xhhStNpgNrxN1ypmqNU6N1cF/JLjm3cBeOQQQ3kgGxBhCrUVFuk?=
- =?us-ascii?Q?M+FivQYhL/IaI7vL7j6BfmIgP7F1YJYd69N78R+z5k5ecFW12gde8krODLyA?=
- =?us-ascii?Q?qkkfeQ5TOy8lkuSEtTDqySqlFcwNLglr7XUM3spOA40asQQndPzq2aSB6D2d?=
- =?us-ascii?Q?1V8jbK1SA3HGD2AD5SnQfBjqYqtLngZiHN6i1miDCRYp/HiNWmVaLpTE7ANe?=
- =?us-ascii?Q?T/ofzfmMskHKktVqbjqM19xfyhTM4UoxCJfQeB7Ez1NHZdjAx/nrMblV5N/Q?=
- =?us-ascii?Q?ksWG5Tpe/v9jahxQOTBvGWpNda84Myamg2mQWTlv4dU838rOfnFxzGCxf41p?=
- =?us-ascii?Q?ZMF2hSTFz4hy/pLHyqNvCx7U55oPUBcoFJATlkvmTE7FYmCz4AadYGDfjDBJ?=
- =?us-ascii?Q?w8uHgaB8iPlkJyrYioF4q8cFk+vyzarUqkzVe7fhylbSzPNvScXXB72Ab3rx?=
- =?us-ascii?Q?H8B+fOOYW/yPTJ9YCHQC0tHcR1zQEXOytLJzqteSr4S62aK/Eb+aVwESis6r?=
- =?us-ascii?Q?rs6eNeAJJdfBCS4Qk5F+/838o8NdumFOXs/1GVn4Hp/zO+SDusVIcgpsqmrj?=
- =?us-ascii?Q?molyCkcMO2y6AkZQO6AfN3hEgZsKbkQN3w1nM9kWu8XzVDAEnrA7k+RL48kZ?=
- =?us-ascii?Q?JnzdlwoMPWdNL0u3hJb/8z4ZXKyGkzOWWi6nlSdZqORTU6lCkQADGA04hFJt?=
- =?us-ascii?Q?wwBLedz4xJsZ3awS2szlNZYQ7IVVAkl/u5RhKBIvAMbCEpXCW+qeN+ndyZRP?=
- =?us-ascii?Q?ytkpAxST6zDWFFDIGMly3QL8AJGWyNf2yXeLw1DdT61BRrnSB+8nOnXLuzG9?=
- =?us-ascii?Q?2lRkx3wGSSaRdIjhHmwxE7zXm0Pl+dcCebPkgoWHvBaEo6+/jIi0mQ9ogvfR?=
- =?us-ascii?Q?dBlVBnQ924astuiUob4lChTHiKYCmgYgfdIYtghGPSs702WwxP7xewHm/rIe?=
- =?us-ascii?Q?DgT1uYlKV+e3kRozetOpwzm2TfUGThIuuK93TB+dctmqGNQqqNlcgaYQpf7d?=
- =?us-ascii?Q?81j+58O943RfJOmnbPaLPo3jWhoJ4GaBgeqF1EaAbM7fccvbUm0EBG/r4myG?=
- =?us-ascii?Q?Gdw8Apxd5O5pJUC4hGR4GDNRnbWQwRFmSio76EL5A9vt/J6U2aBdMnZmjRgy?=
- =?us-ascii?Q?nQsLMTX9ImamBLuzA2oW2KAmddFMR9SfqCUSsplrAgyNqHJ4XTXyvEdiLxJr?=
- =?us-ascii?Q?1ZVGZFcMoWhMbWyIgQv3vHuLXoSedPkry56oRFuDUIVfBe2+rU63UtVk6N/M?=
- =?us-ascii?Q?bq5Dc9xtgMoM5um3CB/97c3dpVONzdGHShkdWhdcfrJJG+fIZUdSaXJjYl/c?=
- =?us-ascii?Q?w6PViqmMt+xz70S7BTaz+6Prh0+a0dRwiqfykS/PgAYrcWr0rama?=
+	=?us-ascii?Q?XZnHnplezkke0EgbNpPCG9sxllqSaqCxdGarBF33VvsdRndZp+9pv9yqctwd?=
+ =?us-ascii?Q?xZ2a8eFIBCtU5nDUSaxw8wWB0bRHiAI0gvtOo1iKUI0fqKQjEGQ/V6JX47ce?=
+ =?us-ascii?Q?U97oWM3WqRR0sMng3VjVYpmeeDLTkGq0/367UX7Yxx3KeEjtTySs9qmFsVJe?=
+ =?us-ascii?Q?nQiHew7RkD0jAFVx1jbsyGiWmdfLNkmezITdFselkdaQlPlRvmkk/xLd1xas?=
+ =?us-ascii?Q?Nyq9u+q0zZmX5BzVxTFihuaeTl3sz8AALSx41STbD5m9ces1K36+gn+JxuQj?=
+ =?us-ascii?Q?0mGLEhGq1reUTSCygop6pxSpU4TDtPdnHbmqoj6UWyaX+J/BZwVj6yb3svbz?=
+ =?us-ascii?Q?w8/pf5Kf1dYMMqlDHJDFOtel16anJE/wXMYPNpWMSMKzpZQU8AhZcr0LlbZd?=
+ =?us-ascii?Q?PGxhRV3IwNeltk+M+L0hEVLo/wAkIcpIRmfQjFFOaw7w1LpjVFP8qBXEyvLd?=
+ =?us-ascii?Q?TPl4r22lpagAsbOSzBJ7gqdLvKIJKGuwQDDeaKQ2itmRbH2nUWQ6PKeSqi9I?=
+ =?us-ascii?Q?KtjqotTkfUqwYLQkPZOGmJcXVf0cRaNHS9A37TzXS74hngUmeyKADMX6FykW?=
+ =?us-ascii?Q?WfN+jYXnyIxdlbzXXNNgNTCr4UWGt+5yq3jkYokVyjPL6PiKJ6KFjrRIE/rd?=
+ =?us-ascii?Q?jbvzZhyy0itALgWwK+MK5FX/YPmrcFvBdmUuSXeIzbKBBwrgVth0hIiJXR36?=
+ =?us-ascii?Q?eyYmAxNkh/MqLqFU3Kz2YDt/+YLxJBMXJVwVnzH9P2VLtD2+YR9nh+MJ+8Al?=
+ =?us-ascii?Q?ySXfPSYSFBZmn0zrvVadzEBjW4bg4xvKSlw2X0qood2oL+45kV67qppTRy21?=
+ =?us-ascii?Q?Q81S1i+7jn97cUhazGg/lTKARHx8bZm6oRYtTWbhxDprjx9uFqSBiWfdWDnp?=
+ =?us-ascii?Q?v1VMgL2naFHvyket5VZbfgmja68v8xeSj9E5DnA+ly/RqjBNwGvMP0XkI83m?=
+ =?us-ascii?Q?yYSxM9AGkD3LC7XhBgAoVZC12rZNYXK7xl/dZNSu4lmdaUywMRE3yl1N6KFk?=
+ =?us-ascii?Q?ysF/GIW5zQd7NJfSASCPuQCfPOkpRu/ncSxgOmwPQwrPMw6INvMyHLyALoLp?=
+ =?us-ascii?Q?seE4sR9bJVSL77L03pcqY5iD9TYcPAQkLhRIJhRRUuAngcqLbAF7/S5ktiBQ?=
+ =?us-ascii?Q?Qf5QRNDfGPPzONzakYPM9LM8kVAT6HRBKKwi/tvxquaPEPuA2/NHw/fwwlfd?=
+ =?us-ascii?Q?xkmapUmv9CPK9YXymvu49OORjFEN3rW823qF824GotvEaTnTI4Adoi23r7Wv?=
+ =?us-ascii?Q?grnWTjETTFoGlpQejhOSfcktOW/rtvj7FaURsq6r26/8aVC8QFkGiY17gnxs?=
+ =?us-ascii?Q?OQYb+Al9HfuPomD6nRmBA2klBYUwzuwLq19y/dsUzjYYv3kMqlRZxh4wBmFc?=
+ =?us-ascii?Q?P7xfhwaNLYmmd++aXgQWYe0UDaFizZp4Wz8c7OBwJq7uRBHWHxbxWCXyS7VA?=
+ =?us-ascii?Q?l3LtTRDOaQRYVy44P+eVv3lyo7gfp7yAASlYtyuHTdE+cN0RVMdeHQgVkFkS?=
+ =?us-ascii?Q?8xA3a6EXaUXGipYGBo4BeUi+1YLCfLrDv9OfDDz8naytdogCX58mKRzDV25r?=
+ =?us-ascii?Q?z9QuAY0raqshMRrzDZk/tjXPkIqCS0JRN37ATFxzA/3W7jvOgo8IJeix2JGV?=
+ =?us-ascii?Q?9rKMjhFH5Bv6dRp5zwoFvfbciWCFVbEKx2yr4knlUSzuHHC0an+LohY/RMao?=
+ =?us-ascii?Q?HpFrIQBIMe1347tAxo+ejeAvx0/wrmCGFyu+DwmIzdtJ6pY+UHCw53ATS/DL?=
+ =?us-ascii?Q?Qnod4leSWSbj+oJ5CDxKo76ANu7EcBqLj+7gWw0VfvxAEZ3xIrP8?=
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ebd7ff7a-ea2b-4280-4ed0-08de4e985766
+X-MS-Exchange-CrossTenant-Network-Message-Id: 398b1b27-9a1e-43a2-1ae0-08de4e9855b6
 X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11947.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jan 2026 09:28:54.5042
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jan 2026 09:28:51.4526
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: va6BzmL7N/0wL/axWbu52n5ywHDW59DtJtaK51pX0h8ATGl3S3DhOViW8tb+uB7RkJKI4nZDEqK8WQ5ZEpC2oasUSSM2rDeUKIPPOUZQjPBSpVKYNzP+fT1GEzgRC61U
+X-MS-Exchange-CrossTenant-UserPrincipalName: CdNre8s+TxMVDZ1hpLoK9kIJ3aCDCCoLcHLXjn4xZ+r+z44Q2Rayff1ENV17+UxSS9tOxxybMHblkiH5+aYlo9ml31/faEaGFJpYc7FZtdlaI47Zs4jV9Ei7/j0lBIWt
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYRPR01MB12872
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 08 Jan 2026 09:29:00 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21439
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21438
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+commit 94e611b5b9ef3a1d9ba77f41343e95155a5091d2 upstream.
 
-commit 00286d7d643d3c98e48d9cc3a9f471b37154f462 upstream.
+Add Renesas I3C controller which is available in R9A08G045 (RZ/G3S) and
+R9A09G047 (RZ/G3E) SoCs.
 
-The Kconfig file for controller drivers is only sourced if the I3C
-symbol is enabled. No need to check for that in individual drivers.
-
+Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Link: https://lore.kernel.org/r/20250506075247.1545-2-wsa+renesas@sang-engi=
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+Link: https://lore.kernel.org/r/20250724094146.6443-4-wsa+renesas@sang-engi=
 neering.com
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 ---
- drivers/i3c/master/Kconfig | 4 ----
- 1 file changed, 4 deletions(-)
+ .../devicetree/bindings/i3c/renesas,i3c.yaml  | 179 ++++++++++++++++++
+ 1 file changed, 179 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/i3c/renesas,i3c.yaml
 
-diff --git a/drivers/i3c/master/Kconfig b/drivers/i3c/master/Kconfig
-index 3b8f95916f46..b5e20b28f107 100644
---- a/drivers/i3c/master/Kconfig
-+++ b/drivers/i3c/master/Kconfig
-@@ -1,7 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0-only
- config CDNS_I3C_MASTER
- 	tristate "Cadence I3C master driver"
--	depends on I3C
- 	depends on HAS_IOMEM
- 	depends on !(ALPHA || PARISC)
- 	help
-@@ -9,7 +8,6 @@ config CDNS_I3C_MASTER
-=20
- config DW_I3C_MASTER
- 	tristate "Synospsys DesignWare I3C master driver"
--	depends on I3C
- 	depends on HAS_IOMEM
- 	depends on !(ALPHA || PARISC)
- 	# ALPHA and PARISC needs {read,write}sl()
-@@ -24,7 +22,6 @@ config DW_I3C_MASTER
-=20
- config SVC_I3C_MASTER
- 	tristate "Silvaco I3C Dual-Role Master driver"
--	depends on I3C
- 	depends on HAS_IOMEM
- 	depends on !(ALPHA || PARISC)
- 	help
-@@ -32,7 +29,6 @@ config SVC_I3C_MASTER
-=20
- config MIPI_I3C_HCI
- 	tristate "MIPI I3C Host Controller Interface driver (EXPERIMENTAL)"
--	depends on I3C
- 	depends on HAS_IOMEM
- 	help
- 	  Support for hardware following the MIPI Aliance's I3C Host Controller
+diff --git a/Documentation/devicetree/bindings/i3c/renesas,i3c.yaml b/Docum=
+entation/devicetree/bindings/i3c/renesas,i3c.yaml
+new file mode 100644
+index 000000000000..fe2e9633c46f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/i3c/renesas,i3c.yaml
+@@ -0,0 +1,179 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/i3c/renesas,i3c.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas RZ/G3S and RZ/G3E I3C Bus Interface
++
++maintainers:
++  - Wolfram Sang <wsa+renesas@sang-engineering.com>
++  - Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - renesas,r9a08g045-i3c # RZ/G3S
++          - renesas,r9a09g047-i3c # RZ/G3E
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    items:
++      - description: Non-recoverable internal error interrupt
++      - description: Normal transfer error interrupt
++      - description: Normal transfer abort interrupt
++      - description: Normal response status buffer full interrupt
++      - description: Normal command buffer empty interrupt
++      - description: Normal IBI status buffer full interrupt
++      - description: Normal Rx data buffer full interrupt
++      - description: Normal Tx data buffer empty interrupt
++      - description: Normal receive status buffer full interrupt
++      - description: START condition detection interrupt
++      - description: STOP condition detection interrupt
++      - description: Transmit end interrupt
++      - description: NACK detection interrupt
++      - description: Arbitration lost interrupt
++      - description: Timeout detection interrupt
++      - description: Wake-up condition detection interrupt
++      - description: HDR Exit Pattern detection interrupt
++    minItems: 16
++
++  interrupt-names:
++    items:
++      - const: ierr
++      - const: terr
++      - const: abort
++      - const: resp
++      - const: cmd
++      - const: ibi
++      - const: rx
++      - const: tx
++      - const: rcv
++      - const: st
++      - const: sp
++      - const: tend
++      - const: nack
++      - const: al
++      - const: tmo
++      - const: wu
++      - const: exit
++    minItems: 16
++
++  clocks:
++    items:
++      - description: APB bus clock
++      - description: transfer clock
++      - description: SFRs clock
++    minItems: 2
++
++  clock-names:
++    items:
++      - const: pclk
++      - const: tclk
++      - const: pclkrw
++    minItems: 2
++
++  power-domains:
++    maxItems: 1
++
++  resets:
++    items:
++      - description: Reset signal
++      - description: APB interface reset signal/SCAN reset signal
++
++  reset-names:
++    items:
++      - const: presetn
++      - const: tresetn
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - interrupt-names
++  - clock-names
++  - clocks
++  - power-domains
++  - resets
++  - reset-names
++
++allOf:
++  - $ref: i3c.yaml#
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: renesas,r9a08g045-i3c
++    then:
++      properties:
++        clocks:
++          maxItems: 2
++        clock-names:
++          maxItems: 2
++        interrupts:
++          minItems: 17
++        interrupt-names:
++          minItems: 17
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: renesas,r9a09g047-i3c
++    then:
++      properties:
++        clocks:
++          minItems: 3
++        clock-names:
++          minItems: 3
++        interrupts:
++          maxItems: 16
++        interrupt-names:
++          maxItems: 16
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/r9a08g045-cpg.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    i3c@1005b000 {
++        compatible =3D "renesas,r9a08g045-i3c";
++        reg =3D <0x1005b000 0x1000>;
++        clocks =3D <&cpg CPG_MOD R9A08G045_I3C_PCLK>,
++                 <&cpg CPG_MOD R9A08G045_I3C_TCLK>;
++        clock-names =3D "pclk", "tclk";
++        interrupts =3D <GIC_SPI 289 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 293 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 294 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 295 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 296 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 297 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 298 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 299 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 307 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 306 IRQ_TYPE_LEVEL_HIGH>;
++        interrupt-names =3D "ierr", "terr", "abort", "resp",
++                          "cmd", "ibi", "rx", "tx", "rcv",
++                          "st", "sp", "tend", "nack",
++                          "al", "tmo", "wu", "exit";
++        resets =3D <&cpg R9A08G045_I3C_PRESETN>,
++                 <&cpg R9A08G045_I3C_TRESETN>;
++        reset-names =3D "presetn", "tresetn";
++        power-domains =3D <&cpg>;
++        #address-cells =3D <3>;
++        #size-cells =3D <0>;
++    };
++...
 --=20
 2.43.0
 
