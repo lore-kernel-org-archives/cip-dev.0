@@ -2,28 +2,28 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3904D1A612
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A499BD1A60F
 	for <webhook@archiver.kernel.org>; Fri,  9 Jan 2026 12:17:37 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.msgproc02-g2.8789.1767961043308602851
  for <cip-dev@lists.cip-project.org>;
- Fri, 09 Jan 2026 04:17:31 -0800
+ Fri, 09 Jan 2026 04:17:35 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: 3btk8w+cTei/EQJsL4rJ6w==
-X-CSE-MsgGUID: c9vfKGFUTQaQOlzf8wMbsg==
+X-CSE-ConnectionGUID: GV7yOJK3TgCcGUVoi4gCyQ==
+X-CSE-MsgGUID: 1gX7doJoTLWjvjzink9TPA==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 09 Jan 2026 21:17:31 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 09 Jan 2026 21:17:34 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.93.57])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 080994172F36;
-	Fri,  9 Jan 2026 21:17:29 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 850E44173002;
+	Fri,  9 Jan 2026 21:17:33 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.12.y-cip 6/8] arm64: dts: renesas: r9a09g057: Add RTC node
-Date: Fri,  9 Jan 2026 12:17:16 +0000
-Message-ID: <20260109121718.46056-7-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.12.y-cip 8/8] arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Add NMI pushbutton support
+Date: Fri,  9 Jan 2026 12:17:18 +0000
+Message-ID: <20260109121718.46056-9-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260109121718.46056-1-ovidiu.panait.rb@renesas.com>
 References: <20260109121718.46056-1-ovidiu.panait.rb@renesas.com>
@@ -33,47 +33,54 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 09 Jan 2026 12:17:37 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21522
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21524
 
-commit cfc733da4e79018f88d8ac5f3a5306abbba8ef89 upstream.
+commit f61c497a91c4f7f5b34e78475dafc511cdcebca6 upstream.
 
-Add RTC node to Renesas RZ/V2H ("R9A09G057") SoC DTSI.
+RZ/V2H EVK has a user pushbutton connected to the SoC NMI pin, which
+can be used to wake up the system from suspend to idle. Add a DT node
+in the device tree to instantiate the gpio-keys driver for this button.
 
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20251107210706.45044-4-ovidiu.panait.rb@renesas.com
+Link: https://patch.msgid.link/20251027140651.18367-1-ovidiu.panait.rb@renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a09g057.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ .../boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts     | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-index 7ef3b1a063df..01110aa695dd 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-@@ -587,6 +587,21 @@ wdt3: watchdog@13000400 {
- 			status = "disabled";
- 		};
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
+index 3225d6065a85..b428c0cff030 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
++++ b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
+@@ -9,6 +9,7 @@
  
-+		rtc: rtc@11c00800 {
-+			compatible = "renesas,r9a09g057-rtca3", "renesas,rz-rtca3";
-+			reg = <0 0x11c00800 0 0x400>;
-+			interrupts = <GIC_SPI 524 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 525 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 526 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "alarm", "period", "carry";
-+			clocks = <&cpg CPG_MOD 0x53>, <&rtxin_clk>;
-+			clock-names = "bus", "counter";
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x79>, <&cpg 0x7a>;
-+			reset-names = "rtc", "rtest";
-+			status = "disabled";
-+		};
+ #include <dt-bindings/pinctrl/renesas,r9a09g057-pinctrl.h>
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
+ #include "r9a09g057.dtsi"
+ 
+ / {
+@@ -34,6 +35,18 @@ chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	keys: keys {
++		compatible = "gpio-keys";
 +
- 		scif: serial@11c01400 {
- 			compatible = "renesas,scif-r9a09g057";
- 			reg = <0 0x11c01400 0 0x400>;
++		key-wakeup {
++			interrupts-extended = <&icu 0 IRQ_TYPE_EDGE_FALLING>;
++			linux,code = <KEY_WAKEUP>;
++			label = "NMI_SW";
++			debounce-interval = <20>;
++			wakeup-source;
++		};
++	};
++
+ 	memory@48000000 {
+ 		device_type = "memory";
+ 		/* first 128MB is reserved for secure area. */
 -- 
 2.51.0
 
