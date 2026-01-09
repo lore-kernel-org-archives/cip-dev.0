@@ -2,28 +2,28 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F930D1A60A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACC34D1A60D
 	for <webhook@archiver.kernel.org>; Fri,  9 Jan 2026 12:17:27 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.8789.1767961043308602851
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.8787.1767961041818980139
  for <cip-dev@lists.cip-project.org>;
- Fri, 09 Jan 2026 04:17:23 -0800
+ Fri, 09 Jan 2026 04:17:26 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: Un6vGsHLTNasM0qjE5aqGQ==
-X-CSE-MsgGUID: X8bca7FPSiWQ5z3kCsxh3Q==
+ dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
+X-CSE-ConnectionGUID: HHlX9kFETjqg9myLTkHStA==
+X-CSE-MsgGUID: IfC01faDR36AaxMLfUnIIw==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 09 Jan 2026 21:17:22 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 09 Jan 2026 21:17:25 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.93.57])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 663A84172F36;
-	Fri,  9 Jan 2026 21:17:21 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id CF20D4172F36;
+	Fri,  9 Jan 2026 21:17:24 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.12.y-cip 1/8] dt-bindings: rtc: renesas,rz-rtca3: Add RZ/V2H support
-Date: Fri,  9 Jan 2026 12:17:11 +0000
-Message-ID: <20260109121718.46056-2-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.12.y-cip 3/8] rtc: renesas-rtca3: Disable interrupts only if the RTC is enabled
+Date: Fri,  9 Jan 2026 12:17:13 +0000
+Message-ID: <20260109121718.46056-4-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260109121718.46056-1-ovidiu.panait.rb@renesas.com>
 References: <20260109121718.46056-1-ovidiu.panait.rb@renesas.com>
@@ -33,112 +33,58 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 09 Jan 2026 12:17:27 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21517
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21519
 
-commit 4800046b56a5b240ab280f55165484a9dbdf7092 upstream.
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-The Renesas RZ/V2H RTC IP is based on the same RTCA3 IP as RZ/G3S
-(r9a08g045), with the following differences:
-- It lacks the time capture functionality
-- The maximum supported periodic interrupt frequency is 128Hz instead
-  of 256Hz
-- It requires two reset lines instead of one
+commit 27b2fcbd6b98204b0dce62e9aa9540ca0a2b70f1 upstream.
 
-Add new compatible string "renesas,r9a09g057-rtca3" for RZ/V2H and update
-the binding accordingly:
-- Allow "resets" to contain one or two entries depending on the SoC.
-- Add "reset-names" property, but make it required only for RZ/V2H.
+If the RTC is not enabled and the code attempts to disable the interrupt,
+the readb_poll_timeout_atomic() function in the
+rtca3_alarm_irq_set_helper() may timeout, leading to probe failures.
+This issue is reproducible on some devices because the initial values of
+the PIE and AIE bits in the RCR1 register are undefined.
 
-Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Link: https://patch.msgid.link/20251107210706.45044-2-ovidiu.panait.rb@renesas.com
+To prevent probe failures in this scenario, disable RTC interrupts only
+when the RTC is actually enabled.
+
+Fixes: d4488377609e ("rtc: renesas-rtca3: Add driver for RTCA-3 available on Renesas RZ/G3S SoC")
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Link: https://lore.kernel.org/r/20250205095519.2031742-1-claudiu.beznea.uj@bp.renesas.com
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- .../bindings/rtc/renesas,rz-rtca3.yaml        | 46 +++++++++++++++++--
- 1 file changed, 41 insertions(+), 5 deletions(-)
+ drivers/rtc/rtc-renesas-rtca3.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/rtc/renesas,rz-rtca3.yaml b/Documentation/devicetree/bindings/rtc/renesas,rz-rtca3.yaml
-index e70eeb66aa64..ccb1638c35b9 100644
---- a/Documentation/devicetree/bindings/rtc/renesas,rz-rtca3.yaml
-+++ b/Documentation/devicetree/bindings/rtc/renesas,rz-rtca3.yaml
-@@ -9,14 +9,12 @@ title: Renesas RTCA-3 Real Time Clock
- maintainers:
-   - Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+diff --git a/drivers/rtc/rtc-renesas-rtca3.c b/drivers/rtc/rtc-renesas-rtca3.c
+index d127933bfc8a..598bf943cc5b 100644
+--- a/drivers/rtc/rtc-renesas-rtca3.c
++++ b/drivers/rtc/rtc-renesas-rtca3.c
+@@ -586,17 +586,14 @@ static int rtca3_initial_setup(struct clk *clk, struct rtca3_priv *priv)
+ 	 */
+ 	usleep_range(sleep_us, sleep_us + 10);
  
--allOf:
--  - $ref: rtc.yaml#
+-	/* Disable all interrupts. */
+-	mask = RTCA3_RCR1_AIE | RTCA3_RCR1_CIE | RTCA3_RCR1_PIE;
+-	ret = rtca3_alarm_irq_set_helper(priv, mask, 0);
+-	if (ret)
+-		return ret;
 -
- properties:
-   compatible:
-     items:
-       - enum:
-           - renesas,r9a08g045-rtca3 # RZ/G3S
-+          - renesas,r9a09g057-rtca3 # RZ/V2H
-       - const: renesas,rz-rtca3
+ 	mask = RTCA3_RCR2_START | RTCA3_RCR2_HR24;
+ 	val = readb(priv->base + RTCA3_RCR2);
+-	/* Nothing to do if already started in 24 hours and calendar count mode. */
+-	if ((val & mask) == mask)
+-		return 0;
++	/* Only disable the interrupts if already started in 24 hours and calendar count mode. */
++	if ((val & mask) == mask) {
++		/* Disable all interrupts. */
++		mask = RTCA3_RCR1_AIE | RTCA3_RCR1_CIE | RTCA3_RCR1_PIE;
++		return rtca3_alarm_irq_set_helper(priv, mask, 0);
++	}
  
-   reg:
-@@ -48,8 +46,12 @@ properties:
-     maxItems: 1
- 
-   resets:
--    items:
--      - description: VBATTB module reset
-+    minItems: 1
-+    maxItems: 2
-+
-+  reset-names:
-+    minItems: 1
-+    maxItems: 2
- 
- required:
-   - compatible
-@@ -61,6 +63,39 @@ required:
-   - power-domains
-   - resets
- 
-+allOf:
-+  - $ref: rtc.yaml#
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: renesas,r9a08g045-rtca3
-+    then:
-+      properties:
-+        resets:
-+          items:
-+            - description: VBATTB module reset
-+        reset-names:
-+          const: vbattb
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: renesas,r9a09g057-rtca3
-+    then:
-+      properties:
-+        resets:
-+          items:
-+            - description: RTC reset
-+            - description: Reset for the RTEST registers
-+        reset-names:
-+          items:
-+            - const: rtc
-+            - const: rtest
-+      required:
-+        - reset-names
-+
- additionalProperties: false
- 
- examples:
-@@ -81,4 +116,5 @@ examples:
-         clock-names = "bus", "counter";
-         power-domains = <&cpg>;
-         resets = <&cpg R9A08G045_VBAT_BRESETN>;
-+        reset-names = "vbattb";
-     };
+ 	/* Reconfigure the RTC in 24 hours and calendar count mode. */
+ 	mask = RTCA3_RCR2_START | RTCA3_RCR2_CNTMD;
 -- 
 2.51.0
 
