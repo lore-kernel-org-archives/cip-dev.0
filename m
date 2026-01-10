@@ -2,77 +2,77 @@ Return-Path: <pavel@nabladev.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5695D26D9A
-	for <webhook@archiver.kernel.org>; Fri,  9 Jan 2026 19:42:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C5B7D25027
+	for <webhook@archiver.kernel.org>; Sat, 10 Jan 2026 22:39:42 +0000 (UTC)
 Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.18321.1767987728297360520
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.421.1768084773093269431
  for <cip-dev@lists.cip-project.org>;
- Fri, 09 Jan 2026 11:42:09 -0800
+ Sat, 10 Jan 2026 14:39:33 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=DMk+dU8P;
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=Ha9gAAOM;
  spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E268A10D18C;
-	Fri,  9 Jan 2026 20:42:05 +0100 (CET)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 138A410972A;
+	Sat, 10 Jan 2026 23:39:29 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1767987726;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=V6W6zKcyg+3hTFm5yrABfV9Ly141Xb5+Cp0fCHmEEDo=;
-	b=DMk+dU8PmZL9FNqRWrF58khm3/K4ivcxNK5KRKSsssIkZZIj897nRCPZQFjl2r7EfjqLEw
-	a/ZJyt0rz8Fp1bkZa637E/2aUv+0jIa8Z4v2yJ+QyKVpBBohihn3J3ldWeTySCsrGOiSKB
-	9kPX+sVgCVR04Q4mExWskfAteUqujoGvelt3GyVZOPGCcvJs2II7aMovByO6Smpbuq3rQg
-	7Iiy3q1n0jP7hMFetTT/guZk4L5gHerkn4UsnMYyH9/TRupsChkQ1TucEM4cInnhiKcjTX
-	S3yN7VOmY7XAVv6yDgK+F1HBzTUmDWlv+mApa1quB25HUn5a3Y+yaQeZzi7/1A==
-Date: Fri, 9 Jan 2026 20:42:04 +0100
+	s=dkim; t=1768084770; h=from:subject:date:message-id:to:mime-version:content-type;
+	bh=VPqSEbaQlX0Uz9byYLph2eo3RLm3bHhqX/7z6OpGNHU=;
+	b=Ha9gAAOMrNFbN4QmbCbaMRJkW4VfEovACSh/5badFTKuPlYLLZ+yetXpxzyA3gTzxtroSP
+	cpn6mUKrhDOxbox+t1otjF5AEuR9Ei6y5Gip7x4CgG/Nu/46LhDjynl4hixKczAF3X7ZRu
+	zwwa5hHs6NAQ/sCWuoNna5injqbQOaaR7gETlmkQUWoZ10//cC42mZ+BWMT07hZ78fBenA
+	XG8zrsNp3JuGIEM4mEm/a3TFMUT2EkQ89nvFmcNeLPWsbQl9zQAOFYzgVeQLRtaTXgunDU
+	Dx8Orttgo0Ckx/sQyeTjKJqwP5TxhbL0zbwv4eN/FY7SIfx57BX48oFNhFeHKw==
+Date: Sat, 10 Jan 2026 23:39:26 +0100
 From: Pavel Machek <pavel@nabladev.com>
-To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-Cc: cip-dev@lists.cip-project.org, pavel@nabladev.com,
-	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: Re: [PATCH 6.12.y-cip 0/8] Add RZ/V2H RTC support
-Message-ID: <aWFaDNRAqAPLTf41@duo.ucw.cz>
-References: <20260109121718.46056-1-ovidiu.panait.rb@renesas.com>
+To: jan.kiszka@siemens.com, cip-dev@lists.cip-project.org,
+	Chris.Paterson2@renesas.com
+Subject: [ANNOUNCE] v5.10.247-cip68-rt30
+Message-ID: <aWLVHnFYQWsNWmjj@duo.ucw.cz>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="r9+nrA3qpp4zNFGG"
+	protocol="application/pgp-signature"; boundary="FBISP1rv2QdLdi7O"
 Content-Disposition: inline
-In-Reply-To: <20260109121718.46056-1-ovidiu.panait.rb@renesas.com>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 09 Jan 2026 19:42:11 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21527
+ <cip-dev@lists.cip-project.org>; Sat, 10 Jan 2026 22:39:42 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21528
 
 
---r9+nrA3qpp4zNFGG
+--FBISP1rv2QdLdi7O
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> This patch series adds RTC support for the Renesas RZ/V2H SoC.
+New realtime trees should be available at kernel.org.
 
-This looks okay to me.
+Trees are available at
 
-Reviewed-by: Pavel Machek <pavel@nabladev.com>
+https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=3D=
+linux-5.10.y-cip-rt
+https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=3D=
+linux-5.10.y-cip-rt-rebase
 
-I can apply the series if it passes testing and there are no other
-comments.
+And their content should be identical. There are also tar archives, at:
+
+https://mirrors.edge.kernel.org/pub/linux/kernel/projects/cip/
 
 Best regards,
                                                                 Pavel
 --=20
 In cooperation with Nabla.
 
---r9+nrA3qpp4zNFGG
+--FBISP1rv2QdLdi7O
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaWFaDAAKCRAw5/Bqldv6
-8hkVAJwMKuhfMorc0Wnr+st7ew1xKSAGGwCfXSUTmHUHNgto0SlKFIHcuB4lnUY=
-=Klk6
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaWLVHgAKCRAw5/Bqldv6
+8o8TAKC3+do+fJMdJy8HRbMKopzicz+CBACffgV7rXGfuYG8nJYZ3oo9i+MjKB8=
+=Ie33
 -----END PGP SIGNATURE-----
 
---r9+nrA3qpp4zNFGG--
+--FBISP1rv2QdLdi7O--
 
