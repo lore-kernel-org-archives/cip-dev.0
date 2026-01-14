@@ -2,28 +2,28 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92E62D2A006
-	for <webhook@archiver.kernel.org>; Wed, 14 Jan 2026 12:53:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E991D2A005
+	for <webhook@archiver.kernel.org>; Wed, 14 Jan 2026 12:53:44 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.msgproc02-g2.9226.1768395212892422768
  for <cip-dev@lists.cip-project.org>;
- Wed, 14 Jan 2026 04:53:33 -0800
+ Wed, 14 Jan 2026 04:53:34 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: KBtu7KhNTX2vfgUXhzgciw==
-X-CSE-MsgGUID: 4CclUFn4SMyHmLz0IT7kjA==
+X-CSE-ConnectionGUID: 0pqYpokYRN+7sOi3IGsz1g==
+X-CSE-MsgGUID: +zO6IbfKTpuOs9BltWyGDA==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 14 Jan 2026 21:53:32 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 14 Jan 2026 21:53:34 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.92.8])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 1FE4440029CF;
-	Wed, 14 Jan 2026 21:53:30 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id E2985400D0FA;
+	Wed, 14 Jan 2026 21:53:32 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.1.y-cip 3/4] arm64: dts: renesas: r9a09g056: Add RIIC controllers
-Date: Wed, 14 Jan 2026 12:53:23 +0000
-Message-ID: <20260114125324.8630-4-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.1.y-cip 4/4] arm64: dts: renesas: r9a09g056n48-rzv2n-evk: Enable RIIC controllers
+Date: Wed, 14 Jan 2026 12:53:24 +0000
+Message-ID: <20260114125324.8630-5-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260114125324.8630-1-ovidiu.panait.rb@renesas.com>
 References: <20260114125324.8630-1-ovidiu.panait.rb@renesas.com>
@@ -32,225 +32,145 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 14 Jan 2026 12:53:34 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21550
+ <cip-dev@lists.cip-project.org>; Wed, 14 Jan 2026 12:53:44 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21551
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit ece22fc24b0b23e123fde849340f1344f08fe151 upstream.
+commit f631c8392c9830f354b8b069f87e5ee19303b5b1 upstream.
 
-Add the nine RIIC controllers present on the Renesas RZ/V2N (R9A09G056)
-SoC to its DTSI.
+Enable the RIIC controllers 0, 1, 2, 3, 6, 7, and 8 which are populated
+on the RZ/V2N EVK.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250514101528.41663-6-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://lore.kernel.org/20250514101528.41663-7-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a09g056.dtsi | 189 +++++++++++++++++++++
- 1 file changed, 189 insertions(+)
+ .../dts/renesas/r9a09g056n48-rzv2n-evk.dts    | 95 +++++++++++++++++++
+ 1 file changed, 95 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g056.dtsi b/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
-index fe6677d6f8b8..c3a1819da38a 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
-@@ -319,6 +319,195 @@ scif: serial@11c01400 {
- 			status = "disabled";
- 		};
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
+index b3e68e1a9f03..55a023b70d3b 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
++++ b/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
+@@ -17,6 +17,13 @@ / {
+ 	aliases {
+ 		ethernet0 = &eth0;
+ 		ethernet1 = &eth1;
++		i2c0 = &i2c0;
++		i2c1 = &i2c1;
++		i2c2 = &i2c2;
++		i2c3 = &i2c3;
++		i2c6 = &i2c6;
++		i2c7 = &i2c7;
++		i2c8 = &i2c8;
+ 		mmc1 = &sdhi1;
+ 		serial0 = &scif;
+ 	};
+@@ -81,6 +88,55 @@ &eth1 {
+ 	status = "okay";
+ };
  
-+		i2c0: i2c@14400400 {
-+			compatible = "renesas,riic-r9a09g056", "renesas,riic-r9a09g057";
-+			reg = <0 0x14400400 0 0x400>;
-+			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 507 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 506 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "tei", "ri", "ti", "spi", "sti",
-+					  "naki", "ali", "tmoi";
-+			clocks = <&cpg CPG_MOD 0x94>;
-+			resets = <&cpg 0x98>;
-+			power-domains = <&cpg>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
++&i2c0 {
++	pinctrl-0 = <&i2c0_pins>;
++	pinctrl-names = "default";
++	clock-frequency = <400000>;
++	status = "okay";
++};
 +
-+		i2c1: i2c@14400800 {
-+			compatible = "renesas,riic-r9a09g056", "renesas,riic-r9a09g057";
-+			reg = <0 0x14400800 0 0x400>;
-+			interrupts = <GIC_SPI 180 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 509 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 508 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 182 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 183 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 181 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 185 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "tei", "ri", "ti", "spi", "sti",
-+					  "naki", "ali", "tmoi";
-+			clocks = <&cpg CPG_MOD 0x95>;
-+			resets = <&cpg 0x99>;
-+			power-domains = <&cpg>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
++&i2c1 {
++	pinctrl-0 = <&i2c1_pins>;
++	pinctrl-names = "default";
++	clock-frequency = <400000>;
++	status = "okay";
++};
 +
-+		i2c2: i2c@14400c00 {
-+			compatible = "renesas,riic-r9a09g056", "renesas,riic-r9a09g057";
-+			reg = <0 0x14400c00 0 0x400>;
-+			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 511 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 510 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "tei", "ri", "ti", "spi", "sti",
-+					  "naki", "ali", "tmoi";
-+			clocks = <&cpg CPG_MOD 0x96>;
-+			resets = <&cpg 0x9a>;
-+			power-domains = <&cpg>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
++&i2c2 {
++	pinctrl-0 = <&i2c2_pins>;
++	pinctrl-names = "default";
++	clock-frequency = <400000>;
++	status = "okay";
++};
 +
-+		i2c3: i2c@14401000 {
-+			compatible = "renesas,riic-r9a09g056", "renesas,riic-r9a09g057";
-+			reg = <0 0x14401000 0 0x400>;
-+			interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 513 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 512 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 195 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "tei", "ri", "ti", "spi", "sti",
-+					  "naki", "ali", "tmoi";
-+			clocks = <&cpg CPG_MOD 0x97>;
-+			resets = <&cpg 0x9b>;
-+			power-domains = <&cpg>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
++&i2c3 {
++	pinctrl-0 = <&i2c3_pins>;
++	pinctrl-names = "default";
++	clock-frequency = <400000>;
++	status = "okay";
++};
 +
-+		i2c4: i2c@14401400 {
-+			compatible = "renesas,riic-r9a09g056", "renesas,riic-r9a09g057";
-+			reg = <0 0x14401400 0 0x400>;
-+			interrupts = <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 515 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 514 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "tei", "ri", "ti", "spi", "sti",
-+					  "naki", "ali", "tmoi";
-+			clocks = <&cpg CPG_MOD 0x98>;
-+			resets = <&cpg 0x9c>;
-+			power-domains = <&cpg>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
++&i2c6 {
++	pinctrl-0 = <&i2c6_pins>;
++	pinctrl-names = "default";
++	clock-frequency = <400000>;
++	status = "okay";
++};
 +
-+		i2c5: i2c@14401800 {
-+			compatible = "renesas,riic-r9a09g056", "renesas,riic-r9a09g057";
-+			reg = <0 0x14401800 0 0x400>;
-+			interrupts = <GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 517 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 516 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "tei", "ri", "ti", "spi", "sti",
-+					  "naki", "ali", "tmoi";
-+			clocks = <&cpg CPG_MOD 0x99>;
-+			resets = <&cpg 0x9d>;
-+			power-domains = <&cpg>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
++&i2c7 {
++	pinctrl-0 = <&i2c7_pins>;
++	pinctrl-names = "default";
++	clock-frequency = <400000>;
++	status = "okay";
++};
 +
-+		i2c6: i2c@14401c00 {
-+			compatible = "renesas,riic-r9a09g056", "renesas,riic-r9a09g057";
-+			reg = <0 0x14401c00 0 0x400>;
-+			interrupts = <GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 519 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 518 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 214 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "tei", "ri", "ti", "spi", "sti",
-+					  "naki", "ali", "tmoi";
-+			clocks = <&cpg CPG_MOD 0x9a>;
-+			resets = <&cpg 0x9e>;
-+			power-domains = <&cpg>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
++&i2c8 {
++	pinctrl-0 = <&i2c8_pins>;
++	pinctrl-names = "default";
++	clock-frequency = <400000>;
++	status = "okay";
++};
 +
-+		i2c7: i2c@14402000 {
-+			compatible = "renesas,riic-r9a09g056", "renesas,riic-r9a09g057";
-+			reg = <0 0x14402000 0 0x400>;
-+			interrupts = <GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 521 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 520 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 221 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "tei", "ri", "ti", "spi", "sti",
-+					  "naki", "ali", "tmoi";
-+			clocks = <&cpg CPG_MOD 0x9b>;
-+			resets = <&cpg 0x9f>;
-+			power-domains = <&cpg>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
+ &mdio0 {
+ 	phy0: ethernet-phy@0 {
+ 		compatible = "ethernet-phy-id0022.1640", "ethernet-phy-ieee802.3-c22";
+@@ -162,6 +218,45 @@ eth1_pins: eth1 {
+ 		output-enable;
+ 	};
+ 
++	i2c0_pins: i2c0 {
++		pinmux = <RZV2N_PORT_PINMUX(3, 0, 1)>, /* I2C0_SDA */
++			 <RZV2N_PORT_PINMUX(3, 1, 1)>; /* I2C0_SCL */
++	};
 +
-+		i2c8: i2c@11c01000 {
-+			compatible = "renesas,riic-r9a09g056", "renesas,riic-r9a09g057";
-+			reg = <0 0x11c01000 0 0x400>;
-+			interrupts = <GIC_SPI 222 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 523 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 522 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 224 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 225 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 223 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 226 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 227 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "tei", "ri", "ti", "spi", "sti",
-+					  "naki", "ali", "tmoi";
-+			clocks = <&cpg CPG_MOD 0x93>;
-+			resets = <&cpg 0xa0>;
-+			power-domains = <&cpg>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
++	i2c1_pins: i2c1 {
++		pinmux = <RZV2N_PORT_PINMUX(3, 2, 1)>, /* I2C1_SDA */
++			 <RZV2N_PORT_PINMUX(3, 3, 1)>; /* I2C1_SCL */
++	};
 +
- 		gic: interrupt-controller@14900000 {
- 			compatible = "arm,gic-v3";
- 			reg = <0x0 0x14900000 0 0x20000>,
++	i2c2_pins: i2c2 {
++		pinmux = <RZV2N_PORT_PINMUX(2, 0, 4)>, /* I2C2_SDA */
++			 <RZV2N_PORT_PINMUX(2, 1, 4)>; /* I2C2_SCL */
++	};
++
++	i2c3_pins: i2c3 {
++		pinmux = <RZV2N_PORT_PINMUX(3, 6, 1)>, /* I2C3_SDA */
++			 <RZV2N_PORT_PINMUX(3, 7, 1)>; /* I2C3_SCL */
++	};
++
++	i2c6_pins: i2c6 {
++		pinmux = <RZV2N_PORT_PINMUX(4, 4, 1)>, /* I2C6_SDA */
++			 <RZV2N_PORT_PINMUX(4, 5, 1)>; /* I2C6_SCL */
++		/* There are no pull-up resistors on the EVK, so enable the internal pull-up */
++		bias-pull-up;
++	};
++
++	i2c7_pins: i2c7 {
++		pinmux = <RZV2N_PORT_PINMUX(4, 6, 1)>, /* I2C7_SDA */
++			 <RZV2N_PORT_PINMUX(4, 7, 1)>; /* I2C7_SCL */
++		/* There are no pull-up resistors on the EVK, so enable the internal pull-up */
++		bias-pull-up;
++	};
++
++	i2c8_pins: i2c8 {
++		pinmux = <RZV2N_PORT_PINMUX(0, 6, 1)>, /* I2C8_SDA */
++			 <RZV2N_PORT_PINMUX(0, 7, 1)>; /* I2C8_SCL */
++	};
++
+ 	scif_pins: scif {
+ 		pins = "SCIF_TXD", "SCIF_RXD";
+ 		renesas,output-impedance = <1>;
 -- 
 2.51.0
 
