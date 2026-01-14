@@ -1,122 +1,71 @@
-Return-Path: <pavel@nabladev.com>
+Return-Path: <adithya.balakumar@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12C10D29FF7
-	for <webhook@archiver.kernel.org>; Wed, 14 Jan 2026 11:53:44 +0000 (UTC)
-Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.8259.1768391615903967499
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 301DAD29FFE
+	for <webhook@archiver.kernel.org>; Wed, 14 Jan 2026 12:10:44 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.135])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.8553.1768392634613809779
  for <cip-dev@lists.cip-project.org>;
- Wed, 14 Jan 2026 03:53:36 -0800
+ Wed, 14 Jan 2026 04:10:35 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=YEEW6IBv;
- spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 15D3810A7F9;
-	Wed, 14 Jan 2026 12:53:32 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1768391613;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=R0Vil1CXTElmi3GaV2kd/FPF5fyQ9xJjd6nr8CivrZY=;
-	b=YEEW6IBvJFoOKgeZO+OZz5xamauxe9FlIIwHDf8P7dCjIWbKguUpDgz57AznQd+b6rST0w
-	rCWXagEgn+em8bwZpLi+RaExjlNfhrq6GBF3+FcOacUM14TiIbZjR+UBWDWCDd6RMt6QK2
-	X4Wa6WUK3EYG5yMsInJonCydpf11IHfy/BWlYL5lcfPZUIBhsBzw0dg8YTDGDsKpACgxHd
-	71gz7IcbQuRyxK/Fp1CTpHH8HjMmr3Dx2OhT8EH4xpXtiFyliCsmwGXFUGzU7K7v9HJmzq
-	akC+0UiBCt9zA1L3gCylsw1CQ7xJLRplGuFRyQIdpkK8uq4RzuIqL0wDmDjBmA==
-Date: Wed, 14 Jan 2026 12:53:30 +0100
-From: Pavel Machek <pavel@nabladev.com>
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: cip-dev@lists.cip-project.org,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	tomm.merciai@gmail.com
-Subject: Re: [PATCH 6.1.y-cip 04/22] i3c: master: Add basic driver for the
- Renesas I3C controller
-Message-ID: <aWeDum6VUxnXZV6T@duo.ucw.cz>
-References: <20260108092823.489287-1-tommaso.merciai.xr@bp.renesas.com>
- <20260108092823.489287-5-tommaso.merciai.xr@bp.renesas.com>
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.135, mailfrom: adithya.balakumar@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1801) id 60ECAWsV2399173; Wed, 14 Jan 2026 21:10:32 +0900
+X-Iguazu-Qid: 2yAbS7rJl2lFQw5C1Q
+X-Iguazu-QSIG: v=2; s=0; t=1768392632; q=2yAbS7rJl2lFQw5C1Q; m=/ThvpBAMfTBgqypCe7HR55tga7QtXsDhyTLr0D5yXP0=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	 id 4drlLc2Kj7zyPZ; Wed, 14 Jan 2026 21:10:32 +0900 (JST)
+From: Adithya.Balakumar@toshiba-tsip.com
+To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
+Cc: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>,
+        shivanand.kunijadar@toshiba-tsip.com, dinesh.kumar@toshiba-tsip.com,
+        akunuri.sahithi@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
+Subject: [isar-cip-core][PATCH v4 2/4] Kconfig: Add option to set WFX_URL
+Date: Wed, 14 Jan 2026 07:25:14 -0500
+X-TSB-HOP2: ON
+Message-Id: <20260114122517.1716929-3-Adithya.Balakumar@toshiba-tsip.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20260114122517.1716929-1-Adithya.Balakumar@toshiba-tsip.com>
+References: <20260114122517.1716929-1-Adithya.Balakumar@toshiba-tsip.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="mfRPM3yy4KSncbbC"
-Content-Disposition: inline
-In-Reply-To: <20260108092823.489287-5-tommaso.merciai.xr@bp.renesas.com>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 14 Jan 2026 12:10:29.0203 (UTC) FILETIME=[C61D6230:01DC854E]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 14 Jan 2026 11:53:44 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21541
+ <cip-dev@lists.cip-project.org>; Wed, 14 Jan 2026 12:10:44 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21544
+
+From: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
+
+Signed-off-by: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
+---
+ Kconfig | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/Kconfig b/Kconfig
+index 30abb84..3665269 100644
+--- a/Kconfig
++++ b/Kconfig
+@@ -279,6 +279,13 @@ config IMAGE_SWUPDATE
+ 
+ if IMAGE_SWUPDATE
+ 
++config WFX_URL
++	string "WFX backend URL"
++	default ""
++	help
++	  URL of the wfx backend for software updates. See ./doc/README.swupdate.md for
++	  more about wfx support for updates.
++
+ choice
+ 	prompt "Update type"
+ 
+-- 
+2.39.5
 
 
---mfRPM3yy4KSncbbC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-I see incosistency here: ccc_cmd() does kfree(), priv_xfers does not;
-and I don't see who does free xfer in case of priv_xfers. I summarized
-functions below to point out the memory leak.
-
-If I'm misunderstanding the code, please point out where xfer is freed
-in renesas_i3c_priv_xfers().
-
-Best regards,
-								Pavel
-
-> +++ b/drivers/i3c/master/renesas-i3c.c
-
-> +static int renesas_i3c_send_ccc_cmd(struct i3c_master_controller *m,
-> +					   struct i3c_ccc_cmd *ccc)
-> +{
-=2E..
-> +	struct renesas_i3c_xfer *xfer;
-=2E..
-> +	xfer =3D renesas_i3c_alloc_xfer(i3c, 1);
-> +	if (!xfer)
-> +		return -ENOMEM;
-=2E..
-> +	renesas_i3c_wait_xfer(i3c, xfer);
-=2E..
-> +	kfree(xfer);
-> +
-> +	return ret;
-> +}
-> +
-> +static int renesas_i3c_priv_xfers(struct i3c_dev_desc *dev, struct i3c_p=
-riv_xfer *i3c_xfers,
-> +					 int i3c_nxfers)
-> +{
-=2E..
-> +	struct renesas_i3c_xfer *xfer;
-=2E..
-> +	xfer =3D renesas_i3c_alloc_xfer(i3c, 1);
-> +	if (!xfer)
-> +		return -ENOMEM;
-> +
-> +	init_completion(&xfer->comp);
-> +
-> +	for (i =3D 0; i < i3c_nxfers; i++) {
-=2E..
-> +		renesas_i3c_wait_xfer(i3c, xfer);
-> +	}
-> +
-> +	return 0;
-> +}
-
---=20
-In cooperation with Nabla.
-
---mfRPM3yy4KSncbbC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaWeDugAKCRAw5/Bqldv6
-8jb9AJ97Scxlyxb6X6riQxRRPxLj1DAJpQCghBvRSMCeowF6A/OR3JdodXok8Yc=
-=X/aO
------END PGP SIGNATURE-----
-
---mfRPM3yy4KSncbbC--
 
