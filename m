@@ -2,65 +2,66 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EDFED33A12
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5579CD33A14
 	for <webhook@archiver.kernel.org>; Thu, 15 Jan 2026 08:33:51 +0000 (UTC)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.31254.1768466027214128326
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.31258.1768466028833163566
  for <cip-dev@lists.cip-project.org>;
- Thu, 15 Jan 2026 00:33:47 -0800
+ Thu, 15 Jan 2026 00:33:49 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=SEDwHrlD;
- spf=pass (domain: tuxon.dev, ip: 209.85.218.51, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b876b691fbcso133830266b.1
-        for <cip-dev@lists.cip-project.org>; Thu, 15 Jan 2026 00:33:46 -0800 (PST)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=CLw9i1eW;
+ spf=pass (domain: tuxon.dev, ip: 209.85.218.45, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b8768225837so98867566b.2
+        for <cip-dev@lists.cip-project.org>; Thu, 15 Jan 2026 00:33:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1768466025; x=1769070825; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1768466027; x=1769070827; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xvOHqtsQAPy0ELnmQoy6v/Q9dYoyX5N5EC9OnCC7LoI=;
-        b=SEDwHrlDwwZHt21c7dq28RLfo2qiHtiuOcVjSSN5EusXHXjpbXEJQG1EajzWoSzf0k
-         AFcetEuCXtEd9CpiM4tPKJWBWJAb1Bh6bfZOWuRp+DXohhvCQsSURRetITUb7opSckF5
-         Ypyw0QDA46y/XbKkUOEiGZKheif/G8crqm18WR4/gP7rDE8Qdq+Y2HdG67u4VNGtRXbo
-         FUTnooDWhNWzW7d8ifmXkSfGhwZPcBJMkK8Xt7qab+NrikbxDOfSGXxHU1Mfi6H3o+NQ
-         eY7RCgW/SzY3WxbAXJY/d0PALSiIVn3kbC/sUS+LalNNCE++hBKfpPuOuw59vfjsS49e
-         RsIQ==
+        bh=Tzy8qSRpppZ5ScYOpQfBFvfQItXvQ0FOh0WzQDVXmmE=;
+        b=CLw9i1eWXW0AfsZ8jBKIEJPQ/4YD71ybPnKy/vxyvlE87L+L3hGeZn4Cfhx9mpCNx4
+         Ab7UIVHyfYt/nNP+Aglnp8Vc1O5+L04fbD7gfV3D6O+uXSr9F1kUIIgx6nfpuisJDDOF
+         P5asUpW7qCe+8+wdxuUAuQkPVZTVqdRYsb30B3boAr8LV/EII9VB9+pBlNfvwMGgLab7
+         92CEYMsQ61VNXkl5IspNl8VO++mTSrDJxT45n9ukk/66NXHwlSTYzCqCjRqxd3cv29Li
+         QW+h3mgicf/+FdIeY6uMi2ms+kAWTBgYsAqRR0SiSz9cm2IKes0GLuwqpYLeifh5JXiO
+         EDMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768466025; x=1769070825;
+        d=1e100.net; s=20230601; t=1768466027; x=1769070827;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=xvOHqtsQAPy0ELnmQoy6v/Q9dYoyX5N5EC9OnCC7LoI=;
-        b=Z7b+aoHfLRob3U6kxH+UBjHc3xdVeQfJy+7fl8GDPRQU6lGlC3p2uAOj+51RboFrPh
-         CJrJSlrtQOlUfdMobIA1sNhFB6IVi66ffr8TUyfzF4aLI+oPrFCTEO5gHcZ+2u7Gtmaj
-         HlDfMoqYCkptBbdx/iaYBqjTo/iXofPpZpZixn9HuSsFk5aRKHkyhBhOi4zv/e3TLnSr
-         BQ14r+ir3RZXli8JUiaTPU3Q8z9FrKQ1i2v/DKxu8w/XgTSk/06wgqhFx19PSlzd4/eS
-         2jE0I2myOcYvglQWtPBxqogLunoWKZkLV/egrRQeOVJ9z6KJfox+sEoP9ZDPUftNkrNK
-         l0HQ==
-X-Gm-Message-State: AOJu0YxWyMCx93YqnWfaQpsqUTCrq+GoBGyKIFaaBteJA6xwijM5jnMp
-	p7GU5J1+kjfolbK7HKhLjDfDepndvWQeng4qdO5mA9WLY1KT5E7aeDPNrudHjmib60o=
-X-Gm-Gg: AY/fxX4xtLbmBRS642VDSGbKuYorqHgevv+RaD7GfuJBulF2RvZRBKIILEgib8De01S
-	M/g11xFUnZMXqE1vs3IVTzW/Bcxdjv3eatrh7hXIt3MS2JMbzmsX7wyWxrbGG3Sh6QKKmk3VoBQ
-	vgKZB6QZQLMHDIeg5cLhhXQqIEBZgHfwWYlE3RXTzcmS+XZRn3tROsnmd1U+MkaEviT7eO7cmyI
-	o/+/1jtb/uYPJ5zpq8NlKKOrS2XtxQhMuCUtdWtV9w/nx5WUWwln3/Yb2SwwyPeO9zoeYyGkCpR
-	CWDWDBhYDpZan6enWxQafxqx4IuMM7UeyT14HOJzC3GB7wa8MIi9KPBN+MVQOlrf66rLWaXz8Pz
-	bg8IU2zYZOcFri1kPqBPZ8kWNVs+OeEUNIKPju5bDtG3Y43FlOefX+xZ5xHejcoyWYBWVJRhC7C
-	9TQVDHdLR4VBImY1XQ4b4Bu9fLrdEnxyZxc3VU8Q7zgDOgs0BEji1VvTb3Q80cmPGtVrl0J8Eim
-	h/X
-X-Received: by 2002:a17:907:3dac:b0:b87:12d2:fa1a with SMTP id a640c23a62f3a-b8760fdab0cmr493065366b.12.1768466025523;
-        Thu, 15 Jan 2026 00:33:45 -0800 (PST)
+        bh=Tzy8qSRpppZ5ScYOpQfBFvfQItXvQ0FOh0WzQDVXmmE=;
+        b=CH6DlIP9PHnQ+qzzJIewdUiJ0EwVHDZl4OSDN47X88+lpI6ocz+3pwPx3kzdFQLxoo
+         8uvpfhf0Ml667ihB38hzTGAsa7rWtxpQ4tS4Ash4IsBWEVV0/FxVDD/B+60NBvPehFS6
+         8XQe+VgXrxKqM9GPy2wLiEfOfoQ86Us3H9saYM3mIRiQHdEq0DdVPBjAZx7r5C/2kIK3
+         LxbmWcedeLNm95GiwrTQHD/hHBI3xFXAkW4FVRGAlAfU9MUc2ZqGJwPyMyKbsRJ6YfoZ
+         vuvYc4S5BrnCMPBnLN1Ua9QJdUDlvPC3X5w+9Hl9PBjA0Nto6jMLMtTlOja7+2w+y/ZO
+         BPwg==
+X-Gm-Message-State: AOJu0YxFz5bt2WEj5maTVIFEQbvLoPD7fc87xlncQAzeks/+cDHSfxMU
+	oUcnpUPWWXLf50aCwORNjS1+ILzkwC+DjzDEOEHnfXgZj3sDA9Z0qqTus7DGo671ityqF/rksFw
+	Ypg4h
+X-Gm-Gg: AY/fxX63bgi9akhYZSiuIJAJcE/keGY1K/XEMoL7zAjX5EFOVr6dv/iGKbq3JAaN/aq
+	mF5vTja9QnM+myTqSjJmUtqgRiXxv7Tx/x1rwbcRGr08DUBIZj8Se6Chlefo2wY0vsZYdxkSOWH
+	aGsJhBDDNmkkHqBVlgIUERTKgpYDYRlXpeYyf1OXJb2jQcTP4Lbt45BM8nX9+NptN+ge4wQ46nZ
+	tdCfmui3jvFdsGP8YGXbOMBQhnvTLl6qmUoOWY70nU4pyztyUfi4M5z/z8kwz9lmdlHNsIaNQ3V
+	LERqgiyMlFb1DNkiu+oGpIxxlH0Ws/yHnja//5XCfAwaXnW+AxaQ6R76LKLUbtlJHyIwkEKQIvU
+	Wv9FZJ4wEuZ8duhFKxdi61xWo2p3EujG8iNfHp4eRadFK06kstxK+xMUrAXoW+7N/ZayWvy4xaf
+	RFWR2rhED2ixASmSDDo+xKsb6OSo5R3yufJvfOrnBJfeuqTvtkRy1maUJu2kqWPkGXmsYbGur2+
+	34I
+X-Received: by 2002:a17:906:3191:b0:b87:751:6f21 with SMTP id a640c23a62f3a-b876787b749mr296158066b.36.1768466027164;
+        Thu, 15 Jan 2026 00:33:47 -0800 (PST)
 Received: from claudiu-TUXEDO-InfinityBook-Pro-AMD-Gen9.. ([46.97.176.64])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8731f0718asm833387066b.67.2026.01.15.00.33.44
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8731f0718asm833387066b.67.2026.01.15.00.33.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jan 2026 00:33:45 -0800 (PST)
+        Thu, 15 Jan 2026 00:33:46 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
 Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip v3 06/18] mmc: sdio: Drop dev_pm_domain_detach() call
-Date: Thu, 15 Jan 2026 10:33:20 +0200
-Message-ID: <20260115083332.1063820-7-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip v3 07/18] spi: Drop dev_pm_domain_detach() call
+Date: Thu, 15 Jan 2026 10:33:21 +0200
+Message-ID: <20260115083332.1063820-8-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260115083332.1063820-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20260115083332.1063820-1-claudiu.beznea.uj@bp.renesas.com>
@@ -70,11 +71,11 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 15 Jan 2026 08:33:51 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21567
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21568
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit c2ef7a03f5c8f0a612a8beff666483b725adf8fc upstream.
+commit c42e36a488c7e01f833fc9f4814f735b66b2d494 upstream.
 
 Starting with commit f99508074e78 ("PM: domains: Detach on
 device_unbind_cleanup()"), there is no longer a need to call
@@ -89,37 +90,45 @@ on the flags passed to dev_pm_domain_attach() to power off the
 domain.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://lore.kernel.org/r/20250827101236.927313-1-claudiu.beznea.uj@bp.renesas.com
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Message-ID: <20250827101612.928008-1-claudiu.beznea.uj@bp.renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 [claudiu.beznea: drop dev_pm_domain_detach() conditionally]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/mmc/core/sdio_bus.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/spi/spi.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mmc/core/sdio_bus.c b/drivers/mmc/core/sdio_bus.c
-index c90dabb5ab06..cfb1d2b5b21b 100644
---- a/drivers/mmc/core/sdio_bus.c
-+++ b/drivers/mmc/core/sdio_bus.c
-@@ -199,7 +199,8 @@ static int sdio_bus_probe(struct device *dev)
- 	atomic_dec(&func->card->sdio_funcs_probed);
- 	if (func->card->host->caps & MMC_CAP_POWER_OFF_CARD)
- 		pm_runtime_put_noidle(dev);
--	dev_pm_domain_detach(dev, false);
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index 6acdb27a2be1..08276ff2004a 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -407,13 +407,14 @@ static int spi_drv_probe(struct device *dev)
+ 			spi->irq = 0;
+ 	}
+ 
+-	ret = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON);
++	ret = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON |
++					PD_FLAG_DETACH_POWER_OFF);
+ 	if (ret)
+ 		return ret;
+ 
+ 	if (sdrv->probe) {
+ 		ret = sdrv->probe(spi);
+-		if (ret)
++		if (ret && !dev_pm_domain_allow_detach_on_unbind_cleanup())
+ 			dev_pm_domain_detach(dev, true);
+ 	}
+ 
+@@ -427,7 +428,8 @@ static int spi_drv_remove(struct device *dev)
+ 
+ 	if (sdrv->remove)
+ 		ret = sdrv->remove(to_spi_device(dev));
+-	dev_pm_domain_detach(dev, true);
 +	if (!dev_pm_domain_allow_detach_on_unbind_cleanup())
-+		dev_pm_domain_detach(dev, false);
++		dev_pm_domain_detach(dev, true);
+ 
  	return ret;
- }
- 
-@@ -231,7 +232,8 @@ static int sdio_bus_remove(struct device *dev)
- 	if (func->card->host->caps & MMC_CAP_POWER_OFF_CARD)
- 		pm_runtime_put_sync(dev);
- 
--	dev_pm_domain_detach(dev, false);
-+	if (!dev_pm_domain_allow_detach_on_unbind_cleanup())
-+		dev_pm_domain_detach(dev, false);
- 
- 	return 0;
  }
 -- 
 2.43.0
