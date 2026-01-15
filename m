@@ -2,65 +2,66 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66876D33A18
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B081D33A0E
 	for <webhook@archiver.kernel.org>; Thu, 15 Jan 2026 08:34:01 +0000 (UTC)
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.31270.1768466036157240095
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.31260.1768466037630138891
  for <cip-dev@lists.cip-project.org>;
- Thu, 15 Jan 2026 00:33:56 -0800
+ Thu, 15 Jan 2026 00:33:57 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=UxpEUWIq;
- spf=pass (domain: tuxon.dev, ip: 209.85.208.52, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-64b921d9e67so1006616a12.3
-        for <cip-dev@lists.cip-project.org>; Thu, 15 Jan 2026 00:33:55 -0800 (PST)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=gFATi6qb;
+ spf=pass (domain: tuxon.dev, ip: 209.85.218.52, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b8765b7f4c0so111572466b.0
+        for <cip-dev@lists.cip-project.org>; Thu, 15 Jan 2026 00:33:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1768466034; x=1769070834; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1768466036; x=1769070836; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wy9IWmv2Dt/PdUwVMuAxpHSx3CGecWBAo6FwgD+V21c=;
-        b=UxpEUWIqsI8v8Z6gAxKDsQR/a+31QeIX7YRnQOg97sQbH82d/EoXbbIxDydrKes+/+
-         MPLYoV0LNLMrUCMaN/k02Q3smDNbdlxg/1TgJYi3SYy9l1Z3bDmd/Fos6BLyKqRkQ2gb
-         Z5xou/1WY67Ni8zBL6CxoxtnHwrj8TkGbiK2icK7YMKX+nDolMftv/3EEn/EEp7X4jFl
-         3fQgGOlHCSs2fYNULg2wHw7hKTIm/Xmoqg/dXLy+M01QgX718fzv0MQ27qtRTpztHZqz
-         9wVepttUlRz+dykqKblt71Mwvu/rCifYNK5QvGwoAtC9j81vCpQc18LVdWXFMr0U8j33
-         HH0Q==
+        bh=M3QpKJSS/RqMDV7t32NxMPN6FlaTXUkHuu7M10R90Us=;
+        b=gFATi6qbLXfczC89gIkpfqcvdChXDB+V6y+ak1AhirfoQWdFFms+h8WgecTgP0Xn3X
+         g93n7ZK8qL8L3PCzcbecnmxBq3CN4cCp4z3Lpzp6MvKf9vveCkKcjEWIvmS27vuODDbZ
+         j2mmjo8N389tI1527u66p4bYXJM12HllGJGqcurwSoXVerFf6cWc5lg9NpwKq9fkQQGS
+         S1vD8IsowVuzUE8Qd+JKrRV9a3DlzhLOl+0TQs3riJ8RXguPFyjsLxOfc6xqFiVLoxrG
+         BeIHFT/95B5wkjUMmURCoKP/uO57JAfapyI3jlPUiU+Ml/doiRSDsfF+tv2HHHRPqiKy
+         Sk3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768466034; x=1769070834;
+        d=1e100.net; s=20230601; t=1768466036; x=1769070836;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=wy9IWmv2Dt/PdUwVMuAxpHSx3CGecWBAo6FwgD+V21c=;
-        b=fAw1MR5sTMiJ0fYCX7sFLwpbLRHnuNJ5ihq4ZrtKPORZB4RsYJ7cUk7M8NXlA71wII
-         6N6G9/YSE6BPsVDU0i3w12LAP1D73lPbKE6ISIdK15SkhvJK5CiSGpZMhbDgYJBFNVFW
-         wK0sZyzueqh7LW2k97SYyt1ILtf9Vx8YjAxFqQy0YdQjBU1SDfK5QN4jcuolyo5S+qAP
-         pYCjztxDSz0pR9DTxYYZOKY2inWF4S9zMUCrPSxp0+7NwB0wEhHkN/J6/khZ7AJ/IeZT
-         h0wwski67bOrpMvjf7fwN3RaxhigbqOzEFW/MTHJXr2NX9As0E9hY/3OO9QDWKA3rDll
-         srGQ==
-X-Gm-Message-State: AOJu0Yw8Oaw4WYs/IqN0eE8YFw3/Qx5vv7CcdOBz4zlbwidn3/v5+vhX
-	GcQrjeWrBHmywCI4otnTEETzW4ubxUtbxZymaX5oxSYqiVor27gDtTCDDLZXY3FIvzljZcTj5sa
-	Z/7Rg
-X-Gm-Gg: AY/fxX4nc+ufvdvx3glDtDGq0FXKjMrqMuRhMkbawgbjZgMJC72IuSE8zoKxA60riT3
-	Jth+Ka/H1R4WRzQrPT3nzjYZLJj1m6+fbAAB/C4V//9h1ycql/n5+L7FZVLNlVKrN9V79jiSTKt
-	dV33WvU84m/7Kjiv1KURgJTahxnUc84/IOT7XCufKAsHv9pZihkeO6sALYHbk6wC1unvE/HOwm5
-	08ep/TuIrfaDMnOgvwhcX0PLQt03mCOxX0SY6hc57WfxxJVGBxPi+Szlm7IrWqfu53koEom83z1
-	HRVGdv6S+iy5njAj2cdF1lqmhYgqiIMXiiSz2+laEnmUTBip9Q3lS0i9tc6hNWvzJTPm69pqbuu
-	aNRqO6912G5rQNaQKU9qzKwktSoFFcKIVjDuFw9Tbo+aaDRe6JomsEkybNAh4dIoO5638PprJuX
-	BAqvkotOxf3z6NFA85kmnV5hu9Dad9bzTmsOF5p0lmr26yyqXPDylJeRvv96tAImaRJw==
-X-Received: by 2002:a17:906:6a21:b0:b87:4c37:7fd8 with SMTP id a640c23a62f3a-b87612797f9mr442736666b.49.1768466034542;
-        Thu, 15 Jan 2026 00:33:54 -0800 (PST)
+        bh=M3QpKJSS/RqMDV7t32NxMPN6FlaTXUkHuu7M10R90Us=;
+        b=JmegSd5Ag3X/nISEG+P++Q/4dOds9OaGbCWtaxXKgwDwXHijGrcb5d2Nd7RTDI3DeU
+         JhiytWJAC3hv0Fs/8XlLuZkijQOlfc8I/lR0OjElCV/DpKsYV/tZ+RFN7CABDlWQXBtk
+         bzC69ty92G/wsV6Q5G24EQ3DHFmU4UF25kooUpbN5uSqNDf36lqsiX+OPYA/NYb43RqL
+         ZZ4+NQpXVOzEsZEZ2086J+IFwFOP/+/JL3xMEbMl+mbtwkFz6HY8ob8LJFYayNfneANn
+         J9JqXUr0OUDUCtJ7enHSbPyY66FdeASkjlsQMYmOPRbg6WIASldtO+a4WGeORAwXmyyu
+         C+Kg==
+X-Gm-Message-State: AOJu0YyTDIWNkD7zYgvDxZT30B9X8xUxiOl0V9KnkSRt8y2F6l0+Ixa5
+	wyZKrXuH/ShwjrDvQLNEejR8RvlFx8/0QMzvMq00zJYq0D+fNdbRAjBmbTAls1xaTddCBm8brKj
+	UvWxx
+X-Gm-Gg: AY/fxX7gl8mgxouOIxaucgBXiIYR+cgUlp9sgUI4r5jbaz1jvJ+8EbnFzUDdl0eUUVb
+	/EBM/Ikjco7nXDEBCX//24467fLt1tnm4C7/x6a0WAvSN7LEeCPvw0c7SJvX4sOXlZQcQotocJO
+	PlGm99n54J/ZvZtOKTfhd3owUW0ljWMoDAIkobwdfb0FI0oYxIAmQGpqZnKNo5fymL9Q0ZGc5Me
+	wLSCGb0F51W4qEq0D4jwf9rhBcmSTro7npph2OzzPQhjWzdlKt02dtxnX0q0hmKK2asGUYEif44
+	nclWgcOc4CYNeVctHZ16PsLKDBI+ngtgw5B97QO0aayEsy2JM4Cs1eKK9CwmizilyuEC2gm+229
+	jbvLKaFv3o95r//sw+JT2V41tkCg1a5iYe53VnjH2rJmxicVfIyPsZgCRSz8H8Xidb8tz/4BKmK
+	WzqpAw3nA5iWaWutMnJ+or3Uzk7K3U8eH+YYqrq3dz8bjt7cLWss66ZhXyA9HWDCavbVVvB0CYV
+	KC2
+X-Received: by 2002:a17:907:3c8a:b0:b87:2604:972e with SMTP id a640c23a62f3a-b87612dc1b8mr487510166b.59.1768466035943;
+        Thu, 15 Jan 2026 00:33:55 -0800 (PST)
 Received: from claudiu-TUXEDO-InfinityBook-Pro-AMD-Gen9.. ([46.97.176.64])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8731f0718asm833387066b.67.2026.01.15.00.33.53
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8731f0718asm833387066b.67.2026.01.15.00.33.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jan 2026 00:33:53 -0800 (PST)
+        Thu, 15 Jan 2026 00:33:55 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
 Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip v3 11/18] clk: renesas: rzg2l: Move pointers after hw member
-Date: Thu, 15 Jan 2026 10:33:25 +0200
-Message-ID: <20260115083332.1063820-12-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip v3 12/18] clk: renesas: rzg2l: Add macro to loop through module clocks
+Date: Thu, 15 Jan 2026 10:33:26 +0200
+Message-ID: <20260115083332.1063820-13-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260115083332.1063820-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20260115083332.1063820-1-claudiu.beznea.uj@bp.renesas.com>
@@ -70,54 +71,65 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 15 Jan 2026 08:34:01 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21572
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21573
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit a68ea80f85bbf7b69f69ef9e17e3e1be14d948c8 upstream.
+commit 3fd4a8bb4b63b886a7a11444f85000ea90d2617f upstream.
 
-Reorder the pointer members in struct mstp_clock so they appear immediately
-after the hw member. This helps avoid potential padding and eliminates the
-need for any calculations in the to_mod_clock() macro. As struct clk_hw
-currently contains only pointers, placing it first also avoids padding.
+Add a macro to iterate over the module clocks array. This will be useful
+in the upcoming commits that move MSTOP support into the clock
+enable/disable APIs.
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://lore.kernel.org/20250514090415.4098534-3-claudiu.beznea.uj@bp.renesas.com
+Link: https://lore.kernel.org/20250527112403.1254122-4-claudiu.beznea.uj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[claudiu.beznea: add the it parameter to for_each_mod_clock() to avoid
+ compilation errors]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/clk/renesas/rzg2l-cpg.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/renesas/rzg2l-cpg.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index b447847610b0..015fbfb8351b 100644
+index 015fbfb8351b..e5067332da13 100644
 --- a/drivers/clk/renesas/rzg2l-cpg.c
 +++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -1194,19 +1194,19 @@ rzg2l_cpg_register_core_clk(const struct cpg_core_clk *core,
-  * struct mstp_clock - MSTP gating clock
-  *
-  * @hw: handle between common and hardware-specific interfaces
-+ * @priv: CPG/MSTP private data
-+ * @sibling: pointer to the other coupled clock
-  * @off: register offset
-  * @bit: ON/MON bit
-  * @enabled: soft state of the clock, if it is coupled with another clock
-- * @priv: CPG/MSTP private data
-- * @sibling: pointer to the other coupled clock
-  */
- struct mstp_clock {
- 	struct clk_hw hw;
-+	struct rzg2l_cpg_priv *priv;
-+	struct mstp_clock *sibling;
- 	u16 off;
- 	u8 bit;
- 	bool enabled;
--	struct rzg2l_cpg_priv *priv;
--	struct mstp_clock *sibling;
- };
+@@ -1211,6 +1211,13 @@ struct mstp_clock {
  
  #define to_mod_clock(_hw) container_of(_hw, struct mstp_clock, hw)
+ 
++#define for_each_mod_clock(it, mod_clock, hw, priv) \
++	for (it = 0; (priv) && it < (priv)->num_mod_clks; it++) \
++		if ((priv)->clks[(priv)->num_core_clks + it] == ERR_PTR(-ENOENT)) \
++			continue; \
++		else if (((hw) = __clk_get_hw((priv)->clks[(priv)->num_core_clks + it])) && \
++			 ((mod_clock) = to_mod_clock(hw)))
++
+ static int rzg2l_mod_clock_endisable(struct clk_hw *hw, bool enable)
+ {
+ 	struct mstp_clock *clock = to_mod_clock(hw);
+@@ -1323,17 +1330,11 @@ static struct mstp_clock
+ *rzg2l_mod_clock__get_sibling(struct mstp_clock *clock,
+ 			      struct rzg2l_cpg_priv *priv)
+ {
++	struct mstp_clock *clk;
+ 	struct clk_hw *hw;
+ 	unsigned int i;
+ 
+-	for (i = 0; i < priv->num_mod_clks; i++) {
+-		struct mstp_clock *clk;
+-
+-		if (priv->clks[priv->num_core_clks + i] == ERR_PTR(-ENOENT))
+-			continue;
+-
+-		hw = __clk_get_hw(priv->clks[priv->num_core_clks + i]);
+-		clk = to_mod_clock(hw);
++	for_each_mod_clock(i, clk, hw, priv) {
+ 		if (clock->off == clk->off && clock->bit == clk->bit)
+ 			return clk;
+ 	}
 -- 
 2.43.0
 
