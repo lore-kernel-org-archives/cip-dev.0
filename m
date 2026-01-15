@@ -2,64 +2,66 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8405DD33A18
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88820D33A1E
 	for <webhook@archiver.kernel.org>; Thu, 15 Jan 2026 08:34:11 +0000 (UTC)
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.31273.1768466042985040853
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.31267.1768466047920018867
  for <cip-dev@lists.cip-project.org>;
- Thu, 15 Jan 2026 00:34:03 -0800
+ Thu, 15 Jan 2026 00:34:08 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=gIlo/su2;
- spf=pass (domain: tuxon.dev, ip: 209.85.218.53, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b8765b7f4c0so111584366b.0
-        for <cip-dev@lists.cip-project.org>; Thu, 15 Jan 2026 00:34:02 -0800 (PST)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=Ikx1JQpC;
+ spf=pass (domain: tuxon.dev, ip: 209.85.218.50, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b8010b8f078so111711566b.0
+        for <cip-dev@lists.cip-project.org>; Thu, 15 Jan 2026 00:34:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1768466041; x=1769070841; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1768466046; x=1769070846; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TQRi0w7/F0eBzGT0Id8epD7eZdOUXbrU1HlqPRSFV8I=;
-        b=gIlo/su2szx+OzAE8cMSTK7nd7OVo+RmC1UIKs2t2uvb/c3P9IXvFZKuI0o6Hakmca
-         srJwsLsxVDEpmaMsfx0HA17d1Js5dxPu2rhHIdxSqCLUBA8SvjVrIJ3KdwiVIw5Sbswo
-         BtK6oj11xAR5HfaCO2LuGZMhf9Pw8x7gxmxFkxO5EW0hrA+X42XMMO+qXxsFOz49/u+W
-         mReQLjONgVJJVLrjWVuTCSx1XlnDOq8JXwOFNZ8Xiy1IyzsrvVAqQxwcJWMZ4qNwFx1m
-         NxukMP9au8jncVUCAoBlA1QCYEQGCIgNm3iS5SfexsUls93w3rAvFLqaOfqeRE9N2m0J
-         pTQQ==
+        bh=pTzCq29AYcuuwLJLTnWnRTb91xl0P/AoOCk13pqBfl8=;
+        b=Ikx1JQpCAamUHFA630OkWXAmXKrYtx0FsHOyNowjz68fa9vycdwkACUlBrjSEShlQu
+         FnjXhFUNPw29qLu6eb+1RdUWpQvi7ZQqdc8UPaRpS0oh6cqhoKAD0mjnczn/mKLVzxvv
+         /Q8oxrE4c/9JbjXxLJiCW76qDluGIKBrj/T9EAh71Zt1qrQ7/oP3tcY+p01Xy/9IOeYM
+         BzmVQoBo+W83J1b3BKDz8/WcGzPVJcuhI/xzqA2EV9Pr2j85yPjkM0bTUbZlToBE6pPy
+         vf34iz6Fqbj0ve9fpGW+2YG6hwfNTOp/zmLuls2bkZHWub0eOCnM8KdfJ60CmSvuGQnr
+         42Ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768466041; x=1769070841;
+        d=1e100.net; s=20230601; t=1768466046; x=1769070846;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=TQRi0w7/F0eBzGT0Id8epD7eZdOUXbrU1HlqPRSFV8I=;
-        b=rbkp++ADj7hiOI6JK/DMSesp9l1kbG3o0klNU4WHAm/2jO8Tfzo7R449DoFXkgfB9/
-         NFHk1dTeRZlxIWSrp8i2nr6swELHE/TEqtuayOKpjI4Ijm+kgqAIVria7+6a+Blbezi9
-         axstZWfXMUS6IBhQ6wSmBWoDDBFmzPLv1W/ahFFvPeXN0hWcYtADY+3R9gNDsqlN+Ur4
-         1ht7VwJaUU1v+62cvEEdwHO+yEUNAibvxrZGdvpIyh+HA2HXm5bpZWKdtd5/qgGldKQn
-         BghPBsTfRjXkjD9aAptcOAROkm3B8xE+NmjcY58Q2YvYkcCGLb8sRGVRr9FngCdlqGrl
-         UeVQ==
-X-Gm-Message-State: AOJu0YxaHLI0a/XsSUj2Ws8StQsajx3hEDB39UlbB4e4m/Y4v8ueoHad
-	fi6p0IXBYn7hUVjsauRAIYL+ASkI3vR1uAbEqizZ+bcQmKuFx49zw3EXReI5ZPrqLGg=
-X-Gm-Gg: AY/fxX5fsSP3LtvtbIqRJS9dh1U1yQUaSPZP3mRBZ8wWd18Hku+Uheb785N9/uraD//
-	kj7+Neep4Pv/RwEm78qWK3GazV83xMgKEOQyUr4qraIXQvN0/aXNIABYTIPgmFO1zyVm0tI4l5U
-	BovvOKyNdusB0GTepnPQBhhBmvxEOa4V/UAGkRyDFOnEUxt4EM/pLeTDge4WRJeH1YYQ2TLXE0V
-	JcdvmJkYskU803IPCSPyGDDjt6UhdFYikKsU0ZxQ6clAReSnj2zCNnbeZByOBDpZtQ6Z+RwscBx
-	fX4R5TnTUK0oX3+uXBLQu5NVIbI0O9HN4S/XipZiw9lSojWso45uw3elPLUC5zMd1UwKQ0trQ2S
-	vYSA/yz9IboIA1PmDCWmTury2Rg4zhA0J+v2RZLFlgxjRqs3IEAwpOG8zqO4A+dY3ZwRBpkWJDA
-	0IYPW0ukiup5Ew7dxmrvCvqfm1INNnAA0UOyR4J6OtzFTPU71ZuXoAKZeCxQkITjvzhA==
-X-Received: by 2002:a17:907:a08a:b0:b87:31d1:4131 with SMTP id a640c23a62f3a-b87612dc12amr476943066b.60.1768466041325;
-        Thu, 15 Jan 2026 00:34:01 -0800 (PST)
+        bh=pTzCq29AYcuuwLJLTnWnRTb91xl0P/AoOCk13pqBfl8=;
+        b=L19MBKogIm/2YQK7iIY1kLJivx23GGE/ZLVH5dAIWCfSqns8pMKfMVG7UsnWmLqWxa
+         Mw0OgPsiABMeaKUaX4qNTgB3yhI+aABzdd+08p7bfKxTKkH/tp3L4J5VxiPPx47rKjE8
+         wJfzT95qE9/Lxs/lArNp7/MvdIzwohdow6k+JU6Zuh6KCGPTiLNgX04kFvsujtQI2XKi
+         7rqYZvo+p9Foo5qUvJJU72xZ2ukeTbvgoMDHXAlgao+QJr04rfwDJf35UG1Pdl3OezHD
+         oMgGMepZ8xZ9jyQd2fDcSuDxI4BjFWywIvf1nw6+TmX4eKwKeXO0IVy00U9IoLdASDPK
+         z1MA==
+X-Gm-Message-State: AOJu0YwbSr636KNbyUyu24/9odrJ7mAQNhfSpFKjNUzK+xHgj/FKkbRW
+	zB1F556Jf3KspVvRTs/ZFs58Wwq97tl1VmmvrqaHEKXdLcMjy1m8Der1O03s7ZUiWyOvbTPlYcm
+	P55Fq
+X-Gm-Gg: AY/fxX5Z65paXzRlY1muNMUDkQP48pid700T/vFO3MOoBXM/b4t67u+wUzjAXpAhdrZ
+	b23d26mb9mXFCs1y5TZeWHpsP7AafYqhLLOaG42uFsHYZrapI6+4g2Vm8DJ8A0MdLZQlZsBlwNR
+	SMP/HYJUQTJYNDd6/uJ4FZveNjRzRZtubJ9giJBQOIsddV6hsyz/XBxs6GMQo4m73153i1HpI37
+	/W0AWGeM+XV9O6wvV/nfuABm+ubxFSEMAdP9KbPktfNCGTzh9CUWKRgSMM0MkoDUAIwmp21xZzC
+	2iC9Uq+gXPrwX4ISzKjQntAPjsPjiv4121ZPYWH5U0kwHjnK1Fcw/xsrfTPtTLh1lSBeScmSPWv
+	VkhIrRgSdyM+Ktm2pnVIvAwnGh214t9SrQ59X0Zruw0CggSzcIiSzB9h0aU2F5cJ7BfOThB3NLE
+	yCm/TeW7zb2FPgNmZG5BRJaLiRjtx6TflTs0GGwoQY9LVRsL1Aadl9amFqxdT+ZENANdClAlg/F
+	11a
+X-Received: by 2002:a17:907:6e94:b0:b87:1c74:a8c6 with SMTP id a640c23a62f3a-b87612c3b92mr497655566b.57.1768466046100;
+        Thu, 15 Jan 2026 00:34:06 -0800 (PST)
 Received: from claudiu-TUXEDO-InfinityBook-Pro-AMD-Gen9.. ([46.97.176.64])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8731f0718asm833387066b.67.2026.01.15.00.33.59
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8731f0718asm833387066b.67.2026.01.15.00.34.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jan 2026 00:34:00 -0800 (PST)
+        Thu, 15 Jan 2026 00:34:05 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
 Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip v3 15/18] clk: renesas: r9a08g045: Add MSTOP for coupled clocks as well
-Date: Thu, 15 Jan 2026 10:33:29 +0200
-Message-ID: <20260115083332.1063820-16-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip v3 18/18] clk: renesas: r9a07g043: Add MSTOP for RZ/G2UL
+Date: Thu, 15 Jan 2026 10:33:32 +0200
+Message-ID: <20260115083332.1063820-19-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260115083332.1063820-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20260115083332.1063820-1-claudiu.beznea.uj@bp.renesas.com>
@@ -69,52 +71,238 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 15 Jan 2026 08:34:11 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21576
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21579
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 0ab2d84f94dae48c3e7605cdc99dbb4e7c7b206a upstream.
+commit 0f078d37aeeefa197f4ffff6acd677cd3220a070 upstream.
 
-If MSTOP is not added for both clocks in a coupled pair, and the clocks
-are not disabled in the reverse order of their enable sequence, the MSTOP
-may remain enabled when disabling the clocks.
+Add MSTOP configuration for all the module clocks on the RZ/G2UL
+based SoCs (RZ/G2UL, RZ/Five).
 
-This happens because rzg2l_mod_clock_endisable() executes for coupled
-clocks only when a single clock from the pair is enabled. If one clock has
-no MSTOP defined, it can result in the MSTOP configuration being left
-active when the clocks are disabled out of order (i.e., not in the reverse
-order of enabling).
-
-Fixes: c49695952746 ("clk: renesas: r9a08g045: Drop power domain instantiation")
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250704134328.3614317-2-claudiu.beznea.uj@bp.renesas.com
+Link: https://lore.kernel.org/20250806092129.621194-4-claudiu.beznea.uj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/clk/renesas/r9a08g045-cpg.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/clk/renesas/r9a07g043-cpg.c | 132 ++++++++++++++--------------
+ 1 file changed, 66 insertions(+), 66 deletions(-)
 
-diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9a08g045-cpg.c
-index 4351bae7b8bd..87c79df6406b 100644
---- a/drivers/clk/renesas/r9a08g045-cpg.c
-+++ b/drivers/clk/renesas/r9a08g045-cpg.c
-@@ -247,11 +247,13 @@ static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
- 					MSTOP(BUS_MCPU1, BIT(13))),
- 	DEF_COUPLED("eth0_axi",		R9A08G045_ETH0_CLK_AXI, R9A08G045_CLK_M0, 0x57c, 0,
- 					MSTOP(BUS_PERI_COM, BIT(2))),
--	DEF_COUPLED("eth0_chi",		R9A08G045_ETH0_CLK_CHI, R9A08G045_CLK_ZT, 0x57c, 0, 0),
-+	DEF_COUPLED("eth0_chi",		R9A08G045_ETH0_CLK_CHI, R9A08G045_CLK_ZT, 0x57c, 0,
-+					MSTOP(BUS_PERI_COM, BIT(2))),
- 	DEF_MOD("eth0_refclk",		R9A08G045_ETH0_REFCLK, R9A08G045_CLK_HP, 0x57c, 8, 0),
- 	DEF_COUPLED("eth1_axi",		R9A08G045_ETH1_CLK_AXI, R9A08G045_CLK_M0, 0x57c, 1,
- 					MSTOP(BUS_PERI_COM, BIT(3))),
--	DEF_COUPLED("eth1_chi",		R9A08G045_ETH1_CLK_CHI, R9A08G045_CLK_ZT, 0x57c, 1, 0),
-+	DEF_COUPLED("eth1_chi",		R9A08G045_ETH1_CLK_CHI, R9A08G045_CLK_ZT, 0x57c, 1,
-+					MSTOP(BUS_PERI_COM, BIT(3))),
- 	DEF_MOD("eth1_refclk",		R9A08G045_ETH1_REFCLK, R9A08G045_CLK_HP, 0x57c, 9, 0),
- 	DEF_MOD("i2c0_pclk",		R9A08G045_I2C0_PCLK, R9A08G045_CLK_P0, 0x580, 0,
- 					MSTOP(BUS_MCPU2, BIT(10))),
+diff --git a/drivers/clk/renesas/r9a07g043-cpg.c b/drivers/clk/renesas/r9a07g043-cpg.c
+index 02dc5cecfd8d..f050f8565916 100644
+--- a/drivers/clk/renesas/r9a07g043-cpg.c
++++ b/drivers/clk/renesas/r9a07g043-cpg.c
+@@ -164,143 +164,143 @@ static const struct cpg_core_clk r9a07g043_core_clks[] __initconst = {
+ static const struct rzg2l_mod_clk r9a07g043_mod_clks[] = {
+ #ifdef CONFIG_ARM64
+ 	DEF_MOD("gic",		R9A07G043_GIC600_GICCLK, R9A07G043_CLK_P1,
+-				0x514, 0, 0),
++				0x514, 0, MSTOP(BUS_REG1, BIT(7))),
+ 	DEF_MOD("ia55_pclk",	R9A07G043_IA55_PCLK, R9A07G043_CLK_P2,
+-				0x518, 0, 0),
++				0x518, 0, MSTOP(BUS_PERI_CPU, BIT(13))),
+ 	DEF_MOD("ia55_clk",	R9A07G043_IA55_CLK, R9A07G043_CLK_P1,
+-				0x518, 1, 0),
++				0x518, 1, MSTOP(BUS_PERI_CPU, BIT(13))),
+ #endif
+ #ifdef CONFIG_RISCV
+ 	DEF_MOD("iax45_pclk",	R9A07G043_IAX45_PCLK, R9A07G043_CLK_P2,
+-				0x518, 0, 0),
++				0x518, 0, MSTOP(BUS_PERI_CPU, BIT(13))),
+ 	DEF_MOD("iax45_clk",	R9A07G043_IAX45_CLK, R9A07G043_CLK_P1,
+-				0x518, 1, 0),
++				0x518, 1, MSTOP(BUS_PERI_CPU, BIT(13))),
+ #endif
+ 	DEF_MOD("dmac_aclk",	R9A07G043_DMAC_ACLK, R9A07G043_CLK_P1,
+-				0x52c, 0, 0),
++				0x52c, 0, MSTOP(BUS_REG1, BIT(2))),
+ 	DEF_MOD("dmac_pclk",	R9A07G043_DMAC_PCLK, CLK_P1_DIV2,
+-				0x52c, 1, 0),
++				0x52c, 1, MSTOP(BUS_REG1, BIT(3))),
+ 	DEF_MOD("ostm0_pclk",	R9A07G043_OSTM0_PCLK, R9A07G043_CLK_P0,
+-				0x534, 0, 0),
++				0x534, 0, MSTOP(BUS_REG0, BIT(4))),
+ 	DEF_MOD("ostm1_pclk",	R9A07G043_OSTM1_PCLK, R9A07G043_CLK_P0,
+-				0x534, 1, 0),
++				0x534, 1, MSTOP(BUS_REG0, BIT(5))),
+ 	DEF_MOD("ostm2_pclk",	R9A07G043_OSTM2_PCLK, R9A07G043_CLK_P0,
+-				0x534, 2, 0),
++				0x534, 2, MSTOP(BUS_REG0, BIT(6))),
+ 	DEF_MOD("mtu_x_mck",	R9A07G043_MTU_X_MCK_MTU3, R9A07G043_CLK_P0,
+-				0x538, 0, 0),
++				0x538, 0, MSTOP(BUS_MCPU1, BIT(2))),
+ 	DEF_MOD("wdt0_pclk",	R9A07G043_WDT0_PCLK, R9A07G043_CLK_P0,
+-				0x548, 0, 0),
++				0x548, 0, MSTOP(BUS_REG0, BIT(2))),
+ 	DEF_MOD("wdt0_clk",	R9A07G043_WDT0_CLK, R9A07G043_OSCCLK,
+-				0x548, 1, 0),
++				0x548, 1, MSTOP(BUS_REG0, BIT(2))),
+ 	DEF_MOD("spi_clk2",	R9A07G043_SPI_CLK2, R9A07G043_CLK_SPI1,
+-				0x550, 0, 0),
++				0x550, 0, MSTOP(BUS_MCPU1, BIT(1))),
+ 	DEF_MOD("spi_clk",	R9A07G043_SPI_CLK, R9A07G043_CLK_SPI0,
+-				0x550, 1, 0),
++				0x550, 1, MSTOP(BUS_MCPU1, BIT(1))),
+ 	DEF_MOD("sdhi0_imclk",	R9A07G043_SDHI0_IMCLK, CLK_SD0_DIV4,
+-				0x554, 0, 0),
++				0x554, 0, MSTOP(BUS_PERI_COM, BIT(0))),
+ 	DEF_MOD("sdhi0_imclk2",	R9A07G043_SDHI0_IMCLK2, CLK_SD0_DIV4,
+-				0x554, 1, 0),
++				0x554, 1, MSTOP(BUS_PERI_COM, BIT(0))),
+ 	DEF_MOD("sdhi0_clk_hs",	R9A07G043_SDHI0_CLK_HS, R9A07G043_CLK_SD0,
+-				0x554, 2, 0),
++				0x554, 2, MSTOP(BUS_PERI_COM, BIT(0))),
+ 	DEF_MOD("sdhi0_aclk",	R9A07G043_SDHI0_ACLK, R9A07G043_CLK_P1,
+-				0x554, 3, 0),
++				0x554, 3, MSTOP(BUS_PERI_COM, BIT(0))),
+ 	DEF_MOD("sdhi1_imclk",	R9A07G043_SDHI1_IMCLK, CLK_SD1_DIV4,
+-				0x554, 4, 0),
++				0x554, 4, MSTOP(BUS_PERI_COM, BIT(1))),
+ 	DEF_MOD("sdhi1_imclk2",	R9A07G043_SDHI1_IMCLK2, CLK_SD1_DIV4,
+-				0x554, 5, 0),
++				0x554, 5, MSTOP(BUS_PERI_COM, BIT(1))),
+ 	DEF_MOD("sdhi1_clk_hs",	R9A07G043_SDHI1_CLK_HS, R9A07G043_CLK_SD1,
+-				0x554, 6, 0),
++				0x554, 6, MSTOP(BUS_PERI_COM, BIT(1))),
+ 	DEF_MOD("sdhi1_aclk",	R9A07G043_SDHI1_ACLK, R9A07G043_CLK_P1,
+-				0x554, 7, 0),
++				0x554, 7, MSTOP(BUS_PERI_COM, BIT(1))),
+ #ifdef CONFIG_ARM64
+ 	DEF_MOD("cru_sysclk",   R9A07G043_CRU_SYSCLK, CLK_M2_DIV2,
+-				0x564, 0, 0),
++				0x564, 0, MSTOP(BUS_PERI_VIDEO, BIT(3))),
+ 	DEF_MOD("cru_vclk",     R9A07G043_CRU_VCLK, R9A07G043_CLK_M2,
+-				0x564, 1, 0),
++				0x564, 1, MSTOP(BUS_PERI_VIDEO, BIT(3))),
+ 	DEF_MOD("cru_pclk",     R9A07G043_CRU_PCLK, R9A07G043_CLK_ZT,
+-				0x564, 2, 0),
++				0x564, 2, MSTOP(BUS_PERI_VIDEO, BIT(3))),
+ 	DEF_MOD("cru_aclk",     R9A07G043_CRU_ACLK, R9A07G043_CLK_M0,
+-				0x564, 3, 0),
++				0x564, 3, MSTOP(BUS_PERI_VIDEO, BIT(3))),
+ 	DEF_COUPLED("lcdc_clk_a", R9A07G043_LCDC_CLK_A, R9A07G043_CLK_M0,
+-				0x56c, 0, 0),
++				0x56c, 0, MSTOP(BUS_PERI_VIDEO, GENMASK(8, 7))),
+ 	DEF_COUPLED("lcdc_clk_p", R9A07G043_LCDC_CLK_P, R9A07G043_CLK_ZT,
+-				0x56c, 0, 0),
++				0x56c, 0, MSTOP(BUS_PERI_VIDEO, GENMASK(8, 7))),
+ 	DEF_MOD("lcdc_clk_d",	R9A07G043_LCDC_CLK_D, R9A07G043_CLK_M3,
+-				0x56c, 1, 0),
++				0x56c, 1, MSTOP(BUS_PERI_VIDEO, BIT(9))),
+ #endif
+ 	DEF_MOD("ssi0_pclk",	R9A07G043_SSI0_PCLK2, R9A07G043_CLK_P0,
+-				0x570, 0, 0),
++				0x570, 0, MSTOP(BUS_MCPU1, BIT(10))),
+ 	DEF_MOD("ssi0_sfr",	R9A07G043_SSI0_PCLK_SFR, R9A07G043_CLK_P0,
+-				0x570, 1, 0),
++				0x570, 1, MSTOP(BUS_MCPU1, BIT(10))),
+ 	DEF_MOD("ssi1_pclk",	R9A07G043_SSI1_PCLK2, R9A07G043_CLK_P0,
+-				0x570, 2, 0),
++				0x570, 2, MSTOP(BUS_MCPU1, BIT(11))),
+ 	DEF_MOD("ssi1_sfr",	R9A07G043_SSI1_PCLK_SFR, R9A07G043_CLK_P0,
+-				0x570, 3, 0),
++				0x570, 3, MSTOP(BUS_MCPU1, BIT(11))),
+ 	DEF_MOD("ssi2_pclk",	R9A07G043_SSI2_PCLK2, R9A07G043_CLK_P0,
+-				0x570, 4, 0),
++				0x570, 4, MSTOP(BUS_MCPU1, BIT(12))),
+ 	DEF_MOD("ssi2_sfr",	R9A07G043_SSI2_PCLK_SFR, R9A07G043_CLK_P0,
+-				0x570, 5, 0),
++				0x570, 5, MSTOP(BUS_MCPU1, BIT(12))),
+ 	DEF_MOD("ssi3_pclk",	R9A07G043_SSI3_PCLK2, R9A07G043_CLK_P0,
+-				0x570, 6, 0),
++				0x570, 6, MSTOP(BUS_MCPU1, BIT(13))),
+ 	DEF_MOD("ssi3_sfr",	R9A07G043_SSI3_PCLK_SFR, R9A07G043_CLK_P0,
+-				0x570, 7, 0),
++				0x570, 7, MSTOP(BUS_MCPU1, BIT(13))),
+ 	DEF_MOD("usb0_host",	R9A07G043_USB_U2H0_HCLK, R9A07G043_CLK_P1,
+-				0x578, 0, 0),
++				0x578, 0, MSTOP(BUS_PERI_COM, BIT(5))),
+ 	DEF_MOD("usb1_host",	R9A07G043_USB_U2H1_HCLK, R9A07G043_CLK_P1,
+-				0x578, 1, 0),
++				0x578, 1, MSTOP(BUS_PERI_COM, BIT(7))),
+ 	DEF_MOD("usb0_func",	R9A07G043_USB_U2P_EXR_CPUCLK, R9A07G043_CLK_P1,
+-				0x578, 2, 0),
++				0x578, 2, MSTOP(BUS_PERI_COM, BIT(6))),
+ 	DEF_MOD("usb_pclk",	R9A07G043_USB_PCLK, R9A07G043_CLK_P1,
+-				0x578, 3, 0),
++				0x578, 3, MSTOP(BUS_PERI_COM, BIT(4))),
+ 	DEF_COUPLED("eth0_axi",	R9A07G043_ETH0_CLK_AXI, R9A07G043_CLK_M0,
+-				0x57c, 0, 0),
++				0x57c, 0, MSTOP(BUS_PERI_COM, BIT(2))),
+ 	DEF_COUPLED("eth0_chi",	R9A07G043_ETH0_CLK_CHI, R9A07G043_CLK_ZT,
+-				0x57c, 0, 0),
++				0x57c, 0, MSTOP(BUS_PERI_COM, BIT(2))),
+ 	DEF_COUPLED("eth1_axi",	R9A07G043_ETH1_CLK_AXI, R9A07G043_CLK_M0,
+-				0x57c, 1, 0),
++				0x57c, 1, MSTOP(BUS_PERI_COM, BIT(3))),
+ 	DEF_COUPLED("eth1_chi",	R9A07G043_ETH1_CLK_CHI, R9A07G043_CLK_ZT,
+-				0x57c, 1, 0),
++				0x57c, 1, MSTOP(BUS_PERI_COM, BIT(3))),
+ 	DEF_MOD("i2c0",		R9A07G043_I2C0_PCLK, R9A07G043_CLK_P0,
+-				0x580, 0, 0),
++				0x580, 0, MSTOP(BUS_MCPU2, BIT(10))),
+ 	DEF_MOD("i2c1",		R9A07G043_I2C1_PCLK, R9A07G043_CLK_P0,
+-				0x580, 1, 0),
++				0x580, 1, MSTOP(BUS_MCPU2, BIT(11))),
+ 	DEF_MOD("i2c2",		R9A07G043_I2C2_PCLK, R9A07G043_CLK_P0,
+-				0x580, 2, 0),
++				0x580, 2, MSTOP(BUS_MCPU2, BIT(12))),
+ 	DEF_MOD("i2c3",		R9A07G043_I2C3_PCLK, R9A07G043_CLK_P0,
+-				0x580, 3, 0),
++				0x580, 3, MSTOP(BUS_MCPU2, BIT(13))),
+ 	DEF_MOD("scif0",	R9A07G043_SCIF0_CLK_PCK, R9A07G043_CLK_P0,
+-				0x584, 0, 0),
++				0x584, 0, MSTOP(BUS_MCPU2, BIT(1))),
+ 	DEF_MOD("scif1",	R9A07G043_SCIF1_CLK_PCK, R9A07G043_CLK_P0,
+-				0x584, 1, 0),
++				0x584, 1, MSTOP(BUS_MCPU2, BIT(2))),
+ 	DEF_MOD("scif2",	R9A07G043_SCIF2_CLK_PCK, R9A07G043_CLK_P0,
+-				0x584, 2, 0),
++				0x584, 2, MSTOP(BUS_MCPU2, BIT(3))),
+ 	DEF_MOD("scif3",	R9A07G043_SCIF3_CLK_PCK, R9A07G043_CLK_P0,
+-				0x584, 3, 0),
++				0x584, 3, MSTOP(BUS_MCPU2, BIT(4))),
+ 	DEF_MOD("scif4",	R9A07G043_SCIF4_CLK_PCK, R9A07G043_CLK_P0,
+-				0x584, 4, 0),
++				0x584, 4, MSTOP(BUS_MCPU2, BIT(5))),
+ 	DEF_MOD("sci0",		R9A07G043_SCI0_CLKP, R9A07G043_CLK_P0,
+-				0x588, 0, 0),
++				0x588, 0, MSTOP(BUS_MCPU2, BIT(7))),
+ 	DEF_MOD("sci1",		R9A07G043_SCI1_CLKP, R9A07G043_CLK_P0,
+-				0x588, 1, 0),
++				0x588, 1, MSTOP(BUS_MCPU2, BIT(8))),
+ 	DEF_MOD("rspi0",	R9A07G043_RSPI0_CLKB, R9A07G043_CLK_P0,
+-				0x590, 0, 0),
++				0x590, 0, MSTOP(BUS_MCPU1, BIT(14))),
+ 	DEF_MOD("rspi1",	R9A07G043_RSPI1_CLKB, R9A07G043_CLK_P0,
+-				0x590, 1, 0),
++				0x590, 1, MSTOP(BUS_MCPU1, BIT(15))),
+ 	DEF_MOD("rspi2",	R9A07G043_RSPI2_CLKB, R9A07G043_CLK_P0,
+-				0x590, 2, 0),
++				0x590, 2, MSTOP(BUS_MCPU2, BIT(0))),
+ 	DEF_MOD("canfd",	R9A07G043_CANFD_PCLK, R9A07G043_CLK_P0,
+-				0x594, 0, 0),
++				0x594, 0, MSTOP(BUS_MCPU2, BIT(9))),
+ 	DEF_MOD("gpio",		R9A07G043_GPIO_HCLK, R9A07G043_OSCCLK,
+-				0x598, 0, 0),
++				0x598, 0, MSTOP(BUS_PERI_CPU, BIT(6))),
+ 	DEF_MOD("adc_adclk",	R9A07G043_ADC_ADCLK, R9A07G043_CLK_TSU,
+-				0x5a8, 0, 0),
++				0x5a8, 0, MSTOP(BUS_MCPU2, BIT(14))),
+ 	DEF_MOD("adc_pclk",	R9A07G043_ADC_PCLK, R9A07G043_CLK_P0,
+-				0x5a8, 1, 0),
++				0x5a8, 1, MSTOP(BUS_MCPU2, BIT(14))),
+ 	DEF_MOD("tsu_pclk",	R9A07G043_TSU_PCLK, R9A07G043_CLK_TSU,
+-				0x5ac, 0, 0),
++				0x5ac, 0, MSTOP(BUS_MCPU2, BIT(15))),
+ #ifdef CONFIG_RISCV
+ 	DEF_MOD("nceplic_aclk",	R9A07G043_NCEPLIC_ACLK, R9A07G043_CLK_P1,
+-				0x608, 0, 0),
++				0x608, 0, MSTOP(BUS_REG1, BIT(7))),
+ #endif
+ };
+ 
 -- 
 2.43.0
 
