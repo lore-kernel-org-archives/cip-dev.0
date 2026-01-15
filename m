@@ -2,66 +2,64 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41960D33A10
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41925D33A0F
 	for <webhook@archiver.kernel.org>; Thu, 15 Jan 2026 08:33:51 +0000 (UTC)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.31250.1768466021177633369
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.31252.1768466024055850166
  for <cip-dev@lists.cip-project.org>;
- Thu, 15 Jan 2026 00:33:41 -0800
+ Thu, 15 Jan 2026 00:33:44 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=KNgaCFyf;
- spf=pass (domain: tuxon.dev, ip: 209.85.208.51, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-64dfb22c7e4so3087751a12.1
-        for <cip-dev@lists.cip-project.org>; Thu, 15 Jan 2026 00:33:40 -0800 (PST)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=aoKiGfDj;
+ spf=pass (domain: tuxon.dev, ip: 209.85.208.52, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-64b7a38f07eso876463a12.0
+        for <cip-dev@lists.cip-project.org>; Thu, 15 Jan 2026 00:33:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1768466019; x=1769070819; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1768466022; x=1769070822; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CCB6ErHg3HBJCpKTkqNetM5X8qwre32JJAbUTZr6jzA=;
-        b=KNgaCFyfKKPzYqNMBevXvFamLi+aPREPfVFe7FXcOAEtqrweG614IZ20USNngrxCaF
-         aCVFz3NA8x+cfiQ3QPRfPTQhsjgov69XLujqHoR/5203b5VvyqiK8ngozNxFdOPtrEfJ
-         FlTnOsmYkK243IaWLyqAZxUMUpdJVZJTUeMi1SBKBLEfKDYAmFE6dPIy+p7ZO0Uf/hKz
-         oyKQ0Q8cN3vBSUHlrV1EKDSsziqokdM2Iw/0skWpd6djaX2GGpyHY6O918AMM85vkQOK
-         E3/X14bteS1DAVwKY7g/6ROwkstDJDlFmEhRVN3KewWnDdcs3EtSgnxCb1erldrqQwwp
-         EpVw==
+        bh=1aRbN84XI1WPz3RfTPMzI3pUCjwKsN8zHlmK+/lo+xo=;
+        b=aoKiGfDjebkGgvJJhaxR+UNk3uKQQhshoGpO3mgKxqwcbbtYie13x/vH74Qw3nk2z1
+         MIvfsCmD0lAqdzRV4QRJUsgJZSq548nHpDPHWmZLTf0grboQyaNY6qoIOrpBwUCmuYHC
+         ObDC8wNiHdmEYAtDDrlFs80hZZZ5zDLlQ12C8XFdWFnkQqSysGPLac6GDzH92flyRdGn
+         KhTCCh4ZefGhKn7+Y+EibKiy9EXwKw82yNfD89n2NFJnJhc7smUxQ36MmKTw9EeCJz7I
+         zL0cO09jSsTBVRNrjP7kUbzZkISVqg807G9GNoS+Lnjn/8K1xw1v/AexJQWyaLWAnC4k
+         Dk7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768466019; x=1769070819;
+        d=1e100.net; s=20230601; t=1768466022; x=1769070822;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=CCB6ErHg3HBJCpKTkqNetM5X8qwre32JJAbUTZr6jzA=;
-        b=LynV6MvTdMyb1ST+CAfMFkt07jHbKr9L6d/D0k0PmAbcMCdVTK4z+PehpD2Hly4z74
-         6yS0fVjpYuBLs4ffsQyfP4UdDiEwMZPkGbhiEStVPN5HU4o134hc0Pv37+vHJNUp11Fw
-         jfzyZQbI4cA25IXiWMSA9cFfAywANIZdPL3SAPGxt3kSJyaS4O1VspKKlOtWHjp4XzWf
-         RZcOB+vkLW3Xn9PJ+TsDisCZRKbhSDOSkQpEFJaj4BFIIhiDeGWV9F3K5pj3kCw4kYOm
-         jiLV4p0w3++VQWyZ8t6XXXOZYH3QKWhoo+7C4LviAggzoaCn9ZW5HJ6dSAIKxCOcmt9n
-         3lXw==
-X-Gm-Message-State: AOJu0YyBnKHlt++sFLEva4I3RcL3u1tIu+bLeP9eBmaChhBZ7xNXaiwC
-	pEbMmZOtAtznVLlGFm1ZBSo6NZSn1pVek31ZjuAZE+QUPLAF8hAYnVvBgJWQG/NOQkWzLiPFvDw
-	YOF//
-X-Gm-Gg: AY/fxX4LOGCI4x9LRVwqkDRMJvK5AXeOWTlQxHdIRhe7BxB9sGG3FHWGz3oQN8hF37l
-	TgzmrapXDFnzhXY/UE1CeJZE0J75f1YZ8GhTNdgBj3DuvViJ0FmZv7pCjs7vr7YZQDwjwOWplJ1
-	v3M4W4GPo9b5EjRsg35zCIGb2OlwsmJ0T6V2IHe4/I4obmj1QTvyI0KJphSVI9xa/KUplKh/NG4
-	NzzUpE3uIjJcwfjJGVo0wq0iGRP5LSHc3Vc156Ta2EQCk7lkrDHsmFRNKLCYM5Kx15uVbsjUt2I
-	Co6NfjPylD8br3L581FHs3lrT9Ja7I9Q3VRg3GcjtuHJB45fhNsZWET1TjblsCC0eSH6VxmFM3Y
-	S95bMBwNwJADxjdFDfoZZXYWwjvAXy1goMhBWnUVKPhJSDjJh0m4j5IaIr7Dlczbm5Vc+30T7hC
-	e67gGYKkZ53B95qes9xACFTgAoTd3x4txNMsiLJCqv//CUT3RCYDVqhVeAFxZu1k12URWWCYGG9
-	nnu
-X-Received: by 2002:a17:907:2d8e:b0:b3a:8070:e269 with SMTP id a640c23a62f3a-b8777b24ce5mr206054566b.14.1768466019281;
-        Thu, 15 Jan 2026 00:33:39 -0800 (PST)
+        bh=1aRbN84XI1WPz3RfTPMzI3pUCjwKsN8zHlmK+/lo+xo=;
+        b=Z2pqAGq9Ya5r+JQbpx+4RuzTCtitvCDYJXnZ6+wb/AdiUujdyY73/PljCj2xp0Oz7k
+         Hi2WRmeRDWEzbLTz19NYsh9Ih+660vUjINMvTqGQRkwtbwdc85Ak8go5V6xHyNBELa9C
+         OxGbkxRjdO6gKjJOtGt8br43DGIwAyY6wmx6eJmJxA/TL9FzoyiJT8sGmsVwSh+8dh3c
+         yzsOTJdo0eKUNFby6H7m1hFwaSOzv+2u9duJvtcjgnl2rlqw1Gzu55LXMrwplaUeM38L
+         r+wjotY5hCP6u7gOlXC+mEZXH9E8qFJrzVQYIHaulkykdFB48pJrxLBKHZlcqRfAg1by
+         2UNg==
+X-Gm-Message-State: AOJu0YxP0TGZFrA+AsnKH5gh3lYIAEDKu3rH2SyakDWiQcQQo7vQJnqQ
+	K+EzWydCVHCSnUawOpV/4noR+YFnavN0O1Cb8jqgYKnCFBDcvJ30gbjNcKUo9FrnjAo=
+X-Gm-Gg: AY/fxX683lpFHZjBpfXmjGcIEHEYa70BsD7rS/Ao9AHrGviKxmtAGnz019gjKDa82/E
+	GL11E2OamFDDWX/RxZASP/vbkwj0NeLlgut3u63nNGgOC8FMBt1iqtO6deeWfmAJ5BQx3k/Jk5H
+	Gng22UmIiV4Zst4uGD3v5N1rA0cbdu4VkTxrfLHaoSd1VpDfqdkN9Z2vqOjI3Mnw1vaUjoerLlP
+	rOzj8JbTfdd5yybwTg3jgvJnWXMjZfTa3b9GiUNZcHJj1YnUe5oWu9WHiQIWkoz287Luds+m+jL
+	6DPVXoJe4Cd3KxyxhHcRu3PrZbP7YRL8oyAQ3z51tEGbkEJk6y92jZWgHin8SRgqvnNKVLRnPKW
+	gz2ngEPKg+0WNGTgP45BLSfgEb1SLYMqaeff09NHYn5/ygY6AKo5T3rjonhefvcORLcxsg4GQeU
+	ZWiorcYP5vR/4oqbSSkBnuSpcVV5dyK66BTpDOLkH350YgGZaC0IwU+oaRtXXmgep3xQ==
+X-Received: by 2002:a17:907:3e04:b0:b87:2579:b6cf with SMTP id a640c23a62f3a-b87612a49b6mr368237166b.41.1768466022375;
+        Thu, 15 Jan 2026 00:33:42 -0800 (PST)
 Received: from claudiu-TUXEDO-InfinityBook-Pro-AMD-Gen9.. ([46.97.176.64])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8731f0718asm833387066b.67.2026.01.15.00.33.37
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8731f0718asm833387066b.67.2026.01.15.00.33.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jan 2026 00:33:38 -0800 (PST)
+        Thu, 15 Jan 2026 00:33:41 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
 Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip v3 02/18] of: Add of_machine_compatible_match()
-Date: Thu, 15 Jan 2026 10:33:16 +0200
-Message-ID: <20260115083332.1063820-3-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip v3 04/18] PM: domains: Detach on device_unbind_cleanup()
+Date: Thu, 15 Jan 2026 10:33:18 +0200
+Message-ID: <20260115083332.1063820-5-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260115083332.1063820-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20260115083332.1063820-1-claudiu.beznea.uj@bp.renesas.com>
@@ -71,91 +69,145 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 15 Jan 2026 08:33:51 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21563
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21565
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit c029b22f8a98e14988f800d5c0176a9eaec3c8db upstream.
+commit f99508074e78fea17f06d753d9ef453b174ec98e upstream.
 
-We have of_machine_is_compatible() to check if a machine is compatible
-with a single compatible string. However some code is able to support
-multiple compatible boards, and so wants to check for one of many
-compatible strings.
+The dev_pm_domain_attach() function is typically used in bus code
+alongside dev_pm_domain_detach(), often following patterns like:
 
-So add of_machine_compatible_match() which takes a NULL terminated
-array of compatible strings to check against the root node's
-compatible property.
+static int bus_probe(struct device *_dev)
+{
+    struct bus_driver *drv = to_bus_driver(dev->driver);
+    struct bus_device *dev = to_bus_device(_dev);
+    int ret;
 
-Compared to an open coded match this is slightly more self
-documenting, and also avoids the caller needing to juggle the root
-node either directly or via of_find_node_by_path().
+    // ...
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://msgid.link/20231214103152.12269-1-mpe@ellerman.id.au
+    ret = dev_pm_domain_attach(_dev, true);
+    if (ret)
+        return ret;
+
+    if (drv->probe)
+        ret = drv->probe(dev);
+
+    // ...
+}
+
+static void bus_remove(struct device *_dev)
+{
+    struct bus_driver *drv = to_bus_driver(dev->driver);
+    struct bus_device *dev = to_bus_device(_dev);
+
+    if (drv->remove)
+        drv->remove(dev);
+    dev_pm_domain_detach(_dev);
+}
+
+When the driver's probe function uses devres-managed resources that
+depend on the power domain state, those resources are released later
+during device_unbind_cleanup().
+
+Releasing devres-managed resources that depend on the power domain state
+after detaching the device from its PM domain can cause failures.
+
+For example, if the driver uses devm_pm_runtime_enable() in its probe
+function, and the device's clocks are managed by the PM domain, then
+during removal the runtime PM is disabled in device_unbind_cleanup()
+after the clocks have been removed from the PM domain. It may happen
+that the devm_pm_runtime_enable() action causes the device to be runtime-
+resumed. If the driver specific runtime PM APIs access registers directly,
+this will lead to accessing device registers without clocks being enabled.
+Similar issues may occur with other devres actions that access device
+registers.
+
+Add detach_power_off member to struct dev_pm_info, to be used
+later in device_unbind_cleanup() as the power_off argument for
+dev_pm_domain_detach(). This is a preparatory step toward removing
+dev_pm_domain_detach() calls from bus remove functions. Since the current
+PM domain detach functions (genpd_dev_pm_detach() and acpi_dev_pm_detach())
+already set dev->pm_domain = NULL, there should be no issues with bus
+drivers that still call dev_pm_domain_detach() in their remove functions.
+
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Link: https://patch.msgid.link/20250703112708.1621607-3-claudiu.beznea.uj@bp.renesas.com
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+[claudiu.beznea: adjust dd.c chance on v5.10 CIP code]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/of/base.c  | 21 +++++++++++++++++++++
- include/linux/of.h |  6 ++++++
- 2 files changed, 27 insertions(+)
+ drivers/base/dd.c           | 7 +++++++
+ drivers/base/power/common.c | 3 +++
+ include/linux/pm.h          | 1 +
+ 3 files changed, 11 insertions(+)
 
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index 1029173ded4d..013549c61be2 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -557,6 +557,27 @@ int of_device_compatible_match(struct device_node *device,
- 	return score;
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index 1e8318acf621..f8313e42ad82 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -25,6 +25,7 @@
+ #include <linux/kthread.h>
+ #include <linux/wait.h>
+ #include <linux/async.h>
++#include <linux/pm_domain.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/pinctrl/devinfo.h>
+ #include <linux/slab.h>
+@@ -596,6 +597,8 @@ static int really_probe(struct device *dev, struct device_driver *drv)
+ 		driver_sysfs_remove(dev);
+ 		dev->driver = NULL;
+ 		dev_set_drvdata(dev, NULL);
++		if (dev_pm_domain_allow_detach_on_unbind_cleanup())
++			dev_pm_domain_detach(dev, dev->power.detach_power_off);
+ 		if (dev->pm_domain && dev->pm_domain->dismiss)
+ 			dev->pm_domain->dismiss(dev);
+ 		pm_runtime_reinit(dev);
+@@ -634,6 +637,8 @@ static int really_probe(struct device *dev, struct device_driver *drv)
+ 	driver_sysfs_remove(dev);
+ 	dev->driver = NULL;
+ 	dev_set_drvdata(dev, NULL);
++	if (dev_pm_domain_allow_detach_on_unbind_cleanup())
++		dev_pm_domain_detach(dev, dev->power.detach_power_off);
+ 	if (dev->pm_domain && dev->pm_domain->dismiss)
+ 		dev->pm_domain->dismiss(dev);
+ 	pm_runtime_reinit(dev);
+@@ -1193,6 +1198,8 @@ static void __device_release_driver(struct device *dev, struct device *parent)
+ 		dev->dma_range_map = NULL;
+ 		dev->driver = NULL;
+ 		dev_set_drvdata(dev, NULL);
++		if (dev_pm_domain_allow_detach_on_unbind_cleanup())
++			dev_pm_domain_detach(dev, dev->power.detach_power_off);
+ 		if (dev->pm_domain && dev->pm_domain->dismiss)
+ 			dev->pm_domain->dismiss(dev);
+ 		pm_runtime_reinit(dev);
+diff --git a/drivers/base/power/common.c b/drivers/base/power/common.c
+index 593fb5bbeb97..e58dcfe1f0c9 100644
+--- a/drivers/base/power/common.c
++++ b/drivers/base/power/common.c
+@@ -110,6 +110,9 @@ int dev_pm_domain_attach(struct device *dev, u32 flags)
+ 	if (!ret)
+ 		ret = genpd_dev_pm_attach(dev);
+ 
++	if (dev->pm_domain)
++		dev->power.detach_power_off = !!(flags & PD_FLAG_DETACH_POWER_OFF);
++
+ 	return ret < 0 ? ret : 0;
  }
+ EXPORT_SYMBOL_GPL(dev_pm_domain_attach);
+diff --git a/include/linux/pm.h b/include/linux/pm.h
+index 52d9724db9dc..a5354eeec2bf 100644
+--- a/include/linux/pm.h
++++ b/include/linux/pm.h
+@@ -621,6 +621,7 @@ struct dev_pm_info {
+ 	struct pm_subsys_data	*subsys_data;  /* Owned by the subsystem. */
+ 	void (*set_latency_tolerance)(struct device *, s32);
+ 	struct dev_pm_qos	*qos;
++	bool			detach_power_off:1;	/* Owned by the driver core */
+ };
  
-+/**
-+ * of_machine_compatible_match - Test root of device tree against a compatible array
-+ * @compats: NULL terminated array of compatible strings to look for in root node's compatible property.
-+ *
-+ * Returns true if the root node has any of the given compatible values in its
-+ * compatible property.
-+ */
-+bool of_machine_compatible_match(const char *const *compats)
-+{
-+	struct device_node *root;
-+	int rc = 0;
-+
-+	root = of_find_node_by_path("/");
-+	if (root) {
-+		rc = of_device_compatible_match(root, compats);
-+		of_node_put(root);
-+	}
-+
-+	return rc != 0;
-+}
-+
- /**
-  * of_machine_is_compatible - Test root of device tree for a given compatible value
-  * @compat: compatible string to look for in root node's compatible property.
-diff --git a/include/linux/of.h b/include/linux/of.h
-index 4ed8dce624e7..65c0e3105809 100644
---- a/include/linux/of.h
-+++ b/include/linux/of.h
-@@ -398,6 +398,7 @@ extern int of_alias_get_alias_list(const struct of_device_id *matches,
- 				   unsigned int nbits);
- 
- extern int of_machine_is_compatible(const char *compat);
-+bool of_machine_compatible_match(const char *const *compats);
- 
- extern int of_add_property(struct device_node *np, struct property *prop);
- extern int of_remove_property(struct device_node *np, struct property *prop);
-@@ -794,6 +795,11 @@ static inline int of_remove_property(struct device_node *np, struct property *pr
- 	return 0;
- }
- 
-+static inline bool of_machine_compatible_match(const char *const *compats)
-+{
-+	return false;
-+}
-+
- static inline bool of_console_check(const struct device_node *dn, const char *name, int index)
- {
- 	return false;
+ extern int dev_pm_get_subsys_data(struct device *dev);
 -- 
 2.43.0
 
