@@ -2,65 +2,64 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9F98D33A3A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F152ED33A3C
 	for <webhook@archiver.kernel.org>; Thu, 15 Jan 2026 08:36:21 +0000 (UTC)
 Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.31327.1768466177964981017
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.31329.1768466179447397219
  for <cip-dev@lists.cip-project.org>;
- Thu, 15 Jan 2026 00:36:18 -0800
+ Thu, 15 Jan 2026 00:36:19 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=KVgIuLtL;
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=ELpj3Fej;
  spf=pass (domain: tuxon.dev, ip: 209.85.208.53, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-65063a95558so932192a12.0
-        for <cip-dev@lists.cip-project.org>; Thu, 15 Jan 2026 00:36:17 -0800 (PST)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-64b83949fdaso850888a12.2
+        for <cip-dev@lists.cip-project.org>; Thu, 15 Jan 2026 00:36:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1768466176; x=1769070976; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1768466178; x=1769070978; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/XQfUImmoDcKzmFn5jPmXsh4tD/k2Dmqe+1MBSg5Zeg=;
-        b=KVgIuLtLvPYgNERSgC0EZdVJCuZfN2bL4Lt2HGmfE66YaN3wCoAWYNMkxOtl1oHpHC
-         IyT6Kz8d7kJgyPFKQObdqJtw8cupauCIehoVy/Yen1TEf8RziIMV8YoyHTc3M0QmwRvw
-         t2/W6CgL/XE/p0aebEE+aDMEGwi5fOMoM+oN9ePdzt5FEqNB4qBgtFN1WlIuw5Mg7SUy
-         I+GhDwKst3QKLGFG7Y99KG5SRcBKElpywY4hy0LHkbbE3eH9sRgieZO/EZu7IVRRJtBD
-         HWFrnjv2yGZOB44z8cutNDDf1vOBDyQe66w+tSnaJJMnWMc7BL8g7t91ZaIonI+9eGKP
-         TdNQ==
+        bh=UVq91KWNFTNbXoD+ksXzxIHQB6mSL5DlFXOK3kG3OWE=;
+        b=ELpj3Fej67UbtSOeatqrSldT0md2K5GXjAD7N0PwF5wKo53NWjtiZF/gD+xGAr3iWe
+         TJl9jfEGOAleaee9ktzUw71efQ7xcq9+sV1XnCdqfasNGlRqKRzulBS/TY8loIdvrDRJ
+         DzNXVR5n7AMNyCUuDQfAzXpgmbZ1K+DCTWZNsgp0EFzz5sz6Ytp+t3GHfbBWMQVW1cVI
+         9+C30LT3WaqAtbncgxLoTB+D+rVVBDw2raP5fBCQvJBNzmuctDgDyO4qXeMPk8Nx05xU
+         HL0gjnPmooUNy2w7sERaefz1XX8z6SzxdsVT2R17x0FGjqUzL1AAXaiPkI60uVFac2Mm
+         xpTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768466176; x=1769070976;
+        d=1e100.net; s=20230601; t=1768466178; x=1769070978;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=/XQfUImmoDcKzmFn5jPmXsh4tD/k2Dmqe+1MBSg5Zeg=;
-        b=HYK58XudnIqXXMZA6RVdIgr6E5DAyXAFDwarN7g7bzb6cUNQkE+C0HXy0imYjHFYGv
-         tixDi5PzBZ5orkKkKzPU5zB+AdsyVhGAqS/EAEYpKk7STkUvIL4D5p3iM0HfNTMgjQRy
-         Xuxi4N4/xaTBqhUkuBUftWGlXve+pc+hhfdqhA6JPLlCa8XKm4mQBn37zZopttrqK+5Y
-         /JJo5hPf5mz5WRGn1S4S8uQcw3hwg4ABO9C1Aw9vdeelBJKGjQncz6nuWnNmpaoGWxTC
-         qxk35bi5JF2iIIcoBwrcGJkREnOqb1PuHMY0KBQYCZXp3rcs8WDsegeaUqE0LN+axeLj
-         hsXQ==
-X-Gm-Message-State: AOJu0Yz5sf4Wy0fql2lDUGBBLZdYAAF9nKy9LmeSy5fVKJwu5CpD+rhI
-	nLSAZ6t6haBgcxU9Z8j4ArY9wqfUFVm8YsMGfdu1/XpAbxODCI6actiw5aZDFOojSwq3nfkHQpQ
-	HoDFD
-X-Gm-Gg: AY/fxX5CavbZponTuefzMQ/Iv8J95EhN/2Lc/K9+WBIi3rZgLFzxWcBwy0uTVI3m55g
-	Z6FH0I4yBI3SlBJXvz5Ly9PL32R3Y50IqJT6DDV+mt/UUN5OYIXuuj0LM/wHKguz/6yMHeD4DAa
-	QNOsdnCaXGA7kIEus0nIP9NEkWCJEThLN9PPKHXR+0r4Jk/gYp8WqJe2OdGqiJibELoplejvhqm
-	UUoLe1YmJaDnu5J/AymnJkN73mxvUPqBIXR8d5jmoPfcOaAMy/v+Ki3AcEnh2O7HCsIaHOLOQwg
-	9ac708bAS3l3g5qJFXeBNj1R+gYMVK6qrEnpZvbnJ+OZ7LJ/K8FjaHAvf013G1wYvOzjl1VZcjn
-	woeUVjWJwQd828Dojhh8yoEwBjYUNAoU0Juh71lAy6LP40I0njcS9wl7XIFXmQauZCAqwH8pzbs
-	A8ypd6GJ/EpoSxi1gEdOdznoWHgRguhHQEpbVuhtX8JX9a4lrKy9A4Yr1suZ1UzZrYtA==
-X-Received: by 2002:a05:6402:4412:b0:64f:cfa0:9024 with SMTP id 4fb4d7f45d1cf-653ec46fa74mr3977147a12.34.1768466176358;
-        Thu, 15 Jan 2026 00:36:16 -0800 (PST)
+        bh=UVq91KWNFTNbXoD+ksXzxIHQB6mSL5DlFXOK3kG3OWE=;
+        b=n/Q+xAimUBYZZYBzR9cu04cxqXXCH2w212ALVg9XuAP6XPtlGpjmDQa/Cb9p/pSqhB
+         JSJ1EbZeyuzhUVcVMMupGRf9692hG3h0QlNfTps49bVl9OEWwpbNabu/Hs1EhbRWfatx
+         L/7+gkxlbtRlnPxagA+upbtoW7Y41YcWC7CHUtdxO9rjuwPnAMhzYwGAuuxoMPtU51c2
+         XZo3XCCUNVhOZXxZ0Qkd+BPmkl1YbK33V5MlQVWW/OPTNGP4sIF1BTwxEroszdeArHu5
+         m8nPPmWfuhPemHB8gu3g1dpu4tuyEybOO/ztgThMUG9nY2r5Ma8Pu3dybIoYe47VZRgy
+         VEMg==
+X-Gm-Message-State: AOJu0YxQaTZa2FCWTRSAhEChKT5RC4LGVcuF1I1F0YtfvUkvFdFN1lth
+	SONpfsctvs2plydLrtLKYoPLRY2HSmB348ZpuJuaPpJ8oGdwet3jq3bz03aA4B3rx/Q=
+X-Gm-Gg: AY/fxX4BlAkigqq+qadxw8lhoW3AivN1U6jCfN6KXGc4GlFi8BRf08COvlh2kDTYDVQ
+	WLh+mnoqsgQfLSSFHY7DbFxzfacEoD+dNS+1ihVsGXppY4ybEukUm81fhfsIPS+9UYLUiLxv2Ko
+	Kon9ZzSRBDStBL97BrXY+gRZpAnSmgKQO3XHiaOyj5RDi5Uhf/QAMhm1H2/iROzzNMO+DH9N3zZ
+	6WqAdYqMRK23NmkQ9UUJSxmpwyUi3U1QS2mL0JrpGvEEBCzL29N9FPCUwSva6sIic2yB3kc669N
+	pyW1vPNH+VPsRU9aZnLx7np8C33bsaxx++N+4afK7iFXxVmqsxbuE+UrNQGq5xlqN1D22zJqu2W
+	t/OA5EEClpJtx1XMnwFOKuYhKBe7RBqvFxyGq7K+xQ9AwZeZE7NyiJ3ykOFCkpZnwTb9zGXol7H
+	INL4Reu8zHyhqwqMjRSCqUO+2CR1o4zsujGBK0neJ0883bZjJM48uhYubeFrUhp34R5w==
+X-Received: by 2002:a17:907:7f8d:b0:b83:95ca:589b with SMTP id a640c23a62f3a-b8760fea594mr502470066b.10.1768466177819;
+        Thu, 15 Jan 2026 00:36:17 -0800 (PST)
 Received: from claudiu-TUXEDO-InfinityBook-Pro-AMD-Gen9.. ([46.97.176.64])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-65411882303sm1993564a12.10.2026.01.15.00.36.15
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-65411882303sm1993564a12.10.2026.01.15.00.36.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jan 2026 00:36:15 -0800 (PST)
+        Thu, 15 Jan 2026 00:36:17 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
 Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 6.12.y-cip v3 05/19] mmc: sdio: Drop dev_pm_domain_detach() call
-Date: Thu, 15 Jan 2026 10:35:49 +0200
-Message-ID: <20260115083604.1064260-6-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip v3 06/19] spi: Drop dev_pm_domain_detach() call
+Date: Thu, 15 Jan 2026 10:35:50 +0200
+Message-ID: <20260115083604.1064260-7-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260115083604.1064260-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20260115083604.1064260-1-claudiu.beznea.uj@bp.renesas.com>
@@ -70,11 +69,11 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 15 Jan 2026 08:36:21 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21605
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21606
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit c2ef7a03f5c8f0a612a8beff666483b725adf8fc upstream.
+commit c42e36a488c7e01f833fc9f4814f735b66b2d494 upstream.
 
 Starting with commit f99508074e78 ("PM: domains: Detach on
 device_unbind_cleanup()"), there is no longer a need to call
@@ -89,38 +88,46 @@ on the flags passed to dev_pm_domain_attach() to power off the
 domain.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://lore.kernel.org/r/20250827101236.927313-1-claudiu.beznea.uj@bp.renesas.com
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Message-ID: <20250827101612.928008-1-claudiu.beznea.uj@bp.renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 [claudiu.beznea: drop dev_pm_domain_detach() conditionally]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/mmc/core/sdio_bus.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/spi/spi.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mmc/core/sdio_bus.c b/drivers/mmc/core/sdio_bus.c
-index 656601754966..07704ad86131 100644
---- a/drivers/mmc/core/sdio_bus.c
-+++ b/drivers/mmc/core/sdio_bus.c
-@@ -200,7 +200,8 @@ static int sdio_bus_probe(struct device *dev)
- 	atomic_dec(&func->card->sdio_funcs_probed);
- 	if (func->card->host->caps & MMC_CAP_POWER_OFF_CARD)
- 		pm_runtime_put_noidle(dev);
--	dev_pm_domain_detach(dev, false);
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index e5f3372d86be..2e931ccc4c97 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -434,13 +434,14 @@ static int spi_probe(struct device *dev)
+ 			spi->irq = 0;
+ 	}
+ 
+-	ret = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON);
++	ret = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON |
++					PD_FLAG_DETACH_POWER_OFF);
+ 	if (ret)
+ 		return ret;
+ 
+ 	if (sdrv->probe) {
+ 		ret = sdrv->probe(spi);
+-		if (ret)
++		if (ret && !dev_pm_domain_allow_detach_on_unbind_cleanup())
+ 			dev_pm_domain_detach(dev, true);
+ 	}
+ 
+@@ -454,7 +455,8 @@ static void spi_remove(struct device *dev)
+ 	if (sdrv->remove)
+ 		sdrv->remove(to_spi_device(dev));
+ 
+-	dev_pm_domain_detach(dev, true);
 +	if (!dev_pm_domain_allow_detach_on_unbind_cleanup())
-+		dev_pm_domain_detach(dev, false);
- 	return ret;
++		dev_pm_domain_detach(dev, true);
  }
  
-@@ -232,7 +233,8 @@ static void sdio_bus_remove(struct device *dev)
- 	if (func->card->host->caps & MMC_CAP_POWER_OFF_CARD)
- 		pm_runtime_put_sync(dev);
- 
--	dev_pm_domain_detach(dev, false);
-+	if (!dev_pm_domain_allow_detach_on_unbind_cleanup())
-+		dev_pm_domain_detach(dev, false);
- }
- 
- static const struct dev_pm_ops sdio_bus_pm_ops = {
+ static void spi_shutdown(struct device *dev)
 -- 
 2.43.0
 
