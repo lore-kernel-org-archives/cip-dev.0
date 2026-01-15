@@ -2,65 +2,65 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D20D33A28
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94592D33A24
 	for <webhook@archiver.kernel.org>; Thu, 15 Jan 2026 08:35:11 +0000 (UTC)
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.31297.1768466109337038878
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.31291.1768466102728267297
  for <cip-dev@lists.cip-project.org>;
- Thu, 15 Jan 2026 00:35:09 -0800
+ Thu, 15 Jan 2026 00:35:03 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=n6Zbw7D2;
- spf=pass (domain: tuxon.dev, ip: 209.85.208.44, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6505d3b84bcso904824a12.3
-        for <cip-dev@lists.cip-project.org>; Thu, 15 Jan 2026 00:35:09 -0800 (PST)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=BhFFKowp;
+ spf=pass (domain: tuxon.dev, ip: 209.85.208.54, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-64b8123c333so1042962a12.3
+        for <cip-dev@lists.cip-project.org>; Thu, 15 Jan 2026 00:35:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1768466108; x=1769070908; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1768466101; x=1769070901; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=R5/SmrPCBIcTNTmOhay/F307DEFDs5Zbf3TLxYKOrJ4=;
-        b=n6Zbw7D2vcF80T7Ft3bIiX2kHa+jaH3bYQDqzAKvKhyNpGP5TB++05zXb8lMnLsx5F
-         WAaj6TQmP2TLVNN5Ify1sofikbCLXvspMKlqBj1d46464B/V8tafJl4puA3l3ctcqFcx
-         fk39l6rT0FcWkS9jupoK7V4DP6eYtB3Wbm/6WbqtJXvXs4V1VrBknUjrPzbCG0D8gV+m
-         fSB7FL58AChFrppOyeRiwxdumckK1smlNXf1VyE/7eiorBE4Pn8btwiX5QoO6Ycx7I9D
-         bxbPiHXzhGQ5zVV5GPeHsQAuaNfY5okwb9exvzmCE5yBC1eDMlKarraIsii5Vee0lRlb
-         klLg==
+        bh=CW2/xr5QBH49HVQp2Kp4nvtzi1NKKr/rsqg2nM/fj+w=;
+        b=BhFFKowp1hLjGhH1Ca9Qcw6GoLL9PKQIPQc5u0uXukSbJGdoiKoFbBvbn+n0w8FBwf
+         usCHmuIJKxFTCJFkQcmL0bTTmDXU3s3+hvP+cNLyx2K/P28DxzeqooUl4RbrkNlJ3E4X
+         QUyOC+VPzgZaCUYFuBpfJ3FjjF2oOhuMQ/oooO3IPKQ3xUWCbYpgTKNtHHKMM72DzZ6z
+         K598deyNYvuxn/cLv8AqRy6z7EQjqsTujheYFja5cmtH4qU+m5L8ARpf02Nv1LszCbrr
+         xkFd58tK0NVJYfx2OHEOJoHSqIgxMmgm+CypbFrW3F9v0G9quR/NrZ5NAEXv/XupUqVQ
+         GxHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768466108; x=1769070908;
+        d=1e100.net; s=20230601; t=1768466101; x=1769070901;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=R5/SmrPCBIcTNTmOhay/F307DEFDs5Zbf3TLxYKOrJ4=;
-        b=kb7OeD6GvlueBMuBfbn+j7WcSja/Dvgsx9upUaiTRKKp2C9FbRw3PezyYAKDnozJaq
-         hpum8n2geLEN0VOK0QNtHmu9HeDpvrgJOAdLjEtSnvvRnnqtamCyC6um5BOLER/lO4FJ
-         +MCC1o1h9oO6laJ33gnG2iTndGtrYk9++IcliHVHICDzYIbekdy8EJiMFi/4ata/1Trt
-         IoYs/AutHOB6zFYAS9OaQascaCi4+yVJL5aQNfgKESIRcbg0lJADEggBnwfSjycWahp1
-         OMqgbcPjnGANAAT/sUaT/uIaBZg2A945B4UV7Je/+pZmcTCl/ELVpTS42M4NNtSEixxD
-         ojXg==
-X-Gm-Message-State: AOJu0YzMKF5nhhaGpUJO3y17oNaEDVIXnAPTj+pNEgGkWopeJZlNbCYP
-	KW12aTfnlPyR/6upTRrkqwlUbFJOOQr5092TGGtv55yir1/qmeKqDDnnQZXbrn5NgGrob/gqYtU
-	kq3kT
-X-Gm-Gg: AY/fxX5JGzDen3+WOQIK2Or6NmSBSSHG0SeFX9zKKmfQF+0BeC9aYBjFIE6rNHkz1V8
-	QSpC/AKTV7RYtfM3gU4XHkbqTA94Ybb4fx2kbN54Ygj+OOUeUjro9zBlCny10Ps/NiFcGtR8b9S
-	mrwRFM/hBGfTnBp84w3bnHwlrXNLCOT2Vpd/FM7NlvC3FLqwa34kbaIYXVxIzHOynD8hX/6TfCX
-	/cCgplMBbbR+TKqySeBNGV51m3/RKV7wZQQ3LrB0X/oSmo1tt+RmciHJ4w9duLUXmpaPoUCpVyw
-	E+GKCg27JezFQY/ko4qrSonKY+g5yDuxmt6sXVYhUq3CbbIt/m5dGOyUvmuXz7EHR7Qtgf6y1Nq
-	ihbZ6RwCNKs8Vj5R2VlhrK1oFaM3uM6tJvsbRsoSenzA0rTF/XdUqWPCEAMIagPHQ0dPXXCqP8/
-	8nw1Bp6QxNUSIM1Sik/JDHj5hWNMsmvET3IhD2D4j/Na17qYFKSdrw6jaoZowz/Stu7Q==
-X-Received: by 2002:a05:6402:2808:b0:650:8c47:ac5 with SMTP id 4fb4d7f45d1cf-653ee15f8dbmr4345891a12.11.1768466107726;
-        Thu, 15 Jan 2026 00:35:07 -0800 (PST)
+        bh=CW2/xr5QBH49HVQp2Kp4nvtzi1NKKr/rsqg2nM/fj+w=;
+        b=PDOth7eq/dYVYb6rYMlnJtT7GUmvEcAKSnCYcnky38N5M+CN99B6ximrbuW5BUfUWl
+         ffP5CmnL92sFiWv+NmtCqPyWVgfe6pdTPCvTfE5yeqAYmWVGGRwjkpv7ma5QQA65nd8y
+         Sl3nGCvMaWFN8YcnwYhMxuZK4BXBeSQkH1LGp/6WcuCwV2hOsxcsSToeJSp21LGaiKkF
+         qNorrJBkby9JEM0Pbm23zMKiBYBCRNx1Edd8iSdglkzAU/kORn8UydJXdXBYrqz5WiJK
+         VsK1DTs5aoHxeqTuzzWGe5SpzN978l8wJP8PZZmN7wmjLCz6lV3oJ+d5WgVi+GcCD9RR
+         HWVQ==
+X-Gm-Message-State: AOJu0YwMWUsYbk+jQ2ExwaTknt31q4pGiRi8QiU9f9x3CGejrcaeUflR
+	Fvk53VZm9GJZuPZcxyt4rX4BMZ5UV6tv2eNdMEfIchc1V4f4wq4Sctwq+hnSW8Lc57wxlyb28BY
+	WjCx4
+X-Gm-Gg: AY/fxX7uV6X9TkZkkuFUkuK/l/FcvQfP/uFFXiJvrGQeIpWS9rCJp9ePwbwPwlswur4
+	Gr/YNn7+j/nbaBC9tfnryHvWzIkbuwQW3WCkc1JTiTSwnHNd7jeXpnNZILB/6O1u3cUhFXZ20AU
+	3N6m5jSh57xQJ7qdWI1bqp+M5NTNGAR33VWpMIXeyFgqo3+kyL9Ba1gUNl7BQiHAKOQGTEpdlpc
+	ToBsXTAdH57+PufKdBnXvb7pyzOnUjEaD9EEkWQBjHgpUKYW9PLjVl12BREwXFwZmcDZMMoHYJs
+	tcaKemKWZugxR7zcRTBdtgORZuTzjHrgwFcXprTFgb9yYbdiwYIrvUIF+w11wHJPe/41PkmF7n8
+	HU7zILavGeSvw5GSKfNw+iIy9rwT3hY+lETP2lupDQNalwpMjzqN1KSMPmMFy6V+yYEYdLBmTsf
+	xiwPd7YsgdKuWecfk4FWYHDcBNhIYNuS7MInre5UEGKyRKEycJTehyw8f55n26GVJAeQ==
+X-Received: by 2002:a05:6402:610:b0:650:883a:8896 with SMTP id 4fb4d7f45d1cf-653ec459ac0mr3234049a12.29.1768466101096;
+        Thu, 15 Jan 2026 00:35:01 -0800 (PST)
 Received: from claudiu-TUXEDO-InfinityBook-Pro-AMD-Gen9.. ([46.97.176.64])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-65411f70f66sm1915660a12.19.2026.01.15.00.35.06
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-65411f70f66sm1915660a12.19.2026.01.15.00.34.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jan 2026 00:35:07 -0800 (PST)
+        Thu, 15 Jan 2026 00:35:00 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
 Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 6.1.y-cip v3 08/19] driver core: auxiliary bus: Drop dev_pm_domain_detach() call
-Date: Thu, 15 Jan 2026 10:34:40 +0200
-Message-ID: <20260115083451.1064048-9-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip v3 04/19] PM: domains: Detach on device_unbind_cleanup()
+Date: Thu, 15 Jan 2026 10:34:36 +0200
+Message-ID: <20260115083451.1064048-5-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260115083451.1064048-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20260115083451.1064048-1-claudiu.beznea.uj@bp.renesas.com>
@@ -70,66 +70,128 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 15 Jan 2026 08:35:11 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21588
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21584
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit eca710386972f2a72708b0b2a615eb150d218e18 upstream.
+commit f99508074e78fea17f06d753d9ef453b174ec98e upstream.
 
-Starting with commit f99508074e78 ("PM: domains: Detach on
-device_unbind_cleanup()"), there is no longer a need to call
-dev_pm_domain_detach() in the bus remove function. The
-device_unbind_cleanup() function now handles this to avoid
-invoking devres cleanup handlers while the PM domain is
-powered off, which could otherwise lead to failures as
-described in the above-mentioned commit.
+The dev_pm_domain_attach() function is typically used in bus code
+alongside dev_pm_domain_detach(), often following patterns like:
 
-Drop the explicit dev_pm_domain_detach() call and rely instead
-on the flags passed to dev_pm_domain_attach() to power off the
-domain.
+static int bus_probe(struct device *_dev)
+{
+    struct bus_driver *drv = to_bus_driver(dev->driver);
+    struct bus_device *dev = to_bus_device(_dev);
+    int ret;
+
+    // ...
+
+    ret = dev_pm_domain_attach(_dev, true);
+    if (ret)
+        return ret;
+
+    if (drv->probe)
+        ret = drv->probe(dev);
+
+    // ...
+}
+
+static void bus_remove(struct device *_dev)
+{
+    struct bus_driver *drv = to_bus_driver(dev->driver);
+    struct bus_device *dev = to_bus_device(_dev);
+
+    if (drv->remove)
+        drv->remove(dev);
+    dev_pm_domain_detach(_dev);
+}
+
+When the driver's probe function uses devres-managed resources that
+depend on the power domain state, those resources are released later
+during device_unbind_cleanup().
+
+Releasing devres-managed resources that depend on the power domain state
+after detaching the device from its PM domain can cause failures.
+
+For example, if the driver uses devm_pm_runtime_enable() in its probe
+function, and the device's clocks are managed by the PM domain, then
+during removal the runtime PM is disabled in device_unbind_cleanup()
+after the clocks have been removed from the PM domain. It may happen
+that the devm_pm_runtime_enable() action causes the device to be runtime-
+resumed. If the driver specific runtime PM APIs access registers directly,
+this will lead to accessing device registers without clocks being enabled.
+Similar issues may occur with other devres actions that access device
+registers.
+
+Add detach_power_off member to struct dev_pm_info, to be used
+later in device_unbind_cleanup() as the power_off argument for
+dev_pm_domain_detach(). This is a preparatory step toward removing
+dev_pm_domain_detach() calls from bus remove functions. Since the current
+PM domain detach functions (genpd_dev_pm_detach() and acpi_dev_pm_detach())
+already set dev->pm_domain = NULL, there should be no issues with bus
+drivers that still call dev_pm_domain_detach() in their remove functions.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-Link: https://lore.kernel.org/r/20250827100541.926350-1-claudiu.beznea.uj@bp.renesas.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[claudiu.beznea: drop dev_pm_domain_detach() conditionally]
+Link: https://patch.msgid.link/20250703112708.1621607-3-claudiu.beznea.uj@bp.renesas.com
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+[claudiu.beznea: conditionally call dev_pm_domain_detach() on
+ device_unbind_cleanup()]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/base/auxiliary.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/base/dd.c           | 3 +++
+ drivers/base/power/common.c | 3 +++
+ include/linux/pm.h          | 1 +
+ 3 files changed, 7 insertions(+)
 
-diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
-index 31f5a81b5393..b02bbbc8d117 100644
---- a/drivers/base/auxiliary.c
-+++ b/drivers/base/auxiliary.c
-@@ -207,14 +207,15 @@ static int auxiliary_bus_probe(struct device *dev)
- 	struct auxiliary_device *auxdev = to_auxiliary_dev(dev);
- 	int ret;
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index dbbe2cebb891..8a1aadd0dc3f 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -25,6 +25,7 @@
+ #include <linux/kthread.h>
+ #include <linux/wait.h>
+ #include <linux/async.h>
++#include <linux/pm_domain.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/pinctrl/devinfo.h>
+ #include <linux/slab.h>
+@@ -533,6 +534,8 @@ static void device_unbind_cleanup(struct device *dev)
+ 	dev->dma_range_map = NULL;
+ 	dev->driver = NULL;
+ 	dev_set_drvdata(dev, NULL);
++	if (dev_pm_domain_allow_detach_on_unbind_cleanup())
++		dev_pm_domain_detach(dev, dev->power.detach_power_off);
+ 	if (dev->pm_domain && dev->pm_domain->dismiss)
+ 		dev->pm_domain->dismiss(dev);
+ 	pm_runtime_reinit(dev);
+diff --git a/drivers/base/power/common.c b/drivers/base/power/common.c
+index da8b9af9d798..f1fd50d0efb9 100644
+--- a/drivers/base/power/common.c
++++ b/drivers/base/power/common.c
+@@ -110,6 +110,9 @@ int dev_pm_domain_attach(struct device *dev, u32 flags)
+ 	if (!ret)
+ 		ret = genpd_dev_pm_attach(dev);
  
--	ret = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON);
-+	ret = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON |
-+					PD_FLAG_DETACH_POWER_OFF);
- 	if (ret) {
- 		dev_warn(dev, "Failed to attach to PM Domain : %d\n", ret);
- 		return ret;
- 	}
- 
- 	ret = auxdrv->probe(auxdev, auxiliary_match_id(auxdrv->id_table, auxdev));
--	if (ret)
-+	if (ret && !dev_pm_domain_allow_detach_on_unbind_cleanup())
- 		dev_pm_domain_detach(dev, true);
- 
- 	return ret;
-@@ -227,7 +228,8 @@ static void auxiliary_bus_remove(struct device *dev)
- 
- 	if (auxdrv->remove)
- 		auxdrv->remove(auxdev);
--	dev_pm_domain_detach(dev, true);
-+	if (!dev_pm_domain_allow_detach_on_unbind_cleanup())
-+		dev_pm_domain_detach(dev, true);
++	if (dev->pm_domain)
++		dev->power.detach_power_off = !!(flags & PD_FLAG_DETACH_POWER_OFF);
++
+ 	return ret < 0 ? ret : 0;
  }
+ EXPORT_SYMBOL_GPL(dev_pm_domain_attach);
+diff --git a/include/linux/pm.h b/include/linux/pm.h
+index 93cd34f00822..30420441da19 100644
+--- a/include/linux/pm.h
++++ b/include/linux/pm.h
+@@ -692,6 +692,7 @@ struct dev_pm_info {
+ 	struct pm_subsys_data	*subsys_data;  /* Owned by the subsystem. */
+ 	void (*set_latency_tolerance)(struct device *, s32);
+ 	struct dev_pm_qos	*qos;
++	bool			detach_power_off:1;	/* Owned by the driver core */
+ };
  
- static void auxiliary_bus_shutdown(struct device *dev)
+ extern int dev_pm_get_subsys_data(struct device *dev);
 -- 
 2.43.0
 
