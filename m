@@ -1,122 +1,71 @@
-Return-Path: <pavel@nabladev.com>
+Return-Path: <adithya.balakumar@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4077D47CDE
-	for <webhook@archiver.kernel.org>; Fri, 16 Jan 2026 11:09:35 +0000 (UTC)
-Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.3566.1768561774766723405
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DFF9D4898C
+	for <webhook@archiver.kernel.org>; Fri, 16 Jan 2026 11:49:16 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.131])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.4358.1768564148482657622
  for <cip-dev@lists.cip-project.org>;
- Fri, 16 Jan 2026 03:09:35 -0800
+ Fri, 16 Jan 2026 03:49:09 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=DW6FmRRB;
- spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7E5BF10E4C7;
-	Fri, 16 Jan 2026 12:09:30 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1768561772;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=qAoMRcoJ3anugmWQvugvQR9xetDArHPn0FiQtNknUBo=;
-	b=DW6FmRRBTgQUlryuPPs9TZVA60p7LNYmWSS/DC+Mr28uhHiXv7T+qllaB8LtZIAWSqBsBO
-	t/PSnQRgI3u5WDGNJ1btppt4FpzxrqXTkxAMFKA8ax0hIrgb5riOYCk7uWl7o8OwKYeJhX
-	i9t3wv58/OgSP25dfZATuBkyip3k3dkLUzo0ffJ8laKWgDEIgNB88BA8+R7kSEVYrWiZY2
-	VMNOZ0JnTd+HCJ05PU+7ioiSh6+Qqgm7qdJHi//Kd8MIFaqCuC+wJDImWCDkhIZuYDCQ7R
-	TTiQkBz6ZQjZdvalIQsnBCtviLj9BLLAwISYxKzUC06uGLiayx9IxOg4+el9dQ==
-Date: Fri, 16 Jan 2026 12:09:28 +0100
-From: Pavel Machek <pavel@nabladev.com>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: pavel@nabladev.com, nobuhiro.iwamatsu.x90@mail.toshiba,
-	cip-dev@lists.cip-project.org
-Subject: Re: [PATCH 5.10.y-cip] pinctrl: renesas: rzg2l: Fix ISEL restore on
- resume
-Message-ID: <aWocaN0FxCWNIDYa@duo.ucw.cz>
-References: <20260115103710.133165-1-claudiu.beznea.uj@bp.renesas.com>
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.131, mailfrom: adithya.balakumar@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1120) id 60GBn5Gc2052946; Fri, 16 Jan 2026 20:49:06 +0900
+X-Iguazu-Qid: 2rWh7Ml5iWvJAa0fCr
+X-Iguazu-QSIG: v=2; s=0; t=1768564145; q=2rWh7Ml5iWvJAa0fCr; m=0n5Q4t6cUAzp2/BJ+gS+kD5RiReh9yduOonX4LbHEbg=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	 id 4dsymx507Nz4vyk; Fri, 16 Jan 2026 20:49:05 +0900 (JST)
+From: Adithya.Balakumar@toshiba-tsip.com
+To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
+Cc: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>,
+        shivanand.kunijadar@toshiba-tsip.com, dinesh.kumar@toshiba-tsip.com,
+        akunuri.sahithi@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp,
+        michael.adler@siemens.com
+Subject: [isar-cip-core][PATCH v5 3/4] swupdate.inc: Enable wfx based updates if WFX_URL is set
+Date: Fri, 16 Jan 2026 07:03:46 -0500
+X-TSB-HOP2: ON
+Message-Id: <20260116120347.1733494-4-Adithya.Balakumar@toshiba-tsip.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20260116120347.1733494-1-Adithya.Balakumar@toshiba-tsip.com>
+References: <20260116120347.1733494-1-Adithya.Balakumar@toshiba-tsip.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="W5Nzr+ephBm8Qkba"
-Content-Disposition: inline
-In-Reply-To: <20260115103710.133165-1-claudiu.beznea.uj@bp.renesas.com>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 16 Jan 2026 11:49:00.0824 (UTC) FILETIME=[1B01D980:01DC86DE]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 16 Jan 2026 11:09:35 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21630
+ <cip-dev@lists.cip-project.org>; Fri, 16 Jan 2026 11:49:16 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21635
+
+From: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
+
+WFX_URL can be set via the Kconfig menu. Enable wfx backend based updates
+if WFX_URL is set at build time.
+
+Signed-off-by: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
+---
+ recipes-core/images/swupdate.inc | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/recipes-core/images/swupdate.inc b/recipes-core/images/swupdate.inc
+index 7cd816a..7041058 100644
+--- a/recipes-core/images/swupdate.inc
++++ b/recipes-core/images/swupdate.inc
+@@ -57,5 +57,9 @@ python() {
+ IMAGE_INSTALL:append = "${@' swupdate' if bb.utils.to_boolean(d.getVar('SWUPDATE_SELFBUILT')) else ''}"
+ IMAGE_PREINSTALL:append = "${@'' if bb.utils.to_boolean(d.getVar('SWUPDATE_SELFBUILT')) else ' swupdate'}"
+ 
++# check for wfx url to enable support for wfx backend based updates
++OVERRIDES .= "${@':wfx' if d.getVar("WFX_URL") else ''}"
++IMAGE_INSTALL:append:wfx = " swupdate-config-wfx"
++
+ IMAGE_INSTALL += " swupdate-handler-roundrobin"
+ IMAGE_INSTALL += " swupdate-config"
+-- 
+2.39.5
 
 
---W5Nzr+ephBm8Qkba
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> commit 44bf66122c12ef6d3382a9b84b9be1802e5f0e95 upstream.
->=20
-> Commit 1d2da79708cb ("pinctrl: renesas: rzg2l: Avoid configuring ISEL in
-> gpio_irq_{en,dis}able*()") dropped the configuration of ISEL from
-> struct irq_chip::{irq_enable, irq_disable} APIs and moved it to
-> struct gpio_chip::irq::{child_to_parent_hwirq,
-> child_irq_domain_ops::free} APIs to fix spurious IRQs.
->=20
-> After commit 1d2da79708cb ("pinctrl: renesas: rzg2l: Avoid configuring IS=
-EL
-> in gpio_irq_{en,dis}able*()"), ISEL was no longer configured properly on
-> resume. This is because the pinctrl resume code used
-> struct irq_chip::irq_enable  (called from rzg2l_gpio_irq_restore()) to
-> reconfigure the wakeup interrupts. Some drivers (e.g. Ethernet) may also
-> reconfigure non-wakeup interrupts on resume through their own code,
-> eventually calling struct irq_chip::irq_enable.
->=20
-> Fix this by adding ISEL configuration back into the
-> struct irq_chip::irq_enable API and on resume path for wakeup interrupts.
->=20
-> As struct irq_chip::irq_enable needs now to lock to update the ISEL,
-> convert the struct rzg2l_pinctrl::lock to a raw spinlock and replace the
-> locking API calls with the raw variants. Otherwise the lockdep reports
-> invalid wait context when probing the adv7511 module on RZ/G2L:
-
-> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-=2E..
-> -static void rzg2l_gpio_irq_enable(struct irq_data *d)
-> +static void __rzg2l_gpio_irq_enable(struct irq_data *d, bool lock)
->  {
->  	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
-> +	struct rzg2l_pinctrl *pctrl =3D container_of(gc, struct rzg2l_pinctrl, =
-gpio_chip);
->  	unsigned int hwirq =3D irqd_to_hwirq(d);
-> =20
->  	gpiochip_enable_irq(gc, hwirq);
-> +	if (lock)
-> +		rzg2l_gpio_irq_endisable(pctrl, hwirq, true);
-> +	else
-> +		__rzg2l_gpio_irq_endisable(pctrl, hwirq, true);
->  	irq_chip_enable_parent(d);
->  }
->
-
-Conditional locking. That's something that should normally be avoided.
-
-Anyway, it is already in mainline, and patch looks good to me, so
-
-Reviewed-by: Pavel Machek <pavel@nabladev.com>
-
-I can apply this if it passes testing.
-
-Best regards,
-                                                                Pavel
---=20
-In cooperation with Nabla.
-
---W5Nzr+ephBm8Qkba
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaWocaAAKCRAw5/Bqldv6
-8mlXAJ41svurEAOYUreR+xD7r80lnfQETQCgjp7gP4E9ydD9tOl04+vEekO0Mlg=
-=Bn7R
------END PGP SIGNATURE-----
-
---W5Nzr+ephBm8Qkba--
 
