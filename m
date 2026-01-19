@@ -1,81 +1,81 @@
-Return-Path: <pavel@nabladev.com>
+Return-Path: <alexander.heinisch@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB72DD29C40
-	for <webhook@archiver.kernel.org>; Mon, 19 Jan 2026 16:01:01 +0000 (UTC)
-Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.37885.1768838457557066156
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B52D29C42
+	for <webhook@archiver.kernel.org>; Mon, 19 Jan 2026 16:25:22 +0000 (UTC)
+Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.38511.1768839920294137774
  for <cip-dev@lists.cip-project.org>;
- Mon, 19 Jan 2026 08:00:58 -0800
+ Mon, 19 Jan 2026 08:25:20 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=Yv/f9DyN;
- spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 82A8B10857E;
-	Mon, 19 Jan 2026 17:00:55 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1768838455;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=gPbspTKHpEiSME+RbztvNWMTlN3dQQBkMnhX5rcQCRI=;
-	b=Yv/f9DyNOtHS6gs12jiylb1aFbQbm9lcgAIHvalFmPsXpySV/MfTtGW4ysDMVyvXjvCwmX
-	sBU5wcNFJAVx8b/sSAe2afKbfe0Hv7YpmiaTMY1l9eEXgI95RzPkVrMgBwsdWiPgFlWj0x
-	0Y3n+5sGq1pa57CdTQrvL7l5YijCvCKE7ut4AxAvPKnsSlOO3ssaRWaxMp4loG6yGOpAi+
-	RAi6lyFpwXJ3tDJWLHg7deglYYaIkDLcTk45I30d9iisJfN9BDBAeBSPnCSaj4CVZBZu+s
-	QosYLLg07dNve8C2duizS5cfRha0UALsvwyqm5W2NCN3UpIeGUaeCzzsvXp6NA==
-Date: Mon, 19 Jan 2026 17:00:54 +0100
-From: Pavel Machek <pavel@nabladev.com>
-To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-Cc: cip-dev@lists.cip-project.org, pavel@nabladev.com,
-	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: Re: [PATCH 6.12.y-cip 0/5] Add RZ/V2N XSPI support
-Message-ID: <aW5VNiVsV77nEIra@duo.ucw.cz>
-References: <20260119125516.32220-1-ovidiu.panait.rb@renesas.com>
+ dkim=pass header.i=alexander.heinisch@siemens.com header.s=fm1 header.b=VIcvfSbb;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-1330684-20260119162517d906ccd80a000207d4-utvaye@rts-flowmailer.siemens.com)
+Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 20260119162517d906ccd80a000207d4
+        for <cip-dev@lists.cip-project.org>;
+        Mon, 19 Jan 2026 17:25:17 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=alexander.heinisch@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=BKmS7LKtefHd1gUDW5NKcrerbrWU3+VNlgvPR9O2iIc=;
+ b=VIcvfSbbI/v5+0hWnt4sbHT7I/1PIEVZzYlBL5mpspYx5faFQ7I2mSXTQWtplzQU/8xZCG
+ eDG9Tn4Md0M8C4IXTjQL4HGALKfXjFde6ystuXvKsJJ8aNVciNl2fiC6uLg3fFaecVchmHy1
+ 9uI3C3CstcdHDC47C3/BDNdUBWjeKOB8mqu6kTNLw59fgmBLJo4pT3f/ytQMpIhSw1N/HJFz
+ UJ5OZIQbvncj6+12WgqJwfMSNozZdV+W7SNdOqk1W/2IojV2zeHyUuQQmsal9X+AnvisICbm
+ V+LwP/mJPLgyUknD6v/w3Df8hFosidaSSHghqPKZnqguY/ERoG6WXWew==;
+From: alexander.heinisch@siemens.com
+To: cip-dev@lists.cip-project.org
+Cc: quirin.gylstorff@siemens.com,
+	Alexander Heinisch <alexander.heinisch@siemens.com>
+Subject: [isar-cip-core][PATCH 0/2] swupdate: Enforce signature verification
+Date: Mon, 19 Jan 2026 17:24:42 +0100
+Message-ID: <20260119162444.672037-1-alexander.heinisch@siemens.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="nmM1fAe4+yZueiuQ"
-Content-Disposition: inline
-In-Reply-To: <20260119125516.32220-1-ovidiu.panait.rb@renesas.com>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1330684:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 19 Jan 2026 16:01:01 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21674
+ <cip-dev@lists.cip-project.org>; Mon, 19 Jan 2026 16:25:22 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21675
+
+From: Alexander Heinisch <alexander.heinisch@siemens.com>
+
+The self built versions of swupdate (used by default in distros < trixie)
+do not enforce signature verification.
+
+```
+$ sudo swupdate -n -v -i demo.swu
+[DEBUG] : SWUPDATE running :  [read_settings_file] : Reading config file /etc/swupdate.cfg
+[DEBUG] : SWUPDATE running :  [read_module_settings] : Reading config settings for module globals
+[TRACE] : SWUPDATE running :  [swupdate_dgst_init] : public key / cert /usr/share/swupdate-signing/swupdate-sign.crt ignored, you need to set SIGALG
+```
+
+This patch series enables signature verification by default for swupdate.
+The series is split into two patches:
+1) Build swupdate with signature check enabled.
+   This simply fixes the provided demo build configuration in the kas file
+   (+ ./kas-container menu).
+
+2) Enforce signing and verification for swupdate by default.
+    This patch modifies the swupdate configuration files to enforce signature
+    verification by default, which may break downstreams relying on unsigned
+    swupdate images. However, the diverged default config for signing and
+    verification of swu files is probably not desired anyways.
 
 
---nmM1fAe4+yZueiuQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Alexander Heinisch (2):
+  swupdate: Build swupdate with signature check enabled.
+  swupdate: Enforce signing and verification for swupdate by default.
 
-Hi!
+ classes-recipe/swupdate.bbclass    | 2 +-
+ kas/opt/swupdate.yml               | 1 +
+ recipes-core/images/swupdate.inc   | 2 +-
+ recipes-core/swupdate/swupdate.inc | 1 +
+ 4 files changed, 4 insertions(+), 2 deletions(-)
 
-> This series adds XSPI support for the Renesas RZ/V2N SoC and enables the
-> MT25QU512ABB8E12 flash device used on the RZ/V2N EVK board.
->=20
-> Patches were cherry-picked from mainline kernel.
+--
+2.47.3
 
-This looks okay to me.
-
-Reviewed-by: Pavel Machek <pavel@nabladev.com>
-
-I can apply the series if it passes testing and there are no other
-comments.
-
-Best regards,
-                                                                Pavel
---=20
-In cooperation with Nabla.
-
---nmM1fAe4+yZueiuQ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaW5VNgAKCRAw5/Bqldv6
-8v0TAJ40rDyyW9KahZ7KRz3JrRdEB2KHXgCffYdi7gVQIU5BMi5W8Q8jzfJQ2CA=
-=N8OX
------END PGP SIGNATURE-----
-
---nmM1fAe4+yZueiuQ--
 
