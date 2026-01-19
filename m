@@ -1,88 +1,64 @@
-Return-Path: <srinuvasan.a@siemens.com>
+Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E147CA5FEF
-	for <webhook@archiver.kernel.org>; Mon, 19 Jan 2026 06:18:48 +0000 (UTC)
-Received: from mta-65-228.siemens.flowmailer.net (mta-65-228.siemens.flowmailer.net [185.136.65.228])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.30367.1768803518176914784
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF8F9CCF2FD
+	for <webhook@archiver.kernel.org>; Mon, 19 Jan 2026 12:51:10 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.34111.1768827068704176654
  for <cip-dev@lists.cip-project.org>;
- Sun, 18 Jan 2026 22:18:38 -0800
+ Mon, 19 Jan 2026 04:51:09 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=srinuvasan.a@siemens.com header.s=fm1 header.b=Fb1yDyfZ;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.228, mailfrom: fm-1324425-20260119061836445083b2610002079c-kqeaxe@rts-flowmailer.siemens.com)
-Received: by mta-65-228.siemens.flowmailer.net with ESMTPSA id 20260119061836445083b2610002079c
-        for <cip-dev@lists.cip-project.org>;
-        Mon, 19 Jan 2026 07:18:36 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=srinuvasan.a@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=sTg9DXp/bnp9+cZGtTVGtiGzJqw4kRFsLyv1zG8/52M=;
- b=Fb1yDyfZu/N+Heg82V11+tvZFHS6thMz4EaLyQL69ekv5HTVsKXd1KznEUoSTp35har9Z+
- 28utrdu8HD6/h+t5t6DHwcsPDhFJvmxuEDuSbBD0/8n2VOiCdW8RYsOTuzOSRc+jM1n95Dpd
- 9IIa2GEHKoXh8uJUeq8wRiHPrQITwhwHvCl0uVxaduAfBzv52cqJn1xVCjuOCT0HqxzjONYe
- 8tEv+7CHfQ+sjRpGJq+6uM9L45DlgfNihJL8/b0Awpv2mfw9kJl2TRvcQyZJ/GQK79SsFtGN
- lidZFrVxkCr4IWL5+wIICywGw2CFakTHk4bt/jNkThD3RpvUvwyi71ew==;
-From: srinuvasan.a@siemens.com
-To: cip-dev@lists.cip-project.org
-Cc: jan.kiszka@siemens.com,
-	felix.moessbauer@siemens.com,
-	srinuvasan <srinuvasan.a@siemens.com>
-Subject: [isar-cip-core][PATCH 2/2] recipes-core/swupdate: generate reproducible source tarballs
-Date: Mon, 19 Jan 2026 11:48:51 +0530
-Message-Id: <20260119061851.120592-2-srinuvasan.a@siemens.com>
-In-Reply-To: <20260119061851.120592-1-srinuvasan.a@siemens.com>
-References: <20260119061851.120592-1-srinuvasan.a@siemens.com>
+ dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
+X-CSE-ConnectionGUID: xVvu/AVASVKmFL89Eb9QNg==
+X-CSE-MsgGUID: +7pFDVj8STq4SGv6md2F/g==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 19 Jan 2026 21:51:07 +0900
+Received: from vm01.adwin.renesas.com (unknown [10.226.92.25])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id DAB9A413151D;
+	Mon, 19 Jan 2026 21:51:05 +0900 (JST)
+From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+To: cip-dev@lists.cip-project.org,
+	pavel@nabladev.com,
+	nobuhiro.iwamatsu.x90@mail.toshiba
+Subject: [PATCH 6.1.y-cip 0/6] Add RZ/V2N USB2.0 support
+Date: Mon, 19 Jan 2026 12:50:58 +0000
+Message-ID: <20260119125104.32147-1-ovidiu.panait.rb@renesas.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-1324425:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 19 Jan 2026 06:18:48 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21644
+ <cip-dev@lists.cip-project.org>; Mon, 19 Jan 2026 12:51:10 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21645
 
-From: srinuvasan <srinuvasan.a@siemens.com>
+Hi,
 
-Apply additional options to the tar command used to generate
-reproducible source tarballs: (1) use numeric and null [GU]IDs,
--clamp-mtime for file modification times to never be later than
-SOURCE_DATE_EPOCH (preserving mtimes for files not modified by
-the recipe) and --sort=name for consistent ordering within the
-archive.
+This series adds USB2.0 support for the Renesas RZ/V2N SoC.
 
-Ref: https://github.com/ilbers/isar/commit/f19a4f955111a409b00da98285b9baca8112dd46
+Patches were cherry-picked from mainline kernel.
 
-Signed-off-by: srinuvasan <srinuvasan.a@siemens.com>
----
- recipes-core/swupdate/swupdate_2022.12+dsfg-4-cip.bb | 2 +-
- recipes-core/swupdate/swupdate_2023.12.bb            | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Best regards,
+Ovidiu
 
-diff --git a/recipes-core/swupdate/swupdate_2022.12+dsfg-4-cip.bb b/recipes-core/swupdate/swupdate_2022.12+dsfg-4-cip.bb
-index fcccc2c..3a73c89 100644
---- a/recipes-core/swupdate/swupdate_2022.12+dsfg-4-cip.bb
-+++ b/recipes-core/swupdate/swupdate_2022.12+dsfg-4-cip.bb
-@@ -37,5 +37,5 @@ CHANGELOG_V ?= "${PV}-${SRCREV}"
- do_prepare_build() {
-     deb_add_changelog
-     cd ${WORKDIR}
--    tar cJf ${PN}_${PV}.orig.tar.xz --exclude=.git --exclude=debian ${P}
-+    tar cJf ${PN}_${PV}.orig.tar.xz ${TAR_REPRO_OPTS} ${P}
- }
-diff --git a/recipes-core/swupdate/swupdate_2023.12.bb b/recipes-core/swupdate/swupdate_2023.12.bb
-index cc01a98..6822153 100644
---- a/recipes-core/swupdate/swupdate_2023.12.bb
-+++ b/recipes-core/swupdate/swupdate_2023.12.bb
-@@ -50,5 +50,5 @@ CHANGELOG_V ?= "${PV}+cip-${SRCREV}"
- do_prepare_build() {
-     deb_add_changelog
-     cd ${WORKDIR}
--    tar cJf ${PN}_${PV}+cip.orig.tar.xz --exclude=.git --exclude=debian ${P}
-+    tar cJf ${PN}_${PV}+cip.orig.tar.xz ${TAR_REPRO_OPTS} ${P}
- }
+Lad Prabhakar (6):
+  clk: renesas: r9a09g056: Add clock and reset entries for USB2.0
+  dt-bindings: reset: renesas,rzv2h-usb2phy: Document RZ/V2N SoC support
+  dt-bindings: usb: renesas,usbhs: Add RZ/V2N SoC support
+  dt-bindings: phy: renesas,usb2-phy: Document RZ/V2N SoC support
+  arm64: dts: renesas: r9a09g056: Add USB2.0 support
+  arm64: dts: renesas: r9a09g056n48-rzv2n-evk: Enable USB2.0 support
+
+ .../bindings/phy/renesas,usb2-phy.yaml        |  4 ++
+ .../reset/renesas,rzv2h-usb2phy-reset.yaml    |  7 +-
+ .../bindings/usb/renesas,usbhs.yaml           |  1 +
+ arch/arm64/boot/dts/renesas/r9a09g056.dtsi    | 66 +++++++++++++++++++
+ .../dts/renesas/r9a09g056n48-rzv2n-evk.dts    | 36 ++++++++++
+ drivers/clk/renesas/r9a09g056-cpg.c           | 10 +++
+ 6 files changed, 123 insertions(+), 1 deletion(-)
+
 -- 
-2.39.5
+2.51.0
 
 
