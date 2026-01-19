@@ -1,91 +1,80 @@
-Return-Path: <pavel@nabladev.com>
+Return-Path: <srinuvasan.a@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ACC8C98320
-	for <webhook@archiver.kernel.org>; Sat, 17 Jan 2026 10:00:29 +0000 (UTC)
-Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.5870.1768644020209671708
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9ACDD4A5EB
+	for <webhook@archiver.kernel.org>; Mon, 19 Jan 2026 06:18:38 +0000 (UTC)
+Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.30056.1768803515710407627
  for <cip-dev@lists.cip-project.org>;
- Sat, 17 Jan 2026 02:00:20 -0800
+ Sun, 18 Jan 2026 22:18:37 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=XvXPtNQi;
- spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D7CF310DB22;
-	Sat, 17 Jan 2026 11:00:14 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1768644017;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=DYM+LpU3OVHed2IxXDuwS14RtBZVsiOm/NyeIZN0PZ8=;
-	b=XvXPtNQiXzQvM6vsBg14wC08drZ3GE0U30j/ZIqYXN1IdsJ63RDG/ZlKquXawmwbus91Lp
-	RtZ2fPpLEUCqjSEpu4Bw5bpl8U4qNWJiRsopxgnhXTHEOJ4riPYmpVk5QvglcYq55YCRnc
-	DQ/QlYj9NIvohJEFKQMemTa/RNlo/PqRVvt99LG8E7653mG8TaTzaoB0d3HUku28EYdeyF
-	81BHMCfnm7OW+Y9icnmbIvrdcFVZuxamxg92s7q+OS+dwn9j8gp8d8XpU/d9gfxQUY/uoq
-	RFP094UvAERlVuAYB/ugroPoOuy19ytHgxUctg9rPTD67wBvM1cu9kGhRsRBoQ==
-Date: Sat, 17 Jan 2026 11:00:12 +0100
-From: Pavel Machek <pavel@nabladev.com>
-To: nobuhiro.iwamatsu.x90@mail.toshiba
-Cc: claudiu.beznea@tuxon.dev, pavel@nabladev.com,
-	cip-dev@lists.cip-project.org
-Subject: Re: [cip-dev] [PATCH 5.10.y-cip] pinctrl: renesas: rzg2l: Fix ISEL
- restore on resume
-Message-ID: <aWtdrHpVgkmnlSa8@duo.ucw.cz>
-References: <20260115103710.133165-1-claudiu.beznea.uj@bp.renesas.com>
- <TY7PR01MB1481852ED078D02DFA970560FCD8DA@TY7PR01MB14818.jpnprd01.prod.outlook.com>
+ dkim=pass header.i=srinuvasan.a@siemens.com header.s=fm1 header.b=QlWq1pR6;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-1324425-20260119061832c329fe44c80002073c-m0obh3@rts-flowmailer.siemens.com)
+Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 20260119061832c329fe44c80002073c
+        for <cip-dev@lists.cip-project.org>;
+        Mon, 19 Jan 2026 07:18:32 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=srinuvasan.a@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=OG/fV+p8p/a9OIycSnRbE8XlhnJftmZXaQAIacj15a0=;
+ b=QlWq1pR63sVmIiyI4N7LL2Nhkq3MhJbkCHIK5RHJRNonXduxbKPHJAKwrtccfNAJX3maWS
+ NVPlip3rl16ffWnHqwzdu6ckaeiiPdso2yWDWfVt/mnMcd1/GqmTaSoXJZAqfvvm5uwE1Wy3
+ lStsRqOvE9Ds2mqOy0M+zVN2DKT/gVS0TaQGUmaTstJR6M0hFii0gknQRWJXGNzBO4SyP/RL
+ ByrfpGDciWXjhgj5geGQZYFzc4HrnIVCV13qqFhK0fxw0NRFDyiZhtQD6/24enPlujSG3Pbt
+ PImN+KuEajFAQFRXx6pgSDtPGaEnW7CLRy5m/Nq8QGtWdkaXm2AFINng==;
+From: srinuvasan.a@siemens.com
+To: cip-dev@lists.cip-project.org
+Cc: jan.kiszka@siemens.com,
+	felix.moessbauer@siemens.com,
+	srinuvasan <srinuvasan.a@siemens.com>
+Subject: [isar-cip-core][PATCH 1/2] Update Isar revision
+Date: Mon, 19 Jan 2026 11:48:50 +0530
+Message-Id: <20260119061851.120592-1-srinuvasan.a@siemens.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="9gRF427GfI++mZvp"
-Content-Disposition: inline
-In-Reply-To: <TY7PR01MB1481852ED078D02DFA970560FCD8DA@TY7PR01MB14818.jpnprd01.prod.outlook.com>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1324425:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Sat, 17 Jan 2026 10:00:29 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21642
+ <cip-dev@lists.cip-project.org>; Mon, 19 Jan 2026 06:18:38 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21643
 
+From: srinuvasan <srinuvasan.a@siemens.com>
 
---9gRF427GfI++mZvp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This revision brings the few installer fixes, fixes the build of
+linux-libc-dev-*-cross packages, adds support for reproducible source
+tarball generation, and includes a few minor fixes.
 
-Hi!
+Signed-off-by: srinuvasan <srinuvasan.a@siemens.com>
+---
+ kas-cip.yml | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> > [1]
-> > https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/commi=
-t/dri
-> > vers/pinctrl/renesas/pinctrl-rzg2l.c?h=3Dlinux-6.1.y-cip&id=3D9c6a8dccc=
-2af82f7
-> > 4d6401d5c13f4039bbad02eb
-> > [2]
-> > https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit=
-/?h=3D
-> > linux-6.12.y&id=3Df8bb150f228f4c1500632a81e91e6ad99df5c90c
-> >=20
-> >  drivers/pinctrl/renesas/pinctrl-rzg2l.c | 63
-> > ++++++++++++++++---------
-> >  1 file changed, 40 insertions(+), 23 deletions(-)
-> >=20
->=20
-> Ah, I was just working to backport this patch. Thanks!
-> Reviewed-by: Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
+diff --git a/kas-cip.yml b/kas-cip.yml
+index aa9f3b4..a3e9b24 100644
+--- a/kas-cip.yml
++++ b/kas-cip.yml
+@@ -1,7 +1,7 @@
+ #
+ # CIP Core, generic profile
+ #
+-# Copyright (c) Siemens AG, 2019-2025
++# Copyright (c) Siemens AG, 2019-2026
+ #
+ # Authors:
+ #  Jan Kiszka <jan.kiszka@siemens.com>
+@@ -22,7 +22,7 @@ repos:
+ 
+   isar:
+     url: https://github.com/ilbers/isar.git
+-    commit: d364cfa643d1d61d768b5235b9783ca083a564ab
++    commit: 33ca03c711e34d38d303ca38c1259cb6c5fe55ef
+     layers:
+       meta:
+ 
+-- 
+2.39.5
 
-Looks good to me, and it passed testing, so I'm applying/pushing it.
-
-								Pavel
---=20
-In cooperation with Nabla.
-
---9gRF427GfI++mZvp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaWtdrAAKCRAw5/Bqldv6
-8r8sAKCfRxDIRKMpKir7/FMIOFECbTmQOQCfYTXL2N9/kpPBTDGRCdmTnWQNPc8=
-=v64l
------END PGP SIGNATURE-----
-
---9gRF427GfI++mZvp--
 
