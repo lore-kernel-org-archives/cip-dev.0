@@ -2,65 +2,64 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBF18E63C8D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB108E63C8C
 	for <webhook@archiver.kernel.org>; Mon, 26 Jan 2026 09:43:15 +0000 (UTC)
-Received: from mail-wm1-f67.google.com (mail-wm1-f67.google.com [209.85.128.67])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.16748.1769420589772811866
+Received: from mail-wm1-f68.google.com (mail-wm1-f68.google.com [209.85.128.68])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.16214.1769420588878023249
  for <cip-dev@lists.cip-project.org>;
- Mon, 26 Jan 2026 01:43:10 -0800
+ Mon, 26 Jan 2026 01:43:09 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=LqHHEZMw;
- spf=pass (domain: tuxon.dev, ip: 209.85.128.67, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wm1-f67.google.com with SMTP id 5b1f17b1804b1-47ee0291921so36048485e9.3
-        for <cip-dev@lists.cip-project.org>; Mon, 26 Jan 2026 01:43:09 -0800 (PST)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=OmN7qQDe;
+ spf=pass (domain: tuxon.dev, ip: 209.85.128.68, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wm1-f68.google.com with SMTP id 5b1f17b1804b1-4801bc328easo48759295e9.3
+        for <cip-dev@lists.cip-project.org>; Mon, 26 Jan 2026 01:43:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1769420588; x=1770025388; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1769420587; x=1770025387; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OUFMwJ5/m0HP1u7Km4T4BEo8xEqh/d1WXFBq0kzN6e8=;
-        b=LqHHEZMw0oX3Wgol/rrc0VZ6bGatcI/NPzH1TkXAr7eT1O+JRASgMY2OijJ5S+ITTR
-         oYOvh5rkeRULr1l6xRXIAe8+z+w9LDckuiuSvhqh0KNPWlEIz9AvigMt1UYeWhMx3WnN
-         eBfZsII4SAfz3DsqU5X62wlRr6KyCvm1uuZdQjLxY7Mag1eDVB0/9RLGo2GoTkTqRD1v
-         qdflX4ERbU+wsyXtkQbqDNhIjwP9Fd6OMNIrHPJDguwa6Ue7AJ6czPlWK9PULaJWYCmw
-         R7uYquSQEvMAkvXYQYQCZO2rG2XcAk6wVnV+9qMWXIlVP4YyC9OJiuhQBssrlfpHlDm+
-         HpQA==
+        bh=3LGUB+0JW3bVki1ldQs4pouCVdoEm3APZyrYE1eq4W8=;
+        b=OmN7qQDegokEIlZwUlpi0Q0JaDiYztHdCMC7WQKOtLEbufT6hLDNxXaaOgMjhgm6p1
+         Ghnl28mzyOP3+Z6tYarrOKiK0RRHJpUNK5CbUDG83onqCD/TKrkAjXwHS+oMrpjGvrEZ
+         3kcQXa3DVrDiVWcJGq7lhWVOxyEo/mrm6X2Hx7hV+QrbbUNVBu6apphq5NKOH3oDyWpH
+         6wdvbmKBWOkAS9GUL6yztfSAZVn3WMNEWL43hE/mkBP0sPvThCSZSiJQbjxoIifnSedH
+         UYPuRhr/Cm/cFQxERO55s0ieQmmaaEeIkdn81r1cS4LDR7j0TBQVsfVO1ZcGS0nT8eRZ
+         cDYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769420588; x=1770025388;
+        d=1e100.net; s=20230601; t=1769420587; x=1770025387;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=OUFMwJ5/m0HP1u7Km4T4BEo8xEqh/d1WXFBq0kzN6e8=;
-        b=ft24/sRy2pBsPYuhHcxI1pboGFDi1iTaNjOxzSrxW90Seu/9qo1cNXX0M7gqSUecUP
-         erj+YLLut4N0/N6ErAITHaSFGicDwU50QZQvevgtkXDMKNJblZZkiXM5nkc6EYG6s84P
-         MQdm0GGvBOJcXvYLToJOONLL4352L7aildHyzqvS+JXK4H+TgvMjySlR9M7xeSxw8BUm
-         SXMHvgRRJ0gLsFOmNsHOQC1o5+CM1ZUdk+FZYLIyxiQ0z27FkHQzOx38Qil6JFBAPPf2
-         Br004o4eX8RXUz0lPW14GGfZs5H9bBV5ruM3JTz8WG1eaJS0ufIJP1VifUPqu+lYELir
-         tAXg==
-X-Gm-Message-State: AOJu0Yy6jM1LhW9pib4lbvlwGY/zigMrU1AVwNIb0OhVv0RvNjkQDR2h
-	ek46qVBvQQzPdk6qRMCFlCJd4qoyh2W2Q0dE6yy6AZH8PPSgWsG8nK037UWgdPOyN21RNIWfDkz
-	jXguv85g=
-X-Gm-Gg: AZuq6aIoWVSMYJ4CZ0HjuDPT+/Ji/WTRL2CFF2L7t31TfdaEf1g4Z+JPiK3dciiXUis
-	UM7g+Dy2uyegTPKePf7AfDc4Lt5u77GEJLejCO3tUMaGjIgGr66LpOgn68XEhZ3E385pDbcW9I8
-	JrHf/wqWQKfkIz7UY84PwG7otuFY8ThUz8e4A/y/OX+pcJ32u7ABYi8MrUb9aESajY0OM+jOesO
-	jY/pJqH9f4ArxQs5gRlLQt8TkK+7qZ/vUvwvVdCMmmn8Aquiq9jde0zH6v4FpmmCpYEWqdPYFsc
-	cO3oQSQuMc3AR3phJlUIeVu6ViM7LgRZRubJcceil4rdup7OBqudhrdf0/ey8mDz+uiA5SCRA5E
-	/XERnFZNmOLhJdcQ5xlqsitmliXTsJ2BTck0/wJMsfgu1p9YQFQDZp7a2IxRiB8O01oa7QvlJRE
-	t6t/k86daZYwDa5Z8frpRId2HwlifawX0XhVDX9j0=
-X-Received: by 2002:a05:600c:45c5:b0:477:5897:a0c4 with SMTP id 5b1f17b1804b1-48063973966mr14390915e9.4.1769420588124;
-        Mon, 26 Jan 2026 01:43:08 -0800 (PST)
+        bh=3LGUB+0JW3bVki1ldQs4pouCVdoEm3APZyrYE1eq4W8=;
+        b=rJnEUrfl2lOtMTzddDqWUE75/fRlfs2qaxwxYfveyONnaxHb2BAVOS6LHhLlOGjAs/
+         9rc08PCgL8odPpkKNleeTy6kORKZ/UFFYhmd3+GexLC3eZXTfP62j/vxx5kZxlWn0yeE
+         HSeYaqpry2bWLGFJbC9r0eidI9jfs++BBsJHDTrB9Iuqis776IMzjyelmEuKk+69c4lB
+         GMu859AWuZ1kYCvvh69QmSuQ0nghF9vu0ypfYNjIRa6socvDRniVpItCgn5OLvxz6eyL
+         6j4x/ilKoqi6CrUh5DQNeZmao8FztQ/d1itV2wmmJmZweKL/QTzdqUwt2fx2ZNM5Pk95
+         sS6A==
+X-Gm-Message-State: AOJu0YzNGhSkehItbRySlur7BeryI7UH572Dj6fnYaesOX2Mt0MUGJai
+	h3jqK18BWtLY5IK1oFNYUVr+1ySSLeU6odyFmP1vw469uxvMRREt3uFA+GIquODO1mY=
+X-Gm-Gg: AZuq6aJRiQlM5Y6/QgIg8D+lt7Z46K28A+z2hhXOgcAaex5IxkrY/oJRBioebti2voq
+	tOsBmqRAbCcxWDhCl3wvFfksv6FDdQAKobhOyGdHeQGdFTjRylzjBngYIsn51XeRkW1vRvSdhOm
+	+xL82tkIMpqFJH2zqUq5LhIPFbYox/Hi0Zi7KKlGMrv4QvwSujqBF3YFVMK1O1xtPRPMVCv+Icl
+	NDe4V5uOI3bmYPCNV2NOD3QGjIt1yPD8ufRs5H3BMfgfe9xBgFp+vkb67NDbbemVhwatdTu8DtH
+	kE6zGRZxdB9qNaoXtp/pJknV93FDrkNaEM+if8KHAhnulxqC9htBhylk27Uy8mqpzxuZTc8PAX8
+	/gnO1Ae8g880rm/v09l0sOwGT4WwEVVUKmrqOe85IPjKyb6b9zspkpGnkPBbOjSu4q04a0U1IgR
+	75yeHV5tvn1ruJrD+aNOmGbG9KeoFA0pb/gZ2pQCw=
+X-Received: by 2002:a05:600c:35ce:b0:47d:3ead:7440 with SMTP id 5b1f17b1804b1-4805d06c428mr65792315e9.32.1769420586919;
+        Mon, 26 Jan 2026 01:43:06 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.31])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4804d61f1f8sm101010705e9.5.2026.01.26.01.43.07
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4804d61f1f8sm101010705e9.5.2026.01.26.01.43.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Jan 2026 01:43:07 -0800 (PST)
+        Mon, 26 Jan 2026 01:43:06 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
 Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 2/2] mmc: renesas_sdhi: Add suspend/resume hooks
-Date: Mon, 26 Jan 2026 11:43:04 +0200
-Message-ID: <20260126094304.2528903-3-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 1/2] mmc: renesas_sdhi: Deassert the reset signal on probe
+Date: Mon, 26 Jan 2026 11:43:03 +0200
+Message-ID: <20260126094304.2528903-2-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260126094304.2528903-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20260126094304.2528903-1-claudiu.beznea.uj@bp.renesas.com>
@@ -70,119 +69,60 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 26 Jan 2026 09:43:15 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21711
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21710
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit dcbce328d3a2d87770133834210cf328c083d480 upstream.
+commit 15213383a3d9195db582729ab3feb923605b6f63 upstream.
 
-Add suspend/resume hooks which assert/deassert the reset signals, along
-with forcing runtime suspend/resume. This allows using the driver in
-scenarios where the resume is done with the help of bootloader and the
-bootloader disables the SDHI clocks, resets, IRQs before passing execution
-to Linux.
+Deassert the reset signal of the SDHI controller during probe to avoid
+relying on the previous bootloaders. Without deasserting the reset signal,
+the SDHI controller will not function.
 
 Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-[claudiu.beznea: adjusted as follows:
-- in renesas_sdhi.h: kept the include section as it was in CIP v5.10, kept
-  the renesas_sdhi_probe() and renesas_sdhi_remove() prototype as it was on
-  v5.10 CIP
-- in renesas_sdhi_core.c: kept the renesas_sdhi_suspend() and
-  renesas_sdhi_remove() definitions
-- in renesas_sdhi_internal_dmac.c: kept the code from CIP v5.10
-- guard new PM function with CONFIG_PM]
+[claudiu.beznea: used reset_control_deassert() and added devm action to
+ restore its action, as reset control API from the original commit is not
+ present in v5.10 CIP]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/mmc/host/renesas_sdhi.h               |  4 ++
- drivers/mmc/host/renesas_sdhi_core.c          | 39 +++++++++++++++++++
- drivers/mmc/host/renesas_sdhi_internal_dmac.c |  3 +-
- 3 files changed, 44 insertions(+), 2 deletions(-)
+ drivers/mmc/host/renesas_sdhi_core.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_sdhi.h
-index 53eded81a53e..86c92b588d9c 100644
---- a/drivers/mmc/host/renesas_sdhi.h
-+++ b/drivers/mmc/host/renesas_sdhi.h
-@@ -80,4 +80,8 @@ struct renesas_sdhi {
- int renesas_sdhi_probe(struct platform_device *pdev,
- 		       const struct tmio_mmc_dma_ops *dma_ops);
- int renesas_sdhi_remove(struct platform_device *pdev);
-+#ifdef CONFIG_PM
-+int renesas_sdhi_suspend(struct device *dev);
-+int renesas_sdhi_resume(struct device *dev);
-+#endif
- #endif
 diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 7f80190713b5..0192862f5a68 100644
+index 06c1fdf51250..7f80190713b5 100644
 --- a/drivers/mmc/host/renesas_sdhi_core.c
 +++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -32,6 +32,7 @@
- #include <linux/pinctrl/pinctrl-state.h>
- #include <linux/platform_device.h>
- #include <linux/pm_domain.h>
-+#include <linux/pm_runtime.h>
- #include <linux/regulator/consumer.h>
- #include <linux/reset.h>
- #include <linux/sh_dma.h>
-@@ -1249,4 +1250,42 @@ int renesas_sdhi_remove(struct platform_device *pdev)
- }
- EXPORT_SYMBOL_GPL(renesas_sdhi_remove);
+@@ -975,6 +975,11 @@ static const struct soc_device_attribute sdhi_quirks_match[]  = {
+ 	{ /* Sentinel. */ },
+ };
  
-+#ifdef CONFIG_PM
-+int renesas_sdhi_suspend(struct device *dev)
++static void renesas_sdhi_reset_assert(void *data)
 +{
-+	struct tmio_mmc_host *host = dev_get_drvdata(dev);
-+	struct renesas_sdhi *priv = host_to_priv(host);
-+	int ret;
-+
-+	ret = pm_runtime_force_suspend(dev);
-+	if (ret)
-+		return ret;
-+
-+	ret = reset_control_assert(priv->rstc);
-+	if (ret)
-+		pm_runtime_force_resume(dev);
-+
-+	return ret;
++	reset_control_assert(data);
 +}
-+EXPORT_SYMBOL_GPL(renesas_sdhi_suspend);
 +
-+int renesas_sdhi_resume(struct device *dev)
-+{
-+	struct tmio_mmc_host *host = dev_get_drvdata(dev);
-+	struct renesas_sdhi *priv = host_to_priv(host);
-+	int ret;
-+
+ int renesas_sdhi_probe(struct platform_device *pdev,
+ 		       const struct tmio_mmc_dma_ops *dma_ops)
+ {
+@@ -1035,6 +1040,15 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+ 	if (IS_ERR(priv->rstc))
+ 		return PTR_ERR(priv->rstc);
+ 
 +	ret = reset_control_deassert(priv->rstc);
 +	if (ret)
 +		return ret;
 +
-+	ret = pm_runtime_force_resume(dev);
++	ret = devm_add_action_or_reset(&pdev->dev, renesas_sdhi_reset_assert,
++				       priv->rstc);
 +	if (ret)
-+		reset_control_assert(priv->rstc);
++		return ret;
 +
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(renesas_sdhi_resume);
-+#endif
-+
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index 17d693ba90b1..3720f6fb01ae 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -422,8 +422,7 @@ static int renesas_sdhi_internal_dmac_probe(struct platform_device *pdev)
- }
- 
- static const struct dev_pm_ops renesas_sdhi_internal_dmac_dev_pm_ops = {
--	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
--				pm_runtime_force_resume)
-+	SET_SYSTEM_SLEEP_PM_OPS(renesas_sdhi_suspend, renesas_sdhi_resume)
- 	SET_RUNTIME_PM_OPS(tmio_mmc_host_runtime_suspend,
- 			   tmio_mmc_host_runtime_resume,
- 			   NULL)
+ 	priv->pinctrl = devm_pinctrl_get(&pdev->dev);
+ 	if (!IS_ERR(priv->pinctrl)) {
+ 		priv->pins_default = pinctrl_lookup_state(priv->pinctrl,
 -- 
 2.43.0
 
