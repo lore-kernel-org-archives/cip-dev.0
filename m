@@ -2,494 +2,93 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 864D0D25B61
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87506D25B62
 	for <webhook@archiver.kernel.org>; Wed, 28 Jan 2026 13:25:32 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.msgproc01-g2.12765.1769606726333152485
  for <cip-dev@lists.cip-project.org>;
- Wed, 28 Jan 2026 05:25:31 -0800
+ Wed, 28 Jan 2026 05:25:26 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: 8JLqv/bOTGKliVflWf87Wg==
-X-CSE-MsgGUID: f+hUg1TCThG9CrimKAbPMg==
+X-CSE-ConnectionGUID: w9o576k0R52vrxDfJ6drag==
+X-CSE-MsgGUID: zJWQZHztT6u474gZfTuRSg==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 28 Jan 2026 22:25:30 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 28 Jan 2026 22:25:25 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.92.43])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 7B20141728C9;
-	Wed, 28 Jan 2026 22:25:29 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 2CDCE41728C9;
+	Wed, 28 Jan 2026 22:25:23 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.1.y-cip 03/11] soc: renesas: rz-sysc: Populate readable_reg/writeable_reg in regmap config
-Date: Wed, 28 Jan 2026 13:25:12 +0000
-Message-ID: <20260128132522.6902-4-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.1.y-cip 00/11] Add RZ/V2H TSU support
+Date: Wed, 28 Jan 2026 13:25:09 +0000
+Message-ID: <20260128132522.6902-1-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260128132522.6902-1-ovidiu.panait.rb@renesas.com>
-References: <20260128132522.6902-1-ovidiu.panait.rb@renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 28 Jan 2026 13:25:32 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21740
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21737
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Hi,
 
-commit c432180a7d95081353a96fd6d5bd75b0fc8a27c3 upstream.
+This series adds TSU support for the Renesas RZ/V2H SoC.
 
-Not all system controller registers are accessible from Linux. Accessing
-such registers generates synchronous external abort. Populate the
-readable_reg and writeable_reg members of the regmap config to inform the
-regmap core which registers can be accessed. The list will need to be
-updated whenever new system controller functionality is exported through
-regmap.
+All patches, except for patch 4/11, were cherry-picked from mainline kernel.
 
-Fixes: 2da2740fb9c8 ("soc: renesas: rz-sysc: Add syscon/regmap support")
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20251105070526.264445-3-claudiu.beznea.uj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
----
- drivers/soc/renesas/r9a08g045-sysc.c |  69 ++++++++++++++++++
- drivers/soc/renesas/r9a09g047-sys.c  |  79 +++++++++++++++++++++
- drivers/soc/renesas/r9a09g056-sys.c  |  68 ++++++++++++++++++
- drivers/soc/renesas/r9a09g057-sys.c  | 101 +++++++++++++++++++++++++++
- drivers/soc/renesas/rz-sysc.c        |   2 +
- drivers/soc/renesas/rz-sysc.h        |   4 ++
- 6 files changed, 323 insertions(+)
+Patch 4/11 is needed to fix asynchronous aborts during unbind. See the MSTOP
+series [1] for more details.
 
-diff --git a/drivers/soc/renesas/r9a08g045-sysc.c b/drivers/soc/renesas/r9a08g045-sysc.c
-index 0504d4e68761..03d653d5cde5 100644
---- a/drivers/soc/renesas/r9a08g045-sysc.c
-+++ b/drivers/soc/renesas/r9a08g045-sysc.c
-@@ -6,10 +6,29 @@
-  */
- 
- #include <linux/bits.h>
-+#include <linux/device.h>
- #include <linux/init.h>
- 
- #include "rz-sysc.h"
- 
-+#define SYS_XSPI_MAP_STAADD_CS0		0x348
-+#define SYS_XSPI_MAP_ENDADD_CS0		0x34c
-+#define SYS_XSPI_MAP_STAADD_CS1		0x350
-+#define SYS_XSPI_MAP_ENDADD_CS1		0x354
-+#define SYS_GETH0_CFG			0x380
-+#define SYS_GETH1_CFG			0x390
-+#define SYS_PCIE_CFG			0x3a0
-+#define SYS_PCIE_MON			0x3a4
-+#define SYS_PCIE_ERR_MON		0x3ac
-+#define SYS_PCIE_PHY			0x3b4
-+#define SYS_I2C0_CFG			0x400
-+#define SYS_I2C1_CFG			0x410
-+#define SYS_I2C2_CFG			0x420
-+#define SYS_I2C3_CFG			0x430
-+#define SYS_I3C_CFG			0x440
-+#define SYS_USB_PWRRDY			0xd70
-+#define SYS_PCIE_RST_RSM_B		0xd74
-+
- static const struct rz_sysc_soc_id_init_data rzg3s_sysc_soc_id_init_data __initconst = {
- 	.family = "RZ/G3S",
- 	.id = 0x85e0447,
-@@ -18,7 +37,57 @@ static const struct rz_sysc_soc_id_init_data rzg3s_sysc_soc_id_init_data __initc
- 	.specific_id_mask = GENMASK(27, 0),
- };
- 
-+static bool rzg3s_regmap_readable_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case SYS_XSPI_MAP_STAADD_CS0:
-+	case SYS_XSPI_MAP_ENDADD_CS0:
-+	case SYS_XSPI_MAP_STAADD_CS1:
-+	case SYS_XSPI_MAP_ENDADD_CS1:
-+	case SYS_GETH0_CFG:
-+	case SYS_GETH1_CFG:
-+	case SYS_PCIE_CFG:
-+	case SYS_PCIE_MON:
-+	case SYS_PCIE_ERR_MON:
-+	case SYS_PCIE_PHY:
-+	case SYS_I2C0_CFG:
-+	case SYS_I2C1_CFG:
-+	case SYS_I2C2_CFG:
-+	case SYS_I2C3_CFG:
-+	case SYS_I3C_CFG:
-+	case SYS_USB_PWRRDY:
-+	case SYS_PCIE_RST_RSM_B:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
-+static bool rzg3s_regmap_writeable_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case SYS_XSPI_MAP_STAADD_CS0:
-+	case SYS_XSPI_MAP_ENDADD_CS0:
-+	case SYS_XSPI_MAP_STAADD_CS1:
-+	case SYS_XSPI_MAP_ENDADD_CS1:
-+	case SYS_PCIE_CFG:
-+	case SYS_PCIE_PHY:
-+	case SYS_I2C0_CFG:
-+	case SYS_I2C1_CFG:
-+	case SYS_I2C2_CFG:
-+	case SYS_I2C3_CFG:
-+	case SYS_I3C_CFG:
-+	case SYS_USB_PWRRDY:
-+	case SYS_PCIE_RST_RSM_B:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
- const struct rz_sysc_init_data rzg3s_sysc_init_data __initconst = {
- 	.soc_id_init_data = &rzg3s_sysc_soc_id_init_data,
-+	.readable_reg = rzg3s_regmap_readable_reg,
-+	.writeable_reg = rzg3s_regmap_writeable_reg,
- 	.max_register = 0xe20,
- };
-diff --git a/drivers/soc/renesas/r9a09g047-sys.c b/drivers/soc/renesas/r9a09g047-sys.c
-index 2e8426c03050..e413b0eff9bf 100644
---- a/drivers/soc/renesas/r9a09g047-sys.c
-+++ b/drivers/soc/renesas/r9a09g047-sys.c
-@@ -29,6 +29,27 @@
- #define SYS_LSI_PRR_CA55_DIS		BIT(8)
- #define SYS_LSI_PRR_NPU_DIS		BIT(1)
- 
-+#define SYS_LSI_OTPTSU1TRMVAL0		0x330
-+#define SYS_LSI_OTPTSU1TRMVAL1		0x334
-+#define SYS_SPI_STAADDCS0		0x900
-+#define SYS_SPI_ENDADDCS0		0x904
-+#define SYS_SPI_STAADDCS1		0x908
-+#define SYS_SPI_ENDADDCS1		0x90c
-+#define SYS_VSP_CLK			0xe00
-+#define SYS_GBETH0_CFG			0xf00
-+#define SYS_GBETH1_CFG			0xf04
-+#define SYS_PCIE_INTX_CH0		0x1000
-+#define SYS_PCIE_MSI1_CH0		0x1004
-+#define SYS_PCIE_MSI2_CH0		0x1008
-+#define SYS_PCIE_MSI3_CH0		0x100c
-+#define SYS_PCIE_MSI4_CH0		0x1010
-+#define SYS_PCIE_MSI5_CH0		0x1014
-+#define SYS_PCIE_PME_CH0		0x1018
-+#define SYS_PCIE_ACK_CH0		0x101c
-+#define SYS_PCIE_MISC_CH0		0x1020
-+#define SYS_PCIE_MODE_CH0		0x1024
-+#define SYS_ADC_CFG			0x1600
-+
- static void rzg3e_sys_print_id(struct device *dev,
- 				void __iomem *sysc_base,
- 				struct soc_device_attribute *soc_dev_attr)
-@@ -62,7 +83,65 @@ static const struct rz_sysc_soc_id_init_data rzg3e_sys_soc_id_init_data __initco
- 	.print_id = rzg3e_sys_print_id,
- };
- 
-+static bool rzg3e_regmap_readable_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case SYS_LSI_OTPTSU1TRMVAL0:
-+	case SYS_LSI_OTPTSU1TRMVAL1:
-+	case SYS_SPI_STAADDCS0:
-+	case SYS_SPI_ENDADDCS0:
-+	case SYS_SPI_STAADDCS1:
-+	case SYS_SPI_ENDADDCS1:
-+	case SYS_VSP_CLK:
-+	case SYS_GBETH0_CFG:
-+	case SYS_GBETH1_CFG:
-+	case SYS_PCIE_INTX_CH0:
-+	case SYS_PCIE_MSI1_CH0:
-+	case SYS_PCIE_MSI2_CH0:
-+	case SYS_PCIE_MSI3_CH0:
-+	case SYS_PCIE_MSI4_CH0:
-+	case SYS_PCIE_MSI5_CH0:
-+	case SYS_PCIE_PME_CH0:
-+	case SYS_PCIE_ACK_CH0:
-+	case SYS_PCIE_MISC_CH0:
-+	case SYS_PCIE_MODE_CH0:
-+	case SYS_ADC_CFG:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
-+static bool rzg3e_regmap_writeable_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case SYS_SPI_STAADDCS0:
-+	case SYS_SPI_ENDADDCS0:
-+	case SYS_SPI_STAADDCS1:
-+	case SYS_SPI_ENDADDCS1:
-+	case SYS_VSP_CLK:
-+	case SYS_GBETH0_CFG:
-+	case SYS_GBETH1_CFG:
-+	case SYS_PCIE_INTX_CH0:
-+	case SYS_PCIE_MSI1_CH0:
-+	case SYS_PCIE_MSI2_CH0:
-+	case SYS_PCIE_MSI3_CH0:
-+	case SYS_PCIE_MSI4_CH0:
-+	case SYS_PCIE_MSI5_CH0:
-+	case SYS_PCIE_PME_CH0:
-+	case SYS_PCIE_ACK_CH0:
-+	case SYS_PCIE_MISC_CH0:
-+	case SYS_PCIE_MODE_CH0:
-+	case SYS_ADC_CFG:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
- const struct rz_sysc_init_data rzg3e_sys_init_data = {
- 	.soc_id_init_data = &rzg3e_sys_soc_id_init_data,
-+	.readable_reg = rzg3e_regmap_readable_reg,
-+	.writeable_reg = rzg3e_regmap_writeable_reg,
- 	.max_register = 0x170c,
- };
-diff --git a/drivers/soc/renesas/r9a09g056-sys.c b/drivers/soc/renesas/r9a09g056-sys.c
-index 16b4e433c337..42f5eff291fd 100644
---- a/drivers/soc/renesas/r9a09g056-sys.c
-+++ b/drivers/soc/renesas/r9a09g056-sys.c
-@@ -34,6 +34,24 @@
- #define SYS_RZV2N_FEATURE_C55		BIT(1)
- #define SYS_RZV2N_FEATURE_SEC		BIT(2)
- 
-+#define SYS_LSI_OTPTSU0TRMVAL0		0x320
-+#define SYS_LSI_OTPTSU0TRMVAL1		0x324
-+#define SYS_LSI_OTPTSU1TRMVAL0		0x330
-+#define SYS_LSI_OTPTSU1TRMVAL1		0x334
-+#define SYS_GBETH0_CFG			0xf00
-+#define SYS_GBETH1_CFG			0xf04
-+#define SYS_PCIE_INTX_CH0		0x1000
-+#define SYS_PCIE_MSI1_CH0		0x1004
-+#define SYS_PCIE_MSI2_CH0		0x1008
-+#define SYS_PCIE_MSI3_CH0		0x100c
-+#define SYS_PCIE_MSI4_CH0		0x1010
-+#define SYS_PCIE_MSI5_CH0		0x1014
-+#define SYS_PCIE_PME_CH0		0x1018
-+#define SYS_PCIE_ACK_CH0		0x101c
-+#define SYS_PCIE_MISC_CH0		0x1020
-+#define SYS_PCIE_MODE_CH0		0x1024
-+#define SYS_ADC_CFG			0x1600
-+
- static void rzv2n_sys_print_id(struct device *dev,
- 			       void __iomem *sysc_base,
- 			       struct soc_device_attribute *soc_dev_attr)
-@@ -70,7 +88,57 @@ static const struct rz_sysc_soc_id_init_data rzv2n_sys_soc_id_init_data __initco
- 	.print_id = rzv2n_sys_print_id,
- };
- 
-+static bool rzv2n_regmap_readable_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case SYS_LSI_OTPTSU0TRMVAL0:
-+	case SYS_LSI_OTPTSU0TRMVAL1:
-+	case SYS_LSI_OTPTSU1TRMVAL0:
-+	case SYS_LSI_OTPTSU1TRMVAL1:
-+	case SYS_GBETH0_CFG:
-+	case SYS_GBETH1_CFG:
-+	case SYS_PCIE_INTX_CH0:
-+	case SYS_PCIE_MSI1_CH0:
-+	case SYS_PCIE_MSI2_CH0:
-+	case SYS_PCIE_MSI3_CH0:
-+	case SYS_PCIE_MSI4_CH0:
-+	case SYS_PCIE_MSI5_CH0:
-+	case SYS_PCIE_PME_CH0:
-+	case SYS_PCIE_ACK_CH0:
-+	case SYS_PCIE_MISC_CH0:
-+	case SYS_PCIE_MODE_CH0:
-+	case SYS_ADC_CFG:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
-+static bool rzv2n_regmap_writeable_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case SYS_GBETH0_CFG:
-+	case SYS_GBETH1_CFG:
-+	case SYS_PCIE_INTX_CH0:
-+	case SYS_PCIE_MSI1_CH0:
-+	case SYS_PCIE_MSI2_CH0:
-+	case SYS_PCIE_MSI3_CH0:
-+	case SYS_PCIE_MSI4_CH0:
-+	case SYS_PCIE_MSI5_CH0:
-+	case SYS_PCIE_PME_CH0:
-+	case SYS_PCIE_ACK_CH0:
-+	case SYS_PCIE_MISC_CH0:
-+	case SYS_PCIE_MODE_CH0:
-+	case SYS_ADC_CFG:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
- const struct rz_sysc_init_data rzv2n_sys_init_data = {
- 	.soc_id_init_data = &rzv2n_sys_soc_id_init_data,
-+	.readable_reg = rzv2n_regmap_readable_reg,
-+	.writeable_reg = rzv2n_regmap_writeable_reg,
- 	.max_register = 0x170c,
- };
-diff --git a/drivers/soc/renesas/r9a09g057-sys.c b/drivers/soc/renesas/r9a09g057-sys.c
-index e3390e7c7fe5..827c718ac7c5 100644
---- a/drivers/soc/renesas/r9a09g057-sys.c
-+++ b/drivers/soc/renesas/r9a09g057-sys.c
-@@ -29,6 +29,35 @@
- #define SYS_LSI_PRR_GPU_DIS		BIT(0)
- #define SYS_LSI_PRR_ISP_DIS		BIT(4)
- 
-+#define SYS_LSI_OTPTSU0TRMVAL0		0x320
-+#define SYS_LSI_OTPTSU0TRMVAL1		0x324
-+#define SYS_LSI_OTPTSU1TRMVAL0		0x330
-+#define SYS_LSI_OTPTSU1TRMVAL1		0x334
-+#define SYS_GBETH0_CFG			0xf00
-+#define SYS_GBETH1_CFG			0xf04
-+#define SYS_PCIE_INTX_CH0		0x1000
-+#define SYS_PCIE_MSI1_CH0		0x1004
-+#define SYS_PCIE_MSI2_CH0		0x1008
-+#define SYS_PCIE_MSI3_CH0		0x100c
-+#define SYS_PCIE_MSI4_CH0		0x1010
-+#define SYS_PCIE_MSI5_CH0		0x1014
-+#define SYS_PCIE_PME_CH0		0x1018
-+#define SYS_PCIE_ACK_CH0		0x101c
-+#define SYS_PCIE_MISC_CH0		0x1020
-+#define SYS_PCIE_MODE_CH0		0x1024
-+#define SYS_PCIE_INTX_CH1		0x1030
-+#define SYS_PCIE_MSI1_CH1		0x1034
-+#define SYS_PCIE_MSI2_CH1		0x1038
-+#define SYS_PCIE_MSI3_CH1		0x103c
-+#define SYS_PCIE_MSI4_CH1		0x1040
-+#define SYS_PCIE_MSI5_CH1		0x1044
-+#define SYS_PCIE_PME_CH1		0x1048
-+#define SYS_PCIE_ACK_CH1		0x104c
-+#define SYS_PCIE_MISC_CH1		0x1050
-+#define SYS_PCIE_MODE_CH1		0x1054
-+#define SYS_PCIE_MODE			0x1060
-+#define SYS_ADC_CFG			0x1600
-+
- static void rzv2h_sys_print_id(struct device *dev,
- 				void __iomem *sysc_base,
- 				struct soc_device_attribute *soc_dev_attr)
-@@ -62,7 +91,79 @@ static const struct rz_sysc_soc_id_init_data rzv2h_sys_soc_id_init_data __initco
- 	.print_id = rzv2h_sys_print_id,
- };
- 
-+static bool rzv2h_regmap_readable_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case SYS_LSI_OTPTSU0TRMVAL0:
-+	case SYS_LSI_OTPTSU0TRMVAL1:
-+	case SYS_LSI_OTPTSU1TRMVAL0:
-+	case SYS_LSI_OTPTSU1TRMVAL1:
-+	case SYS_GBETH0_CFG:
-+	case SYS_GBETH1_CFG:
-+	case SYS_PCIE_INTX_CH0:
-+	case SYS_PCIE_MSI1_CH0:
-+	case SYS_PCIE_MSI2_CH0:
-+	case SYS_PCIE_MSI3_CH0:
-+	case SYS_PCIE_MSI4_CH0:
-+	case SYS_PCIE_MSI5_CH0:
-+	case SYS_PCIE_PME_CH0:
-+	case SYS_PCIE_ACK_CH0:
-+	case SYS_PCIE_MISC_CH0:
-+	case SYS_PCIE_MODE_CH0:
-+	case SYS_PCIE_INTX_CH1:
-+	case SYS_PCIE_MSI1_CH1:
-+	case SYS_PCIE_MSI2_CH1:
-+	case SYS_PCIE_MSI3_CH1:
-+	case SYS_PCIE_MSI4_CH1:
-+	case SYS_PCIE_MSI5_CH1:
-+	case SYS_PCIE_PME_CH1:
-+	case SYS_PCIE_ACK_CH1:
-+	case SYS_PCIE_MISC_CH1:
-+	case SYS_PCIE_MODE_CH1:
-+	case SYS_PCIE_MODE:
-+	case SYS_ADC_CFG:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
-+static bool rzv2h_regmap_writeable_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case SYS_GBETH0_CFG:
-+	case SYS_GBETH1_CFG:
-+	case SYS_PCIE_INTX_CH0:
-+	case SYS_PCIE_MSI1_CH0:
-+	case SYS_PCIE_MSI2_CH0:
-+	case SYS_PCIE_MSI3_CH0:
-+	case SYS_PCIE_MSI4_CH0:
-+	case SYS_PCIE_MSI5_CH0:
-+	case SYS_PCIE_PME_CH0:
-+	case SYS_PCIE_ACK_CH0:
-+	case SYS_PCIE_MISC_CH0:
-+	case SYS_PCIE_MODE_CH0:
-+	case SYS_PCIE_INTX_CH1:
-+	case SYS_PCIE_MSI1_CH1:
-+	case SYS_PCIE_MSI2_CH1:
-+	case SYS_PCIE_MSI3_CH1:
-+	case SYS_PCIE_MSI4_CH1:
-+	case SYS_PCIE_MSI5_CH1:
-+	case SYS_PCIE_PME_CH1:
-+	case SYS_PCIE_ACK_CH1:
-+	case SYS_PCIE_MISC_CH1:
-+	case SYS_PCIE_MODE_CH1:
-+	case SYS_PCIE_MODE:
-+	case SYS_ADC_CFG:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
- const struct rz_sysc_init_data rzv2h_sys_init_data = {
- 	.soc_id_init_data = &rzv2h_sys_soc_id_init_data,
-+	.readable_reg = rzv2h_regmap_readable_reg,
-+	.writeable_reg = rzv2h_regmap_writeable_reg,
- 	.max_register = 0x170c,
- };
-diff --git a/drivers/soc/renesas/rz-sysc.c b/drivers/soc/renesas/rz-sysc.c
-index 9f79e299e6f4..19c1e666279b 100644
---- a/drivers/soc/renesas/rz-sysc.c
-+++ b/drivers/soc/renesas/rz-sysc.c
-@@ -140,6 +140,8 @@ static int rz_sysc_probe(struct platform_device *pdev)
- 	regmap_cfg->val_bits = 32;
- 	regmap_cfg->fast_io = true;
- 	regmap_cfg->max_register = data->max_register;
-+	regmap_cfg->readable_reg = data->readable_reg;
-+	regmap_cfg->writeable_reg = data->writeable_reg;
- 
- 	regmap = devm_regmap_init_mmio(dev, sysc->base, regmap_cfg);
- 	if (IS_ERR(regmap))
-diff --git a/drivers/soc/renesas/rz-sysc.h b/drivers/soc/renesas/rz-sysc.h
-index 8eec355d5d56..88929bf21cb1 100644
---- a/drivers/soc/renesas/rz-sysc.h
-+++ b/drivers/soc/renesas/rz-sysc.h
-@@ -34,10 +34,14 @@ struct rz_sysc_soc_id_init_data {
- /**
-  * struct rz_sysc_init_data - RZ SYSC initialization data
-  * @soc_id_init_data: RZ SYSC SoC ID initialization data
-+ * @writeable_reg: Regmap writeable register check function
-+ * @readable_reg: Regmap readable register check function
-  * @max_register: Maximum SYSC register offset to be used by the regmap config
-  */
- struct rz_sysc_init_data {
- 	const struct rz_sysc_soc_id_init_data *soc_id_init_data;
-+	bool (*writeable_reg)(struct device *dev, unsigned int reg);
-+	bool (*readable_reg)(struct device *dev, unsigned int reg);
- 	u32 max_register;
- };
- 
+[1] https://lore.kernel.org/cip-dev/20260115083451.1064048-1-claudiu.beznea.uj@bp.renesas.com/
+
+Best regards,
+Ovidiu
+
+Claudiu Beznea (2):
+  soc: renesas: r9a09g056-sys: Populate max_register
+  soc: renesas: rz-sysc: Populate readable_reg/writeable_reg in regmap
+    config
+
+John Madieu (5):
+  soc: renesas: rz-sysc: Add syscon/regmap support
+  dt-bindings: thermal: r9a09g047-tsu: Document the TSU unit
+  thermal/drivers/renesas/rzg3e: Add thermal driver for the Renesas
+    RZ/G3E SoC
+  thermal/drivers/renesas/rzg3e: Fix add thermal driver for the Renesas
+    RZ/G3E SoC
+  arm64: defconfig: Enable the Renesas RZ/G3E thermal driver
+
+Kuninori Morimoto (1):
+  arm64: dts: renesas: r9a09g057: Move interrupt-parent to root node
+
+Ovidiu Panait (3):
+  PM: domains: Add RZ/V2H compatible to PM domain detach list
+  clk: renesas: r9a09g057: Add clock and reset entries for TSU
+  arm64: dts: renesas: r9a09g057: Add TSU nodes
+
+ .../thermal/renesas,r9a09g047-tsu.yaml        |  87 +++
+ MAINTAINERS                                   |   7 +
+ arch/arm64/boot/dts/renesas/r9a09g057.dtsi    |  89 ++-
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/base/power/common.c                   |   1 +
+ drivers/clk/renesas/r9a09g057-cpg.c           |   6 +
+ drivers/soc/renesas/Kconfig                   |   1 +
+ drivers/soc/renesas/r9a08g045-sysc.c          |  70 +++
+ drivers/soc/renesas/r9a09g047-sys.c           |  80 +++
+ drivers/soc/renesas/r9a09g056-sys.c           |  69 +++
+ drivers/soc/renesas/r9a09g057-sys.c           | 102 ++++
+ drivers/soc/renesas/rz-sysc.c                 |  32 +-
+ drivers/soc/renesas/rz-sysc.h                 |   6 +
+ drivers/thermal/Kconfig                       |   7 +
+ drivers/thermal/Makefile                      |   1 +
+ drivers/thermal/rzg3e_thermal.c               | 572 ++++++++++++++++++
+ 16 files changed, 1123 insertions(+), 8 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/thermal/renesas,r9a09g047-tsu.yaml
+ create mode 100644 drivers/thermal/rzg3e_thermal.c
+
 -- 
 2.51.0
 
