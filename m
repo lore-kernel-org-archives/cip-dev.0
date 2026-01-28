@@ -2,96 +2,151 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB3A8D25B65
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D54F1D25B6C
 	for <webhook@archiver.kernel.org>; Wed, 28 Jan 2026 13:27:02 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.12806.1769606813945727931
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.12809.1769606815696538903
  for <cip-dev@lists.cip-project.org>;
- Wed, 28 Jan 2026 05:26:54 -0800
+ Wed, 28 Jan 2026 05:27:02 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: yr+e4X3eSLe9Ganxmruq6A==
-X-CSE-MsgGUID: xKohGAaiRS2vdPYxb4pKqQ==
+ dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
+X-CSE-ConnectionGUID: JSXxzGuDRxqjGDu/bkbvFQ==
+X-CSE-MsgGUID: /c1JMqJKSke2bniaPqrYgw==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 28 Jan 2026 22:26:53 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 28 Jan 2026 22:27:02 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.92.43])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 3451540325B4;
-	Wed, 28 Jan 2026 22:26:51 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 07A0C40325B4;
+	Wed, 28 Jan 2026 22:27:00 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.12.y-cip 00/12] Add RZ/V2H TSU support
-Date: Wed, 28 Jan 2026 13:26:37 +0000
-Message-ID: <20260128132650.6955-1-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.12.y-cip 05/12] dt-bindings: thermal: r9a09g047-tsu: Document the TSU unit
+Date: Wed, 28 Jan 2026 13:26:42 +0000
+Message-ID: <20260128132650.6955-6-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260128132650.6955-1-ovidiu.panait.rb@renesas.com>
+References: <20260128132650.6955-1-ovidiu.panait.rb@renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 28 Jan 2026 13:27:02 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21749
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21754
 
-Hi,
+From: John Madieu <john.madieu.xa@bp.renesas.com>
 
-This series adds TSU support for the Renesas RZ/V2H SoC.
+commit caf41eb4575ddac61dd0f6d4a6108bb7ab9fc408 upstream.
 
-All patches, except for patch 4/12, were cherry-picked from mainline kernel.
+The Renesas RZ/G3E SoC includes a Thermal Sensor Unit (TSU) block designed
+to measure the junction temperature. The device provides real-time
+temperature measurements for thermal management, utilizing a single
+dedicated channel (channel 1) for temperature sensing.
 
-Patch 4/12 is needed to fix asynchronous aborts during unbind. See the MSTOP
-series [1] for more details.
-
-[1] https://lore.kernel.org/cip-dev/20260115083604.1064260-1-claudiu.beznea.uj@bp.renesas.com/
-
-Best regards,
-Ovidiu
-
-Claudiu Beznea (2):
-  soc: renesas: r9a09g056-sys: Populate max_register
-  soc: renesas: rz-sysc: Populate readable_reg/writeable_reg in regmap
-    config
-
-Geert Uytterhoeven (1):
-  thermal: renesas: Fix RZ/G3E fall-out
-
-John Madieu (5):
-  soc: renesas: rz-sysc: Add syscon/regmap support
-  dt-bindings: thermal: r9a09g047-tsu: Document the TSU unit
-  thermal/drivers/renesas/rzg3e: Add thermal driver for the Renesas
-    RZ/G3E SoC
-  thermal/drivers/renesas/rzg3e: Fix add thermal driver for the Renesas
-    RZ/G3E SoC
-  arm64: defconfig: Enable the Renesas RZ/G3E thermal driver
-
-Kuninori Morimoto (1):
-  arm64: dts: renesas: r9a09g057: Move interrupt-parent to root node
-
-Ovidiu Panait (3):
-  PM: domains: Add RZ/V2H compatible to PM domain detach list
-  clk: renesas: r9a09g057: Add clock and reset entries for TSU
-  arm64: dts: renesas: r9a09g057: Add TSU nodes
-
- .../thermal/renesas,r9a09g047-tsu.yaml        |  87 +++
- MAINTAINERS                                   |   7 +
- arch/arm64/boot/dts/renesas/r9a09g057.dtsi    |  89 ++-
- arch/arm64/configs/defconfig                  |   1 +
- drivers/base/power/common.c                   |   1 +
- drivers/clk/renesas/r9a09g057-cpg.c           |   6 +
- drivers/soc/renesas/Kconfig                   |   1 +
- drivers/soc/renesas/r9a08g045-sysc.c          |  70 +++
- drivers/soc/renesas/r9a09g047-sys.c           |  80 +++
- drivers/soc/renesas/r9a09g056-sys.c           |  69 +++
- drivers/soc/renesas/r9a09g057-sys.c           | 102 ++++
- drivers/soc/renesas/rz-sysc.c                 |  32 +-
- drivers/soc/renesas/rz-sysc.h                 |   6 +
- drivers/thermal/renesas/Kconfig               |   7 +
- drivers/thermal/renesas/Makefile              |   1 +
- drivers/thermal/renesas/rzg3e_thermal.c       | 547 ++++++++++++++++++
- 16 files changed, 1098 insertions(+), 8 deletions(-)
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+Link: https://lore.kernel.org/r/20250917170202.197929-2-john.madieu.xa@bp.renesas.com
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+---
+ .../thermal/renesas,r9a09g047-tsu.yaml        | 87 +++++++++++++++++++
+ 1 file changed, 87 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/thermal/renesas,r9a09g047-tsu.yaml
- create mode 100644 drivers/thermal/renesas/rzg3e_thermal.c
 
+diff --git a/Documentation/devicetree/bindings/thermal/renesas,r9a09g047-tsu.yaml b/Documentation/devicetree/bindings/thermal/renesas,r9a09g047-tsu.yaml
+new file mode 100644
+index 000000000000..8d3f3c24f0f2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/thermal/renesas,r9a09g047-tsu.yaml
+@@ -0,0 +1,87 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/thermal/renesas,r9a09g047-tsu.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas RZ/G3E Temperature Sensor Unit (TSU)
++
++maintainers:
++  - John Madieu <john.madieu.xa@bp.renesas.com>
++
++description:
++  The Temperature Sensor Unit (TSU) is an integrated thermal sensor that
++  monitors the chip temperature on the Renesas RZ/G3E SoC. The TSU provides
++  real-time temperature measurements for thermal management.
++
++properties:
++  compatible:
++    const: renesas,r9a09g047-tsu
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++  power-domains:
++    maxItems: 1
++
++  interrupts:
++    items:
++      - description: Conversion complete interrupt signal (pulse)
++      - description: Comparison result interrupt signal (level)
++
++  interrupt-names:
++    items:
++      - const: adi
++      - const: adcmpi
++
++  "#thermal-sensor-cells":
++    const: 0
++
++  renesas,tsu-trim:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    items:
++      - items:
++          - description: phandle to system controller
++          - description: offset of trim registers
++    description:
++      Phandle and offset to the system controller containing the TSU
++      calibration trim values. The offset points to the first trim register
++      (OTPTSU1TRMVAL0), with the second trim register (OTPTSU1TRMVAL1) located
++      at offset + 4.
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - resets
++  - power-domains
++  - interrupts
++  - interrupt-names
++  - "#thermal-sensor-cells"
++  - renesas,tsu-trim
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/renesas,r9a09g047-cpg.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    thermal-sensor@14002000 {
++        compatible = "renesas,r9a09g047-tsu";
++        reg = <0x14002000 0x1000>;
++        clocks = <&cpg CPG_MOD 0x10a>;
++        resets = <&cpg 0xf8>;
++        power-domains = <&cpg>;
++        interrupts = <GIC_SPI 250 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 251 IRQ_TYPE_LEVEL_HIGH>;
++        interrupt-names = "adi", "adcmpi";
++        #thermal-sensor-cells = <0>;
++        renesas,tsu-trim = <&sys 0x330>;
++    };
 -- 
 2.51.0
 
