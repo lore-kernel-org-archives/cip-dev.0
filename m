@@ -2,28 +2,28 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E197CD25B6E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D54BDD25B6B
 	for <webhook@archiver.kernel.org>; Wed, 28 Jan 2026 13:27:02 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.12806.1769606813945727931
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.12809.1769606815696538903
  for <cip-dev@lists.cip-project.org>;
- Wed, 28 Jan 2026 05:26:57 -0800
+ Wed, 28 Jan 2026 05:26:55 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: MGqW70RnTbaajiI9DUphzQ==
-X-CSE-MsgGUID: vyWR08AeTfK1pEges6zOFg==
+ dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
+X-CSE-ConnectionGUID: kFBf2ADwRGCw2XyiOVOqWg==
+X-CSE-MsgGUID: H9p1YhXCR3uZD32ghDmHhQ==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 28 Jan 2026 22:26:56 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 28 Jan 2026 22:26:55 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.92.43])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id B4A7240325B4;
-	Wed, 28 Jan 2026 22:26:55 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id F1AE140325B4;
+	Wed, 28 Jan 2026 22:26:53 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.12.y-cip 02/12] soc: renesas: r9a09g056-sys: Populate max_register
-Date: Wed, 28 Jan 2026 13:26:39 +0000
-Message-ID: <20260128132650.6955-3-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.12.y-cip 01/12] soc: renesas: rz-sysc: Add syscon/regmap support
+Date: Wed, 28 Jan 2026 13:26:38 +0000
+Message-ID: <20260128132650.6955-2-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260128132650.6955-1-ovidiu.panait.rb@renesas.com>
 References: <20260128132650.6955-1-ovidiu.panait.rb@renesas.com>
@@ -33,34 +33,166 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 28 Jan 2026 13:27:02 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21751
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21750
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: John Madieu <john.madieu.xa@bp.renesas.com>
 
-commit 4ff787433ba6d564b00334b4bfd6350f5b6f4bb3 upstream.
+commit 2da2740fb9c8e26b6b5e20d74f2ed1d49824236d upstream.
 
-Populate max_register to avoid external aborts.
+The RZ/G3E system controller has various registers that control or report
+some properties specific to individual IPs. The regmap is registered as a
+syscon device to allow these IP drivers to access the registers through the
+regmap API.
 
-Fixes: 2da2740fb9c8 ("soc: renesas: rz-sysc: Add syscon/regmap support")
+As other RZ SoCs might have custom read/write callbacks or max-offsets,
+register a custom regmap configuration.
+
+[claudiu.beznea:
+ - do not check the match->data validity in rz_sysc_probe() as it is
+   always valid
+ - dinamically allocate regmap_cfg]
+
+Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com> # on RZ/G3S
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20251105070526.264445-2-claudiu.beznea.uj@bp.renesas.com
+Link: https://lore.kernel.org/20250818162859.9661-2-john.madieu.xa@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- drivers/soc/renesas/r9a09g056-sys.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/soc/renesas/Kconfig          |  1 +
+ drivers/soc/renesas/r9a08g045-sysc.c |  1 +
+ drivers/soc/renesas/r9a09g047-sys.c  |  1 +
+ drivers/soc/renesas/r9a09g057-sys.c  |  1 +
+ drivers/soc/renesas/rz-sysc.c        | 30 +++++++++++++++++++++++++++-
+ drivers/soc/renesas/rz-sysc.h        |  2 ++
+ 6 files changed, 35 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/soc/renesas/r9a09g056-sys.c b/drivers/soc/renesas/r9a09g056-sys.c
-index 3ad1422eba36..16b4e433c337 100644
---- a/drivers/soc/renesas/r9a09g056-sys.c
-+++ b/drivers/soc/renesas/r9a09g056-sys.c
-@@ -72,4 +72,5 @@ static const struct rz_sysc_soc_id_init_data rzv2n_sys_soc_id_init_data __initco
+diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+index bbe9aba2d5c9..728eddf69085 100644
+--- a/drivers/soc/renesas/Kconfig
++++ b/drivers/soc/renesas/Kconfig
+@@ -407,6 +407,7 @@ config RST_RCAR
  
- const struct rz_sysc_init_data rzv2n_sys_init_data = {
- 	.soc_id_init_data = &rzv2n_sys_soc_id_init_data,
+ config SYSC_RZ
+ 	bool "System controller for RZ SoCs" if COMPILE_TEST
++	select MFD_SYSCON
+ 
+ config SYSC_R9A08G045
+ 	bool "Renesas RZ/G3S System controller support" if COMPILE_TEST
+diff --git a/drivers/soc/renesas/r9a08g045-sysc.c b/drivers/soc/renesas/r9a08g045-sysc.c
+index f4db1431e036..0504d4e68761 100644
+--- a/drivers/soc/renesas/r9a08g045-sysc.c
++++ b/drivers/soc/renesas/r9a08g045-sysc.c
+@@ -20,4 +20,5 @@ static const struct rz_sysc_soc_id_init_data rzg3s_sysc_soc_id_init_data __initc
+ 
+ const struct rz_sysc_init_data rzg3s_sysc_init_data __initconst = {
+ 	.soc_id_init_data = &rzg3s_sysc_soc_id_init_data,
++	.max_register = 0xe20,
+ };
+diff --git a/drivers/soc/renesas/r9a09g047-sys.c b/drivers/soc/renesas/r9a09g047-sys.c
+index cd2eb7782cfe..2e8426c03050 100644
+--- a/drivers/soc/renesas/r9a09g047-sys.c
++++ b/drivers/soc/renesas/r9a09g047-sys.c
+@@ -64,4 +64,5 @@ static const struct rz_sysc_soc_id_init_data rzg3e_sys_soc_id_init_data __initco
+ 
+ const struct rz_sysc_init_data rzg3e_sys_init_data = {
+ 	.soc_id_init_data = &rzg3e_sys_soc_id_init_data,
 +	.max_register = 0x170c,
  };
+diff --git a/drivers/soc/renesas/r9a09g057-sys.c b/drivers/soc/renesas/r9a09g057-sys.c
+index 4c21cc29edbc..e3390e7c7fe5 100644
+--- a/drivers/soc/renesas/r9a09g057-sys.c
++++ b/drivers/soc/renesas/r9a09g057-sys.c
+@@ -64,4 +64,5 @@ static const struct rz_sysc_soc_id_init_data rzv2h_sys_soc_id_init_data __initco
+ 
+ const struct rz_sysc_init_data rzv2h_sys_init_data = {
+ 	.soc_id_init_data = &rzv2h_sys_soc_id_init_data,
++	.max_register = 0x170c,
+ };
+diff --git a/drivers/soc/renesas/rz-sysc.c b/drivers/soc/renesas/rz-sysc.c
+index ffa65fb4dade..9f79e299e6f4 100644
+--- a/drivers/soc/renesas/rz-sysc.c
++++ b/drivers/soc/renesas/rz-sysc.c
+@@ -5,9 +5,13 @@
+  * Copyright (C) 2024 Renesas Electronics Corp.
+  */
+ 
++#include <linux/cleanup.h>
+ #include <linux/io.h>
++#include <linux/mfd/syscon.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
+ #include <linux/sys_soc.h>
+ 
+ #include "rz-sysc.h"
+@@ -100,14 +104,23 @@ MODULE_DEVICE_TABLE(of, rz_sysc_match);
+ 
+ static int rz_sysc_probe(struct platform_device *pdev)
+ {
++	const struct rz_sysc_init_data *data;
+ 	const struct of_device_id *match;
+ 	struct device *dev = &pdev->dev;
++	struct regmap *regmap;
+ 	struct rz_sysc *sysc;
++	int ret;
++
++	struct regmap_config *regmap_cfg __free(kfree) = kzalloc(sizeof(*regmap_cfg), GFP_KERNEL);
++	if (!regmap_cfg)
++		return -ENOMEM;
+ 
+ 	match = of_match_node(rz_sysc_match, dev->of_node);
+ 	if (!match)
+ 		return -ENODEV;
+ 
++	data = match->data;
++
+ 	sysc = devm_kzalloc(dev, sizeof(*sysc), GFP_KERNEL);
+ 	if (!sysc)
+ 		return -ENOMEM;
+@@ -117,7 +130,22 @@ static int rz_sysc_probe(struct platform_device *pdev)
+ 		return PTR_ERR(sysc->base);
+ 
+ 	sysc->dev = dev;
+-	return rz_sysc_soc_init(sysc, match);
++	ret = rz_sysc_soc_init(sysc, match);
++	if (ret)
++		return ret;
++
++	regmap_cfg->name = "rz_sysc_regs";
++	regmap_cfg->reg_bits = 32;
++	regmap_cfg->reg_stride = 4;
++	regmap_cfg->val_bits = 32;
++	regmap_cfg->fast_io = true;
++	regmap_cfg->max_register = data->max_register;
++
++	regmap = devm_regmap_init_mmio(dev, sysc->base, regmap_cfg);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
++
++	return of_syscon_register_regmap(dev->of_node, regmap);
+ }
+ 
+ static struct platform_driver rz_sysc_driver = {
+diff --git a/drivers/soc/renesas/rz-sysc.h b/drivers/soc/renesas/rz-sysc.h
+index 56bc047a1bff..8eec355d5d56 100644
+--- a/drivers/soc/renesas/rz-sysc.h
++++ b/drivers/soc/renesas/rz-sysc.h
+@@ -34,9 +34,11 @@ struct rz_sysc_soc_id_init_data {
+ /**
+  * struct rz_sysc_init_data - RZ SYSC initialization data
+  * @soc_id_init_data: RZ SYSC SoC ID initialization data
++ * @max_register: Maximum SYSC register offset to be used by the regmap config
+  */
+ struct rz_sysc_init_data {
+ 	const struct rz_sysc_soc_id_init_data *soc_id_init_data;
++	u32 max_register;
+ };
+ 
+ extern const struct rz_sysc_init_data rzg3e_sys_init_data;
 -- 
 2.51.0
 
