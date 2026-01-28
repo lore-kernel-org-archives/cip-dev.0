@@ -2,75 +2,197 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DE1FD25B57
-	for <webhook@archiver.kernel.org>; Wed, 28 Jan 2026 12:58:52 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.12291.1769605124180184666
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 853CBD25B5C
+	for <webhook@archiver.kernel.org>; Wed, 28 Jan 2026 13:25:32 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.12767.1769606727971388175
  for <cip-dev@lists.cip-project.org>;
- Wed, 28 Jan 2026 04:58:44 -0800
+ Wed, 28 Jan 2026 05:25:28 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: 90SLkU//T5GPj0kbQj3NGA==
-X-CSE-MsgGUID: jSGA8zPWQ+aNKwUyC0xPCg==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 28 Jan 2026 21:58:43 +0900
+ dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
+X-CSE-ConnectionGUID: npqMf2PcSl+6Q9qhX/hfWw==
+X-CSE-MsgGUID: a1YuDmewQGCSxH+z38TUMQ==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 28 Jan 2026 22:25:27 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.92.43])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id E8D74402393F;
-	Wed, 28 Jan 2026 21:58:41 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id E711D41728C9;
+	Wed, 28 Jan 2026 22:25:25 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.1.y-cip] thermal/drivers/renesas/rzg3s: Fix inverted reset logic in devm cleanup
-Date: Wed, 28 Jan 2026 12:58:40 +0000
-Message-ID: <20260128125840.6801-1-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.1.y-cip 01/11] soc: renesas: rz-sysc: Add syscon/regmap support
+Date: Wed, 28 Jan 2026 13:25:10 +0000
+Message-ID: <20260128132522.6902-2-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260128132522.6902-1-ovidiu.panait.rb@renesas.com>
+References: <20260128132522.6902-1-ovidiu.panait.rb@renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 28 Jan 2026 12:58:52 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21736
+ <cip-dev@lists.cip-project.org>; Wed, 28 Jan 2026 13:25:32 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21738
 
-The devm reset callback that should undo the reset_control_deassert() done
-during probe is incorrectly calling reset_control_deassert() again,
-instead of reset_control_assert().
+From: John Madieu <john.madieu.xa@bp.renesas.com>
 
-Fix this by calling reset_control_assert() and rename the callback
-function accordingly.
+commit 2da2740fb9c8e26b6b5e20d74f2ed1d49824236d upstream.
 
-Fixes: 8b53b0bf10a3 ("thermal/drivers/renesas/rzg3s: Add thermal driver for the Renesas RZ/G3S SoC")
+The RZ/G3E system controller has various registers that control or report
+some properties specific to individual IPs. The regmap is registered as a
+syscon device to allow these IP drivers to access the registers through the
+regmap API.
+
+As other RZ SoCs might have custom read/write callbacks or max-offsets,
+register a custom regmap configuration.
+
+[claudiu.beznea:
+ - do not check the match->data validity in rz_sysc_probe() as it is
+   always valid
+ - dinamically allocate regmap_cfg]
+
+Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com> # on RZ/G3S
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/20250818162859.9661-2-john.madieu.xa@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- drivers/thermal/rzg3s_thermal.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/soc/renesas/Kconfig          |  1 +
+ drivers/soc/renesas/r9a08g045-sysc.c |  1 +
+ drivers/soc/renesas/r9a09g047-sys.c  |  1 +
+ drivers/soc/renesas/r9a09g057-sys.c  |  1 +
+ drivers/soc/renesas/rz-sysc.c        | 30 +++++++++++++++++++++++++++-
+ drivers/soc/renesas/rz-sysc.h        |  2 ++
+ 6 files changed, 35 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/thermal/rzg3s_thermal.c b/drivers/thermal/rzg3s_thermal.c
-index b2a98168e6b4..4c6e4fa13ee4 100644
---- a/drivers/thermal/rzg3s_thermal.c
-+++ b/drivers/thermal/rzg3s_thermal.c
-@@ -178,9 +178,9 @@ static int rzg3s_thermal_read_calib(struct rzg3s_thermal_priv *priv)
- 	return 0;
- }
+diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+index 121f0c928542..ee2c2222f1c4 100644
+--- a/drivers/soc/renesas/Kconfig
++++ b/drivers/soc/renesas/Kconfig
+@@ -488,6 +488,7 @@ config SYSC_R8A774B1
  
--static void rzg3s_thermal_reset_deassert(void *data)
-+static void rzg3s_thermal_reset_assert(void *data)
+ config SYSC_RZ
+ 	bool "System controller for RZ SoCs" if COMPILE_TEST
++	select MFD_SYSCON
+ 
+ config SYSC_R9A08G045
+ 	bool "Renesas RZ/G3S System controller support" if COMPILE_TEST
+diff --git a/drivers/soc/renesas/r9a08g045-sysc.c b/drivers/soc/renesas/r9a08g045-sysc.c
+index f4db1431e036..0504d4e68761 100644
+--- a/drivers/soc/renesas/r9a08g045-sysc.c
++++ b/drivers/soc/renesas/r9a08g045-sysc.c
+@@ -20,4 +20,5 @@ static const struct rz_sysc_soc_id_init_data rzg3s_sysc_soc_id_init_data __initc
+ 
+ const struct rz_sysc_init_data rzg3s_sysc_init_data __initconst = {
+ 	.soc_id_init_data = &rzg3s_sysc_soc_id_init_data,
++	.max_register = 0xe20,
+ };
+diff --git a/drivers/soc/renesas/r9a09g047-sys.c b/drivers/soc/renesas/r9a09g047-sys.c
+index cd2eb7782cfe..2e8426c03050 100644
+--- a/drivers/soc/renesas/r9a09g047-sys.c
++++ b/drivers/soc/renesas/r9a09g047-sys.c
+@@ -64,4 +64,5 @@ static const struct rz_sysc_soc_id_init_data rzg3e_sys_soc_id_init_data __initco
+ 
+ const struct rz_sysc_init_data rzg3e_sys_init_data = {
+ 	.soc_id_init_data = &rzg3e_sys_soc_id_init_data,
++	.max_register = 0x170c,
+ };
+diff --git a/drivers/soc/renesas/r9a09g057-sys.c b/drivers/soc/renesas/r9a09g057-sys.c
+index 4c21cc29edbc..e3390e7c7fe5 100644
+--- a/drivers/soc/renesas/r9a09g057-sys.c
++++ b/drivers/soc/renesas/r9a09g057-sys.c
+@@ -64,4 +64,5 @@ static const struct rz_sysc_soc_id_init_data rzv2h_sys_soc_id_init_data __initco
+ 
+ const struct rz_sysc_init_data rzv2h_sys_init_data = {
+ 	.soc_id_init_data = &rzv2h_sys_soc_id_init_data,
++	.max_register = 0x170c,
+ };
+diff --git a/drivers/soc/renesas/rz-sysc.c b/drivers/soc/renesas/rz-sysc.c
+index ffa65fb4dade..9f79e299e6f4 100644
+--- a/drivers/soc/renesas/rz-sysc.c
++++ b/drivers/soc/renesas/rz-sysc.c
+@@ -5,9 +5,13 @@
+  * Copyright (C) 2024 Renesas Electronics Corp.
+  */
+ 
++#include <linux/cleanup.h>
+ #include <linux/io.h>
++#include <linux/mfd/syscon.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
+ #include <linux/sys_soc.h>
+ 
+ #include "rz-sysc.h"
+@@ -100,14 +104,23 @@ MODULE_DEVICE_TABLE(of, rz_sysc_match);
+ 
+ static int rz_sysc_probe(struct platform_device *pdev)
  {
--	reset_control_deassert(data);
-+	reset_control_assert(data);
++	const struct rz_sysc_init_data *data;
+ 	const struct of_device_id *match;
+ 	struct device *dev = &pdev->dev;
++	struct regmap *regmap;
+ 	struct rz_sysc *sysc;
++	int ret;
++
++	struct regmap_config *regmap_cfg __free(kfree) = kzalloc(sizeof(*regmap_cfg), GFP_KERNEL);
++	if (!regmap_cfg)
++		return -ENOMEM;
+ 
+ 	match = of_match_node(rz_sysc_match, dev->of_node);
+ 	if (!match)
+ 		return -ENODEV;
+ 
++	data = match->data;
++
+ 	sysc = devm_kzalloc(dev, sizeof(*sysc), GFP_KERNEL);
+ 	if (!sysc)
+ 		return -ENOMEM;
+@@ -117,7 +130,22 @@ static int rz_sysc_probe(struct platform_device *pdev)
+ 		return PTR_ERR(sysc->base);
+ 
+ 	sysc->dev = dev;
+-	return rz_sysc_soc_init(sysc, match);
++	ret = rz_sysc_soc_init(sysc, match);
++	if (ret)
++		return ret;
++
++	regmap_cfg->name = "rz_sysc_regs";
++	regmap_cfg->reg_bits = 32;
++	regmap_cfg->reg_stride = 4;
++	regmap_cfg->val_bits = 32;
++	regmap_cfg->fast_io = true;
++	regmap_cfg->max_register = data->max_register;
++
++	regmap = devm_regmap_init_mmio(dev, sysc->base, regmap_cfg);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
++
++	return of_syscon_register_regmap(dev->of_node, regmap);
  }
  
- static void rzg3s_thermal_rem_hwmon_sysfs(void *data)
-@@ -214,7 +214,7 @@ static int rzg3s_thermal_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
+ static struct platform_driver rz_sysc_driver = {
+diff --git a/drivers/soc/renesas/rz-sysc.h b/drivers/soc/renesas/rz-sysc.h
+index 56bc047a1bff..8eec355d5d56 100644
+--- a/drivers/soc/renesas/rz-sysc.h
++++ b/drivers/soc/renesas/rz-sysc.h
+@@ -34,9 +34,11 @@ struct rz_sysc_soc_id_init_data {
+ /**
+  * struct rz_sysc_init_data - RZ SYSC initialization data
+  * @soc_id_init_data: RZ SYSC SoC ID initialization data
++ * @max_register: Maximum SYSC register offset to be used by the regmap config
+  */
+ struct rz_sysc_init_data {
+ 	const struct rz_sysc_soc_id_init_data *soc_id_init_data;
++	u32 max_register;
+ };
  
--	ret = devm_add_action_or_reset(dev, rzg3s_thermal_reset_deassert, priv->rstc);
-+	ret = devm_add_action_or_reset(dev, rzg3s_thermal_reset_assert, priv->rstc);
- 	if (ret)
- 		return ret;
- 
+ extern const struct rz_sysc_init_data rzg3e_sys_init_data;
 -- 
 2.51.0
 
