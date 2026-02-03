@@ -1,165 +1,94 @@
-Return-Path: <john.madieu.xa@bp.renesas.com>
+Return-Path: <pavel@nabladev.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1FC9E8306E
-	for <webhook@archiver.kernel.org>; Tue,  3 Feb 2026 09:13:53 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.12666.1770110026120335150
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79FC9E6E810
+	for <webhook@archiver.kernel.org>; Tue,  3 Feb 2026 11:21:35 +0000 (UTC)
+Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.14508.1770117688960893626
  for <cip-dev@lists.cip-project.org>;
- Tue, 03 Feb 2026 01:13:48 -0800
+ Tue, 03 Feb 2026 03:21:29 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: john.madieu.xa@bp.renesas.com)
-X-CSE-ConnectionGUID: LTqfx07vRuOLlUNqCXjPLQ==
-X-CSE-MsgGUID: wn5BxiEXRwq8AKgtogrA5g==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 03 Feb 2026 18:13:48 +0900
-Received: from ubuntu.adwin.renesas.com (unknown [10.226.93.13])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 24336416D941;
-	Tue,  3 Feb 2026 18:13:45 +0900 (JST)
-From: John Madieu <john.madieu.xa@bp.renesas.com>
-To: cip-dev@lists.cip-project.org,
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=Q49x1o4a;
+ spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B4FBD10CD3B;
+	Tue,  3 Feb 2026 12:21:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
+	s=dkim; t=1770117686;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=qMDTV67SsDiR+5cWm/mglpk45+gZy0tPM/njkmoP7h4=;
+	b=Q49x1o4aE3rtg3YnLnD4Fv/qD7kq8Y+qc/WXe8qXXiS992ofIG22PBSt9J8tcq+jypOHhG
+	T77ZYkD6MqbSRE6BV+ItOP7l1i2//xce0iPCzXIFaW/rb+q0meg+nW4eMWmZaFVp23PqUG
+	F43JPqCpG3NHRFkbWb6QVBVtne6X5INmjdeg0MUtN5bKDrEELvYcR3c7+qq1Ukl6So0kFT
+	LNMEkbfs6Jo1LTwcnDeeEZNDl5M17NGedl8XF3HwYToYp4Z2YcnfyHhQ8GkbV/Df7+0AlD
+	eedIWvLXtdUZxVoYpuJ7Wfw8INk4L6SwD/L0Kl7pfe0TXH0lOc+dSs7DjHEvRg==
+Date: Tue, 3 Feb 2026 12:21:20 +0100
+From: Pavel Machek <pavel@nabladev.com>
+To: John Madieu <john.madieu.xa@bp.renesas.com>
+Cc: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Pavel Machek <pavel@nabladev.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Pavel Machek <pavel@nabladev.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	john.madieu@gmail.com
-Subject: [PATCH 6.12.y-cip 2/2] arm64: dts: renesas: r9a09g047: Add TSU node
-Date: Tue,  3 Feb 2026 10:13:31 +0100
-Message-ID: <20260203091332.98580-3-john.madieu.xa@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260203091332.98580-1-john.madieu.xa@bp.renesas.com>
+Subject: Re: [PATCH 6.12.y-cip 0/2] ADD RZ/G3E TSU support
+Message-ID: <aYHaMO8DZzKrUz7Z@duo.ucw.cz>
 References: <20260203091332.98580-1-john.madieu.xa@bp.renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="XV7uqMZZKj+yqLVX"
+Content-Disposition: inline
+In-Reply-To: <20260203091332.98580-1-john.madieu.xa@bp.renesas.com>
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 03 Feb 2026 09:13:53 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21821
+ <cip-dev@lists.cip-project.org>; Tue, 03 Feb 2026 11:21:35 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21822
 
-[ Upstream commit 1ad66039bef99a8e7e109f5f79c3b95f1ce8bb82 ]
 
-Add TSU node along with thermal zones and keep it enabled in the SoC DTSI.
+--XV7uqMZZKj+yqLVX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20250917170202.197929-4-john.madieu.xa@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[john.madieu:
- Add "syscon" compatible fallback to system-controller node, so that
- TSU can access calibration data using syscon_regmap_lookup_by_phandle_args().
- This is mandatory prior commit ba5095ebbc7a ("mfd: syscon: Allow syscon nodes
- without a "syscon" compatible").]
-Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r9a09g047.dtsi | 50 +++++++++++++++++++++-
- 1 file changed, 49 insertions(+), 1 deletion(-)
+Hi!
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-index c8cbe53ad4b0..bd15725f2c22 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-@@ -65,6 +65,7 @@ cpu0: cpu@0 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G047_CA55_0_CORECLK0>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -75,6 +76,7 @@ cpu1: cpu@100 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G047_CA55_0_CORECLK1>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -85,6 +87,7 @@ cpu2: cpu@200 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G047_CA55_0_CORECLK2>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -95,6 +98,7 @@ cpu3: cpu@300 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G047_CA55_0_CORECLK3>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -274,7 +278,7 @@ cpg: clock-controller@10420000 {
- 		};
- 
- 		sys: system-controller@10430000 {
--			compatible = "renesas,r9a09g047-sys";
-+			compatible = "renesas,r9a09g047-sys", "syscon";
- 			reg = <0 0x10430000 0 0x10000>;
- 			clocks = <&cpg CPG_CORE R9A09G047_SYS_0_PCLK>;
- 			resets = <&cpg 0x30>;
-@@ -617,6 +621,19 @@ wdt3: watchdog@13000400 {
- 			status = "disabled";
- 		};
- 
-+		tsu: thermal@14002000 {
-+			compatible = "renesas,r9a09g047-tsu";
-+			reg = <0 0x14002000 0 0x1000>;
-+			interrupts = <GIC_SPI 250 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 251 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "adi", "adcmpi";
-+			clocks = <&cpg CPG_MOD 0x10a>;
-+			resets = <&cpg 0xf8>;
-+			power-domains = <&cpg>;
-+			#thermal-sensor-cells = <0>;
-+			renesas,tsu-trim = <&sys 0x330>;
-+		};
-+
- 		i2c0: i2c@14400400 {
- 			compatible = "renesas,riic-r9a09g047", "renesas,riic-r9a09g057";
- 			reg = <0 0x14400400 0 0x400>;
-@@ -1173,6 +1190,37 @@ stmmac_axi_setup: stmmac-axi-config {
- 		snps,blen = <16 8 4 0 0 0 0>;
- 	};
- 
-+	thermal-zones {
-+		cpu-thermal {
-+			polling-delay = <1000>;
-+			polling-delay-passive = <250>;
-+			thermal-sensors = <&tsu>;
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&target>;
-+					cooling-device = <&cpu0 0 3>, <&cpu1 0 3>,
-+							 <&cpu2 0 3>, <&cpu3 0 3>;
-+					contribution = <1024>;
-+				};
-+			};
-+
-+			trips {
-+				target: trip-point {
-+					temperature = <95000>;
-+					hysteresis = <1000>;
-+					type = "passive";
-+				};
-+
-+				sensor_crit: sensor-crit {
-+					temperature = <120000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+	};
-+
- 	timer {
- 		compatible = "arm,armv8-timer";
- 		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
--- 
-2.25.1
+> This series adds the TSU (thermal sensor) support for Renesas RZ/G3E and
+> addresses an unbind issue seen with the TSU device.
+>=20
+> Patch 1 extends the PM domain detach allowlist to include the RZ/G3E SoC
+> compatible, avoiding asynchronous aborts when the TSU is unbound.
+>=20
+> Patch 2 backports the upstream RZ/G3E TSU DTSI support (TSU node, thermal=
+ zone,
+> and CPU cooling maps). It also adds a "syscon" fallback compatible to the
+> system-controller node so the TSU driver can access calibration data via
+> syscon_regmap_lookup_by_phandle_args().
+>=20
+> This has been tested on an RZ/G3E SMARC platform.
 
+This looks okay to me.
+
+Reviewed-by: Pavel Machek <pavel@nabladev.com>
+
+I can apply the series if it passes testing and there are no other
+comments.
+
+Best regards,
+                                                                Pavel
+--=20
+In cooperation with Nabla.
+
+--XV7uqMZZKj+yqLVX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaYHaMAAKCRAw5/Bqldv6
+8i6hAJ9ubIf2l6Uc/4CNak/dcMheqque7gCeLYT3Q+byvUy/cGrlvAVei9Jf73Q=
+=oQs6
+-----END PGP SIGNATURE-----
+
+--XV7uqMZZKj+yqLVX--
 
