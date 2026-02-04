@@ -1,89 +1,183 @@
-Return-Path: <pavel@nabladev.com>
+Return-Path: <uli@fpond.eu>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87E68E7C712
-	for <webhook@archiver.kernel.org>; Tue,  3 Feb 2026 11:46:15 +0000 (UTC)
-Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.14737.1770119165501793313
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F946E8B38D
+	for <webhook@archiver.kernel.org>; Wed,  4 Feb 2026 02:47:33 +0000 (UTC)
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.54])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.10742.1770173245145933169
  for <cip-dev@lists.cip-project.org>;
- Tue, 03 Feb 2026 03:46:06 -0800
+ Tue, 03 Feb 2026 18:47:25 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=BFOG/uak;
- spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 66A4010944B;
-	Tue,  3 Feb 2026 12:46:01 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1770119163;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=HrU5k9qdgP5mMTfWTFJpYLHaIxpRqoI3errSpw2m/E8=;
-	b=BFOG/uakGatWfNyEtzHOAtTjXeU6rQ2WjK/+FWV1/OKHbt7uQqDnUsZKL5i7kRVZxZvNCa
-	YrpQSDqV8ppimmoDuffySxA32h10DGU4ckOpMeC1qfW3d/vsL07TNSe1+0cNhe2RSi0wQd
-	q6mAi7g7EpsaNPrCSwjZgW2m3VM7/wj3pvonuySvu9ULC/0iNvpB2QddvUOa21Tt7tPfjC
-	vlHr1C8Iy57DPuEUudKmyDpfYde71IzfA4yIMk678bMmhfC9qsNs9xqylH6A8U+nKsVX1B
-	9ZXK6wAugpLRVDV98s3HqxVkI+x17doGbS8noUfrcdpMmuHoJAYx3f/nEf6e9A==
-Date: Tue, 3 Feb 2026 12:45:59 +0100
-From: Pavel Machek <pavel@nabladev.com>
-To: Ulrich Hecht <uli@fpond.eu>
-Cc: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+ dkim=pass header.i=@fpond.eu header.s=strato-dkim-0002 header.b=Qg8eoMFv;
+ dkim=pass header.i=@fpond.eu header.s=strato-dkim-0003 header.b=H2jSW9WH;
+ spf=none, err=permanent DNS error (domain: fpond.eu, ip: 85.215.255.54, mailfrom: uli@fpond.eu)
+ARC-Seal: i=1; a=rsa-sha256; t=1770173218; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=oOduNLSkFJisFWm94UINKJFL+MhZL+y64gOWX5ZTf62kLEZu47+IFckVDkxaEg/1Rm
+    ZmRmjcKlSD5sqUWET+r9MBBH4oD3fR7FTZt6XFd5XIUVlhA5S+xlN9ghEkiqVy6p7SDI
+    nqryNizuuaVdhKWFIL5ojMVKn+X8S29BhAaSYhW1bxoKbD3NMOvuo3fd+aqPb6vghAHz
+    g+j6SGoNoAyluGpP4pqMW4mq1AnURhgnTSlUSHB41ouYcHpIV+k7OpnipZbMstjHbTot
+    vGwN3d3NN2IMOSir2RV+nm683ZQ2PmBTY0R0FRsp9AhycPJnMi0efiU1pONbJoo+j9cS
+    UmPQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1770173218;
+    s=strato-dkim-0002; d=strato.com;
+    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
+    bh=jZ41afvdV8Ulod61Gd9uuhG2HqiWv6CGqj4DcN/B3m0=;
+    b=Yl6BcuvGhutGTW0gxjJxU4AuKKNVInuoG34K+JEAfqhWl4ccMydQ4wMt4sfSTOIQcD
+    cWYd/fjPuha/zdCqcOefOWF4wjbfLL2m1ctvrSXBUwJDsENgu/n1nl5hWW/P1Lt+sXkk
+    Eq2lYwHBq+7+zNkIsovjyMtnaI5O/uaAr1J4BuYvmiBZ2wUpU/6AfiArQxq1kmk2hBfv
+    JffBciOkStbLKKufLJZZpZF+wYnQ+9gmlrZ9baMpWxjwVE+tGhxeuI8ITfnrMp41WMnD
+    0xGMZPZuHedVgVa0LMe42XK97jJEI4Vi+swMAHT/HPT8FbhFm2rVFlBnPryDBMhQM6eA
+    lH2A==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1770173218;
+    s=strato-dkim-0002; d=fpond.eu;
+    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
+    bh=jZ41afvdV8Ulod61Gd9uuhG2HqiWv6CGqj4DcN/B3m0=;
+    b=Qg8eoMFvi+Hj3zcBVeHzovqlVvL4KAA5pzvRnlEqxkUJGL/gQ/VetIJJqr1VExbPgr
+    6knN8ewQtoUL0xynwMJ0QQz/NlL6x/QUyU5kv/sN0NPvoeiOcVwywrOqFrExVmQ1UnLI
+    n6XIEr6m+rL6Z7+0zRxmARXErZVWwZiwV3i8HE+vvAxfhwhRjnsfoDUMYsbzDq/gix4d
+    3VFmxtigFH6rbGEyOHW3BukWf/0acgauDfQqdpsQ609sAetOc6Nf1cdo2NVSAKQATb5/
+    pvtDNJQG25cv0hm3UMCYn4SqA4SPenDd8AxnRDvj1YtwQK0nkGHIE24LkQgZTD9fjJUk
+    IW1Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1770173218;
+    s=strato-dkim-0003; d=fpond.eu;
+    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
+    bh=jZ41afvdV8Ulod61Gd9uuhG2HqiWv6CGqj4DcN/B3m0=;
+    b=H2jSW9WHy6eb6bfJ5hlz0RExCG0pp9DfIJB2GRWBrd0tyHJ71hHfx8Lc10hjMIrAq3
+    UyC81GlqwXDC5uqRjEAw==
+X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzvtHhj3fsqaRxGvRje"
+Received: from open-xchange-core-mw-gw-21.open-xchange-core-mw-hazelcast-headless.open-xchange.svc.cluster.local
+    by smtp-ox.front (RZmta 55.0.1 AUTH)
+    with ESMTPSA id z92cbd2142kvJbD
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256 bits))
+	(Client did not present a certificate);
+    Wed, 4 Feb 2026 03:46:57 +0100 (CET)
+Date: Wed, 4 Feb 2026 03:46:57 +0100 (CET)
+From: Ulrich Hecht <uli@fpond.eu>
+To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
 	"pavel@nabladev.com" <pavel@nabladev.com>,
+	"jan.kiszka@siemens.com" <jan.kiszka@siemens.com>,
+	"masami.ichikawa@cybertrust.co.jp" <masami.ichikawa@cybertrust.co.jp>,
+	"chris.paterson2@renesas.com" <chris.paterson2@renesas.com>,
 	"nobuhiro.iwamatsu.x90@mail.toshiba" <nobuhiro.iwamatsu.x90@mail.toshiba>
-Subject: Re: Request for review for 4.4-st72, 4.4-cip107
-Message-ID: <aYHf9zpDUEwBm1fS@duo.ucw.cz>
-References: <1873813255.141036.1770094885595@webmail.strato.de>
+Message-ID: <583933906.252924.1770173217678@webmail.strato.de>
+Subject: [ANNOUNCE] Release v4.4.302-cip107
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="6vVGvJMFsg6kYWkQ"
-Content-Disposition: inline
-In-Reply-To: <1873813255.141036.1770094885595@webmail.strato.de>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
+X-Mailer: Open-Xchange Mailer v8.42.74
+X-Originating-Port: 47740
+X-Originating-Client: open-xchange-appsuite
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 03 Feb 2026 11:46:15 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21824
+ <cip-dev@lists.cip-project.org>; Wed, 04 Feb 2026 02:47:33 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21825
 
+Hi,
 
---6vVGvJMFsg6kYWkQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+the CIP kernel team has released Linux kernel v4.4.302-cip107. The linux-4.4.y-cip tree's base version has been updated to v4.4-st72. The trees are up-to-date with kernel 4.19-st12.
 
-Hi!
+You can get this release via the git tree or as a tarball from https://mirrors.edge.kernel.org/pub/linux/kernel/projects/cip/4.4/
 
-> Here are the manual backports for the upcoming 4.4 kernel release. As alw=
-ays they can be found in https://git.kernel.org/pub/scm/linux/kernel/git/ci=
-p/linux-cip.git/log/?h=3Dlinux-4.4.y-st-rc
->=20
-a > 9fdef2a6b53b3 jbd2: fix the inconsistency between checksum and data in =
-memory for journal sb
-a > 7d0ef9b50d5d3 f2fs: fix return value of f2fs_recover_fsync_data()
-a > bb471f70de075 ip6_gre: make ip6gre_header() robust
-a just a WARN addition > 6eaf989ce1c09 KVM: x86: WARN if hrtimer callback f=
-or periodic APIC timer fires with period=3D0
-a > 1a0a3e2a74b85 f2fs: invalidate dentry cache on failed whiteout creation
-a > cdfaae22c3796 usb: renesas_usbhs: Fix a resource leak in usbhs_pipe_mal=
-loc()
->
-
-Patches look good to me, thank you.
-
-Reviewed-by: Pavel Machek <pavel@nabladev.com>
+  v4.4.302-cip107:
+    repository:
+      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+    branch:
+      linux-4.4.y-cip
+    commit hash:
+      a78bddb4be568b3a319ab5553990ddce8ac32a48
+    Fixed CVEs:
+      CVE-2022-49711: bus: fsl-mc-bus: fix KASAN use-after-free in fsl_mc_bus_remove()
+      CVE-2023-52975: scsi: iscsi_tcp: Fix UAF during logout when accessing the shost ipaddress
+      CVE-2024-36903: ipv6: Fix potential uninit-value access in __ip6_make_skb()
+      CVE-2024-36927: ipv4: Fix uninit-value access in __ip_make_skb()
+      CVE-2025-22121: ext4: fix out-of-bound read in ext4_xattr_inode_dec_ref_all()
+      CVE-2025-38556: HID: core: Harden s32ton() against conversion to 0 bits
+      CVE-2025-40215: xfrm: delete x->tunnel as we delete x
+      CVE-2025-40256: xfrm: also call xfrm_state_delete_tunnel at destroy time for states that were never added
+      CVE-2025-68255: staging: rtl8723bs: fix stack buffer overflow in OnAssocReq IE parsing
+      CVE-2025-68258: comedi: multiq3: sanitize config options in multiq3_attach()
+      CVE-2025-68261: ext4: add i_data_sem protection in ext4_destroy_inline_data_nolock()
+      CVE-2025-68264: ext4: refresh inline data size before write operations
+      CVE-2025-68266: bfs: Reconstruct file type when loading from disk
+      CVE-2025-68282: usb: gadget: udc: fix use-after-free in usb_gadget_state_work
+      CVE-2025-68325: net/sched: sch_cake: Fix incorrect qlen reduction in cake_drop
+      CVE-2025-68332: comedi: c6xdigio: Fix invalid PNP driver unregistration
+      CVE-2025-68336: locking/spinlock/debug: Fix data-race in do_raw_write_lock
+      CVE-2025-68337: jbd2: avoid bug_on in jbd2_journal_get_create_access() when file system corrupted
+      CVE-2025-68344: ALSA: wavefront: Fix integer overflow in sample size validation
+      CVE-2025-68346: ALSA: dice: fix buffer overflow in detect_stream_formats()
+      CVE-2025-68349: NFSv4/pNFS: Clear NFS_INO_LAYOUTCOMMIT in pnfs_mark_layout_stateid_invalid
+      CVE-2025-68354: regulator: core: Protect regulator_supply_alias_list with regulator_list_mutex
+      CVE-2025-68362: wifi: rtl818x: rtl8187: Fix potential buffer underflow in rtl8187_rx_cb()
+      CVE-2025-68364: ocfs2: relax BUG() to ocfs2_error() in __ocfs2_move_extent()
+      CVE-2025-68366: nbd: defer config unlock in nbd_genl_connect
+      CVE-2025-68367: macintosh/mac_hid: fix race condition in mac_hid_toggle_emumouse
+      CVE-2025-68372: nbd: defer config put in recv_work
+      CVE-2025-68724: crypto: asymmetric_keys - prevent overflow in asymmetric_key_generate_id
+      CVE-2025-68733: smack: fix bug: unprivileged task can create labels
+      CVE-2025-68757: drm/vgem-fence: Fix potential deadlock on release
+      CVE-2025-68767: hfsplus: Verify inode mode when loading from disk
+      CVE-2025-68769: f2fs: fix return value of f2fs_recover_fsync_data()
+      CVE-2025-68771: ocfs2: fix kernel BUG in ocfs2_find_victim_chain
+      CVE-2025-68773: spi: fsl-cpm: Check length parity before switching to 16 bit mode
+      CVE-2025-68774: hfsplus: fix missing hfs_bnode_get() in __hfs_bnode_create
+      CVE-2025-68777: Input: ti_am335x_tsc - fix off-by-one error in wire_order validation
+      CVE-2025-68782: scsi: target: Reset t_task_cdb pointer in error case
+      CVE-2025-68783: ALSA: usb-mixer: us16x08: validate meter packet indices
+      CVE-2025-68785: net: openvswitch: fix middle attribute validation in push_nsh() action
+      CVE-2025-68787: netrom: Fix memory leak in nr_sendmsg()
+      CVE-2025-68789: hwmon: (ibmpex) fix use-after-free in high/low store
+      CVE-2025-68796: f2fs: fix to avoid updating zero-sized extent in extent cache
+      CVE-2025-68797: char: applicom: fix NULL pointer dereference in ac_ioctl
+      CVE-2025-68799: caif: fix integer underflow in cffrml_receive()
+      CVE-2025-68801: mlxsw: spectrum_router: Fix neighbour use-after-free
+      CVE-2025-68813: ipvs: fix ipv4 null-ptr-deref in route error path
+      CVE-2025-68816: net/mlx5: fw_tracer, Validate format string parameters
+      CVE-2025-68819: media: dvb-usb: dtv5100: fix out-of-bounds in dtv5100_i2c_msg()
+      CVE-2025-68820: ext4: xattr: fix null pointer deref in ext4_raw_inode()
+      CVE-2025-71069: f2fs: invalidate dentry cache on failed whiteout creation
+      CVE-2025-71075: scsi: aic94xx: fix use-after-free in device removal path
+      CVE-2025-71079: net: nfc: fix deadlock between nfc_unregister_device and rfkill_fop_write
+      CVE-2025-71085: ipv6: BUG() in pskb_expand_head() as part of calipso_skbuff_setattr()
+      CVE-2025-71086: net: rose: fix invalid array index in rose_kill_by_device()
+      CVE-2025-71091: team: fix check for port enabled in team_queue_override_port_prio_changed()
+      CVE-2025-71093: e1000: fix OOB in e1000_tbi_should_accept()
+      CVE-2025-71096: RDMA/core: Check for the presence of LS_NLA_TYPE_DGID correctly
+      CVE-2025-71097: ipv4: Fix reference count leak when using error routes with nexthop objects
+      CVE-2025-71098: ip6_gre: make ip6gre_header() robust
+      CVE-2025-71104: KVM: x86: Fix VM hard lockup after prolonged inactivity with periodic HV timer
+      CVE-2025-71108: usb: typec: ucsi: Handle incorrect num_connectors capability
+      CVE-2025-71111: hwmon: (w83791d) Convert macros to functions to avoid TOCTOU
+      CVE-2025-71113: crypto: af_alg - zero initialize memory allocated via sock_kmalloc
+      CVE-2025-71114: via_wdt: fix critical boot hang due to unnamed resource allocation
+      CVE-2025-71116: libceph: make decode_pool() more resilient against corrupted osdmaps
+      CVE-2025-71118: ACPICA: Avoid walking the Namespace if start_node is NULL
+      CVE-2025-71120: SUNRPC: svcauth_gss: avoid NULL deref on zero length gss_token in gss_read_proxy_verf
+      CVE-2025-71121: parisc: Do not reprogram affinitiy on ASP chip
+      CVE-2025-71123: ext4: fix string copying in parse_apply_sb_mount_options()
+      CVE-2025-71125: tracing: Do not register unsupported perf events
+      CVE-2025-71127: wifi: mac80211: Discard Beacon frames to non-broadcast address
+      CVE-2025-71131: crypto: seqiv - Do not use req->iv after crypto_aead_encrypt
+      CVE-2025-71136: media: adv7842: Avoid possible out-of-bounds array accesses in adv7842_cp_log_status()
+      CVE-2025-71146: netfilter: nf_conncount: fix leaked ct in error paths
+      CVE-2025-71154: net: usb: rtl8150: fix memory leak on usb_submit_urb() failure
+      CVE-2026-22977: net: sock: fix hardened usercopy panic in sock_recv_errqueue
+      CVE-2026-22978: wifi: avoid kernel-infoleak from struct iw_point
+      CVE-2026-22988: arp: do not assume dev_hard_header() does not change skb->head
+      CVE-2026-22990: libceph: replace overzealous BUG_ON in osdmap_apply_incremental()
+      CVE-2026-22991: libceph: make free_choose_arg_map() resilient to partial allocation
+      CVE-2026-23020: net: 3com: 3c59x: fix possible null dereference in vortex_probe1()
+      CVE-2026-23021: net: usb: pegasus: fix memory leak in update_eth_regs_async()
 
 Best regards,
-                                                                Pavel
---=20
-In cooperation with Nabla.
-
---6vVGvJMFsg6kYWkQ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaYHf9wAKCRAw5/Bqldv6
-8o7UAJoDUqnvLq3QLkdJq2Vmymx0+12kQQCgwXFy2k5Lcv92/0lcI70oYjYwsho=
-=X2fj
------END PGP SIGNATURE-----
-
---6vVGvJMFsg6kYWkQ--
+Ulrich Hecht
 
