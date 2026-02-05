@@ -1,369 +1,402 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 374E3ECD98B
-	for <webhook@archiver.kernel.org>; Thu,  5 Feb 2026 16:57:42 +0000 (UTC)
-Received: from AS8PR04CU009.outbound.protection.outlook.com (AS8PR04CU009.outbound.protection.outlook.com [52.101.70.7])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.25607.1770310656414119946
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 322DCECD99B
+	for <webhook@archiver.kernel.org>; Thu,  5 Feb 2026 19:52:03 +0000 (UTC)
+Received: from AS8PR04CU009.outbound.protection.outlook.com (AS8PR04CU009.outbound.protection.outlook.com [52.101.70.25])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.29735.1770321115847260278
  for <cip-dev@lists.cip-project.org>;
- Thu, 05 Feb 2026 08:57:36 -0800
+ Thu, 05 Feb 2026 11:51:56 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=FLacPmHp;
- spf=pass (domain: siemens.com, ip: 52.101.70.7, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=B0bkGroM;
+ spf=pass (domain: siemens.com, ip: 52.101.70.25, mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lb39PrQ26nCX+3RpntHQzySsquK+xLacr2U8YYUM2LJ8PeLhklzkI2LlO827qgbybRgmxjlGLA8B5TA5sX48j558RjV9VCq5cjnEQaOpseP3u29/WpVcUu37lCp3WTkvXbjb+BWUg9bblYbURHT6mN/Qm4loLPLB4E4x4OOgNK/ptpbV3Ww8397x6KQjeWj+dUnkxjvTccxnYg/i99kU4A5BT1w43E1Kvht5RbAYjy/U5TB1sOPc5Jy4FyYzqAzqAKTQiVdewqIUto+pRfbXVc6XHrEDk74AYrEZJKAVeWzwWrlc8J4iNCXHD/hsKkX3MnucMQKGjbm/VV6HgTd7KA==
+ b=i0OL8LPrYJ9len2DJz7U6nlV6esnx1N3QOTDi59vs9Wf/zReDIZxmc+aU7X1s9GBJ9RnaasI83FKWmz2F+bSnV0XTxZJ+URgKo4MN7MGFkmxzCTnMXF68XN2sRfjbm4g8vb38qUurqnYczrt/Lk10clYpO5V5c+9R7b/kxWupf5BWK7Lii1avwTBf1s9m3IVECICqJm3YX68LmiwQyixulyzHL21AeTITrd3u69veWw4jaaj5JZxPHrNvS88cFCWNr7YxIpzck2Hs0slQhT52nBZWnc2xjv0s0U78D+tb0um2GoL3PZAzNotLtmveGgBA07J2UPeQf8tO/xtoAQQTA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iPu6H4XFphH3WqOuXdKr6MA6/zFcwY63dvFG4F4FOlI=;
- b=lV2Lp1WOghLci6PbrLzctXkkllg5s5p+PvsuhEEl3/HNbjD3gQJO1risVmczdljfPs6uqDwA4QhPgUtQNOU77gqNUB3Uvq6vALj7im/D6IVtvy7j0TEMDPlNTHr+KWBXaUwg568wNAp2PGSD5NvXDKvwWjwO6A8W9t3DBebJyUsaR11JKGlKlLCEZa6vHJONQODopR6eYSrbZO6IXQeLCa84UPHtfH2HaIMhqH7h1aZLtFDXp/SR5FLywfFng7tlraG+FYK0UF59232wbofR3X0uuIynYuWDdMG2y8uG05I/fuxj88yrcZ3KfoWwF+HXPUX9wRMOcjUWDkS2men0eQ==
+ bh=O476apt8tEC9NGvPk0zNPYKE8WDYpDlRo0aQl8Qt2YU=;
+ b=m+wJJ59kJmEYhDU/RNEAgy4j6K+S5tfzI+qAsaRE05PQbpnQACIedqAwhvWdIYzHXHKCF5i9IemYVH0U4Q7MkTsRKA4fZMInfjwqehLZwzkMIgVWGvVuJEvVDn3fgIdu94YsZCuJX1bPZ+h98n2Y6pgw86nyHoolaEN+hC3Zr2IXNXhlHd3Q/0/+kiAYChDPiIllgnxvM+vvX51wlYwtqKehvTUcoZw5K3/LUhtydXQ0EC1YcHEckR7H6JwmDKxuUPqCqFoE4aV0vreGLQuXd/xsRe6Hy+7hmSawXmUxt2fuHdLnoj0EmN9bvWhOIMaLh/RxP+ysYrTTUYCwWfR++w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iPu6H4XFphH3WqOuXdKr6MA6/zFcwY63dvFG4F4FOlI=;
- b=FLacPmHpNXbAaNEVBKGPatCHHidrtMP6cluJdLotAZMYbkf3yz3VfWObJlFuhkMZZsLla0B3CdMxIKf2D/8GZea7eH9cnPARg3O0vzjOlcOEn7aQsqFbo1Dze3nWgHg+ijS88FH4qtP6L6SXkELWXeXqCj3iXwIz6cH4lYVTlA+F5SKD/fZ8NJa+qsj00mIssLxxpAiHz5V8DXz8dORG9NeLDJIR3CzaECGVwTSu4tY5RteMxF4a7NrtGYtkxdDvN2qiBXgrwmv+DQYP+z0rWkBH+8VFFsXkkRuCklxshvhfM/daVYsgMiB26qvbu8xvXl0vtSjS1LFaIqIF9nBoKg==
+ bh=O476apt8tEC9NGvPk0zNPYKE8WDYpDlRo0aQl8Qt2YU=;
+ b=B0bkGroM7yimrUH+RKc7+pR32J+UcfX4AeKggMw5gThg17XANS4TZT9cJX0pB5M1I/tozLmx+M6X4D1YROJSXPZOhPjSPMLPJ4J+WoGeVDJHAG9ua0QSkkeVfWBORJGwbiejJOBbCuyf36+L5X9tGEsU+pUSF6PsyExbvVaEK8As0kltUA4aqfo6IoO61EWxIn1m6ERWHKnMwxWcRzo2XIQwEKXeuGY7xTF//eIbMGsDZzxOJ1YbJE0ztF3dqJQk/DLJFZS372Dtax5KlV9nhCMcRN6k3vQdVASr0AV2SGSA8BTX9TaMyw9lWF7nN383PALp9gfmo2L1cJIvTW4+DQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from GV2PR10MB6186.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:76::15)
- by FRWPR10MB9419.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:d10:1a4::13) with
+Received: from VI1PR10MB2319.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:803:89::19)
+ by AMDPR10MB9504.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:73c::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9564.16; Thu, 5 Feb
- 2026 16:57:33 +0000
-Received: from GV2PR10MB6186.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::63bc:6561:54d3:94b9]) by GV2PR10MB6186.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::63bc:6561:54d3:94b9%5]) with mapi id 15.20.9564.014; Thu, 5 Feb 2026
- 16:57:32 +0000
-Message-ID: <944f83ee-b233-46d0-9e2d-f96af55cbecd@siemens.com>
-Date: Thu, 5 Feb 2026 17:57:26 +0100
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9587.13; Thu, 5 Feb
+ 2026 19:51:51 +0000
+Received: from VI1PR10MB2319.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::b57f:1a19:e3c8:fbb6]) by VI1PR10MB2319.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::b57f:1a19:e3c8:fbb6%6]) with mapi id 15.20.9587.013; Thu, 5 Feb 2026
+ 19:51:51 +0000
+Message-ID: <263c929e-e873-4592-aa1d-3a79cfc4b148@siemens.com>
+Date: Thu, 5 Feb 2026 20:51:50 +0100
 User-Agent: Mozilla Thunderbird
 Subject: Re: [isar-cip-core][PATCH] swupdate: use self-built 2025.12 for
  Debian Trixie
-To: Badrikesh Prusty <badrikesh.prusty@siemens.com>,
- cip-dev@lists.cip-project.org,
- Quirin Gylstorff <quirin.gylstorff@siemens.com>
+To: "Prusty, Badrikesh (FT FDS CES LX PBU 2)" <badrikesh.prusty@siemens.com>,
+ "Kiszka, Jan (FT RPD CED)" <jan.kiszka@siemens.com>,
+ "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
 References: <20260205163727.2995422-1-badrikesh.prusty@siemens.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
+ <944f83ee-b233-46d0-9e2d-f96af55cbecd@siemens.com>
+ <SG2PR06MB51078D17CA7212B9DE6CE6039199A@SG2PR06MB5107.apcprd06.prod.outlook.com>
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 Content-Language: en-US
-Autocrypt: addr=jan.kiszka@siemens.com; keydata=
- xsFNBGZY+hkBEACkdtFD81AUVtTVX+UEiUFs7ZQPQsdFpzVmr6R3D059f+lzr4Mlg6KKAcNZ
- uNUqthIkgLGWzKugodvkcCK8Wbyw+1vxcl4Lw56WezLsOTfu7oi7Z0vp1XkrLcM0tofTbClW
- xMA964mgUlBT2m/J/ybZd945D0wU57k/smGzDAxkpJgHBrYE/iJWcu46jkGZaLjK4xcMoBWB
- I6hW9Njxx3Ek0fpLO3876bszc8KjcHOulKreK+ezyJ01Hvbx85s68XWN6N2ulLGtk7E/sXlb
- 79hylHy5QuU9mZdsRjjRGJb0H9Buzfuz0XrcwOTMJq7e7fbN0QakjivAXsmXim+s5dlKlZjr
- L3ILWte4ah7cGgqc06nFb5jOhnGnZwnKJlpuod3pc/BFaFGtVHvyoRgxJ9tmDZnjzMfu8YrA
- +MVv6muwbHnEAeh/f8e9O+oeouqTBzgcaWTq81IyS56/UD6U5GHet9Pz1MB15nnzVcyZXIoC
- roIhgCUkcl+5m2Z9G56bkiUcFq0IcACzjcRPWvwA09ZbRHXAK/ao/+vPAIMnU6OTx3ejsbHn
- oh6VpHD3tucIt+xA4/l3LlkZMt5FZjFdkZUuAVU6kBAwElNBCYcrrLYZBRkSGPGDGYZmXAW/
- VkNUVTJkRg6MGIeqZmpeoaV2xaIGHBSTDX8+b0c0hT/Bgzjv8QARAQABzSNKYW4gS2lzemth
- IDxqYW4ua2lzemthQHNpZW1lbnMuY29tPsLBlAQTAQoAPhYhBABMZH11cs99cr20+2mdhQqf
- QXvYBQJmWPvXAhsDBQkFo5qABQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEGmdhQqfQXvY
- zPAP/jGiVJ2VgPcRWt2P8FbByfrJJAPCsos+SZpncRi7tl9yTEpS+t57h7myEKPdB3L+kxzg
- K3dt1UhYp4FeIHA3jpJYaFvD7kNZJZ1cU55QXrJI3xu/xfB6VhCs+VAUlt7XhOsOmTQqCpH7
- pRcZ5juxZCOxXG2fTQTQo0gfF5+PQwQYUp0NdTbVox5PTx5RK3KfPqmAJsBKdwEaIkuY9FbM
- 9lGg8XBNzD2R/13cCd4hRrZDtyegrtocpBAruVqOZhsMb/h7Wd0TGoJ/zJr3w3WnDM08c+RA
- 5LHMbiA29MXq1KxlnsYDfWB8ts3HIJ3ROBvagA20mbOm26ddeFjLdGcBTrzbHbzCReEtN++s
- gZneKsYiueFDTxXjUOJgp8JDdVPM+++axSMo2js8TwVefTfCYt0oWMEqlQqSqgQwIuzpRO6I
- ik7HAFq8fssy2cY8Imofbj77uKz0BNZC/1nGG1OI9cU2jHrqsn1i95KaS6fPu4EN6XP/Gi/O
- 0DxND+HEyzVqhUJkvXUhTsOzgzWAvW9BlkKRiVizKM6PLsVm/XmeapGs4ir/U8OzKI+SM3R8
- VMW8eovWgXNUQ9F2vS1dHO8eRn2UqDKBZSo+qCRWLRtsqNzmU4N0zuGqZSaDCvkMwF6kIRkD
- ZkDjjYQtoftPGchLBTUzeUa2gfOr1T4xSQUHhPL8zsFNBGZY+hkBEADb5quW4M0eaWPIjqY6
- aC/vHCmpELmS/HMa5zlA0dWlxCPEjkchN8W4PB+NMOXFEJuKLLFs6+s5/KlNok/kGKg4fITf
- Vcd+BQd/YRks3qFifckU+kxoXpTc2bksTtLuiPkcyFmjBph/BGms35mvOA0OaEO6fQbauiHa
- QnYrgUQM+YD4uFoQOLnWTPmBjccoPuiJDafzLxwj4r+JH4fA/4zzDa5OFbfVq3ieYGqiBrtj
- tBFv5epVvGK1zoQ+Rc+h5+dCWPwC2i3cXTUVf0woepF8mUXFcNhY+Eh8vvh1lxfD35z2CJeY
- txMcA44Lp06kArpWDjGJddd+OTmUkFWeYtAdaCpj/GItuJcQZkaaTeiHqPPrbvXM361rtvaw
- XFUzUlvoW1Sb7/SeE/BtWoxkeZOgsqouXPTjlFLapvLu5g9MPNimjkYqukASq/+e8MMKP+EE
- v3BAFVFGvNE3UlNRh+ppBqBUZiqkzg4q2hfeTjnivgChzXlvfTx9M6BJmuDnYAho4BA6vRh4
- Dr7LYTLIwGjguIuuQcP2ENN+l32nidy154zCEp5/Rv4K8SYdVegrQ7rWiULgDz9VQWo2zAjo
- TgFKg3AE3ujDy4V2VndtkMRYpwwuilCDQ+Bpb5ixfbFyZ4oVGs6F3jhtWN5Uu43FhHSCqUv8
- FCzl44AyGulVYU7hTQARAQABwsF8BBgBCgAmFiEEAExkfXVyz31yvbT7aZ2FCp9Be9gFAmZY
- +hkCGwwFCQWjmoAACgkQaZ2FCp9Be9hN3g/8CdNqlOfBZGCFNZ8Kf4tpRpeN3TGmekGRpohU
- bBMvHYiWW8SvmCgEuBokS+Lx3pyPJQCYZDXLCq47gsLdnhVcQ2ZKNCrr9yhrj6kHxe1Sqv1S
- MhxD8dBqW6CFe/mbiK9wEMDIqys7L0Xy/lgCFxZswlBW3eU2Zacdo0fDzLiJm9I0C9iPZzkJ
- gITjoqsiIi/5c3eCY2s2OENL9VPXiH1GPQfHZ23ouiMf+ojVZ7kycLjz+nFr5A14w/B7uHjz
- uL6tnA+AtGCredDne66LSK3HD0vC7569sZ/j8kGKjlUtC+zm0j03iPI6gi8YeCn9b4F8sLpB
- lBdlqo9BB+uqoM6F8zMfIfDsqjB0r/q7WeJaI8NKfFwNOGPuo93N+WUyBi2yYCXMOgBUifm0
- T6Hbf3SHQpbA56wcKPWJqAC2iFaxNDowcJij9LtEqOlToCMtDBekDwchRvqrWN1mDXLg+av8
- qH4kDzsqKX8zzTzfAWFxrkXA/kFpR3JsMzNmvextkN2kOLCCHkym0zz5Y3vxaYtbXG2wTrqJ
- 8WpkWIE8STUhQa9AkezgucXN7r6uSrzW8IQXxBInZwFIyBgM0f/fzyNqzThFT15QMrYUqhhW
- ZffO4PeNJOUYfXdH13A6rbU0y6xE7Okuoa01EqNi9yqyLA8gPgg/DhOpGtK8KokCsdYsTbk=
-In-Reply-To: <20260205163727.2995422-1-badrikesh.prusty@siemens.com>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=quirin.gylstorff@siemens.com; keydata=
+ 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
+ Z2NBPBZUysw=
+In-Reply-To: <SG2PR06MB51078D17CA7212B9DE6CE6039199A@SG2PR06MB5107.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI2PR02CA0038.apcprd02.prod.outlook.com
- (2603:1096:4:196::22) To GV2PR10MB6186.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:150:76::15)
+X-ClientProxiedBy: FR4P281CA0013.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:c8::6) To VI1PR10MB2319.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:803:89::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PR10MB6186:EE_|FRWPR10MB9419:EE_
-X-MS-Office365-Filtering-Correlation-Id: 667cacb6-5ee4-4564-04ea-08de64d7a77d
+X-MS-TrafficTypeDiagnostic: VI1PR10MB2319:EE_|AMDPR10MB9504:EE_
+X-MS-Office365-Filtering-Correlation-Id: b0141e4f-8acd-4fbc-678b-08de64f0016f
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
 X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?MXEwT0diaGZ4L3g4RHgrVUc4ZzV2ZHIvVyswRGsrM09YM05UV2d5ZWF6Y0ZE?=
- =?utf-8?B?UGwxekhuL0RqWEszbHBDMXlOeWhNUjBxdzRTMzg0dzUxSFIwM2RrVDg4MVNV?=
- =?utf-8?B?NDExLzhJeFVOU2pLZlF4MktIUUlNUWJ6emNESnZBYkQvWUZuWUdpY1NsbWtN?=
- =?utf-8?B?YmFDd3RWaVRtb1JoZ1gxZHBMY2tXQ1dVbzNjQ20zYnFkNFFtR3BuS0h5VUFQ?=
- =?utf-8?B?STlTZllQRkwyaWJPaWExd210clBneVR3aTNnLzlad3Y3LzlWYldUWm1RZytX?=
- =?utf-8?B?Yy9rMzU4ZGdvcGQ4ZXRINjhvZWR6Ty9YMEtJOTNSSTVqb2NhYW84aUMxQXdR?=
- =?utf-8?B?MURPa28yM0VMNzlVUWplUXg1S3RNc3JRVERaOEdjWXN0aWNOWkJpRnFKTVRM?=
- =?utf-8?B?bVQ3Sk5XRnR6ZDhFZGc0UEFER3NOQzZVbE9TUDdkRkYvZXlGaTVxbFlzWnJQ?=
- =?utf-8?B?SEN2eVVyT0Fnb2w1clJvVC92Wk5NZWdFSGtmNU9YdVZFTlBkUElSVnd6Z25E?=
- =?utf-8?B?ZjQ2a3cvZ0JxWmRwRWFVM1NMU0hWaU9xNXI0NWFOaStkOUZyRVlXSkNNV1pD?=
- =?utf-8?B?cjJGYTlBaVhOQ1ZhMVl1VXNiMjdITVRXTkYrOHRISDc3WlN3cXJaUjJJOGVr?=
- =?utf-8?B?RDZ2bzFqOWFYUTAwSDFFekhCclNsRXkvemJvOXBRR1REYk9xRVZVNS9kSEVZ?=
- =?utf-8?B?OGRscmN3bnVRTTNRRXYxVmRYSjQwR3VLd0FxV2ZibFZ6SjhzbldZNTF3Z1Uw?=
- =?utf-8?B?QWJVWFpHU2hFZ0UyY2dJTCtmdVhFNzB0QUJTeGxkZ1UrQTBGS1cvRWlCWWxh?=
- =?utf-8?B?MnZGcVlsYUh0aXA5c3JlQ0NVaU5UTVB1UWtwVjA4aFpTZkIzWklMRWZod1VI?=
- =?utf-8?B?WUY3aUZQc2VvcncrUVVUcGVrd00wcVdNbVpqVy9jOGw4OXMwYThsOE9DcmQ5?=
- =?utf-8?B?Vk92aWh1RkptVFFaU3A5QjhvQ21VL3hLeVNHWjkyeGdWUXcwcW0zZ3B2VG1G?=
- =?utf-8?B?S1VyWElVNCtrL1cxY0N4Z01XdTRTRU1yaDhIT3NRdFNyMUtDczlqSU9nU1J6?=
- =?utf-8?B?RUF0VFgyU0JObUhQb3lySVQ4UjBzUm5HUkdaSGdVM2pZMGhTbTRWQWpzNzlH?=
- =?utf-8?B?ckMvWGY1Vm05UTMzaGRPakNuanlUNFpLN1hDaGxBblpidXVaSEt5UU1vL3Ir?=
- =?utf-8?B?NnJvcENoSW9Md08xcXhuSTBJYkdROG5IWXVrTURENEk4OUZCZmxaT2tmU2w0?=
- =?utf-8?B?T2c2alFseGMxRVpDYzBzbGk0QXZNY1UrS2lDS001ZjhUZ2Z6cFhoWGhZdkpE?=
- =?utf-8?B?UFcrd3M4Q1VjQ1RVQ2preTNQVDBZTkRXN1h6dVViTmxtVGhSOEZJcTFSRklD?=
- =?utf-8?B?cHpQQzNDdGQ4OXlsVmRpWlpjZ3JaSGFqUVJ5dlhLaW92M1gxMndsODBnbjN1?=
- =?utf-8?B?a09lSkdrT2d4emxGWlBuTDdqRWxOUE5sdWtDZmcvREh2Q1hJWHIzRTIxU0xm?=
- =?utf-8?B?T1hvWEU1aW5PbGRqUnI3Z3NRdC9ua0VSMTBPcm5tWTBqZ1BJMWhwRDQ1UUUw?=
- =?utf-8?B?Ukc1Z1ROZ3NEZW1CV2dyRUNWV0tLelNJdEp0NTlCM2NtREVPLzlGcHBpTzYz?=
- =?utf-8?B?ejdTUy9mNVp6ODY3Z2RUY3Q1TlEyWDd6N3Vya0tUUEFwQ08xYmVCUzBMdnBM?=
- =?utf-8?B?M0dPbGFBK3NjdGNoTlo3VUtVdU9vb1JFR3hVZERUUmJVd2hwTEJpQktsQTBB?=
- =?utf-8?B?VjladXAvWi9OckRucjJPUVNnV0NDWGZRK1AxcjE1MGt4bUxtalNBSVZ5Z2tM?=
- =?utf-8?B?a1dwV3lXTDlFYUlyTHJjWUwrZnFSL0VZOWduYlpPbUxaYXRHbVE1RFdHM1F1?=
- =?utf-8?B?REFlc0VaZkZBZzZjcXVYV25ENkZwZ2JKeVkvV3pJV3hBdXdhNDRkcG02Vm96?=
- =?utf-8?B?VjFXVUVOalFpaTdpNTV3Qk1FMFRXMzQ3L1VpU2ZjRGRtblBHZlB6RmlSamsr?=
- =?utf-8?B?bXJxd0tpdkdBYWpkWktOdUptZk9XUlcrWGVkWVBxbUdGMnpjU2JWcHVhaEFq?=
- =?utf-8?B?VnZRbVB3c3Fiemh5SkV1OVQ0L2ZnaDNNMWpJa1dFeDVBSUFKS0lERmRLZDdu?=
- =?utf-8?Q?5r5k=3D?=
+	=?utf-8?B?NGVGZHpQcFJQWjQ4T0FrSGV3RENXaXFJS0FYVEZlbXVSRmJxWWFManYxcFNa?=
+ =?utf-8?B?OXRlNW0wU2xuMjg2YkNpOGJlRGdGbUFpeGpTN282ZnY3QS8wWXQvWW1xTTYx?=
+ =?utf-8?B?dUlkRDRJM2hGd2hMQnF6K016VjE3TGJGU21hTVZCb3ZWdUpBd0NSRXgvUXRV?=
+ =?utf-8?B?bVgwdGZxRFp3NS9ja0JuV0VycFkzMGQ0SkNBa0tXbmczTEptRVZSUDhJT0ZJ?=
+ =?utf-8?B?MHZUZkJBSVZ3bVBlU1VIZWVsM1hnWHlycHM1M2lpQVp0RU9LVE45VWVKeDEr?=
+ =?utf-8?B?dk9ROW5GZ2Q3SU5yM1FWTDlYOFlDa0lGY0JlUGQvQ0lKSTh3MFZoN20wZ2lt?=
+ =?utf-8?B?N0tyT3lIWS8yaUtVNmJ4dzRlRGd4S2xZV1hTSFFoVE04UlB0MUU1UHR4OTBa?=
+ =?utf-8?B?QlBmY0FYS0JqRElGcEhtSGF3K0JHRFVlV0Q2ZlFqYTRWN3hhd0JJbHJQWTBq?=
+ =?utf-8?B?VnRRdVlRajNZQ1F0ck5MdVU0cWZ2K3Zsam5pM2NuY3VldTEvK2M4a0RINENE?=
+ =?utf-8?B?YWhvS2ExVTNxSk16TlNaOFZ6ODlmK2NNMHVZa1F0L010WngwUzUwVCtPejFR?=
+ =?utf-8?B?Z2wzdTV6Y1NicHk3T0FsZEtJTzB5bDBTZ2FUcXdIWWxSWG9YVG1XdExsMHBx?=
+ =?utf-8?B?VGlwUnVBV2NSTTBmR3RqeVpSdi9UNmt4VmhTTDBRU0J4dWQybzV4ZGJaWlo2?=
+ =?utf-8?B?aHByUmtxRXdrUldkQUkxdEJ0enQ5dmozMUYyTnlxUy9RSVp1ZThSWk1hUUho?=
+ =?utf-8?B?eGhObWhQQ2VKWG1QN29wYWlnL0IzMzkyeDIvdGJBVG1QVzBldlFCZXFhTTJ4?=
+ =?utf-8?B?Ujk2VHI5S3E4UFc2NzExbHpOeWkrY2hDWnFyUHVycUFaV3VBbUlOYzJrL1J0?=
+ =?utf-8?B?b09RK2RyUFhUTVI4dFZEd1BNMEV4N0tXbEU5RXBPZjFtb3NVZUJMYWhIRTJ5?=
+ =?utf-8?B?UUNHYUY4ZU9CN2p4Q21BdUtXSjZ0dWZQb3pyYUcrazgrU014TDV3RmhlVWRL?=
+ =?utf-8?B?VUxrQlFiL2Fjc1pDVUVZRHNyNGVoZHFORFE4bFRTaG1GRnQ4RWplYXkvWE5h?=
+ =?utf-8?B?U3ExNy9SeEt0NWpaOXBWYi8wZVpxcEhJanBpWWE2d1ZNZzE2OXFZVFNhNkJo?=
+ =?utf-8?B?SXpUN0haeGxWLzhVSmxMcmsvNzR2V2laWVRITC9xbmNUTHRvS2xyTUdpRTQ5?=
+ =?utf-8?B?MVc2OVlOZnFOOTgzZ2NTL2RwSXZHVTFRVHlzQ09NQkZmaVJkZVAva0QrYUxX?=
+ =?utf-8?B?aEhMWjBjQ20vbEZ6STdXRHBVUXh2djZEOEo3SkxJb0FBWlR5VHp3Y3VITHNB?=
+ =?utf-8?B?RE80endwTzRkQnZpUkU4ZWVSamtUTTJtbVlmRXFOWFFHYjRqUUoxMDNHZmVt?=
+ =?utf-8?B?RlBTdjNsTU1rWkFSOFV5S3Y5NlpuUnc0MUR2azFCbHB5ekg1cDdBeW1CQ1J2?=
+ =?utf-8?B?R2hRS3NtM0s1OHQxMnFwSDgrelFIWlF3ODI0d2hoL3E3TCtzVC8vUWI0dkpx?=
+ =?utf-8?B?NzJJT21uTE9kYzJyazlYbnhRL2JoM2Z6Zlo1Y0U1cjdZWHZ4ZjdFcWZGcUFk?=
+ =?utf-8?B?SUtGNzVPMFowTXVoOHhMYXMxbGJQRitiUnV3M0NrN1RjVXhjL2piaVZPaE5t?=
+ =?utf-8?B?S1N6dk15dS9udmpGZHFmUVZNV0pneEo3VHU3YkxnWm5tUUVCVjgwMHJsTFlq?=
+ =?utf-8?B?WlFtYjFVYWRIcUswVm5SY1JrbmpQVWgveHloNEtGdGZTTmZpc3kyVVBtQnV2?=
+ =?utf-8?B?NklkNjhacHFGcEpxVzB6Z2piZFdScnQxb1BxcFlpODYrMmRqbUxmdmxJOXox?=
+ =?utf-8?B?NWlPNkI2eDFzNTRGais1LzBEWms1VkZiTjBPOTNmSnRXQmFoYXpCdGJWTU1r?=
+ =?utf-8?B?LzgyRHM4dGE0NGFKOVVCWURieG1zUkgvc3g3dEx4b1F6eGgvKzFrYlhXSURw?=
+ =?utf-8?B?MTRFcGlLM3FJVWp1bG5zaHBncTFQNjN1R25DMElFZEdJWjdON0EzbXhDMmE0?=
+ =?utf-8?B?bE5DOHFMVDZjaE9PWU1ibGc5dS9RbkVwQTB0OGlBNjBnMktOWnE4YjduUnpi?=
+ =?utf-8?B?SzdSWGRQeUNjeFBXMkc3cENCWmk1eG9RU0txR1ZBWlVGcDVCM1MwcmJUcERl?=
+ =?utf-8?Q?aQYmJEkEbm7vvtodV39dyCMEN?=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR10MB6186.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR10MB2319.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?alFuRC9JUFJDWkM2Z04vT052L1MxWG9SK3ZpWUJ1SXU3VGVIWEp4NWhtTmFa?=
- =?utf-8?B?KytjYkRXamZNMFRPZWtNZ0JvK3hDZHk5WFBGVHpKRlRINDhyd0FCY0d5Y0tD?=
- =?utf-8?B?Mlh5Y2VhbVhkM29URE9KU1ozVGVDbWlIb2RhUlNNaCsweDZxdlpUdWYxaHBR?=
- =?utf-8?B?V3RiTm11ZER1dk1kcVNrZzRPMHZOczJ1Z3Y4YVRMWjZWY1o2b05WVnY1V05o?=
- =?utf-8?B?bGFyc2ZKNjZoMlhtMVZnd0hFSmQ4RnZUQU1RN0V2aFpQK09HZEQ1ZlNwMWJR?=
- =?utf-8?B?b1Ywbm16bWFFM2gzVDZuMUJGQkMvS0dnZko2ak56MS9nTFFWMVRyK25NYnJL?=
- =?utf-8?B?eGdJcDRIa1lhQk80MU9pWXowVU03QU51UGxGOW9OYWc3dnVFUUtPZFRZdUxq?=
- =?utf-8?B?VHdIVWc0RWtqN3Vob2pDeThMQzRYQ3BJU2l5eUsreEpUb3hSS3I3MU5iODZZ?=
- =?utf-8?B?alVaUzZxL3pnUEdVU01TcHhlYy9uN1l5S3VSUTdDTVZUWHVkRkdkdkNUcmcy?=
- =?utf-8?B?UTdYejBtSTJqOG9FMGJnaHAybUtTb3ZMOWpJcFBxWlU3NC9hMnZjekxWVXdr?=
- =?utf-8?B?Nmw2REE2VHNGV0Z5azBNVXZxRVVYK2p0d3NnZnFpWGd2YTJ0RmlVenZEYjdp?=
- =?utf-8?B?TE9hcWdNRytaRVk1L0hWYmF6SHo3VGkvMzZFRU81VG1QQ3k0N1g0WE43cGdU?=
- =?utf-8?B?NXhpVlpKelFtUmg0MVRRa09KdXNKR055YmtZY2xZYWw0V291MG83ZDIxQkVF?=
- =?utf-8?B?TXB0c05SaHhQeEMwRGxUUjM3Rmo1MUFXTjY3THVONXpRQUpxSXd4b1hVUXYr?=
- =?utf-8?B?MWlDN0h6dVcwTzQ4V3ppWjAzcFdDdEJEckw4QStkSmxHMnBMWENKWEJHYmIv?=
- =?utf-8?B?ZzZGc0FSaUp5Yzd4d0hNOTQwSU00MWFPYi82Umc2NWFHSjFwRnZNTkF2RXNw?=
- =?utf-8?B?d3dyN0I2eWYzczNxejhuUTJEN1Z6a25kcFpHV3FRa1FFN2NxT0dPTG1MWG9j?=
- =?utf-8?B?THR4QkVxemxEWHl0YUtlK2c4MURhYmVHZGh3NEltelc5ZCtKMWdXS0tjNGp0?=
- =?utf-8?B?Nm5zRzhsOTFsNW9VTzJsQmZDL2Y2SEplU1I5NUxuZWpPbW9PMjNXSlozcUQ2?=
- =?utf-8?B?SHhZVTRtZ2NKdFhoSmFJY3N1ZFE4aHFlUXB0bWN2UU10Q0UvZmMxNEVPdzha?=
- =?utf-8?B?QTF0NTRXYXpnc2t2R0Q0TTh4K1I2bTU0ZU9XelFIUzJLcGJmdGVyLzlVSnAy?=
- =?utf-8?B?Y01Xd3BocnZhSGZZZzVBbFRhek9ycGF4a2ZWc3NzLzZoSmx6V2c2R2p5dUtJ?=
- =?utf-8?B?U0RxUVRTNVNIbnQvb1ROZ1RteitUZHd2Tk9FOG5oNlJzeDdxNlVmZ21pU2w5?=
- =?utf-8?B?ajY4SC9uZDN4OEEzNEh3bzE2QjZaOUNZN1hGZ1BGYzdqMVVPaXdUTkpvcmFm?=
- =?utf-8?B?RVh5a2pvckhYRkU4bGRSTFQwZkFieUY2SExUSHQ4TDVxUFY4VEJiTEc4Wi9T?=
- =?utf-8?B?eTZiUWtBckVoOVpucS9ySW95U1FhMTM4ZWxtWVh4RHZZZXRNTXFMTW5QRHBR?=
- =?utf-8?B?anI5bDJmVFFkMVk4SFpCOHFUSm4wNjNJYnBnc1VhRnN2VFl3ZFVZd095K2s2?=
- =?utf-8?B?ajNzR1pLUmxYNHJxamNKK3pxSENVN0t1SWRnTEt4R2ZHYm5jVGs3MmtjZDR4?=
- =?utf-8?B?TFZGZmRJSkRMZ2pqWkQwZC9MQmJ1dFhudkV2NlJKMldqa21PQkF2RmdvZzRO?=
- =?utf-8?B?dlpFaWVwbVBQZWZCSGZMQVpXRHdjNmtRcURyQ0h6OGFKUEh0NUdXY0F3MFFu?=
- =?utf-8?B?MXJ4MmJ3TXdNLzZZLy81VEVJNWFIYkxRd0tTNG55Y1ZlcXNsamVKUGRicDQy?=
- =?utf-8?B?Y2VBTmNad0dzeGhkd0dQemZYQ0wzL2NNUWpRUlI4OVIyTSs5UTlTLzdjZ2dX?=
- =?utf-8?B?anpXcmZQNDRORnFGbHdWTzdHRTA5WDMxQ2c1LzJEZWZOT1cwMFNWNDQyYnZH?=
- =?utf-8?B?WnZvTUJjK1Q1TUY2bFRzSVFKUEhUbXNNY3NHUjFudFYrak85c01NdVB6RHN3?=
- =?utf-8?B?NEhqQWp3VDNUNEZFZzNxTkpWbHRVK0d4eFY4R29GY2xUbXNHcnBEaS9GM0Zn?=
- =?utf-8?B?eWJEZFdIUS9JaExhdmRUaE5KV2lDanlSMTBBU09YbDBpbjNXc3Y3YzhEOEtB?=
- =?utf-8?B?OWtaL3VwbU16YkFtd2dUYUlHVVYrY2ZNTWdHdmJuajZYc1JYR0V1cFRaSnZ2?=
- =?utf-8?B?cW1tRnZXeS96azJnbENGRHR2ZFpMUk9UOTEzSnA0OGU1SG5jZXplSi9sektw?=
- =?utf-8?B?NkNqOGgrZkpmOXhkTUhmWS9VbFNQWUR1dVNHU2paazJyVEt2OGdHb3NmeUl2?=
- =?utf-8?Q?luXOnOb01kGI5/OI=3D?=
+	=?utf-8?B?RDR0b2VMYzkzOFp1Z0wrbXlFRVpDbmo0bU9FZkV4QlJYaVpBQmhSajdubDZh?=
+ =?utf-8?B?TE9UOEozVjdidlZrVlR6UUJwNjE4Q3pSaUVscWdLdWhibDB2VG1sTDhxRXBl?=
+ =?utf-8?B?ODNMTXJJVGdlbWh3N1NZczIzWlFLdk0zbWgyZFdrNGRWa2taMTlMb3RxZU1z?=
+ =?utf-8?B?TGJXNTZqMHZsR3JaM3JiakZhWGkyMHl5eUJHNGpDZTg5M3NXanl0ajJqNmUx?=
+ =?utf-8?B?UHUrcEVOWDk0RFAxQjd0SThZS0lGcmZBdjVzb2RIYUxwZ3prWU5LQ2RwWEU1?=
+ =?utf-8?B?Q0Iyb2szVm4zRXpQcUV0SU42VjZkdldaVENpdFl6U3NaYnl2TDlONSt3NVFw?=
+ =?utf-8?B?eU9MWUlrTTEyaVllMHU4Q3ZsNkFzbW92UnFVYzZwQVpXNVdoN2tvT2N5TmVu?=
+ =?utf-8?B?N212bThyTjhac1Y5SXF4RmhFNE1zV0ZETUt0Kzc4WXdLaDVMamxtMlk1QUdk?=
+ =?utf-8?B?Z1d3SEIyNW5hZzZFUTFGRVVLYUpWTXZsd3I4eVg5eHFpYllLN1FPbkE2a0NF?=
+ =?utf-8?B?eHlNbmZyMXpZandReS9nS1cyYU0vMjJLWEFYV0tQVXZ2Q1VSanlNT3BkNjJB?=
+ =?utf-8?B?bXVwcXlmVFBMWDJrQWU2eVZ0VUdqVWxEci95emtnL3BZSTdMczNIM1RDUG1V?=
+ =?utf-8?B?bTd0WUxVMlRkSjIrNWVoRUZVRTBNVi83dUFJSk8xR0JRVmdSWnpJZk15Um5G?=
+ =?utf-8?B?eW9OYTFabUYySjNUWlZtWFVZQ1UreFovSUlFTXErajlxRnhqYUJJVDdUbHdE?=
+ =?utf-8?B?Y1RnRWVFbzJqcmwwMnRtYlIxSzdycHhQWUhQUjBxV3dtTGpBa1pQTy9IMnJy?=
+ =?utf-8?B?R3FibGpoa05HZ3hWS1BNWGthRVBsdEJSL2h6S2FrWGx3UkRaUG94bTl3UjdB?=
+ =?utf-8?B?MnRvVVo3UzRUZmZjVTUwcXVqcExMalpGeDlKbkhaZEJHY0JJTlpVdDFvUGwy?=
+ =?utf-8?B?ZWduWFJSTDFxK0ROUmNCSHlyWVU5YytGUkVER3lpSWMrR0REbWczcVRDRSt6?=
+ =?utf-8?B?NTZwVjFCM2tEQUhhS1FoUDQvWlhuemRZUlZ2RWRFZFRZTjZybE5oOFIrMHVp?=
+ =?utf-8?B?UTFRaHpNSmhOUGd2Wmd3ZzR5SXkvSU5UL21YWWZXVWxkVE5TeERpRkR5UW5z?=
+ =?utf-8?B?LzF3SkIxaGN1bk1mNm1OVVIzeXFGeWVHOTM0T0hXZGdkVm9ET2VxZ3RBMUhI?=
+ =?utf-8?B?M3FBWm9MYTJlYkRydzUxOXlZTzZFREJFRVhJT0JOR1QyRyt2UTAxcUJ0dG1x?=
+ =?utf-8?B?Tkl5cTh2NjgzK0pneFdpWEgzaWlidDVvWUY3dVk4NVlnOEgrWE5Ja2I1YkVq?=
+ =?utf-8?B?bXJUMnVtQ1B2VngwSWdUbUpKM0tyWjJpWmsxcEtvcDFDVGx1MTR4M0M4TW54?=
+ =?utf-8?B?L2hLYm5kczV2L0lJTXpEZkZzeDNud0xVZDJPbFZ0QlVpa0VCMjBpeUpyVWtp?=
+ =?utf-8?B?YlVGMnFNUjRmZ3I4Q2VxMHlOZE9SM2ZLWnovQkw4dGtVWG5yTDRVYUVzWldY?=
+ =?utf-8?B?L3dJMjlWNm90MTNHbFhLWFFnK2xFMjN5MDR0TDY1V2UzK2I4ckJadUh1R1BM?=
+ =?utf-8?B?YzJIQWF4N2pwNklRL3ZDWklNY1NiWE82OEh0Q3ZobEZwTmtYRzBYdmNXR3dG?=
+ =?utf-8?B?SWFiYXpXWmp3ZGIyUkhndGNSdXRNa2tlcXNEcURJTFdHWXNFblh0NE0rZTBt?=
+ =?utf-8?B?L1dFUUVRY01UMzdiNEtPZWVkTnNYQko5Q1B2UlZ5NTFycXFqZVRibjZ1Y3py?=
+ =?utf-8?B?R2wrMDhoTy9KSEVrVnJvSDN2d2VZa1F5YUVkdktubGdRazgyZUd2MXlnbDgz?=
+ =?utf-8?B?cmE5SzR4M24yUGVKVHlCdVJ4QUExVldkbEgxaXQ1cndHUTJNdUpjRGh3Zyt3?=
+ =?utf-8?B?WHFlczBIVGtYY29Dckttck5md1JCdHJxaU9Nc0hHOE5tYklSRjFadFpKZXJN?=
+ =?utf-8?B?ajNJN2JuTlFMK3V3cktLUFoxaEdJaGhDdHEvVFU5Rzl0TmJ5MHFwZmFaN1hJ?=
+ =?utf-8?B?azVMWnpjL0pqTTVxTjlwMllKbkpmZ3phYUlJL0QyY29lY1ZPaEFnd3NTaVc1?=
+ =?utf-8?B?V3dhRzdlS3BKeFpFWmZwdXp2U01nK204VXNqVnNGZjNJOFE2K0RpZ2lsYW5k?=
+ =?utf-8?B?RkZsaGpwQStiSW5QTGRrVDFYYzlVRS94Mm9HZHVFUGZLRHdKV3pZMG1hVWE3?=
+ =?utf-8?B?NFZYcVZQMHJocXpUL3ZDVW1xQzJwSldIOHFUZTRiVHRWc0dsV1FKakNOaGIv?=
+ =?utf-8?B?TFJicFBzemJJR0kwbkZMV3A0R014dUdZWTBUMS9BTk1Jb3hQTVFNL1JyNDRx?=
+ =?utf-8?B?N0N6UzM5Zlo5ZEEyZlcyZEtyMUZuLzRTQWh3K2R5T2tTZVZBWVAwNjVkNVox?=
+ =?utf-8?Q?FZ6spuXuS/SBdKwY=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 667cacb6-5ee4-4564-04ea-08de64d7a77d
-X-MS-Exchange-CrossTenant-AuthSource: GV2PR10MB6186.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: b0141e4f-8acd-4fbc-678b-08de64f0016f
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR10MB2319.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Feb 2026 16:57:32.7273
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Feb 2026 19:51:51.4246
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ne4LkZdDjJUIoBIhObc2WQ6D8253KVkAEi5Qqyp7NznjUMefLAlnmc/ZLQYLCTWEpGXryyqLRadTTbwVdlwphA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: FRWPR10MB9419
+X-MS-Exchange-CrossTenant-UserPrincipalName: hbC5VbouT2hMIf9JWVwewnsjIq/rbtMSmzMvWciI2u0m+l0B08jRfv1z3WGVD1nkoRPWvReTGLXu3mizD45ERjEqwRX49ONOIqlbkD6+awU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AMDPR10MB9504
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 05 Feb 2026 16:57:42 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21840
+ <cip-dev@lists.cip-project.org>; Thu, 05 Feb 2026 19:52:03 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21841
 
-On 05.02.26 17:37, Badrikesh Prusty wrote:
-> Debian Trixie ships SWUpdate 2024.12 which has an issue: swupdate-client
-> ignores the daemon's RuntimeDirectory setting and always uses /tmp
-> sockets, causing IPC failures.
+Hi,
+
+On 2/5/26 7:19 PM, Prusty, Badrikesh (FT FDS CES LX PBU 2) wrote:
+> Hello Jan,
 > 
-> This sets PREFERRED_VERSION_swupdate to 2025.12 and enables
-> SWUPDATE_SELFBUILT for Trixie. It also adds patches so control and
-> progress sockets are created under /run/swupdate by default,
-> matching documentation. swupdate-client now uses these sockets by
-> default when applying updates.
+> I have shared my changes as an MR for the debian/master branch here:
+> https://salsa.debian.org/debian/swupdate/-/merge_requests/34
+> Once it is approved and merged, we can look into backporting it to stable.
 > 
-> Closes: #135
-
-What's the state in Debian? Did they refuse to fix it in stable?
-
-Jan
-
-> Signed-off-by: Badrikesh Prusty <badrikesh.prusty@siemens.com>
-> ---
->  conf/distro/cip-core-trixie.conf              |  1 +
->  recipes-core/images/swupdate.inc              |  3 +-
->  ...date-as-default-socket-directory-ins.patch | 49 +++++++++++++++++++
->  recipes-core/swupdate/swupdate_2025.12.bb     | 43 ++++++++++++++++
->  4 files changed, 95 insertions(+), 1 deletion(-)
->  create mode 100644 recipes-core/swupdate/files/2025.12/0001-ipc-use-run-swupdate-as-default-socket-directory-ins.patch
->  create mode 100644 recipes-core/swupdate/swupdate_2025.12.bb
+> Many thanks,
+> Badrikesh
 > 
-> diff --git a/conf/distro/cip-core-trixie.conf b/conf/distro/cip-core-trixie.conf
-> index b133bbb..4ed2461 100644
-> --- a/conf/distro/cip-core-trixie.conf
-> +++ b/conf/distro/cip-core-trixie.conf
-> @@ -12,5 +12,6 @@
->  require conf/distro/debian-trixie.conf
->  require cip-core-common.inc
->  
-> +PREFERRED_VERSION_swupdate ?= "2025.12%"
->  PREFERRED_VERSION_linux-cip ?= "6.12.%"
->  PREFERRED_VERSION_linux-cip-rt ?= "6.12.%"
-> diff --git a/recipes-core/images/swupdate.inc b/recipes-core/images/swupdate.inc
-> index 00e972e..c9dbcde 100644
-> --- a/recipes-core/images/swupdate.inc
-> +++ b/recipes-core/images/swupdate.inc
-> @@ -42,10 +42,11 @@ SWUPDATE_SELFBUILT ?= "0"
->  SWUPDATE_SELFBUILT:buster = "1"
->  SWUPDATE_SELFBUILT:bullseye = "1"
->  SWUPDATE_SELFBUILT:bookworm = "1"
-> +SWUPDATE_SELFBUILT:trixie = "1"
->  
->  python() {
->      base_distro = d.getVar('BASE_DISTRO_CODENAME')
-> -    if base_distro not in ['buster', 'bullseye', 'bookworm'] and \
-> +    if base_distro not in ['buster', 'bullseye', 'bookworm', 'trixie'] and \
->         bb.utils.to_boolean(d.getVar('SWUPDATE_SELFBUILT')):
->          bb.fatal(f'Self-built SWUpdate not supported for {base_distro}')
->  
-> diff --git a/recipes-core/swupdate/files/2025.12/0001-ipc-use-run-swupdate-as-default-socket-directory-ins.patch b/recipes-core/swupdate/files/2025.12/0001-ipc-use-run-swupdate-as-default-socket-directory-ins.patch
-> new file mode 100644
-> index 0000000..e87c8bc
-> --- /dev/null
-> +++ b/recipes-core/swupdate/files/2025.12/0001-ipc-use-run-swupdate-as-default-socket-directory-ins.patch
-> @@ -0,0 +1,49 @@
-> +From c89f62d0a68e5c45e3f052edf6c3d77bba8c67e5 Mon Sep 17 00:00:00 2001
-> +From: Badrikesh Prusty <badrikesh.prusty@siemens.com>
-> +Date: Tue, 3 Feb 2026 11:25:18 +0530
-> +Subject: [PATCH] ipc: use /run/swupdate as default socket directory instead of
-> + /tmp
-> +
-> +Change the default socket directory for control and progress IPC from
-> +/tmp to /run/swupdate.
-> +
-> +This aligns with systemd conventions (RuntimeDirectory=swupdate) and
-> +the documentation in `doc/source/swupdate.rst`. It also improves
-> +security by avoiding world-writable /tmp and provides deterministic,
-> +predictable paths for both daemon and clients.
-> +
-> +Signed-off-by: Badrikesh Prusty <badrikesh.prusty@siemens.com>
-> +---
-> + ipc/network_ipc.c  | 2 +-
-> + ipc/progress_ipc.c | 2 +-
-> + 2 files changed, 2 insertions(+), 2 deletions(-)
-> +
-> +diff --git a/ipc/network_ipc.c b/ipc/network_ipc.c
-> +index 099587d4..e167d0b1 100644
-> +--- a/ipc/network_ipc.c
-> ++++ b/ipc/network_ipc.c
-> +@@ -32,7 +32,7 @@ char *get_ctrl_socket(void) {
-> + 			socketdir = getenv("TMPDIR");
-> + 		}
-> + 		if (!socketdir)
-> +-			socketdir = "/tmp";
-> ++			socketdir = "/run/swupdate";
-> + 		if (asprintf(&SOCKET_CTRL_PATH, "%s/%s", socketdir, SOCKET_CTRL_DEFAULT) == -1)
-> + 			return (char *)"/tmp/"SOCKET_CTRL_DEFAULT;
-> + 	}
-> +diff --git a/ipc/progress_ipc.c b/ipc/progress_ipc.c
-> +index d3689271..382a83c9 100644
-> +--- a/ipc/progress_ipc.c
-> ++++ b/ipc/progress_ipc.c
-> +@@ -41,7 +41,7 @@ char *get_prog_socket(void) {
-> + 			socketdir = getenv("TMPDIR");
-> + 		}
-> + 		if(!socketdir){
-> +-			socketdir = "/tmp";
-> ++			socketdir = "/run/swupdate";
-> + 		}
-> + 		if (asprintf(&SOCKET_PROGRESS_PATH, "%s/%s", socketdir, SOCKET_PROGRESS_DEFAULT) == -1)
-> + 			return (char *)"/tmp/"SOCKET_PROGRESS_DEFAULT;
-> +-- 
-> +2.39.5
-> +
-> diff --git a/recipes-core/swupdate/swupdate_2025.12.bb b/recipes-core/swupdate/swupdate_2025.12.bb
-> new file mode 100644
-> index 0000000..d53545e
-> --- /dev/null
-> +++ b/recipes-core/swupdate/swupdate_2025.12.bb
-> @@ -0,0 +1,43 @@
-> +#
-> +# CIP Core, generic profile
-> +#
-> +# Copyright (c) Siemens AG, 2026
-> +#
-> +# Authors:
-> +#  Badrikesh Prusty <badrikesh.prusty@siemens.com>
-> +#
-> +# SPDX-License-Identifier: MIT
-> +
-> +inherit dpkg
-> +
-> +require swupdate.inc
-> +
-> +DEPENDS += "libebgenv-dev"
-> +DEPENDS += "libubootenv-dev"
-> +
-> +DEB_BUILD_PROFILES += "nodoc"
-> +DEB_BUILD_OPTIONS += "nodoc"
-> +
-> +FILESEXTRAPATHS:prepend := "${FILE_DIRNAME}/files/${PV}:"
-> +
-> +SRC_URI = "git://salsa.debian.org/debian/swupdate.git;protocol=https;branch=debian/master;destsuffix=${P}"
-> +
-> +SRCREV = "1fa1ce0c85423f228529d2fccbe8813f07040536"
-> +
-> +# patches
-> +SRC_URI += "file://0001-ipc-use-run-swupdate-as-default-socket-directory-ins.patch"
-> +
-> +# Disable cross for arm and arm64 on bullseye
-> +# with cross compile we have a unsat-dependency to dh-nodejs on arm/arm64
-> +ISAR_CROSS_COMPILE:bullseye = "0"
-> +
-> +# add cross build and deactivate testing for arm based builds
-> +DEB_BUILD_PROFILES += "cross nocheck"
-> +
-> +CHANGELOG_V ?= "${PV}+cip-${SRCREV}"
-> +
-> +do_prepare_build() {
-> +    deb_add_changelog
-> +    cd ${WORKDIR}
-> +    tar cJf ${PN}_${PV}+cip.orig.tar.xz ${TAR_REPRO_OPTS} ${P}
-> +}
+> ________________________________________
+> From: Kiszka, Jan (FT RPD CED) <jan.kiszka@siemens.com>
+> Sent: 05 February 2026 22:27
+> To: Prusty, Badrikesh (FT FDS CES LX PBU 2); cip-dev@lists.cip-project.org; Gylstorff, Quirin (FT RPD CED OES-DE)
+> Subject: Re: [isar-cip-core][PATCH] swupdate: use self-built 2025.12 for Debian Trixie
+> 
+> On 05.02.26 17:37, Badrikesh Prusty wrote:
+>> Debian Trixie ships SWUpdate 2024.12 which has an issue: swupdate-client
+>> ignores the daemon's RuntimeDirectory setting and always uses /tmp
+>> sockets, causing IPC failures.
+>>
+>> This sets PREFERRED_VERSION_swupdate to 2025.12 and enables
+>> SWUPDATE_SELFBUILT for Trixie. It also adds patches so control and
+>> progress sockets are created under /run/swupdate by default,
+>> matching documentation. swupdate-client now uses these sockets by
+>> default when applying updates.
+For this  the TMPDIR env variable exists or the Kconfig switch 
+CONFIG_SOCKET_CTRL_PATH and CONFIG_SOCKET_PROGRESS_PATH.
 
--- 
-Siemens AG, Foundational Technologies
-Linux Expert Center
+
+
+>>
+>> Closes: #135
+> 
+> What's the state in Debian? Did they refuse to fix it in stable?
+> 
+> Jan
+> 
+>> Signed-off-by: Badrikesh Prusty <badrikesh.prusty@siemens.com>
+>> ---
+>>   conf/distro/cip-core-trixie.conf              |  1 +
+>>   recipes-core/images/swupdate.inc              |  3 +-
+>>   ...date-as-default-socket-directory-ins.patch | 49 +++++++++++++++++++
+>>   recipes-core/swupdate/swupdate_2025.12.bb     | 43 ++++++++++++++++
+>>   4 files changed, 95 insertions(+), 1 deletion(-)
+>>   create mode 100644 recipes-core/swupdate/files/2025.12/0001-ipc-use-run-swupdate-as-default-socket-directory-ins.patch
+>>   create mode 100644 recipes-core/swupdate/swupdate_2025.12.bb
+>>
+>> diff --git a/conf/distro/cip-core-trixie.conf b/conf/distro/cip-core-trixie.conf
+>> index b133bbb..4ed2461 100644
+>> --- a/conf/distro/cip-core-trixie.conf
+>> +++ b/conf/distro/cip-core-trixie.conf
+>> @@ -12,5 +12,6 @@
+>>   require conf/distro/debian-trixie.conf
+>>   require cip-core-common.inc
+>>
+>> +PREFERRED_VERSION_swupdate ?= "2025.12%"
+>>   PREFERRED_VERSION_linux-cip ?= "6.12.%"
+>>   PREFERRED_VERSION_linux-cip-rt ?= "6.12.%"
+>> diff --git a/recipes-core/images/swupdate.inc b/recipes-core/images/swupdate.inc
+>> index 00e972e..c9dbcde 100644
+>> --- a/recipes-core/images/swupdate.inc
+>> +++ b/recipes-core/images/swupdate.inc
+>> @@ -42,10 +42,11 @@ SWUPDATE_SELFBUILT ?= "0"
+>>   SWUPDATE_SELFBUILT:buster = "1"
+>>   SWUPDATE_SELFBUILT:bullseye = "1"
+>>   SWUPDATE_SELFBUILT:bookworm = "1"
+>> +SWUPDATE_SELFBUILT:trixie = "1"
+>>
+>>   python() {
+>>       base_distro = d.getVar('BASE_DISTRO_CODENAME')
+>> -    if base_distro not in ['buster', 'bullseye', 'bookworm'] and \
+>> +    if base_distro not in ['buster', 'bullseye', 'bookworm', 'trixie'] and \
+>>          bb.utils.to_boolean(d.getVar('SWUPDATE_SELFBUILT')):
+>>           bb.fatal(f'Self-built SWUpdate not supported for {base_distro}')
+>>
+>> diff --git a/recipes-core/swupdate/files/2025.12/0001-ipc-use-run-swupdate-as-default-socket-directory-ins.patch b/recipes-core/swupdate/files/2025.12/0001-ipc-use-run-swupdate-as-default-socket-directory-ins.patch
+>> new file mode 100644
+>> index 0000000..e87c8bc
+>> --- /dev/null
+>> +++ b/recipes-core/swupdate/files/2025.12/0001-ipc-use-run-swupdate-as-default-socket-directory-ins.patch
+>> @@ -0,0 +1,49 @@
+>> +From c89f62d0a68e5c45e3f052edf6c3d77bba8c67e5 Mon Sep 17 00:00:00 2001
+>> +From: Badrikesh Prusty <badrikesh.prusty@siemens.com>
+>> +Date: Tue, 3 Feb 2026 11:25:18 +0530
+>> +Subject: [PATCH] ipc: use /run/swupdate as default socket directory instead of
+>> + /tmp
+>> +
+>> +Change the default socket directory for control and progress IPC from
+>> +/tmp to /run/swupdate.
+>> +
+>> +This aligns with systemd conventions (RuntimeDirectory=swupdate) and
+>> +the documentation in `doc/source/swupdate.rst`. It also improves
+>> +security by avoiding world-writable /tmp and provides deterministic,
+>> +predictable paths for both daemon and clients.
+>> +
+>> +Signed-off-by: Badrikesh Prusty <badrikesh.prusty@siemens.com>
+>> +---
+>> + ipc/network_ipc.c  | 2 +-
+>> + ipc/progress_ipc.c | 2 +-
+>> + 2 files changed, 2 insertions(+), 2 deletions(-)
+>> +
+>> +diff --git a/ipc/network_ipc.c b/ipc/network_ipc.c
+>> +index 099587d4..e167d0b1 100644
+>> +--- a/ipc/network_ipc.c
+>> ++++ b/ipc/network_ipc.c
+>> +@@ -32,7 +32,7 @@ char *get_ctrl_socket(void) {
+>> +                     socketdir = getenv("TMPDIR");
+>> +             }
+>> +             if (!socketdir)
+>> +-                    socketdir = "/tmp";
+>> ++                    socketdir = "/run/swupdate";
+>> +             if (asprintf(&SOCKET_CTRL_PATH, "%s/%s", socketdir, SOCKET_CTRL_DEFAULT) == -1)
+>> +                     return (char *)"/tmp/"SOCKET_CTRL_DEFAULT;
+>> +     }
+>> +diff --git a/ipc/progress_ipc.c b/ipc/progress_ipc.c
+>> +index d3689271..382a83c9 100644
+>> +--- a/ipc/progress_ipc.c
+>> ++++ b/ipc/progress_ipc.c
+>> +@@ -41,7 +41,7 @@ char *get_prog_socket(void) {
+>> +                     socketdir = getenv("TMPDIR");
+>> +             }
+>> +             if(!socketdir){
+>> +-                    socketdir = "/tmp";
+>> ++                    socketdir = "/run/swupdate";
+>> +             }
+>> +             if (asprintf(&SOCKET_PROGRESS_PATH, "%s/%s", socketdir, SOCKET_PROGRESS_DEFAULT) == -1)
+>> +                     return (char *)"/tmp/"SOCKET_PROGRESS_DEFAULT;
+>> +--
+>> +2.39.5
+>> +
+
+This is a SWUpdate upstream topic and not a Debian or CIP topic.
+
+
+Quirin
+
+>> diff --git a/recipes-core/swupdate/swupdate_2025.12.bb b/recipes-core/swupdate/swupdate_2025.12.bb
+>> new file mode 100644
+>> index 0000000..d53545e
+>> --- /dev/null
+>> +++ b/recipes-core/swupdate/swupdate_2025.12.bb
+>> @@ -0,0 +1,43 @@
+>> +#
+>> +# CIP Core, generic profile
+>> +#
+>> +# Copyright (c) Siemens AG, 2026
+>> +#
+>> +# Authors:
+>> +#  Badrikesh Prusty <badrikesh.prusty@siemens.com>
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +
+>> +inherit dpkg
+>> +
+>> +require swupdate.inc
+>> +
+>> +DEPENDS += "libebgenv-dev"
+>> +DEPENDS += "libubootenv-dev"
+>> +
+>> +DEB_BUILD_PROFILES += "nodoc"
+>> +DEB_BUILD_OPTIONS += "nodoc"
+>> +
+>> +FILESEXTRAPATHS:prepend := "${FILE_DIRNAME}/files/${PV}:"
+>> +
+>> +SRC_URI = "git://salsa.debian.org/debian/swupdate.git;protocol=https;branch=debian/master;destsuffix=${P}"
+>> +
+>> +SRCREV = "1fa1ce0c85423f228529d2fccbe8813f07040536"
+>> +
+>> +# patches
+>> +SRC_URI += "file://0001-ipc-use-run-swupdate-as-default-socket-directory-ins.patch"
+>> +
+>> +# Disable cross for arm and arm64 on bullseye
+>> +# with cross compile we have a unsat-dependency to dh-nodejs on arm/arm64
+>> +ISAR_CROSS_COMPILE:bullseye = "0"
+>> +
+>> +# add cross build and deactivate testing for arm based builds
+>> +DEB_BUILD_PROFILES += "cross nocheck"
+>> +
+>> +CHANGELOG_V ?= "${PV}+cip-${SRCREV}"
+>> +
+>> +do_prepare_build() {
+>> +    deb_add_changelog
+>> +    cd ${WORKDIR}
+>> +    tar cJf ${PN}_${PV}+cip.orig.tar.xz ${TAR_REPRO_OPTS} ${P}
+>> +}
+> 
+> --
+> Siemens AG, Foundational Technologies
+> Linux Expert Center
+
 
