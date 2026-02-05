@@ -1,262 +1,483 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <adithya.balakumar@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8537AE91277
-	for <webhook@archiver.kernel.org>; Thu,  5 Feb 2026 07:01:29 +0000 (UTC)
-Received: from AS8PR04CU009.outbound.protection.outlook.com (AS8PR04CU009.outbound.protection.outlook.com [52.101.70.42])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.15373.1770274882712690120
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65A48E9127E
+	for <webhook@archiver.kernel.org>; Thu,  5 Feb 2026 07:01:49 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.131])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.15305.1770274903638783649
  for <cip-dev@lists.cip-project.org>;
- Wed, 04 Feb 2026 23:01:23 -0800
+ Wed, 04 Feb 2026 23:01:44 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=L2gKPEvD;
- spf=pass (domain: siemens.com, ip: 52.101.70.42, mailfrom: jan.kiszka@siemens.com)
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.131, mailfrom: adithya.balakumar@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1120) id 61571f6K2066454; Thu, 5 Feb 2026 16:01:41 +0900
+X-Iguazu-Qid: 2rWh8deQPDBR7GVYL4
+X-Iguazu-QSIG: v=2; s=0; t=1770274901; q=2rWh8deQPDBR7GVYL4; m=2WefNJ6oNzIADUH3wPQJTeDZRv02S2PYXHPaddA1pMQ=
+Received: from imx12-a.toshiba.co.jp (unknown [38.106.60.135])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	 id 4f67S45S8Wz4vym; Thu,  5 Feb 2026 16:01:40 +0900 (JST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iM4kI/ADit/StmIaw+f3F3WhJzDQ6fwJmwOEYJRl+yzql/JTNlPiREfnDcXsN5YDeEKC7XlMJLMa/MYAEZHRNXLqZNJz0osH4WqYabFRu8ek40J/v1xxRNwJDHQe72C5Jle+HWqHhq64aAttASBj+Uu7A9qYm3vXw0zNi6mUquDY+nzW9SjnedPOyrTIXQNpFXMh0O5DS18ddwYHsqpUo+fWfrXBcCF7ZZZ0cHQuXvffpkLz3OZQ32eZzBzRdE3MKpEBn5z5pxptOL+EnX7nOvFXOhsU8NqewJczCwpkZOJEAkvvlIKa5O+cp3TynHVkUkN5pDXochArP9MOtH1i6Q==
+ b=jQyLS//kv5BvcUxPZHzcLYal43boBSgguNXLrCGSo/v1Zn3RwHa8MN0SU4Ax0p1oKYRwAv3srMKYmj67NV9tt31L3phP7jPpTY1aqmtftMUaGgq57zBB32Da1+CjKLC9+eJ087Ch8GTCOKv2/FUmpl76cKTC13vB+54OQI4RaZw9ZRCYdM9KjywV5bj1Jlg49xTE7MNwIaJFUsds/zM5wFdxnPweHiUx4bo3mXSTC6Qfsh8k2NPUp9j7CiKj298GGZSSJd3Myg3e7JgsBz4zlTXf7sb8yFnijcXD0qpWgzOTCY8IHC2hM2m69wJcgOye3Occ/1q/xhTVLELVCYqbpg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LZpePBvgazbKE6zr6g0oTOQ+J7snFtIO3EU2xbzSY8E=;
- b=kjgCiMN3YrGkSkXFNlz1rc4BMNyC1kwPDT+4WyZko+/91YVVIc/gCvnz9PMegNeJXy450CrT0f59pMZdeNURgZIWm1MRuCy9If4HtTFwzzMqXjq7AgQWl53qmxpPvvH+J401De3kPqbc92JIodiBxzSgQbaJ9Z0M3MTUD5r/cg4jp6XaA3mLgXI3FWCykxipiE3lo58P0RUIqcu1oMhNBv0hFIfXWCKOhNY+Zm0+JxdbHGAiI3tuhlpdRi/Mn1r00U0Iy+a+OjsceOaysSqN5LvuG4l0hgvuo446Svn781PITBz6szy1QXau3RhxNCPcS2POoapd6mc1X0lEcVyrYA==
+ bh=cqyj68MySa/72ex8gMJjBuoDoRFcQ2xgkGQL3kossTQ=;
+ b=bP7wtqNkj9ZjBD0yyJWam4Zm5hdHrIsBKXLe3t0KD6z7WI9s3Vu4XEWc3XDO+fRiveftxE3a8NcFH9cqwnZXgrgDLTPr2KKjPy+D+E2JybJrWLHTZfAw6F4GRvcg3YqsXHjjzG3eTMxzZ/xg7AwkLiIxtqkPiJ6cZQkNIgOUSqTvZbWBfyMRrMPdYmb7t3ND1OICuzEfJlNLIR0ZWJS/jPUNDfK8cynL3pVGVOLMhhAKRghniZwlpVTY3/6aOc0y348xvhin8fpXfiBhaPF/tz8ChxSfAMWHtPvYvk7dMgjNkkTkRWRKSNva9GKZKF2Usv1x5SsOzADoo1tlgKmyxA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LZpePBvgazbKE6zr6g0oTOQ+J7snFtIO3EU2xbzSY8E=;
- b=L2gKPEvDW2ZYUDl5cqKQ+jWBogkTc1xeih4K8lXzQIcpolFhUwP1UClP9MNP5hD9nmBbG3DUsYxMiHruV0KypN7oIJKVm9gOKDG27bdTLYpNxoNGYFBm5dxXaaehIBCmNAf48YoKSs/eYkOvxv96Nu9KJ35UrQHL1QvQDqLp9gmyq5LFSjEXUP2jLZ1rKPzwDwwYbi60CM1np7LkTz+wToo5Z6DEAZr2d0Nyd22steaAVh9hOv4bTr5JtzmVQwdE4ady8oYBQoKl0z2qTi/eFhjCDkoCWi5cSyTzKAMH6UiT2AFGTAKbbMXdkEICroq95LfzEoyhhWUh1HZNBxXQEg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from GV2PR10MB6186.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:76::15)
- by PAWPR10MB7720.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:364::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9564.7; Thu, 5 Feb
- 2026 07:01:18 +0000
-Received: from GV2PR10MB6186.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::63bc:6561:54d3:94b9]) by GV2PR10MB6186.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::63bc:6561:54d3:94b9%5]) with mapi id 15.20.9564.014; Thu, 5 Feb 2026
- 07:01:17 +0000
-Message-ID: <584f457b-2d06-4074-9f0b-22d967f11847@siemens.com>
-Date: Thu, 5 Feb 2026 08:01:16 +0100
-User-Agent: Mozilla Thunderbird
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Subject: CIP IRC weekly meeting today on libera.chat
-To: cip-dev <cip-dev@lists.cip-project.org>
+ smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
+ header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
+From: <Adithya.Balakumar@toshiba-tsip.com>
+To: <jan.kiszka@siemens.com>, <cip-dev@lists.cip-project.org>,
+        <quirin.gylstorff@siemens.com>
+CC: <Shivanand.Kunijadar@toshiba-tsip.com>, <dinesh.kumar@toshiba-tsip.com>,
+        <koshiro.onuki.h55@mail.toshiba>, <kazuhiro.hayashi.f74@mail.toshiba>
+Subject: Re: [isar-cip-core][PATCH v1] doc/README.factory-reset.md: Minor
+ corrections, verification steps and what to look for during factory reset
+Thread-Topic: [isar-cip-core][PATCH v1] doc/README.factory-reset.md: Minor
+ corrections, verification steps and what to look for during factory reset
+Thread-Index: AQHcllhDClDLOtNixUueGOZEYXz6cbVzqa4AgAAD2V0=
+Date: Thu, 5 Feb 2026 07:01:35 +0000
+X-TSB-HOP2: ON
+Message-ID: 
+ <TYCPR01MB96693C40CB49321A6A982A32C499A@TYCPR01MB9669.jpnprd01.prod.outlook.com>
+References: <20260205044638.14716-1-Adithya.Balakumar@toshiba-tsip.com>
+ <a2cb468e-9aad-45ca-ae41-233c410f403f@siemens.com>
+In-Reply-To: <a2cb468e-9aad-45ca-ae41-233c410f403f@siemens.com>
+Accept-Language: en-US
 Content-Language: en-US
-Autocrypt: addr=jan.kiszka@siemens.com; keydata=
- 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
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR0P281CA0175.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:b4::9) To GV2PR10MB6186.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:150:76::15)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYCPR01MB9669:EE_|OS9PR01MB14171:EE_
+x-ms-office365-filtering-correlation-id: b460a1ac-9fa6-4faa-560b-08de6484668d
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|1800799024|366016|376014|14052099004|38070700021|8096899003|7053199007|95630200002;
+x-microsoft-antispam-message-info: 
+ =?iso-2022-jp?B?MVYzWGtvYWVWclR5SzU5WmpxZS8rRGg3elptQXcwYTBIMlpoUzJEUWVu?=
+ =?iso-2022-jp?B?U0N3aGlqY1FlLzNma3l0Y3NMSVpXK1B5VDlYTVNNVTJGdWN3QnJoUk5P?=
+ =?iso-2022-jp?B?c0dQKzVhZU9yUmtrVGhVRWZ2MW5tRHpuZFFtbG9zT0dVckhrRXFZM09v?=
+ =?iso-2022-jp?B?NVFWZTZHT0VnQXBFZEN1MXp6WnZBeDFGbkNSZnBYZDRBcnh1MzRWaldY?=
+ =?iso-2022-jp?B?UmlYU2NJNmcxRXBoWUZIdE5zZ0JycDFabXA3azkyb0pycFVicXZQMCtL?=
+ =?iso-2022-jp?B?OTZVU0NSVG8xZmNzSnZBMmgveGJ6VkJYSGMwc1orOVNuOG5GZEdzWWFi?=
+ =?iso-2022-jp?B?N1lrZDF6bmVGbnl4dG5KdlVuai92QTBHcEIvdjZqN2J1WFhjWjlwYjNH?=
+ =?iso-2022-jp?B?T0IreUZ0cnVlYnlpUS94MDAvZ3hIcVhLcC9RM3ZldUpwL0FQU2NtTnds?=
+ =?iso-2022-jp?B?RXY3RHZTK25zOU1KdFRudHlqWEx6OXY0UjJZNmlrSmxoV0ZkTEExZlJL?=
+ =?iso-2022-jp?B?akpsWlIzdVJXRHJ6ZjBVSkMyZSt0amxBaVY5NkoxSWJySlNjT2xJeDNB?=
+ =?iso-2022-jp?B?MG03bm5KRXdiOU9FQWN2WFlnYUI3Ri9TVlllZElqNFNGSWZjREJsSjdK?=
+ =?iso-2022-jp?B?UEgyTnhDV3dYSkJoOFRqUFhJUUpmeVo5eUpSOXNoMjVUaG9QeXNheWVN?=
+ =?iso-2022-jp?B?OUZyTGRWYmF1VHpZOFdMRm80Z3pVbHhxZ0pJbks1QWUxZjNEbHRsSnc0?=
+ =?iso-2022-jp?B?RHgzWStDekh0N051blJ1eWIxU0dJelFmTkZkdVcwRnFxWmhBY0V4S3p4?=
+ =?iso-2022-jp?B?YWpiQzF3TExNTTFMYTEwV09xMzI3Mlp3UnRrSFpMWlZUNUhwZHQ0cjFU?=
+ =?iso-2022-jp?B?KzluT0tya3V1NEM5Z3JOQjNLcitwL25HNUdqaUp6dDdtV3FpcWtBZU93?=
+ =?iso-2022-jp?B?anptM2E5ems5RXh2c1p2Nmo5N2lQQWxqQUlSdVZ4cTFOYXlXbko1N3Rp?=
+ =?iso-2022-jp?B?V3BST3oweHlnN1NrSzg3cnVPTEdiYnZDMnNOREw4UGphQmx6RDlUbUds?=
+ =?iso-2022-jp?B?eWw0YUN4N3dZenZjMEw1dVZ4QVdtakM2NGpFYUFkaXA4NWVTUTAwOUtp?=
+ =?iso-2022-jp?B?ejRrZW1sendYamZUZFVUeE14dDg0VkIrM2lXR3RabmtiUGVUYm9HOU51?=
+ =?iso-2022-jp?B?ZFRrTWVralBqWGtmeExPT0RNUzA4eVkwNEVGTGxOUlA3bjF5d3RleC9J?=
+ =?iso-2022-jp?B?Zm1pQ0N3Z2lsL04rREN3UWNybExUUnVYaGN2UUFhWi9jL2s5VzVtZSts?=
+ =?iso-2022-jp?B?bkt0WTFLR2Zsc3h5QWFhKzY5Zmdyc3dQck1hLyt5NUM3dnFEWkdjMXZu?=
+ =?iso-2022-jp?B?QUtkeE02SHZDcVE0dktpdk1iVFNrc2xqYXRlanM0TFF0ZFJmbzI2czNH?=
+ =?iso-2022-jp?B?aUg3UTdPUEp5OVhWYWtIcVlEeW9LYjRLT1gvc3c0TUFLWS9vTVdEdjBN?=
+ =?iso-2022-jp?B?T1FZczl2OUtrWWRBNmRIZWxjNU5MRFhqU3ZsVUxiNDdreS9ORUExZjlO?=
+ =?iso-2022-jp?B?RjNYcEFzd0d1NjU1L0ltYndIK3VYWi9LaFFPemdORCtSckRqVUY4SjJu?=
+ =?iso-2022-jp?B?Rnkxck1aemExai9vaWFvaGtxS2pRV0gvV0dULzFSa3Q5VExzTkZ3cllE?=
+ =?iso-2022-jp?B?cGwvVytiRWxKYjFJWVg3cDZ4OTBGMExoTHh3SEU0Y201dWllOU9ZVUEz?=
+ =?iso-2022-jp?B?MDVhb1B0Q2pnQWVLbDJoWUJtK09zOXlvVDhGKzNGbHJIZFZEVlo5VE5U?=
+ =?iso-2022-jp?B?NksveVdWNDRTMEZTL1Z4Wjg2M3U5ak1NbVlHbXlieGlKQXdZbUxsNzJ4?=
+ =?iso-2022-jp?B?amcrMmhwTFoyRjg0UzBLRDh2STJiWXU2YnRDekJyd21aamtMdDhsVnVX?=
+ =?iso-2022-jp?B?TVR3dDVySE5aQk4wWEw5VS9oK3J2WmJRQkNGSzNJYy8xMEowYXFBbUFL?=
+ =?iso-2022-jp?B?WEQrUkMvVjdXb21zTm5TRWdnOHY4OW9JKzF6SW83VWFaK0pjemlEZ2lZ?=
+ =?iso-2022-jp?B?Q3M4Z1ZLb0lLMU1rYnd0eW9DRUx0RUdvVmViQXdOcVowVGdDUHN4d2hv?=
+ =?iso-2022-jp?B?cERpUi83blVxT1FJUDNxMWdNemx0ZkFoampsaDltcFhrZExHL1B1LzdE?=
+ =?iso-2022-jp?B?bkhZOXNFWXRJWENBdGpGdWgxbEMydnlnRnBQeW1ZczZxYUlGZHVXUU1Q?=
+ =?iso-2022-jp?B?VUthU0ZZaTdSSWc0TEt0TWZKSElhWHpGbDRIRS8rY0x3Zy92WlR4cVFY?=
+ =?iso-2022-jp?B?eDlYU2hyMWJleS9xaTRuSUVXOUJSUEJyN3JhbHFBZ2JwZDliZkxDMGF5?=
+ =?iso-2022-jp?B?SkJiTU8rUnRMK05Jd2IxMCtLcitIWjZjTE9COFpEZ3JVcXQzQWF2U3dh?=
+ =?iso-2022-jp?B?QlV2b2hBPT0=?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB9669.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(14052099004)(38070700021)(8096899003)(7053199007)(95630200002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?MGZPQm1vOWU2WVpYM1dxanlXOFc4cU51TThPWFFXcE1mV1VlUVMzY25M?=
+ =?iso-2022-jp?B?Q0NwbVlWY0pyKzRuR0dNeTZtN2dMdU9TWmxQVGVpcVowUmtjMG83bGpu?=
+ =?iso-2022-jp?B?RTZhZVVkU3VVZDlkVnpHdlkweE1rZ1ltTFpmaC92b2QwUTFscFFjUHpV?=
+ =?iso-2022-jp?B?WC82QWZqYW54UUc3QnU3cFVRN2d1SkJ6SW4yWmZzeUpaSWQ3QkYzOE9Y?=
+ =?iso-2022-jp?B?MmlkVk4xK204Sm5ybjVRc05GR21UQ2p5L1hYTTdHS1JjZmtSR1dlYnVX?=
+ =?iso-2022-jp?B?VlVaQTF0bWowTklNQnd0emZCMVBaYWFCTmk5UW5kenAyOFpZNzhYQUJN?=
+ =?iso-2022-jp?B?MlZ5WWtQN1I4WlRZekJvQmR6WHp2ZkRZYVV6eTZjZXIvNTNvR2tGSjB1?=
+ =?iso-2022-jp?B?bkRJZ2xHcnRXT25QMk9HOHYwQUtuWVg3QlZ4NFR2ZzNJUXl6K2pnTDlq?=
+ =?iso-2022-jp?B?MS96UkxVZnZobktvWWozWmdsTVBpcVFGSGlBVjRNdjNRaVArbElOaEkz?=
+ =?iso-2022-jp?B?djkxbEdvOFMzS25WMWNFZWNiR2gyNGo4ZWo4N2RLdkNFU1pTY2d2bzBN?=
+ =?iso-2022-jp?B?K3ZaMWl6ZnVyZTdaQnpsSElnSmwrdnNETUlKUGt3bUR6MllCMnZhQUdl?=
+ =?iso-2022-jp?B?RnplSHRZNiswQ2MrYkpzejVSOGNIRUUyRXd3Tkt0NmJmbHV6RjdDSTlo?=
+ =?iso-2022-jp?B?ZlNFbEMxRHgwODdsTmVSMEt6dE5WTlNMQWdpS1VBcU9GeEovYmdzTWdM?=
+ =?iso-2022-jp?B?Y2M4YUF3R2VZM0lHaytRMEM0eHA0bnlGZmh0MFdhRTBpenphMEFKR0R4?=
+ =?iso-2022-jp?B?ZHJxZ2Z5QSsrZHhDK0o1cWkrbTkrTENtcG9uVWRQOEJFMWxsaXc3NWd2?=
+ =?iso-2022-jp?B?RTNkN29lbUdxR29iWk1zUmx0NkhvNUd4SlRhM093R0pQb1dCemRjYUFG?=
+ =?iso-2022-jp?B?ajRJZXJTYitONzVYYXdOdGFjd0JEUGpKTmE2VnF6UUZobU1qTWI2Sysx?=
+ =?iso-2022-jp?B?Unc0SjVYSlJvVzZ4MEVqOStCdmFIczJFRHBHK3lhK3VvdGV3YngxZ29K?=
+ =?iso-2022-jp?B?SVJBR1EzR0h5QTJhclJsaFpycWhtc3YwZXRqaWp0bE95Z3ZMZThhc1gx?=
+ =?iso-2022-jp?B?N3ZsTGh4azlIbG1Va0NiaEh0WTVwUmcrTytSdFVPS3poREx1SXVZb0V4?=
+ =?iso-2022-jp?B?TGl4M3ZHUnFzc3hHWjNkMDRURGRzZ2pwNFRsRUsyTnUrQUFnVmlDVmFT?=
+ =?iso-2022-jp?B?ZzkvZDc1RElhS1JaOHg5aktieloxVmpFbWlPVVRBQklTRHBBSnN2ZXRB?=
+ =?iso-2022-jp?B?Vm9BYkNiM0Y3RUhXeXpiRGlLWitNZDFXSVNnYXVFdUFZSnRxallyK3M2?=
+ =?iso-2022-jp?B?Qk1Jb2tScWlNbzA2QW10YkhVd29ab1pMREpwS1JIMGx2L25zTFh0SzNB?=
+ =?iso-2022-jp?B?TG9MWkdhYnpKaVEwMEtLY0tIMTZHSGx6RndzT3drQnFJbTVZSWtiV0ow?=
+ =?iso-2022-jp?B?eVBrbzQ3czRscGoxeWN0TXQwQ3pSTDVSZGZwUHczaUtVRVR5S2dPbW1U?=
+ =?iso-2022-jp?B?aGpMeUR2c0xWcXQwK3FYeGZOSzhJK1ExV3dIZDhYOG9McyswdkN0UWhu?=
+ =?iso-2022-jp?B?VWtFVUo5WFBTSjdBNkxrWWZhbE5sVXdZZ0JXdkdvWmlvOUErTFVYQlo3?=
+ =?iso-2022-jp?B?TVZlMEJscU8wQUV2bkRIZ1dWTlUyTms4aE0yeUkxakhNanEwNU4yaDlU?=
+ =?iso-2022-jp?B?UnF1OW1UcnBwSy9GSVArS2QyUSt1SjJVdkZWeEl6Z1ZxOVRoR3YwQ0pI?=
+ =?iso-2022-jp?B?T1FLd0h4aFRLTDgxZWJaem9hZnJuM0hGNTF4YkxsbkR0WGZia1dXYXpO?=
+ =?iso-2022-jp?B?Yk1GenRzYmtaY1Fpd25yWFl3blA4UGhuc0RJRTZ6QlZiV3NCQ3UvU0JX?=
+ =?iso-2022-jp?B?Qit2R09CNFJwN1JwUDdGc0pjV3RLSUxqeUNpNVMzTU9RTmpEeGFkb3hV?=
+ =?iso-2022-jp?B?MHZzbWVyUFBrVzVYaHJKQ0dxb3pIa0RnYzJobDQ0MTdvRnUzcEpjM1Nt?=
+ =?iso-2022-jp?B?MjQ3cW8yM2tENDdxajRLTGlLWXZucXZxNk5meEpMdVROUkpsbXM3ak9M?=
+ =?iso-2022-jp?B?R3RhQlNIV2d6OTJiYXlpdUUwUkIzaEVRSU0wM0YyRlNCZkw3bTBtdnI1?=
+ =?iso-2022-jp?B?U2VMeitPYm9zemJMYlhtLzVQMVE2RDg1bmdDODN1UHFaOGYwSWRHTHND?=
+ =?iso-2022-jp?B?YVJNZ0lJRnFjRndzQVNxcDN0SFpONmQwTWFzUUpsSmg5VFN0bkhZUHNv?=
+ =?iso-2022-jp?B?TTlrN21udGtrcG1YS3E3emsyNnhobUMrL29SRW8yVW1mRUdDUWZETVkr?=
+ =?iso-2022-jp?B?UTY2a1NxMXVZUlVJYVVkN0dqT0NCNUtkTWp6M0R3NEJlT0FhTzlMVUM4?=
+ =?iso-2022-jp?B?N2d6ZU5FQ1V4c0lMcWI3azdEcE41bndtZ1hpcGxKRUQyZHpIK2RCZjc5?=
+ =?iso-2022-jp?B?THFnS3J3dWtXTklTQk9ObmhwTnBzdE5ubS90QkE3aTlhK2QvOG1KNVMz?=
+ =?iso-2022-jp?B?WW9rd2wydz0=?=
+Content-Type: multipart/alternative;
+	boundary="_000_TYCPR01MB96693C40CB49321A6A982A32C499ATYCPR01MB9669jpnp_"
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PR10MB6186:EE_|PAWPR10MB7720:EE_
-X-MS-Office365-Filtering-Correlation-Id: bac87a20-3c2c-4771-53b2-08de64845c18
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?aWtCQnB5dXFVazdvekNwVFNrRGZWL05wMGNRNWFLNXArMytXalhKUlRLSEo4?=
- =?utf-8?B?ZzFDOVJrMHhKdDVqZ2pFc1lnSEJXMjE3d2Q2Q3Y4cml0L3dTNHpkb2wzNFhm?=
- =?utf-8?B?a1k4MnRERllvTjFBZUZQRklObWpXcXhOL2xZdUZ5TXFBM3o1dys2SjFOSGJD?=
- =?utf-8?B?SkQyZ29QWEF5RjcyOStMaWlUd3B6TVo2V01NQStjTVc0NGwxQkFvWlFDbXF1?=
- =?utf-8?B?bkRyRE0rSHNsZ2krbDZwOXdyWkFJakxrOG5nMVVOZWludnRJMnkrMnhoak45?=
- =?utf-8?B?OC9OUmUwUFJlT0JMTUU2NEdidE1MWS9UMTRESEt1TTUvR01Zb0hKa3pnc2FQ?=
- =?utf-8?B?b01Cc09jZlFibWRDUTNaRXBaTkJoTkJYalhTWjY4ZkgyVGE0c1kyR3kxQzZj?=
- =?utf-8?B?WEtzVzRmNWZySWhING1pMUZURVphQm94N0VhZUF0UDdWQjRzSGxaSGdvbEtH?=
- =?utf-8?B?R0NISitGMzErOHoxTFpBZFptUkgyeUdwNnZIVlZTQnhjbU9teHY1Y2kvcGRQ?=
- =?utf-8?B?OXpPZ0dqZVFPbitERTVpQ0hZdlloclZqU1VqTGVjUzZVUERNSHVmbFFvODg0?=
- =?utf-8?B?cUp6YUVnZE1VUVdUaUJCMitSOGhzRW1sUEV2N0p6S1ozdUpPMm1qQXQ4emty?=
- =?utf-8?B?MlNOak5vSExXKzB6ZWxHZDJSVjRXcjZQTFJlVWl2ZlZJQ0hCdVBtaFVKMm12?=
- =?utf-8?B?NjYrcFhTell0eDBaT1hTY3VMSzZKYWFKaGJrNXArK2RVZEN3eVhFVVBvTm9s?=
- =?utf-8?B?U25uMzRSMVBndmpURXJpbGdXZkZTSnk1eHdHVUcvRjBWTjhEMkhzN096RUt0?=
- =?utf-8?B?RHgvUEZlUmNmMldibDBwajBnNUN2ZUIxYVVRcVJTV0lRZTRLdnlYZHVqbUJD?=
- =?utf-8?B?UW5QOUh2dXNPK3pzUitvNEh6TXVTRlNZVmR3c2J0TU9BOHBaOFZWVkwrZ2M0?=
- =?utf-8?B?VTNWd2FWbzhyWHNXamY3SGFKYUt2SUlKZkhtK0FlS3o4T00yYytxM2N3Y25E?=
- =?utf-8?B?R2dmbHB4TjgzMUduVEJmajkzMnQybDB3WU52dStGMjEzYURvM0phWWpGN3RQ?=
- =?utf-8?B?b0ZNL01TNGJUQk9Bak5BV1RpenpwNlZPWGd5OFZ5N1l1QUZzRkxZRHlZMHBQ?=
- =?utf-8?B?V3VGdHZuRjhBUjlLTDZFZHVJT1RTdnRaTGVVeUZVaWU0cTRyV0hpOWs0L0Jy?=
- =?utf-8?B?NmtkUWI1VEhmQmxmakFCREZ2YjFNMkk0WlNITFJXeWppS1pCckoyNm1RUW1E?=
- =?utf-8?B?M3h2V0g5TmluMnlXbDNMaDh0djNYYlJzWW1meUliMFdKd3k3MnZJdXlIU1Na?=
- =?utf-8?B?b1lyYzMwUDNYR1RWaTNrL2RWKy82VmFlWGlnWUtPbHlJenNWaEF2dW03dS9M?=
- =?utf-8?B?TmpTcGVUd3RWQXI3Q0JWTTJiMVU4WVh0aEFXNEx0Sm5aYzhwUWFUcUNuVzZJ?=
- =?utf-8?B?d2J0RStRSmhxMTRXeFJ1WDFCMVE5SjVyVThmcFB2Slo4WVNyOWlpeGVsOUFC?=
- =?utf-8?B?WWxFS3pRMmpHZDladmwreWgrcmRnNm10U29DYnFkMzhELy9tNVVIek5zVUl5?=
- =?utf-8?B?bmtuYlNDa3Y1UlB0THRSOWY0WkxDNE9xSzlTUEFINWM3dWlIMnd5S1BMSDA4?=
- =?utf-8?B?b3FoWGhMcFovRDlVTVdrNzUvMS9PMlF4VzJuQ0w4V1RSWDJsTjNTeHFZMERV?=
- =?utf-8?B?Z25xc2s2Q2QrT2Y3SjZKQ0xUODFCYW1rbzFLMXRoVCtwZkpkVnNRNnpUOXZ4?=
- =?utf-8?B?aXByUDRibUZiOFIwTTltL1RjL1Y3ZmM5aXRKMW1pMUo4Nzh4WmNFV0lEaUd0?=
- =?utf-8?B?dmdPbDlMNVpWaTY4TWxXMThQOWFWUlUwQjVuNVE1Z1oyUWtMd2h4SVV2R0d1?=
- =?utf-8?B?YnVwdmg5eElBVUpkVjhpeks5UUNnTWR3dHZjL2Z6NHVnUCt0dTZSSnp6OWRv?=
- =?utf-8?B?OWw0M1kzZ3RsTDRGd0RjR1RIV2N4bElYYVhxOVJvQ2YzV0Q4Nm9adENLdVFj?=
- =?utf-8?B?ZDMrSlliL1U5Q0VUY1J4OEpzd28vN3gyRWNuSVB1bFdPVWN2bmJQazUxa2M3?=
- =?utf-8?Q?ubS1yO?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR10MB6186.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?a0FVMkppYzhUQXVVQUFVNVk2ZzIrVUV2M2VOMDBpSjNHWVZxZ3JpV3RCelEy?=
- =?utf-8?B?ZkI2aVZhNXZrMm10T1B3TWNCbnNQdjl1eFluTzh3YlE0dng0THJ0QnMvRU1r?=
- =?utf-8?B?Y1JFVVNJblFPNXlxaFBMdVRNbFl6azVMVVFUWEhLQ3lDeEg1MERtd29DYUdO?=
- =?utf-8?B?d3dHSFRWMGZTaW40aXJTbUppVUl2cTRnU3JSTXY0RTdnNlJZZk54cWRFOW11?=
- =?utf-8?B?UTNJUmo0aEpZUy9NV1ZJODdPTW11dHQzNGJ0Tzgza3lpZlNDOWRYM28wUlBK?=
- =?utf-8?B?WEtiYzJkakhuVlAwWWdUQzVtOUhvUWZxU2pCOFNmalMwOHFYQW92cFpWdGs3?=
- =?utf-8?B?c2x1WnFPY2JsK0RHOHB1czhDZlR6bGNQNGpjWWRSK1ZPQ0N4S1lpaWRqVzNX?=
- =?utf-8?B?U3lpS0tYS1drSzY2MzE2eSt1OUhHYjJIeW9kWlJzYjUzUWlDSis5QzhWaExN?=
- =?utf-8?B?d1VtbFExdVcwQVU1WkVVcGZLdDhMMGlHRVJCSDB6YkZLRTVmcGJNbHU0MW5E?=
- =?utf-8?B?T0pPNERmM0RTZko5WXdzWGRwclZieTE1ekFycEdpbkZCKzJQS0xiZVErclpG?=
- =?utf-8?B?NzJkWUpScjNJeWJPek94dHhLNXV6M3d5WThRL25tVVJQaExqS2pLT3FPN0pQ?=
- =?utf-8?B?R0ovMllIbTJOM3ZUSDFYUjJTMjA1RTZnY2QvaTFudmpOQ3BLcnl2VWZpdUtk?=
- =?utf-8?B?VVdaV0NUYnBmMUM1aWFuc2lySnkxVzJEaEpIbmpNM3BLOVBjWERVUDRLQ25k?=
- =?utf-8?B?bGlpeGhnSVlVdHNyd1NDT1krbXk5SndpV3lDNmZueXoxVHRMbFZKaVVoSXFV?=
- =?utf-8?B?blk3OFRNUVE2ZndvL096WXhtMGVJd1FUUVhnZnRkZmlBLzVENnZuNHdFYjJu?=
- =?utf-8?B?R0VDOGxNZ3doVjUxRTM4cjN6eGxwOURCbW5DRGgvcUJ5amozUWkwVWkzYit2?=
- =?utf-8?B?OEpOTGdpQktCLzdjL0dSeTNPbHFkTlFLMnZUeVI2QTVxYW5uZkVCdmtoSlpY?=
- =?utf-8?B?TVhybitBME5ubkMwdElSQllPaW01dmdFYVBhOUYxZHRYckl0TEpERDVlMEJD?=
- =?utf-8?B?U0hVTnBKV3IvNnRNbXQvY0RCa1c0SjdwYTBBelJaNkJvMjg3dDBKajRoVm1L?=
- =?utf-8?B?VG1XMUQ1OUdGOUo2NnpGT3A5eWg4YUFqeDN3a3BHdktENXM3TDVPWWlFdWs5?=
- =?utf-8?B?S1JjbzI1YnNjbGFmMHFsNDV5ZVkxSlJiaUxTVkQ0VkdPSllNMDNFdkl1ZVNP?=
- =?utf-8?B?cXE0SHN4eDhMYjBpK1FDMExHTUxnY2NObjFRMElGVXlBZFMxS0RQZWkrOGha?=
- =?utf-8?B?NytGVHY0dTZCeXFpczZ1cWl6T1RZL3p3V1J4aTBTQVpoSDdmOGJrdE1zVndB?=
- =?utf-8?B?OXdSM0czb2pwelZIL1JJUlhGRTVNR2Y1WFpiMVRmbFdKOU9hVktkbDhhMVVm?=
- =?utf-8?B?SksvcVhCZGZXUlR1SXBMTC9NM3lqYTZETFJRcGthc0FacnhjaG1CZExMUGd3?=
- =?utf-8?B?djZRVGxSUllnZE50dlAva0toSTRac0c3bzkxMWRTSG9ESSsxUlpaMUV3c3NC?=
- =?utf-8?B?ZVlIbUM4Tk14YWV3Rm9xRGVzZEZXMFdORlJ2cHdKZXJDY0UyTzRoWnliMllo?=
- =?utf-8?B?MWZpWVZKTjlXVjVnWjRIZXRrbjBCLzJCa2ZLb3ZXYXBJOHZMODF3ajcwb093?=
- =?utf-8?B?YnI1TTlMWGx5enlGYWtrVExlUXNOTmZTeFJTcjBNVDh0RU5La0RMa1lHN242?=
- =?utf-8?B?clA3cWhuK3NtdWh0dU53OEdTS1pTcjJndTV2TWpUa3RRQllGY3J1WG1TeWFq?=
- =?utf-8?B?YXJiNm4vRE0zcEZ4RFRVeVduOCtkSlFTSVdWR1haaGVIN2kyNll4amZUKzZP?=
- =?utf-8?B?cVV4dE1uQ1ZDREIya3RON1NOeDcwYmRIRjJ4WGJabVpESGFaK0dnTmZ3bUl3?=
- =?utf-8?B?b2lVdWpDdW5rQmVpa2VaU2FjeVJsZ1kwZTlGaFloK0JubzlDY0hWTzRtUFZu?=
- =?utf-8?B?b1pBMlJtc09uUjJPQ1lMMjU4N0VHTXE3bzY0L0gxSVQ4bzdHKzVhYzhraGlR?=
- =?utf-8?B?S2d1d3NSNy9kd0ZydllnejRkQjRnM1RCcUpoZjh6Z2Z5dmY5Mm40ZnlrQnRG?=
- =?utf-8?B?ZnJDL0p4STh6bjRGLzF5RW5WK1RNZjA2YWNyRy9tZnd1dy9hZFhJckl6d1Vt?=
- =?utf-8?B?Z3NTdVlzc3BibVdWZkN4b25UcldnK3p0T1h5c2NZQzYwbFRFUTdUU2xDVitU?=
- =?utf-8?B?Z3BSSVptbSt2Vys1U0gveWRnbEd1WDNqTVZoR1dZLzZoa0dqWTliZEw0Y0V6?=
- =?utf-8?B?cVVFWS9vMUJIVmRLbUJEYmVwUGZGU0t1S2U1N09uNkVHNEQ5NmNPdz09?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bac87a20-3c2c-4771-53b2-08de64845c18
-X-MS-Exchange-CrossTenant-AuthSource: GV2PR10MB6186.EURPRD10.PROD.OUTLOOK.COM
+X-OriginatorOrg: toshiba-tsip.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Feb 2026 07:01:17.8858
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB9669.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b460a1ac-9fa6-4faa-560b-08de6484668d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Feb 2026 07:01:35.1184
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NOXPhzS6MsVVimUY+YsJwTGmxRvh6Dk3QNi0TjwCY+xXfTpcjcvgRFZWBsn4h+U7hvOebyQFnhizrFnJnKYXwA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR10MB7720
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ZEfpIFjsB0DRAy5m3LC2TTb5WoFj2SG119y3u4atPtGUBqKMhMMqoSdHCuPDOHrhNv8mShZgmU0/ml4DVBc3Nj4c9VsoiyM+vp4W9pFnDux8euq4GPkc3BzZDJtwr9OD
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB14171
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 05 Feb 2026 07:01:29 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21832
+ <cip-dev@lists.cip-project.org>; Thu, 05 Feb 2026 07:01:49 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21833
 
-Hi all,
+--_000_TYCPR01MB96693C40CB49321A6A982A32C499ATYCPR01MB9669jpnp_
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 
-Kindly be reminded to attend the weekly meeting through IRC to discuss
-technical topics with CIP kernel today. Our channel is the following:
+Thanks Jan, will make the corrections in v2.
 
-    irc:irc.libera.chat:6667/cip
+Regards,
+Adithya Balakumar
+________________________________
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Sent: Thursday, February 5, 2026 12:16 PM
+To: balakumar adithya(=1B$B#T#S#I#P=1B(B =1B$B#D#I#T#C!2#D#I#T=1B(B-=1B$B#O=
+#S#T=1B(B) <Adithya.Balakumar@toshiba-tsip.com>; cip-dev@lists.cip-project.=
+org <cip-dev@lists.cip-project.org>; Quirin Gylstorff <quirin.gylstorff@sie=
+mens.com>
+Cc: kunijadar shivanand(=1B$B#T#S#I#P=1B(B DITC_DIT-OST) <Shivanand.Kunijad=
+ar@toshiba-tsip.com>; dinesh kumar(=1B$B#T#S#I#P=1B(B DITC_DIT-OST) <dinesh=
+.kumar@toshiba-tsip.com>; onuki koshiro(=1B$BBgH4=1B(B =1B$B8v;JO/=1B(B =1B=
+$B""#D#I#T#C!{#C#P#T=1B(B) <koshiro.onuki.h55@mail.toshiba>; hayashi kazuhi=
+ro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B""#D#I#T#C!{#C#P#T=1B(B) <kazuhiro.haya=
+shi.f74@mail.toshiba>
+Subject: Re: [isar-cip-core][PATCH v1] doc/README.factory-reset.md: Minor c=
+orrections, verification steps and what to look for during factory reset
 
-The IRC meeting is scheduled to UTC (GMT) 12:00:
+On 05.02.26 05:46, Adithya.Balakumar@toshiba-tsip.com wrote:
+> From: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
+>
+> Signed-off-by: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
+> ---
+>  doc/README.factory-reset.md | 44 ++++++++++++++++++++++++++++++++++---
+>  1 file changed, 41 insertions(+), 3 deletions(-)
+>
+> diff --git a/doc/README.factory-reset.md b/doc/README.factory-reset.md
+> index 729912b..ef35225 100644
+> --- a/doc/README.factory-reset.md
+> +++ b/doc/README.factory-reset.md
+> @@ -1,18 +1,18 @@
+>  # Enable Factory-reset
+>
+>  To enable the factory-reset functionality the following two elements nee=
+d to be installed:
+> - - initramfs-factory-reset-hook which executes the factory-reset
+> +  - initramfs-factory-reset-hook which executes the factory-reset
+>    ```
+>    INITRAMFS_INSTALL +=3D "initramfs-factory-reset-hook"
+>    ```
+> -- factory-reset-helper which provides the helper scripts to set the fact=
+ory-reset marker
+> +  - factory-reset-helper which provides the helper scripts to set the fa=
+ctory-reset marker
 
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=2026&month=2&day=5&hour=12&min=0&sec=0&p1=224&p2=179&p3=136&p4=37&p5=241&p6=248
+The indention of items were inconsistent, but do they have to be 2
+spaces? Below, you do not indent at all.
 
-USWest    USEast    UK        DE        TW        JP
-04:00     07:00     12:00     13:00     20:00     21:00
+>    ```
+>    IMAGE_INSTALL +=3D "factory-reset-helper"
+>    ```
+>
+>  ## Technical details
+>
+> -The by executing `set-factory-reset.sh --create` a marker is stored as a=
+ EFI variable or on disk (default `/dev/disk/by-partlabel/efi`).
+> +The by executing `set-factory-reset.sh --create` a marker is stored as a=
+ EFI variable or on disk (default `/dev/disk/by-partlabel/var`).
 
-Last meeting minutes:
-https://ircbot.wl.linuxfoundation.org/meetings/cip/2026/01/cip.2026-01-29-12.01.log.html
+"The by..." still doesn't read smoothly.
 
-* Action items
-* Kernel maintenance updates
-* Kernel release status [*]
-* Kernel testing
-* AOB
+>  The marker on disk is intended for devices which do not provide the faci=
+lities to set EFI variables.
+>  The initramfs reads this marker and formats the hard-drives provided by =
+the variable `INITRAMFS_FACTORY_RESET_DEVICES`.
+>  The initramfs-hook will try to detect the previous used file system and =
+will format the partition with the detected type.
+> @@ -27,3 +27,41 @@ The removal of the TPM keys can be deactivated by sett=
+ing the variable `INITRAMF
+>  As the factory-reset is executed before the disks are unlocked in the in=
+itramfs, the file system type must be provided with the
+>  variable `INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE`. The factory-reset o=
+f encrypted partition is not supported with the file based
+>  marker.
+> +
+> +## Verification
+> +
+> +- Set the factory-reset marker with the below command:
+> +```
+> +root@demo:~# set-factory-reset.sh --create
+> +```
+> +
+> +- Trigger a reboot as factory-reset happens in the initramfs step:
+> +```
+> +root@demo:~# reboot
+> +```
+> +
+> +- Factory reset runs during the initramfs. The reset scripts format the =
+target partition with the required filesystem. This can be observed in the =
+boot logs similar to the example below:
+> +```
+> +.
+> +.
+> +Begin: Factory Reset ... Begin: Reset device: /dev/disk/by-partlabel/var=
+ ... [    5.834137] random: crng init done
+> +mke2fs 1.47.2 (1-Jan-2025)
+> +Discarding device blocks: done
+> +Creating filesystem with 131072 4k blocks and 32768 inodes
+> +Filesystem UUID: d4ec21bc-988b-41f8-8e71-4d2b24cb7074
+> +.
+> +.
+> +```
+> +
+> +- If disk encryption is enabled, apart from the formatting of the target=
+ partition as stated above, the initramfs scripts also encrypts the target =
+partitions. This too can be observed in the boot logs similar to the exampl=
+e below:
+> +```
+> +.
+> +.
+> +Device /dev/sda6 is not a valid LUKS device.
+> +[    8.375556] tpm2_policypcr (224) used greatest stack depth: 11736 byt=
+es left
+> +persistent-handle: 0x81080001
+> +action: persisted
+> +Begin: Encryption of /dev/sda6 ... var: 12/32768 files (0.0% non-contigu=
+ous), 6385/131072 blocks
+> +.
+> +.
+> +```
 
+Adding Quirin to help with cross-checking.
+
+Thanks,
 Jan
 
-[*]
-Date the data is created: Thu Feb  5 06:58:13 AM UTC 2026
-linux-4.4.y-cip: interval 30 day
-  latest version release date: Wed Feb  4 01:55:28 AM UTC 2026
-  limit date: Fri Mar  6 01:55:28 AM UTC 2026
-  Status: On track
-linux-4.4.y-cip-rt: interval 60 day
-  latest version release date: Sun Jan 11 09:55:11 AM UTC 2026
-  limit date: Thu Mar 12 09:55:11 AM UTC 2026
-  Status: On track
-linux-4.19.y-cip: interval 30 day
-  latest version release date: Thu Jan 29 04:48:14 AM UTC 2026
-  limit date: Sat Feb 28 04:48:14 AM UTC 2026
-  Status: On track
-linux-4.19.y-cip-rt: interval 60 day
-  latest version release date: Wed Feb  4 10:41:33 AM UTC 2026
-  limit date: Sun Apr  5 10:41:33 AM UTC 2026
-  Status: On track
-linux-5.10.y-cip: interval 30 day
-  latest version release date: Fri Jan  9 05:02:19 AM UTC 2026
-  limit date: Sun Feb  8 05:02:19 AM UTC 2026
-  Status: On track
-linux-5.10.y-cip-rt: interval 60 day
-  latest version release date: Sat Jan 10 07:38:46 PM UTC 2026
-  limit date: Wed Mar 11 07:38:46 PM UTC 2026
-  Status: On track
-linux-6.1.y-cip: interval 30 day
-  latest version release date: Fri Jan  9 02:26:25 AM UTC 2026
-  limit date: Sun Feb  8 02:26:25 AM UTC 2026
-  Status: On track
-linux-6.1.y-cip-rt: interval 60 day
-  latest version release date: Wed Nov  5 06:50:13 PM UTC 2025
-  limit date: Sun Jan  4 06:50:13 PM UTC 2026
-  Status: *Late*
-linux-6.12.y-cip: interval 15 day
-  latest version release date: Fri Jan 23 06:50:44 AM UTC 2026
-  limit date: Sat Feb  7 06:50:44 AM UTC 2026
-  Status: On track
+--
+Siemens AG, Foundational Technologies
+Linux Expert Center
+
+--_000_TYCPR01MB96693C40CB49321A6A982A32C499ATYCPR01MB9669jpnp_
+Content-Type: text/html; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
+jp">
+<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
+ttom:0;} </style>
+</head>
+<body dir=3D"ltr">
+<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
+Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);" clas=
+s=3D"elementToProof">
+Thanks Jan, will make the corrections in v2.</div>
+<div><br>
+</div>
+<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
+Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);" clas=
+s=3D"elementToProof">
+Regards,</div>
+<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
+Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);" clas=
+s=3D"elementToProof">
+Adithya Balakumar<span style=3D"font-family: Calibri, Arial, Helvetica, san=
+s-serif; font-size: 12pt; color: rgb(0, 0, 0);"><br>
+</span></div>
+<hr style=3D"display: inline-block; width: 98%;">
+<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
+: 12pt; color: rgb(0, 0, 0);">
+<b>From:</b>&nbsp;Jan Kiszka &lt;jan.kiszka@siemens.com&gt;<br>
+<b>Sent:</b>&nbsp;Thursday, February 5, 2026 12:16 PM<br>
+<b>To:</b>&nbsp;balakumar adithya(=1B$B#T#S#I#P=1B(B =1B$B#D#I#T#C!2#D#I#T=
+=1B(B-=1B$B#O#S#T=1B(B) &lt;Adithya.Balakumar@toshiba-tsip.com&gt;; cip-dev=
+@lists.cip-project.org &lt;cip-dev@lists.cip-project.org&gt;; Quirin Gylsto=
+rff &lt;quirin.gylstorff@siemens.com&gt;<br>
+<b>Cc:</b>&nbsp;kunijadar shivanand(=1B$B#T#S#I#P=1B(B DITC_DIT-OST) &lt;Sh=
+ivanand.Kunijadar@toshiba-tsip.com&gt;; dinesh kumar(=1B$B#T#S#I#P=1B(B DIT=
+C_DIT-OST) &lt;dinesh.kumar@toshiba-tsip.com&gt;; onuki koshiro(=1B$BBgH4=
+=1B(B =1B$B8v;JO/=1B(B =1B$B""#D#I#T#C!{#C#P#T=1B(B) &lt;koshiro.onuki.h55@=
+mail.toshiba&gt;; hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B""#D#I#=
+T#C!{#C#P#T=1B(B) &lt;kazuhiro.hayashi.f74@mail.toshiba&gt;<br>
+<b>Subject:</b>&nbsp;Re: [isar-cip-core][PATCH v1] doc/README.factory-reset=
+.md: Minor corrections, verification steps and what to look for during fact=
+ory reset
+</div>
+<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
+: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div style=3D"font-size: 11pt;">On 05.02.26 05:46, Adithya.Balakumar@toshib=
+a-tsip.com wrote:<br>
+&gt; From: Adithya Balakumar &lt;Adithya.Balakumar@toshiba-tsip.com&gt;<br>
+&gt;<br>
+&gt; Signed-off-by: Adithya Balakumar &lt;Adithya.Balakumar@toshiba-tsip.co=
+m&gt;<br>
+&gt; ---<br>
+&gt;&nbsp; doc/README.factory-reset.md | 44 +++++++++++++++++++++++++++++++=
++++---<br>
+&gt;&nbsp; 1 file changed, 41 insertions(+), 3 deletions(-)<br>
+&gt;<br>
+&gt; diff --git a/doc/README.factory-reset.md b/doc/README.factory-reset.md=
+<br>
+&gt; index 729912b..ef35225 100644<br>
+&gt; --- a/doc/README.factory-reset.md<br>
+&gt; +++ b/doc/README.factory-reset.md<br>
+&gt; @@ -1,18 +1,18 @@<br>
+&gt;&nbsp; # Enable Factory-reset<br>
+&gt;&nbsp;<br>
+&gt;&nbsp; To enable the factory-reset functionality the following two elem=
+ents need to be installed:<br>
+&gt; - - initramfs-factory-reset-hook which executes the factory-reset<br>
+&gt; +&nbsp; - initramfs-factory-reset-hook which executes the factory-rese=
+t<br>
+&gt;&nbsp;&nbsp;&nbsp; ```<br>
+&gt;&nbsp;&nbsp;&nbsp; INITRAMFS_INSTALL +=3D &quot;initramfs-factory-reset=
+-hook&quot;<br>
+&gt;&nbsp;&nbsp;&nbsp; ```<br>
+&gt; -- factory-reset-helper which provides the helper scripts to set the f=
+actory-reset marker<br>
+&gt; +&nbsp; - factory-reset-helper which provides the helper scripts to se=
+t the factory-reset marker<br>
+<br>
+The indention of items were inconsistent, but do they have to be 2<br>
+spaces? Below, you do not indent at all.<br>
+<br>
+&gt;&nbsp;&nbsp;&nbsp; ```<br>
+&gt;&nbsp;&nbsp;&nbsp; IMAGE_INSTALL +=3D &quot;factory-reset-helper&quot;<=
+br>
+&gt;&nbsp;&nbsp;&nbsp; ```<br>
+&gt;&nbsp;<br>
+&gt;&nbsp; ## Technical details<br>
+&gt;&nbsp;<br>
+&gt; -The by executing `set-factory-reset.sh --create` a marker is stored a=
+s a EFI variable or on disk (default `/dev/disk/by-partlabel/efi`).<br>
+&gt; +The by executing `set-factory-reset.sh --create` a marker is stored a=
+s a EFI variable or on disk (default `/dev/disk/by-partlabel/var`).<br>
+<br>
+&quot;The by...&quot; still doesn't read smoothly.<br>
+<br>
+&gt;&nbsp; The marker on disk is intended for devices which do not provide =
+the facilities to set EFI variables.<br>
+&gt;&nbsp; The initramfs reads this marker and formats the hard-drives prov=
+ided by the variable `INITRAMFS_FACTORY_RESET_DEVICES`.<br>
+&gt;&nbsp; The initramfs-hook will try to detect the previous used file sys=
+tem and will format the partition with the detected type.<br>
+&gt; @@ -27,3 +27,41 @@ The removal of the TPM keys can be deactivated by s=
+etting the variable `INITRAMF<br>
+&gt;&nbsp; As the factory-reset is executed before the disks are unlocked i=
+n the initramfs, the file system type must be provided with the<br>
+&gt;&nbsp; variable `INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE`. The factory=
+-reset of encrypted partition is not supported with the file based<br>
+&gt;&nbsp; marker.<br>
+&gt; +<br>
+&gt; +## Verification<br>
+&gt; +<br>
+&gt; +- Set the factory-reset marker with the below command:<br>
+&gt; +```<br>
+&gt; +root@demo:~# set-factory-reset.sh --create<br>
+&gt; +```<br>
+&gt; +<br>
+&gt; +- Trigger a reboot as factory-reset happens in the initramfs step:<br=
+>
+&gt; +```<br>
+&gt; +root@demo:~# reboot<br>
+&gt; +```<br>
+&gt; +<br>
+&gt; +- Factory reset runs during the initramfs. The reset scripts format t=
+he target partition with the required filesystem. This can be observed in t=
+he boot logs similar to the example below:<br>
+&gt; +```<br>
+&gt; +.<br>
+&gt; +.<br>
+&gt; +Begin: Factory Reset ... Begin: Reset device: /dev/disk/by-partlabel/=
+var ... [&nbsp;&nbsp;&nbsp; 5.834137] random: crng init done<br>
+&gt; +mke2fs 1.47.2 (1-Jan-2025)<br>
+&gt; +Discarding device blocks: done<br>
+&gt; +Creating filesystem with 131072 4k blocks and 32768 inodes<br>
+&gt; +Filesystem UUID: d4ec21bc-988b-41f8-8e71-4d2b24cb7074<br>
+&gt; +.<br>
+&gt; +.<br>
+&gt; +```<br>
+&gt; +<br>
+&gt; +- If disk encryption is enabled, apart from the formatting of the tar=
+get partition as stated above, the initramfs scripts also encrypts the targ=
+et partitions. This too can be observed in the boot logs similar to the exa=
+mple below:<br>
+&gt; +```<br>
+&gt; +.<br>
+&gt; +.<br>
+&gt; +Device /dev/sda6 is not a valid LUKS device.<br>
+&gt; +[&nbsp;&nbsp;&nbsp; 8.375556] tpm2_policypcr (224) used greatest stac=
+k depth: 11736 bytes left<br>
+&gt; +persistent-handle: 0x81080001<br>
+&gt; +action: persisted<br>
+&gt; +Begin: Encryption of /dev/sda6 ... var: 12/32768 files (0.0% non-cont=
+iguous), 6385/131072 blocks<br>
+&gt; +.<br>
+&gt; +.<br>
+&gt; +```<br>
+<br>
+Adding Quirin to help with cross-checking.<br>
+<br>
+Thanks,<br>
+Jan<br>
+<br>
+--<br>
+Siemens AG, Foundational Technologies<br>
+Linux Expert Center<br>
+</div>
+</body>
+</html>
+
+--_000_TYCPR01MB96693C40CB49321A6A982A32C499ATYCPR01MB9669jpnp_--
+
 
