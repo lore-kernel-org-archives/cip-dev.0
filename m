@@ -1,310 +1,281 @@
-Return-Path: <tommaso.merciai.xr@bp.renesas.com>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD8ACEA3F3A
-	for <webhook@archiver.kernel.org>; Tue, 10 Feb 2026 10:28:13 +0000 (UTC)
-Received: from OS0P286CU010.outbound.protection.outlook.com (OS0P286CU010.outbound.protection.outlook.com [40.107.74.61])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.16669.1770719292587570909
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 210F6E94628
+	for <webhook@archiver.kernel.org>; Tue, 10 Feb 2026 11:28:54 +0000 (UTC)
+Received: from OSPPR02CU001.outbound.protection.outlook.com (OSPPR02CU001.outbound.protection.outlook.com [40.107.159.54])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.17613.1770722929774426753
  for <cip-dev@lists.cip-project.org>;
- Tue, 10 Feb 2026 02:28:13 -0800
+ Tue, 10 Feb 2026 03:28:50 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=hVPNgOEO;
- spf=pass (domain: bp.renesas.com, ip: 40.107.74.61, mailfrom: tommaso.merciai.xr@bp.renesas.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=tPp9A1Dr;
+ spf=pass (domain: siemens.com, ip: 40.107.159.54, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VOCH3u96j1FKeuEBjOVaMeNf6n58AnTMJ0fG4sT7pZ20swngwcyrpthCUYuBtERWUj+1zh1/atTU2cTytGtMiDSIU854D24NwF/H++YhiBT8wlGziz6jCaiIJ4PuWCa3xkoJdygzISnmgHLRXF4t6cWv8QkVxG5xnH7rc9SHHbVMjNNBfwOPXoCe4ClCGbvI6jfexeakwyNEBx7mdKBatbAqYHHrcXEy0MI7YNwO+ZCx0z4It/nj8u2jWHJW37DHmzhWLCZcCQGDzmii30M41EEBs0s7+j9qRuLqLvzM9Tcx/ft8wL73R57o6eZYPYXiZXyStLrSGaU3YsW081MQug==
+ b=Mi+Xd+7Z3xeUOWmiiqVk+zASSZcvvkjMN8x1S6kORUkrugFHTqijt08RMM8un4wWzgBF0znh7i6AEDy3a9C9vhMcPXarAi8rD9Vt5aq8nHaCA8XbrU2Bg+0ZeyIwR4Moy9k4Bao8dI5+GMT7MNgNlvV0RgIczVQE3Vt80/96hb+NggUzrkVVBg5yVEmPvzGKlfUzKCBYZ5cQo1xgPnLTUcNHKWBDya9GaA2Km1hZMTczw5OxN9XpXcq74X5HzhB7rAh3bqWLyKxidcBvOIjN8Qq2kr5zz5BDWMwGgH3sdYf4G+CImJztAxucjVCihDTOFDec6/N3Qj9Dn8lpzbW8fQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dxtnXpzOqs8sx61uv+1ar/VTWBvB1vAaE+w2qjskru8=;
- b=H83FwrCNVBUoUfqrVygdPRmb5VG1dwENLHSGkJEywxmBFJQpOVDvacL8gTLPsYpWjnV59w9P/3sNtWuwk7zmhPENmhqijF+iPWh5hk0QRVefbLxbyzp2VQGGNfYmpR0GrW6J+BeC5hkJ8zIr5Y+xWgu6AtywxbyklCS5ysm0jDRrg8+v5ZmMRy5p352iBseelXaRX5H3d/7EnP+oKjFedBiMXAn6tVGv68ByTqEa2aNa0sChsPpjM8PoGBzkC++Srjf/k14t4YMNu3HePg+Q2C1WvmPFrtlzBzMXjuZouv1yn4JWQZ8vGs3RbVq7COPeNPjExILwWiNW4Qg8gMs2mw==
+ bh=ae5xvEbyDHnjXDLzuzxxwvWzrka/svSwL7OtE+w2Jo0=;
+ b=gz0s4Ys+3jqWQbbDN78crt+/pgAe++PR2pfszc4AdrTaaJDR2TIye22adeTtj9qAQiEhOAANeBAcsP/pN73X6icXPq3wn2oJoIS8oVwwEJ+5vWuHCGZXC9IFwwyxxkBqw2eQcRjwkFRup6xzjOJ4/OzoKnOC66w1cJBh7lRpAfGd2prALnH4fRCgS04BKC6F4du3t2jIyd8CSA9funjEQP9tJjvViUXAmO2XbE9fRZuxrtN0qM2f1WWPnvOvK3ZXGE64aBZsi8nKCiP668Qsx3Ex5hJLCbAR3Q5MxvbCC/Q4+CHPCgtB5cszxHgSlpWdA94/COHZRCcd9/g8XVwOiA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dxtnXpzOqs8sx61uv+1ar/VTWBvB1vAaE+w2qjskru8=;
- b=hVPNgOEO6a7C+S4s3BQcba1hpFH7XtQT5AB6Zt5aBbC3T2NLB+GxBNWcxoaIbgPn0KKQQ6VsCognmBBka6LlnDOJpRja7tqzQ5XkiP+f3uLGsff7JrW2X+GOOGiW9rE9IEHxMC36OoxnCYT73RE1kJ61wTCgHl45+OCUH8ns8kQ=
+ bh=ae5xvEbyDHnjXDLzuzxxwvWzrka/svSwL7OtE+w2Jo0=;
+ b=tPp9A1DrPpGXwJGyBzxySEqgB/tSMJXgC57UdfpSyPQbwwRAr7d/KWOENgRfHOtpPrv7tnKwE/E5J5tkRGGVRIpIWDIMlOcFJH94AWnV7hT5URDmN4q9CSs8gB5e93UZ4Zg2yT4VqS8h2Iw4mg+tAl11VV2FQPkljvoF6kjgymFGInWIModdICtiuKpiP4g6/uGkD5bIlFPdoiAzE/WaSE24CGoG8FdGMdbTWBvQT1Y9+uBlJNbhzrI7plaDyG7l6i8nFY28fnZiJm3X+KoIN1M4sU2Y2e8vWe/twEjjNTWzrwZTaghvtEUBzxd6mmkpgyjqCGQFcuWSfbkqcQre7Q==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com (2603:1096:400:3e1::6)
- by TYWPR01MB10424.jpnprd01.prod.outlook.com (2603:1096:400:24c::8) with
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from GV2PR10MB6186.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:76::15)
+ by PAWPR10MB7294.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:2e0::7) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9587.19; Tue, 10 Feb
- 2026 10:28:08 +0000
-Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com
- ([fe80::33f1:f7cd:46be:e4d8]) by TYCPR01MB11947.jpnprd01.prod.outlook.com
- ([fe80::33f1:f7cd:46be:e4d8%5]) with mapi id 15.20.9587.017; Tue, 10 Feb 2026
- 10:28:08 +0000
-From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-To: cip-dev@lists.cip-project.org,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Pavel Machek <pavel@nabladev.com>
-CC: Biju Das <biju.das.jz@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	tomm.merciai@gmail.com
-Subject: [PATCH 6.1.y-cip] i2c: riic: Move suspend handling to NOIRQ phase
-Date: Tue, 10 Feb 2026 11:27:47 +0100
-Message-ID: <20260210102747.484082-1-tommaso.merciai.xr@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-X-ClientProxiedBy: FR4P281CA0202.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:e5::12) To TYCPR01MB11947.jpnprd01.prod.outlook.com
- (2603:1096:400:3e1::6)
+ 2026 11:28:45 +0000
+Received: from GV2PR10MB6186.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::63bc:6561:54d3:94b9]) by GV2PR10MB6186.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::63bc:6561:54d3:94b9%5]) with mapi id 15.20.9564.014; Tue, 10 Feb 2026
+ 11:28:45 +0000
+Message-ID: <377c16c6-c735-4519-a933-b7030001838f@siemens.com>
+Date: Tue, 10 Feb 2026 12:28:43 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [isar-cip-core][PATCH v3] doc/README.factory-reset.md: Minor
+ corrections, verification steps and what to look for during factory reset
+To: Adithya.Balakumar@toshiba-tsip.com, cip-dev@lists.cip-project.org
+Cc: shivanand.kunijadar@toshiba-tsip.com, dinesh.kumar@toshiba-tsip.com,
+ koshiro.onuki.h55@mail.toshiba, kazuhiro.hayashi.f74@mail.toshiba,
+ quirin.gylstorff@siemens.com
+References: <20260206101504.239074-1-Adithya.Balakumar@toshiba-tsip.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Content-Language: en-US
+Autocrypt: addr=jan.kiszka@siemens.com; keydata=
+ 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
+In-Reply-To: <20260206101504.239074-1-Adithya.Balakumar@toshiba-tsip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR2P281CA0078.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:9a::20) To GV2PR10MB6186.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:150:76::15)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCPR01MB11947:EE_|TYWPR01MB10424:EE_
-X-MS-Office365-Filtering-Correlation-Id: 33ae18a2-65e3-4ba8-f34d-08de688f155c
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+X-MS-TrafficTypeDiagnostic: GV2PR10MB6186:EE_|PAWPR10MB7294:EE_
+X-MS-Office365-Filtering-Correlation-Id: c262616a-8e55-4f46-47dd-08de68978d39
+X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|1800799024|376014|52116014|366016|38350700014;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?eOYPTbl9JDkvX9ZhJ1qHBd/XiOcbFZAuLNcygBx+5/AfBbjy1sri2oUlkzUb?=
- =?us-ascii?Q?10byG8S7AcOc98vThCWDI+LJEz2n2TE1uUMmMq/gnidXebri5tc8tJreMgXv?=
- =?us-ascii?Q?0i4SwEcT0jhDxJ1wEGjAPZNIUot7yJGawgdpH8hof+a4FYl0bIXgQE7YYKdO?=
- =?us-ascii?Q?q5uf2Jqub50tCahPcfFD/FfUdVtZ4Vgj6NHZnO9FqG50hDYNiJfCveXsbyAh?=
- =?us-ascii?Q?DMAFPWR55CGeuqMVgnLnT0TYjO4T+F8Pd2QI7ia6hnBZpCbz05LWX5xSMLmf?=
- =?us-ascii?Q?CPxeCQLtTfbFA6NKOwG7RhoRShuczxnaR81I6yZpm/AseYxBCB8QrDFFTVed?=
- =?us-ascii?Q?sRjq+KOCEJ2YjReCnR2I6NmAELPDbSnR8msGZ+nT/hjlmz3jobeY+k5wFhzR?=
- =?us-ascii?Q?yo32UbNr76IbJwdIAvyFs38kZb0vlNV/kNl1jmX6AL053sX999bXw+fKgJsr?=
- =?us-ascii?Q?3f0iCPRu99qTFkONxCS7QTMKJ1Y+yIYQAWe3Rcp7JNmFbgScLHic9gquvxt7?=
- =?us-ascii?Q?TRaeZglnY7I5tsGnWPZ2JSg6MpvgV89SphdRb6yRq2YhrCYavhVXIkFXNkt8?=
- =?us-ascii?Q?sYGHOVpNdcPpZwanwUQQxUGO6DXaHBsz93l1HaUnwC0MhmUQPP28+M5y6x0P?=
- =?us-ascii?Q?FGlgzH4ATlHGHnPusqXjUlu/vnlLjeanX21CHppG3M6Lb1FrRIOLXLufU6hf?=
- =?us-ascii?Q?uip2vFUHovXMQOquLJG2TADcuDfHfgsl4aOQZJZKvsihEZjJecqf6AeBiknV?=
- =?us-ascii?Q?hk7PUN0+kSjofDGfegNvLQvn5CExMZO8k4UROZKj4ciUhSLg8UDGWnMZIpbX?=
- =?us-ascii?Q?krYUkGxNjHjpWchz3H9/Q9ffWO3Da/Bt1dp3dlhx9jQUirBFMdboUrIAFJCT?=
- =?us-ascii?Q?jzWlTPYE2TUL5iOSOccVrJOIvFS1VexABMTmVID1dV04ZFg5fGfS/g1iSIlK?=
- =?us-ascii?Q?T7lzQob3P2VCrykNLmKMUstJr6s3SzyzdF3NN+nxXPcd2a0JC16CcvwZFpbH?=
- =?us-ascii?Q?qBPSKFo8f7NId+hsfXAQFItgRqZJjAYfC7j1EMzMIH1F+xf7xzXaD9qCYgrJ?=
- =?us-ascii?Q?7G1RmEpvAn361R+XUjsb9tso4ycR7+WExBZkPTeYyEjjv3xgq+VtbZAkuuvo?=
- =?us-ascii?Q?Q0YFuro5miLjkS4WU/R4HWwDEial+p/nM9CBHJxaX1hlZMXCIMHynaZykVAJ?=
- =?us-ascii?Q?EckoodzlyzMMwnr88lqC3UeXDyuH/q8JFt5/EuErYxoJEA1hmRYEmkH94JN7?=
- =?us-ascii?Q?cCMrTrQd1mPyFcF9ZdcXKVzKbLJzJpg9S9numjaThztMJotzIddj4EmikYox?=
- =?us-ascii?Q?GjAE9AkYWbeF1vH/B8sqvI0qLrbBB1EOI/BEnuwb9cLZ6Hrr1aS/cQtKp2qn?=
- =?us-ascii?Q?q665qnVRJqG4m1SOpH7MjDQlt4BkQkTKsioqEMz1foxFZuuC4KP8eBmd93Q4?=
- =?us-ascii?Q?lsxCkP3ZysnVgFBnn+/Aikw2Bgx1sLIv07WRs0jZ56FWeN7IFV+uSDSOkfZq?=
- =?us-ascii?Q?MrpVlun+YaWRJgZEqy+kXYN+IBBIvCANNYp/lAb/4q6+EUNHMv1h/3se9xhc?=
- =?us-ascii?Q?OmPEwx6SJ3AF2vjJ58wQOegR3W/1dlI/4wsqCF8oFhAXtvhZ5Py6KqjqkMIw?=
- =?us-ascii?Q?knQ3OdZaUaNY59cioEcd3EU=3D?=
+	=?utf-8?B?MjlmVWhJQXZvT05Hd0xacWNlRUdKNVE2aUFZMklRMHFlRENvU0NMZGhrc1dI?=
+ =?utf-8?B?Y2taQnlEQ1R6YnVkTzZUeXNwOTVHazNwYTY1V0FoenNWd1BHWEhXdXNndXQ0?=
+ =?utf-8?B?Z1RwY0tYQlU3a1JDdHVudW95b1pwYlEwcUNWUkMwZDVZcGlYWXhEMnh3dnJp?=
+ =?utf-8?B?bDNMY3hHaWx4cThldXhadWFTU0RUK040QWNxeFpjK3dlSkVFbHJ3dmVBeDNw?=
+ =?utf-8?B?NW9RcUlNZjBhVXJJbm0rdDQvT0t5b0VFRTFWSWROWldhN2FZdWwwQ0w1OFN3?=
+ =?utf-8?B?WlRTQlB2cWcxcGlNSjk1Z2ppcW5BeU0wemx2Q2FyWWtZQUhEd2ptUUxSRGVB?=
+ =?utf-8?B?MHU1S0czcEV2eEVENkhqTGNtakVnVGttazAzQkJrSjNzWUluQVFOemd6aStL?=
+ =?utf-8?B?clNvbGxuVFVjVk9LR2djY3JaSnU3YTBRRC9XMlp0RXA1N2xKZ09uYm1Bc3Rn?=
+ =?utf-8?B?MXhiU29wUkw0bW1CT2ZHU3ZLY3ZRRTFkUG5YMW5SZkxZUDVTWlg5bDg3QzdJ?=
+ =?utf-8?B?RlVBVHArbHZRT0RYMms4Vmh4dlgweDZMajc2QUFrYlpjRGJyYSswVDhjWEV0?=
+ =?utf-8?B?a1ZUYVoxM1Jkak8zbC9KS3VBTG1WVklDNTFWOFZDckxMWHE3cnlENm1nSmND?=
+ =?utf-8?B?U2d2RHB0NTlxQThkWDVKK25UZC9uQnFUWGVNY3R5VnFhSGJOZ1hDZkhQTWll?=
+ =?utf-8?B?K2lQVDllZEd5emZsd0V4VzJFeDVoTEIxTkNpa1IwdWZzaC94UlloQVViZEM2?=
+ =?utf-8?B?ZzI3OW9wTlpCMEx4czFNZ1EwVzFQbEk3ZUVsZWJnaHpLVVMwalk3eVpaZkJw?=
+ =?utf-8?B?Z3RjbWlseDErRnZ2RXhyUFN5QTFEWWNac3lFdG5Nc1Zxek1XbnMra3FDaytq?=
+ =?utf-8?B?T1lQN09rNCswbVJBU2N4NTNxd3dDK3V3ZkliZ3YyaElxZU81MStVY2pNVTVP?=
+ =?utf-8?B?TEg0R3FpSVNCKzdKdXpsWDI0bW1WWEhiSHd0LzZhUEliNjZMMG5wcmZpRzBT?=
+ =?utf-8?B?dC93V1FKV1krdXNzb0lHQVltYyt1aFJ1elFZcWF3dFJXUDF6K05rT09hSm9C?=
+ =?utf-8?B?UlRuWFBUaTZteC9nMTh6WnJLakdlMDdBNm0rek9jdWtSNUtCTVdQS1RoRlJm?=
+ =?utf-8?B?dENlU2dnZDhFNXl5dHRSREFUSnQwV3FKd2pXWVkybTBjZlZRcGw4VHI3Q2pJ?=
+ =?utf-8?B?L1RtbnFPclhlelhUS3U3Skc0SmVkQW9BTzZ4dGpPL2VtOEpJZENveXZpOE9L?=
+ =?utf-8?B?OTBHK29TTGhRY2txMEx5R1MvQm5FRUlwcm9EN2VRdXBWeStha0t0cEVpTjFs?=
+ =?utf-8?B?eHJyVUxObHdBL0pUVm5HY0p4SEp3MWFCVGJrRDQ4UGVIVTQwa0V4ZHphMEJ0?=
+ =?utf-8?B?SGpNcmpZRTV3Rkh4YUtoV0pSd1hRVUJjSzhUTEU4WTRSSkZoSytuVkkrMTRG?=
+ =?utf-8?B?MjRpQ2RLTEcvRXRKeFk4czJSa0FtZ045TC9UVWJKYzdZc0kra3FMYnlVem4r?=
+ =?utf-8?B?UFBLazB3V255d3AyMzJRaHk1aEprK1lIcEhPZXg5MVBZdzllWHZoWnU3NmVy?=
+ =?utf-8?B?cUQrYjNKWStzcUEyckFGWjM5K1QwOWlCSXpwQllLNUpHY05INENFejZkT3BE?=
+ =?utf-8?B?V3k1VjRsemVCL1hIMlNDSGlzMXM0Y2NZQkZ5bHNEcHBFRTB2NDEvejU3QkNn?=
+ =?utf-8?B?ZHdMTmpkelJWdzJiQlVzeGZ3MGxuZGc4ZUhvd25STjVmQzRrTVFQUWdIT2Mv?=
+ =?utf-8?B?L3d3RXk2ME0yZDI2SjV2ZWFhaHYzRFljc2ZzZU9IYW8xbWE4aCsrUEpLMnRh?=
+ =?utf-8?B?cDRYVCtNOG1jU1hHY2pyWVFrbWs5REFsVkFKTG80OGUycm5xajJJZUNmOWdh?=
+ =?utf-8?B?RXBoVnNtNk4zVjVnT3hKcjBsU0FEdHV1cDFNL0tMZkFyMzhIb2xtZzQ2KzdU?=
+ =?utf-8?B?aXJKN3hyazFldmU1cEhaNFdZeGk4YmtRTGlTWWF3a2FmbWM2UTZZZjJjYzVn?=
+ =?utf-8?B?VlB1REM3QkpjVW1tSUovVkdxcUVpRjcxbUdzakdMSENGWnJ0QkgxTFBZVnRh?=
+ =?utf-8?B?OElmV1pBOElxWGtNQkFocys5TWh5ZFJaUmpycE84aFo0ZGhnQnpEV1FNRHli?=
+ =?utf-8?Q?81RE=3D?=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11947.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR10MB6186.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?8/pdBPkYXcDKuP3Bwlrr9zcrdiFRYhtlOTgnH9UyzTvXWW7C4vpbM6i9AISr?=
- =?us-ascii?Q?L11AS9oyUUqruWnJsBqGho9eVlxh5pjQNodt2wR2IaNlVdADCiL2PzxrVxuP?=
- =?us-ascii?Q?CYAjoLNwxfviBzFc/JFZKMuCWtN+kTmutaBM6ztmGdkQKiXz+Ny03X7uMaS7?=
- =?us-ascii?Q?Oiy3BQXaHviax3Lu2UIcdPf+cxEN0jpUr9GtlsZFDy8v1RQN5iQO3IYZEm8p?=
- =?us-ascii?Q?MLiJpHcOU2ldZpgRvIpUoCxsr3hI0dlrLEkip3IEnXoM2edsjSwkKpTNVwf6?=
- =?us-ascii?Q?GyCMCnA1BA/msZUW02VK4XkMQfK1pG/AfUkOSW1HdlxRsDgRteKvEAnDwnn2?=
- =?us-ascii?Q?HdX8CR00Dv/K386OD6KkEp+Jwl9Jfy4qlKoT1nk9/WpOH73kWa9MlqFDetJm?=
- =?us-ascii?Q?8nX/CFEG6pfId2b62VbnizH+U4Vw3JQW8LhVeTC0FErn7A4zo5m8vjM5jkZG?=
- =?us-ascii?Q?L2C7Xl9T8JCQYjpWq2IggXJ6mlQXbYZUg3PMqtwDaf3s+S91gmyO+Cp8bc6Q?=
- =?us-ascii?Q?ekLh5F4jVUyChha9bCgnrK94O5ZTUaXeI5yqrRiQu5/9a6V6xcdVtAboC/J5?=
- =?us-ascii?Q?O5Qa7JiCJ14eeWonw7Bwi46UabMc2Wi2RxcLHvhyWOsJ9PbU4oCohso/h5IQ?=
- =?us-ascii?Q?gi3ZKp6IqP8ybgq20Xg4YSlPn9JwotxK3VT/WbwDrpFoUIR1peF6Ur5SiLZ9?=
- =?us-ascii?Q?utm9Snbw/5KbF6C16B7TLdPjEUiV4z6hUCSW0OkYyLVSwHx4uudjkH1baD9g?=
- =?us-ascii?Q?WbcMqTsn5n8LsXOtquLekSwxMevdmUWhhWkGR0hEKio4HeH9NVnrIjlP1jTB?=
- =?us-ascii?Q?GI+OSPh9V2FO8ijXM40qEhCiNg2mF/8O6gD55nOKzcuMLtgOiIJxHJrknyYA?=
- =?us-ascii?Q?tsZ3OTPtPic62yxXooIIOLbZ0tKR1GM7nXn7IQpOV/3LOJxv5voslo3/p6w/?=
- =?us-ascii?Q?sRmLUrvmeGbYpQzrwAR4bz3TEbjCyVM2hm+0fnoCa0n2KJcdQZawgNzslRcY?=
- =?us-ascii?Q?dZ11UwyHVGyPiaBN+vDJhPbeYX4V5LgGyR6g6ujAKigc1+bJwG2W9jNQ8S5q?=
- =?us-ascii?Q?8J2RyE5XF66/c2Ykxp75u74xlrsg0IrSneCA7aq2Bn3Fn+Osb0poPk+TlTPS?=
- =?us-ascii?Q?N9wfR6+1KmNQPlYgZKx6se/M+7+05K+FKZI8+lYIB0lV3osLzw8QyNJKAWx+?=
- =?us-ascii?Q?IG6hTDhoVAYdRRSzldmA1Hn4fqGhG6wzshBT8IUyxEnN3lU+/H7JcfSxzMFU?=
- =?us-ascii?Q?2nyIKHykO4zv1As3NVxCClmLtv6hqsPbEEHq8MJLHa0GVLXtL3lJcT3gKcL6?=
- =?us-ascii?Q?8/OM883/TTEQRDiRA4A1/AbKa3RxKHswe0/ZA9i2D5qrcLfYLAWGQOqcXjaS?=
- =?us-ascii?Q?L0OJ/OQaiv4RhwNIoOMnluisx3TnG2Z3GYu4th58DIgV6GMOCkGGPJnIfjAP?=
- =?us-ascii?Q?00Q+xD+3cqDuSmTie8E90k4LwNCoEbqDSzHwD2NaAx1w2xQpHlUGBSofWaO9?=
- =?us-ascii?Q?170LGUP2UYW/kAgperoKCw+trKffUSEwi/GAtTtkMNe3pK7uIOfY3DqnC+pd?=
- =?us-ascii?Q?2CaZmDAEehPqjPT3FBWm7GuljWbHsPTW5JJiRJnDMf6caDp9kT4V5+Hb4r93?=
- =?us-ascii?Q?SfALmd4UfNqTqE78U4PkBfOuhHRYPdP21iqsNaXpYv+CCRHLWRZTdlRdhnl1?=
- =?us-ascii?Q?EvhmJgocZKRD/osTEhMhc/OI3BhkzGo75fUH594xWzKxfmCADW0UkgGCkSF3?=
- =?us-ascii?Q?RLf2HPcjhec8jGAzuonns7LXxohBuchePrA722blv8SoaJdbS5Px?=
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 33ae18a2-65e3-4ba8-f34d-08de688f155c
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11947.jpnprd01.prod.outlook.com
+	=?utf-8?B?OEN2aVhhbWhBZXgrRm83cmJzRkRuWnFaRDN1VDVoY29ZakN2RWRHTTlNb1ZW?=
+ =?utf-8?B?VzlOTEhwYkpGNEs3MisxV0pzMTcwRDVUay9weEIwTE9CSkZaSFlCN2w5WWNF?=
+ =?utf-8?B?TXg3K1hENjVMNTFaRS9MVlMrcUtWWUxnZHozR3M1MVZyU0NHZU1SL2VjVWZQ?=
+ =?utf-8?B?bjdGc3RJNE10a2ZqMzZLdklyUi9HdEVGRWtRZERzZGxSeWJQN0hTa00veEt3?=
+ =?utf-8?B?VUw3WlUyU25uWGZUTU10b0o5bko0SmNqVlhiU2ZiNktWVDU2Mm1oMHNJZUJ3?=
+ =?utf-8?B?a0xlOUhsRjNETUxCL0M1UHFndTBEU0xhdmJVNXFUREhPdCtUaDcyZFFRcGc3?=
+ =?utf-8?B?QjJxUFJYNjZWbFVBRVR5MmFZOTViSXo0czNYY1lHVDgyZ05nZnZ0TWN4N2Jq?=
+ =?utf-8?B?Q3N5QXI2UTI0QStEOEhDUkxyNjlnaFF4aklsUTZ3aHJvMERNL01jTWN4QmVu?=
+ =?utf-8?B?OGpmS1d0bHI5NWFUbHpLS2pUcTVlMlJ5TkRvR3RtcHJ3ZFdrSE1wdVYzK2sy?=
+ =?utf-8?B?SVEvU2dqNVNRQU9TL0M2cUZ3SVUzcDRQQVFNR1dEM2lxSFk1b3lKenNZa0l3?=
+ =?utf-8?B?eXVmWTByNHAxa0ExbURiNStNWTJmbHN0QktsamovV0pRY2ExVy9MNkxYMkhm?=
+ =?utf-8?B?eitwNkd3SWtITzNWbXVMRmkrWTMwa0tsTE1ObjNFTHNMajhaaC9RK1JiWHhT?=
+ =?utf-8?B?UzlRMjFYS3F6MUpLZlNEbk9NMEUweWVXK0RiWUJySVlKcWZ2dkdXMjNlTXRF?=
+ =?utf-8?B?R3lTeFM4akl6dkNFQnEzSEVOMEI1bzBweHlxZWJtOG04b3o4ZlZ6UXdvUlhS?=
+ =?utf-8?B?Ly9mME9nMm5HZGtnNlFyR3lJbmtnaEpPbmxGb0dGTVh0amZjeS84RHJVRWFr?=
+ =?utf-8?B?T2FlVjUxYVdtTTkvTkYvQXFsa1hvVVRMdGY4dTQxd3VnR1hzMlpSVlMxVGQ3?=
+ =?utf-8?B?aWpSRHUzbytiYnQ1d3NyRzFGbHdWeEZmSnNGWXJhbnBJaGMrTHlWN3VQQ2RC?=
+ =?utf-8?B?U3lHTGt1Qk1GeWdTdVNlbkd5YmJ1b01HQi94OE1aTXBHeTBncGFYdDVGd3dP?=
+ =?utf-8?B?cWM5bUs4QTdub0ZaSDcxSlp4YWExQytoSWVZbUxqcTdmS05kdDdKYyt3cE1i?=
+ =?utf-8?B?MXZIUkJBbE42OWphaGk5cUh2UmRCbDQ3UlpPS1Q2MjMrVEt0ZU14MlFTTnVH?=
+ =?utf-8?B?cWhKUjFFN213cWRuVFJDTUR3U1dkRHNlQ1FyR0MzNDNTS0h5MGVxcCt1Smkv?=
+ =?utf-8?B?TzZMdzR3UzhtL1RQVzUyaEpyWW1SMStMNGRRN21xaXNIN21zb1JvNE9UVnNX?=
+ =?utf-8?B?MzlSUkNNL0pQd1ljKzA3QklseGRIM0E4Q2tzYVM5SnBIWWJhdWc0Q1RUak9x?=
+ =?utf-8?B?dGVlUnBQckJLY2w2ZUQ1UG9lTVd1bTdKS0ZOaStKWXQ1MW16Y0NHKzhLMmdR?=
+ =?utf-8?B?V1h5THRxWEYwblA3RlZLd1JtdzVHeFlGbXpobGxaR1ZiLzA4WlkvMXR5QnVM?=
+ =?utf-8?B?WmI5VEFwTExFbGlNOEp2OThGc0ZnNGwxbXFhdVNjamxwbGxRN0tvYWJLTEV5?=
+ =?utf-8?B?V3lueUIzK09Bc0lZUEExWU9CeXNaazZsT09JMExTQVhrVVVlVHdmeDN5ZnZ6?=
+ =?utf-8?B?NFZYWldpVitBYlkrOUxySzVGRjhaSWRpYkRNcDVicjZoNUlXTmcvbEdSWHJU?=
+ =?utf-8?B?Nk5XN3o3OXZMRzJ0TG9BRjUwa1JSdGxIMlpLNlJjSnZlRVFOUTBuV2pvNlhr?=
+ =?utf-8?B?UWFjVGRUWGY3S2FwbXVySlBucTJYSThiR29rdWVTRXBXeXJMTU9sMGpCM3Fx?=
+ =?utf-8?B?ZFh3TFY4N0wrQmxIVW1EVnlFWEwweFlHNjdzQ1BOSW96L3NmVWFIVExjeGsy?=
+ =?utf-8?B?bU1nNFhqVWV3VmZHNFR0SUVEbTBkMHZIUWs1T3hIRjIxNWd2VXk5dnk3aWdy?=
+ =?utf-8?B?c3hyQmt5eHlZUUlPSGhhdkFNNHFzcmdFWk9ZOHEwdytLSjRrNkNZblFEaUlm?=
+ =?utf-8?B?TFkvUVk5bSs0aDhlVHEvWlFocGpONzhLNHFRWW9OSlhxTTRiRXJlRFp3ZGJG?=
+ =?utf-8?B?aFhHNG1WSXdPeWRhbjVaeXdCNFpycFYzU21oOUlSNk1qTzdtbFJNMERMSGNH?=
+ =?utf-8?B?ZzZCK3hRQ0d5SHdRaXNpSE5wbURGVXUwOTB6QW9qMlRHNjR3TVc0WWlWZjlz?=
+ =?utf-8?B?QVFKV3c2eUVYVVdIUHNBd21rSXBPYkZSblBPb29MaUxTTTVkT0pQQ3RBSVpG?=
+ =?utf-8?B?TjJKRUdtWkNRRmE5MjQzeDVyWUtGdWFCRnh6QUkrcHM0NEpuUjh4VDdhQ3Fl?=
+ =?utf-8?B?aG8vVm9ZbTRISlZjc1M5TnRsL3RXNWlkMVJ1WDBFOGJERlY0emwrdz09?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c262616a-8e55-4f46-47dd-08de68978d39
+X-MS-Exchange-CrossTenant-AuthSource: GV2PR10MB6186.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Feb 2026 10:28:08.4527
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Feb 2026 11:28:45.4726
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WWakEJrPqVVcSZ3VVaQBbQhfEEJRlg9SQZPQa3nIhS6prFn8SGBv+4CoM/WmxaaHRyA4gTMLU7oP3ibiRmsuUUxSodPJfXOjNaqCcij+wNW6cElDPrONsEBwlOD70ZOI
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB10424
+X-MS-Exchange-CrossTenant-UserPrincipalName: uUQiP3x9d/xLNlzy5rcqj2/aiPI4CdzReMOIlBPQ6Yj9/56BqVumQx3U9YYbJ5mOCj/PqkvwTvFM/4O2nVJbIA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR10MB7294
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 10 Feb 2026 10:28:13 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21852
+ <cip-dev@lists.cip-project.org>; Tue, 10 Feb 2026 11:28:54 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21853
 
-commit e383f0961422f983451ac4dd6aed1a3d3311f2be upstream.
+On 06.02.26 11:15, Adithya.Balakumar@toshiba-tsip.com wrote:
+> From: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
+> 
+> Signed-off-by: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
+> ---
+>  doc/README.factory-reset.md | 40 +++++++++++++++++++++++++++++--------
+>  1 file changed, 32 insertions(+), 8 deletions(-)
+> 
+> diff --git a/doc/README.factory-reset.md b/doc/README.factory-reset.md
+> index 729912b..aa8dd1c 100644
+> --- a/doc/README.factory-reset.md
+> +++ b/doc/README.factory-reset.md
+> @@ -1,18 +1,18 @@
+>  # Enable Factory-reset
+>  
+>  To enable the factory-reset functionality the following two elements need to be installed:
+> - - initramfs-factory-reset-hook which executes the factory-reset
+> -  ```
+> -  INITRAMFS_INSTALL += "initramfs-factory-reset-hook"
+> -  ```
+> +- initramfs-factory-reset-hook which executes the factory-reset
+> +```
+> +INITRAMFS_INSTALL += "initramfs-factory-reset-hook"
+> +```
+>  - factory-reset-helper which provides the helper scripts to set the factory-reset marker
+> -  ```
+> -  IMAGE_INSTALL += "factory-reset-helper"
+> -  ```
+> +```
+> +IMAGE_INSTALL += "factory-reset-helper"
+> +```
+>  
+>  ## Technical details
+>  
+> -The by executing `set-factory-reset.sh --create` a marker is stored as a EFI variable or on disk (default `/dev/disk/by-partlabel/efi`).
+> +By executing `set-factory-reset.sh --create`, a marker is stored as an EFI variable or on disk (default `/dev/disk/by-partlabel/var`).
+>  The marker on disk is intended for devices which do not provide the facilities to set EFI variables.
+>  The initramfs reads this marker and formats the hard-drives provided by the variable `INITRAMFS_FACTORY_RESET_DEVICES`.
+>  The initramfs-hook will try to detect the previous used file system and will format the partition with the detected type.
+> @@ -27,3 +27,27 @@ The removal of the TPM keys can be deactivated by setting the variable `INITRAMF
+>  As the factory-reset is executed before the disks are unlocked in the initramfs, the file system type must be provided with the
+>  variable `INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE`. The factory-reset of encrypted partition is not supported with the file based
+>  marker.
+> +
+> +## Verification
+> +
+> +- Create a test file in a target partition (ex: `/var`)
+> +```
+> +root@demo:~# touch /var/to-be-deleted
+> +```
+> +
+> +- Set the factory-reset marker with the below command:
+> +```
+> +root@demo:~# set-factory-reset.sh --create
+> +```
+> +
+> +- Trigger a reboot as factory-reset happens in the initramfs step:
+> +```
+> +root@demo:~# reboot
+> +```
+> +
+> +- Factory reset runs during the initramfs. The reset scripts format the target partition with the required filesystem. If disk encryption is enabled, the initramfs scripts also encrypts the target partitions. Both of which can be observed in the boot logs.
+> +
+> +- After the reboot, confirm that the test file created in step 1 is deleted.
+> +```
+> +root@demo:~# find /var -name "to-be-deleted"
+> +```
 
-Commit 53326135d0e0 ("i2c: riic: Add suspend/resume support") added
-suspend support for the Renesas I2C driver and following this change
-on RZ/G3E the following WARNING is seen on entering suspend ...
+Thanks, applied.
 
-[  134.275704] Freezing remaining freezable tasks completed (elapsed 0.001 =
-seconds)
-[  134.285536] ------------[ cut here ]------------
-[  134.290298] i2c i2c-2: Transfer while suspended
-[  134.295174] WARNING: drivers/i2c/i2c-core.h:56 at __i2c_smbus_xfer+0x1e4=
-/0x214, CPU#0: systemd-sleep/388
-[  134.365507] Tainted: [W]=3DWARN
-[  134.368485] Hardware name: Renesas SMARC EVK version 2 based on r9a09g04=
-7e57 (DT)
-[  134.375961] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=
-=3D--)
-[  134.382935] pc : __i2c_smbus_xfer+0x1e4/0x214
-[  134.387329] lr : __i2c_smbus_xfer+0x1e4/0x214
-[  134.391717] sp : ffff800083f23860
-[  134.395040] x29: ffff800083f23860 x28: 0000000000000000 x27: ffff800082e=
-d5d60
-[  134.402226] x26: 0000001f4395fd74 x25: 0000000000000007 x24: 00000000000=
-00001
-[  134.409408] x23: 0000000000000000 x22: 000000000000006f x21: ffff800083f=
-23936
-[  134.416589] x20: ffff0000c090e140 x19: ffff0000c090e0d0 x18: 00000000000=
-00006
-[  134.423771] x17: 6f63657320313030 x16: 2e30206465737061 x15: ffff800083f=
-23280
-[  134.430953] x14: 0000000000000000 x13: ffff800082b16ce8 x12: 00000000000=
-00f09
-[  134.438134] x11: 0000000000000503 x10: ffff800082b6ece8 x9 : ffff800082b=
-16ce8
-[  134.445315] x8 : 00000000ffffefff x7 : ffff800082b6ece8 x6 : 80000000fff=
-ff000
-[  134.452495] x5 : 0000000000000504 x4 : 0000000000000000 x3 : 00000000000=
-00000
-[  134.459672] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff0000c9e=
-e9e80
-[  134.466851] Call trace:
-[  134.469311]  __i2c_smbus_xfer+0x1e4/0x214 (P)
-[  134.473715]  i2c_smbus_xfer+0xbc/0x120
-[  134.477507]  i2c_smbus_read_byte_data+0x4c/0x84
-[  134.482077]  isl1208_i2c_read_time+0x44/0x178 [rtc_isl1208]
-[  134.487703]  isl1208_rtc_read_time+0x14/0x20 [rtc_isl1208]
-[  134.493226]  __rtc_read_time+0x44/0x88
-[  134.497012]  rtc_read_time+0x3c/0x68
-[  134.500622]  rtc_suspend+0x9c/0x170
+Jan
 
-The warning is triggered because I2C transfers can still be attempted
-while the controller is already suspended, due to inappropriate ordering
-of the system sleep callbacks.
-
-If the controller is autosuspended, there is no way to wake it up once
-runtime PM disabled (in suspend_late()). During system resume, the I2C
-controller will be available only after runtime PM is re-enabled
-(in resume_early()). However, this may be too late for some devices.
-
-Wake up the controller in the suspend() callback while runtime PM is
-still enabled. The I2C controller will remain available until the
-suspend_noirq() callback (pm_runtime_force_suspend()) is called. During
-resume, the I2C controller can be restored by the resume_noirq() callback
-(pm_runtime_force_resume()). Finally, the resume() callback re-enables
-autosuspend. As a result, the I2C controller can remain available until
-the system enters suspend_noirq() and from resume_noirq().
-
-Cc: stable@vger.kernel.org
-Fixes: 53326135d0e0 ("i2c: riic: Add suspend/resume support")
-Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-Tested-by: Biju Das <biju.das.jz@bp.renesas.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
----
- drivers/i2c/busses/i2c-riic.c | 46 +++++++++++++++++++++++++++++------
- 1 file changed, 39 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c
-index 26975f44c999..f1570872a63f 100644
---- a/drivers/i2c/busses/i2c-riic.c
-+++ b/drivers/i2c/busses/i2c-riic.c
-@@ -602,12 +602,39 @@ static const struct riic_of_data riic_rz_v2h_info =3D=
- {
-=20
- static int riic_i2c_suspend(struct device *dev)
- {
--	struct riic_dev *riic =3D dev_get_drvdata(dev);
--	int ret;
-+	/*
-+	 * Some I2C devices may need the I2C controller to remain active
-+	 * during resume_noirq() or suspend_noirq(). If the controller is
-+	 * autosuspended, there is no way to wake it up once runtime PM is
-+	 * disabled (in suspend_late()).
-+	 *
-+	 * During system resume, the I2C controller will be available only
-+	 * after runtime PM is re-enabled (in resume_early()). However, this
-+	 * may be too late for some devices.
-+	 *
-+	 * Wake up the controller in the suspend() callback while runtime PM
-+	 * is still enabled. The I2C controller will remain available until
-+	 * the suspend_noirq() callback (pm_runtime_force_suspend()) is
-+	 * called. During resume, the I2C controller can be restored by the
-+	 * resume_noirq() callback (pm_runtime_force_resume()).
-+	 *
-+	 * Finally, the resume() callback re-enables autosuspend, ensuring
-+	 * the I2C controller remains available until the system enters
-+	 * suspend_noirq() and from resume_noirq().
-+	 */
-+	return pm_runtime_resume_and_get(dev);
-+}
-=20
--	ret =3D pm_runtime_resume_and_get(dev);
--	if (ret)
--		return ret;
-+static int riic_i2c_resume(struct device *dev)
-+{
-+	pm_runtime_put_autosuspend(dev);
-+
-+	return 0;
-+}
-+
-+static int riic_i2c_suspend_noirq(struct device *dev)
-+{
-+	struct riic_dev *riic =3D dev_get_drvdata(dev);
-=20
- 	i2c_mark_adapter_suspended(&riic->adapter);
-=20
-@@ -615,12 +642,12 @@ static int riic_i2c_suspend(struct device *dev)
- 	riic_clear_set_bit(riic, ICCR1_ICE, 0, RIIC_ICCR1);
-=20
- 	pm_runtime_mark_last_busy(dev);
--	pm_runtime_put_sync(dev);
-+	pm_runtime_force_suspend(dev);
-=20
- 	return reset_control_assert(riic->rstc);
- }
-=20
--static int riic_i2c_resume(struct device *dev)
-+static int riic_i2c_resume_noirq(struct device *dev)
- {
- 	struct riic_dev *riic =3D dev_get_drvdata(dev);
- 	int ret;
-@@ -629,6 +656,10 @@ static int riic_i2c_resume(struct device *dev)
- 	if (ret)
- 		return ret;
-=20
-+	ret =3D pm_runtime_force_resume(dev);
-+	if (ret)
-+		return ret;
-+
- 	ret =3D riic_init_hw(riic);
- 	if (ret) {
- 		/*
-@@ -646,6 +677,7 @@ static int riic_i2c_resume(struct device *dev)
- }
-=20
- static const struct dev_pm_ops riic_i2c_pm_ops =3D {
-+	NOIRQ_SYSTEM_SLEEP_PM_OPS(riic_i2c_suspend_noirq, riic_i2c_resume_noirq)
- 	SYSTEM_SLEEP_PM_OPS(riic_i2c_suspend, riic_i2c_resume)
- };
-=20
---=20
-2.43.0
-
+-- 
+Siemens AG, Foundational Technologies
+Linux Expert Center
 
