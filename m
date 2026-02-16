@@ -2,109 +2,87 @@ Return-Path: <pavel@nabladev.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D640E7BDA5
-	for <webhook@archiver.kernel.org>; Mon, 16 Feb 2026 11:58:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44495E7BDB4
+	for <webhook@archiver.kernel.org>; Mon, 16 Feb 2026 12:30:22 +0000 (UTC)
 Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.18092.1771243079455474412
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.18539.1771245019263596850
  for <cip-dev@lists.cip-project.org>;
- Mon, 16 Feb 2026 03:57:59 -0800
+ Mon, 16 Feb 2026 04:30:19 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=B86vy4vT;
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=HHifId7u;
  spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CBF1110ECFE;
-	Mon, 16 Feb 2026 12:57:56 +0100 (CET)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id AFD6F10E4FC;
+	Mon, 16 Feb 2026 13:30:15 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1771243077;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=dOu4sYL8IgbBBkNo7Puka0o/J3brxLi20ZJ7hyc9Qi8=;
-	b=B86vy4vTIbmVKRjWqrPcc1XqgZP0/Kb/xlO2CRS444n1jGwyAVd33UU4ECSQ53S/xtUNXD
-	9wZTQstcATekmNvilp1Mfshy1ZexyXXtTqLrztGOYqV71XfbWitIoQzmjKkJ1SWqqgyU7d
-	B+k1qbRukgf2jOU96Sh/5TcBgS22KQ9vHmxRAg9PEhWEIhCA0N7BVYCs1wrSbH83mcBlCs
-	tStnP2a9lodS8ZYVONpUor0OlWpbCo2PWsNtNH9SLwtWr8rPyxZIcJ48OjLQekxTVTsPjT
-	TY4EygaQO7yvqzBn8rNrTIXcWwNZXE89QlTg+ZfKr+r88jBfahkWiwrOlZO46Q==
-Date: Mon, 16 Feb 2026 12:57:55 +0100
+	s=dkim; t=1771245016; h=from:subject:date:message-id:to:mime-version:content-type;
+	bh=EyHtMiqS1Ths0Kq33voww8eBKj+YxW7YFlDoqp8hCi4=;
+	b=HHifId7uw+FP0uID6Mfbe57KeSPw6781g6WNxOr9dUwF82oCaMgtXNIroF6xUK+TtrOCFK
+	idRTm2ZLK0LYItLZvruq3avTx2BJvMDslDOW7c3oUhJQbqU1bAVLGcvQ0lobl/MAm4FImY
+	a/zIYlB1MXLsfq+J9wm8nR5pqKFCLfabDtEhd1L+eUGcLexgQaA6ZZSl6y4iCAa3TG2a61
+	OyrODIPgJL1Jhl/CtaG7sURWUW+pLWFVMVA59AL2Oy07Q5VkpBuGHGYQQ9oITaJqsXixbL
+	gMeslPzkmeNcwO5fWr3ju96nFO/DFBWup8zUdo6vawV8UGmGtxFhEZSojiIc/g==
+Date: Mon, 16 Feb 2026 13:30:13 +0100
 From: Pavel Machek <pavel@nabladev.com>
-To: Pavel Machek <pavel@nabladev.com>
-Cc: tommaso.merciai.xr@bp.renesas.com, cip-dev@lists.cip-project.org,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	tomm.merciai@gmail.com
-Subject: Re: [cip-dev] [PATCH 5.10.y-cip] i2c: riic: Move suspend handling to
- NOIRQ phase
-Message-ID: <aZMGQ31JBsck9820@duo.ucw.cz>
-References: <20260210102637.484003-1-tommaso.merciai.xr@bp.renesas.com>
- <aZMFskqvbJa24JYR@duo.ucw.cz>
+To: Chris.Paterson2@renesas.com, cip-dev@lists.cip-project.org
+Subject: Something wrong with stable-rc testing?
+Message-ID: <aZMN1SgBFLYJt5Oe@duo.ucw.cz>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="bPPbDHk7GQcCUyHO"
+	protocol="application/pgp-signature"; boundary="SYhvHdZ1ug44l75G"
 Content-Disposition: inline
-In-Reply-To: <aZMFskqvbJa24JYR@duo.ucw.cz>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 16 Feb 2026 11:58:02 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21879
+ <cip-dev@lists.cip-project.org>; Mon, 16 Feb 2026 12:30:22 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21880
 
 
---bPPbDHk7GQcCUyHO
+--SYhvHdZ1ug44l75G
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon 2026-02-16 12:55:30, Pavel Machek wrote:
-> Hi!
->=20
-> > Wake up the controller in the suspend() callback while runtime PM is
-> > still enabled. The I2C controller will remain available until the
-> > suspend_noirq() callback (pm_runtime_force_suspend()) is called. During
-> > resume, the I2C controller can be restored by the resume_noirq() callba=
-ck
-> > (pm_runtime_force_resume()). Finally, the resume() callback re-enables
-> > autosuspend. As a result, the I2C controller can remain available until
-> > the system enters suspend_noirq() and from resume_noirq().
->=20
-> > +++ b/drivers/i2c/busses/i2c-riic.c
-> > @@ -606,6 +634,10 @@ static int riic_i2c_resume(struct device *dev)
-> >  	if (ret)
-> >  		return ret;
-> > =20
-> > +	ret =3D pm_runtime_force_resume(dev);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> >  	ret =3D riic_init_hw(riic);
-> >  	if (ret) {
-> >  		/*
->=20
-> Similar to the next error return, this likely should do
-> "reset_control_assert(riic->rstc);" before returning. I guess fixed
-> patch would be best here.
+Hi!
 
-Hmm, maybe that's not the best way forward.
+There's something wrong with -stable-rc testing, see
 
-It appears that same problem exists in mainline, too? So probably we
-should merge this and let you fix it in the mainline.
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/pipelines/2=
+324617201
 
-Reviewed-by: Pavel Machek <pavel@nabladev.com>
+I tried clicking around the results, and I see:
 
-I can this if it passes testing and there are no other comments.
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/jobs/131237=
+64183
 
-Best regards,
-                                                                Pavel
+Something went wrong with SQUAD watch job submission. SQUAD returned:
+86
+23:42:49
+SQUAD URL: https://squad.ciplatform.org//api/watchjob/linux-stable-rc/linux=
+-6.12.y/6.12.72-rc1_4b487d46d/arm64_renesas_defconfig_r8a774a1-hihope-rzg2m=
+-ex
+87
+23:42:49
+SQUAD Backend: cip
+
+squad url does not load for me.
+
+Can someone take a look?
+
+Thanks,
+									Pavel
 --=20
 In cooperation with Nabla.
 
---bPPbDHk7GQcCUyHO
+--SYhvHdZ1ug44l75G
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaZMGQwAKCRAw5/Bqldv6
-8hIpAKCD7Qz76w8jrIki2H9gjV3FE9cwQQCfQb85MIU+bi8kPlDm5Ts8vqSYFuc=
-=xk0c
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaZMN1QAKCRAw5/Bqldv6
+8n54AKC2L61avcRMVluLMEXbZsWFts3qZwCgtRrNC8nP5Jtqhl8/oOac6s5JUr8=
+=ktl4
 -----END PGP SIGNATURE-----
 
---bPPbDHk7GQcCUyHO--
+--SYhvHdZ1ug44l75G--
 
