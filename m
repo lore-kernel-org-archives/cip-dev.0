@@ -1,89 +1,80 @@
-Return-Path: <ovidiu.panait.rb@renesas.com>
+Return-Path: <pavel@nabladev.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA13E81A36
-	for <webhook@archiver.kernel.org>; Mon, 16 Feb 2026 15:18:33 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.21901.1771255102641506078
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61349E83825
+	for <webhook@archiver.kernel.org>; Mon, 16 Feb 2026 19:14:34 +0000 (UTC)
+Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.1694.1771269270903382832
  for <cip-dev@lists.cip-project.org>;
- Mon, 16 Feb 2026 07:18:25 -0800
+ Mon, 16 Feb 2026 11:14:31 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: Z47VpNmJSpSU+yqoEInlWA==
-X-CSE-MsgGUID: mDUvfEYESFCpU2R6pqQVFA==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 17 Feb 2026 00:18:25 +0900
-Received: from vm01.adwin.renesas.com (unknown [10.226.92.12])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3E6AE4006A89;
-	Tue, 17 Feb 2026 00:18:23 +0900 (JST)
-From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-To: cip-dev@lists.cip-project.org,
-	pavel@nabladev.com,
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=Hk/IHBKU;
+ spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8EF2910F801;
+	Mon, 16 Feb 2026 20:14:24 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
+	s=dkim; t=1771269268;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=rgRuIMIWxx7zlV+uxlgadd4zO+qwq4PquM+ZRpnF+qw=;
+	b=Hk/IHBKUCp9eoyVYYGMXWwwStGwBNn1MBaLLe4uGmSoFl6NAe5W69uuWYpgR3ZrJ+M2wSX
+	qh+6brCcZXRONyvZH6UyzVqtOgXPrE4HwRf+C0ilgHZIRdjswnlr1qZz5chCh0YkU7T5DC
+	Fn+zLMAe1jiheT4v6UCxpOXalLoNFOmp31ysykAfo7qMvFkYpD3suMRDMLmxj+v/V6iDwb
+	eQEmLhZeF6en3lUHdC2NJlO0Ph1ae45u2ZxlQioPyFY+QXL2MuyxI4QTlXIykXpOYX6Pg3
+	A7tWd7XFqQuKUAeS8sabjk2Bsf5Xp+Z0ZKFr1/Ciw7t/OVdqsSTSs+E+FZZW4Q==
+Date: Mon, 16 Feb 2026 20:14:22 +0100
+From: Pavel Machek <pavel@nabladev.com>
+To: ovidiu.panait.rb@renesas.com
+Cc: cip-dev@lists.cip-project.org, pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.12.y-cip 2/3] arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Enable Mali-G31
-Date: Mon, 16 Feb 2026 15:18:18 +0000
-Message-ID: <20260216151819.92667-3-ovidiu.panait.rb@renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260216151819.92667-1-ovidiu.panait.rb@renesas.com>
-References: <20260216151819.92667-1-ovidiu.panait.rb@renesas.com>
+Subject: Re: [cip-dev] [PATCH 6.1.y-cip 0/3] Add RZ/V2H GPU support
+Message-ID: <aZNsju4RrLWChenE@duo.ucw.cz>
+References: <20260216151751.92635-1-ovidiu.panait.rb@renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="aak13lqCxc6ronqP"
+Content-Disposition: inline
+In-Reply-To: <20260216151751.92635-1-ovidiu.panait.rb@renesas.com>
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 16 Feb 2026 15:18:33 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21887
+ <cip-dev@lists.cip-project.org>; Mon, 16 Feb 2026 19:14:34 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21889
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit 8bf8ad268e46403c7140ea5aaa85e9c659117dbc upstream.
+--aak13lqCxc6ronqP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Enable Mali-G31 (GPU) node on EVK board.
+Hi!
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250218115922.407816-4-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
----
- .../boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts   | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+> This series adds GPU (Mali-G31) support for the Renesas RZ/V2H SoC.
+>=20
+> Patches were cherry-picked from mainline kernel.
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-index a75101fe848a..380e8c706a29 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-@@ -69,6 +69,16 @@ memory@240000000 {
- 		reg = <0x2 0x40000000 0x2 0x00000000>;
- 	};
- 
-+	reg_0p8v: regulator0 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "fixed-0.8V";
-+		regulator-min-microvolt = <800000>;
-+		regulator-max-microvolt = <800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
- 	reg_1p8v: regulator-1p8v {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-1.8V";
-@@ -152,6 +162,11 @@ &eth1 {
- 	status = "okay";
- };
- 
-+&gpu {
-+	status = "okay";
-+	mali-supply = <&reg_0p8v>;
-+};
-+
- &hsusb {
- 	dr_mode = "otg";
- 	status = "okay";
--- 
-2.51.0
+This looks okay to me.
 
+Reviewed-by: Pavel Machek <pavel@nabladev.com>
+
+I can apply the series if it passes testing and there are no other
+comments.
+
+Best regards,
+                                                                Pavel
+--=20
+In cooperation with Nabla.
+
+--aak13lqCxc6ronqP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaZNsjgAKCRAw5/Bqldv6
+8mNnAJ9dQ5Oeoycehvj9VKvF1ObmBSIYiwCfbQP7IL1P+YdLuc7T8qMs1RQ0QHQ=
+=wORn
+-----END PGP SIGNATURE-----
+
+--aak13lqCxc6ronqP--
 
