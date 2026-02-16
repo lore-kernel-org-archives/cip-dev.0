@@ -2,98 +2,98 @@ Return-Path: <pavel@nabladev.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C3E2E7BDA4
-	for <webhook@archiver.kernel.org>; Mon, 16 Feb 2026 11:50:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ADF3E7BDA5
+	for <webhook@archiver.kernel.org>; Mon, 16 Feb 2026 11:55:42 +0000 (UTC)
 Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.18008.1771242636270648638
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.18064.1771242935389941802
  for <cip-dev@lists.cip-project.org>;
- Mon, 16 Feb 2026 03:50:36 -0800
+ Mon, 16 Feb 2026 03:55:35 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=L179WqiQ;
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=Kub9YvF4;
  spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 142B510E0D1;
-	Mon, 16 Feb 2026 12:50:29 +0100 (CET)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6A02810E0D1;
+	Mon, 16 Feb 2026 12:55:31 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1771242632;
+	s=dkim; t=1771242933;
 	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=FgypMqfLkklUBoMAITnNtHXsUXdhGxjY6hX19hI6yA8=;
-	b=L179WqiQ0gExmjr+txSKAYMpMRstFB9xdH7t3Uh0ztBZE/xo6yJBEd+mCogqQL0NA3N2RX
-	h/gB6EkEIoYsAEGE/1/QOTuBsCprLdYkR6uaw3M1gUK+loEBAf+CmljPecwNrGIxpcMolp
-	TE1ZuaQdYm4bLUeWN6wGj+eXHxvdd3rdJ2gbUx6OGU+X1u83+ClrEAnX5EUOMAQcl8Pd/O
-	Apb+V5zCyCdLqQ+kMWIg1x3W/arShl0GnzV+IuZ3FF1WgrXkVUrg3p0oGleg3Eu8kxF8JR
-	9lhWUp5aFkvack8ppfPMVRKO+dglwLSbmV6vgUanuRIiA7VJliA7To5sF0L19Q==
-Date: Mon, 16 Feb 2026 12:50:27 +0100
+	 in-reply-to:references; bh=FtQtKzGY5PW4GNYHp/CMzgTfmQ8BxmyaxtDvdbx+YCg=;
+	b=Kub9YvF4V8MmfzllG23ch2BG/6GIqN66+rjTKeLoJPk5xw0IFuFyjpSvzgyUijgdvh0lkw
+	fSrfOsoEcpPFYRP41INKVh61ua/rDhn+BXAxv+xji8q8XDhNgYmF53fheIfuURmNi1SI29
+	S9gvA0FoOm0ahdoshWosUgq0tZZQkgrgs5hekNzD1wi/TQFu50JlTiiMe1ZaECUV2hDABs
+	keThaWgFYuF9mabg7qg4gpRh7FnqWDnBEo3HntnEChQ79RaoHsN9NXJkc9H8ZQS6YlyQ29
+	8xfPntFGMojJMYDUs2FXASlv/7ZengTXVWf+nakZr/8vFaEv6URYsaUXm2kazA==
+Date: Mon, 16 Feb 2026 12:55:30 +0100
 From: Pavel Machek <pavel@nabladev.com>
 To: tommaso.merciai.xr@bp.renesas.com
-Cc: Pavel Machek <pavel@nabladev.com>, cip-dev@lists.cip-project.org,
+Cc: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	Pavel Machek <pavel@nabladev.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	tomm.merciai@gmail.com
-Subject: Re: [cip-dev] [PATCH 6.1.y-cip] i2c: riic: Move suspend handling to
+Subject: Re: [cip-dev] [PATCH 5.10.y-cip] i2c: riic: Move suspend handling to
  NOIRQ phase
-Message-ID: <aZMEg+Ls7kkwNAca@duo.ucw.cz>
-References: <20260210102747.484082-1-tommaso.merciai.xr@bp.renesas.com>
- <aYyRTRXYwG57A9B/@duo.ucw.cz>
- <aYymQmVrJ2Tt49Zf@tom-desktop>
+Message-ID: <aZMFskqvbJa24JYR@duo.ucw.cz>
+References: <20260210102637.484003-1-tommaso.merciai.xr@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="pNe/2Wrlxt3Pi6a0"
+	protocol="application/pgp-signature"; boundary="67o2HD/7RW7dLWT9"
 Content-Disposition: inline
-In-Reply-To: <aYymQmVrJ2Tt49Zf@tom-desktop>
+In-Reply-To: <20260210102637.484003-1-tommaso.merciai.xr@bp.renesas.com>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 16 Feb 2026 11:50:42 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21877
+ <cip-dev@lists.cip-project.org>; Mon, 16 Feb 2026 11:55:42 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21878
 
 
---pNe/2Wrlxt3Pi6a0
+--67o2HD/7RW7dLWT9
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> > > commit e383f0961422f983451ac4dd6aed1a3d3311f2be upstream.
-> > >=20
-> > > Commit 53326135d0e0 ("i2c: riic: Add suspend/resume support") added
-> > > suspend support for the Renesas I2C driver and following this change
-> > > on RZ/G3E the following WARNING is seen on entering suspend ...
-> >=20
-> > I don't see anything obviously wrong with this patch, but ... do we
-> > need 6.12 version, too?
->=20
-> I see that this patch is already into linux-6.12 stable branch [0].
->=20
-> [0] https://github.com/gregkh/linux/blob/linux-6.12.y/drivers/i2c/busses/=
-i2c-riic.c
->=20
-> Please correct me if I'm wrong.
+> Wake up the controller in the suspend() callback while runtime PM is
+> still enabled. The I2C controller will remain available until the
+> suspend_noirq() callback (pm_runtime_force_suspend()) is called. During
+> resume, the I2C controller can be restored by the resume_noirq() callback
+> (pm_runtime_force_resume()). Finally, the resume() callback re-enables
+> autosuspend. As a result, the I2C controller can remain available until
+> the system enters suspend_noirq() and from resume_noirq().
 
-Aha, I was checking -cip but not -stable, it is now in both.
+> +++ b/drivers/i2c/busses/i2c-riic.c
+> @@ -606,6 +634,10 @@ static int riic_i2c_resume(struct device *dev)
+>  	if (ret)
+>  		return ret;
+> =20
+> +	ret =3D pm_runtime_force_resume(dev);
+> +	if (ret)
+> +		return ret;
+> +
+>  	ret =3D riic_init_hw(riic);
+>  	if (ret) {
+>  		/*
 
-Patch looks okay to me.
+Similar to the next error return, this likely should do
+"reset_control_assert(riic->rstc);" before returning. I guess fixed
+patch would be best here.
 
-Reviewed-by: Pavel Machek <pavel@nabladev.com>
-
-I can apply it if it passes testing and there are no other comments.
-
-Best regards,
-                                                                Pavel
+Thanks and best regards,
+							Pavel
 --=20
 In cooperation with Nabla.
 
---pNe/2Wrlxt3Pi6a0
+--67o2HD/7RW7dLWT9
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaZMEgwAKCRAw5/Bqldv6
-8ivVAKCZVKNXR6tyBYUGk55I0OL/k3DzGwCfS/G/lPm/Wd810oJk3e8LLs3I33g=
-=A18x
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaZMFsgAKCRAw5/Bqldv6
+8iTjAJ45XM3wESwhwByANZUMcuo++VdDdACgtAH3T4BP7QjNEztXNfpulOzWbiY=
+=UuHg
 -----END PGP SIGNATURE-----
 
---pNe/2Wrlxt3Pi6a0--
+--67o2HD/7RW7dLWT9--
 
