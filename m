@@ -2,78 +2,58 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89065E98E18
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77061E98E16
 	for <webhook@archiver.kernel.org>; Mon, 23 Feb 2026 10:27:44 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.32567.1771842463251188933
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.32566.1771842462466619448
  for <cip-dev@lists.cip-project.org>;
- Mon, 23 Feb 2026 02:27:43 -0800
+ Mon, 23 Feb 2026 02:27:42 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: oXl7HEuFRpya66rFd9HKvg==
-X-CSE-MsgGUID: jSPZXOA8TYm/86mWxxgmhg==
+X-CSE-ConnectionGUID: CpQZHnk8Q9ixLKSPNfm3yw==
+X-CSE-MsgGUID: lRuQMn7AQc6PLo+cClYiBQ==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 23 Feb 2026 19:27:42 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 23 Feb 2026 19:27:40 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.92.12])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 63C3D401A65A;
-	Mon, 23 Feb 2026 19:27:41 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 9D172401A659;
+	Mon, 23 Feb 2026 19:27:39 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.1.y-cip 1/4] dt-bindings: gpu: mali-bifrost: Add compatible for RZ/V2N SoC
-Date: Mon, 23 Feb 2026 10:27:35 +0000
-Message-ID: <20260223102738.119897-2-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.1.y-cip 0/4] Add RZ/V2N GPU support
+Date: Mon, 23 Feb 2026 10:27:34 +0000
+Message-ID: <20260223102738.119897-1-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260223102738.119897-1-ovidiu.panait.rb@renesas.com>
-References: <20260223102738.119897-1-ovidiu.panait.rb@renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 23 Feb 2026 10:27:44 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21908
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21907
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi,
 
-commit a92b9efaf2cff15a28723f592ee21df0561e58c3 upstream.
+This series adds GPU (Mali-G31) support for the Renesas RZ/V2N SoC.
 
-Add a compatible string for the Renesas RZ/V2N SoC variants that include a
-Mali-G31 GPU. These variants share the same restrictions on interrupts,
-clocks, and power domains as the RZ/G2L SoC, so extend the existing schema
-validation accordingly.
+Patches were cherry-picked from mainline kernel.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20250502162540.165962-1-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
----
- Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+Best regards,
+Ovidiu
 
-diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml b/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml
-index 9d42466c59b8..edcf63d6eed7 100644
---- a/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml
-+++ b/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml
-@@ -23,6 +23,7 @@ properties:
-               - renesas,r9a07g044-mali
-               - renesas,r9a07g054-mali
-               - renesas,r9a09g047-mali
-+              - renesas,r9a09g056-mali
-               - renesas,r9a09g057-mali
-               - rockchip,px30-mali
-               - rockchip,rk3568-mali
-@@ -121,6 +122,7 @@ allOf:
-               - renesas,r9a07g044-mali
-               - renesas,r9a07g054-mali
-               - renesas,r9a09g047-mali
-+              - renesas,r9a09g056-mali
-               - renesas,r9a09g057-mali
-     then:
-       properties:
+Lad Prabhakar (4):
+  dt-bindings: gpu: mali-bifrost: Add compatible for RZ/V2N SoC
+  clk: renesas: r9a09g056: Add clocks and resets for Mali-G31 GPU
+  arm64: dts: renesas: r9a09g056: Add Mali-G31 GPU node
+  arm64: dts: renesas: r9a09g056n48-rzv2n-evk: Enable Mali-G31 GPU
+
+ .../bindings/gpu/arm,mali-bifrost.yaml        |  2 +
+ arch/arm64/boot/dts/renesas/r9a09g056.dtsi    | 51 +++++++++++++++++++
+ .../dts/renesas/r9a09g056n48-rzv2n-evk.dts    | 14 +++++
+ drivers/clk/renesas/r9a09g056-cpg.c           | 16 ++++++
+ 4 files changed, 83 insertions(+)
+
 -- 
 2.51.0
 
