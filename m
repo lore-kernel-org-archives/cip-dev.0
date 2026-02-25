@@ -2,28 +2,28 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A613FCEE9F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A64AFCEEA0
 	for <webhook@archiver.kernel.org>; Wed, 25 Feb 2026 12:10:32 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.43850.1772021412384374918
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.43747.1772021423471547198
  for <cip-dev@lists.cip-project.org>;
- Wed, 25 Feb 2026 04:10:28 -0800
+ Wed, 25 Feb 2026 04:10:23 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: NAGRhCKxSzyDUqjTV7P37Q==
-X-CSE-MsgGUID: eNlcissaSBqI31MtQbnn6A==
+ dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
+X-CSE-ConnectionGUID: TZpIF1ySReqAcHvlQBRDww==
+X-CSE-MsgGUID: 6+HCYvudSEKtKXbEWDeC5g==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 25 Feb 2026 21:10:28 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 25 Feb 2026 21:10:22 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.92.192])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 2E42E41A8077;
-	Wed, 25 Feb 2026 21:10:26 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id B7B9E41A8278;
+	Wed, 25 Feb 2026 21:10:21 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.1.y-cip 12/25] drm: renesas: rz-du: mipi_dsi: Add min check for VCLK range
-Date: Wed, 25 Feb 2026 12:09:50 +0000
-Message-ID: <20260225121003.129467-13-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.1.y-cip 09/25] clk: renesas: r9a09g057: Add clock and reset entries for DSI and LCDC
+Date: Wed, 25 Feb 2026 12:09:47 +0000
+Message-ID: <20260225121003.129467-10-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260225121003.129467-1-ovidiu.panait.rb@renesas.com>
 References: <20260225121003.129467-1-ovidiu.panait.rb@renesas.com>
@@ -33,42 +33,178 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 25 Feb 2026 12:10:32 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21943
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21940
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit e37a95d01d5acce211da8446fefbd8684c67f516 upstream.
+commit 66a470abe950fd7ebb0cfd909581fb9573f8b629 upstream.
 
-The VCLK range for Renesas RZ/G2L SoC is 5.803 MHz to 148.5 MHz. Add a
-minimum clock check in the mode_valid callback to ensure that the clock
-value does not fall below the valid range.
+Add clock and reset entries for the DSI and LCDC peripherals.
 
 Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/r/20250609225630.502888-2-prabhakar.mahadev-lad.rj@bp.renesas.com
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://patch.msgid.link/20251015192611.241920-5-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/clk/renesas/r9a09g057-cpg.c | 62 +++++++++++++++++++++++++++++
+ drivers/clk/renesas/rzv2h-cpg.h     |  3 ++
+ 2 files changed, 65 insertions(+)
 
-diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-index fd51835b840f..51090bafb794 100644
---- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-+++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-@@ -592,6 +592,9 @@ rzg2l_mipi_dsi_bridge_mode_valid(struct drm_bridge *bridge,
- 	if (mode->clock > 148500)
- 		return MODE_CLOCK_HIGH;
+diff --git a/drivers/clk/renesas/r9a09g057-cpg.c b/drivers/clk/renesas/r9a09g057-cpg.c
+index 007dbbe08eb3..b85b5302d348 100644
+--- a/drivers/clk/renesas/r9a09g057-cpg.c
++++ b/drivers/clk/renesas/r9a09g057-cpg.c
+@@ -6,6 +6,7 @@
+  */
  
-+	if (mode->clock < 5803)
-+		return MODE_CLOCK_LOW;
+ #include <linux/clk-provider.h>
++#include <linux/clk/renesas.h>
+ #include <linux/device.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+@@ -30,6 +31,7 @@ enum clk_ids {
+ 	CLK_PLLCA55,
+ 	CLK_PLLVDO,
+ 	CLK_PLLETH,
++	CLK_PLLDSI,
+ 	CLK_PLLGPU,
+ 
+ 	/* Internal Core Clocks */
+@@ -63,6 +65,9 @@ enum clk_ids {
+ 	CLK_SMUX2_GBE0_RXCLK,
+ 	CLK_SMUX2_GBE1_TXCLK,
+ 	CLK_SMUX2_GBE1_RXCLK,
++	CLK_CDIV4_PLLETH_LPCLK,
++	CLK_PLLETH_LPCLK_GEAR,
++	CLK_PLLDSI_GEAR,
+ 	CLK_PLLGPU_GEAR,
+ 
+ 	/* Module Clocks */
+@@ -91,6 +96,26 @@ static const struct clk_div_table dtable_2_16[] = {
+ 	{0, 0},
+ };
+ 
++static const struct clk_div_table dtable_2_32[] = {
++	{0, 2},
++	{1, 4},
++	{2, 6},
++	{3, 8},
++	{4, 10},
++	{5, 12},
++	{6, 14},
++	{7, 16},
++	{8, 18},
++	{9, 20},
++	{10, 22},
++	{11, 24},
++	{12, 26},
++	{13, 28},
++	{14, 30},
++	{15, 32},
++	{0, 0},
++};
 +
- 	return MODE_OK;
- }
+ static const struct clk_div_table dtable_2_64[] = {
+ 	{0, 2},
+ 	{1, 4},
+@@ -107,6 +132,17 @@ static const struct clk_div_table dtable_2_100[] = {
+ 	{0, 0},
+ };
  
++static const struct clk_div_table dtable_16_128[] = {
++	{0, 16},
++	{1, 32},
++	{2, 64},
++	{3, 128},
++	{0, 0},
++};
++
++RZV2H_CPG_PLL_DSI_LIMITS(rzv2h_cpg_pll_dsi_limits);
++#define PLLDSI		PLL_PACK_LIMITS(0xc0, 1, 0, &rzv2h_cpg_pll_dsi_limits)
++
+ /* Mux clock tables */
+ static const char * const smux2_gbe0_rxclk[] = { ".plleth_gbe0", "et0_rxclk" };
+ static const char * const smux2_gbe0_txclk[] = { ".plleth_gbe0", "et0_txclk" };
+@@ -128,6 +164,7 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
+ 	DEF_PLL(".pllca55", CLK_PLLCA55, CLK_QEXTAL, PLLCA55),
+ 	DEF_FIXED(".pllvdo", CLK_PLLVDO, CLK_QEXTAL, 105, 2),
+ 	DEF_FIXED(".plleth", CLK_PLLETH, CLK_QEXTAL, 125, 3),
++	DEF_PLLDSI(".plldsi", CLK_PLLDSI, CLK_QEXTAL, PLLDSI),
+ 	DEF_PLL(".pllgpu", CLK_PLLGPU, CLK_QEXTAL, PLLGPU),
+ 
+ 	/* Internal Core Clocks */
+@@ -169,6 +206,12 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
+ 	DEF_SMUX(".smux2_gbe0_rxclk", CLK_SMUX2_GBE0_RXCLK, SSEL0_SELCTL3, smux2_gbe0_rxclk),
+ 	DEF_SMUX(".smux2_gbe1_txclk", CLK_SMUX2_GBE1_TXCLK, SSEL1_SELCTL0, smux2_gbe1_txclk),
+ 	DEF_SMUX(".smux2_gbe1_rxclk", CLK_SMUX2_GBE1_RXCLK, SSEL1_SELCTL1, smux2_gbe1_rxclk),
++	DEF_FIXED(".cdiv4_plleth_lpclk", CLK_CDIV4_PLLETH_LPCLK, CLK_PLLETH, 1, 4),
++	DEF_CSDIV(".plleth_lpclk_gear", CLK_PLLETH_LPCLK_GEAR, CLK_CDIV4_PLLETH_LPCLK,
++		  CSDIV0_DIVCTL2, dtable_16_128),
++
++	DEF_PLLDSI_DIV(".plldsi_gear", CLK_PLLDSI_GEAR, CLK_PLLDSI,
++		       CSDIV1_DIVCTL2, dtable_2_32),
+ 
+ 	DEF_DDIV(".pllgpu_gear", CLK_PLLGPU_GEAR, CLK_PLLGPU, CDDIV3_DIVCTL1, dtable_2_64),
+ 
+@@ -350,6 +393,22 @@ static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst = {
+ 						BUS_MSTOP(9, BIT(7))),
+ 	DEF_MOD("cru_3_pclk",			CLK_PLLDTY_DIV16, 13, 13, 6, 29,
+ 						BUS_MSTOP(9, BIT(7))),
++	DEF_MOD("dsi_0_pclk",			CLK_PLLDTY_DIV16, 14, 8, 7, 8,
++						BUS_MSTOP(9, BIT(14) | BIT(15))),
++	DEF_MOD("dsi_0_aclk",			CLK_PLLDTY_ACPU_DIV2, 14, 9, 7, 9,
++						BUS_MSTOP(9, BIT(14) | BIT(15))),
++	DEF_MOD("dsi_0_vclk1",			CLK_PLLDSI_GEAR, 14, 10, 7, 10,
++						BUS_MSTOP(9, BIT(14) | BIT(15))),
++	DEF_MOD("dsi_0_lpclk",			CLK_PLLETH_LPCLK_GEAR, 14, 11, 7, 11,
++						BUS_MSTOP(9, BIT(14) | BIT(15))),
++	DEF_MOD("dsi_0_pllref_clk",		CLK_QEXTAL, 14, 12, 7, 12,
++						BUS_MSTOP(9, BIT(14) | BIT(15))),
++	DEF_MOD("lcdc_0_clk_a",			CLK_PLLDTY_ACPU_DIV2, 14, 13, 7, 13,
++						BUS_MSTOP(10, BIT(1) | BIT(2) | BIT(3))),
++	DEF_MOD("lcdc_0_clk_p",			CLK_PLLDTY_DIV16, 14, 14, 7, 14,
++						BUS_MSTOP(10, BIT(1) | BIT(2) | BIT(3))),
++	DEF_MOD("lcdc_0_clk_d",			CLK_PLLDSI_GEAR, 14, 15, 7, 15,
++						BUS_MSTOP(10, BIT(1) | BIT(2) | BIT(3))),
+ 	DEF_MOD("gpu_0_clk",			CLK_PLLGPU_GEAR, 15, 0, 7, 16,
+ 						BUS_MSTOP(3, BIT(4))),
+ 	DEF_MOD("gpu_0_axi_clk",		CLK_PLLDTY_ACPU_DIV2, 15, 1, 7, 17,
+@@ -419,6 +478,9 @@ static const struct rzv2h_reset r9a09g057_resets[] __initconst = {
+ 	DEF_RST(12, 14, 5, 31),		/* CRU_3_PRESETN */
+ 	DEF_RST(12, 15, 6, 0),		/* CRU_3_ARESETN */
+ 	DEF_RST(13, 0, 6, 1),		/* CRU_3_S_RESETN */
++	DEF_RST(13, 7, 6, 8),		/* DSI_0_PRESETN */
++	DEF_RST(13, 8, 6, 9),		/* DSI_0_ARESETN */
++	DEF_RST(13, 12, 6, 13),		/* LCDC_0_RESET_N */
+ 	DEF_RST(13, 13, 6, 14),		/* GPU_0_RESETN */
+ 	DEF_RST(13, 14, 6, 15),		/* GPU_0_AXI_RESETN */
+ 	DEF_RST(13, 15, 6, 16),		/* GPU_0_ACE_RESETN */
+diff --git a/drivers/clk/renesas/rzv2h-cpg.h b/drivers/clk/renesas/rzv2h-cpg.h
+index f606c51c4c9a..26c59002f50a 100644
+--- a/drivers/clk/renesas/rzv2h-cpg.h
++++ b/drivers/clk/renesas/rzv2h-cpg.h
+@@ -126,6 +126,7 @@ struct fixed_mod_conf {
+ #define CPG_CDDIV3		(0x40C)
+ #define CPG_CDDIV4		(0x410)
+ #define CPG_CSDIV0		(0x500)
++#define CPG_CSDIV1		(0x504)
+ 
+ #define CDDIV0_DIVCTL1	DDIV_PACK(CPG_CDDIV0, 4, 3, 1)
+ #define CDDIV0_DIVCTL2	DDIV_PACK(CPG_CDDIV0, 8, 3, 2)
+@@ -142,7 +143,9 @@ struct fixed_mod_conf {
+ 
+ #define CSDIV0_DIVCTL0	DDIV_PACK(CPG_CSDIV0, 0, 2, CSDIV_NO_MON)
+ #define CSDIV0_DIVCTL1	DDIV_PACK(CPG_CSDIV0, 4, 2, CSDIV_NO_MON)
++#define CSDIV0_DIVCTL2	DDIV_PACK(CPG_CSDIV0, 8, 2, CSDIV_NO_MON)
+ #define CSDIV0_DIVCTL3	DDIV_PACK_NO_RMW(CPG_CSDIV0, 12, 2, CSDIV_NO_MON)
++#define CSDIV1_DIVCTL2	DDIV_PACK(CPG_CSDIV1, 8, 4, CSDIV_NO_MON)
+ 
+ #define SSEL0_SELCTL2 	SMUX_PACK(CPG_SSEL0, 8, 1)
+ #define SSEL0_SELCTL3 	SMUX_PACK(CPG_SSEL0, 12, 1)
 -- 
 2.34.1
 
