@@ -2,28 +2,28 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75292FCEEA0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93667FCEEAD
 	for <webhook@archiver.kernel.org>; Wed, 25 Feb 2026 12:10:42 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.43747.1772021423471547198
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.43850.1772021412384374918
  for <cip-dev@lists.cip-project.org>;
- Wed, 25 Feb 2026 04:10:38 -0800
+ Wed, 25 Feb 2026 04:10:36 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: YfkQ0FOnRN+xObfDlombOw==
-X-CSE-MsgGUID: 6+cmIOtPRB6UMWNgXr5fhQ==
+ dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
+X-CSE-ConnectionGUID: //2vpOq1Q7q5W+XJW/xzVA==
+X-CSE-MsgGUID: /pQtVKiZRx64FdMMgZrM3A==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 25 Feb 2026 21:10:37 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 25 Feb 2026 21:10:35 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.92.192])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 8A19A41A827D;
-	Wed, 25 Feb 2026 21:10:36 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id BF3E141A8278;
+	Wed, 25 Feb 2026 21:10:34 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.1.y-cip 17/25] drm: renesas: rz-du: mipi_dsi: Add dphy_late_init() callback for RZ/V2H(P)
-Date: Wed, 25 Feb 2026 12:09:55 +0000
-Message-ID: <20260225121003.129467-18-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.1.y-cip 16/25] drm: renesas: rz-du: mipi_dsi: Add feature flag for 16BPP support
+Date: Wed, 25 Feb 2026 12:09:54 +0000
+Message-ID: <20260225121003.129467-17-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260225121003.129467-1-ovidiu.panait.rb@renesas.com>
 References: <20260225121003.129467-1-ovidiu.panait.rb@renesas.com>
@@ -33,22 +33,22 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 25 Feb 2026 12:10:42 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21948
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21947
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit 7c1e102ccf1d276bbaee2ddb601b0bdeb6eeaf5c upstream.
+commit a56a6b81d80fdf876a5ee6e441a6c8a0052f6f37 upstream.
 
-Introduce the `dphy_late_init` callback in `rzg2l_mipi_dsi_hw_info` to
-allow additional D-PHY register configurations after enabling data and
-clock lanes. This is required for the RZ/V2H(P) SoC but not for the
-RZ/G2L SoC.
+Introduce the `RZ_MIPI_DSI_FEATURE_16BPP` flag in `rzg2l_mipi_dsi_hw_info`
+to indicate support for 16BPP pixel formats. The RZ/V2H(P) SoC supports
+16BPP, whereas this feature is missing on the RZ/G2L SoC.
 
-Modify `rzg2l_mipi_dsi_startup()` to invoke `dphy_late_init` if defined,
-ensuring SoC-specific initialization is performed only when necessary.
+Update the `mipi_dsi_host_attach()` function to check this flag before
+allowing 16BPP formats. If the SoC does not support 16BPP, return an error
+to prevent incorrect format selection.
 
-This change prepares for RZ/V2H(P) SoC support while maintaining
-compatibility with existing platforms.
+This change enables finer-grained format support control for different
+SoC variants.
 
 Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
@@ -56,34 +56,50 @@ Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/r/20250609225630.502888-9-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://lore.kernel.org/r/20250609225630.502888-8-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
 diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-index d0c9b91cb633..e465dd913fab 100644
+index 2b4442798f83..d0c9b91cb633 100644
 --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
 +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-@@ -35,6 +35,7 @@ struct rzg2l_mipi_dsi;
+@@ -29,6 +29,8 @@
+ 
+ #include "rzg2l_mipi_dsi_regs.h"
+ 
++#define RZ_MIPI_DSI_FEATURE_16BPP	BIT(0)
++
+ struct rzg2l_mipi_dsi;
  
  struct rzg2l_mipi_dsi_hw_info {
- 	int (*dphy_init)(struct rzg2l_mipi_dsi *dsi, u64 hsfreq_millihz);
-+	void (*dphy_startup_late_init)(struct rzg2l_mipi_dsi *dsi);
- 	void (*dphy_exit)(struct rzg2l_mipi_dsi *dsi);
- 	u32 phy_reg_offset;
+@@ -38,6 +40,7 @@ struct rzg2l_mipi_dsi_hw_info {
  	u32 link_reg_offset;
-@@ -321,6 +322,9 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi_dsi *dsi,
- 	txsetr = TXSETR_DLEN | TXSETR_NUMLANEUSE(dsi->lanes - 1) | TXSETR_CLEN;
- 	rzg2l_mipi_dsi_link_write(dsi, TXSETR, txsetr);
+ 	unsigned long min_dclk;
+ 	unsigned long max_dclk;
++	u8 features;
+ };
  
-+	if (dsi->info->dphy_startup_late_init)
-+		dsi->info->dphy_startup_late_init(dsi);
-+
- 	hsfreq = DIV_ROUND_CLOSEST_ULL(hsfreq_millihz, MILLI);
- 	/*
- 	 * Global timings characteristic depends on high speed Clock Frequency
+ struct rzg2l_mipi_dsi {
+@@ -645,8 +648,16 @@ static int rzg2l_mipi_dsi_host_attach(struct mipi_dsi_host *host,
+ 
+ 	switch (mipi_dsi_pixel_format_to_bpp(device->format)) {
+ 	case 24:
++		break;
+ 	case 18:
+ 		break;
++	case 16:
++		if (!(dsi->info->features & RZ_MIPI_DSI_FEATURE_16BPP)) {
++			dev_err(dsi->dev, "Unsupported format 0x%04x\n",
++				device->format);
++			return -EINVAL;
++		}
++		break;
+ 	default:
+ 		dev_err(dsi->dev, "Unsupported format 0x%04x\n", device->format);
+ 		return -EINVAL;
 -- 
 2.34.1
 
