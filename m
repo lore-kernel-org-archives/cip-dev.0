@@ -2,28 +2,28 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7517BFCEEA8
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7508FFCEEA7
 	for <webhook@archiver.kernel.org>; Wed, 25 Feb 2026 12:10:32 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.43850.1772021412384374918
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.43747.1772021423471547198
  for <cip-dev@lists.cip-project.org>;
- Wed, 25 Feb 2026 04:10:25 -0800
+ Wed, 25 Feb 2026 04:10:26 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: SBCTTusBSYW+zRXWeMFPFQ==
-X-CSE-MsgGUID: gv9skqcaRYCOP2pAgu7Skw==
+ dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
+X-CSE-ConnectionGUID: m5hvOC/SSIW0l9HfTLyMsw==
+X-CSE-MsgGUID: h5Qae+JiQHySg8i0nOQLmg==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 25 Feb 2026 21:10:24 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 25 Feb 2026 21:10:26 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.92.192])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 8E19341A8077;
-	Wed, 25 Feb 2026 21:10:23 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 58B4C41A8077;
+	Wed, 25 Feb 2026 21:10:25 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.1.y-cip 10/25] drm: renesas: rz-du: mipi_dsi: Simplify HSFREQ calculation
-Date: Wed, 25 Feb 2026 12:09:48 +0000
-Message-ID: <20260225121003.129467-11-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.1.y-cip 11/25] drm: renesas: rz-du: mipi_dsi: Use VCLK for HSFREQ calculation
+Date: Wed, 25 Feb 2026 12:09:49 +0000
+Message-ID: <20260225121003.129467-12-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260225121003.129467-1-ovidiu.panait.rb@renesas.com>
 References: <20260225121003.129467-1-ovidiu.panait.rb@renesas.com>
@@ -33,49 +33,180 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 25 Feb 2026 12:10:32 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21941
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21942
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit 0425a20f8a49722d0508e917b4aef767bbc06ec8 upstream.
+commit 3c55c4f05c7ac4fd741cbe92574598324f843d94 upstream.
 
-Simplify the high-speed clock frequency (HSFREQ) calculation by removing
-the redundant multiplication and division by 8. The updated equation:
+Update the RZ/G2L MIPI DSI driver to calculate HSFREQ using the actual
+VCLK rate instead of the mode clock. The relationship between HSCLK and
+VCLK is:
 
-    hsfreq = mode->clock * bpp / dsi->lanes;
+    vclk * bpp <= hsclk * 8 * lanes
 
-produces the same result while improving readability and clarity.
+Retrieve the VCLK rate using `clk_get_rate(dsi->vclk)`, ensuring that
+HSFREQ accurately reflects the clock rate set in hardware, leading to
+better precision in data transmission.
 
-Additionally, update the comment to clarify the relationship between HS
-clock bit frequency, HS byte clock frequency, and HSFREQ.
+Additionally, use `DIV_ROUND_CLOSEST_ULL` for a more precise division
+when computing `hsfreq`. Also, update unit conversions to use correct
+scaling factors for better clarity and correctness.
 
+Since `clk_get_rate()` returns the clock rate in Hz, update the HSFREQ
+threshold comparisons to use Hz instead of kHz to ensure correct behavior.
+
+Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/r/20250609225630.502888-3-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://lore.kernel.org/r/20250609225630.502888-4-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ .../gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c    | 40 +++++++++++--------
+ 1 file changed, 23 insertions(+), 17 deletions(-)
 
 diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-index cd0d85fbfb24..422c55b792e8 100644
+index 422c55b792e8..fd51835b840f 100644
 --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
 +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-@@ -278,10 +278,10 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi_dsi *dsi,
- 	 *       hsclk: DSI HS Byte clock frequency (Hz)
- 	 *       lanes: number of data lanes
- 	 *
--	 * hsclk(bit) = hsclk(byte) * 8
-+	 * hsclk(bit) = hsclk(byte) * 8 = hsfreq
+@@ -8,6 +8,7 @@
+ #include <linux/delay.h>
+ #include <linux/io.h>
+ #include <linux/iopoll.h>
++#include <linux/math.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+@@ -16,6 +17,7 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/reset.h>
+ #include <linux/slab.h>
++#include <linux/units.h>
+ 
+ #include <drm/drm_atomic.h>
+ #include <drm/drm_atomic_helper.h>
+@@ -76,7 +78,7 @@ struct rzg2l_mipi_dsi_timings {
+ 
+ static const struct rzg2l_mipi_dsi_timings rzg2l_mipi_dsi_global_timings[] = {
+ 	{
+-		.hsfreq_max = 80000,
++		.hsfreq_max = 80000000,
+ 		.t_init = 79801,
+ 		.tclk_prepare = 8,
+ 		.ths_prepare = 13,
+@@ -90,7 +92,7 @@ static const struct rzg2l_mipi_dsi_timings rzg2l_mipi_dsi_global_timings[] = {
+ 		.tlpx = 6,
+ 	},
+ 	{
+-		.hsfreq_max = 125000,
++		.hsfreq_max = 125000000,
+ 		.t_init = 79801,
+ 		.tclk_prepare = 8,
+ 		.ths_prepare = 12,
+@@ -104,7 +106,7 @@ static const struct rzg2l_mipi_dsi_timings rzg2l_mipi_dsi_global_timings[] = {
+ 		.tlpx = 6,
+ 	},
+ 	{
+-		.hsfreq_max = 250000,
++		.hsfreq_max = 250000000,
+ 		.t_init = 79801,
+ 		.tclk_prepare = 8,
+ 		.ths_prepare = 12,
+@@ -118,7 +120,7 @@ static const struct rzg2l_mipi_dsi_timings rzg2l_mipi_dsi_global_timings[] = {
+ 		.tlpx = 6,
+ 	},
+ 	{
+-		.hsfreq_max = 360000,
++		.hsfreq_max = 360000000,
+ 		.t_init = 79801,
+ 		.tclk_prepare = 8,
+ 		.ths_prepare = 10,
+@@ -132,7 +134,7 @@ static const struct rzg2l_mipi_dsi_timings rzg2l_mipi_dsi_global_timings[] = {
+ 		.tlpx = 6,
+ 	},
+ 	{
+-		.hsfreq_max = 720000,
++		.hsfreq_max = 720000000,
+ 		.t_init = 79801,
+ 		.tclk_prepare = 8,
+ 		.ths_prepare = 9,
+@@ -146,7 +148,7 @@ static const struct rzg2l_mipi_dsi_timings rzg2l_mipi_dsi_global_timings[] = {
+ 		.tlpx = 6,
+ 	},
+ 	{
+-		.hsfreq_max = 1500000,
++		.hsfreq_max = 1500000000,
+ 		.t_init = 79801,
+ 		.tclk_prepare = 8,
+ 		.ths_prepare = 9,
+@@ -259,7 +261,7 @@ static void rzg2l_mipi_dsi_dphy_exit(struct rzg2l_mipi_dsi *dsi)
+ static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi_dsi *dsi,
+ 				  const struct drm_display_mode *mode)
+ {
+-	unsigned long hsfreq;
++	unsigned long hsfreq, vclk_rate;
+ 	unsigned int bpp;
+ 	u32 txsetr;
+ 	u32 clstptsetr;
+@@ -270,6 +272,16 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi_dsi *dsi,
+ 	u32 golpbkt;
+ 	int ret;
+ 
++	ret = pm_runtime_resume_and_get(dsi->dev);
++	if (ret < 0)
++		return ret;
++
++	clk_set_rate(dsi->vclk, mode->clock * KILO);
++	vclk_rate = clk_get_rate(dsi->vclk);
++	if (vclk_rate != mode->clock * KILO)
++		dev_dbg(dsi->dev, "Requested vclk rate %lu, actual %lu mismatch\n",
++			mode->clock * KILO, vclk_rate);
++
+ 	/*
+ 	 * Relationship between hsclk and vclk must follow
+ 	 * vclk * bpp = hsclk * 8 * lanes
+@@ -281,13 +293,7 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi_dsi *dsi,
+ 	 * hsclk(bit) = hsclk(byte) * 8 = hsfreq
  	 */
  	bpp = mipi_dsi_pixel_format_to_bpp(dsi->format);
--	hsfreq = (mode->clock * bpp * 8) / (8 * dsi->lanes);
-+	hsfreq = mode->clock * bpp / dsi->lanes;
+-	hsfreq = mode->clock * bpp / dsi->lanes;
+-
+-	ret = pm_runtime_resume_and_get(dsi->dev);
+-	if (ret < 0)
+-		return ret;
+-
+-	clk_set_rate(dsi->vclk, mode->clock * 1000);
++	hsfreq = DIV_ROUND_CLOSEST_ULL(vclk_rate * bpp, dsi->lanes);
  
- 	ret = pm_runtime_resume_and_get(dsi->dev);
+ 	ret = rzg2l_mipi_dsi_dphy_init(dsi, hsfreq);
  	if (ret < 0)
+@@ -305,12 +311,12 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi_dsi *dsi,
+ 	 * - data lanes: maximum 4 lanes
+ 	 * Therefore maximum hsclk will be 891 Mbps.
+ 	 */
+-	if (hsfreq > 445500) {
++	if (hsfreq > 445500000) {
+ 		clkkpt = 12;
+ 		clkbfht = 15;
+ 		clkstpt = 48;
+ 		golpbkt = 75;
+-	} else if (hsfreq > 250000) {
++	} else if (hsfreq > 250000000) {
+ 		clkkpt = 7;
+ 		clkbfht = 8;
+ 		clkstpt = 27;
+@@ -752,7 +758,7 @@ static int rzg2l_mipi_dsi_probe(struct platform_device *pdev)
+ 	 * mode->clock and format are not available. So initialize DPHY with
+ 	 * timing parameters for 80Mbps.
+ 	 */
+-	ret = rzg2l_mipi_dsi_dphy_init(dsi, 80000);
++	ret = rzg2l_mipi_dsi_dphy_init(dsi, 80000000);
+ 	if (ret < 0)
+ 		goto err_phy;
+ 
 -- 
 2.34.1
 
