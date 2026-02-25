@@ -2,28 +2,28 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 624DEFCEE9B
-	for <webhook@archiver.kernel.org>; Wed, 25 Feb 2026 12:10:12 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.43849.1772021410518793132
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E4FFCEE95
+	for <webhook@archiver.kernel.org>; Wed, 25 Feb 2026 12:10:22 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.43850.1772021412384374918
  for <cip-dev@lists.cip-project.org>;
- Wed, 25 Feb 2026 04:10:10 -0800
+ Wed, 25 Feb 2026 04:10:17 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: dkV6LUNNTVqzaTLWrEXl6w==
-X-CSE-MsgGUID: 1Wu0CJqzTpiMpyxdTT7pbA==
+ dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
+X-CSE-ConnectionGUID: yrKs6nj7QMKhsA1cFDfvvw==
+X-CSE-MsgGUID: LQ9OYvcHReKKdFfWamYDrg==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 25 Feb 2026 21:10:09 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 25 Feb 2026 21:10:17 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.92.192])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 8009041A8077;
-	Wed, 25 Feb 2026 21:10:08 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id DB9A941A8077;
+	Wed, 25 Feb 2026 21:10:15 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.1.y-cip 02/25] dt-bindings: display: bridge: renesas,dsi: Document RZ/V2H(P) and RZ/V2N
-Date: Wed, 25 Feb 2026 12:09:40 +0000
-Message-ID: <20260225121003.129467-3-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.1.y-cip 06/25] clk: renesas: rzv2h: Add instance field to struct pll
+Date: Wed, 25 Feb 2026 12:09:44 +0000
+Message-ID: <20260225121003.129467-7-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260225121003.129467-1-ovidiu.panait.rb@renesas.com>
 References: <20260225121003.129467-1-ovidiu.panait.rb@renesas.com>
@@ -32,191 +32,61 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 25 Feb 2026 12:10:12 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21933
+ <cip-dev@lists.cip-project.org>; Wed, 25 Feb 2026 12:10:22 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21937
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit ddeb8d5c1f97d9112b93a779c9e3dc3eaab68c19 upstream.
+commit 36a23904b4def05bfbb589af9fab5bc06144d241 upstream.
 
-Add the compatible string "renesas,r9a09g057-mipi-dsi" for the Renesas
-RZ/V2H(P) (R9A09G057) SoC. While the MIPI DSI LINK registers are shared
-with the RZ/G2L SoC, the D-PHY register layout differs. Additionally, the
-RZ/V2H(P) uses only two resets compared to three on RZ/G2L, and requires
-five clocks instead of six.
-
-To reflect these hardware differences, update the binding schema to
-support the reduced clock and reset requirements for RZ/V2H(P).
-
-Since the RZ/V2N (R9A09G056) SoC integrates an identical DSI IP to
-RZ/V2H(P), the same "renesas,r9a09g057-mipi-dsi" compatible string is
-reused for RZ/V2N.
+Add a two-bit "instance" member to struct pll and extend the PLL_PACK()
+macro to accept an instance parameter.  Initialize all existing PLL
+definitions with instance 0 to preserve legacy behavior. This change
+enables support for SoCs with multiple PLL instances (for example,
+RZ/G3E we have two PLL DSIs).
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://patch.msgid.link/20251015192611.241920-6-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://patch.msgid.link/20251015192611.241920-2-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- .../bindings/display/bridge/renesas,dsi.yaml  | 120 +++++++++++++-----
- 1 file changed, 91 insertions(+), 29 deletions(-)
+ drivers/clk/renesas/rzv2h-cpg.h | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml b/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
-index 5a99d9b9635e..c20625b8425e 100644
---- a/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
-+++ b/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
-@@ -14,16 +14,21 @@ description: |
-   RZ/G2L alike family of SoC's. The encoder can operate in DSI mode, with
-   up to four data lanes.
+diff --git a/drivers/clk/renesas/rzv2h-cpg.h b/drivers/clk/renesas/rzv2h-cpg.h
+index 130e165a7214..496481a5493f 100644
+--- a/drivers/clk/renesas/rzv2h-cpg.h
++++ b/drivers/clk/renesas/rzv2h-cpg.h
+@@ -16,20 +16,23 @@
+  *
+  * @offset: STBY register offset
+  * @has_clkn: Flag to indicate if CLK1/2 are accessible or not
++ * @instance: PLL instance number
+  */
+ struct pll {
+ 	unsigned int offset:9;
+ 	unsigned int has_clkn:1;
++	unsigned int instance:2;
+ };
  
--allOf:
--  - $ref: /schemas/display/dsi-controller.yaml#
--
- properties:
-   compatible:
--    items:
-+    oneOf:
-+      - items:
-+          - enum:
-+              - renesas,r9a07g044-mipi-dsi # RZ/G2{L,LC}
-+              - renesas,r9a07g054-mipi-dsi # RZ/V2L
-+          - const: renesas,rzg2l-mipi-dsi
-+
-+      - items:
-+          - const: renesas,r9a09g056-mipi-dsi # RZ/V2N
-+          - const: renesas,r9a09g057-mipi-dsi
-+
-       - enum:
--          - renesas,r9a07g044-mipi-dsi # RZ/G2{L,LC}
--          - renesas,r9a07g054-mipi-dsi # RZ/V2L
--      - const: renesas,rzg2l-mipi-dsi
-+          - renesas,r9a09g057-mipi-dsi # RZ/V2H(P)
+-#define PLL_PACK(_offset, _has_clkn) \
++#define PLL_PACK(_offset, _has_clkn, _instance) \
+ 	((struct pll){ \
+ 		.offset = _offset, \
+-		.has_clkn = _has_clkn \
++		.has_clkn = _has_clkn, \
++		.instance = _instance \
+ 	})
  
-   reg:
-     maxItems: 1
-@@ -49,34 +54,56 @@ properties:
-       - const: debug
+-#define PLLCA55		PLL_PACK(0x60, 1)
+-#define PLLGPU		PLL_PACK(0x120, 1)
++#define PLLCA55		PLL_PACK(0x60, 1, 0)
++#define PLLGPU		PLL_PACK(0x120, 1, 0)
  
-   clocks:
--    items:
--      - description: DSI D-PHY PLL multiplied clock
--      - description: DSI D-PHY system clock
--      - description: DSI AXI bus clock
--      - description: DSI Register access clock
--      - description: DSI Video clock
--      - description: DSI D-PHY Escape mode transmit clock
-+    oneOf:
-+      - items:
-+          - description: DSI D-PHY PLL multiplied clock
-+          - description: DSI D-PHY system clock
-+          - description: DSI AXI bus clock
-+          - description: DSI Register access clock
-+          - description: DSI Video clock
-+          - description: DSI D-PHY Escape mode transmit clock
-+      - items:
-+          - description: DSI D-PHY PLL reference clock
-+          - description: DSI AXI bus clock
-+          - description: DSI Register access clock
-+          - description: DSI Video clock
-+          - description: DSI D-PHY Escape mode transmit clock
- 
-   clock-names:
--    items:
--      - const: pllclk
--      - const: sysclk
--      - const: aclk
--      - const: pclk
--      - const: vclk
--      - const: lpclk
-+    oneOf:
-+      - items:
-+          - const: pllclk
-+          - const: sysclk
-+          - const: aclk
-+          - const: pclk
-+          - const: vclk
-+          - const: lpclk
-+      - items:
-+          - const: pllrefclk
-+          - const: aclk
-+          - const: pclk
-+          - const: vclk
-+          - const: lpclk
- 
-   resets:
--    items:
--      - description: MIPI_DSI_CMN_RSTB
--      - description: MIPI_DSI_ARESET_N
--      - description: MIPI_DSI_PRESET_N
-+    oneOf:
-+      - items:
-+          - description: MIPI_DSI_CMN_RSTB
-+          - description: MIPI_DSI_ARESET_N
-+          - description: MIPI_DSI_PRESET_N
-+      - items:
-+          - description: MIPI_DSI_ARESET_N
-+          - description: MIPI_DSI_PRESET_N
- 
-   reset-names:
--    items:
--      - const: rst
--      - const: arst
--      - const: prst
-+    oneOf:
-+      - items:
-+          - const: rst
-+          - const: arst
-+          - const: prst
-+      - items:
-+          - const: arst
-+          - const: prst
- 
-   power-domains:
-     maxItems: 1
-@@ -130,6 +157,41 @@ required:
- 
- unevaluatedProperties: false
- 
-+allOf:
-+  - $ref: ../dsi-controller.yaml#
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: renesas,r9a09g057-mipi-dsi
-+    then:
-+      properties:
-+        clocks:
-+          maxItems: 5
-+
-+        clock-names:
-+          maxItems: 5
-+
-+        resets:
-+          maxItems: 2
-+
-+        reset-names:
-+          maxItems: 2
-+    else:
-+      properties:
-+        clocks:
-+          minItems: 6
-+
-+        clock-names:
-+          minItems: 6
-+
-+        resets:
-+          minItems: 3
-+
-+        reset-names:
-+          minItems: 3
-+
- examples:
-   - |
-     #include <dt-bindings/clock/r9a07g044-cpg.h>
+ /**
+  * struct ddiv - Structure for dynamic switching divider
 -- 
 2.34.1
 
