@@ -2,86 +2,97 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB0B8FCEEB5
-	for <webhook@archiver.kernel.org>; Wed, 25 Feb 2026 12:10:52 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.43850.1772021412384374918
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C99A8FCEEB4
+	for <webhook@archiver.kernel.org>; Wed, 25 Feb 2026 12:12:42 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.43797.1772021555976081793
  for <cip-dev@lists.cip-project.org>;
- Wed, 25 Feb 2026 04:10:45 -0800
+ Wed, 25 Feb 2026 04:12:36 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: xpk7bu3AT0+NeqPMcx1k7Q==
-X-CSE-MsgGUID: LMmnfol4Q7CpW4IPOcdLFg==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 25 Feb 2026 21:10:44 +0900
+ dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
+X-CSE-ConnectionGUID: GFIf82j9Roe+zkIWs6gCAw==
+X-CSE-MsgGUID: aDimo5b6ScWoNXiq0OKAEg==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 25 Feb 2026 21:12:35 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.92.192])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id ABA2D41A8298;
-	Wed, 25 Feb 2026 21:10:43 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 404DA401CBF7;
+	Wed, 25 Feb 2026 21:12:33 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.1.y-cip 21/25] drm: renesas: rz-du: Add support for RZ/V2H(P) SoC
-Date: Wed, 25 Feb 2026 12:09:59 +0000
-Message-ID: <20260225121003.129467-22-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.12.y-cip 00/24] Add RZ/V2H display support
+Date: Wed, 25 Feb 2026 12:12:08 +0000
+Message-ID: <20260225121232.129678-1-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260225121003.129467-1-ovidiu.panait.rb@renesas.com>
-References: <20260225121003.129467-1-ovidiu.panait.rb@renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 25 Feb 2026 12:10:52 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21952
+ <cip-dev@lists.cip-project.org>; Wed, 25 Feb 2026 12:12:42 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21957
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi,
 
-commit 1f957fbb88b61eaf5ac9bf2db6bc2e54121a4359 upstream.
+This series adds display support for the Renesas RZ/V2H SoC and EVK board.
 
-The LCD controller (LCDC) on the RZ/V2H(P) SoC is composed of Frame
-Compression Processor (FCPVD), Video Signal Processor (VSPD), and
-Display Unit (DU).
+All patches were cherry-picked from mainline kernel.
 
-There is one LCDC unit available on the RZ/V2H(P) SoC which is connected
-to the DSI.
+Best regards,
+Ovidiu
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/r/20250512182330.238259-3-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
----
- drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Hugo Villeneuve (1):
+  dt-bindings: display: bridge: renesas,dsi: allow properties from
+    dsi-controller
 
-diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c
-index 0259e3f280ad..a4f0f23e2f49 100644
---- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c
-+++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c
-@@ -49,9 +49,20 @@ static const struct rzg2l_du_device_info rzg2l_du_r9a07g044_info = {
- 	}
- };
- 
-+static const struct rzg2l_du_device_info rzg2l_du_r9a09g057_info = {
-+	.channels_mask = BIT(0),
-+	.routes = {
-+		[RZG2L_DU_OUTPUT_DSI0] = {
-+			.possible_outputs = BIT(0),
-+			.port = 0,
-+		},
-+	},
-+};
-+
- static const struct of_device_id rzg2l_du_of_table[] = {
- 	{ .compatible = "renesas,r9a07g043u-du", .data = &rzg2l_du_r9a07g043u_info },
- 	{ .compatible = "renesas,r9a07g044-du", .data = &rzg2l_du_r9a07g044_info },
-+	{ .compatible = "renesas,r9a09g057-du", .data = &rzg2l_du_r9a09g057_info },
- 	{ /* sentinel */ }
- };
- 
+Lad Prabhakar (23):
+  dt-bindings: display: bridge: renesas,dsi: Document RZ/V2H(P) and
+    RZ/V2N
+  media: dt-bindings: media: renesas,vsp1: Document RZ/V2H(P)
+  media: dt-bindings: media: renesas,fcp: Document RZ/V2H(P) SoC
+  dt-bindings: display: renesas,rzg2l-du: Add support for RZ/V2H(P) SoC
+  clk: renesas: rzv2h: Add instance field to struct pll
+  clk: renesas: rzv2h: Use GENMASK for PLL fields
+  clk: renesas: rzv2h: Add support for DSI clocks
+  clk: renesas: r9a09g057: Add clock and reset entries for DSI and LCDC
+  drm: renesas: rz-du: mipi_dsi: Simplify HSFREQ calculation
+  drm: renesas: rz-du: mipi_dsi: Use VCLK for HSFREQ calculation
+  drm: renesas: rz-du: mipi_dsi: Add OF data support
+  drm: renesas: rz-du: mipi_dsi: Make "rst" reset control optional for
+    RZ/V2H(P)
+  drm: renesas: rz-du: mipi_dsi: Use mHz for D-PHY frequency
+    calculations
+  drm: renesas: rz-du: mipi_dsi: Add feature flag for 16BPP support
+  drm: renesas: rz-du: mipi_dsi: Add dphy_late_init() callback for
+    RZ/V2H(P)
+  drm: renesas: rz-du: mipi_dsi: Add function pointers for configuring
+    VCLK and mode validation
+  drm: renesas: rz-du: mipi_dsi: Add LPCLK clock support
+  drm: renesas: rz-du: mipi_dsi: Add support for RZ/V2H(P) SoC
+  drm: renesas: rz-du: Add support for RZ/V2H(P) SoC
+  drm: renesas: rz-du: Drop ARCH_RZG2L dependency
+  arm64: dts: renesas: r9a09g057: Add FCPV and VSPD nodes
+  arm64: dts: renesas: r9a09g057: Add DU and DSI nodes
+  arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Enable DU and DSI
+
+ .../bindings/display/bridge/renesas,dsi.yaml  | 187 +++++-
+ .../bindings/display/renesas,rzg2l-du.yaml    |  23 +-
+ .../bindings/media/renesas,fcp.yaml           |   2 +
+ .../bindings/media/renesas,vsp1.yaml          |   1 +
+ arch/arm64/boot/dts/renesas/r9a09g057.dtsi    |  89 +++
+ .../dts/renesas/r9a09g057h44-rzv2h-evk.dts    |  71 +++
+ drivers/clk/renesas/r9a09g057-cpg.c           |  62 ++
+ drivers/clk/renesas/rzv2h-cpg.c               | 512 ++++++++++++++-
+ drivers/clk/renesas/rzv2h-cpg.h               |  29 +-
+ drivers/gpu/drm/renesas/rz-du/Kconfig         |   2 +-
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c  |  11 +
+ .../gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c    | 601 ++++++++++++++++--
+ .../drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h   |  36 +-
+ include/linux/clk/renesas.h                   | 145 +++++
+ 14 files changed, 1689 insertions(+), 82 deletions(-)
+
 -- 
-2.34.1
+2.51.0
 
 
