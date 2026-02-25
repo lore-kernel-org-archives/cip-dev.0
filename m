@@ -2,28 +2,28 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7508FFCEEA7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69D66FCEEA4
 	for <webhook@archiver.kernel.org>; Wed, 25 Feb 2026 12:10:32 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.msgproc02-g2.43747.1772021423471547198
  for <cip-dev@lists.cip-project.org>;
- Wed, 25 Feb 2026 04:10:26 -0800
+ Wed, 25 Feb 2026 04:10:31 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: m5hvOC/SSIW0l9HfTLyMsw==
-X-CSE-MsgGUID: h5Qae+JiQHySg8i0nOQLmg==
+X-CSE-ConnectionGUID: fpsJqo31TCC5IRBp56Wisw==
+X-CSE-MsgGUID: MsleNGR4S8GjRYzBFPDrTQ==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 25 Feb 2026 21:10:26 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 25 Feb 2026 21:10:30 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.92.192])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 58B4C41A8077;
-	Wed, 25 Feb 2026 21:10:25 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id ECBFA41A8278;
+	Wed, 25 Feb 2026 21:10:28 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.1.y-cip 11/25] drm: renesas: rz-du: mipi_dsi: Use VCLK for HSFREQ calculation
-Date: Wed, 25 Feb 2026 12:09:49 +0000
-Message-ID: <20260225121003.129467-12-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.1.y-cip 13/25] drm: renesas: rz-du: mipi_dsi: Add OF data support
+Date: Wed, 25 Feb 2026 12:09:51 +0000
+Message-ID: <20260225121003.129467-14-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260225121003.129467-1-ovidiu.panait.rb@renesas.com>
 References: <20260225121003.129467-1-ovidiu.panait.rb@renesas.com>
@@ -33,28 +33,25 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 25 Feb 2026 12:10:32 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21942
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/21944
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit 3c55c4f05c7ac4fd741cbe92574598324f843d94 upstream.
+commit 2991c3f0ca8632264569f7c045f37ecdb71a05da upstream.
 
-Update the RZ/G2L MIPI DSI driver to calculate HSFREQ using the actual
-VCLK rate instead of the mode clock. The relationship between HSCLK and
-VCLK is:
+n preparation for adding support for the Renesas RZ/V2H(P) SoC, this patch
+introduces a mechanism to pass SoC-specific information via OF data in the
+DSI driver. This enables the driver to adapt dynamically to various
+SoC-specific requirements without hardcoding configurations.
 
-    vclk * bpp <= hsclk * 8 * lanes
+The MIPI DSI interface on the RZ/V2H(P) SoC is nearly identical to the one
+on the RZ/G2L SoC. While the LINK registers are shared between the two
+SoCs, the D-PHY registers differ. Also the VCLK range differs on both these
+SoCs. To accommodate these differences `struct rzg2l_mipi_dsi_hw_info` is
+introduced and as now passed as OF data.
 
-Retrieve the VCLK rate using `clk_get_rate(dsi->vclk)`, ensuring that
-HSFREQ accurately reflects the clock rate set in hardware, leading to
-better precision in data transmission.
-
-Additionally, use `DIV_ROUND_CLOSEST_ULL` for a more precise division
-when computing `hsfreq`. Also, update unit conversions to use correct
-scaling factors for better clarity and correctness.
-
-Since `clk_get_rate()` returns the clock rate in Hz, update the HSFREQ
-threshold comparisons to use Hz instead of kHz to ensure correct behavior.
+These changes lay the groundwork for the upcoming RZ/V2H(P) SoC support by
+allowing SoC-specific data to be passed through OF.
 
 Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
@@ -62,151 +59,175 @@ Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/r/20250609225630.502888-4-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://lore.kernel.org/r/20250609225630.502888-5-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- .../gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c    | 40 +++++++++++--------
- 1 file changed, 23 insertions(+), 17 deletions(-)
+ .../gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c    | 51 ++++++++++++++-----
+ .../drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h   |  2 -
+ 2 files changed, 38 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-index 422c55b792e8..fd51835b840f 100644
+index 51090bafb794..ce4e476f2c86 100644
 --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
 +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-@@ -8,6 +8,7 @@
- #include <linux/delay.h>
- #include <linux/io.h>
- #include <linux/iopoll.h>
-+#include <linux/math.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-@@ -16,6 +17,7 @@
- #include <linux/pm_runtime.h>
- #include <linux/reset.h>
- #include <linux/slab.h>
-+#include <linux/units.h>
+@@ -29,10 +29,23 @@
  
- #include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
-@@ -76,7 +78,7 @@ struct rzg2l_mipi_dsi_timings {
+ #include "rzg2l_mipi_dsi_regs.h"
  
- static const struct rzg2l_mipi_dsi_timings rzg2l_mipi_dsi_global_timings[] = {
- 	{
--		.hsfreq_max = 80000,
-+		.hsfreq_max = 80000000,
- 		.t_init = 79801,
- 		.tclk_prepare = 8,
- 		.ths_prepare = 13,
-@@ -90,7 +92,7 @@ static const struct rzg2l_mipi_dsi_timings rzg2l_mipi_dsi_global_timings[] = {
- 		.tlpx = 6,
- 	},
- 	{
--		.hsfreq_max = 125000,
-+		.hsfreq_max = 125000000,
- 		.t_init = 79801,
- 		.tclk_prepare = 8,
- 		.ths_prepare = 12,
-@@ -104,7 +106,7 @@ static const struct rzg2l_mipi_dsi_timings rzg2l_mipi_dsi_global_timings[] = {
- 		.tlpx = 6,
- 	},
- 	{
--		.hsfreq_max = 250000,
-+		.hsfreq_max = 250000000,
- 		.t_init = 79801,
- 		.tclk_prepare = 8,
- 		.ths_prepare = 12,
-@@ -118,7 +120,7 @@ static const struct rzg2l_mipi_dsi_timings rzg2l_mipi_dsi_global_timings[] = {
- 		.tlpx = 6,
- 	},
- 	{
--		.hsfreq_max = 360000,
-+		.hsfreq_max = 360000000,
- 		.t_init = 79801,
- 		.tclk_prepare = 8,
- 		.ths_prepare = 10,
-@@ -132,7 +134,7 @@ static const struct rzg2l_mipi_dsi_timings rzg2l_mipi_dsi_global_timings[] = {
- 		.tlpx = 6,
- 	},
- 	{
--		.hsfreq_max = 720000,
-+		.hsfreq_max = 720000000,
- 		.t_init = 79801,
- 		.tclk_prepare = 8,
- 		.ths_prepare = 9,
-@@ -146,7 +148,7 @@ static const struct rzg2l_mipi_dsi_timings rzg2l_mipi_dsi_global_timings[] = {
- 		.tlpx = 6,
- 	},
- 	{
--		.hsfreq_max = 1500000,
-+		.hsfreq_max = 1500000000,
- 		.t_init = 79801,
- 		.tclk_prepare = 8,
- 		.ths_prepare = 9,
-@@ -259,7 +261,7 @@ static void rzg2l_mipi_dsi_dphy_exit(struct rzg2l_mipi_dsi *dsi)
- static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi_dsi *dsi,
- 				  const struct drm_display_mode *mode)
++struct rzg2l_mipi_dsi;
++
++struct rzg2l_mipi_dsi_hw_info {
++	int (*dphy_init)(struct rzg2l_mipi_dsi *dsi, unsigned long hsfreq);
++	void (*dphy_exit)(struct rzg2l_mipi_dsi *dsi);
++	u32 phy_reg_offset;
++	u32 link_reg_offset;
++	unsigned long min_dclk;
++	unsigned long max_dclk;
++};
++
+ struct rzg2l_mipi_dsi {
+ 	struct device *dev;
+ 	void __iomem *mmio;
+ 
++	const struct rzg2l_mipi_dsi_hw_info *info;
++
+ 	struct reset_control *rstc;
+ 	struct reset_control *arstc;
+ 	struct reset_control *prstc;
+@@ -165,22 +178,22 @@ static const struct rzg2l_mipi_dsi_timings rzg2l_mipi_dsi_global_timings[] = {
+ 
+ static void rzg2l_mipi_dsi_phy_write(struct rzg2l_mipi_dsi *dsi, u32 reg, u32 data)
  {
--	unsigned long hsfreq;
-+	unsigned long hsfreq, vclk_rate;
- 	unsigned int bpp;
- 	u32 txsetr;
- 	u32 clstptsetr;
-@@ -270,6 +272,16 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi_dsi *dsi,
- 	u32 golpbkt;
- 	int ret;
+-	iowrite32(data, dsi->mmio + reg);
++	iowrite32(data, dsi->mmio + dsi->info->phy_reg_offset + reg);
+ }
  
-+	ret = pm_runtime_resume_and_get(dsi->dev);
-+	if (ret < 0)
-+		return ret;
-+
-+	clk_set_rate(dsi->vclk, mode->clock * KILO);
-+	vclk_rate = clk_get_rate(dsi->vclk);
-+	if (vclk_rate != mode->clock * KILO)
-+		dev_dbg(dsi->dev, "Requested vclk rate %lu, actual %lu mismatch\n",
-+			mode->clock * KILO, vclk_rate);
-+
- 	/*
- 	 * Relationship between hsclk and vclk must follow
- 	 * vclk * bpp = hsclk * 8 * lanes
-@@ -281,13 +293,7 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi_dsi *dsi,
- 	 * hsclk(bit) = hsclk(byte) * 8 = hsfreq
- 	 */
+ static void rzg2l_mipi_dsi_link_write(struct rzg2l_mipi_dsi *dsi, u32 reg, u32 data)
+ {
+-	iowrite32(data, dsi->mmio + LINK_REG_OFFSET + reg);
++	iowrite32(data, dsi->mmio + dsi->info->link_reg_offset + reg);
+ }
+ 
+ static u32 rzg2l_mipi_dsi_phy_read(struct rzg2l_mipi_dsi *dsi, u32 reg)
+ {
+-	return ioread32(dsi->mmio + reg);
++	return ioread32(dsi->mmio + dsi->info->phy_reg_offset + reg);
+ }
+ 
+ static u32 rzg2l_mipi_dsi_link_read(struct rzg2l_mipi_dsi *dsi, u32 reg)
+ {
+-	return ioread32(dsi->mmio + LINK_REG_OFFSET + reg);
++	return ioread32(dsi->mmio + dsi->info->link_reg_offset + reg);
+ }
+ 
+ /* -----------------------------------------------------------------------------
+@@ -295,7 +308,7 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi_dsi *dsi,
  	bpp = mipi_dsi_pixel_format_to_bpp(dsi->format);
--	hsfreq = mode->clock * bpp / dsi->lanes;
--
--	ret = pm_runtime_resume_and_get(dsi->dev);
--	if (ret < 0)
--		return ret;
--
--	clk_set_rate(dsi->vclk, mode->clock * 1000);
-+	hsfreq = DIV_ROUND_CLOSEST_ULL(vclk_rate * bpp, dsi->lanes);
+ 	hsfreq = DIV_ROUND_CLOSEST_ULL(vclk_rate * bpp, dsi->lanes);
  
- 	ret = rzg2l_mipi_dsi_dphy_init(dsi, hsfreq);
- 	if (ret < 0)
-@@ -305,12 +311,12 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi_dsi *dsi,
- 	 * - data lanes: maximum 4 lanes
- 	 * Therefore maximum hsclk will be 891 Mbps.
- 	 */
--	if (hsfreq > 445500) {
-+	if (hsfreq > 445500000) {
- 		clkkpt = 12;
- 		clkbfht = 15;
- 		clkstpt = 48;
- 		golpbkt = 75;
--	} else if (hsfreq > 250000) {
-+	} else if (hsfreq > 250000000) {
- 		clkkpt = 7;
- 		clkbfht = 8;
- 		clkstpt = 27;
-@@ -752,7 +758,7 @@ static int rzg2l_mipi_dsi_probe(struct platform_device *pdev)
- 	 * mode->clock and format are not available. So initialize DPHY with
- 	 * timing parameters for 80Mbps.
- 	 */
--	ret = rzg2l_mipi_dsi_dphy_init(dsi, 80000);
-+	ret = rzg2l_mipi_dsi_dphy_init(dsi, 80000000);
+-	ret = rzg2l_mipi_dsi_dphy_init(dsi, hsfreq);
++	ret = dsi->info->dphy_init(dsi, hsfreq);
  	if (ret < 0)
  		goto err_phy;
  
+@@ -338,7 +351,7 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi_dsi *dsi,
+ 	return 0;
+ 
+ err_phy:
+-	rzg2l_mipi_dsi_dphy_exit(dsi);
++	dsi->info->dphy_exit(dsi);
+ 	pm_runtime_put(dsi->dev);
+ 
+ 	return ret;
+@@ -346,7 +359,7 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi_dsi *dsi,
+ 
+ static void rzg2l_mipi_dsi_stop(struct rzg2l_mipi_dsi *dsi)
+ {
+-	rzg2l_mipi_dsi_dphy_exit(dsi);
++	dsi->info->dphy_exit(dsi);
+ 	pm_runtime_put(dsi->dev);
+ }
+ 
+@@ -589,10 +602,12 @@ rzg2l_mipi_dsi_bridge_mode_valid(struct drm_bridge *bridge,
+ 				 const struct drm_display_info *info,
+ 				 const struct drm_display_mode *mode)
+ {
+-	if (mode->clock > 148500)
++	struct rzg2l_mipi_dsi *dsi = bridge_to_rzg2l_mipi_dsi(bridge);
++
++	if (mode->clock > dsi->info->max_dclk)
+ 		return MODE_CLOCK_HIGH;
+ 
+-	if (mode->clock < 5803)
++	if (mode->clock < dsi->info->min_dclk)
+ 		return MODE_CLOCK_LOW;
+ 
+ 	return MODE_OK;
+@@ -718,6 +733,8 @@ static int rzg2l_mipi_dsi_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, dsi);
+ 	dsi->dev = &pdev->dev;
+ 
++	dsi->info = of_device_get_match_data(&pdev->dev);
++
+ 	ret = drm_of_get_data_lanes_count_ep(dsi->dev->of_node, 1, 0, 1, 4);
+ 	if (ret < 0)
+ 		return dev_err_probe(dsi->dev, ret,
+@@ -761,13 +778,13 @@ static int rzg2l_mipi_dsi_probe(struct platform_device *pdev)
+ 	 * mode->clock and format are not available. So initialize DPHY with
+ 	 * timing parameters for 80Mbps.
+ 	 */
+-	ret = rzg2l_mipi_dsi_dphy_init(dsi, 80000000);
++	ret = dsi->info->dphy_init(dsi, 80000000);
+ 	if (ret < 0)
+ 		goto err_phy;
+ 
+ 	txsetr = rzg2l_mipi_dsi_link_read(dsi, TXSETR);
+ 	dsi->num_data_lanes = min(((txsetr >> 16) & 3) + 1, num_data_lanes);
+-	rzg2l_mipi_dsi_dphy_exit(dsi);
++	dsi->info->dphy_exit(dsi);
+ 	pm_runtime_put(dsi->dev);
+ 
+ 	/* Initialize the DRM bridge. */
+@@ -784,7 +801,7 @@ static int rzg2l_mipi_dsi_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ err_phy:
+-	rzg2l_mipi_dsi_dphy_exit(dsi);
++	dsi->info->dphy_exit(dsi);
+ 	pm_runtime_put(dsi->dev);
+ err_pm_disable:
+ 	pm_runtime_disable(dsi->dev);
+@@ -801,8 +818,16 @@ static int rzg2l_mipi_dsi_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static const struct rzg2l_mipi_dsi_hw_info rzg2l_mipi_dsi_info = {
++	.dphy_init = rzg2l_mipi_dsi_dphy_init,
++	.dphy_exit = rzg2l_mipi_dsi_dphy_exit,
++	.link_reg_offset = 0x10000,
++	.min_dclk = 5803,
++	.max_dclk = 148500,
++};
++
+ static const struct of_device_id rzg2l_mipi_dsi_of_table[] = {
+-	{ .compatible = "renesas,rzg2l-mipi-dsi" },
++	{ .compatible = "renesas,rzg2l-mipi-dsi", .data = &rzg2l_mipi_dsi_info, },
+ 	{ /* sentinel */ }
+ };
+ 
+diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h
+index 1dbc16ec64a4..16efe4dc59f4 100644
+--- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h
++++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h
+@@ -41,8 +41,6 @@
+ #define DSIDPHYTIM3_THS_ZERO(x)		((x) << 0)
+ 
+ /* --------------------------------------------------------*/
+-/* Link Registers */
+-#define LINK_REG_OFFSET			0x10000
+ 
+ /* Link Status Register */
+ #define LINKSR				0x10
 -- 
 2.34.1
 
