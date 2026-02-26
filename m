@@ -2,56 +2,56 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70BC4FD9E0B
-	for <webhook@archiver.kernel.org>; Thu, 26 Feb 2026 19:42:43 +0000 (UTC)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.78966.1772134961254579439
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C716FD9E07
+	for <webhook@archiver.kernel.org>; Thu, 26 Feb 2026 19:42:53 +0000 (UTC)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.78971.1772134965728522517
  for <cip-dev@lists.cip-project.org>;
- Thu, 26 Feb 2026 11:42:41 -0800
+ Thu, 26 Feb 2026 11:42:46 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=cSDAEHV0;
- spf=pass (domain: gmail.com, ip: 209.85.128.52, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4836f363ad2so15191835e9.1
-        for <cip-dev@lists.cip-project.org>; Thu, 26 Feb 2026 11:42:41 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=e7vG1+cx;
+ spf=pass (domain: gmail.com, ip: 209.85.128.44, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-48069a48629so13540375e9.0
+        for <cip-dev@lists.cip-project.org>; Thu, 26 Feb 2026 11:42:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772134959; x=1772739759; darn=lists.cip-project.org;
+        d=gmail.com; s=20230601; t=1772134964; x=1772739764; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GqzFidqYDU8S01nI/Y1yVznJojB6PbUsmuhkTwF0YWk=;
-        b=cSDAEHV0mPgT9hkNjdIbuhRbhF/SQZ/MZd4+1n0ckN/J0p/llCEARJvNvn3wfldVXA
-         yuvOOPL5WSe4C85/1xmumWIcf4Qd/4vRO+qqT3IaS9jHWhHc/ToQgux3i/OhDAlWhUIi
-         liiQr9qa/ZEL1jBUKS7T5YviM/2aD3ZygZeHUkShFqOM/6/W2x7vI4mPPlPcQoqAliDA
-         YFnPCaISx5cafezo8p3/MsdtABz5YEMUxWxF9hgl0CTQx/V/S78JA7R8Sujw50T5sPuc
-         Jv4daR2QayM8vJYNe+aY5a25hPsegdkM9fb6cJCgy/G1zKuKjUuXDGh0/Ksof/Mo8bcM
-         +opA==
+        bh=2JnbfS9sLKNe9MyBTUN+nlRDXcACYO8Jkc5/3pbEtSY=;
+        b=e7vG1+cxqIYyu35CznPtrrF8RgOEdNreSOqqxfGx1jojqewJTq7DhN99ZCcDT8lZoS
+         xh402v9dZAP7CqtkjQbXV3SI0Vd7s7clF7LHrJvlG3rhZl689Jda9zdwcZ2HnZaho04R
+         W1PTZFhiFid8fZiFr5ik6wPCnd1x1zRIPc1GQhyV2mvGGjHX62w+IUD9SngiGwA+igM6
+         SOM1OwdwDC0ThRc6M6ZCFHt60b+t6YwfxYmSxrRq5Z9po7ofuAA5ABLVcNLHqFnM/p02
+         W5hU9A6WWvISz4wx3KvLpZB+qVxHmoKy+drIT62z36u+dTTPqqukXZIdlF/0+l+bkJld
+         4C3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772134959; x=1772739759;
+        d=1e100.net; s=20230601; t=1772134964; x=1772739764;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=GqzFidqYDU8S01nI/Y1yVznJojB6PbUsmuhkTwF0YWk=;
-        b=qz5mx0v6RzfdrYY+LKYNuzfmFpLuk2q1/98MzI1TSigdZtTuI5+A1+HNIRxZsDjLNS
-         kfDFa/u/1DqBjYadeR1p7OifUKvJdBRgIbg8u0D9AuDzi+cSsmLUrbiftb/iQt35Zkh8
-         KJE+druKoTInjoazhMdySnlujAE86dgyHQLBLAt+wvzwWeM2wIFWRel6q2FLtyr7+AFR
-         WqwJNA6q/XTqm6djYkahPqfJMXSyJz4ISXklYWwgAYi0ojy0Uq0+nWb6ZVbs2wUQaeyn
-         UHcJjv6PtgaW927VtwebFk6Tjj60OIAl6y7rIKbUwTUmjyTGJVAes0doJ2GYPBvCDdbY
-         1GWw==
-X-Gm-Message-State: AOJu0YwZoLArvaP7QR1MAkqs13BwvtMJr4/DSqUy4EpTMNJJlKSfe8+N
-	dZ4qsHu1WL+cH91JK7DsixdbOROb4Ccwo4Nw+TbRRz3ZoT0E7gMvVH8aWQbcxhl5
-X-Gm-Gg: ATEYQzxKeNPw2EEihax7pgcJDetbY87/Tt/nWFJhFPBYK7Hl0uVQDUJkDNo1k1VlJFj
-	T2KTbdOBTXp3jvhE3CFTzMUrG+6p02B8s7lFm5P7w55Bx112iExUY6nKvbSRisfSnreHC2aJGAj
-	TA+gdF+RJJtYlBMtjPY1dv7l6kdkOHge9umYNrgrqXwIyaJLSUNRaybheujGIXN45NA7BdV6EEr
-	d/BHlcYiOMIzPU6sSUX5xIsabCoRDqFsdso8+VGf2sq4p2lfu6hwP3oRhu2B5LbLRBb+5Tm9H5d
-	exWkscmwKAhDBK8134ecsN5uQ3RJ7H4JLCv5PmqFxiVdtaK2JFpiVTPNhkwVpNoLGOpcujVMYW8
-	q6p2rsiioeplT/BEk467jxpaIDOUrTGjBek7ZcfnMsKb8sWn4fl4dGEzow1Rgu140Ly/M+dRX2U
-	x+Jbeq+VvuQuziVPeJ9JQhVM4kGUIlcNtsVuLilXGBv3tlsxQ=
-X-Received: by 2002:a05:600c:3b18:b0:477:7b16:5fb1 with SMTP id 5b1f17b1804b1-483c9bb6615mr112885e9.7.1772134959336;
-        Thu, 26 Feb 2026 11:42:39 -0800 (PST)
+        bh=2JnbfS9sLKNe9MyBTUN+nlRDXcACYO8Jkc5/3pbEtSY=;
+        b=eSILWsD0Gl50XaQw9F8g0PdTxbkAedQv5xY3UA955D1KR/+XHtQGHzqp9rlc7r+lTf
+         jPAUy4GGMHRGJSXr+6q3m0yuJbpGptpOwfCjpVu5aNoc/0UOKiFUF20IInPPJRkOqT4u
+         ixdO/hnbteV3yVbdxxstcAX5ZLfain7ysyNGd0FPagQm1eFGAvM1I2lQlDejRxxaTl5a
+         nzV8W2hhExdoGEJzNGmCkKlFEchNLpBdyUVDIar/x/pSbwSZ8KjPvdpFJrgPdb2Pr8Rd
+         mumr79/lyq9yOo93acpdHm3voiI699lw8wbYmFKA/0exBditBlBGZXlZqvW8k4yTvx2k
+         QUyA==
+X-Gm-Message-State: AOJu0Ywj9iWhZBerT8amDouKBxymilZufFlqXySyBEpyORfKo0F6LADk
+	uh39gtjT10CjeCWdD97dDnBZ1iS31/kgTN7PWQ33VSVCYQHOOOKj3Mba3Kf0Jb/Y
+X-Gm-Gg: ATEYQzyhZQstxXlFiWI58TUX7yVhsjW3xMVnM5gEymwCXQJNNgibcY5JwPM1ZNECKOu
+	tx3PC2mEAcn6ehHLbBIMaVYmmUedIFJjEIAaVE61cVdT20oXAue5Ek7z68lGAS4Dz11vkwi3aws
+	YoSo6Rs8VAOsSCfiCYmse2ILH1/74Cx2hr4NbAW8mQnBYcnh7s88Xn47en66bcl9uIoe2cVbKBL
+	QioRQMJ2eq8sbzf8CGFN3n1ky4AwWlijy9JhW6CegN6ptdPiYDIYpU8gMDjsCr4at+/EJOEWEJv
+	w3f+gcehAT6CPcHE/BN6uMEbKUAgnmJqJ+oQY6jkPQbkw40zhRnmJxz0SUmlu4Dc6TOgjXnOMJI
+	WtPUEFBx76979iL8iX7MVV2B9Onr5sZfB5PbAqnRnlWyzpnZ4TjlBkFa9z5pweOsjs0fDzs3lUh
+	3DU8Uax0v9ebeLZcJdRFR6uuu7rsf+O8tbRO8RGpTrLPwYaKc=
+X-Received: by 2002:a05:600c:8287:b0:477:c478:46d7 with SMTP id 5b1f17b1804b1-483a95e205emr331627985e9.22.1772134963799;
+        Thu, 26 Feb 2026 11:42:43 -0800 (PST)
 Received: from localhost.localdomain ([2a00:23c4:a758:8a01:bf1f:8924:d67:fd04])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4399c6100b8sm1854324f8f.2.2026.02.26.11.42.38
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4399c6100b8sm1854324f8f.2.2026.02.26.11.42.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Feb 2026 11:42:39 -0800 (PST)
+        Thu, 26 Feb 2026 11:42:43 -0800 (PST)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,9 +59,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 1/9] iopoll: Do not use timekeeping in read_poll_timeout_atomic()
-Date: Thu, 26 Feb 2026 19:42:22 +0000
-Message-ID: <20260226194237.449383-2-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 7/9] ASoC: renesas: rz-ssi: Move DMA configuration
+Date: Thu, 26 Feb 2026 19:42:28 +0000
+Message-ID: <20260226194237.449383-8-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260226194237.449383-1-biju.das.jz@bp.renesas.com>
 References: <20260226194237.449383-1-biju.das.jz@bp.renesas.com>
@@ -70,105 +70,80 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 26 Feb 2026 19:42:43 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22012
+ <cip-dev@lists.cip-project.org>; Thu, 26 Feb 2026 19:42:53 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22018
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[ Upstream commit 7349a69cf3125e92d48e442d9f400ba446fa314f ]
+[ Upstream commit b541cb0a27dfa7504a8008320502f869c75f8bfc ]
 
-read_poll_timeout_atomic() uses ktime_get() to implement the timeout
-feature, just like its non-atomic counterpart.  However, there are
-several issues with this, due to its use in atomic contexts:
+Move DMA configuration from rz_ssi_dma_request() to rz_ssi_dai_trigger()
+for supporting sample widths higher than 16.
 
-  1. When called in the s2ram path (as typically done by clock or PM
-     domain drivers), timekeeping may be suspended, triggering the
-     WARN_ON(timekeeping_suspended) in ktime_get():
-
-	WARNING: CPU: 0 PID: 654 at kernel/time/timekeeping.c:843 ktime_get+0x28/0x78
-
-     Calling ktime_get_mono_fast_ns() instead of ktime_get() would get
-     rid of that warning.  However, that would break timeout handling,
-     as (at least on systems with an ARM architectured timer), the time
-     returned by ktime_get_mono_fast_ns() does not advance while
-     timekeeping is suspended.
-     Interestingly, (on the same ARM systems) the time returned by
-     ktime_get() does advance while timekeeping is suspended, despite
-     the warning.
-
-  2. Depending on the actual clock source, and especially before a
-     high-resolution clocksource (e.g. the ARM architectured timer)
-     becomes available, time may not advance in atomic contexts, thus
-     breaking timeout handling.
-
-Fix this by abandoning the idea that one can rely on timekeeping to
-implement timeout handling in all atomic contexts, and switch from a
-global time-based to a locally-estimated timeout handling.  In most
-(all?) cases the timeout condition is exceptional and an error
-condition, hence any additional delays due to underestimating wall clock
-time are irrelevant.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Tony Lindgren <tony@atomide.com>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-Link: https://lore.kernel.org/r/3d2a2f4e553489392d871108797c3be08f88300b.1685692810.git.geert+renesas@glider.be
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Link: https://patch.msgid.link/20251114075856.4751-4-biju.das.jz@bp.renesas.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- include/linux/iopoll.h | 22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
+ sound/soc/sh/rz-ssi.c | 29 ++++++++++++-----------------
+ 1 file changed, 12 insertions(+), 17 deletions(-)
 
-diff --git a/include/linux/iopoll.h b/include/linux/iopoll.h
-index 0417360a6db9..19a7b00baff4 100644
---- a/include/linux/iopoll.h
-+++ b/include/linux/iopoll.h
-@@ -74,6 +74,10 @@
-  * Returns 0 on success and -ETIMEDOUT upon a timeout. In either
-  * case, the last read value at @args is stored in @val.
-  *
-+ * This macro does not rely on timekeeping.  Hence it is safe to call even when
-+ * timekeeping is suspended, at the expense of an underestimation of wall clock
-+ * time, which is rather minimal with a non-zero delay_us.
-+ *
-  * When available, you'll probably want to use one of the specialized
-  * macros defined below rather than this macro directly.
-  */
-@@ -81,22 +85,30 @@
- 					delay_before_read, args...) \
- ({ \
- 	u64 __timeout_us = (timeout_us); \
-+	s64 __left_ns = __timeout_us * NSEC_PER_USEC; \
- 	unsigned long __delay_us = (delay_us); \
--	ktime_t __timeout = ktime_add_us(ktime_get(), __timeout_us); \
--	if (delay_before_read && __delay_us) \
-+	u64 __delay_ns = __delay_us * NSEC_PER_USEC; \
-+	if (delay_before_read && __delay_us) { \
- 		udelay(__delay_us); \
-+		if (__timeout_us) \
-+			__left_ns -= __delay_ns; \
-+	} \
- 	for (;;) { \
- 		(val) = op(args); \
- 		if (cond) \
- 			break; \
--		if (__timeout_us && \
--		    ktime_compare(ktime_get(), __timeout) > 0) { \
-+		if (__timeout_us && __left_ns < 0) { \
- 			(val) = op(args); \
- 			break; \
- 		} \
--		if (__delay_us) \
-+		if (__delay_us) { \
- 			udelay(__delay_us); \
-+			if (__timeout_us) \
-+				__left_ns -= __delay_ns; \
-+		} \
- 		cpu_relax(); \
-+		if (__timeout_us) \
-+			__left_ns--; \
- 	} \
- 	(cond) ? 0 : -ETIMEDOUT; \
- })
+diff --git a/sound/soc/sh/rz-ssi.c b/sound/soc/sh/rz-ssi.c
+index d90a80ffdddb..354fcdbd3805 100644
+--- a/sound/soc/sh/rz-ssi.c
++++ b/sound/soc/sh/rz-ssi.c
+@@ -789,14 +789,6 @@ static int rz_ssi_dma_request(struct rz_ssi_priv *ssi, struct device *dev)
+ 	if (!rz_ssi_is_dma_enabled(ssi))
+ 		goto no_dma;
+ 
+-	if (ssi->playback.dma_ch &&
+-	    (rz_ssi_dma_slave_config(ssi, ssi->playback.dma_ch, true) < 0))
+-		goto no_dma;
+-
+-	if (ssi->capture.dma_ch &&
+-	    (rz_ssi_dma_slave_config(ssi, ssi->capture.dma_ch, false) < 0))
+-		goto no_dma;
+-
+ 	return 0;
+ 
+ no_dma:
+@@ -844,24 +836,27 @@ static int rz_ssi_dai_trigger(struct snd_pcm_substream *substream, int cmd,
+ 		if (cmd == SNDRV_PCM_TRIGGER_START)
+ 			rz_ssi_stream_init(strm, substream);
+ 
+-		if (ssi->dma_rt) {
+-			bool is_playback;
++		if (rz_ssi_is_dma_enabled(ssi)) {
++			bool is_playback = rz_ssi_stream_is_play(substream);
++
++			if (ssi->dma_rt)
++				ret = rz_ssi_dma_slave_config(ssi, ssi->playback.dma_ch,
++							      is_playback);
++			else
++				ret = rz_ssi_dma_slave_config(ssi, strm->dma_ch,
++							      is_playback);
+ 
+-			is_playback = rz_ssi_stream_is_play(substream);
+-			ret = rz_ssi_dma_slave_config(ssi, ssi->playback.dma_ch,
+-						      is_playback);
+ 			/* Fallback to pio */
+ 			if (ret < 0) {
+ 				ssi->playback.transfer = rz_ssi_pio_send;
+ 				ssi->capture.transfer = rz_ssi_pio_recv;
+ 				rz_ssi_release_dma_channels(ssi);
++			} else {
++				/* For DMA, queue up multiple DMA descriptors */
++				num_transfer = 4;
+ 			}
+ 		}
+ 
+-		/* For DMA, queue up multiple DMA descriptors */
+-		if (rz_ssi_is_dma_enabled(ssi))
+-			num_transfer = 4;
+-
+ 		for (i = 0; i < num_transfer; i++) {
+ 			ret = strm->transfer(ssi, strm);
+ 			if (ret)
 -- 
 2.43.0
 
