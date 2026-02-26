@@ -2,56 +2,55 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1087AFCE08C
-	for <webhook@archiver.kernel.org>; Thu, 26 Feb 2026 19:29:03 +0000 (UTC)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.78619.1772134132952867931
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E4BFCE08C
+	for <webhook@archiver.kernel.org>; Thu, 26 Feb 2026 19:33:53 +0000 (UTC)
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.78740.1772134431416919967
  for <cip-dev@lists.cip-project.org>;
- Thu, 26 Feb 2026 11:28:53 -0800
+ Thu, 26 Feb 2026 11:33:51 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=Q3CXji+P;
- spf=pass (domain: gmail.com, ip: 209.85.128.52, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4836f4cbe0bso11468935e9.3
-        for <cip-dev@lists.cip-project.org>; Thu, 26 Feb 2026 11:28:52 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=cduALuwO;
+ spf=pass (domain: gmail.com, ip: 209.85.128.54, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-483a233819aso12787705e9.3
+        for <cip-dev@lists.cip-project.org>; Thu, 26 Feb 2026 11:33:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772134131; x=1772738931; darn=lists.cip-project.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yPu7zdLeiSJz1AEKf6hvqWs7p0r8pDiNdKKo12Qc/9M=;
-        b=Q3CXji+PWwmMwHQ26GVzYN8zMWU6J5EERKHRxXv9VhVwz3sc6MCNX9xajo99eb8Rky
-         WiarhP84c+tIsYiULWblPfGvEeujHrU0SrUL2uO3BikNFiF4NA4iJRcgr5sXMbgQQeLK
-         ZlzULmokHvwM8cgVSmf+qxJm7sC9mxhO7KyF3rk1+aMb2sPkIC3hcaEF6F44ip7FmPAS
-         yqZdfSy/qYdJZSTFBpd4O5FfYxObzxO0lL7jlNPigO1k92rgmgci3lgLKqT8VjomrkSm
-         QE9QGxoGnFBS6DFaNcloE44HyM84mw9GP+l2hNlgUkM7Bgt0aDjO+GOBx9dZt+osd5g3
-         KgEg==
+        d=gmail.com; s=20230601; t=1772134429; x=1772739229; darn=lists.cip-project.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hAW1lrZEcsfxRk4nrIblNG2fztFZ6WPjgeNimJlBTH0=;
+        b=cduALuwODpWTcU9lEUPmoiaTDnAa+EEeJLmLKxEbppWMMr92QscAcmaCE5Uzxr4KLf
+         oMkAB4LK6n311djYVtFqo86DARnzScTRYliSRYULDY3db10lrTGBuiH54/5ey7e9qvE7
+         Vp8jcrQ1ZAX4IscNukJtdT5o9NFTOwHFjmnhuQrZ8wLnyYqa4IqmPHDZTxZ4njv4N97B
+         jwWo4qS02DkJ79W0DPvyUy1oyL09n5uGTP7CIegPH7LL7bJdT2fvSikrYz2TTSHAiEjd
+         /yhJBe64/Arq+MsoPBUzazpn3iLN/gpZgi8RFzbNyO5LUvm+DVb0MGtI1Djsxn6bwZlX
+         p3Pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772134131; x=1772738931;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=yPu7zdLeiSJz1AEKf6hvqWs7p0r8pDiNdKKo12Qc/9M=;
-        b=GrltiWzFpqPEDGoG2R3MI0ncwEmdva2OE5Mg5kKPbdRfh9N/cZvVK3qdBSP/1IspzR
-         2J1QCpKfG5BdQ++0ebn9F0KHqBxia0MTb1D/Dy8fv2WAo1Nxz3LbS/NWh6L+/VTFlVyP
-         3cT7XrHb8LowJVUerwvuiJtRBbdhi083llNeEC1art+YJ73u2OA20D2MLHuzxxrgsmC1
-         q41t5KOY+KPDdz47xRBDqPb3+RWJemcHKtbxy5PvMWQriSJfliU9XnKn707oBnnQjn3J
-         a+KFj022ubuBDsJr47j++pawWHEktyBebztHASl3lgvOvuVyBay8mKLoxThisNlqqaiB
-         GQtA==
-X-Gm-Message-State: AOJu0Ywe0J8ut+rUUbJmE2TeT8VegQV/MKslE9N8MDfEjY1ibCFC3Yha
-	bxuujq5q5bpi1R5Ls6Y0k8r9nnLY9DZTAv5FARx9pjhkMTKT2IAzby7yW7Etiww0
-X-Gm-Gg: ATEYQzzKit8RTydp+60tJLs6tHTN+2mB0vho8S2kxS9mE8EgDbicR/ykmin3Dih/toI
-	UqNRuH2eQ03eY9v7n5qfu1cfBMYKgYqyo1L79lxBUpr0E+Hx0tb1ENtxx4T5Y/48Hh/SqNk91FJ
-	SbbQVwODGvlDrsV0WseM6vQ4+J/7taUETp0HbmMb/aMJlHaCjlF0wZ7aeKubsaYj73DzM4/HMBs
-	LWRYmAPoPgH87nfFavHXdyetHr65uVa4SdyVBwfRsFvJxIWy1HQUyz/fs6b5+UeJbVYD4psGxbZ
-	ec6YcTiXklrgBuQJfF3pwqpkN9K0A6WtXKl5ICQutGZphjcgeNIS7TeYZUgvRHsMP1e+CPKp1Ec
-	LMA8XzBt7jdlHoOkOgX3/NDpUD2ajVj72XqJ35e+pkNfmYi8z4oXL8PALyeCfVlbC2vudoukKg/
-	uSsUfRt8WsO4tr5NkThoWNDxVcDIezfJIqqHqTPDDbDDwAZno=
-X-Received: by 2002:a05:600c:6296:b0:483:3380:ca11 with SMTP id 5b1f17b1804b1-483c3df7964mr56651285e9.33.1772134130819;
-        Thu, 26 Feb 2026 11:28:50 -0800 (PST)
+        d=1e100.net; s=20230601; t=1772134429; x=1772739229;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hAW1lrZEcsfxRk4nrIblNG2fztFZ6WPjgeNimJlBTH0=;
+        b=o0igeIZb7GV+8N+V9HmCM244ACgl6k92HiXdJ3tYFzyN1nMAVq9RIxnXGTYWWdxwVG
+         vC72FOc76DZFiXOcEmaPeuon44w2CasykMRr+PDiaIzpnTqY4RUdjoyH57vhZVdRbDop
+         +dbYb1Db7fbIwZIwq2kVOywqyXuDiuDqKf4erp3gmAgJKH+k4qHS6H6+FMOaCKOZnuTG
+         MK16ocEWPrcuH6G7d67VkWIakgh/FDrc+qMxfKPv1YhTtvEvZH7x36WRnqQSFPEeXbye
+         JZ1Snrodw/ae1bAevVcp9AkjOR5dcRKb8NQ3E/xDAAHhIWbIFF43TvQKVZXVq627+Xep
+         heZg==
+X-Gm-Message-State: AOJu0Yxsf8uLD/Wz6JFvY4MrBo9wUhlXDEjUl0YIVdZbQRSonxP9DGkK
+	JduXr7g5rj1MSwVWwU2Gix0Q6Y7PCSZwuYQGDYkwmSNDbemf4I1mDSXToxqmR2BM
+X-Gm-Gg: ATEYQzwo7PXfQg3WqkscCKXgbkvqhesZbLlMFoXiO1jjPLJFPX9IGo9H5FkY3X/r/Pi
+	iF8KtL+PdXNRr7yhNFAdYhXb4nIgxe5htUBrTI3QoqYCmVjNow6xbMj+tfSkZ1CdydIs7OfHCDS
+	i4ACz4dT+mHyS3BTrISDIzb89LgQWPVBlyCXDnNj08qJV6i7wCGRDFhyRS8U1u53yM71RCe+xts
+	Xfz7cBAGncib9UBwMdz3xFGjWcQYAHtuUAGThEOt25Iby4R2EkgPaINBOVHqky7ZKr6x0PHkNLC
+	sQz5TgkTVMnSlLlOvZhux3dXNNwGLDWChNodh3JMfrzKiFgKHRyPvul6ltEbnGqHephlAehYl+q
+	9khlrZIoaNOLDUPmOu9ufvVGkN8Ptgo4VXGYHmZE/1ngBU7cXTCLQvA0JZZNy0SpL3psdMckFYa
+	p1bd4GJrySqqrJ+IxR+0S+rYn7DFalkc2DaYs4Ku9iACEcP6I=
+X-Received: by 2002:a05:600c:468b:b0:483:c35d:367f with SMTP id 5b1f17b1804b1-483c3dd6fd2mr60987695e9.21.1772134429333;
+        Thu, 26 Feb 2026 11:33:49 -0800 (PST)
 Received: from localhost.localdomain ([2a00:23c4:a758:8a01:bf1f:8924:d67:fd04])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483bfb776dfsm76701365e9.1.2026.02.26.11.28.50
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483bd75df90sm167721555e9.14.2026.02.26.11.33.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Feb 2026 11:28:50 -0800 (PST)
+        Thu, 26 Feb 2026 11:33:48 -0800 (PST)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,181 +58,44 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 4/5] ASoC: renesas: rz-ssi: Add support for 24 bits sample width
-Date: Thu, 26 Feb 2026 19:28:41 +0000
-Message-ID: <20260226192846.449277-5-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 0/8] RZ/G2L SSI Improvements
+Date: Thu, 26 Feb 2026 19:33:24 +0000
+Message-ID: <20260226193348.449329-1-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260226192846.449277-1-biju.das.jz@bp.renesas.com>
-References: <20260226192846.449277-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 26 Feb 2026 19:29:03 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22000
+ <cip-dev@lists.cip-project.org>; Thu, 26 Feb 2026 19:33:53 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22002
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[ Upstream commit 9e10709f831408d948be66bc8f6329fa37a3dc82 ]
+Add support for 24, 32 bit sample format width. Also fix
+channel swap issue.
 
-Add support for 24 bits sample format width for RZ/G2L SoCs.
+patch#1  fixes 2 issue
+1) ktime_get related kernel warning during ostm driver suspend 
+2) Fullduplex testing triggers an error:
+   rz-ssi-pcm-audio 10049c00.ssi: timeout waiting for SSI idle errors
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://patch.msgid.link/20251114075856.4751-5-biju.das.jz@bp.renesas.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- sound/soc/sh/rz-ssi.c | 75 ++++++++++++++++++++++++++++++++-----------
- 1 file changed, 57 insertions(+), 18 deletions(-)
+Biju Das (7):
+  ASoC: renesas: rz-ssi: Fix channel swap issue in full duplex mode
+  ASoC: renesas: rz-ssi: Fix rz_ssi_priv::hw_params_cache::sample_width
+  ASoC: renesas: rz-ssi: Use dev variable in probe()
+  ASoC: renesas: rz-ssi: Remove trailing comma in the terminator entry
+  ASoC: renesas: rz-ssi: Move DMA configuration
+  ASoC: renesas: rz-ssi: Add support for 24 bits sample width
+  ASoC: renesas: rz-ssi: Add support for 32 bits sample width
 
-diff --git a/sound/soc/sh/rz-ssi.c b/sound/soc/sh/rz-ssi.c
-index 8c326bd4ba7d..53a5d0b9d58c 100644
---- a/sound/soc/sh/rz-ssi.c
-+++ b/sound/soc/sh/rz-ssi.c
-@@ -38,6 +38,7 @@
- #define SSICR_MST		BIT(14)
- #define SSICR_BCKP		BIT(13)
- #define SSICR_LRCKP		BIT(12)
-+#define SSICR_PDTA		BIT(9)
- #define SSICR_CKDV(x)		(((x) & 0xf) << 4)
- #define SSICR_TEN		BIT(1)
- #define SSICR_REN		BIT(0)
-@@ -74,7 +75,7 @@
- #define PREALLOC_BUFFER_MAX	(SZ_32K)
- 
- #define SSI_RATES		SNDRV_PCM_RATE_8000_48000 /* 8k-48kHz */
--#define SSI_FMTS		SNDRV_PCM_FMTBIT_S16_LE
-+#define SSI_FMTS		(SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S24_LE)
- #define SSI_CHAN_MIN		2
- #define SSI_CHAN_MAX		2
- #define SSI_FIFO_DEPTH		32
-@@ -300,11 +301,24 @@ static int rz_ssi_clk_setup(struct rz_ssi_priv *ssi, unsigned int rate,
- 	}
- 
- 	/*
--	 * DWL: Data Word Length = 16 bits
-+	 * DWL: Data Word Length = {16, 24} bits
- 	 * SWL: System Word Length = 32 bits
- 	 */
- 	ssicr |= SSICR_CKDV(clk_ckdv);
--	ssicr |= SSICR_DWL(1) | SSICR_SWL(3);
-+	switch (ssi->hw_params_cache.sample_width) {
-+	case 16:
-+		ssicr |= SSICR_DWL(1);
-+		break;
-+	case 24:
-+		ssicr |= SSICR_DWL(5) | SSICR_PDTA;
-+		break;
-+	default:
-+		dev_err(ssi->dev, "Not support %u data width",
-+			ssi->hw_params_cache.sample_width);
-+		return -EINVAL;
-+	}
-+
-+	ssicr |= SSICR_SWL(3);
- 	rz_ssi_reg_writel(ssi, SSICR, ssicr);
- 	rz_ssi_reg_writel(ssi, SSIFCR,
- 			  (SSIFCR_AUCKE | SSIFCR_TFRST | SSIFCR_RFRST));
-@@ -463,7 +477,6 @@ static int rz_ssi_pio_recv(struct rz_ssi_priv *ssi, struct rz_ssi_stream *strm)
- {
- 	struct snd_pcm_substream *substream = strm->substream;
- 	struct snd_pcm_runtime *runtime;
--	u16 *buf;
- 	int fifo_samples;
- 	int frames_left;
- 	int samples;
-@@ -498,12 +511,23 @@ static int rz_ssi_pio_recv(struct rz_ssi_priv *ssi, struct rz_ssi_stream *strm)
- 			break;
- 
- 		/* calculate new buffer index */
--		buf = (u16 *)runtime->dma_area;
--		buf += strm->buffer_pos * runtime->channels;
-+		if (ssi->hw_params_cache.sample_width == 16) {
-+			u16 *buf;
- 
--		/* Note, only supports 16-bit samples */
--		for (i = 0; i < samples; i++)
--			*buf++ = (u16)(rz_ssi_reg_readl(ssi, SSIFRDR) >> 16);
-+			buf = (u16 *)runtime->dma_area;
-+			buf += strm->buffer_pos * runtime->channels;
-+
-+			for (i = 0; i < samples; i++)
-+				*buf++ = (u16)(rz_ssi_reg_readl(ssi, SSIFRDR) >> 16);
-+		} else {
-+			u32 *buf;
-+
-+			buf = (u32 *)runtime->dma_area;
-+			buf += strm->buffer_pos * runtime->channels;
-+
-+			for (i = 0; i < samples; i++)
-+				*buf++ = rz_ssi_reg_readl(ssi, SSIFRDR);
-+		}
- 
- 		rz_ssi_reg_mask_setl(ssi, SSIFSR, SSIFSR_RDF, 0);
- 		rz_ssi_pointer_update(strm, samples / runtime->channels);
-@@ -521,7 +545,6 @@ static int rz_ssi_pio_send(struct rz_ssi_priv *ssi, struct rz_ssi_stream *strm)
- 	int frames_left;
- 	int i;
- 	u32 ssifsr;
--	u16 *buf;
- 
- 	if (!rz_ssi_stream_is_valid(ssi, strm))
- 		return -EINVAL;
-@@ -550,12 +573,23 @@ static int rz_ssi_pio_send(struct rz_ssi_priv *ssi, struct rz_ssi_stream *strm)
- 		return 0;
- 
- 	/* calculate new buffer index */
--	buf = (u16 *)(runtime->dma_area);
--	buf += strm->buffer_pos * runtime->channels;
-+	if (ssi->hw_params_cache.sample_width == 16) {
-+		u16 *buf;
-+
-+		buf = (u16 *)(runtime->dma_area);
-+		buf += strm->buffer_pos * runtime->channels;
-+
-+		for (i = 0; i < samples; i++)
-+			rz_ssi_reg_writel(ssi, SSIFTDR, ((u32)(*buf++) << 16));
-+	} else {
-+		u32 *buf;
- 
--	/* Note, only supports 16-bit samples */
--	for (i = 0; i < samples; i++)
--		rz_ssi_reg_writel(ssi, SSIFTDR, ((u32)(*buf++) << 16));
-+		buf = (u32 *)(runtime->dma_area);
-+		buf += strm->buffer_pos * runtime->channels;
-+
-+		for (i = 0; i < samples; i++)
-+			rz_ssi_reg_writel(ssi, SSIFTDR, *buf++);
-+	}
- 
- 	rz_ssi_reg_mask_setl(ssi, SSIFSR, SSIFSR_TDE, 0);
- 	rz_ssi_pointer_update(strm, samples / runtime->channels);
-@@ -666,8 +700,13 @@ static int rz_ssi_dma_slave_config(struct rz_ssi_priv *ssi,
- 	cfg.direction = is_play ? DMA_MEM_TO_DEV : DMA_DEV_TO_MEM;
- 	cfg.dst_addr = ssi->phys + SSIFTDR;
- 	cfg.src_addr = ssi->phys + SSIFRDR;
--	cfg.src_addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
--	cfg.dst_addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
-+	if (ssi->hw_params_cache.sample_width == 16) {
-+		cfg.src_addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
-+		cfg.dst_addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
-+	} else {
-+		cfg.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-+		cfg.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-+	}
- 
- 	return dmaengine_slave_config(dma_ch, &cfg);
- }
-@@ -985,7 +1024,7 @@ static int rz_ssi_dai_hw_params(struct snd_pcm_substream *substream,
- 	unsigned int rate = params_rate(params);
- 	int ret;
- 
--	if (sample_bits != 16) {
-+	if (!(sample_bits == 16 || sample_bits == 24)) {
- 		dev_err(ssi->dev, "Unsupported sample width: %d\n",
- 			sample_bits);
- 		return -EINVAL;
+Geert Uytterhoeven (1):
+  iopoll: Do not use timekeeping in read_poll_timeout_atomic()
+
+ include/linux/iopoll.h |  22 +++--
+ sound/soc/sh/rz-ssi.c  | 183 ++++++++++++++++++++++++++++-------------
+ 2 files changed, 141 insertions(+), 64 deletions(-)
+
 -- 
 2.43.0
 
