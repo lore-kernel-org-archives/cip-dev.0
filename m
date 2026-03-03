@@ -2,428 +2,403 @@ Return-Path: <cosmin-gabriel.tanislav.xa@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A926BEDA6AB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEED8EDA6B4
 	for <webhook@archiver.kernel.org>; Tue,  3 Mar 2026 16:55:00 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.msgproc01-g2.23260.1772556884440938222
  for <cip-dev@lists.cip-project.org>;
- Tue, 03 Mar 2026 08:54:51 -0800
+ Tue, 03 Mar 2026 08:54:58 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: cosmin-gabriel.tanislav.xa@renesas.com)
-X-CSE-ConnectionGUID: 9zpq3f2sTpS4a+wWX38MLg==
-X-CSE-MsgGUID: M/GGnZZMT1eecxQa/PYo7w==
+X-CSE-ConnectionGUID: Mqhrzz5ETH2fx4oTyCB4mg==
+X-CSE-MsgGUID: NuRsBFsTT1C926KJYLvwdg==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 04 Mar 2026 01:54:50 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 04 Mar 2026 01:54:58 +0900
 Received: from demon-pc.localdomain (unknown [10.226.93.13])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 8C0824005464;
-	Wed,  4 Mar 2026 01:54:49 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id ABB0740031DC;
+	Wed,  4 Mar 2026 01:54:56 +0900 (JST)
 From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.12.y-cip 06/11] iio: adc: add RZ/T2H / RZ/N2H ADC driver
-Date: Tue,  3 Mar 2026 18:53:46 +0200
-Message-ID: <20260303165351.914437-7-cosmin-gabriel.tanislav.xa@renesas.com>
+Subject: [PATCH 6.12.y-cip 10/11] arm64: dts: renesas: rzt2h-rzn2h-evk: Reorder ADC nodes
+Date: Tue,  3 Mar 2026 18:53:50 +0200
+Message-ID: <20260303165351.914437-11-cosmin-gabriel.tanislav.xa@renesas.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260303165351.914437-1-cosmin-gabriel.tanislav.xa@renesas.com>
 References: <20260303165351.914437-1-cosmin-gabriel.tanislav.xa@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 03 Mar 2026 16:55:00 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22066
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22070
 
-commit fc3b97dd71ab428d6cf6a49c7f67b7067feb6456 upstream.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Add support for the A/D 12-Bit successive approximation converters found
-in the Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs.
+commit 5979010bcc665e9bcf41b22f111b3fe7fc4eadb1 upstream.
 
-RZ/T2H has two ADCs with 4 channels and one with 6.
-RZ/N2H has two ADCs with 4 channels and one with 15.
+Reorder the ADC nodes in the dts/i files so they follow the same
+alphabetical ordering used elsewhere in these files.
 
-Conversions can be performed in single or continuous mode. Result of the
-conversion is stored in a 16-bit data register corresponding to each
-channel.
-
-The conversions can be started by a software trigger, a synchronous
-trigger (from MTU or from ELC) or an asynchronous external trigger (from
-ADTRGn# pin).
-
-Only single mode with software trigger is supported for now.
-
-Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Reviewed-by: Nuno Sá <nuno.sa@analog.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-[cosmin.tanislav:
- - unquote MODULE_IMPORT_NS() argument]
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://patch.msgid.link/20260115122210.3971063-1-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 ---
- MAINTAINERS                 |   1 +
- drivers/iio/adc/Kconfig     |  11 ++
- drivers/iio/adc/Makefile    |   1 +
- drivers/iio/adc/rzt2h_adc.c | 304 ++++++++++++++++++++++++++++++++++++
- 4 files changed, 317 insertions(+)
- create mode 100644 drivers/iio/adc/rzt2h_adc.c
+ .../dts/renesas/r9a09g077m44-rzt2h-evk.dts    |  55 +++---
+ .../dts/renesas/r9a09g087m44-rzn2h-evk.dts    |  89 +++++-----
+ .../dts/renesas/rzt2h-n2h-evk-common.dtsi     | 157 +++++++++---------
+ 3 files changed, 152 insertions(+), 149 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ec00eee33131..52eeeb7cb01b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19692,6 +19692,7 @@ L:	linux-iio@vger.kernel.org
- L:	linux-renesas-soc@vger.kernel.org
- S:	Supported
- F:	Documentation/devicetree/bindings/iio/adc/renesas,r9a09g077-adc.yaml
-+F:	drivers/iio/adc/rzt2h_adc.c
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts
+index 95348fee1a03..d0a982a101b1 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts
++++ b/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts
+@@ -115,6 +115,34 @@ led-8 {
+ 	};
+ };
  
- RENESAS RTCA-3 RTC DRIVER
- M:	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-index 154d58ad9268..8e63b24c7630 100644
---- a/drivers/iio/adc/Kconfig
-+++ b/drivers/iio/adc/Kconfig
-@@ -1189,6 +1189,17 @@ config RZG2L_ADC
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called rzg2l_adc.
- 
-+config RZT2H_ADC
-+	tristate "Renesas RZ/T2H / RZ/N2H ADC driver"
-+	depends on ARCH_RENESAS || COMPILE_TEST
-+	select IIO_ADC_HELPER
-+	help
-+	  Say yes here to build support for the ADC found in Renesas
-+	  RZ/T2H / RZ/N2H SoCs.
++&adc2 {
++	status = "okay";
 +
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called rzt2h_adc.
++	channel@0 {
++		reg = <0x0>;
++	};
 +
- config SC27XX_ADC
- 	tristate "Spreadtrum SC27xx series PMICs ADC"
- 	depends on MFD_SC27XX_PMIC || COMPILE_TEST
-diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
-index 339a7ae9cf62..c64cc574d4a2 100644
---- a/drivers/iio/adc/Makefile
-+++ b/drivers/iio/adc/Makefile
-@@ -108,6 +108,7 @@ obj-$(CONFIG_RICHTEK_RTQ6056) += rtq6056.o
- obj-$(CONFIG_RN5T618_ADC) += rn5t618-adc.o
- obj-$(CONFIG_ROCKCHIP_SARADC) += rockchip_saradc.o
- obj-$(CONFIG_RZG2L_ADC) += rzg2l_adc.o
-+obj-$(CONFIG_RZT2H_ADC) += rzt2h_adc.o
- obj-$(CONFIG_SC27XX_ADC) += sc27xx_adc.o
- obj-$(CONFIG_SD_ADC_MODULATOR) += sd_adc_modulator.o
- obj-$(CONFIG_SOPHGO_CV1800B_ADC) += sophgo-cv1800b-adc.o
-diff --git a/drivers/iio/adc/rzt2h_adc.c b/drivers/iio/adc/rzt2h_adc.c
-new file mode 100644
-index 000000000000..07b2aeeaa2dc
---- /dev/null
-+++ b/drivers/iio/adc/rzt2h_adc.c
-@@ -0,0 +1,304 @@
-+// SPDX-License-Identifier: GPL-2.0
++	channel@1 {
++		reg = <0x1>;
++	};
 +
-+#include <linux/bitfield.h>
-+#include <linux/cleanup.h>
-+#include <linux/completion.h>
-+#include <linux/delay.h>
-+#include <linux/iio/adc-helpers.h>
-+#include <linux/iio/iio.h>
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <linux/iopoll.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/property.h>
++	channel@2 {
++		reg = <0x2>;
++	};
 +
-+#define RZT2H_ADCSR_REG			0x00
-+#define RZT2H_ADCSR_ADIE_MASK		BIT(12)
-+#define RZT2H_ADCSR_ADCS_MASK		GENMASK(14, 13)
-+#define RZT2H_ADCSR_ADCS_SINGLE		0b00
-+#define RZT2H_ADCSR_ADST_MASK		BIT(15)
++	channel@3 {
++		reg = <0x3>;
++	};
 +
-+#define RZT2H_ADANSA0_REG		0x04
-+#define RZT2H_ADANSA0_CH_MASK(x)	BIT(x)
++	channel@4 {
++		reg = <0x4>;
++	};
 +
-+#define RZT2H_ADDR_REG(x)		(0x20 + 0x2 * (x))
-+
-+#define RZT2H_ADCALCTL_REG		0x1f0
-+#define RZT2H_ADCALCTL_CAL_MASK		BIT(0)
-+#define RZT2H_ADCALCTL_CAL_RDY_MASK	BIT(1)
-+#define RZT2H_ADCALCTL_CAL_ERR_MASK	BIT(2)
-+
-+#define RZT2H_ADC_MAX_CHANNELS		16
-+
-+struct rzt2h_adc {
-+	void __iomem *base;
-+	struct device *dev;
-+
-+	struct completion completion;
-+	/* lock to protect against multiple access to the device */
-+	struct mutex lock;
-+
-+	const struct iio_chan_spec *channels;
-+	unsigned int num_channels;
-+	unsigned int max_channels;
++	channel@5 {
++		reg = <0x5>;
++	};
 +};
 +
-+static void rzt2h_adc_start(struct rzt2h_adc *adc, unsigned int conversion_type)
-+{
-+	u16 reg;
+ &i2c0 {
+ 	pinctrl-0 = <&i2c0_pins>;
+ 	pinctrl-names = "default";
+@@ -149,30 +177,3 @@ i2c1_pins: i2c1-pins {
+ 	};
+ };
+ 
+-&adc2 {
+-	status = "okay";
+-
+-	channel@0 {
+-		reg = <0x0>;
+-	};
+-
+-	channel@1 {
+-		reg = <0x1>;
+-	};
+-
+-	channel@2 {
+-		reg = <0x2>;
+-	};
+-
+-	channel@3 {
+-		reg = <0x3>;
+-	};
+-
+-	channel@4 {
+-		reg = <0x4>;
+-	};
+-
+-	channel@5 {
+-		reg = <0x5>;
+-	};
+-};
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
+index 079fda5f8ced..90bfcd76845b 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
++++ b/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
+@@ -143,50 +143,6 @@ led-11 {
+ 	};
+ };
+ 
+-#if I2C0
+-&i2c0 {
+-	pinctrl-0 = <&i2c0_pins>;
+-	pinctrl-names = "default";
+-	clock-frequency = <400000>;
+-	status = "okay";
+-};
+-#endif
+-
+-&i2c1 {
+-	pinctrl-0 = <&i2c1_pins>;
+-	pinctrl-names = "default";
+-	clock-frequency = <400000>;
+-	status = "okay";
+-};
+-
+-&pinctrl {
+-	/*
+-	 * I2C0 Pin Configuration:
+-	 * ------------------------
+-	 * Signal | Pin     | DSW15
+-	 * -------|---------|--------------
+-	 * SCL    | P14_6   | 8: OFF, 9: ON, 10: OFF
+-	 * SDA    | P14_7   | 5: ON, 6: OFF
+-	 */
+-	i2c0_pins: i2c0-pins {
+-		pinmux = <RZT2H_PORT_PINMUX(14, 6, 0x17)>,
+-			 <RZT2H_PORT_PINMUX(14, 7, 0x17)>;
+-	};
+-
+-	/*
+-	 * I2C1 Pin Configuration:
+-	 * ------------------------
+-	 * Signal | Pin     | DSW7
+-	 * -------|---------|--------------
+-	 * SCL    | P03_3   | 1: ON, 2: OFF
+-	 * SDA    | P03_4   | 3: ON, 4: OFF
+-	 */
+-	i2c1_pins: i2c1-pins {
+-		pinmux = <RZT2H_PORT_PINMUX(3, 3, 0x17)>,
+-			 <RZT2H_PORT_PINMUX(3, 4, 0x17)>;
+-	};
+-};
+-
+ &adc2 {
+ 	status = "okay";
+ 
+@@ -250,3 +206,48 @@ channel@e {
+ 		reg = <0xe>;
+ 	};
+ };
 +
-+	reg = readw(adc->base + RZT2H_ADCSR_REG);
++#if I2C0
++&i2c0 {
++	pinctrl-0 = <&i2c0_pins>;
++	pinctrl-names = "default";
++	clock-frequency = <400000>;
++	status = "okay";
++};
++#endif
 +
-+	/* Set conversion type */
-+	FIELD_MODIFY(RZT2H_ADCSR_ADCS_MASK, &reg, conversion_type);
++&i2c1 {
++	pinctrl-0 = <&i2c1_pins>;
++	pinctrl-names = "default";
++	clock-frequency = <400000>;
++	status = "okay";
++};
 +
-+	/* Set end of conversion interrupt and start bit. */
-+	reg |= RZT2H_ADCSR_ADIE_MASK | RZT2H_ADCSR_ADST_MASK;
-+
-+	writew(reg, adc->base + RZT2H_ADCSR_REG);
-+}
-+
-+static void rzt2h_adc_stop(struct rzt2h_adc *adc)
-+{
-+	u16 reg;
-+
-+	reg = readw(adc->base + RZT2H_ADCSR_REG);
-+
-+	/* Clear end of conversion interrupt and start bit. */
-+	reg &= ~(RZT2H_ADCSR_ADIE_MASK | RZT2H_ADCSR_ADST_MASK);
-+
-+	writew(reg, adc->base + RZT2H_ADCSR_REG);
-+}
-+
-+static int rzt2h_adc_read_single(struct rzt2h_adc *adc, unsigned int ch, int *val)
-+{
-+	int ret;
-+
-+	ret = pm_runtime_resume_and_get(adc->dev);
-+	if (ret)
-+		return ret;
-+
-+	mutex_lock(&adc->lock);
-+
-+	reinit_completion(&adc->completion);
-+
-+	/* Enable a single channel */
-+	writew(RZT2H_ADANSA0_CH_MASK(ch), adc->base + RZT2H_ADANSA0_REG);
-+
-+	rzt2h_adc_start(adc, RZT2H_ADCSR_ADCS_SINGLE);
++&pinctrl {
++	/*
++	 * I2C0 Pin Configuration:
++	 * ------------------------
++	 * Signal | Pin     | DSW15
++	 * -------|---------|--------------
++	 * SCL    | P14_6   | 8: OFF, 9: ON, 10: OFF
++	 * SDA    | P14_7   | 5: ON, 6: OFF
++	 */
++	i2c0_pins: i2c0-pins {
++		pinmux = <RZT2H_PORT_PINMUX(14, 6, 0x17)>,
++			 <RZT2H_PORT_PINMUX(14, 7, 0x17)>;
++	};
 +
 +	/*
-+	 * Datasheet Page 2770, Table 41.1:
-+	 * 0.32us per channel when sample-and-hold circuits are not in use.
++	 * I2C1 Pin Configuration:
++	 * ------------------------
++	 * Signal | Pin     | DSW7
++	 * -------|---------|--------------
++	 * SCL    | P03_3   | 1: ON, 2: OFF
++	 * SDA    | P03_4   | 3: ON, 4: OFF
 +	 */
-+	ret = wait_for_completion_timeout(&adc->completion, usecs_to_jiffies(1));
-+	if (!ret) {
-+		ret = -ETIMEDOUT;
-+		goto disable;
-+	}
-+
-+	*val = readw(adc->base + RZT2H_ADDR_REG(ch));
-+	ret = IIO_VAL_INT;
-+
-+disable:
-+	rzt2h_adc_stop(adc);
-+
-+	mutex_unlock(&adc->lock);
-+
-+	pm_runtime_put_autosuspend(adc->dev);
-+
-+	return ret;
-+}
-+
-+static void rzt2h_adc_set_cal(struct rzt2h_adc *adc, bool cal)
-+{
-+	u16 val;
-+
-+	val = readw(adc->base + RZT2H_ADCALCTL_REG);
-+	if (cal)
-+		val |= RZT2H_ADCALCTL_CAL_MASK;
-+	else
-+		val &= ~RZT2H_ADCALCTL_CAL_MASK;
-+
-+	writew(val, adc->base + RZT2H_ADCALCTL_REG);
-+}
-+
-+static int rzt2h_adc_calibrate(struct rzt2h_adc *adc)
-+{
-+	u16 val;
-+	int ret;
-+
-+	rzt2h_adc_set_cal(adc, true);
-+
-+	ret = read_poll_timeout(readw, val, val & RZT2H_ADCALCTL_CAL_RDY_MASK,
-+				200, 1000, true, adc->base + RZT2H_ADCALCTL_REG);
-+	if (ret) {
-+		dev_err(adc->dev, "Calibration timed out: %d\n", ret);
-+		return ret;
-+	}
-+
-+	rzt2h_adc_set_cal(adc, false);
-+
-+	if (val & RZT2H_ADCALCTL_CAL_ERR_MASK) {
-+		dev_err(adc->dev, "Calibration failed\n");
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int rzt2h_adc_read_raw(struct iio_dev *indio_dev,
-+			      struct iio_chan_spec const *chan,
-+			      int *val, int *val2, long mask)
-+{
-+	struct rzt2h_adc *adc = iio_priv(indio_dev);
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_RAW:
-+		return rzt2h_adc_read_single(adc, chan->channel, val);
-+	case IIO_CHAN_INFO_SCALE:
-+		*val = 1800;
-+		*val2 = 12;
-+		return IIO_VAL_FRACTIONAL_LOG2;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static const struct iio_info rzt2h_adc_iio_info = {
-+	.read_raw = rzt2h_adc_read_raw,
++	i2c1_pins: i2c1-pins {
++		pinmux = <RZT2H_PORT_PINMUX(3, 3, 0x17)>,
++			 <RZT2H_PORT_PINMUX(3, 4, 0x17)>;
++	};
 +};
 +
-+static irqreturn_t rzt2h_adc_isr(int irq, void *private)
-+{
-+	struct rzt2h_adc *adc = private;
+diff --git a/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi b/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
+index e11293db0f0b..d2cc1774a8aa 100644
+--- a/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
+@@ -65,6 +65,85 @@ vccq_sdhi1: regulator-vccq-sdhi1 {
+ #endif
+ };
+ 
++/*
++ * ADC0 AN000 can be connected to a potentiometer on the board or
++ * exposed on ADC header.
++ *
++ * T2H:
++ * SW17[1] = ON, SW17[2] = OFF - Potentiometer
++ * SW17[1] = OFF, SW17[2] = ON  - CN41 header
++ * N2H:
++ * DSW6[1] = OFF, DSW6[2] = ON - Potentiometer
++ * DSW6[1] = ON, DSW6[2] = OFF - CN3 header
++ */
++&adc0 {
++	status = "okay";
 +
-+	complete(&adc->completion);
++	channel@0 {
++		reg = <0x0>;
++	};
 +
-+	return IRQ_HANDLED;
-+}
++	channel@1 {
++		reg = <0x1>;
++	};
 +
-+static const struct iio_chan_spec rzt2h_adc_chan_template = {
-+	.indexed = 1,
-+	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-+			      BIT(IIO_CHAN_INFO_SCALE),
-+	.type = IIO_VOLTAGE,
++	channel@2 {
++		reg = <0x2>;
++	};
++
++	channel@3 {
++		reg = <0x3>;
++	};
 +};
 +
-+static int rzt2h_adc_parse_properties(struct rzt2h_adc *adc)
-+{
-+	struct iio_chan_spec *chan_array;
-+	unsigned int i;
-+	int ret;
++/*
++ * ADC1 AN100 can be exposed on ADC header or on mikroBUS connector.
++ *
++ * T2H:
++ * SW18[1] = ON, SW18[2] = OFF - CN42 header
++ * SW18[1] = OFF, SW18[2] = ON - mikroBUS
++ * N2H:
++ * DSW6[3] = ON, DSW6[4] = OFF - CN4 header
++ * DSW6[3] = OFF, DSW6[4] = ON - mikroBUS
++ *
++ * ADC1 AN101 can be exposed on ADC header or on Grove2 connector.
++ *
++ * T2H:
++ * SW18[3] = ON, SW18[4] = OFF - CN42 header
++ * SW18[3] = OFF, SW18[4] = ON - Grove2
++ * N2H:
++ * DSW6[5] = ON, DSW6[6] = OFF - CN4 header
++ * DSW6[5] = OFF, DSW6[6] = ON - Grove2
++ *
++ * ADC1 AN102 can be exposed on ADC header or on Grove2 connector.
++ *
++ * T2H:
++ * SW18[5] = ON, SW18[6] = OFF - CN42 header
++ * SW18[5] = OFF, SW18[6] = ON - Grove2
++ * N2H:
++ * DSW6[7] = ON, DSW6[8] = OFF - CN4 header
++ * DSW6[7] = OFF, DSW6[8] = ON - Grove2
++ */
++&adc1 {
++	status = "okay";
 +
-+	ret = devm_iio_adc_device_alloc_chaninfo_se(adc->dev,
-+						    &rzt2h_adc_chan_template,
-+						    RZT2H_ADC_MAX_CHANNELS - 1,
-+						    &chan_array);
-+	if (ret < 0)
-+		return dev_err_probe(adc->dev, ret, "Failed to read channel info");
++	channel@0 {
++		reg = <0x0>;
++	};
 +
-+	adc->num_channels = ret;
-+	adc->channels = chan_array;
++	channel@1 {
++		reg = <0x1>;
++	};
 +
-+	for (i = 0; i < adc->num_channels; i++)
-+		if (chan_array[i].channel + 1 > adc->max_channels)
-+			adc->max_channels = chan_array[i].channel + 1;
++	channel@2 {
++		reg = <0x2>;
++	};
 +
-+	return 0;
-+}
-+
-+static int rzt2h_adc_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct iio_dev *indio_dev;
-+	struct rzt2h_adc *adc;
-+	int ret, irq;
-+
-+	indio_dev = devm_iio_device_alloc(dev, sizeof(*adc));
-+	if (!indio_dev)
-+		return -ENOMEM;
-+
-+	adc = iio_priv(indio_dev);
-+	adc->dev = dev;
-+	init_completion(&adc->completion);
-+
-+	ret = devm_mutex_init(dev, &adc->lock);
-+	if (ret)
-+		return ret;
-+
-+	platform_set_drvdata(pdev, adc);
-+
-+	ret = rzt2h_adc_parse_properties(adc);
-+	if (ret)
-+		return ret;
-+
-+	adc->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(adc->base))
-+		return PTR_ERR(adc->base);
-+
-+	pm_runtime_set_autosuspend_delay(dev, 300);
-+	pm_runtime_use_autosuspend(dev);
-+	ret = devm_pm_runtime_enable(dev);
-+	if (ret)
-+		return ret;
-+
-+	irq = platform_get_irq_byname(pdev, "adi");
-+	if (irq < 0)
-+		return irq;
-+
-+	ret = devm_request_irq(dev, irq, rzt2h_adc_isr, 0, dev_name(dev), adc);
-+	if (ret)
-+		return ret;
-+
-+	indio_dev->name = "rzt2h-adc";
-+	indio_dev->info = &rzt2h_adc_iio_info;
-+	indio_dev->modes = INDIO_DIRECT_MODE;
-+	indio_dev->channels = adc->channels;
-+	indio_dev->num_channels = adc->num_channels;
-+
-+	return devm_iio_device_register(dev, indio_dev);
-+}
-+
-+static const struct of_device_id rzt2h_adc_match[] = {
-+	{ .compatible = "renesas,r9a09g077-adc" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, rzt2h_adc_match);
-+
-+static int rzt2h_adc_pm_runtime_resume(struct device *dev)
-+{
-+	struct rzt2h_adc *adc = dev_get_drvdata(dev);
-+
-+	/*
-+	 * Datasheet Page 2810, Section 41.5.6:
-+	 * After release from the module-stop state, wait for at least
-+	 * 0.5 µs before starting A/D conversion.
-+	 */
-+	fsleep(1);
-+
-+	return rzt2h_adc_calibrate(adc);
-+}
-+
-+static const struct dev_pm_ops rzt2h_adc_pm_ops = {
-+	RUNTIME_PM_OPS(NULL, rzt2h_adc_pm_runtime_resume, NULL)
++	channel@3 {
++		reg = <0x3>;
++	};
 +};
 +
-+static struct platform_driver rzt2h_adc_driver = {
-+	.probe		= rzt2h_adc_probe,
-+	.driver		= {
-+		.name		= "rzt2h-adc",
-+		.of_match_table = rzt2h_adc_match,
-+		.pm		= pm_ptr(&rzt2h_adc_pm_ops),
-+	},
-+};
-+
-+module_platform_driver(rzt2h_adc_driver);
-+
-+MODULE_AUTHOR("Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>");
-+MODULE_DESCRIPTION("Renesas RZ/T2H / RZ/N2H ADC driver");
-+MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(IIO_DRIVER);
+ &extal_clk {
+ 	clock-frequency = <25000000>;
+ };
+@@ -223,81 +302,3 @@ &wdt2 {
+ 	timeout-sec = <60>;
+ };
+ 
+-/*
+- * ADC0 AN000 can be connected to a potentiometer on the board or
+- * exposed on ADC header.
+- *
+- * T2H:
+- * SW17[1] = ON, SW17[2] = OFF - Potentiometer
+- * SW17[1] = OFF, SW17[2] = ON  - CN41 header
+- * N2H:
+- * DSW6[1] = OFF, DSW6[2] = ON - Potentiometer
+- * DSW6[1] = ON, DSW6[2] = OFF - CN3 header
+- */
+-&adc0 {
+-	status = "okay";
+-
+-	channel@0 {
+-		reg = <0x0>;
+-	};
+-
+-	channel@1 {
+-		reg = <0x1>;
+-	};
+-
+-	channel@2 {
+-		reg = <0x2>;
+-	};
+-
+-	channel@3 {
+-		reg = <0x3>;
+-	};
+-};
+-
+-/*
+- * ADC1 AN100 can be exposed on ADC header or on mikroBUS connector.
+- *
+- * T2H:
+- * SW18[1] = ON, SW18[2] = OFF - CN42 header
+- * SW18[1] = OFF, SW18[2] = ON - mikroBUS
+- * N2H:
+- * DSW6[3] = ON, DSW6[4] = OFF - CN4 header
+- * DSW6[3] = OFF, DSW6[4] = ON - mikroBUS
+- *
+- * ADC1 AN101 can be exposed on ADC header or on Grove2 connector.
+- *
+- * T2H:
+- * SW18[3] = ON, SW18[4] = OFF - CN42 header
+- * SW18[3] = OFF, SW18[4] = ON - Grove2
+- * N2H:
+- * DSW6[5] = ON, DSW6[6] = OFF - CN4 header
+- * DSW6[5] = OFF, DSW6[6] = ON - Grove2
+- *
+- * ADC1 AN102 can be exposed on ADC header or on Grove2 connector.
+- *
+- * T2H:
+- * SW18[5] = ON, SW18[6] = OFF - CN42 header
+- * SW18[5] = OFF, SW18[6] = ON - Grove2
+- * N2H:
+- * DSW6[7] = ON, DSW6[8] = OFF - CN4 header
+- * DSW6[7] = OFF, DSW6[8] = ON - Grove2
+- */
+-&adc1 {
+-	status = "okay";
+-
+-	channel@0 {
+-		reg = <0x0>;
+-	};
+-
+-	channel@1 {
+-		reg = <0x1>;
+-	};
+-
+-	channel@2 {
+-		reg = <0x2>;
+-	};
+-
+-	channel@3 {
+-		reg = <0x3>;
+-	};
+-};
 -- 
 2.53.0
 
