@@ -2,41 +2,41 @@ Return-Path: <tommaso.merciai.xr@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17C82EC0476
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C72BEC047A
 	for <webhook@archiver.kernel.org>; Tue,  3 Mar 2026 09:23:37 +0000 (UTC)
-Received: from OS0P286CU011.outbound.protection.outlook.com (OS0P286CU011.outbound.protection.outlook.com [52.101.228.66])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.14392.1772529814325488562
+Received: from TY3P286CU002.outbound.protection.outlook.com (TY3P286CU002.outbound.protection.outlook.com [52.101.229.11])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.14395.1772529810163723216
  for <cip-dev@lists.cip-project.org>;
- Tue, 03 Mar 2026 01:23:34 -0800
+ Tue, 03 Mar 2026 01:23:30 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=S7EafKl/;
- spf=pass (domain: bp.renesas.com, ip: 52.101.228.66, mailfrom: tommaso.merciai.xr@bp.renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=bEtsmOf+;
+ spf=pass (domain: bp.renesas.com, ip: 52.101.229.11, mailfrom: tommaso.merciai.xr@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EJhq2+kqiEwrwegQX2rckxugyGMt1ugGLdhV3A0m8lqv7g8KQtDhznfSAu4o8Iw2EVJRXOpSQQJOz2TFcqCEywo60H1+ocAYX/zFbj+DhPEbXzyvytMJXE66yLoRPF3vUBXHIEP2sYo2ikyF3YCzD/uVoB1jG7ABY0+Aeq84AI/jFPO6N2sJ1tqmG8SSg6VGN9yXqj++ahGtNfxkCuwD4Q9vg1RNlvYjL/5U8dESFxeqUIf6P08TtrCed5M8QpbOQmi76fh5ymC5D/tfZnkuxFLtsMlR0zH3AfcP6z5C/Hn4Li4+hmFhaMFBYRuxgv4BA9Vc2ODB5X/ELhpUtmHeaw==
+ b=bM4gNtOgR6A3eqEH2LhCPG/FRoGWsrpw6k2qLwDV+qBljroRwKOiJmmAyj2EkMGhMzeQU6h6PCJhs6JDE2IM76Bo+uDh7iO2itkKVwVsFxwv4Z3fBMrbBMizf3GMVjc1razNni70+h12lx14K/qU6Ioj6dK2a75ED3+1rYZWbkqq3E2O1HYlpmDxycZ4pZGOAdaXRV2tDSd8B9bYejh3yEf2Z/Eoku7tmix9z0mHIwRNX57tTzfLMV4lLOTLzZfV6Xy/xu5jFTsgBm4DokR5q1lUczla82rKYQCgOWLsBnTrSd4DWJsRd7Qz2itjxdWHiQoLeJcjOwaHABaA/pQMmA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yqjRpLUAXM1Dz64ymHb7CrawDQZf0TM0xltobsaV76E=;
- b=Q3DFDu1Yl75i/EQuoETNv5JbnU77V35LgflzF67K2zhrmF+BlNUEdZqVSrn8wIFq47nmsTE27LbUBd7/w9Qvtkj6Y+2y9Q0rtdpRjdk8886Ie8DVRFJlUAdSZFwZIY8oFxglm0x0T7AHy3PKK9iGrGt8kL1njBXQVhZfPNd0P4tl2wBC2zqTPzofTzeEElGJ9aIzZ9IWA/XRmOeekWVSFSAWR6wGiJriAuTyUqFKH7//2McWWnSA1Z1adSxAQvTE6Niy9Y69UbJs1ZO4y1vJ4hFqKSxHVvI6jhhNosts93GUYMNOUeiqWORNM2QVOMmy3w4uasYRZpCoBAnQCKOVHg==
+ bh=sZdWn95kSQwpGeMPMciudXPJkm6EdV90VtgRzLJCHiI=;
+ b=QbQFGhJZOvhCjdiMFX1rM5+2zD2R6sQZJtR0RA9YViXUdOhccrrDU8XQV9Vqcuqw5DcdsqPtb8qG5PhFZoNEJQk6pVyKTPcJAnt3w9uw1nDlWqZB4wYwz3z43uuB1JHdzfqhWPgVsx10DigWA8JUKi88CO1FoWmFwXmuZAbJyamiQSxeMl2+bu0A9PnjL99dbk3zZzY7rGnwW7PUDClqXPo0iRuXXn8J35fwQ0gS+YOYCH9SAC6xxnbbmmlbyvk1CtAy7VGONQriBvHxwjCN9CCh7L/6T7mOf6knb/91oQkoGmgdq2/J9pQTKaYEPF7+E0s3u3My7/FQ+kpOBE9SFA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yqjRpLUAXM1Dz64ymHb7CrawDQZf0TM0xltobsaV76E=;
- b=S7EafKl/xhaiAXOKvTvdWsrSGzfeN09udbLfCfaidFXL49e1cxuD6qBhCYBjns7zium2Sv1UVrCKASSPVUQni82be750WuZh9Z1gZa3GNfDv6Mf5ri7ZHIIX461y56ZiTiPBQakERK8Fg14AfcfQG6+5rdIuWfLyltI4vtoQV6s=
+ bh=sZdWn95kSQwpGeMPMciudXPJkm6EdV90VtgRzLJCHiI=;
+ b=bEtsmOf+nAwsPIvoDNry2Nnm/ySA9ge+UlLExuG0eiD4ueCZ0KEDamnVhsik+cSvWqYCwPk/ApzCj1Gf5OlhvoOgjtJtMw4IEympa+G4fBFVaJWlTi+GW5yFV9L1SjqwZE0nvDcHv52zpB1F/3KIf+m6Ge3pZVV3HdbCbZajFuI=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=bp.renesas.com;
 Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com (2603:1096:400:3e1::6)
  by TYCPR01MB8342.jpnprd01.prod.outlook.com (2603:1096:400:15f::6) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9654.22; Tue, 3 Mar
- 2026 09:23:30 +0000
+ 2026 09:23:27 +0000
 Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com
  ([fe80::33f1:f7cd:46be:e4d8]) by TYCPR01MB11947.jpnprd01.prod.outlook.com
  ([fe80::33f1:f7cd:46be:e4d8%5]) with mapi id 15.20.9654.022; Tue, 3 Mar 2026
- 09:23:30 +0000
+ 09:23:27 +0000
 From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -44,9 +44,9 @@ To: cip-dev@lists.cip-project.org,
 CC: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	tomm.merciai@gmail.com
-Subject: [PATCH 6.12.y-cip 2/7] clk: Provide devm_clk_bulk_get_all_enabled() helper
-Date: Tue,  3 Mar 2026 10:22:54 +0100
-Message-ID: <20260303092259.13301-3-tommaso.merciai.xr@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 1/7] arm64: dts: renesas: rzg3e-smarc-som: Enable I3C support
+Date: Tue,  3 Mar 2026 10:22:53 +0100
+Message-ID: <20260303092259.13301-2-tommaso.merciai.xr@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260303092259.13301-1-tommaso.merciai.xr@bp.renesas.com>
 References: <20260303092259.13301-1-tommaso.merciai.xr@bp.renesas.com>
@@ -58,201 +58,113 @@ X-ClientProxiedBy: FR5P281CA0022.DEUP281.PROD.OUTLOOK.COM
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: TYCPR01MB11947:EE_|TYCPR01MB8342:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0ba44bb3-947f-4c93-f24a-08de7906888e
+X-MS-Office365-Filtering-Correlation-Id: ea5ba852-1f92-4ddf-148f-08de790686de
 X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
 	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
 X-Microsoft-Antispam-Message-Info: 
-	I5J7OTEqlemwpy+LSmBtM9gkm8jspSajX5nyFw5dQc22Y89eMo5WqiOMiJFxtAhrhBwCTKTpZAwPziMTBheJUv1PJiDituxQ6kj4k7N9Bqh9Ia+ny4PDARVFiPI0IEzpMeymJ+TvFk7kA29XcDb/5w98OtvByRkD88dqdB3lVlmQQ+NaEKWe/gFjj37KTgmxV17UsyABsY4c35LdnzEVhlPzJijdYvPnGfsaOddOnWF/kp5ERe/lE31pGZbZuKTy/pN1YD/e8LnmmTNP7o5M+9Ape650qteolPfhdzxdOkCNsicvJTE5e9dSqvIBbAF6ggRzbQvXiQlo9k+LVrhlZOjUCmAC3+yX1rhWXHrfabGIW7v+6ib1yV1cVZo5PKhFOGtzRQ40JLAoTnjpBF+nf6LLe0SLedlkevrNyzKkoNqDC1DWZ9tO5rr4HoCoPkIc10rsEx3XEB0hCDmnszWSjDkKghqbDnD2p47tLIwokIp63kawFbQUly5bnAIYaT2z5Qf8f6mSKSSuWO+Z55qNaQLSjS5/wh6EPN7dtlJN8QUuFniEXx4T785+KzHdpEPM41xl2nAGLxARqV84Adagkp1CwVdwVic1BTJl0F9gLHDRbRIiDiVvg01JG32w/xBCXBY5w9xbQpwhvqA9C1fOZY/ATEP5PcaX6geefLshTmFYi7kES1DoQtTJRhrexzDvQaUxYTDkTU3HRyay9jb+UTPrgzF8yfqZKm50duYDdwJFSGf5SXcXwKzq3ITm2V/1o2bDNM+4QfaDXsFGRfXEzEmgPOawomnTQg+G1GeF4CU=
+	KPg147hV0rAG1m2ieakeYgLCyF7zZXcNkTulqn8AhTGya5e7OEOHe6+gRW1z/2Wq3M/h2HbH6A/+hH175jhxwIno4TqX1YxRESIaxv68WJZL/1PyfUgm4v2+BBiXIXNabcErlEU8vEWcKOeV8zt+FoDA6a//qpR7TCx0fDnw+yFc9CFLps66GJ+s90SPCtg0qqH10d260zWy+8dWpmd9ymlcnofMxv8qAt4E4G3EqB9ahq1sJ9IfwOiRxFUcaoeDiyV7OLnSYT/il32UT6mqUypKOm3AbdtScj+1faWYN8M+tT6SIdijVNKMxdLUFBC8yFeXWOv3rRwV5DpR+mEjeNOVQFkqWA5S4EPP4/AR2FXYZH1x4PVYfdUZS7E1SvR57+O9uGETt7aw/KbHt4FsNI/OxcMHuSChAaufgKEeHXqlnWy4slg1mxOnFR/ya/rnO1i6kKd82Ys+2WgA3FQODEQf1YVEEYe0SF9GJKAPLS/Egp8S16tWFe70C5VJREwkSbJ11VXkpSO7vbwfEG+tq6RxQO0J8ROY+eQ9icWWQFjmUHnS1cCf/tgjuBWWpMzLxiMECwHCA8nFJN/ae/Bhs33V6ZKUY9W55a+kRIUL20na1aYF+PREUyoOBsX9OI1H5cKWd9wgGoUXPcQuZkjgKzt5qr1ax/PbW1aGpl/UAYzsEIZaxS3rT+MY+3ZiJlPft4WkoJBKm9HA6Tp/0/bYMMZ5VsffbTYco3U2Ia5hKV+ZQbtia8pV3zPI9oG9AMAT
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11947.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?4nZa0a5C/1j+ypLzhXlQcGy53iKPpiBs6PDwikggtKJk2THGOJr8qoYBLPkH?=
- =?us-ascii?Q?2kMPH//tOgzA5J/vwBAX1fMnAjhs/4vejeqYRa7aY1z0GJY48OyDOE4CdnHd?=
- =?us-ascii?Q?FTnH5FLmHk/EzDpPjT+it6+avhzlRw9PP73m44y6+i/amYEQ7EJ4ewMB8PwV?=
- =?us-ascii?Q?xaiIFGrfgrh2sWGVHPrT5wvKHXhcWzdLt6ufWcYG9Gnq6TxdQg9lbE/HAuuM?=
- =?us-ascii?Q?pfNH3jVW2djp+i/jE9I6/ZR/7qLWaA5N61br82kcHW/hHb0yQlkXPokW4Flm?=
- =?us-ascii?Q?mM6lxgaulGRysgINVndlP74S6ATxbGkbqixSkcbrkuzbfql0fe9hNsrraYxM?=
- =?us-ascii?Q?/GuuksumhTuJvEJ4u3i2+OYNFfsOvk2PAu9dPKE6XCqCdhj8fRL+dyXL8yKJ?=
- =?us-ascii?Q?zk0MmjlMNGwFjHv13hB+xmtO+hN8qZeVs4zujjZWkSbMTyRNaAMLOt83CbNe?=
- =?us-ascii?Q?j+hlA6xSX9JP5E+Lgrx0lYEpOK6kgGVQEp+8JMRPmw+EG6F4EFd3aRKGQrl7?=
- =?us-ascii?Q?rP9S2YrJN2BFSkXZsQ6KXuJuT/jmAW5L7ITKQvfA7MMwzHfgMXWR437SmTh8?=
- =?us-ascii?Q?FPnTL7uX+CZckEgT6sZYDnlgAriCJaaIPXzkLdaiXqCBtdJjeMYFdk5EMf+4?=
- =?us-ascii?Q?Kq5MNJLyXXbT4EZvR2UhUpLmsFJTlF+XTSXtKShbXyudMuI7d27Tsx0ziJjL?=
- =?us-ascii?Q?oXSkJ6GtDUYBYcANgRC5SbmMUmIPiY5roOWaflUfTM/3wwijdErPXwSZhiqQ?=
- =?us-ascii?Q?vNqoMx5Pb6A8mI5yi08fXdbtme3GbxXa88Za0FgA9NplcEWIrJhUEsy/dgQI?=
- =?us-ascii?Q?agzlPSEca/xM26UbvCfwqt1Ey0GGT0fwW3Bpr+Mz1iq/FgwMI+Z748AARqnv?=
- =?us-ascii?Q?ICKJ9KWEhpxA4dILmaHHcGW8DUP1cZdpTaDrumJl1JUL9lfTZugEcGVjNen9?=
- =?us-ascii?Q?42lakTTY5UlhLZBMJn+xHh04AL1k0qrWvrFdVAehEyzdMZ0xHRW8ext9YJYi?=
- =?us-ascii?Q?5tpAGwcXF5iAqdHWpGtVBcWnJEvzgo+z+bld5iD2kZBghk9CAmtYaog0jrgO?=
- =?us-ascii?Q?ZeCt+N+ySVS1peoeS+E5ZlYBxPqeFDwOQ5OyRIbhJiS+9XaYUn2SLtdDASYn?=
- =?us-ascii?Q?3VjAWSsbKR29d+oUJid4dkRCz8QqAjSLsJWPnURGukTZhyR0SXRSEQmZaTOf?=
- =?us-ascii?Q?rm+y2QlIoKMFzkuj6VryMJ0UTrTfCIAaS2I9UJGeqOsrNrZrWc7P0puKHM4y?=
- =?us-ascii?Q?Ui8ThMXcSFvLGyIXFS1BR/llu0hrAg1Ie6qLFL5D7rHGli1+GPFTjHflLwBG?=
- =?us-ascii?Q?Y1pNTqJ8gaJ5US2kmQLGGP2b8xQgbO2kAQSPihuomPSeQXjcZtOcw/2SThbl?=
- =?us-ascii?Q?ZKQR1/sK1NZ1hMB1wnSw8XJRGFr1kTTzFUi9ywvGMxbGG+Yf9n4CbxqnWzpu?=
- =?us-ascii?Q?zb2d+GnKHklKPW8tsubKzzuQtF8X7ieOxmualnG0LIixM1SwSJRbGU8hMtUc?=
- =?us-ascii?Q?ceyovYsjfvZIXVvU/zTi6l36luFnsKjNJn5Vt1E2VgKaLmnHvk2sL4LOHuq/?=
- =?us-ascii?Q?Vw2WSwXY/95f2TiD6JsZJSRhCGjCK3pomaeP4Kksa9gcky0PJD2Z88GENNd1?=
- =?us-ascii?Q?b16uzLzxC9J9hcNdqDWZZfa1v/orLrQckXPY7/pJ+FLwaKA9mJj6OsQgxhO5?=
- =?us-ascii?Q?IRx4BldvmqIDDF3mRt3CcZiwCugai/ifFQcWjaqJebzcHcY6Vq17/rohr3Np?=
- =?us-ascii?Q?GYgvw4Yt+ASlwyg3vB0InV0HcNzF4DXmtxfK/LUHEj5lGUwrocLQ?=
+	=?us-ascii?Q?IS2knaaVcSkh4MidWRrsgRHVAXiAkLpMXdx2etTzMXe2O7JyWS2nHlVBvsf6?=
+ =?us-ascii?Q?234YvloUt1Uqu2rnPPO5JI0M//01otCnyoUunbtDW3nhNghbSmkFDJPDliyA?=
+ =?us-ascii?Q?eFQV2HnLq18PCUfJqwc6ya6pU6+eR4AXR4NE1ZJLeqMn0iSlr2uJUZRnd3iF?=
+ =?us-ascii?Q?bpNbmPIMp5xys6PLkclS6dtjEJy3UNAitbI8sfdN9srKa969tNK7IU6eYGfR?=
+ =?us-ascii?Q?NwF2BJY7xerLy4Sz6Ky8bN63xwRK7d/I7qbSCFUJo6jwFRv6OJi1HUBXb7FK?=
+ =?us-ascii?Q?0jELV9sTY3EChXv7g27JxOAc047TqxbOkYneyzig2VXRC8yX5TgLgEiKjGeV?=
+ =?us-ascii?Q?lD9BEBt2F8mGRL72n2aYQE9ZOSiR2m81tU4NgdfZp8eILS/xqgQEPV4XADZl?=
+ =?us-ascii?Q?vbNryzoH7apAI2hCXgAdmQvB43Bjx2vcdCLvcFrkEsmAq25dbB+UX5aaJTUe?=
+ =?us-ascii?Q?6uZShhAqlWlWLOikE6xbbgeSUfAsiod5FH0Rt2fkqIce5l9tqKGls9LAXXvC?=
+ =?us-ascii?Q?dG7v5KMdUa4OfzuHjY+E/wCfL8YKkoL0uq4qjEFFiMYQshizuNwd5YOf9EwH?=
+ =?us-ascii?Q?+lxOkijdMYmANFkxMUCfSWfP3faZ2FtjMJ4GVPYXZ5HeC4bFI5eiIgSthhNp?=
+ =?us-ascii?Q?pkXBmw1aLsawcW05lgh2Ed9DncU9nMUBO3k+huAg6UzJAqZGLXJNMiyNWn4k?=
+ =?us-ascii?Q?z5n5p0KZrwn9q4r5ePox6RpKBa/krZon4J3kIrO5lQsaFtq74XUQYI/AbkJ5?=
+ =?us-ascii?Q?bfniqLbcimB7ssKIT01y6CndOAe84IsAYNHIfFO4leer2FXMPqvUrYryO0DZ?=
+ =?us-ascii?Q?LO8D21w7rlinyabvS6BO5NimLvaSCqZ6FJL84Yvzx9FMjFQ0q5HcNCPldG0Y?=
+ =?us-ascii?Q?4uQo8ivxLEjPkObH7qS6qC+An2WqSLi6Ai1AMIaZKwp2jqQYKz8txwbObNPB?=
+ =?us-ascii?Q?0DaCW4iRw1drhpOS80CR2JJNkdcLBaGMEA60H3+Qd6UVt8zAtK/8NerxzlxP?=
+ =?us-ascii?Q?vq1OP5BuBQROKesNmf3V/epdp7I1SXqYF1THKWfWJcK023X38HnNYrkXWgYN?=
+ =?us-ascii?Q?B5BpUpezWpuuxefI18ruXSvoAQtxJr62p4jvpQHgRzaLRaqtPpE2jM0L7eIm?=
+ =?us-ascii?Q?fvg0a09a7cxBQZSlTZpiH9pZBo5wZI1oke+H950+VxsVy7F88dlTs4SXjdaC?=
+ =?us-ascii?Q?s+vGpHSPzHvxxRvBtNIaeVgSFLZOpWs+4HQAcrMQMv/6w+izOJ+dcsDIeMmO?=
+ =?us-ascii?Q?Zi9K+MkHiaRa9zMfJOyFvPzawReyIKSxuOPwaCjMTSzLaeAXODngUOnggvH2?=
+ =?us-ascii?Q?8zmwbxOt77KLGouq6heHDChOAdclc6+rPDgGrBNzETLGzvYruys3NztMqgS8?=
+ =?us-ascii?Q?yI3lIZ2svyNEhifWGbAIsXjSEoWYmyT+m3Km+QollHt0xQrn61otL5uGNwbx?=
+ =?us-ascii?Q?fE4r2as29yk09590GQGcRBX7d4XqVWeSERnltIwJod6xZwbvJPmFDnEbKfLj?=
+ =?us-ascii?Q?AYsWV9i+a90Smrb+ZGg2EfH2XPcpfSJj+rTufW5KaxLoqvJr9sJnaT9O3f8V?=
+ =?us-ascii?Q?JeJkEWmm/YJpORfuzyX18LSXYRAzh2PAPnH43W5Q5pADe/Pb3YQ/7AsnviWn?=
+ =?us-ascii?Q?DHtEOnwtP85oz+287ip6QaWjKpG2DAyZjAGtNScdzzuaftxJ94qh4z4Vb8Ph?=
+ =?us-ascii?Q?WGVNGgwP5DBbFZVVVHomAB1ipQnJX12wIJVrCiRW+RiuYb8Ck7gdmkvtsEWp?=
+ =?us-ascii?Q?7tElrRV3Q243/sdP+kWHaF2tEcnV/ev49dNNj0GfQ7uqx9OmUedo?=
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0ba44bb3-947f-4c93-f24a-08de7906888e
+X-MS-Exchange-CrossTenant-Network-Message-Id: ea5ba852-1f92-4ddf-148f-08de790686de
 X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11947.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2026 09:23:30.5309
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2026 09:23:27.4476
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: s/SgreJGaZuRE+NqSm8DBBHMcYoxk5xSLXn0Rw5ZxlNxgYSP/zZy15Qyl+Gkg7riHvVP9neR3+LZxnQuW492DHqCwHK/CDxvUC8k6fn3U1g4O+7s3OKYb4JR3uaCKCCQ
+X-MS-Exchange-CrossTenant-UserPrincipalName: ONOFmLb8MOR2xG+XjLfwowgIFBuG2eSVHwEk9vi0G6VaT48liqs1eXE5F/xk0236N2+aswSjRbZhWWQLkA8xHJEDCiBTnaDdNTq3NMp8XbsniXkzumLRiY0hP+1wXQOx
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB8342
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 03 Mar 2026 09:23:37 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22053
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22052
 
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+commit 4ef81dcac8f6e08b29c359ab147dd87a488d178c upstream.
 
-commit 51e32e897539663957f7a0950f66b48f8896efee upstream.
+Enable I3C on RZ/G3E SMARC SoM.
 
-Commit 265b07df758a ("clk: Provide managed helper to get and enable bulk
-clocks") added devm_clk_bulk_get_all_enable() function, but missed to
-return the number of clocks stored in the clk_bulk_data table referenced
-by the clks argument.  Without knowing the number, it's not possible to
-iterate these clocks when needed, hence the argument is useless and
-could have been simply removed.
-
-Introduce devm_clk_bulk_get_all_enabled() variant, which is consistent
-with devm_clk_bulk_get_all() in terms of the returned value:
-
- > 0 if one or more clocks have been stored
- =3D 0 if there are no clocks
- < 0 if an error occurred
-
-Moreover, the naming is consistent with devm_clk_get_enabled(), i.e. use
-the past form of 'enable'.
-
-To reduce code duplication and improve patch readability, make
-devm_clk_bulk_get_all_enable() use the new helper, as suggested by
-Stephen Boyd.
-
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabor=
-a.com>
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Link: https://lore.kernel.org/r/20241019-clk_bulk_ena_fix-v4-1-57f108f64e70=
-@collabora.com
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://patch.msgid.link/9d1cf2cdb1c11f24378404142e4c8aff680c6961.176=
+3638659.git.tommaso.merciai.xr@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 ---
- drivers/clk/clk-devres.c |  9 +++++----
- include/linux/clk.h      | 21 ++++++++++++++++-----
- 2 files changed, 21 insertions(+), 9 deletions(-)
+ arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-index 82ae1f26e634..5368d92d9b39 100644
---- a/drivers/clk/clk-devres.c
-+++ b/drivers/clk/clk-devres.c
-@@ -218,8 +218,8 @@ static void devm_clk_bulk_release_all_enable(struct dev=
-ice *dev, void *res)
- 	clk_bulk_put_all(devres->num_clks, devres->clks);
- }
+diff --git a/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi b/arch/arm64/=
+boot/dts/renesas/rzg3e-smarc-som.dtsi
+index 7faa44510d98..f05b9fec05f0 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
+@@ -122,6 +122,14 @@ raa215300: pmic@12 {
+ 	};
+ };
 =20
--int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
--					      struct clk_bulk_data **clks)
-+int __must_check devm_clk_bulk_get_all_enabled(struct device *dev,
-+					       struct clk_bulk_data **clks)
- {
- 	struct clk_bulk_devres *devres;
- 	int ret;
-@@ -244,11 +244,12 @@ int __must_check devm_clk_bulk_get_all_enable(struct =
-device *dev,
- 	} else {
- 		clk_bulk_put_all(devres->num_clks, devres->clks);
- 		devres_free(devres);
-+		return ret;
- 	}
-=20
--	return ret;
-+	return devres->num_clks;
- }
--EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all_enable);
-+EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all_enabled);
-=20
- static int devm_clk_match(struct device *dev, void *res, void *data)
- {
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 851a0f2cf42c..1dcee6d701e4 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -496,11 +496,13 @@ int __must_check devm_clk_bulk_get_all(struct device =
-*dev,
- 				       struct clk_bulk_data **clks);
-=20
- /**
-- * devm_clk_bulk_get_all_enable - Get and enable all clocks of the consume=
-r (managed)
-+ * devm_clk_bulk_get_all_enabled - Get and enable all clocks of the consum=
-er (managed)
-  * @dev: device for clock "consumer"
-  * @clks: pointer to the clk_bulk_data table of consumer
-  *
-- * Returns success (0) or negative errno.
-+ * Returns a positive value for the number of clocks obtained while the
-+ * clock references are stored in the clk_bulk_data table in @clks field.
-+ * Returns 0 if there're none and a negative value if something failed.
-  *
-  * This helper function allows drivers to get all clocks of the
-  * consumer and enables them in one operation with management.
-@@ -508,8 +510,8 @@ int __must_check devm_clk_bulk_get_all(struct device *d=
-ev,
-  * is unbound.
-  */
-=20
--int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
--					      struct clk_bulk_data **clks);
-+int __must_check devm_clk_bulk_get_all_enabled(struct device *dev,
-+					       struct clk_bulk_data **clks);
-=20
- /**
-  * devm_clk_get - lookup and obtain a managed reference to a clock produce=
-r.
-@@ -1034,7 +1036,7 @@ static inline int __must_check devm_clk_bulk_get_all(=
-struct device *dev,
- 	return 0;
- }
-=20
--static inline int __must_check devm_clk_bulk_get_all_enable(struct device =
-*dev,
-+static inline int __must_check devm_clk_bulk_get_all_enabled(struct device=
- *dev,
- 						struct clk_bulk_data **clks)
- {
- 	return 0;
-@@ -1136,6 +1138,15 @@ static inline void clk_restore_context(void) {}
-=20
- #endif
-=20
-+/* Deprecated. Use devm_clk_bulk_get_all_enabled() */
-+static inline int __must_check
-+devm_clk_bulk_get_all_enable(struct device *dev, struct clk_bulk_data **cl=
-ks)
-+{
-+	int ret =3D devm_clk_bulk_get_all_enabled(dev, clks);
++&i3c {
++	pinctrl-0 =3D <&i3c_pins>;
++	pinctrl-names =3D "default";
++	i2c-scl-hz =3D <400000>;
++	i3c-scl-hz =3D <12500000>;
++	status =3D "okay";
++};
 +
-+	return ret > 0 ? 0 : ret;
-+}
+ &mdio0 {
+ 	phy0: ethernet-phy@7 {
+ 		compatible =3D "ethernet-phy-id0022.1640",
+@@ -219,6 +227,12 @@ i2c2_pins: i2c {
+ 			 <RZG3E_PORT_PINMUX(3, 5, 1)>; /* SDA2 */
+ 	};
+=20
++	i3c_pins: i3c {
++		pinmux =3D <RZG3E_PORT_PINMUX(2, 0, 2)>, /* I3C0_SCL */
++			 <RZG3E_PORT_PINMUX(2, 1, 2)>; /* I3C0_SDA */
++		drive-push-pull;
++	};
 +
- /* clk_prepare_enable helps cases using clk_enable in non-atomic context. =
-*/
- static inline int clk_prepare_enable(struct clk *clk)
- {
+ 	rtc_irq_pin: rtc-irq {
+ 		pins =3D "PS1";
+ 		bias-pull-up;
 --=20
 2.43.0
 
