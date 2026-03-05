@@ -1,266 +1,230 @@
-Return-Path: <masami.ichikawa@miraclelinux.com>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE54AEFCE4F
-	for <webhook@archiver.kernel.org>; Wed,  4 Mar 2026 22:50:46 +0000 (UTC)
-Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com [74.125.224.50])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.31420.1772664637203173479
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25BD4EEF309
+	for <webhook@archiver.kernel.org>; Thu,  5 Mar 2026 06:05:10 +0000 (UTC)
+Received: from DUZPR83CU001.outbound.protection.outlook.com (DUZPR83CU001.outbound.protection.outlook.com [52.101.66.35])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.38329.1772690706292353624
  for <cip-dev@lists.cip-project.org>;
- Wed, 04 Mar 2026 14:50:38 -0800
+ Wed, 04 Mar 2026 22:05:06 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@miraclelinux-com.20230601.gappssmtp.com header.s=20230601 header.b=QvkwV1O5;
- spf=pass (domain: miraclelinux.com, ip: 74.125.224.50, mailfrom: masami.ichikawa@miraclelinux.com)
-Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-64c9a6d7f81so6755064d50.3
-        for <cip-dev@lists.cip-project.org>; Wed, 04 Mar 2026 14:50:37 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772664636; cv=none;
-        d=google.com; s=arc-20240605;
-        b=ZQI4UOa3T8Bsj6SgRhAYu2CxZlE0khKbfkTn+ubXdVRL4Lxpj3UlTXNUKpCWritEcY
-         NWz+rjpqpAUDo9Vz0kGv6kInfmS1pSDbW8chG08ifA6Ckrdx5TBXPRitgIhst0OZ28r4
-         fpjDW4QxPfN6Ix6+Y1ZmqnQnF9zzX+d96Ht6JHf0Q3uYht7HBVI6futAOOI5ASsG0OI8
-         n/pAvl1ZCvraO2/887ehoaTl+3BXtyB4lwSalbeRVhgOEX9GtYAszHRLb5TPnmUaeSDf
-         AZM3zvTM5uicQq7//EVB2PSZUwl7zbsYkhXzONOX80Pv3mEdLWZsZEHPU/KwFapNBqIF
-         N8NQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=to:subject:message-id:date:from:mime-version:dkim-signature;
-        bh=yhrNlotLuUuKQtL9sEvqVu/G7gAMpOTFXiyKDRPQPb8=;
-        fh=pMdhRv1kyG5MNR0BUSVIPLHum9zPZW2mYB9oYwYp5mc=;
-        b=KutLFU7/XpZGuQhDaLYRN4AYEh2IMJzAb4BMcA3PD2+Bv4JOLUkFmSCtrPkhIO43Q9
-         KlP6+7bLG1PMv8SSDtDyHK93K3dLmlga2FRDEVee7ZD0wNFwLedf+aysiIWuq519SewH
-         MSNbTDI1/vtip+TTar/C214Mlh1+pYGXzI0NZPwy4x8EiuIEP1W9DuIQc67ezQrTnE3+
-         nU3TqHC22YVvLvsYZwGAtq+hhFEem75deZEHjlkBvRK6rNMAXyW427DUyF6dewIYpo9B
-         47MK5spZppZYz8BUkz+S8ZzPS3d1ldZlNyOgN+rOPKpvvHOXqmrP9yGJPby5TIcwUZpO
-         D1BA==;
-        darn=lists.cip-project.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20230601.gappssmtp.com; s=20230601; t=1772664636; x=1773269436; darn=lists.cip-project.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=yhrNlotLuUuKQtL9sEvqVu/G7gAMpOTFXiyKDRPQPb8=;
-        b=QvkwV1O55NOx2LCX/v3+hiRpPDw4JfzG1mfLbpYeyZXBoYHJf1AZpyPW0+6bdjnaak
-         +qIbmidKR4Kkqhv60m4BNFpQyZv5lkj0LAridx7EI5UBnF7/7iXFlbzMCPp7NrS2+RBq
-         8gAKCqRnHvay2Zwwzy+JxMO7HsT9d4iXHG7lXDOO3c4d8OZWM1qYZxza9Wi8kaKpcnfO
-         /bUwWDt8DQ5gmbY9xfymGZZnXYzQRlNhVvfxK4sss1rA3K/3b/lup+2xeGGOrOfj7z3V
-         d2mnWACc3XcyDizp4OCKjHgIf+pN1x1o9DFLbcYFJUl06aTtgtk5LePyvexQurB22nwj
-         RLFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772664636; x=1773269436;
-        h=to:subject:message-id:date:from:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yhrNlotLuUuKQtL9sEvqVu/G7gAMpOTFXiyKDRPQPb8=;
-        b=IP2go3+IT3FtQHA7idYq+rzGqgcIOtHxW/jjqBMua7FjdfwsGDmvrzNKXr8UcyKuSB
-         x2kvkIopu0H37rW8LBjImF+g1L50/xsKNm4nlHYP8GBN98mo0yVFKV60Ot/+GrDCZ3KV
-         GEM3zowqZjrMspLVswaw7dODbM0B9mGebaCRs8nLb8RoHwlH/h2WURJkqhh66dJpjWl9
-         1xeiQYxCJQ3MYJ69s8NNDJsZGKvDVhrWMteCJUVkHoK6U25Esh1dI0ZzhbIBGAFYHA+y
-         Aykkybk/3Syi90dGx1EGSiDfPbt7Qp/Lye3l1DekynGaG2Btd5LS4s0tofKoLbBV9oHN
-         o4YA==
-X-Gm-Message-State: AOJu0YxtZSz5Igv6jXV59vVsyW7i+s1YnVHFRz9VlEtDp9Zg3deskFmI
-	ajNYnGSyS5ECJ8uiS5FOL1EpJi0ZkncneaOT9M54CmZVGKA5MAfhDxTIOLRjmrRg5fWpc43rOIm
-	4bTWhu6M4UPANiLo9+Z3kP4GaWCHV5zGzkkcPzBaKp1UAJ0nYBdWpQyM=
-X-Gm-Gg: ATEYQzw8QCHQFSN2aIOeOdVUUwuaiwgYfw6NxWm5K4jgbgNbLN+04klHVS6kMgl87DW
-	jNqJIOcVpd5/65y/Ng4HMvIoMzi2SXcNOdQwFk2F5diuyuSmu6dVcE4rjJKoA0LXaU+o6F+xjrC
-	xj1BNEQhevB5wVZBFb4ufDOxK7bHtg4/z8pIL2yit+Pg71xGQGtIPwHnD23m1QYEiJ6tiRNLCLx
-	Qnp6ZfCNQq4ZzsoaMruk+ZbOnwpsujhzyBTbeBbxu0SkUeqOySSiDfxlGSgV3IajiFXJDwY0gwi
-	v6AuEX/M
-X-Received: by 2002:a05:690e:12ce:b0:644:2e1b:c8bb with SMTP id
- 956f58d0204a3-64cf9bba49bmr3186722d50.59.1772664635998; Wed, 04 Mar 2026
- 14:50:35 -0800 (PST)
-MIME-Version: 1.0
-From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
-Date: Thu, 5 Mar 2026 07:49:59 +0900
-X-Gm-Features: AaiRm53oliwdBBIwldz1EQxc9YE03LK1PhzDozTYhVsFXPiG-3WPwkiQZuJ3h2E
-Message-ID: <CAODzB9pqj=tEhZW=uGFn4=eOFYXEvyzc-UegZM=syyH9D1op5g@mail.gmail.com>
-Subject: [kernel-cve-report] New CVE entries this week
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=hwvNLUjU;
+ spf=pass (domain: siemens.com, ip: 52.101.66.35, mailfrom: jan.kiszka@siemens.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=y2MxT4GwW2bPwBEQzjyH5p1W8nBSStzM68jifVWbw1jD6uiH28LtWYF91dQj7nlxi5MkJJTsO5qxGypgHSwozJ1ege958BN8oJzV2q0/fjONdn1V2CguvvImW7EM7JbONOVTIO/mvxl7Ob5AuoipgLjjQ2SnP+Me6lrEZC9syKT6Q/7FHAZckp4aPP/bn3iwyXSsRJU2fe0rVi/l7pg4A50wu+mA1wkUTeQn960hmJpCxwHSfiSKTDq9qbzS24XsElbTwKdki0Kr6WfWzclmstEyhaaolvbw1Mel/bGzhkGulOUFexsO1qjEM/VCzQhdI86SoXDLGc46FvA3hW7jkQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Q9WagMiTKNdr/q3NlcPrfTYprrhjMvrWET57tMpBsLk=;
+ b=M77VlineiHG2gsYmJ+CdIbtdnJkB219miwYq8xXAzfg9Rq7NJigTK6CmwN+RPNXQkJ4YZ6ByyIQ39una+a/sE/BgXsxjgbzBqrlwnHlilTCy4cdrt3HDBnqICrvY6oXKAFMV3evdEcom3vis7UpXR7m01k/rLmMzzLbR5dlarfex9OYAmL8YAbM93UABlmXeh1ltuIzfZL8uiOtPtx7tPwIPgtpXWSL4WBU+aSJW7RIWB+143AARDobCoqxmcE11lWXAuqSRi2QBM/mdo5HTWLa1pVNEP0pHyH9W/yVaA2pwLhZW02GIg/IvsMvFT+O5MQr44So4f+izFvmbSpSVag==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Q9WagMiTKNdr/q3NlcPrfTYprrhjMvrWET57tMpBsLk=;
+ b=hwvNLUjUtQSB+Z3de1O9j0THIBzIic2XNCBhkNEMICP+TG87fzf5Y5YSVH83XZOotKFyt8FbsUZfZdHIhua2nscsZb11lK4bGgUofBHwmFSd21B02IFFLPg6hXLK+0KJ/P8wjrjgr84txOa+z302y+YD3D1tqhQZcGa7PVw6d/A9ysirDkkv32i3PhHhYQotMa5o3UEF4J9YLvlXoZru8rP2gKRmJHyzNOBhlmG0pTcIQ3eu0QxufY6rvWWQz0qmE5TeTOBVdEyX/anxMLjHSQJeTGZ/6606hrLSRMHro8puufGmkpu0Dc80gtYxDOKHQF/eq9SSnjNk7+cM6Y9eow==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by DB9PR10MB7290.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:462::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9678.18; Thu, 5 Mar
+ 2026 06:05:02 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::be9f:e8ca:ee9:83e1]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::be9f:e8ca:ee9:83e1%6]) with mapi id 15.20.9678.016; Thu, 5 Mar 2026
+ 06:05:01 +0000
+Message-ID: <7231117b-e350-4f03-8f3c-1dbeb4dd5f37@siemens.com>
+Date: Thu, 5 Mar 2026 07:05:01 +0100
+User-Agent: Mozilla Thunderbird
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Subject: CIP IRC weekly meeting today on libera.chat
 To: cip-dev <cip-dev@lists.cip-project.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Language: en-US
+Autocrypt: addr=jan.kiszka@siemens.com; keydata=
+ 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
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0437.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:c6::7) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DB9PR10MB7290:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2e903664-f56f-468c-f422-08de7a7d235c
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: 
+	BqGvxYlgXQMhoX23groqjUlinHA5rz5UsuoLlcuOgZ7hR4SzI5lk23HXQ52hQfHTRE82iag37VQLz4CmB8Q+i/fb/fI+Ix+eL8tj7tMdOM+mXtjC9Ss9bLhgUkPlhO0HzwkrDOjgfpMyST/kv83IvOv9639Lfzj+WqOp8SreRhyggFFeFOk/1y5XUmSl/PgmWyo++mZs5e2XnnLm5sO6pIgKWCgapVyFomN5vZs3afZsWPKPHoc+f6Pea05K+IM6PdNYU24oHqx7b6n7vseoBlz2+FC+2pFvzqE9jAs4iSaqONeYSusWNBEp5p3/lsgWhFffE/Cp6bFFaxg0JpnibY00aSUBWSsWY2wytRlepCz4RPkG/EWgovKWKrCey6ytcDW2x0L/g3Dp3Fb6Kk74Jc372e0PjPFuWAOKoJVuqq2lDbjdwYqD75+Fu019TLoM9LGIDVFZ1NQMb2KdCf2MC7OXBMCOP4eaJJsfbv2F2dKbCnKu4qClQKeSwtXgX8/tvUtE0boNatqx6FKrqTw3ptj0N93HDX2rDI2rXocMawF6rJFQF4phmk5Bses4rpYZt4CYMBQuPJSgSAkbNZnugG0UDWk7F1e2Czbj/RteFU68t3ERRr4N9JYZczO0HXSbQLUcbaM3aIQmkWanq+GUPNYt/kL5f2xqSv8VCOXOEhFUNkHvj+BZsHhHqDkg5SXU
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?QVl1NnhxdWZ1Z3R1WXB4S2N1cUJNWHF1VW13aHY2aTJYTzFQdUJoczJnWUVn?=
+ =?utf-8?B?Nk53akpVb1BLVVJEY2w0TnQvQURhZGpDNXUwbGhuMXBZRDYzY04xcmFxc1Mv?=
+ =?utf-8?B?TlJuajRtYjBLREo5cDR6YjVSM2o3Y0czeFJHYmExUFNNMUNLSlhpeGJrMFdT?=
+ =?utf-8?B?S25hYWpiMGw3cnV1cElCSldJcWhMVENhbjJRb0pOVHZSMkUvNXVReWFESGh0?=
+ =?utf-8?B?cVJYV3E2WWdWbDhsWjNkTU9YZlpMNVlZMGozanFPaWRUMzk1bTc5MktVenY0?=
+ =?utf-8?B?T0ZHYnVaYkYvSFk3VzFxQmNyMWF3UTFneWlOQTM0Q1RpaU1MeWI0bFlHbWJz?=
+ =?utf-8?B?SWl6ZDdlV21LMFBoeklSUEl6T2crRytaQndINnFtcFE5Vld3ckcyUHora25C?=
+ =?utf-8?B?ZWY2QzR4M3M3aVVyV3JXYUVTQ3l4bVZtWjlPTDZCRkhRbUNyUEN1TzlmUVQ4?=
+ =?utf-8?B?TkdIT0tzZ0tkbU93dkt1Ni9qaURRMjZIUEdiQjB4dzY4K0VsbU9TNkMzLzZj?=
+ =?utf-8?B?TWJRSncrZmNObVdnTHRUaVZ6UzBZeVBhV254KzdOelFWdUV3NEg4THdtbFRt?=
+ =?utf-8?B?NjZrT3FmNVVtaFpseTlJTjI3MWtQNmRLUTIvYjZ4M3lmRU8xMktnbWJqWnk4?=
+ =?utf-8?B?OXpObHRFQUZHYkFRRm53anR4Rit4RTBlMEQvNkVKaXNNSXhZQ1RHVlJSai9q?=
+ =?utf-8?B?dFRjSmpDeXhlYk1Da255S2FGYmtzUVdyb2dZZE5TTUlCVTBuN0hLRDluRytV?=
+ =?utf-8?B?VWVidzE3SlZLdDcrNTMwMnJtTW83Zklka3piNVQ1NXppVHI1QTVoM1dKWXZn?=
+ =?utf-8?B?YXpVOG95My9CVnY1dlBCVklnOEFGS1NHeEtTbjRyWmhpbDlkLzZwVVpxM1Ja?=
+ =?utf-8?B?TUN4RU56eDZOZktzY0E5UVJVWFY1Z3pTbittS0pFaXJ0LzFtS2l6SkVVRmlT?=
+ =?utf-8?B?NHNweWhPUWE3ZlgwblpPNUZ4czQ3UHM5WlZ0T2dseHE0SGJkdmtYRDJueTRn?=
+ =?utf-8?B?UkZzbm1JdmRJUnhjZ3NDeXFxQ2lwaTl1RTBUMkxiU1JkNHZSMm1wN1VRaGs0?=
+ =?utf-8?B?QVkweVpmUjJLdkF2d296T3B1aDkwQWdwNlNObVJtVElJZnJ5QmdTbHVhcXEv?=
+ =?utf-8?B?OFdIenE2REIydkhwVW80TVNDR2duNXcxTHgwUGUzNGdoeitOZU56cksraWJ2?=
+ =?utf-8?B?aVgzOXJEZlpkTUR0RTk5WW81SFRiWnE5SVVVZE1tOXBORXgwZTdWbndvaUFT?=
+ =?utf-8?B?UldiVXNZK3pqUGJ1a040TjRaQTREZXVFNW96S3ZnTUJVL2hLcWFDa0V5WDB2?=
+ =?utf-8?B?ejBvbDYvcE1tR0JlSDNVbUlKRGlVb2tWMndpbHB3M0Q3YkxuMDRjTmtmajFV?=
+ =?utf-8?B?MzB5aFlua1E5NmFack1jUkMzVjlxdittVjMza2VjT3Z3c2o5ZGJ6YjVIbFJC?=
+ =?utf-8?B?VFN5OXpLWFJMNmcwZlVkejlLZTBsRnNWWDFpMDZkTjVCbXB1OG1SK3NkRzFu?=
+ =?utf-8?B?SG55ak12alF0N2h4VWRhbDBVVW5NOU55d2pLdmhmazlZUUdUdDlZZVRjQ1BE?=
+ =?utf-8?B?aW1PWXA4NVlCeG1QZ2pqZldqRUx5K21waVVvZEs3aXFPR0ZNd1FFNEdSQ1dT?=
+ =?utf-8?B?MEhSbVVWZEY2MlJ5YUord1JuUlFIVmlDRmxCUlQxSmhteGtkemxkaTRvdFMy?=
+ =?utf-8?B?VTBuR3QrYXpSM1hLbTFDTTcwYWZkSjBGN0lIeC9ac3dEK0hhQXhOaTQ3YVZa?=
+ =?utf-8?B?RllBdzB3ejhFS01SRzdZZ3orUGdXMmRKYytncmt0VUMybnBQVXZwYzlTc3o4?=
+ =?utf-8?B?aXRQbU5GcEROKzdZaXpkLzU2cGN3S0ptSmVTWkZ5ZmNRd2s0RXd3OU5GL0kv?=
+ =?utf-8?B?ZVkrdXkxNHF0elVLZXRQODFmRGlPY2tZMzJCSThSbTRmVmJ3MTVIQ1RaeFNl?=
+ =?utf-8?B?dEtiNEwyNGdZaElEUTBnaDQvVVJ0VGE1NVRoNnV5UnN2QkpialpGMTJjc1lT?=
+ =?utf-8?B?ZGJ6OVVnWXJTbzVPZE5oaEZrTVB4dmlpUEJ0elMvNCtuOGh6ZVNqeWJOMEpy?=
+ =?utf-8?B?V0dRMnc2a2RuZ0lGVUN4RkdtVXFrK0JIaHUxM2Zwb3RBZDlZZzd1QWxoYzVm?=
+ =?utf-8?B?NFZ6b2FOSjJ2SHlSTmlYRDZBSzdzZS9lckhSeWphZ2hHNTg0bjh4R21xVkhZ?=
+ =?utf-8?B?MndtOXI5TGppOXlySVdNYnpRdnV3ZFE4ZktWK3VnM1ZVMFdGVWpXYkpzdTZ3?=
+ =?utf-8?B?VXNqN0xUbkF1VGkxL0d3UThXMnRsV0ZhZUhwU20wZFRtVmVPOVE5MG1aaVh4?=
+ =?utf-8?B?MmMyWks0dGRpdFYzbXdXYjZMZzlxR0Q0dVZNaU12UUN4VHNDYVNuQT09?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2e903664-f56f-468c-f422-08de7a7d235c
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2026 06:05:01.8453
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 08UgqsuMOHfEa3Vlk90tcS5xYgw8vtbvXiWmPUcfYFNp/5F1n+kHDsk/In2itw7Pe1xFa+6SNXkfIRWZmUJueg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR10MB7290
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 04 Mar 2026 22:50:46 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22072
+ <cip-dev@lists.cip-project.org>; Thu, 05 Mar 2026 06:05:10 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22073
 
-Hi!
+Hi all,
 
-It's this week's CVE report.
+Kindly be reminded to attend the weekly meeting through IRC to discuss
+technical topics with CIP kernel today. Our channel is the following:
 
-This week reported 9 new CVEs and 1 updated CVEs.
+    irc:irc.libera.chat:6667/cip
 
-* New CVEs
-CVE-2025-71238: scsi: qla2xxx: Fix bsg_done() causing double free
+The IRC meeting is scheduled to UTC (GMT) 12:00:
 
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-71238
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=2026&month=3&day=5&hour=12&min=0&sec=0&p1=224&p2=179&p3=136&p4=37&p5=241&p6=248
 
-Introduced commit is not determined.Fixed in v7.0-rc1.
+USWest    USEast    UK        DE        TW        JP
+04:00     07:00     12:00     13:00     20:00     21:00
 
+Last meeting minutes:
+https://ircbot.wl.linuxfoundation.org/meetings/cip/2026/02/cip.2026-02-26-12.00.log.html
 
-Fixed status
-mainline: [c2c68225b1456f4d0d393b5a8778d51bb0d5b1d0]
-stable/5.10: [057a5bdc481e58ab853117254867ffb22caf9f6e]
-stable/5.15: [f2bbb4db0e4a4fbd5e649c0b5d8733f61da24720]
-stable/6.1: [27ac9679c43a09e54e2d9aae9980ada045b428e0]
-stable/6.12: [871f6236da96c4a9712b8a29d7f555f767a47e95]
-stable/6.18: [31f33b856d2324d86bcaef295f4d210477a1c018]
-stable/6.19: [708003e1bc857dd014d4c44278d7d77c26f91b1c]
-stable/6.6: [74e7458537cd9349cf019862e51491f670871707]
+* Action items
+   - enhance wiki around board support backports [jan]
+   - provide kernel config snippets for lockdep and rt [jan]
+* Kernel maintenance updates
+* Kernel release status [*]
+* Kernel testing
+* AOB
 
-CVE-2026-23231: netfilter: nf_tables: fix use-after-free in nf_tables_addchain()
+Jan
 
-Announce: https://www.cve.org/CVERecord?id=CVE-2026-23231
-
-Introduced by commit 91c7b38 ("netfilter: nf_tables: use new
-transaction infrastructure to handle chain") in v3.16-rc1.
-Fixed in v7.0-rc1.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [71e99ee20fc3f662555118cf1159443250647533]
-stable/6.1: [2a6586ecfa4ce1413daaafee250d2590e05f1a33]
-stable/6.12: [f3fe58ce37926a10115ede527d59b91bcc05400a]
-stable/6.18: [dbd0af8083dd201f07c49110b2ee93710abdff28]
-stable/6.19: [2f9a4ffeb763aec822f8ff3d1e82202d27d46d4b]
-stable/6.6: [7017745068a9068904e1e7a1b170a5785647cc81]
-
-CVE-2026-23232: Revert "f2fs: block cache/dio write during
-f2fs_enable_checkpoint()"
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2026-23232
-
-Introduced by commit 196c81f ("f2fs: block cache/dio write during
-f2fs_enable_checkpoint()") in v6.19-rc1.
-Fixed in v7.0-rc1.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [3996b70209f145bfcf2afc7d05dd92c27b233b48]
-stable/6.19: [b6382273801bc7c778545dd8004c9a9d750b4f62]
-
-CVE-2026-23233: f2fs: fix to avoid mapping wrong physical block for swapfile
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2026-23233
-
-Introduced by commit 9703d69 ("f2fs: support file pinning for zoned
-devices") in v6.9-rc1.
-Fixed in v7.0-rc1.
-
-Bug introduced commit was backported to following branches.
-stable/6.6
-
-Fixed status
-mainline: [5c145c03188bc9ba1c29e0bc4d527a5978fc47f9]
-stable/6.12: [1ff415eef513bf12deb058fc50d57788c46c48e6]
-stable/6.18: [fee27b69dde1a05908b350eea42937af2387c4fe]
-stable/6.19: [607cb9d83838d2cd9f0406c2403ed61aadf0edff]
-stable/6.6: [d4534a7f6c92baaf7e12a45fc6e37332cafafc33]
-
-CVE-2026-23234: f2fs: fix to avoid UAF in f2fs_write_end_io()
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2026-23234
-
-Introduced by commit e234088 ("f2fs: avoid wait if IO end up when
-do_checkpoint for better performance") in v3.13-rc1.
-Fixed in v7.0-rc1.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [ce2739e482bce8d2c014d76c4531c877f382aa54]
-stable/5.10: [0fb58aff0dafd6837cc91f4154f3ed6e020358fa]
-stable/5.15: [2f67ff1e15a8a4d0e4ffc6564ab20d03d7398fe9]
-stable/6.1: [505e1c0530db6152cab3feef8e3e4da3d3e358c9]
-stable/6.12: [cf4a9e1bc8129eb63fda5f8bdcd8d87f0bd76f42]
-stable/6.18: [995030be4ce6338c6ff814583c14166446a64008]
-stable/6.19: [a42f99be8a16b32a0bb91bb6dda212a6ad61be5d]
-stable/6.6: [acc2c97fc0005846e5cf11b5ba3189fef130c9b3]
-
-CVE-2026-23235: f2fs: fix out-of-bounds access in sysfs attribute read/write
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2026-23235
-
-Introduced by commit b59d0ba ("f2fs: add sysfs support for controlling
-the gc_thread") in v3.12-rc1.
-Fixed in v7.0-rc1.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [98ea0039dbfdd00e5cc1b9a8afa40434476c0955]
-stable/5.10: [e85a99db9ab85dfc30d93b0ca0e9156f3127f55a]
-stable/5.15: [438a405fbad6882df0e34b3e1a16839a71f04240]
-stable/6.1: [6a6c07a9b49e43f0df42d7118fc76aa555c73d98]
-stable/6.12: [4ef30b9f1641c9e877792df6b049f1cf507d002d]
-stable/6.18: [d4a594dd952df123cbdcdee9b9640d9d55e4a954]
-stable/6.19: [3a905e183c047577b154f08a78ac3039e9454703]
-stable/6.6: [eebd72cff518ac87e660aefb8a41224bd88c32ce]
-
-CVE-2026-23236: fbdev: smscufx: properly copy ioctl memory to kernelspace
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2026-23236
-
-Introduced commit is not determined.Fixed in v7.0-rc1.
-
-
-Fixed status
-mainline: [120adae7b42faa641179270c067864544a50ab69]
-stable/5.10: [061cfeb560aa3ddc174153dbe5be9d0b55eb7248]
-stable/5.15: [6167af934f956d3ae1e06d61f45cd0d1004bbe1a]
-stable/6.1: [a0321e6e58facb39fe191caa0e52ed9aab6a48fe]
-stable/6.12: [52917e265aa5f848212f60fc50fc504d8ef12866]
-stable/6.18: [1c008ad0f0d1c1523902b9cdb08e404129677bfc]
-stable/6.19: [f1e91bd4efeae48b0f42caed7e8ce2e3a0d05b02]
-stable/6.6: [0634e8d650993602fc5b389ff7ac525f6542e141]
-
-CVE-2026-23237: platform/x86: classmate-laptop: Add missing NULL pointer checks
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2026-23237
-
-Introduced commit is not determined.Fixed in v6.19.
-
-
-Fixed status
-mainline: [fe747d7112283f47169e9c16e751179a9b38611e]
-stable/5.10: [993708fc18d0d0919db438361b4e8c1f980a8d1b]
-stable/5.15: [af673209d43b46257540997aba042b90ef3258c0]
-stable/6.1: [eb214804f03c829decf10998e9b7dd26f4c8ab9e]
-stable/6.12: [da6e06a5fdbabea3870d18c227734b5dea5b3be6]
-stable/6.18: [97528b1622b8f129574d29a571c32a3c85eafa3c]
-stable/6.6: [9cf4b9b8ad09d6e05307abc4e951cabdff4be652]
-
-CVE-2026-23238: romfs: check sb_set_blocksize() return value
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2026-23238
-
-Introduced commit is not determined.Fixed in v6.19-rc8.
-
-
-Fixed status
-mainline: [ab7ad7abb3660c58ffffdf07ff3bb976e7e0afa0]
-stable/5.10: [a381f0f61b35c8894b0bd0d6acef2d8f9b08b244]
-stable/5.15: [f2521ab1f63a8c244f06a080319e5ff9a2e1bd95]
-stable/6.1: [2c5829cd8fbbc91568c520b666898f57cdcb8cf6]
-stable/6.12: [9b203b8ddd7359270e8a694d0584743555128e2c]
-stable/6.18: [4b71ad7676564a94ec5f7d18298f51e8ae53db73]
-stable/6.6: [cbd9931e6456822067725354d83446c5bb813030]
-
-
-* Updated CVEs
-
-CVE-2025-39889: Bluetooth: l2cap: Check encryption key size on
-incoming connection
-
-stable/5.10 was fixed.
-
-Fixed status
-stable/5.10: [ed503d340a501e414114ddc614a3aae4f6e9eae2]
-
-
-Regards,
--- 
-Masami Ichikawa
-Cybertrust Japan Co., Ltd.
-
-Email :masami.ichikawa@cybertrust.co.jp
-          :masami.ichikawa@miraclelinux.com
+[*]
+Date the data is created: Thu Mar  5 06:04:17 AM UTC 2026
+linux-4.4.y-cip: interval 30 day
+  latest version release date: Sun Mar  1 10:52:36 AM UTC 2026
+  limit date: Tue Mar 31 10:52:36 AM UTC 2026
+  Status: On track
+linux-4.4.y-cip-rt: interval 60 day
+  latest version release date: Sun Jan 11 09:55:11 AM UTC 2026
+  limit date: Thu Mar 12 09:55:11 AM UTC 2026
+  Status: On track
+linux-4.19.y-cip: interval 30 day
+  latest version release date: Mon Feb 23 03:28:28 AM UTC 2026
+  limit date: Wed Mar 25 03:28:28 AM UTC 2026
+  Status: On track
+linux-4.19.y-cip-rt: interval 60 day
+  latest version release date: Wed Feb  4 10:41:33 AM UTC 2026
+  limit date: Sun Apr  5 10:41:33 AM UTC 2026
+  Status: On track
+linux-5.10.y-cip: interval 30 day
+  latest version release date: Fri Feb 13 12:33:43 AM UTC 2026
+  limit date: Sun Mar 15 12:33:43 AM UTC 2026
+  Status: On track
+linux-5.10.y-cip-rt: interval 60 day
+  latest version release date: Sat Jan 10 07:38:46 PM UTC 2026
+  limit date: Wed Mar 11 07:38:46 PM UTC 2026
+  Status: On track
+linux-6.1.y-cip: interval 30 day
+  latest version release date: Tue Feb 24 08:55:46 AM UTC 2026
+  limit date: Thu Mar 26 08:55:46 AM UTC 2026
+  Status: On track
+linux-6.1.y-cip-rt: interval 60 day
+  latest version release date: Tue Feb 24 11:47:33 AM UTC 2026
+  limit date: Sat Apr 25 11:47:33 AM UTC 2026
+  Status: On track
+linux-6.12.y-cip: interval 15 day
+  latest version release date: Thu Feb 12 10:21:35 PM UTC 2026
+  limit date: Fri Feb 27 10:21:35 PM UTC 2026
+  Status: *Late*
 
