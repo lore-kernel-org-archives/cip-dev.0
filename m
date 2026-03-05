@@ -2,154 +2,70 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6628F3D30B
-	for <webhook@archiver.kernel.org>; Thu,  5 Mar 2026 15:36:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D45CDF3D30B
+	for <webhook@archiver.kernel.org>; Thu,  5 Mar 2026 15:37:29 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.47080.1772724990120566597
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.47100.1772725048718379703
  for <cip-dev@lists.cip-project.org>;
- Thu, 05 Mar 2026 07:36:42 -0800
+ Thu, 05 Mar 2026 07:37:29 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: oEcznl4DQuqTgGGvpRE7Wg==
-X-CSE-MsgGUID: YZnC0qm9S3++mcNWDsnqjQ==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 06 Mar 2026 00:36:41 +0900
+X-CSE-ConnectionGUID: bvg+R9ncTo+buh+8GLQDBg==
+X-CSE-MsgGUID: 8NLJHYhPTPGq1MKlVS/fkw==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 06 Mar 2026 00:37:28 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.92.133])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id B793840138D9;
-	Fri,  6 Mar 2026 00:36:40 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id EC91F400CE81;
+	Fri,  6 Mar 2026 00:37:26 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.1.y-cip 8/8] arm64: dts: renesas: r9a09g056n48-rzv2n-evk: Enable DU and DSI
-Date: Thu,  5 Mar 2026 15:36:24 +0000
-Message-ID: <20260305153624.19793-9-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.12.y-cip 0/8] Add RZ/V2N display support
+Date: Thu,  5 Mar 2026 15:37:17 +0000
+Message-ID: <20260305153725.19821-1-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260305153624.19793-1-ovidiu.panait.rb@renesas.com>
-References: <20260305153624.19793-1-ovidiu.panait.rb@renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 05 Mar 2026 15:36:49 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22088
+ <cip-dev@lists.cip-project.org>; Thu, 05 Mar 2026 15:37:29 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22089
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi,
 
-commit 9a5a73dca92aa120ec1ab8b510eb4dbbd653d4e2 upstream.
+This series adds display support for the Renesas RZ/V2N SoC and EVK
+board.
 
-Enable DU, DSI and adv7535 HDMI encoder on RZ/V2N Evaluation Kit.
+All patches were cherry-picked from mainline kernel.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20251103200349.62087-4-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
----
- .../dts/renesas/r9a09g056n48-rzv2n-evk.dts    | 69 +++++++++++++++++++
- 1 file changed, 69 insertions(+)
+Note: This series depends on:
+https://lore.kernel.org/cip-dev/20260225121232.129678-1-ovidiu.panait.rb@renesas.com/
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
-index 5f6281a808f9..f81bbd083cdb 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
-@@ -33,6 +33,17 @@ chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	hdmi-out {
-+		compatible = "hdmi-connector";
-+		type = "d";
-+
-+		port {
-+			hdmi_con_out: endpoint {
-+				remote-endpoint = <&adv7535_out>;
-+			};
-+		};
-+	};
-+
- 	memory@48000000 {
- 		device_type = "memory";
- 		/* first 128MB is reserved for secure area. */
-@@ -75,12 +86,36 @@ vqmmc_sdhi1: regulator-vqmmc-sdhi1 {
- 		gpios-states = <0>;
- 		states = <3300000 0>, <1800000 1>;
- 	};
-+
-+	/* 12MHz oscillator for ADV7535 */
-+	y1: y1-clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <12000000>;
-+	};
- };
- 
- &audio_extal_clk {
- 	clock-frequency = <22579200>;
- };
- 
-+&dsi {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			dsi_out: endpoint {
-+				data-lanes = <1 2 3 4>;
-+				remote-endpoint = <&adv7535_in>;
-+			};
-+		};
-+	};
-+};
-+
-+&du {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	dr_mode = "otg";
- 	status = "okay";
-@@ -138,6 +173,40 @@ &i2c3 {
- 	pinctrl-names = "default";
- 	clock-frequency = <400000>;
- 	status = "okay";
-+
-+	adv7535: hdmi@3d {
-+		compatible = "adi,adv7535";
-+		reg = <0x3d>, <0x3f>, <0x3c>, <0x38>;
-+		reg-names = "main", "edid", "cec", "packet";
-+		clocks = <&y1>;
-+		clock-names = "cec";
-+		avdd-supply = <&reg_1p8v>;
-+		dvdd-supply = <&reg_1p8v>;
-+		pvdd-supply = <&reg_1p8v>;
-+		a2vdd-supply = <&reg_1p8v>;
-+		v3p3-supply = <&reg_3p3v>;
-+		v1p2-supply = <&reg_1p8v>;
-+		adi,dsi-lanes = <4>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7535_in: endpoint {
-+					remote-endpoint = <&dsi_out>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				adv7535_out: endpoint {
-+					remote-endpoint = <&hdmi_con_out>;
-+				};
-+			};
-+		};
-+	};
- };
- 
- &i2c6 {
+Best regards,
+Ovidiu
+
+Lad Prabhakar (8):
+  media: dt-bindings: media: renesas,fcp: Document RZ/V2N SoC
+  media: dt-bindings: media: renesas,fcp: Allow three clocks for RZ/V2N
+    SoC
+  media: dt-bindings: media: renesas,vsp1: Document RZ/V2N SoC
+  dt-bindings: display: renesas,rzg2l-du: Add support for RZ/V2N SoC
+  clk: renesas: r9a09g056: Add clocks and resets for DSI and LCDC
+    modules
+  arm64: dts: renesas: r9a09g056: Add FCPV and VSPD nodes
+  arm64: dts: renesas: r9a09g056: Add DU and DSI nodes
+  arm64: dts: renesas: r9a09g056n48-rzv2n-evk: Enable DU and DSI
+
+ .../bindings/display/renesas,rzg2l-du.yaml    |  3 +
+ .../bindings/media/renesas,fcp.yaml           |  2 +
+ .../bindings/media/renesas,vsp1.yaml          |  1 +
+ arch/arm64/boot/dts/renesas/r9a09g056.dtsi    | 89 +++++++++++++++++++
+ .../dts/renesas/r9a09g056n48-rzv2n-evk.dts    | 69 ++++++++++++++
+ drivers/clk/renesas/r9a09g056-cpg.c           | 64 +++++++++++++
+ 6 files changed, 228 insertions(+)
+
 -- 
 2.34.1
 
