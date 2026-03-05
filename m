@@ -2,28 +2,28 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F34BF3D317
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52D5AF3D311
 	for <webhook@archiver.kernel.org>; Thu,  5 Mar 2026 15:37:50 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.47109.1772725063481588333
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.47107.1772725058294584403
  for <cip-dev@lists.cip-project.org>;
- Thu, 05 Mar 2026 07:37:43 -0800
+ Thu, 05 Mar 2026 07:37:41 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: VHhWXs/CSqKACUw8Mk/tUA==
-X-CSE-MsgGUID: wTvPGyffT5GMWQdQ1y1Geg==
+ dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
+X-CSE-ConnectionGUID: 8/jLjeVISQOl7KC7zTUVlQ==
+X-CSE-MsgGUID: yMH+yvufSLiBbgyezq+1kA==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 06 Mar 2026 00:37:42 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 06 Mar 2026 00:37:41 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.92.133])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id AC7D2400D12C;
-	Fri,  6 Mar 2026 00:37:41 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id E4E80400CE81;
+	Fri,  6 Mar 2026 00:37:39 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.12.y-cip 8/8] arm64: dts: renesas: r9a09g056n48-rzv2n-evk: Enable DU and DSI
-Date: Thu,  5 Mar 2026 15:37:25 +0000
-Message-ID: <20260305153725.19821-9-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.12.y-cip 7/8] arm64: dts: renesas: r9a09g056: Add DU and DSI nodes
+Date: Thu,  5 Mar 2026 15:37:24 +0000
+Message-ID: <20260305153725.19821-8-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260305153725.19821-1-ovidiu.panait.rb@renesas.com>
 References: <20260305153725.19821-1-ovidiu.panait.rb@renesas.com>
@@ -33,123 +33,99 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 05 Mar 2026 15:37:50 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22097
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22096
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit 9a5a73dca92aa120ec1ab8b510eb4dbbd653d4e2 upstream.
+commit d8332e5f3384c17b55025cfcf35733eeffeac3c5 upstream.
 
-Enable DU, DSI and adv7535 HDMI encoder on RZ/V2N Evaluation Kit.
+Add DU and DSI nodes to RZ/V2N SoC DTSI.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20251103200349.62087-4-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://patch.msgid.link/20251103200349.62087-3-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- .../dts/renesas/r9a09g056n48-rzv2n-evk.dts    | 69 +++++++++++++++++++
- 1 file changed, 69 insertions(+)
+ arch/arm64/boot/dts/renesas/r9a09g056.dtsi | 65 ++++++++++++++++++++++
+ 1 file changed, 65 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
-index 5f6281a808f9..f81bbd083cdb 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
-@@ -33,6 +33,17 @@ chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g056.dtsi b/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
+index 6dd28f07a1ac..96765312398c 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
+@@ -918,6 +918,71 @@ queue3 {
+ 			};
+ 		};
  
-+	hdmi-out {
-+		compatible = "hdmi-connector";
-+		type = "d";
++		dsi: dsi@16430000 {
++			compatible = "renesas,r9a09g056-mipi-dsi", "renesas,r9a09g057-mipi-dsi";
++			reg = <0 0x16430000 0 0x20000>;
++			interrupts = <GIC_SPI 874 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 875 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 876 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 877 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 878 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 879 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 880 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "seq0", "seq1", "vin1", "rcv",
++					  "ferr", "ppi", "debug";
++			clocks = <&cpg CPG_MOD 0xec>, <&cpg CPG_MOD 0xe9>,
++				 <&cpg CPG_MOD 0xe8>, <&cpg CPG_MOD 0xea>,
++				 <&cpg CPG_MOD 0xeb>;
++			clock-names = "pllrefclk", "aclk", "pclk", "vclk", "lpclk";
++			resets = <&cpg 0xd8>, <&cpg 0xd7>;
++			reset-names = "arst", "prst";
++			power-domains = <&cpg>;
++			status = "disabled";
 +
-+		port {
-+			hdmi_con_out: endpoint {
-+				remote-endpoint = <&adv7535_out>;
-+			};
-+		};
-+	};
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
 +
- 	memory@48000000 {
- 		device_type = "memory";
- 		/* first 128MB is reserved for secure area. */
-@@ -75,12 +86,36 @@ vqmmc_sdhi1: regulator-vqmmc-sdhi1 {
- 		gpios-states = <0>;
- 		states = <3300000 0>, <1800000 1>;
- 	};
-+
-+	/* 12MHz oscillator for ADV7535 */
-+	y1: y1-clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <12000000>;
-+	};
- };
- 
- &audio_extal_clk {
- 	clock-frequency = <22579200>;
- };
- 
-+&dsi {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			dsi_out: endpoint {
-+				data-lanes = <1 2 3 4>;
-+				remote-endpoint = <&adv7535_in>;
-+			};
-+		};
-+	};
-+};
-+
-+&du {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	dr_mode = "otg";
- 	status = "okay";
-@@ -138,6 +173,40 @@ &i2c3 {
- 	pinctrl-names = "default";
- 	clock-frequency = <400000>;
- 	status = "okay";
-+
-+	adv7535: hdmi@3d {
-+		compatible = "adi,adv7535";
-+		reg = <0x3d>, <0x3f>, <0x3c>, <0x38>;
-+		reg-names = "main", "edid", "cec", "packet";
-+		clocks = <&y1>;
-+		clock-names = "cec";
-+		avdd-supply = <&reg_1p8v>;
-+		dvdd-supply = <&reg_1p8v>;
-+		pvdd-supply = <&reg_1p8v>;
-+		a2vdd-supply = <&reg_1p8v>;
-+		v3p3-supply = <&reg_3p3v>;
-+		v1p2-supply = <&reg_1p8v>;
-+		adi,dsi-lanes = <4>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7535_in: endpoint {
-+					remote-endpoint = <&dsi_out>;
++				port@0 {
++					reg = <0>;
++					dsi_in: endpoint {
++						remote-endpoint = <&du_out_dsi>;
++					};
 +				};
-+			};
 +
-+			port@1 {
-+				reg = <1>;
-+				adv7535_out: endpoint {
-+					remote-endpoint = <&hdmi_con_out>;
++				port@1 {
++					reg = <1>;
++					dsi_out: endpoint {
++					};
 +				};
 +			};
 +		};
-+	};
- };
- 
- &i2c6 {
++
++		du: display@16460000 {
++			compatible = "renesas,r9a09g056-du", "renesas,r9a09g057-du";
++			reg = <0 0x16460000 0 0x10000>;
++			interrupts = <GIC_SPI 882 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 0xed>, <&cpg CPG_MOD 0xee>,
++				 <&cpg CPG_MOD 0xef>;
++			clock-names = "aclk", "pclk", "vclk";
++			power-domains = <&cpg>;
++			resets = <&cpg 0xdc>;
++			renesas,vsps = <&vspd 0>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					du_out_dsi: endpoint {
++						remote-endpoint = <&dsi_in>;
++					};
++				};
++			};
++		};
++
+ 		fcpvd: fcp@16470000 {
+ 			compatible = "renesas,r9a09g056-fcpvd", "renesas,fcpv";
+ 			reg = <0 0x16470000 0 0x10000>;
 -- 
 2.34.1
 
