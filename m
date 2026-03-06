@@ -2,35 +2,35 @@ Return-Path: <alexander.heinisch@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 483ACF513EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5999AF51416
 	for <webhook@archiver.kernel.org>; Fri,  6 Mar 2026 14:22:29 +0000 (UTC)
-Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.70217.1772806939558633763
+Received: from mta-64-228.siemens.flowmailer.net (mta-64-228.siemens.flowmailer.net [185.136.64.228])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.70219.1772806940831154853
  for <cip-dev@lists.cip-project.org>;
- Fri, 06 Mar 2026 06:22:20 -0800
+ Fri, 06 Mar 2026 06:22:21 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=alexander.heinisch@siemens.com header.s=fm1 header.b=N78VzN0n;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.226, mailfrom: fm-1330684-20260306142217b1b2b527a300020748-hqevpv@rts-flowmailer.siemens.com)
-Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20260306142217b1b2b527a300020748
+ dkim=pass header.i=alexander.heinisch@siemens.com header.s=fm1 header.b=DAzXUIGw;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.228, mailfrom: fm-1330684-202603061422186adfa6cd7d00020770-my5ilu@rts-flowmailer.siemens.com)
+Received: by mta-64-228.siemens.flowmailer.net with ESMTPSA id 202603061422186adfa6cd7d00020770
         for <cip-dev@lists.cip-project.org>;
-        Fri, 06 Mar 2026 15:22:17 +0100
+        Fri, 06 Mar 2026 15:22:19 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=alexander.heinisch@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=IZ/VVCUcv4WfezphOphX/c9BqjaQj1RawUHh4hti+VA=;
- b=N78VzN0ncQ97cvdHsNabyyQp5JYqJiJuiyiYfg0WYOA2WaJj6IYwl8W0AxvndOIkIi5XTO
- Kbin8D4nw8vmJ6P368hCOZRHYvDKmz2o1rqkI5KYlFMnZGLuvJHl2hYsRTVdxDZPBRLN+3Dd
- YjPe58yGDdtIzzoA2NNzGSf2Gau4Lqs+0Ep0HVzoutIeS/OxeccdxsfBB5v2vVF2HFF7WKVI
- YSF020/m2ZGrb2IHhromUg5J0m+K8Q69OjozRChOUhpk/AI6DPzoPzmA65g93Phwu6Gl+5TU
- MaRZ/DeIdKMZ6tNOdb7xXp4NQfnb25aR8U6ZpEAC7WUpMfcOHsnKNTUA==;
+ bh=fFBIhalVq2vdMDVNPzXi5fRlPRwZkJ9qIeXKPgBc5Qg=;
+ b=DAzXUIGw6X0W5ADQKtXpur+S/ucOSWPPoaS3R1EOzjzg3AYlp1Zit2+C9PWiMqbuaZiIIQ
+ 2Wpo6Ol/Ee5olR36ROAM8Mb2ePd59D5R6p6uI1cMP7udk8hzGMHX8lmaYI/QG+NrDckqARSK
+ OiYrzC1Z9MPk9jDYz0EC07EO8ZUI3s79hlpcxAA6OprjGHt5eG7ntivQc2Cx9NK+KfEb6dJl
+ EUYsV9Z5QS2ZeQdQ7hGDO0N8ihhsiMDYbljsWRSyid+Qxb6LuHycV8I1QnVeFa+Wu33gS7nY
+ E3lghUdH0drQIL71tRc5LMTGWxHcyZT+B9XepqtxrHjnhz6RUKfB1H7Q==;
 From: alexander.heinisch@siemens.com
 To: cip-dev@lists.cip-project.org,
 	felix.moessbauer@siemens.com
 Cc: quirin.gylstorff@siemens.com,
 	Alexander Heinisch <alexander.heinisch@siemens.com>
-Subject: [isar-cip-core][PATCH v2 1/2] wic: Added support to set sourceparams for empty root-B partition.
-Date: Fri,  6 Mar 2026 15:22:12 +0100
-Message-ID: <20260306142213.1273718-2-alexander.heinisch@siemens.com>
+Subject: [isar-cip-core][PATCH v2 2/2] wic: Wipe rootfs-B headers on bmaptool copy
+Date: Fri,  6 Mar 2026 15:22:13 +0100
+Message-ID: <20260306142213.1273718-3-alexander.heinisch@siemens.com>
 In-Reply-To: <20260306142213.1273718-1-alexander.heinisch@siemens.com>
 References: <20260306142213.1273718-1-alexander.heinisch@siemens.com>
 MIME-Version: 1.0
@@ -41,168 +41,84 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 06 Mar 2026 14:22:29 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22103
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22104
 
 From: Alexander Heinisch <alexander.heinisch@siemens.com>
 
+To copy images `bmaptool copy` uses a bmap file that maps regions
+that actually hold data. That means empty regions / holes in the file
+are skipped by the tool and thus those regions on the disk do not
+change. - That's actually the feature why bmaptools exists.
+
+Wiping the bytes from the beginning of the rootfs-B partition avoids
+undesired hold-partition-data bugs. Especially on systems where
+disk encryption is deployed.
+
+When reinstalling an image configured to use A/B-rootfs and disk encryption
+that way, this results in a LUKS2 header created for rootfs-B during
+disk encryption setup of the previous installation to remain on the target.
+
+The LUKS2 header for rootfs-A gets overwritten properly, as that range
+actually contains filesystem information for squashfs or erofs).
+
+When installing images using different secure boot keys for signing or
+wiping the TPMs state during reinstallation the key cannot be unsealed
+and/or retrieved anymore.
+
+On boot the initramfs-crypt-hook sets up disk encryption for
+rootfs-A (creates a new key) and tries to retrieve the key used for for
+rootfs-B in the TPM as it still has a valid LUKS2 header, which fails.
+Thus, mounting the old LUKS2 encrypted rootfs-B in local-bottom fails
+and the system panics and ends up in a restart/panic loop.
+
+By setting the sourceparam size=5M we ensure that the first 5MB of the partition
+actually gets overwritten. As there are actual zeros in the file compared to
+holes previously, the bmap also maps those regions and overwrites them on copy.
+
+Without an offset specified (as in our cse) the LUKS header is stored at the start
+of the partition and has a size of 4k.
+Due to the nature of LUKS2 it is hard to determine the exact position of the
+backup header. Therefore, I chose to stay close to the actual cryptsetup
+implementation (as of 3b6794a2a3580559bcbc3ad0e67ab4805f48fa7d) to derive furthest
+backup header location which is 4MiB.
+
+This is also sufficient to wipe erofs and squasfs superblocks
+
+ - the squashfs superblock (96 bytes) starting with fs identifier (4 bytes)
+   which is stored at the begin of the partition,
+ - the erofs superblock (78 bytes) starting with fs identifier (4 bytes)
+   which is stored at an offset of 1k
+
+Thus, as the default block size used in EmptyPartitionPlugin is 1MB choosing 5MB as an
+additional write overhead seemed propper.
+
 Signed-off-by: Alexander Heinisch <alexander.heinisch@siemens.com>
 ---
- wic/bbb-efibootguard.wks.in                     | 2 +-
- wic/beaglev-fire-efibootguard.wks.in            | 2 +-
- wic/de0-nano-soc-efibootguard.wks.in            | 2 +-
- wic/hihope-rzg2m-efibootguard.wks.in            | 2 +-
- wic/qemu-arm64-efibootguard-secureboot.wks.in   | 2 +-
- wic/qemu-arm64-efibootguard.wks.in              | 2 +-
- wic/qemu-riscv64-efibootguard.wks.in            | 2 +-
- wic/ti-am62px-sk-efibootguard-secureboot.wks.in | 2 +-
- wic/ti-am62px-sk-efibootguard.wks.in            | 2 +-
- wic/x86-uefi-efibootguard-secureboot.wks.in     | 2 +-
- wic/x86-uefi-efibootguard.wks.in                | 2 +-
- 11 files changed, 11 insertions(+), 11 deletions(-)
+ kas/opt/swupdate.yml | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/wic/bbb-efibootguard.wks.in b/wic/bbb-efibootguard.wks.in
-index 6883579..b6d19ba 100644
---- a/wic/bbb-efibootguard.wks.in
-+++ b/wic/bbb-efibootguard.wks.in
-@@ -12,7 +12,7 @@ part --source rawcopy --sourceparams "file=/usr/lib/u-boot/bbb/u-boot.img" --no-
- include ebg-sysparts.inc
- 
- part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${RO_ROOTFS_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
--part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
-+part --source empty --sourceparams "${ABROOTFS_SOURCEPARAMS_B}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
- 
- # var and optional home are extra partitions
- ${WIC_HOME_PARTITION}
-diff --git a/wic/beaglev-fire-efibootguard.wks.in b/wic/beaglev-fire-efibootguard.wks.in
-index f24b53c..0274745 100644
---- a/wic/beaglev-fire-efibootguard.wks.in
-+++ b/wic/beaglev-fire-efibootguard.wks.in
-@@ -11,7 +11,7 @@ part --source rawcopy --sourceparams "file=/usr/lib/u-boot/beaglev-fire/payload.
- include ebg-sysparts.inc
- 
- part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${RO_ROOTFS_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
--part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
-+part --source empty --sourceparams "${ABROOTFS_SOURCEPARAMS_B}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
- 
- # var and optional home are extra partitions
- ${WIC_HOME_PARTITION}
-diff --git a/wic/de0-nano-soc-efibootguard.wks.in b/wic/de0-nano-soc-efibootguard.wks.in
-index f010853..a1c1108 100644
---- a/wic/de0-nano-soc-efibootguard.wks.in
-+++ b/wic/de0-nano-soc-efibootguard.wks.in
-@@ -11,7 +11,7 @@ part --source rawcopy --sourceparams "file=/usr/lib/u-boot/de0-nano-soc/u-boot-w
- include ebg-sysparts.inc
- 
- part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${RO_ROOTFS_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
--part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
-+part --source empty --sourceparams "${ABROOTFS_SOURCEPARAMS_B}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
- 
- # var and optional home are extra partitions
- ${WIC_HOME_PARTITION}
-diff --git a/wic/hihope-rzg2m-efibootguard.wks.in b/wic/hihope-rzg2m-efibootguard.wks.in
-index fdbad14..2865e8b 100644
---- a/wic/hihope-rzg2m-efibootguard.wks.in
-+++ b/wic/hihope-rzg2m-efibootguard.wks.in
-@@ -4,7 +4,7 @@
- include ebg-sysparts.inc
- 
- part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${RO_ROOTFS_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
--part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
-+part --source empty --sourceparams "${ABROOTFS_SOURCEPARAMS_B}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
- 
- # var and optional home are extra partitions
- ${WIC_HOME_PARTITION}
-diff --git a/wic/qemu-arm64-efibootguard-secureboot.wks.in b/wic/qemu-arm64-efibootguard-secureboot.wks.in
-index 941a552..2092d07 100644
---- a/wic/qemu-arm64-efibootguard-secureboot.wks.in
-+++ b/wic/qemu-arm64-efibootguard-secureboot.wks.in
-@@ -1,7 +1,7 @@
- include ebg-signed-sysparts.inc
- 
- part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
--part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
-+part --source empty --sourceparams "${ABROOTFS_SOURCEPARAMS_B}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
- 
- # var and optional home are extra partitions
- ${WIC_HOME_PARTITION}
-diff --git a/wic/qemu-arm64-efibootguard.wks.in b/wic/qemu-arm64-efibootguard.wks.in
-index 21c0b24..2ca607a 100644
---- a/wic/qemu-arm64-efibootguard.wks.in
-+++ b/wic/qemu-arm64-efibootguard.wks.in
-@@ -4,7 +4,7 @@
- include ebg-sysparts.inc
- 
- part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${RO_ROOTFS_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
--part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
-+part --source empty --sourceparams "${ABROOTFS_SOURCEPARAMS_B}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
- 
- # var and optional home are extra partitions
- ${WIC_HOME_PARTITION}
-diff --git a/wic/qemu-riscv64-efibootguard.wks.in b/wic/qemu-riscv64-efibootguard.wks.in
-index 948c67d..6336398 100644
---- a/wic/qemu-riscv64-efibootguard.wks.in
-+++ b/wic/qemu-riscv64-efibootguard.wks.in
-@@ -4,7 +4,7 @@
- include ebg-sysparts.inc
- 
- part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${RO_ROOTFS_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
--part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
-+part --source empty --sourceparams "${ABROOTFS_SOURCEPARAMS_B}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
- 
- # var and optional home are extra partitions
- ${WIC_HOME_PARTITION}
-diff --git a/wic/ti-am62px-sk-efibootguard-secureboot.wks.in b/wic/ti-am62px-sk-efibootguard-secureboot.wks.in
-index c777a6b..1e2f578 100644
---- a/wic/ti-am62px-sk-efibootguard-secureboot.wks.in
-+++ b/wic/ti-am62px-sk-efibootguard-secureboot.wks.in
-@@ -14,7 +14,7 @@ include ebg-signed-sysparts.inc
- 
- # ABROOTFS partitions
- part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
--part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
-+part --source empty --sourceparams "${ABROOTFS_SOURCEPARAMS_B}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
- 
- ${WIC_HOME_PARTITION}
- ${WIC_VAR_PARTITION}
-diff --git a/wic/ti-am62px-sk-efibootguard.wks.in b/wic/ti-am62px-sk-efibootguard.wks.in
-index 5137c66..d0c7ef4 100644
---- a/wic/ti-am62px-sk-efibootguard.wks.in
-+++ b/wic/ti-am62px-sk-efibootguard.wks.in
-@@ -14,7 +14,7 @@ include ebg-sysparts.inc
- 
- # ABROOTFS partitions
- part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${RO_ROOTFS_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
--part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
-+part --source empty --sourceparams "${ABROOTFS_SOURCEPARAMS_B}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
- 
- ${WIC_HOME_PARTITION}
- ${WIC_VAR_PARTITION}
-diff --git a/wic/x86-uefi-efibootguard-secureboot.wks.in b/wic/x86-uefi-efibootguard-secureboot.wks.in
-index 2af3e58..c508656 100644
---- a/wic/x86-uefi-efibootguard-secureboot.wks.in
-+++ b/wic/x86-uefi-efibootguard-secureboot.wks.in
-@@ -1,7 +1,7 @@
- include ebg-signed-sysparts.inc
- 
- part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
--part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
-+part --source empty --sourceparams "${ABROOTFS_SOURCEPARAMS_B}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
- 
- # var and optional home are extra partitions
- ${WIC_HOME_PARTITION}
-diff --git a/wic/x86-uefi-efibootguard.wks.in b/wic/x86-uefi-efibootguard.wks.in
-index 3640ecf..df7d9ea 100644
---- a/wic/x86-uefi-efibootguard.wks.in
-+++ b/wic/x86-uefi-efibootguard.wks.in
-@@ -4,7 +4,7 @@
- include ebg-sysparts.inc
- 
- part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${RO_ROOTFS_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
--part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
-+part --source empty --sourceparams "${ABROOTFS_SOURCEPARAMS_B}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
- 
- 
- # var and optional home are extra partitions
+diff --git a/kas/opt/swupdate.yml b/kas/opt/swupdate.yml
+index c5b7c61..b4c4b99 100644
+--- a/kas/opt/swupdate.yml
++++ b/kas/opt/swupdate.yml
+@@ -26,3 +26,17 @@ local_conf_header:
+     PREFERRED_PROVIDER_swupdate-certificates-key ??= "swupdate-certificates-key-snakeoil"
+     PREFERRED_PROVIDER_swupdate-certificates ??= "swupdate-certificates-snakeoil"
+     PREFERRED_PROVIDER_swupdate-signer ??= "swupdate-signer-cms"
++
++  wipe-fs-header: |
++    # Overwrite the first 5 MiB of the rootfs-B partition with zeroes to avoid undesired
++    # hold-partition-data bugs. Especially on systems with disk encryption enabled for the
++    # rootfs, we need to make sure that LUKS2 headers already stored on the disk from a
++    # previous installation are properly overwritten by `bmaptool copy`.
++    # By setting the sourceparams="size=5M" the first 5 MiB of the partition will be overwritten
++    # with zeros, which is sufficient to cover: LUKS2 header, squashfs, erofs, ...
++    # - the LUKS2 header (4k) and the backup header (max offset used by cryptsetup = 4M),
++    # - the squashfs superblock (96 bytes) starting with fs identifier (4 bytes)
++    #   which is stored at the begin of the partition,
++    # - the erofs superblock (78 bytes) starting with fs identifier (4 bytes)
++    #   which is stored at an offset of 1k
++    ABROOTFS_SOURCEPARAMS_B = "size=5M"
 -- 
 2.47.3
 
