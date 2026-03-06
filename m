@@ -2,28 +2,28 @@ Return-Path: <cosmin-gabriel.tanislav.xa@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF9FFCB636
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB08EFCB632
 	for <webhook@archiver.kernel.org>; Fri,  6 Mar 2026 17:00:41 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.73802.1772816412211779145
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.74088.1772816422272121011
  for <cip-dev@lists.cip-project.org>;
- Fri, 06 Mar 2026 09:00:34 -0800
+ Fri, 06 Mar 2026 09:00:32 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: cosmin-gabriel.tanislav.xa@renesas.com)
-X-CSE-ConnectionGUID: qZPeDZ0+QU6riEcFeosx4Q==
-X-CSE-MsgGUID: zLexyRq5QTCPsIqOvEOEIw==
+ dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: cosmin-gabriel.tanislav.xa@renesas.com)
+X-CSE-ConnectionGUID: 6i5BttDJTKarXuml9rXfjg==
+X-CSE-MsgGUID: wNE4ALbzSAeQda1DmxJTcg==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 07 Mar 2026 02:00:34 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 07 Mar 2026 02:00:32 +0900
 Received: from demon-pc.localdomain (unknown [10.226.93.180])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id C90D14004BAF;
-	Sat,  7 Mar 2026 02:00:32 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id EFF23400BC0F;
+	Sat,  7 Mar 2026 02:00:30 +0900 (JST)
 From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.12.y-cip 15/17] spi: dt-bindings: renesas,rzv2h-rspi: document RZ/T2H and RZ/N2H
-Date: Fri,  6 Mar 2026 18:59:16 +0200
-Message-ID: <20260306165918.209377-16-cosmin-gabriel.tanislav.xa@renesas.com>
+Subject: [PATCH 6.12.y-cip 14/17] spi: rzv2h-rspi: add support for RZ/T2H and RZ/N2H
+Date: Fri,  6 Mar 2026 18:59:15 +0200
+Message-ID: <20260306165918.209377-15-cosmin-gabriel.tanislav.xa@renesas.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260306165918.209377-1-cosmin-gabriel.tanislav.xa@renesas.com>
 References: <20260306165918.209377-1-cosmin-gabriel.tanislav.xa@renesas.com>
@@ -33,127 +33,180 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 06 Mar 2026 17:00:41 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22121
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22120
 
-commit e93d7b2d8b349f659fa9456048ee86e10eb422f9 upstream.
+commit 0cc8cd824b9fb7fb087a2ec6b0c80d812cc4fde7 upstream.
 
-The Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs have four SPI
-peripherals.
+Compared to the previously supported RZ/V2H, the Renesas RZ/T2H
+(R9A09G077) and RZ/N2H (R9A09G087) SoCs have a smaller FIFO, no resets,
+and only two clocks: PCLKSPIn and PCLK. PCLKSPIn, being the clock from
+which the SPI transfer clock is generated, is the equivalent of the TCLK
+clock from RZ/V2H. They also support generating the SPI transfer clock
+from PCLK.
 
-Compared to the previously supported RZ/V2H, these SoCs have a smaller
-FIFO, no resets, and only two clocks: PCLKSPIn and PCLK. PCLKSPIn,
-being the clock from which the SPI transfer clock is generated, is the
-equivalent of the TCLK from V2H.
+PCLKSPIn supports multiple dividers, generating multiple possible
+frequencies from its parent. To handle this, do the following changes.
 
-Document them, and use RZ/T2H as a fallback for RZ/N2H as the SPIs are
-entirely compatible.
+Use the minimum frequency of SPI clock to calculate the SPI controller's
+min_speed_hz, and the maximum frequency to calculate max_speed_hz.
+
+Add a new function, rzv2h_rspi_find_rate_variable(), which is used for
+the .find_tclk_rate() callback, and which supports handling clocks with
+a variable rate, with the following overall logic.
+
+Iterate through all possible BRDV values.
+
+For each BRDV, calculate two different SPRs, one for the clock's minimum
+frequency, and one for the maxmimum, and iterate through each SPR
+between them.
+
+If the minimum SPR is higher than the upper SPR limit, the minimum rate
+is too high to achieve the requested SPI frequency, skip to the next
+BRDV.
+
+For each SPR, calculate a rate and let the clock framework round it to
+the closest supported rate of the clock.
+
+The rate and SPR that generate a transfer frequency closest to the
+requested SPI transfer frequency will be picked.
 
 Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Link: https://patch.msgid.link/20251119161434.595677-11-cosmin-gabriel.tanislav.xa@renesas.com
+Link: https://patch.msgid.link/20251119161434.595677-12-cosmin-gabriel.tanislav.xa@renesas.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 ---
- .../bindings/spi/renesas,rzv2h-rspi.yaml      | 62 ++++++++++++++++---
- 1 file changed, 52 insertions(+), 10 deletions(-)
+ drivers/spi/spi-rzv2h-rspi.c | 108 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 108 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/spi/renesas,rzv2h-rspi.yaml b/Documentation/devicetree/bindings/spi/renesas,rzv2h-rspi.yaml
-index ab27fefc3c3a..4331df3e3d47 100644
---- a/Documentation/devicetree/bindings/spi/renesas,rzv2h-rspi.yaml
-+++ b/Documentation/devicetree/bindings/spi/renesas,rzv2h-rspi.yaml
-@@ -9,12 +9,15 @@ title: Renesas RZ/V2H(P) Renesas Serial Peripheral Interface (RSPI)
- maintainers:
-   - Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+diff --git a/drivers/spi/spi-rzv2h-rspi.c b/drivers/spi/spi-rzv2h-rspi.c
+index da110efba971..1db7e4e5d64e 100644
+--- a/drivers/spi/spi-rzv2h-rspi.c
++++ b/drivers/spi/spi-rzv2h-rspi.c
+@@ -261,6 +261,105 @@ static inline u32 rzv2h_rspi_calc_bitrate(unsigned long tclk_rate, u8 spr,
+ 	return DIV_ROUND_UP(tclk_rate, (2 * (spr + 1) * (1 << brdv)));
+ }
  
--allOf:
--  - $ref: spi-controller.yaml#
--
- properties:
-   compatible:
--    const: renesas,r9a09g057-rspi # RZ/V2H(P)
-+    oneOf:
-+      - enum:
-+          - renesas,r9a09g057-rspi # RZ/V2H(P)
-+          - renesas,r9a09g077-rspi # RZ/T2H
-+      - items:
-+          - const: renesas,r9a09g087-rspi # RZ/N2H
-+          - const: renesas,r9a09g077-rspi # RZ/T2H
- 
-   reg:
-     maxItems: 1
-@@ -36,13 +39,12 @@ properties:
-       - const: tx
- 
-   clocks:
-+    minItems: 2
-     maxItems: 3
- 
-   clock-names:
--    items:
--      - const: pclk
--      - const: pclk_sfr
--      - const: tclk
-+    minItems: 2
-+    maxItems: 3
- 
-   resets:
-     maxItems: 2
-@@ -62,12 +64,52 @@ required:
-   - interrupt-names
-   - clocks
-   - clock-names
--  - resets
--  - reset-names
-   - power-domains
-   - '#address-cells'
-   - '#size-cells'
- 
-+allOf:
-+  - $ref: spi-controller.yaml#
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - renesas,r9a09g057-rspi
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 3
++static void rzv2h_rspi_find_rate_variable(struct clk *clk, u32 hz,
++					  u8 spr_min, u8 spr_max,
++					  struct rzv2h_rspi_best_clock *best)
++{
++	long clk_rate, clk_min_rate, clk_max_rate;
++	int min_rate_spr, max_rate_spr;
++	unsigned long error;
++	u32 actual_hz;
++	u8 brdv;
++	int spr;
 +
-+        clock-names:
-+          items:
-+            - const: pclk
-+            - const: pclk_sfr
-+            - const: tclk
++	/*
++	 * On T2H / N2H, the source for the SPI clock is PCLKSPIn, which is a
++	 * 1/32, 1/30, 1/25 or 1/24 divider of PLL4, which is 2400MHz,
++	 * resulting in either 75MHz, 80MHz, 96MHz or 100MHz.
++	 */
++	clk_min_rate = clk_round_rate(clk, 0);
++	if (clk_min_rate < 0)
++		return;
 +
-+      required:
-+        - resets
-+        - reset-names
++	clk_max_rate = clk_round_rate(clk, ULONG_MAX);
++	if (clk_max_rate < 0)
++		return;
 +
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - renesas,r9a09g077-rspi
-+    then:
-+      properties:
-+        clocks:
-+          maxItems: 2
++	/*
++	 * From the manual:
++	 * Bit rate = f(PCLKSPIn) / (2 * (n + 1) * 2^N)
++	 *
++	 * If we adapt it to the current context, we get the following:
++	 * hz = rate / ((spr + 1) * (1 << (brdv + 1)))
++	 *
++	 * This can be written in multiple forms depending on what we want to
++	 * determine.
++	 *
++	 * To find the rate, having hz, spr and brdv:
++	 * rate = hz * (spr + 1) * (1 << (brdv + 1)
++	 *
++	 * To find the spr, having rate, hz, and spr:
++	 * spr = rate / (hz * (1 << (brdv + 1)) - 1
++	 */
 +
-+        clock-names:
-+          items:
-+            - const: pclk
-+            - const: pclkspi
++	for (brdv = RSPI_SPCMD_BRDV_MIN; brdv <= RSPI_SPCMD_BRDV_MAX; brdv++) {
++		/* Calculate the divisor needed to find the SPR from a rate. */
++		u32 rate_div = hz * (1 << (brdv + 1));
 +
-+        resets: false
-+        reset-names: false
++		/*
++		 * If the SPR for the minimum rate is greater than the maximum
++		 * allowed value skip this BRDV. The divisor increases with each
++		 * BRDV iteration, so the following BRDV might result in a
++		 * minimum SPR that is in the valid range.
++		 */
++		min_rate_spr = DIV_ROUND_CLOSEST(clk_min_rate, rate_div) - 1;
++		if (min_rate_spr > spr_max)
++			continue;
 +
- unevaluatedProperties: false
++		/*
++		 * If the SPR for the maximum rate is less than the minimum
++		 * allowed value, exit. The divisor only increases with each
++		 * BRDV iteration, so the following BRDV cannot result in a
++		 * maximum SPR that is in the valid range.
++		 */
++		max_rate_spr = DIV_ROUND_CLOSEST(clk_max_rate, rate_div) - 1;
++		if (max_rate_spr < spr_min)
++			break;
++
++		if (min_rate_spr < spr_min)
++			min_rate_spr = spr_min;
++
++		if (max_rate_spr > spr_max)
++			max_rate_spr = spr_max;
++
++		for (spr = min_rate_spr; spr <= max_rate_spr; spr++) {
++			clk_rate = (spr + 1) * rate_div;
++
++			clk_rate = clk_round_rate(clk, clk_rate);
++			if (clk_rate <= 0)
++				continue;
++
++			actual_hz = rzv2h_rspi_calc_bitrate(clk_rate, spr, brdv);
++			error = abs((long)hz - (long)actual_hz);
++
++			if (error >= best->error)
++				continue;
++
++			*best = (struct rzv2h_rspi_best_clock) {
++				.clk = clk,
++				.clk_rate = clk_rate,
++				.error = error,
++				.actual_hz = actual_hz,
++				.brdv = brdv,
++				.spr = spr,
++			};
++
++			if (!error)
++				return;
++		}
++	}
++}
++
+ static void rzv2h_rspi_find_rate_fixed(struct clk *clk, u32 hz,
+ 				       u8 spr_min, u8 spr_max,
+ 				       struct rzv2h_rspi_best_clock *best)
+@@ -558,8 +657,17 @@ static const struct rzv2h_rspi_info rzv2h_info = {
+ 	.num_clks = 3,
+ };
  
- examples:
++static const struct rzv2h_rspi_info rzt2h_info = {
++	.find_tclk_rate = rzv2h_rspi_find_rate_variable,
++	.find_pclk_rate = rzv2h_rspi_find_rate_fixed,
++	.tclk_name = "pclkspi",
++	.fifo_size = 4,
++	.num_clks = 2,
++};
++
+ static const struct of_device_id rzv2h_rspi_match[] = {
+ 	{ .compatible = "renesas,r9a09g057-rspi", &rzv2h_info },
++	{ .compatible = "renesas,r9a09g077-rspi", &rzt2h_info },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, rzv2h_rspi_match);
 -- 
 2.53.0
 
