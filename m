@@ -2,28 +2,28 @@ Return-Path: <cosmin-gabriel.tanislav.xa@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A30E8FCC044
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5DF3FCC046
 	for <webhook@archiver.kernel.org>; Fri,  6 Mar 2026 17:18:42 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.msgproc01-g2.74547.1772817506005814198
  for <cip-dev@lists.cip-project.org>;
- Fri, 06 Mar 2026 09:18:34 -0800
+ Fri, 06 Mar 2026 09:18:35 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: cosmin-gabriel.tanislav.xa@renesas.com)
-X-CSE-ConnectionGUID: EX3HXMa6QhiycKzczou/PQ==
-X-CSE-MsgGUID: FlTEKmcXTxyWGzMCt0dqDg==
+X-CSE-ConnectionGUID: j5uVcF70Tky5lNdpwH+IJg==
+X-CSE-MsgGUID: 2EBZoKD0RC6DgC5CqaSzPA==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 07 Mar 2026 02:18:33 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 07 Mar 2026 02:18:35 +0900
 Received: from demon-pc.localdomain (unknown [10.226.93.180])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9F5BA4031C01;
-	Sat,  7 Mar 2026 02:18:32 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 600AF4031C01;
+	Sat,  7 Mar 2026 02:18:34 +0900 (JST)
 From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.12.y-cip v2 05/17] spi: rzv2h-rspi: make resets optional
-Date: Fri,  6 Mar 2026 19:17:23 +0200
-Message-ID: <20260306171735.226034-6-cosmin-gabriel.tanislav.xa@renesas.com>
+Subject: [PATCH 6.12.y-cip v2 06/17] spi: rzv2h-rspi: make FIFO size chip-specific
+Date: Fri,  6 Mar 2026 19:17:24 +0200
+Message-ID: <20260306171735.226034-7-cosmin-gabriel.tanislav.xa@renesas.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260306171735.226034-1-cosmin-gabriel.tanislav.xa@renesas.com>
 References: <20260306171735.226034-1-cosmin-gabriel.tanislav.xa@renesas.com>
@@ -33,16 +33,16 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 06 Mar 2026 17:18:42 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22130
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22131
 
-commit aead5ae91e4cbadac817d15737eca3b531237448 upstream.
+commit 8e89ee6cd2b928a8431bef61e8b851ce5df1ecb0 upstream.
 
-The Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs don't have
-reset lines for the SPI peripheral, make them optional to prepare for
-adding support for them.
+The Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs have a
+different FIFO size compared to RZ/V2H. Add a chip-specific structure,
+and set the FIFO size inside it, to prepare for adding support for them.
 
 Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Link: https://patch.msgid.link/20251119161434.595677-2-cosmin-gabriel.tanislav.xa@renesas.com
+Link: https://patch.msgid.link/20251119161434.595677-3-cosmin-gabriel.tanislav.xa@renesas.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 ---
@@ -50,24 +50,68 @@ Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 V2:
  * remove internal Reviewed-by tags
 
- drivers/spi/spi-rzv2h-rspi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/spi/spi-rzv2h-rspi.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/spi/spi-rzv2h-rspi.c b/drivers/spi/spi-rzv2h-rspi.c
-index dcc431ba60a9..09b9362e9b1f 100644
+index 09b9362e9b1f..7a7a576c17dd 100644
 --- a/drivers/spi/spi-rzv2h-rspi.c
 +++ b/drivers/spi/spi-rzv2h-rspi.c
-@@ -384,8 +384,8 @@ static int rzv2h_rspi_probe(struct platform_device *pdev)
+@@ -58,7 +58,6 @@
+ /* Register SPDCR2 */
+ #define RSPI_SPDCR2_TTRG	GENMASK(11, 8)
+ #define RSPI_SPDCR2_RTRG	GENMASK(3, 0)
+-#define RSPI_FIFO_SIZE		16
  
- 	rspi->resets[0].id = "presetn";
- 	rspi->resets[1].id = "tresetn";
--	ret = devm_reset_control_bulk_get_exclusive(dev, RSPI_RESET_NUM,
--						    rspi->resets);
-+	ret = devm_reset_control_bulk_get_optional_exclusive(dev, RSPI_RESET_NUM,
-+							     rspi->resets);
- 	if (ret)
- 		return dev_err_probe(dev, ret, "cannot get resets\n");
+ /* Register SPSR */
+ #define RSPI_SPSR_SPRF		BIT(15)
+@@ -69,9 +68,14 @@
+ #define RSPI_RESET_NUM		2
+ #define RSPI_CLK_NUM		3
  
++struct rzv2h_rspi_info {
++	unsigned int fifo_size;
++};
++
+ struct rzv2h_rspi_priv {
+ 	struct reset_control_bulk_data resets[RSPI_RESET_NUM];
+ 	struct spi_controller *controller;
++	const struct rzv2h_rspi_info *info;
+ 	void __iomem *base;
+ 	struct clk *tclk;
+ 	wait_queue_head_t wait;
+@@ -305,7 +309,7 @@ static int rzv2h_rspi_prepare_message(struct spi_controller *ctlr,
+ 		writeb(0, rspi->base + RSPI_SSLP);
+ 
+ 	/* Setup FIFO thresholds */
+-	conf16 = FIELD_PREP(RSPI_SPDCR2_TTRG, RSPI_FIFO_SIZE - 1);
++	conf16 = FIELD_PREP(RSPI_SPDCR2_TTRG, rspi->info->fifo_size - 1);
+ 	conf16 |= FIELD_PREP(RSPI_SPDCR2_RTRG, 0);
+ 	writew(conf16, rspi->base + RSPI_SPDCR2);
+ 
+@@ -362,6 +366,8 @@ static int rzv2h_rspi_probe(struct platform_device *pdev)
+ 
+ 	rspi->controller = controller;
+ 
++	rspi->info = device_get_match_data(dev);
++
+ 	rspi->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(rspi->base))
+ 		return PTR_ERR(rspi->base);
+@@ -445,8 +451,12 @@ static void rzv2h_rspi_remove(struct platform_device *pdev)
+ 	reset_control_bulk_assert(RSPI_RESET_NUM, rspi->resets);
+ }
+ 
++static const struct rzv2h_rspi_info rzv2h_info = {
++	.fifo_size = 16,
++};
++
+ static const struct of_device_id rzv2h_rspi_match[] = {
+-	{ .compatible = "renesas,r9a09g057-rspi" },
++	{ .compatible = "renesas,r9a09g057-rspi", &rzv2h_info },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, rzv2h_rspi_match);
 -- 
 2.53.0
 
