@@ -2,28 +2,28 @@ Return-Path: <cosmin-gabriel.tanislav.xa@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62836FCC04F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FBFDFCC04A
 	for <webhook@archiver.kernel.org>; Fri,  6 Mar 2026 17:18:53 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.msgproc01-g2.74547.1772817506005814198
  for <cip-dev@lists.cip-project.org>;
- Fri, 06 Mar 2026 09:18:48 -0800
+ Fri, 06 Mar 2026 09:18:44 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: cosmin-gabriel.tanislav.xa@renesas.com)
-X-CSE-ConnectionGUID: iR9PODN9TqKeK8BKcq5Tag==
-X-CSE-MsgGUID: 3ZJsSwc9S5aBFsS0ryqiRA==
+X-CSE-ConnectionGUID: 0wyAqYiqQMuTjANBCadhjw==
+X-CSE-MsgGUID: cTaxdQDzQfm/c1eKWS2HTg==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 07 Mar 2026 02:18:47 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 07 Mar 2026 02:18:44 +0900
 Received: from demon-pc.localdomain (unknown [10.226.93.180])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9B2534031C01;
-	Sat,  7 Mar 2026 02:18:46 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 1DE334031C01;
+	Sat,  7 Mar 2026 02:18:42 +0900 (JST)
 From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.12.y-cip v2 13/17] spi: rzv2h-rspi: add support for loopback mode
-Date: Fri,  6 Mar 2026 19:17:31 +0200
-Message-ID: <20260306171735.226034-14-cosmin-gabriel.tanislav.xa@renesas.com>
+Subject: [PATCH 6.12.y-cip v2 11/17] spi: rzv2h-rspi: add support for using PCLK for transfer clock
+Date: Fri,  6 Mar 2026 19:17:29 +0200
+Message-ID: <20260306171735.226034-12-cosmin-gabriel.tanislav.xa@renesas.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260306171735.226034-1-cosmin-gabriel.tanislav.xa@renesas.com>
 References: <20260306171735.226034-1-cosmin-gabriel.tanislav.xa@renesas.com>
@@ -33,16 +33,23 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 06 Mar 2026 17:18:53 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22138
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22136
 
-commit bc4f0b1e39035b9bb3d5d9692074702110f5e2b1 uptream.
+commit 1ce3e8adc7d0038e59a7c9f5c9e5f399ba0db5d6 upstream.
 
-Add support for loopback mode for debugging purposes, allowing us to
-test the SPI controller at the maximum SPI transfer clock without being
-limited by external wiring.
+The Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs support
+generating the SPI transfer clock from PCLK, with the quirk that SPR 0
+is not supported, causing the highest achievable SPI transfer frequency
+to be 31.25MHz.
+
+Add support for generating the SPI transfer clock from PCLK.
+
+Renesas RZ/V2H (R9A09G057) also has the BPEN bit used to enable this
+option in the datasheet, but it is not explicitly documented and there's
+no details about its limitations as there are on RZ/T2H.
 
 Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Link: https://patch.msgid.link/20251119161434.595677-10-cosmin-gabriel.tanislav.xa@renesas.com
+Link: https://patch.msgid.link/20251119161434.595677-8-cosmin-gabriel.tanislav.xa@renesas.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 ---
@@ -50,59 +57,94 @@ Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 V2:
  * remove internal Reviewed-by tags
 
- drivers/spi/spi-rzv2h-rspi.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/spi/spi-rzv2h-rspi.c | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/spi/spi-rzv2h-rspi.c b/drivers/spi/spi-rzv2h-rspi.c
-index be45269e8853..da110efba971 100644
+index f59bcadf5e38..e9d8ee919261 100644
 --- a/drivers/spi/spi-rzv2h-rspi.c
 +++ b/drivers/spi/spi-rzv2h-rspi.c
-@@ -24,6 +24,7 @@
- /* Registers */
- #define RSPI_SPDR		0x00
- #define RSPI_SPCR		0x08
-+#define RSPI_SPPCR		0x0e
- #define RSPI_SSLP		0x10
- #define RSPI_SPBR		0x11
- #define RSPI_SPSCR		0x13
-@@ -40,6 +41,9 @@
- #define RSPI_SPCR_SCKASE	BIT(12)
- #define RSPI_SPCR_SPE		BIT(0)
+@@ -34,6 +34,7 @@
+ #define RSPI_SPFCR		0x6c
  
-+/* Register SPPCR */
-+#define RSPI_SPPCR_SPLP2	BIT(1)
-+
+ /* Register SPCR */
++#define RSPI_SPCR_BPEN		BIT(31)
+ #define RSPI_SPCR_MSTR		BIT(30)
+ #define RSPI_SPCR_SPRIE		BIT(17)
+ #define RSPI_SPCR_SCKASE	BIT(12)
+@@ -41,6 +42,7 @@
+ 
  /* Register SPBR */
  #define RSPI_SPBR_SPR_MIN	0
- #define RSPI_SPBR_SPR_PCLK_MIN	1
-@@ -345,6 +349,7 @@ static int rzv2h_rspi_prepare_message(struct spi_controller *ctlr,
- 	u8 bits_per_word;
- 	u32 conf32;
- 	u16 conf16;
-+	u8 conf8;
++#define RSPI_SPBR_SPR_PCLK_MIN	1
+ #define RSPI_SPBR_SPR_MAX	255
  
- 	/* Make sure SPCR.SPE is 0 before amending the configuration */
- 	rzv2h_rspi_spe_disable(rspi);
-@@ -389,6 +394,10 @@ static int rzv2h_rspi_prepare_message(struct spi_controller *ctlr,
- 	/* Use SPCMD0 only */
- 	writeb(0x0, rspi->base + RSPI_SPSCR);
+ /* Register SPCMD */
+@@ -79,6 +81,8 @@ struct rzv2h_rspi_best_clock {
+ struct rzv2h_rspi_info {
+ 	void (*find_tclk_rate)(struct clk *clk, u32 hz, u8 spr_min, u8 spr_max,
+ 			       struct rzv2h_rspi_best_clock *best_clk);
++	void (*find_pclk_rate)(struct clk *clk, u32 hz, u8 spr_low, u8 spr_high,
++			       struct rzv2h_rspi_best_clock *best_clk);
+ 	const char *tclk_name;
+ 	unsigned int fifo_size;
+ 	unsigned int num_clks;
+@@ -90,6 +94,7 @@ struct rzv2h_rspi_priv {
+ 	const struct rzv2h_rspi_info *info;
+ 	void __iomem *base;
+ 	struct clk *tclk;
++	struct clk *pclk;
+ 	wait_queue_head_t wait;
+ 	unsigned int bytes_per_word;
+ 	u32 last_speed_hz;
+@@ -97,6 +102,7 @@ struct rzv2h_rspi_priv {
+ 	u16 status;
+ 	u8 spr;
+ 	u8 brdv;
++	bool use_pclk;
+ };
  
-+	/* Setup loopback */
-+	conf8 = FIELD_PREP(RSPI_SPPCR_SPLP2, !!(spi->mode & SPI_LOOP));
-+	writeb(conf8, rspi->base + RSPI_SPPCR);
+ #define RZV2H_RSPI_TX(func, type)					\
+@@ -306,9 +312,18 @@ static u32 rzv2h_rspi_setup_clock(struct rzv2h_rspi_priv *rspi, u32 hz)
+ 	rspi->info->find_tclk_rate(rspi->tclk, hz, RSPI_SPBR_SPR_MIN,
+ 				   RSPI_SPBR_SPR_MAX, &best_clock);
+ 
++	/*
++	 * T2H and N2H can also use PCLK as a source, which is 125MHz, but not
++	 * when both SPR and BRDV are 0.
++	 */
++	if (best_clock.error && rspi->info->find_pclk_rate)
++		rspi->info->find_pclk_rate(rspi->pclk, hz, RSPI_SPBR_SPR_PCLK_MIN,
++					   RSPI_SPBR_SPR_MAX, &best_clock);
 +
- 	/* Setup mode */
- 	conf32 = FIELD_PREP(RSPI_SPCMD_CPOL, !!(spi->mode & SPI_CPOL));
- 	conf32 |= FIELD_PREP(RSPI_SPCMD_CPHA, !!(spi->mode & SPI_CPHA));
-@@ -490,7 +499,7 @@ static int rzv2h_rspi_probe(struct platform_device *pdev)
+ 	if (!best_clock.clk_rate)
+ 		return -EINVAL;
+ 
++	rspi->use_pclk = best_clock.clk == rspi->pclk;
+ 	rspi->spr = best_clock.spr;
+ 	rspi->brdv = best_clock.brdv;
+ 
+@@ -361,6 +376,9 @@ static int rzv2h_rspi_prepare_message(struct spi_controller *ctlr,
+ 	/* SPI receive buffer full interrupt enable */
+ 	conf32 |= RSPI_SPCR_SPRIE;
+ 
++	/* Bypass synchronization circuit */
++	conf32 |= FIELD_PREP(RSPI_SPCR_BPEN, rspi->use_pclk);
++
+ 	writel(conf32, rspi->base + RSPI_SPCR);
+ 
+ 	/* Use SPCMD0 only */
+@@ -433,7 +451,9 @@ static int rzv2h_rspi_probe(struct platform_device *pdev)
+ 	for (i = 0; i < rspi->info->num_clks; i++) {
+ 		if (!strcmp(clks[i].id, rspi->info->tclk_name)) {
+ 			rspi->tclk = clks[i].clk;
+-			break;
++		} else if (rspi->info->find_pclk_rate &&
++			   !strcmp(clks[i].id, "pclk")) {
++			rspi->pclk = clks[i].clk;
+ 		}
  	}
  
- 	controller->mode_bits = SPI_CPHA | SPI_CPOL | SPI_CS_HIGH |
--				SPI_LSB_FIRST;
-+				SPI_LSB_FIRST | SPI_LOOP;
- 	controller->bits_per_word_mask = SPI_BPW_RANGE_MASK(4, 32);
- 	controller->prepare_message = rzv2h_rspi_prepare_message;
- 	controller->unprepare_message = rzv2h_rspi_unprepare_message;
 -- 
 2.53.0
 
