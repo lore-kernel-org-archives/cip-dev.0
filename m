@@ -2,28 +2,28 @@ Return-Path: <cosmin-gabriel.tanislav.xa@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 763A5FCB628
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8199FCB636
 	for <webhook@archiver.kernel.org>; Fri,  6 Mar 2026 17:00:31 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.74088.1772816422272121011
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.73802.1772816412211779145
  for <cip-dev@lists.cip-project.org>;
- Fri, 06 Mar 2026 09:00:22 -0800
+ Fri, 06 Mar 2026 09:00:29 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: cosmin-gabriel.tanislav.xa@renesas.com)
-X-CSE-ConnectionGUID: 603YhAfoTQClo9riVXzC6g==
-X-CSE-MsgGUID: gKfvLAVIQemK2L7spynbZg==
+ dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: cosmin-gabriel.tanislav.xa@renesas.com)
+X-CSE-ConnectionGUID: WIgfMW+qSDCXytEivC/t3A==
+X-CSE-MsgGUID: RyluHFgNQU2aY9Wdg4TxXw==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 07 Mar 2026 02:00:21 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 07 Mar 2026 02:00:28 +0900
 Received: from demon-pc.localdomain (unknown [10.226.93.180])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 7ABDD400BC09;
-	Sat,  7 Mar 2026 02:00:20 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 722B3400BC09;
+	Sat,  7 Mar 2026 02:00:27 +0900 (JST)
 From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.12.y-cip 08/17] spi: rzv2h-rspi: move register writes out of rzv2h_rspi_setup_clock()
-Date: Fri,  6 Mar 2026 18:59:09 +0200
-Message-ID: <20260306165918.209377-9-cosmin-gabriel.tanislav.xa@renesas.com>
+Subject: [PATCH 6.12.y-cip 12/17] spi: rzv2h-rspi: add support for variable transfer clock
+Date: Fri,  6 Mar 2026 18:59:13 +0200
+Message-ID: <20260306165918.209377-13-cosmin-gabriel.tanislav.xa@renesas.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260306165918.209377-1-cosmin-gabriel.tanislav.xa@renesas.com>
 References: <20260306165918.209377-1-cosmin-gabriel.tanislav.xa@renesas.com>
@@ -33,118 +33,97 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 06 Mar 2026 17:00:31 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22114
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22118
 
-commit 1b7ce968ab2579702ea9dbc2fb599e540bbd8c88 upstream.
+commit 9c9bf4fdc5e5d09d5f4280ed2c582df6e1f837d9 upstream.
 
-In preparation for caching the last requested transfer frequency, move
-register writes outside of rzv2h_rspi_setup_clock().
+The Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs have a more
+complicated clocking setup for the SPI transfer clock than RZ/V2H, as
+the clock from which it is generated supports multiple dividers.
 
-The transfer list is iterated to determine the speed of the transfer
-and the bits per word.
+To prepare for adding support for these SoCs, do the following changes.
 
-The speed of the transfer is used to compute SPR and BRDV inside
-rzv2h_rspi_setup_clock().
+Use the minimum frequency of SPI clock to calculate the SPI
+controller's min_speed_hz, and the maximum frequency to calculate
+max_speed_hz.
 
-BRDV and SPB are stored in the SPCMD register.
-
-Move the transfer iteration earlier, move the SPR and BRDV writing out
-of rzv2h_rspi_setup_clock(), consolidate writing BRDV and SPB into the
-initial write to the SPCMD register.
+Apply the clock rate found by the .find_tclk_rate() to the found clock.
 
 Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Link: https://patch.msgid.link/20251119161434.595677-5-cosmin-gabriel.tanislav.xa@renesas.com
+Link: https://patch.msgid.link/20251119161434.595677-9-cosmin-gabriel.tanislav.xa@renesas.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 ---
- drivers/spi/spi-rzv2h-rspi.c | 45 ++++++++++++++++++++----------------
- 1 file changed, 25 insertions(+), 20 deletions(-)
+ drivers/spi/spi-rzv2h-rspi.c | 23 ++++++++++++++++++++---
+ 1 file changed, 20 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/spi/spi-rzv2h-rspi.c b/drivers/spi/spi-rzv2h-rspi.c
-index a1f17ec8727b..f02f25b98ec6 100644
+index e9d8ee919261..be45269e8853 100644
 --- a/drivers/spi/spi-rzv2h-rspi.c
 +++ b/drivers/spi/spi-rzv2h-rspi.c
-@@ -83,6 +83,8 @@ struct rzv2h_rspi_priv {
- 	unsigned int bytes_per_word;
- 	u32 freq;
- 	u16 status;
-+	u8 spr;
-+	u8 brdv;
- };
+@@ -308,6 +308,7 @@ static u32 rzv2h_rspi_setup_clock(struct rzv2h_rspi_priv *rspi, u32 hz)
+ 	struct rzv2h_rspi_best_clock best_clock = {
+ 		.error = ULONG_MAX,
+ 	};
++	int ret;
  
- #define RZV2H_RSPI_TX(func, type)					\
-@@ -263,8 +265,8 @@ static u32 rzv2h_rspi_setup_clock(struct rzv2h_rspi_priv *rspi, u32 hz)
- 	return 0;
+ 	rspi->info->find_tclk_rate(rspi->tclk, hz, RSPI_SPBR_SPR_MIN,
+ 				   RSPI_SPBR_SPR_MAX, &best_clock);
+@@ -323,6 +324,10 @@ static u32 rzv2h_rspi_setup_clock(struct rzv2h_rspi_priv *rspi, u32 hz)
+ 	if (!best_clock.clk_rate)
+ 		return -EINVAL;
  
- clock_found:
--	rzv2h_rspi_reg_rmw(rspi, RSPI_SPCMD, RSPI_SPCMD_BRDV, brdv);
--	writeb(spr, rspi->base + RSPI_SPBR);
-+	rspi->spr = spr;
-+	rspi->brdv = brdv;
- 
- 	return rzv2h_rspi_calc_bitrate(tclk_rate, spr, brdv);
- }
-@@ -283,6 +285,25 @@ static int rzv2h_rspi_prepare_message(struct spi_controller *ctlr,
- 	/* Make sure SPCR.SPE is 0 before amending the configuration */
- 	rzv2h_rspi_spe_disable(rspi);
- 
-+	list_for_each_entry(xfer, &message->transfers, transfer_list) {
-+		if (!xfer->speed_hz)
-+			continue;
++	ret = clk_set_rate(best_clock.clk, best_clock.clk_rate);
++	if (ret)
++		return 0;
 +
-+		speed_hz = min(xfer->speed_hz, speed_hz);
-+		bits_per_word = xfer->bits_per_word;
+ 	rspi->use_pclk = best_clock.clk == rspi->pclk;
+ 	rspi->spr = best_clock.spr;
+ 	rspi->brdv = best_clock.brdv;
+@@ -426,8 +431,8 @@ static int rzv2h_rspi_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct rzv2h_rspi_priv *rspi;
+ 	struct clk_bulk_data *clks;
+-	unsigned long tclk_rate;
+ 	int irq_rx, ret, i;
++	long tclk_rate;
+ 
+ 	controller = devm_spi_alloc_host(dev, sizeof(*rspi));
+ 	if (!controller)
+@@ -460,8 +465,6 @@ static int rzv2h_rspi_probe(struct platform_device *pdev)
+ 	if (!rspi->tclk)
+ 		return dev_err_probe(dev, -EINVAL, "Failed to get tclk\n");
+ 
+-	tclk_rate = clk_get_rate(rspi->tclk);
+-
+ 	rspi->resets[0].id = "presetn";
+ 	rspi->resets[1].id = "tresetn";
+ 	ret = devm_reset_control_bulk_get_optional_exclusive(dev, RSPI_RESET_NUM,
+@@ -493,9 +496,23 @@ static int rzv2h_rspi_probe(struct platform_device *pdev)
+ 	controller->unprepare_message = rzv2h_rspi_unprepare_message;
+ 	controller->num_chipselect = 4;
+ 	controller->transfer_one = rzv2h_rspi_transfer_one;
++
++	tclk_rate = clk_round_rate(rspi->tclk, 0);
++	if (tclk_rate < 0) {
++		ret = tclk_rate;
++		goto quit_resets;
 +	}
 +
-+	if (speed_hz == U32_MAX)
-+		return -EINVAL;
+ 	controller->min_speed_hz = rzv2h_rspi_calc_bitrate(tclk_rate,
+ 							   RSPI_SPBR_SPR_MAX,
+ 							   RSPI_SPCMD_BRDV_MAX);
 +
-+	rspi->bytes_per_word = roundup_pow_of_two(BITS_TO_BYTES(bits_per_word));
++	tclk_rate = clk_round_rate(rspi->tclk, ULONG_MAX);
++	if (tclk_rate < 0) {
++		ret = tclk_rate;
++		goto quit_resets;
++	}
 +
-+	rspi->freq = rzv2h_rspi_setup_clock(rspi, speed_hz);
-+	if (!rspi->freq)
-+		return -EINVAL;
-+
-+	writeb(rspi->spr, rspi->base + RSPI_SPBR);
-+
- 	/* Configure the device to work in "host" mode */
- 	conf32 = RSPI_SPCR_MSTR;
- 
-@@ -301,6 +322,8 @@ static int rzv2h_rspi_prepare_message(struct spi_controller *ctlr,
- 	conf32 = FIELD_PREP(RSPI_SPCMD_CPOL, !!(spi->mode & SPI_CPOL));
- 	conf32 |= FIELD_PREP(RSPI_SPCMD_CPHA, !!(spi->mode & SPI_CPHA));
- 	conf32 |= FIELD_PREP(RSPI_SPCMD_LSBF, !!(spi->mode & SPI_LSB_FIRST));
-+	conf32 |= FIELD_PREP(RSPI_SPCMD_SPB, bits_per_word - 1);
-+	conf32 |= FIELD_PREP(RSPI_SPCMD_BRDV, rspi->brdv);
- 	conf32 |= FIELD_PREP(RSPI_SPCMD_SSLKP, 1);
- 	conf32 |= FIELD_PREP(RSPI_SPCMD_SSLA, spi_get_chipselect(spi, 0));
- 	writel(conf32, rspi->base + RSPI_SPCMD);
-@@ -316,24 +339,6 @@ static int rzv2h_rspi_prepare_message(struct spi_controller *ctlr,
- 
- 	rzv2h_rspi_clear_fifos(rspi);
- 
--	list_for_each_entry(xfer, &message->transfers, transfer_list) {
--		if (!xfer->speed_hz)
--			continue;
--
--		speed_hz = min(xfer->speed_hz, speed_hz);
--		bits_per_word = xfer->bits_per_word;
--	}
--
--	if (speed_hz == U32_MAX)
--		return -EINVAL;
--
--	rspi->bytes_per_word = roundup_pow_of_two(BITS_TO_BYTES(bits_per_word));
--	rzv2h_rspi_reg_rmw(rspi, RSPI_SPCMD, RSPI_SPCMD_SPB, bits_per_word - 1);
--
--	rspi->freq = rzv2h_rspi_setup_clock(rspi, speed_hz);
--	if (!rspi->freq)
--		return -EINVAL;
--
- 	rzv2h_rspi_spe_enable(rspi);
- 
- 	return 0;
+ 	controller->max_speed_hz = rzv2h_rspi_calc_bitrate(tclk_rate,
+ 							   RSPI_SPBR_SPR_MIN,
+ 							   RSPI_SPCMD_BRDV_MIN);
 -- 
 2.53.0
 
