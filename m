@@ -2,28 +2,28 @@ Return-Path: <cosmin-gabriel.tanislav.xa@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 912C7F41803
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91C46F41804
 	for <webhook@archiver.kernel.org>; Mon,  9 Mar 2026 15:07:20 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.16855.1773068834291413158
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.16849.1773068830545707322
  for <cip-dev@lists.cip-project.org>;
- Mon, 09 Mar 2026 08:07:17 -0700
+ Mon, 09 Mar 2026 08:07:10 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: cosmin-gabriel.tanislav.xa@renesas.com)
-X-CSE-ConnectionGUID: zCWghkiZTaC5aImaPIlH3Q==
-X-CSE-MsgGUID: fXZxcZxGTd+gtG8f+dLXXQ==
+ dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: cosmin-gabriel.tanislav.xa@renesas.com)
+X-CSE-ConnectionGUID: fPOHg4PPRhaBJXXapCSd1A==
+X-CSE-MsgGUID: oLTwrnU5QqCiLzAsDv3tWg==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 10 Mar 2026 00:07:16 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 10 Mar 2026 00:07:09 +0900
 Received: from demon-pc.localdomain (unknown [10.226.93.213])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id C5D4D40062DB;
-	Tue, 10 Mar 2026 00:07:15 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id B674040062DB;
+	Tue, 10 Mar 2026 00:07:08 +0900 (JST)
 From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.12.y-cip v3 05/17] spi: rzv2h-rspi: make resets optional
-Date: Mon,  9 Mar 2026 17:06:07 +0200
-Message-ID: <20260309150619.761962-6-cosmin-gabriel.tanislav.xa@renesas.com>
+Subject: [PATCH 6.12.y-cip v3 01/17] spi: dt-bindings: Document the RZ/V2H(P) RSPI
+Date: Mon,  9 Mar 2026 17:06:03 +0200
+Message-ID: <20260309150619.761962-2-cosmin-gabriel.tanislav.xa@renesas.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260309150619.761962-1-cosmin-gabriel.tanislav.xa@renesas.com>
 References: <20260309150619.761962-1-cosmin-gabriel.tanislav.xa@renesas.com>
@@ -33,16 +33,20 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 09 Mar 2026 15:07:20 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22203
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22199
 
-commit aead5ae91e4cbadac817d15737eca3b531237448 upstream.
+From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 
-The Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs don't have
-reset lines for the SPI peripheral, make them optional to prepare for
-adding support for them.
+commit 44b91d61c505863b8ae90b7094aee5ca0dce808f upstream.
 
-Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Link: https://patch.msgid.link/20251119161434.595677-2-cosmin-gabriel.tanislav.xa@renesas.com
+Add dt-bindings for the RSPI IP found inside the Renesas RZ/V2H(P)
+SoC.
+
+Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Link: https://patch.msgid.link/20250704162036.468765-2-fabrizio.castro.jz@renesas.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 ---
@@ -53,24 +57,112 @@ V3:
 V2:
  * remove internal Reviewed-by tags
 
- drivers/spi/spi-rzv2h-rspi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ .../bindings/spi/renesas,rzv2h-rspi.yaml      | 96 +++++++++++++++++++
+ 1 file changed, 96 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/spi/renesas,rzv2h-rspi.yaml
 
-diff --git a/drivers/spi/spi-rzv2h-rspi.c b/drivers/spi/spi-rzv2h-rspi.c
-index dcc431ba60a9..09b9362e9b1f 100644
---- a/drivers/spi/spi-rzv2h-rspi.c
-+++ b/drivers/spi/spi-rzv2h-rspi.c
-@@ -384,8 +384,8 @@ static int rzv2h_rspi_probe(struct platform_device *pdev)
- 
- 	rspi->resets[0].id = "presetn";
- 	rspi->resets[1].id = "tresetn";
--	ret = devm_reset_control_bulk_get_exclusive(dev, RSPI_RESET_NUM,
--						    rspi->resets);
-+	ret = devm_reset_control_bulk_get_optional_exclusive(dev, RSPI_RESET_NUM,
-+							     rspi->resets);
- 	if (ret)
- 		return dev_err_probe(dev, ret, "cannot get resets\n");
- 
+diff --git a/Documentation/devicetree/bindings/spi/renesas,rzv2h-rspi.yaml b/Documentation/devicetree/bindings/spi/renesas,rzv2h-rspi.yaml
+new file mode 100644
+index 000000000000..ab27fefc3c3a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/spi/renesas,rzv2h-rspi.yaml
+@@ -0,0 +1,96 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/spi/renesas,rzv2h-rspi.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas RZ/V2H(P) Renesas Serial Peripheral Interface (RSPI)
++
++maintainers:
++  - Fabrizio Castro <fabrizio.castro.jz@renesas.com>
++
++allOf:
++  - $ref: spi-controller.yaml#
++
++properties:
++  compatible:
++    const: renesas,r9a09g057-rspi # RZ/V2H(P)
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    items:
++      - description: Idle Interrupt
++      - description: Error Interrupt
++      - description: Communication End Interrupt
++      - description: Receive Buffer Full Interrupt
++      - description: Transmit Buffer Empty Interrupt
++
++  interrupt-names:
++    items:
++      - const: idle
++      - const: error
++      - const: end
++      - const: rx
++      - const: tx
++
++  clocks:
++    maxItems: 3
++
++  clock-names:
++    items:
++      - const: pclk
++      - const: pclk_sfr
++      - const: tclk
++
++  resets:
++    maxItems: 2
++
++  reset-names:
++    items:
++      - const: presetn
++      - const: tresetn
++
++  power-domains:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - interrupt-names
++  - clocks
++  - clock-names
++  - resets
++  - reset-names
++  - power-domains
++  - '#address-cells'
++  - '#size-cells'
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/clock/renesas-cpg-mssr.h>
++    spi@12800800 {
++        compatible = "renesas,r9a09g057-rspi";
++
++        reg = <0x12800800 0x400>;
++        interrupts = <GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 113 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 504 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 505 IRQ_TYPE_EDGE_RISING>;
++        interrupt-names = "idle", "error", "end", "rx", "tx";
++        clocks = <&cpg CPG_MOD 0x5a>,
++                 <&cpg CPG_MOD 0x5b>,
++                 <&cpg CPG_MOD 0x5c>;
++        clock-names = "pclk", "pclk_sfr", "tclk";
++        resets = <&cpg 0x7f>, <&cpg 0x80>;
++        reset-names = "presetn", "tresetn";
++        power-domains = <&cpg>;
++        #address-cells = <1>;
++        #size-cells = <0>;
++    };
 -- 
 2.53.0
 
