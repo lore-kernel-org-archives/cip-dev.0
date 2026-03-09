@@ -2,56 +2,56 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 130B6F3C27A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FBE3F3C27D
 	for <webhook@archiver.kernel.org>; Mon,  9 Mar 2026 14:26:08 +0000 (UTC)
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.15560.1773066367260984079
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.15559.1773066366743396943
  for <cip-dev@lists.cip-project.org>;
  Mon, 09 Mar 2026 07:26:07 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=RTijzhjB;
- spf=pass (domain: gmail.com, ip: 209.85.221.51, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-439b611274bso5332564f8f.3
-        for <cip-dev@lists.cip-project.org>; Mon, 09 Mar 2026 07:26:07 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=VofECArZ;
+ spf=pass (domain: gmail.com, ip: 209.85.221.43, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-439d8dc4ae4so1697804f8f.2
+        for <cip-dev@lists.cip-project.org>; Mon, 09 Mar 2026 07:26:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1773066365; x=1773671165; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XToOWv+452vYLydqdmnWLFiKK3HRu7vsccAAzvbElgw=;
-        b=RTijzhjBz4tnzkdKdGO/S+K2clCBB+90BdVES09lAtOzWQjuthmHAwNlBPhjTrozji
-         PXOBRNzT4oFY+nUT3Gzlv/qKdkNXFW4ZNhMlsDkQRQinE0LaGyGR2EbI5RErz+0WCYRP
-         MeCnHgi5xF85AlXBEidBslwWlS7Fkdfc7ugRvAEunwWZjE3KgSIoGbwxKQlJCxNrckmf
-         jYDlsfcquA+7eb34PH3GHXBjgZX4UAJBeYi2pcuHsu89tFg1QZxieEVwykLbyOv1p6+9
-         wpjlz+RixbzuSkGvfDT/OjMCaI9dm3Rke80fdLwfSaPmP/AZESTFWLpnsNfWe7PVZSj8
-         gOaw==
+        bh=b+vU3Qdpm374Tvax+ULpBqM7TDIhPMyDDTFH29kdInY=;
+        b=VofECArZRUvX9VPmpFXgI3emS/MT95cKrGgvu0o0Zm4D2LjNdK3gsdmDRiFLZQi58y
+         n57OEtmyTXQi5OZ4VOIYtR7hdrQMjAFQ3VKyl+onQ8yIgJ1z+UHO1C7ipAZpeQo/AWmF
+         FmSQxEsgZdiESjj/MLH/fj5beT2c7RAzVaodAPlQToJc7wKhdmP5Kqp9OIY1VKMWZYIM
+         hxp948A1eqk/1lnX/1l9HRrNvaKykjjEoHJ+Dqs6QP227cCAnimQP3VN0+B4SnVQ8V6I
+         T0l0iyJxe+vOX5EmUng/Xh1KPxnjAIjCysB3DNHqF5fq+bDS4FZSlDaBblsuGCTJUgTD
+         qGxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1773066365; x=1773671165;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=XToOWv+452vYLydqdmnWLFiKK3HRu7vsccAAzvbElgw=;
-        b=LILLTBw3aOqmYuxeS8TZOasPuTXHbsMFPa9rVhtvl99jkbAVdm9btymXYDsa3bMbgw
-         4YjuYoKrLgODyu9xqYZJ6BFBUm+mj8zu+xiH7NpflzGPeWpymSLqqXpgc606b524cxNr
-         TuZ3dZqu+7bFoG7Ueu3O9hAjNDHJ+57KnPTWGPgj0tm6ysdHqz0vC3K6/42K+ft+YFDC
-         Uvj10W6bK2A2/5Cl9cDhRbw2YzOCNGVBuIhmYkGPKiCXyz5xUq2TQR4gDC9nxhSG+R3t
-         Yd9YkXG/mh8YDmcHHEeO2KjTAnjNyYHHQyKe4s2lRCUap85VGx5CfX57OrxF1lPyAwt5
-         KTlg==
-X-Gm-Message-State: AOJu0YwG4miuQUXZ3k+DJY+z1Aaowpy1ob+xBIY1GIjJkGunk2OEvd9u
-	xbAystWa7h8VPDpIGrMJLIFYDYMHYzUL/NqMhD+gj0J/8RLYgDwo4jiQxyWZVg==
-X-Gm-Gg: ATEYQzzqMxli3r7MFEg3cxzYTSWgk+IysLTbMAgcHehL0eVxXeNj5uJpPA3cDsz174a
-	f71Eyy6F0KXQq48y+xSuwVsJc4hDdI9BB7QEhMZfkvP+Et8IDiMRGeXbxXccjvu+b8IYAzPPjmh
-	SEucm18kbLhlt55AkT3hsaa3v2FWJHs7GWMTjvimBJLcV4N2TgsBLU7R58SGzwa7MZ2jUm304xe
-	wbfufiQSxZ818YMGqEq9MuMWdkPf6WXdZSXifTquf1PeNvr4TiVL4A7C21V87C3cc8XPeEC7mkz
-	Xki03nwsXRmKl0f3ZtRDZ3SePFc8+JAwVrL2w00Eg+mCDNRW+fIE1pzkPPCI0zlNDssd1IYpzWQ
-	cRB55LOsg+8tVj0arl1nHCpC870NN+HzLPzT8NJS5iFrNf1uCINBLV+r1cJWSYqmvwC86nynSKH
-	r1KRiCHu/GJynTTPWVaI8GlMrWJ4eVCR8=
-X-Received: by 2002:a05:6000:4308:b0:439:d7e1:fc51 with SMTP id ffacd0b85a97d-439da885bf9mr19971862f8f.36.1773066365227;
-        Mon, 09 Mar 2026 07:26:05 -0700 (PDT)
+        bh=b+vU3Qdpm374Tvax+ULpBqM7TDIhPMyDDTFH29kdInY=;
+        b=FCRrOfhOBnmpKt5oWSCe0WCmLYocNbHl5y8mn9mtrfs4pELuuYr5J4etjlMR6gSHyC
+         rT4xeL3TZf2FtAvvNRwcu9koh1Xl3mS/GDn84w8u2O6bidKtHAOPBYFbVINEMslIMSw/
+         +TXNItyDaIonUH2gm9rnbR4cvL+iWPRd6x2DzEcOlrCj447UODBwkI/yAJEpveJBgqEV
+         /BGIvkf3W7+VksIiA98OEUj8gwiZGN2vR9X2QWOTAP0CS54+Uis+isrN6N2G5vDA2OCu
+         2USFLb31zSfF63JF/onz98YuqE76QaiIAsSlDVdNSQwFC6zMxCX+adsBq6CJ7MoUIwuE
+         pXWg==
+X-Gm-Message-State: AOJu0YxI3ihA0soo51mfYkY7SilypHG1zXmxSuou3m4GFP8qIOiFkthQ
+	xPSyE5ss9AaaoTDwMeZChAOk5+IAM6/zX+DWLoHVN+rpUiDqPmOBwu93/MHgyQ==
+X-Gm-Gg: ATEYQzzkZMa6pPEoDuEkhMGZI7pHF08a7Mw/QkHJ/wljRucIMBvsieABu3dMiJ+1Lld
+	V1ru5toWoMBUR/dWieaSTAKbkg7/jeT05Qej8PGABrM+AYrnpmJNG6VBw8oXhO99gTMRLyTZPBL
+	iW4Wl8YD3KfoUz4xaCUWGP76+WEk7YJ1sli7JGgxLg1JlcR7j7tekxqYB/GgS7wNkM3VlnbzO6c
+	Ue8/GJdnzlRYxyooLeggbOMmw1kiDFe6Mky0Xfhxk0HjstjlLTCxhKOgnlgdkKRypop/LM8POr9
+	xuBWp5+qqR42pJ9b2kfBG280G6+Hv2KRzc4YfdIImDEBAgfhitgSKltznkCK5gt2e0q0YB/n/ri
+	k46DzzJH9kzhP/SaEgOyhPPB4+i8wcC7PsLPXpAt7JgWGKXBSom9aJWjDMO9tqIt3+pz/EAYXoK
+	ElylyleJ98S2Eb5qfHt0bAyzt8yspd0EcsXpyAK6O91Q==
+X-Received: by 2002:a05:6000:240f:b0:439:ccd7:cdcd with SMTP id ffacd0b85a97d-439da354babmr20362998f8f.7.1773066364759;
+        Mon, 09 Mar 2026 07:26:04 -0700 (PDT)
 Received: from biju.lan ([2a00:23c4:a758:8a01:7e80:c383:72cf:ebc3])
         by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439dad8d968sm25970311f8f.6.2026.03.09.07.26.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2026 07:26:05 -0700 (PDT)
+        Mon, 09 Mar 2026 07:26:04 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,9 +59,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 25/29] arm64: dts: renesas: r9a09g047: Add RSCI nodes
-Date: Mon,  9 Mar 2026 14:25:25 +0000
-Message-ID: <20260309142549.987737-26-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 24/29] serial: sh-sci: Add support for RZ/G3E RSCI
+Date: Mon,  9 Mar 2026 14:25:24 +0000
+Message-ID: <20260309142549.987737-25-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260309142549.987737-1-biju.das.jz@bp.renesas.com>
 References: <20260309142549.987737-1-biju.das.jz@bp.renesas.com>
@@ -71,254 +71,440 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 09 Mar 2026 14:26:08 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22193
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22192
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[ Upstream commit ef601dbb5b80a0240dc479ca0aa5fbd746f23ca7 ]
+[ Upstream commit 42eeed6d9f31e6063bf98d71212a6de3aac8cdd3 ]
 
-Add RSCI nodes to RZ/G3E ("R9A09G047") SoC DTSI.
+Add support for RZ/G3E RSCI. RSCI IP found on the RZ/G3E SoC is similar
+to RZ/T2H, but it has a 32-stage FIFO. It has 6 clocks(5 module clocks
++ 1 external clock) instead of 3 clocks(2 module clocks + 1 external
+clock) on T2H, has 6 irqs compared to 4 on RZ/T2H and has multiple resets.
+Add support for the hardware flow control.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20251129185203.380002-2-biju.das.jz@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Link: https://patch.msgid.link/20251129164325.209213-18-biju.das.jz@bp.renesas.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a09g047.dtsi | 220 +++++++++++++++++++++
- 1 file changed, 220 insertions(+)
+ drivers/tty/serial/rsci.c   | 260 ++++++++++++++++++++++++++++++++++--
+ drivers/tty/serial/rsci.h   |   1 +
+ drivers/tty/serial/sh-sci.c |   5 +
+ 3 files changed, 257 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-index bd15725f2c22..addcc9ed8661 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-@@ -591,6 +591,226 @@ channel5 {
- 			};
- 		};
+diff --git a/drivers/tty/serial/rsci.c b/drivers/tty/serial/rsci.c
+index 3e93c6aa765e..e01ecd3ee74a 100644
+--- a/drivers/tty/serial/rsci.c
++++ b/drivers/tty/serial/rsci.c
+@@ -11,6 +11,8 @@
+ #include <linux/serial_core.h>
+ #include <linux/serial_sci.h>
+ #include <linux/tty_flip.h>
++
++#include "serial_mctrl_gpio.h"
+ #include "rsci.h"
  
-+		rsci0: serial@12800c00 {
-+			compatible = "renesas,r9a09g047-rsci";
-+			reg = <0 0x12800c00 0 0x400>;
-+			interrupts = <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 115 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 116 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 118 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi", "tei",
-+					  "aed", "bfd";
-+			clocks = <&cpg CPG_MOD 0x5d>, <&cpg CPG_MOD 0x5e>,
-+				 <&cpg CPG_MOD 0x61>, <&cpg CPG_MOD 0x60>,
-+				 <&cpg CPG_MOD 0x5f>;
-+			clock-names = "pclk", "tclk", "tclk_div4",
-+				      "tclk_div16", "tclk_div64";
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x81>, <&cpg 0x82>;
-+			reset-names = "presetn", "tresetn";
-+			status = "disabled";
-+		};
+ MODULE_IMPORT_NS(SH_SCI);
+@@ -59,6 +61,41 @@ MODULE_IMPORT_NS(SH_SCI);
+ #define CCR1_CTSPEN		BIT(1)	/* CTS External Pin Enable */
+ #define CCR1_CTSE		BIT(0)	/* CTS Enable */
+ 
++/* CCR2 (Common Control Register 2) */
++#define CCR2_INIT			0xFF000004
++#define CCR2_CKS_TCLK			(0)	/* TCLK clock */
++#define CCR2_CKS_TCLK_DIV4		BIT(20)	/* TCLK/4 clock */
++#define CCR2_CKS_TCLK_DIV16		BIT(21)	/* TCLK16 clock */
++#define CCR2_CKS_TCLK_DIV64		(BIT(21) | BIT(20)) /* TCLK/64 clock */
++#define CCR2_BRME			BIT(16)	/* Bitrate Modulation Enable */
++#define CCR2_ABCSE			BIT(6)	/* Asynchronous Mode Extended Base Clock Select */
++#define CCR2_ABCS			BIT(5)	/* Asynchronous Mode Base Clock Select */
++#define CCR2_BGDM			BIT(4)	/* Baud Rate Generator Double-Speed Mode Select */
 +
-+		rsci1: serial@12801000 {
-+			compatible = "renesas,r9a09g047-rsci";
-+			reg = <0 0x12801000 0 0x400>;
-+			interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 121 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 122 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 124 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi", "tei",
-+					  "aed", "bfd";
-+			clocks = <&cpg CPG_MOD 0x62>, <&cpg CPG_MOD 0x63>,
-+				 <&cpg CPG_MOD 0x66>, <&cpg CPG_MOD 0x65>,
-+				 <&cpg CPG_MOD 0x64>;
-+			clock-names = "pclk", "tclk", "tclk_div4",
-+				      "tclk_div16", "tclk_div64";
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x83>, <&cpg 0x84>;
-+			reset-names = "presetn", "tresetn";
-+			status = "disabled";
-+		};
++/* CCR3 (Common Control Register 3) */
++#define CCR3_INIT			0x1203
++#define CCR3_BLK			BIT(29)	/* Block Transfer Mode */
++#define CCR3_GM				BIT(28)	/* GSM Mode */
++#define CCR3_CKE1			BIT(25)	/* Clock Enable 1 */
++#define CCR3_CKE0			BIT(24)	/* Clock Enable 0 */
++#define CCR3_DEN			BIT(21)	/* Driver Enabled */
++#define CCR3_FM				BIT(20)	/* FIFO Mode Select */
++#define CCR3_MP				BIT(19)	/* Multi-Processor Mode */
++#define CCR3_MOD_ASYNC			0	/* Asynchronous mode (Multi-processor mode) */
++#define CCR3_MOD_IRDA			BIT(16)	/* Smart card interface mode */
++#define CCR3_MOD_CLK_SYNC		BIT(17)	/* Clock synchronous mode */
++#define CCR3_MOD_SPI			(BIT(17) | BIT(16)) /* Simple SPI mode */
++#define CCR3_MOD_I2C			BIT(18)	/* Simple I2C mode */
++#define CCR3_RXDESEL			BIT(15)	/* Asynchronous Start Bit Edge Detection Select */
++#define CCR3_STP			BIT(14)	/* Stop bit Length */
++#define CCR3_SINV			BIT(13)	/* Transmitted/Received Data Invert */
++#define CCR3_LSBF			BIT(12)	/* LSB First select */
++#define CCR3_CHR1			BIT(9)	/* Character Length */
++#define CCR3_CHR0			BIT(8)	/* Character Length */
++#define CCR3_BPEN			BIT(7)	/* Synchronizer Bypass Enable */
++#define CCR3_CPOL			BIT(1)	/* Clock Polarity Select */
++#define CCR3_CPHA			BIT(0)	/* Clock Phase Select */
 +
-+		rsci2: serial@12801400 {
-+			compatible = "renesas,r9a09g047-rsci";
-+			reg = <0 0x12801400 0 0x400>;
-+			interrupts = <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 127 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 128 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 130 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi", "tei",
-+					  "aed", "bfd";
-+			clocks = <&cpg CPG_MOD 0x67>, <&cpg CPG_MOD 0x68>,
-+				 <&cpg CPG_MOD 0x6b>, <&cpg CPG_MOD 0x6a>,
-+				 <&cpg CPG_MOD 0x69>;
-+			clock-names = "pclk", "tclk", "tclk_div4",
-+				      "tclk_div16", "tclk_div64";
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x85>, <&cpg 0x86>;
-+			reset-names = "presetn", "tresetn";
-+			status = "disabled";
-+		};
+ /* FCR (FIFO Control Register) */
+ #define FCR_RFRST		BIT(23)	/* Receive FIFO Data Register Reset */
+ #define FCR_TFRST		BIT(15)	/* Transmit FIFO Data Register Reset */
+@@ -138,6 +175,29 @@ static void rsci_start_rx(struct uart_port *port)
+ 	rsci_serial_out(port, CCR0, ctrl);
+ }
+ 
++static void rsci_enable_ms(struct uart_port *port)
++{
++	mctrl_gpio_enable_ms(to_sci_port(port)->gpios);
++}
 +
-+		rsci3: serial@12801800 {
-+			compatible = "renesas,r9a09g047-rsci";
-+			reg = <0 0x12801800 0 0x400>;
-+			interrupts = <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 133 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 134 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 135 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 136 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi", "tei",
-+					  "aed", "bfd";
-+			clocks = <&cpg CPG_MOD 0x6c>, <&cpg CPG_MOD 0x6d>,
-+				 <&cpg CPG_MOD 0x70>, <&cpg CPG_MOD 0x6f>,
-+				 <&cpg CPG_MOD 0x6e>;
-+			clock-names = "pclk", "tclk", "tclk_div4",
-+				      "tclk_div16", "tclk_div64";
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x87>, <&cpg 0x88>;
-+			reset-names = "presetn", "tresetn";
-+			status = "disabled";
-+		};
++static void rsci_init_pins(struct uart_port *port, unsigned int cflag)
++{
++	struct sci_port *s = to_sci_port(port);
 +
-+		rsci4: serial@12801c00 {
-+			compatible = "renesas,r9a09g047-rsci";
-+			reg = <0 0x12801c00 0 0x400>;
-+			interrupts = <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 139 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 140 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 142 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi", "tei",
-+					  "aed", "bfd";
-+			clocks = <&cpg CPG_MOD 0x71>, <&cpg CPG_MOD 0x72>,
-+				 <&cpg CPG_MOD 0x75>, <&cpg CPG_MOD 0x74>,
-+				 <&cpg CPG_MOD 0x73>;
-+			clock-names = "pclk", "tclk", "tclk_div4",
-+				      "tclk_div16", "tclk_div64";
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x89>, <&cpg 0x8a>;
-+			reset-names = "presetn", "tresetn";
-+			status = "disabled";
-+		};
++	/* Use port-specific handler if provided */
++	if (s->cfg->ops && s->cfg->ops->init_pins) {
++		s->cfg->ops->init_pins(port, cflag);
++		return;
++	}
 +
-+		rsci5: serial@12802000 {
-+			compatible = "renesas,r9a09g047-rsci";
-+			reg = <0 0x12802000 0 0x400>;
-+			interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 145 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 146 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 148 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi", "tei",
-+					  "aed", "bfd";
-+			clocks = <&cpg CPG_MOD 0x76>, <&cpg CPG_MOD 0x77>,
-+				 <&cpg CPG_MOD 0x7a>, <&cpg CPG_MOD 0x79>,
-+				 <&cpg CPG_MOD 0x78>;
-+			clock-names = "pclk", "tclk", "tclk_div4",
-+				      "tclk_div16", "tclk_div64";
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x8b>, <&cpg 0x8c>;
-+			reset-names = "presetn", "tresetn";
-+			status = "disabled";
-+		};
++	if (!s->has_rtscts)
++		return;
 +
-+		rsci6: serial@12802400 {
-+			compatible = "renesas,r9a09g047-rsci";
-+			reg = <0 0x12802400 0 0x400>;
-+			interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 151 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 152 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 154 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi", "tei",
-+					  "aed", "bfd";
-+			clocks = <&cpg CPG_MOD 0x7b>, <&cpg CPG_MOD 0x7c>,
-+				 <&cpg CPG_MOD 0x7f>, <&cpg CPG_MOD 0x7e>,
-+				 <&cpg CPG_MOD 0x7d>;
-+			clock-names = "pclk", "tclk", "tclk_div4",
-+				      "tclk_div16", "tclk_div64";
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x8d>, <&cpg 0x8e>;
-+			reset-names = "presetn", "tresetn";
-+			status = "disabled";
-+		};
++	if (s->autorts)
++		rsci_serial_out(port, CCR1, rsci_serial_in(port, CCR1) |
++				CCR1_CTSE | CCR1_CTSPEN);
++}
 +
-+		rsci7: serial@12802800 {
-+			compatible = "renesas,r9a09g047-rsci";
-+			reg = <0 0x12802800 0 0x400>;
-+			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 157 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 158 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 160 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi", "tei",
-+					  "aed", "bfd";
-+			clocks = <&cpg CPG_MOD 0x80>, <&cpg CPG_MOD 0x81>,
-+				 <&cpg CPG_MOD 0x84>, <&cpg CPG_MOD 0x83>,
-+				 <&cpg CPG_MOD 0x82>;
-+			clock-names = "pclk", "tclk", "tclk_div4",
-+				      "tclk_div16", "tclk_div64";
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x8f>, <&cpg 0x90>;
-+			reset-names = "presetn", "tresetn";
-+			status = "disabled";
-+		};
+ static int rsci_scif_set_rtrg(struct uart_port *port, int rx_trig)
+ {
+ 	u32 fcr = rsci_serial_in(port, FCR);
+@@ -157,18 +217,119 @@ static int rsci_scif_set_rtrg(struct uart_port *port, int rx_trig)
+ static void rsci_set_termios(struct uart_port *port, struct ktermios *termios,
+ 			     const struct ktermios *old)
+ {
++	unsigned int ccr2_val = CCR2_INIT, ccr3_val = CCR3_INIT;
++	unsigned int ccr0_val = 0, ccr1_val = 0, ccr4_val = 0;
++	unsigned int brr1 = 255, cks1 = 0, srr1 = 15;
+ 	struct sci_port *s = to_sci_port(port);
++	unsigned int brr = 255, cks = 0;
++	int min_err = INT_MAX, err;
++	unsigned long max_freq = 0;
++	unsigned int baud, i;
+ 	unsigned long flags;
++	unsigned int ctrl;
++	int best_clk = -1;
 +
-+		rsci8: serial@12802c00 {
-+			compatible = "renesas,r9a09g047-rsci";
-+			reg = <0 0x12802c00 0 0x400>;
-+			interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 163 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 164 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 166 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi", "tei",
-+					  "aed", "bfd";
-+			clocks = <&cpg CPG_MOD 0x85>, <&cpg CPG_MOD 0x86>,
-+				 <&cpg CPG_MOD 0x89>, <&cpg CPG_MOD 0x88>,
-+				 <&cpg CPG_MOD 0x87>;
-+			clock-names = "pclk", "tclk", "tclk_div4",
-+				      "tclk_div16", "tclk_div64";
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x91>, <&cpg 0x92>;
-+			reset-names = "presetn", "tresetn";
-+			status = "disabled";
-+		};
++	if ((termios->c_cflag & CSIZE) == CS7) {
++		ccr3_val |= CCR3_CHR0;
++	} else {
++		termios->c_cflag &= ~CSIZE;
++		termios->c_cflag |= CS8;
++	}
 +
-+		rsci9: serial@12803000 {
-+			compatible = "renesas,r9a09g047-rsci";
-+			reg = <0 0x12803000 0 0x400>;
-+			interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 169 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 170 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 171 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 172 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi", "tei",
-+					  "aed", "bfd";
-+			clocks = <&cpg CPG_MOD 0x8a>, <&cpg CPG_MOD 0x8b>,
-+				 <&cpg CPG_MOD 0x8e>, <&cpg CPG_MOD 0x8d>,
-+				 <&cpg CPG_MOD 0x8c>;
-+			clock-names = "pclk", "tclk", "tclk_div4",
-+				      "tclk_div16", "tclk_div64";
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x93>, <&cpg 0x94>;
-+			reset-names = "presetn", "tresetn";
-+			status = "disabled";
-+		};
++	if (termios->c_cflag & PARENB)
++		ccr1_val |= CCR1_PE;
 +
- 		wdt1: watchdog@14400000 {
- 			compatible = "renesas,r9a09g047-wdt", "renesas,r9a09g057-wdt";
- 			reg = <0 0x14400000 0 0x400>;
++	if (termios->c_cflag & PARODD)
++		ccr1_val |= (CCR1_PE | CCR1_PM);
++
++	if (termios->c_cflag & CSTOPB)
++		ccr3_val |= CCR3_STP;
++
++	/* Enable noise filter function */
++	ccr1_val |= CCR1_NFEN;
++
++	/*
++	 * earlyprintk comes here early on with port->uartclk set to zero.
++	 * the clock framework is not up and running at this point so here
++	 * we assume that 115200 is the maximum baud rate. please note that
++	 * the baud rate is not programmed during earlyprintk - it is assumed
++	 * that the previous boot loader has enabled required clocks and
++	 * setup the baud rate generator hardware for us already.
++	 */
++	if (!port->uartclk) {
++		max_freq = 115200;
++	} else {
++		for (i = 0; i < SCI_NUM_CLKS; i++)
++			max_freq = max(max_freq, s->clk_rates[i]);
++
++		max_freq /= min_sr(s);
++	}
++
++	baud = uart_get_baud_rate(port, termios, old, 0, max_freq);
++	if (!baud)
++		goto done;
++
++	/* Divided Functional Clock using standard Bit Rate Register */
++	err = sci_scbrr_calc(s, baud, &brr1, &srr1, &cks1);
++	if (abs(err) < abs(min_err)) {
++		best_clk = SCI_FCK;
++		ccr0_val = 0;
++		min_err = err;
++		brr = brr1;
++		cks = cks1;
++	}
++
++done:
++	if (best_clk >= 0)
++		dev_dbg(port->dev, "Using clk %pC for %u%+d bps\n",
++			s->clks[best_clk], baud, min_err);
+ 
+ 	sci_port_enable(s);
+ 	uart_port_lock_irqsave(port, &flags);
+ 
+-	/* For now, only RX enabling is supported */
+-	if (termios->c_cflag & CREAD)
++	uart_update_timeout(port, termios->c_cflag, baud);
++
++	rsci_serial_out(port, CCR0, ccr0_val);
++
++	ccr3_val |= CCR3_FM;
++	rsci_serial_out(port, CCR3, ccr3_val);
++
++	ccr2_val |= (cks << 20) | (brr << 8);
++	rsci_serial_out(port, CCR2, ccr2_val);
++
++	rsci_serial_out(port, CCR1, ccr1_val);
++	rsci_serial_out(port, CCR4, ccr4_val);
++
++	ctrl = rsci_serial_in(port, FCR);
++	ctrl |= (FCR_RFRST | FCR_TFRST);
++	rsci_serial_out(port, FCR, ctrl);
++
++	if (s->rx_trigger > 1)
++		rsci_scif_set_rtrg(port, s->rx_trigger);
++
++	port->status &= ~UPSTAT_AUTOCTS;
++	s->autorts = false;
++
++	if ((port->flags & UPF_HARD_FLOW) && (termios->c_cflag & CRTSCTS)) {
++		port->status |= UPSTAT_AUTOCTS;
++		s->autorts = true;
++	}
++
++	rsci_init_pins(port, termios->c_cflag);
++	rsci_serial_out(port, CFCLR, CFCLR_CLRFLAG);
++	rsci_serial_out(port, FFCLR, FFCLR_DRC);
++
++	ccr0_val |= CCR0_RE;
++	rsci_serial_out(port, CCR0, ccr0_val);
++
++	if ((termios->c_cflag & CREAD) != 0)
+ 		rsci_start_rx(port);
+ 
+ 	uart_port_unlock_irqrestore(port, flags);
+ 	sci_port_disable(s);
++
++	if (UART_ENABLE_MS(port, termios->c_cflag))
++		rsci_enable_ms(port);
+ }
+ 
+ static int rsci_txfill(struct uart_port *port)
+@@ -193,13 +354,34 @@ static unsigned int rsci_tx_empty(struct uart_port *port)
+ 
+ static void rsci_set_mctrl(struct uart_port *port, unsigned int mctrl)
+ {
+-	/* Not supported yet */
++	if (mctrl & TIOCM_LOOP) {
++		/* Standard loopback mode */
++		rsci_serial_out(port, CCR1, rsci_serial_in(port, CCR1) | CCR1_SPLP);
++	}
+ }
+ 
+ static unsigned int rsci_get_mctrl(struct uart_port *port)
+ {
+-	/* Not supported yet */
+-	return 0;
++	struct sci_port *s = to_sci_port(port);
++	struct mctrl_gpios *gpios = s->gpios;
++	unsigned int mctrl = 0;
++
++	mctrl_gpio_get(gpios, &mctrl);
++
++	/*
++	 * CTS/RTS is handled in hardware when supported, while nothing
++	 * else is wired up.
++	 */
++	if (!mctrl_gpio_to_gpiod(gpios, UART_GPIO_CTS))
++		mctrl |= TIOCM_CTS;
++
++	if (!mctrl_gpio_to_gpiod(gpios, UART_GPIO_DSR))
++		mctrl |= TIOCM_DSR;
++
++	if (!mctrl_gpio_to_gpiod(gpios, UART_GPIO_DCD))
++		mctrl |= TIOCM_CAR;
++
++	return mctrl;
+ }
+ 
+ static void rsci_clear_CFC(struct uart_port *port, unsigned int mask)
+@@ -329,7 +511,8 @@ static void rsci_receive_chars(struct uart_port *port)
+ 				continue;
+ 			}
+ 
+-			/* Store data and status.
++			/*
++			 * Store data and status.
+ 			 * Non FIFO mode is not supported
+ 			 */
+ 			if (rdat & RDR_FFER) {
+@@ -363,6 +546,28 @@ static void rsci_receive_chars(struct uart_port *port)
+ 	}
+ }
+ 
++static void rsci_break_ctl(struct uart_port *port, int break_state)
++{
++	unsigned short ccr0_val, ccr1_val;
++	unsigned long flags;
++
++	uart_port_lock_irqsave(port, &flags);
++	ccr1_val = rsci_serial_in(port, CCR1);
++	ccr0_val = rsci_serial_in(port, CCR0);
++
++	if (break_state == -1) {
++		ccr1_val = (ccr1_val | CCR1_SPB2IO) & ~CCR1_SPB2DT;
++		ccr0_val &= ~CCR0_TE;
++	} else {
++		ccr1_val = (ccr1_val | CCR1_SPB2DT) & ~CCR1_SPB2IO;
++		ccr0_val |= CCR0_TE;
++	}
++
++	rsci_serial_out(port, CCR1, ccr1_val);
++	rsci_serial_out(port, CCR0, ccr0_val);
++	uart_port_unlock_irqrestore(port, flags);
++}
++
+ static void rsci_poll_put_char(struct uart_port *port, unsigned char c)
+ {
+ 	u32 status;
+@@ -384,12 +589,21 @@ static void rsci_poll_put_char(struct uart_port *port, unsigned char c)
+ static void rsci_prepare_console_write(struct uart_port *port, u32 ctrl)
+ {
+ 	struct sci_port *s = to_sci_port(port);
+-	u32 ctrl_temp =
+-		s->params->param_bits->rxtx_enable | CCR0_TIE |
+-		s->hscif_tot;
++	u32 ctrl_temp = s->params->param_bits->rxtx_enable;
++
++	if (s->type == RSCI_PORT_SCIF16)
++		ctrl_temp |= CCR0_TIE | s->hscif_tot;
++
+ 	rsci_serial_out(port, CCR0, ctrl_temp);
+ }
+ 
++static void rsci_finish_console_write(struct uart_port *port, u32 ctrl)
++{
++	/* First set TE = 0 and then restore the CCR0 value */
++	rsci_serial_out(port, CCR0, ctrl & ~CCR0_TE);
++	rsci_serial_out(port, CCR0, ctrl);
++}
++
+ static const char *rsci_type(struct uart_port *port)
+ {
+ 	return "rsci";
+@@ -419,6 +633,17 @@ static const struct sci_port_params_bits rsci_port_param_bits = {
+ 	.poll_sent_bits = CSR_TDRE | CSR_TEND,
+ };
+ 
++static const struct sci_port_params rsci_rzg3e_port_params = {
++	.fifosize = 32,
++	.overrun_reg = CSR,
++	.overrun_mask = CSR_ORER,
++	.sampling_rate_mask = SCI_SR(32),
++	.error_mask = RSCI_DEFAULT_ERROR_MASK,
++	.error_clear = RSCI_ERROR_CLEAR,
++	.param_bits = &rsci_port_param_bits,
++	.common_regs = &rsci_common_regs,
++};
++
+ static const struct sci_port_params rsci_rzt2h_port_params = {
+ 	.fifosize = 16,
+ 	.overrun_reg = CSR,
+@@ -437,6 +662,8 @@ static const struct uart_ops rsci_uart_ops = {
+ 	.start_tx	= rsci_start_tx,
+ 	.stop_tx	= rsci_stop_tx,
+ 	.stop_rx	= rsci_stop_rx,
++	.enable_ms	= rsci_enable_ms,
++	.break_ctl	= rsci_break_ctl,
+ 	.startup	= sci_startup,
+ 	.shutdown	= sci_shutdown,
+ 	.set_termios	= rsci_set_termios,
+@@ -456,11 +683,19 @@ static const struct sci_port_ops rsci_port_ops = {
+ 	.receive_chars		= rsci_receive_chars,
+ 	.poll_put_char		= rsci_poll_put_char,
+ 	.prepare_console_write	= rsci_prepare_console_write,
++	.finish_console_write	= rsci_finish_console_write,
+ 	.suspend_regs_size	= rsci_suspend_regs_size,
+ 	.set_rtrg		= rsci_scif_set_rtrg,
+ 	.shutdown_complete	= rsci_shutdown_complete,
+ };
+ 
++struct sci_of_data of_rsci_rzg3e_data = {
++	.type = RSCI_PORT_SCIF32,
++	.ops = &rsci_port_ops,
++	.uart_ops = &rsci_uart_ops,
++	.params = &rsci_rzg3e_port_params,
++};
++
+ struct sci_of_data of_rsci_rzt2h_data = {
+ 	.type = RSCI_PORT_SCIF16,
+ 	.ops = &rsci_port_ops,
+@@ -470,12 +705,19 @@ struct sci_of_data of_rsci_rzt2h_data = {
+ 
+ #ifdef CONFIG_SERIAL_SH_SCI_EARLYCON
+ 
++static int __init rsci_rzg3e_early_console_setup(struct earlycon_device *device,
++						 const char *opt)
++{
++	return scix_early_console_setup(device, &of_rsci_rzg3e_data);
++}
++
+ static int __init rsci_rzt2h_early_console_setup(struct earlycon_device *device,
+ 						 const char *opt)
+ {
+ 	return scix_early_console_setup(device, &of_rsci_rzt2h_data);
+ }
+ 
++OF_EARLYCON_DECLARE(rsci, "renesas,r9a09g047-rsci", rsci_rzg3e_early_console_setup);
+ OF_EARLYCON_DECLARE(rsci, "renesas,r9a09g077-rsci", rsci_rzt2h_early_console_setup);
+ 
+ #endif /* CONFIG_SERIAL_SH_SCI_EARLYCON */
+diff --git a/drivers/tty/serial/rsci.h b/drivers/tty/serial/rsci.h
+index 9547148e8bd1..2aa2ba3973ee 100644
+--- a/drivers/tty/serial/rsci.h
++++ b/drivers/tty/serial/rsci.h
+@@ -5,6 +5,7 @@
+ 
+ #include "sh-sci-common.h"
+ 
++extern struct sci_of_data of_rsci_rzg3e_data;
+ extern struct sci_of_data of_rsci_rzt2h_data;
+ 
+ #endif /* __RSCI_H__ */
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 29e14e224d02..69460aac7c7e 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -3330,6 +3330,7 @@ static int sci_init_single(struct platform_device *dev,
+ 		sci_port->rx_trigger = 64;
+ 		break;
+ 	case PORT_SCIFA:
++	case RSCI_PORT_SCIF32:
+ 		sci_port->rx_trigger = 32;
+ 		break;
+ 	case PORT_SCIF:
+@@ -3663,6 +3664,10 @@ static const struct of_device_id of_sci_match[] __maybe_unused = {
+ 		.data = &of_sci_scif_rzv2h,
+ 	},
+ #ifdef CONFIG_SERIAL_RSCI
++	{
++		.compatible = "renesas,r9a09g047-rsci",
++		.data = &of_rsci_rzg3e_data,
++	},
+ 	{
+ 		.compatible = "renesas,r9a09g077-rsci",
+ 		.data = &of_rsci_rzt2h_data,
 -- 
 2.43.0
 
