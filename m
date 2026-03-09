@@ -2,56 +2,56 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C7ABEFCD9B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBEC3F417E3
 	for <webhook@archiver.kernel.org>; Mon,  9 Mar 2026 14:26:08 +0000 (UTC)
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.15550.1773066364607540403
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.15650.1773066362425989769
  for <cip-dev@lists.cip-project.org>;
- Mon, 09 Mar 2026 07:26:04 -0700
+ Mon, 09 Mar 2026 07:26:02 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=fzIx+XUR;
- spf=pass (domain: gmail.com, ip: 209.85.221.53, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-439a89b6fd0so8415309f8f.2
-        for <cip-dev@lists.cip-project.org>; Mon, 09 Mar 2026 07:26:04 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=AApBZ4p7;
+ spf=pass (domain: gmail.com, ip: 209.85.221.43, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-439b78b638eso8921660f8f.2
+        for <cip-dev@lists.cip-project.org>; Mon, 09 Mar 2026 07:26:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773066363; x=1773671163; darn=lists.cip-project.org;
+        d=gmail.com; s=20230601; t=1773066361; x=1773671161; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Qm17LgjAKsPm40gvdYSyo25U9Gy8S3VLDJg37jzEfAE=;
-        b=fzIx+XURpFkAHGbWY2OIMGic2+MkTADXq/xzgtPk+3BqgSxMknJse5xzlEe7gBGY3W
-         ibHgvqKiGW+JEavTCYro44ffJZkOAQrARlPOHsuSeghUtOhnNMy8JTZQ+eWLQxm4y63h
-         dOAES9MhaG6veOUjn5dZ6qDZirpMhcQMB8BsaYsJi2qz1jWQxqSDDC/ICUGiL36S8WbJ
-         qLDwbbLwyjgdesLS/8y/4J6kqtvzkPKZY57AmRr4EkKJ6BmqEfJ69BFqH/P9rGQTSQZM
-         t43vM0QjEDR2J3sis4vaZt5YGIb6UnY6ev05wH2eyImbi1jO5RUdWc/u+J5yEcZE5x0W
-         KA+g==
+        bh=cJ7lZhYolkiA8KYaY4e9I5iUsNa7fwrgZMgoxqNlD1o=;
+        b=AApBZ4p75gwMQEenjIk+pvHsGic9t0fdDGGZqY2Bytz81d39igZ7hwjnUth7ygyHaS
+         60JuG9j7V1g+ezDqD9WSdg3/YmGwk/D5xC7Ipb03IfTTqb0fjYnY8Q4IrCxC96QXnOUA
+         YzZfNsp+I3igh5HEX+TZFu3jB96jYZhYrrZTtfyG0/qEGQepw9Ts0Z8+mWzOngdUJg5V
+         8KWvZUI/ic4HQm9om1xfVe59mPwTxsVeYpkQUa/Qf+RMoKlalY2U+MUOm5kJJtM6iOy2
+         NV2NGG8EqtyJez9EUGhVADhGuJ56DmFocfi1ub7uTMsW6/azfh9M57dAzvG9B39V3/jt
+         HEUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773066363; x=1773671163;
+        d=1e100.net; s=20230601; t=1773066361; x=1773671161;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=Qm17LgjAKsPm40gvdYSyo25U9Gy8S3VLDJg37jzEfAE=;
-        b=HXIpUfSc6uIJ+E6f7nIj1TXC18qUlvsdnsNqWC5Ks1q+ikXYZnhHRAJi1a5ofAObd8
-         Xn6rYrVj0MoiF9nTg21XG1WKrYibuY6VD9M3U9hStDWFF6MhsOScRU/wM8e5wt6kDBDj
-         fUd7+wxHvkho7EHmZF3N5pJM648YyETJmK9FQH58Q6qg1Nt3ERJNimexdehAqlKeMo6s
-         HvwMQqvQPIMeJxvYKAeFVPt7xznR+sjXo4A/buR5CnBBDFRH9fEFvf4lCFPxIpSKF12p
-         8pUJBJkbhC7kiiZBaCCnAIaK271+L13CnJtt1QFtn5HPr7Cpfv0VciwkITuYnjmdLeqK
-         3wBQ==
-X-Gm-Message-State: AOJu0YyFh/2o2ay7RAWf0yQlZiSM7+pTIn8v8S5kTqinj6req1+GJpze
-	KuLrnte6Nh8Hb7MsZ5wJB4YdwIm16Ut5BdfT6rPaAI5DUKVWznF8ijn9Em8c1g==
-X-Gm-Gg: ATEYQzzTzMBBs2ywY6s/7E1KI4itXVsqGHwzHe87GEbnGH+lg924pG7XCE9dWAM1BQL
-	Cc6q3niXzb3JM1kS3pEl6lK04dnqI/f5z1Fn+ezClykUe4DRHHLxAGqFoiYOTDfuF9thMUxoPSu
-	buHY3Psls1JiYNgJQHRvwkhwWS/jOAZiixJop95+nFLNGW5Db9cYkKAnSgLPx2RbZQl25j9kLEB
-	aY43NlwvDcjAZHRnbOqOh3yfCpYIvcXf6sLOG2B6ZIpW3/3de80ctlSN9+e0pdaFTSYcVyEYcM5
-	SW0zA9zHDGnf7LOiJOJ/N3UlZKhQKWUqerUli3y6wwmL3D70N4Kf7qT05gWJFNI1n/tPB9t7ASz
-	oMKLzgP3W+kLpuAiFHVOMFAAMfPuwbfjBlHK22lh/71gKWdfuAu573nAohimtePNtdiEs0BNORa
-	cY4sWmR/YiCsbqsgbL3oEpRoY/Tz2z/Dc=
-X-Received: by 2002:a05:6000:2881:b0:437:711c:8754 with SMTP id ffacd0b85a97d-439da55541cmr20764059f8f.7.1773066362603;
-        Mon, 09 Mar 2026 07:26:02 -0700 (PDT)
+        bh=cJ7lZhYolkiA8KYaY4e9I5iUsNa7fwrgZMgoxqNlD1o=;
+        b=ItEZUM0RPIejfcrHDHfjNnRTDU+JWW3KUIg2NIUu+vH/MH4tNpwucUdBAiPBewAwYG
+         VS3DaKvvlAW7Ew+ONw3NvwcziTR+Lul66SmwubxuUaryg2ffec1blnAKv91E3IF2vjum
+         Ht+liXSXXH8Tb1GTtDvpXkV2YlGzqExVrWFoiZGo4a3VR8CKnyh1hZ62QTmw1vQZcc51
+         dIZJuF6xf/vX5F/To+VBNQeIASi6uyD1xP5MnDlNoX21KLOsQFJXUYz2937iz6BCMbWL
+         lGdO1Cp6VWewiEFjzurkwkzqtiwX67hEsEFlmtsunpyyW29S+nSptmFcPMPFqplppKTu
+         nPlA==
+X-Gm-Message-State: AOJu0YyBzxXX7SNvX3l2Xo9LWZc8ge53KQ4DdoWE/WkhwFnGVYxSFUBu
+	9WDs9vf6XvZ68rIp/y5w5EouyK/vivht1rc1ij13aTh05jx2u8pmbxAK3D4+sw==
+X-Gm-Gg: ATEYQzxAbp1IQckRpcPRZoLfMuKHOdNIQHRtJdOVhwQoa7gy9IngxGtGH8akH12oLBA
+	xk6GAtxEdROE7UYw5kVTtaa7OnI5AAGObzznpbJqddhLAob/rwIidcA1OcLqttvdZnzU0dxeCT1
+	b14BTfkp5QnlATUsXz/7BQXwbzsn/TNO9QBr7HpgvqPYucSGxwBM+/g69IWALemlttR/57lsrjq
+	XBo4rerpanUh5Moc46zl8d3VtQt7YrIYoE5OfzcHX0C8IGUMdh86tPm+O/59GWoRytkJTynWLG7
+	Hwg2W7T6IOr6sf7kX6qqHvjPsDmRHEt03o58V5vUaLs406QmyB/79BlrvVtuFDeirBU1OP2IHvE
+	696nZO3lfxm8qXhx4BAiIQgsn24vkZOzUCApFDHxM62EGqLMG8buzRJTK3n3GmRsoGe5yCeMdWi
+	a0xhBLhc5y9u3R6lGadXyshBaz7+6mAQk=
+X-Received: by 2002:a05:6000:40dd:b0:439:ad4a:f40e with SMTP id ffacd0b85a97d-439da89c257mr20049114f8f.48.1773066360323;
+        Mon, 09 Mar 2026 07:26:00 -0700 (PDT)
 Received: from biju.lan ([2a00:23c4:a758:8a01:7e80:c383:72cf:ebc3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439dad8d968sm25970311f8f.6.2026.03.09.07.26.02
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439dad8d968sm25970311f8f.6.2026.03.09.07.25.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2026 07:26:02 -0700 (PDT)
+        Mon, 09 Mar 2026 07:26:00 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,9 +59,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 20/29] serial: sh-sci: Add support for RZ/G3E RSCI clks
-Date: Mon,  9 Mar 2026 14:25:20 +0000
-Message-ID: <20260309142549.987737-21-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 16/29] serial: sh-sci: Use devm_reset_control_array_get_exclusive()
+Date: Mon,  9 Mar 2026 14:25:16 +0000
+Message-ID: <20260309142549.987737-17-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260309142549.987737-1-biju.das.jz@bp.renesas.com>
 References: <20260309142549.987737-1-biju.das.jz@bp.renesas.com>
@@ -71,74 +71,38 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 09 Mar 2026 14:26:08 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22188
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22184
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[ Upstream commit 83c405ec3a340a334c46bb59b07e5799f6d205a4 ]
+[ Upstream commit 850ec928922fb819c28eb175bf85b01e28afdea7 ]
 
-RZ/G3E RSCI has 6 clocks (5 module clocks + 1 external clock). Add
-support for the module clocks.
+Replace devm_*_get_exclusive()->devm_*_array_get_exclusive() to support
+existing SoCs along with RZ/G3E as RZ/G3E has 2 resets.
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Tested-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://patch.msgid.link/20251129164325.209213-14-biju.das.jz@bp.renesas.com
+Link: https://patch.msgid.link/20251129164325.209213-10-biju.das.jz@bp.renesas.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/tty/serial/sh-sci-common.h |  3 +++
- drivers/tty/serial/sh-sci.c        | 10 ++++++++++
- 2 files changed, 13 insertions(+)
+ drivers/tty/serial/sh-sci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/sh-sci-common.h b/drivers/tty/serial/sh-sci-common.h
-index abcd5bcc7c36..5d30771278b4 100644
---- a/drivers/tty/serial/sh-sci-common.h
-+++ b/drivers/tty/serial/sh-sci-common.h
-@@ -16,6 +16,9 @@ enum SCI_CLKS {
- 	SCI_SCK,		/* Optional External Clock */
- 	SCI_BRG_INT,		/* Optional BRG Internal Clock Source */
- 	SCI_SCIF_CLK,		/* Optional BRG External Clock Source */
-+	SCI_FCK_DIV4,		/* Optional Functional Clock frequency-divided by 4 */
-+	SCI_FCK_DIV16,		/* Optional Functional Clock frequency-divided by 16 */
-+	SCI_FCK_DIV64,		/* Optional Functional Clock frequency-divided by 64 */
- 	SCI_NUM_CLKS
- };
- 
 diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 0a38fd760c4f..6e9cd8044b89 100644
+index 97f6dc8692f5..cc6765463003 100644
 --- a/drivers/tty/serial/sh-sci.c
 +++ b/drivers/tty/serial/sh-sci.c
-@@ -3173,6 +3173,9 @@ static int sci_init_clocks(struct sci_port *sci_port, struct device *dev)
- 		[SCI_SCK] = "sck",
- 		[SCI_BRG_INT] = "brg_int",
- 		[SCI_SCIF_CLK] = "scif_clk",
-+		[SCI_FCK_DIV4] = "tclk_div4",
-+		[SCI_FCK_DIV16] = "tclk_div16",
-+		[SCI_FCK_DIV64] = "tclk_div64",
- 	};
- 	struct clk *clk;
- 	unsigned int i;
-@@ -3182,6 +3185,9 @@ static int sci_init_clocks(struct sci_port *sci_port, struct device *dev)
- 	} else if (sci_port->type == RSCI_PORT_SCIF16) {
- 		clk_names[SCI_FCK] = "operation";
- 		clk_names[SCI_BRG_INT] = "bus";
-+	} else if (sci_port->type == RSCI_PORT_SCIF32) {
-+		clk_names[SCI_FCK] = "tclk";
-+		clk_names[SCI_BRG_INT] = "pclk";
- 	}
+@@ -3706,7 +3706,7 @@ static struct plat_sci_port *sci_parse_dt(struct platform_device *pdev,
  
- 	for (i = 0; i < SCI_NUM_CLKS; i++) {
-@@ -3195,6 +3201,10 @@ static int sci_init_clocks(struct sci_port *sci_port, struct device *dev)
- 		    (i == SCI_FCK || i == SCI_BRG_INT))
- 			return dev_err_probe(dev, -ENODEV, "failed to get %s\n", name);
+ 	data = of_device_get_match_data(&pdev->dev);
  
-+		if (!clk && sci_port->type == RSCI_PORT_SCIF32 &&
-+		    (i != SCI_SCK && i != SCI_SCIF_CLK))
-+			return dev_err_probe(dev, -ENODEV, "failed to get %s\n", name);
-+
- 		if (!clk && i == SCI_FCK) {
- 			/*
- 			 * Not all SH platforms declare a clock lookup entry
+-	rstc = devm_reset_control_get_optional_exclusive(&pdev->dev, NULL);
++	rstc = devm_reset_control_array_get_optional_exclusive(&pdev->dev);
+ 	if (IS_ERR(rstc))
+ 		return ERR_PTR(dev_err_probe(&pdev->dev, PTR_ERR(rstc),
+ 					     "failed to get reset ctrl\n"));
 -- 
 2.43.0
 
