@@ -2,52 +2,52 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91239F3C273
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD660F3C277
 	for <webhook@archiver.kernel.org>; Mon,  9 Mar 2026 14:25:57 +0000 (UTC)
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.15640.1773066353639838531
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.15520.1773066354338656376
  for <cip-dev@lists.cip-project.org>;
- Mon, 09 Mar 2026 07:25:53 -0700
+ Mon, 09 Mar 2026 07:25:54 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=aWg47QGa;
- spf=pass (domain: gmail.com, ip: 209.85.221.51, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-439b9b1900bso5988504f8f.1
-        for <cip-dev@lists.cip-project.org>; Mon, 09 Mar 2026 07:25:53 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=ZNMHWsYZ;
+ spf=pass (domain: gmail.com, ip: 209.85.128.41, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-483487335c2so98463045e9.2
+        for <cip-dev@lists.cip-project.org>; Mon, 09 Mar 2026 07:25:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1773066352; x=1773671152; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RhfPXVNj7HLMqBc7igiXpm4m3wmAzCowQ1W9dfGizE0=;
-        b=aWg47QGa8fy86zmm8AEOdjNRT/68blP4ejkxpqUggreHB9R+6ton/brnjW9Zo2/PJ8
-         DVTSc7dAzB694rw5Dj7M9HETpqcFD+4aG0bH+N3M12yaVOD5A6KYp8NSiZezOE7Hy9Vx
-         8M/hogv4uwaXUa8S96n31fY1dCD+0yh9xet/jJ9gadiCSFTMxunISHnCGh1zELv7xt9T
-         84Yv9+1GdmsEo/OK8XSl/RNNxULES/XGW811WSaNpHPDSPR8HD6CsCkwS2eYM3Ji/1cp
-         s3EjusG5w8Xj6lCCkynvLGQwQkcPZ8/I6df0MZUx4duikqwSKk78z5+sw321cb0JVI1b
-         uEjA==
+        bh=lxCeIhaTL97e0F40IJFds4s8ySSRnlrm9C9A6LIY3kI=;
+        b=ZNMHWsYZctFRfFElCpK9QZkmfySw9EvfiU0632khOtJluWehYsr84oUBmZLLLQOMce
+         12rUJ5TWxLmFbubB6WZfCDrG1Os3si7ji5xCqh0r9uGXAt4IlDySqTpwhPBEepPuidyZ
+         SI0fpraZQBYPk5erAIebRN8T0Nvzq7/Wdb5sxP9I7g1ZwIxkTKx5LVJF2Oyhp8rYzCIo
+         25uxfWLihHBgVSu+PSBeXXDbgTZjEDXVFKdA9gPMmzYjjDV7fh+8FreRb8tl7P/tCInU
+         lWawpy8JyJ2HO0VC9RvZnqh3rEU/m50ewWU8fsq3JEnGTUB3KXti9dD2GV6OG9/78yvU
+         0yyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1773066352; x=1773671152;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=RhfPXVNj7HLMqBc7igiXpm4m3wmAzCowQ1W9dfGizE0=;
-        b=IkWjroO827spqG+iRkBDM4jXWTsGnE6+peUsdxIa+GSAlnJgnBjElA0jkFr3VNE2c1
-         vNEcybMt1iEGuSa7H5+amF6TFwuNeqySae+Xc698/q3EKqq0RqGHzPWzEtg6cXIVdPCe
-         sjm28Jh+t0tFhnXL5VEotdsh6FsZ0VsyJJVr26uQJmNwtxJDBeUPKCW+lgZgJpFSfmtu
-         cXniQGVUCQ4/HXt8ISbkGoHI0+rakW3gLGjfxqPaHXdvLtaLCn+K/LheIcHAfnWL7uIm
-         EitXKlMbkX4jr/W+K+xBgAQ/RQs6r+O3d0kkuLT0loP61ETrBsM/Q6WqMYLsmPVG9bg/
-         /Lkw==
-X-Gm-Message-State: AOJu0YzoUHbRSx5XDBmXMwnLMbwrQf3wK+jkKGmfsbvBJhG7dcpFqcmD
-	16OSbJEKQUFVSTTwh3doYjibgtLO34vOq556xMWIbmp5iIqKb3K7mgr+5amDCw==
-X-Gm-Gg: ATEYQzzLmhnQvn/lbCTZ2DejRsC2FkI/qJr3s0SBx42a82XvqsTQ7h7U7cJTMn0Iary
-	GkEfb803ArDZ9MLC1hWLRvnam8sfnR5QR+/KHi14ujWP5yMF6+ql0/qIVdE5VgeeMKW3dkLY8mY
-	8X1FNmlrHMdWkkvPOkX1zNdAOxEwD1z5Bdm1xifKbbXd6vmwvzKiNSnTjUMKSRm/xoXSfKF8cnk
-	Xve5rcbkgDkhdcPcDVLZ62ZYE1pvE4TqaImdg5KOeJiIzrZGZZRwNRsaVNP7vi6CsoKBGzRjdyN
-	5+23SFDlG4lsxrgPjCmLIpurGBvRwZvmTVPJ8j6DUIlx2MMi6f4HfdAMWzEPCiKzQ8KIX/1quL7
-	CdwGUuakcD6K6wJyTejWWuREP3c+/PWe557UkTsVutEKDmcYQEyIiO0rDKS5Ew1QYxaiwAsjCP8
-	rukxDbnlJ2YwnTOthmYPk6iT9WdKHeIJ4=
-X-Received: by 2002:a5d:64c9:0:b0:439:af42:c282 with SMTP id ffacd0b85a97d-439da8a37a2mr19622417f8f.58.1773066351632;
-        Mon, 09 Mar 2026 07:25:51 -0700 (PDT)
+        bh=lxCeIhaTL97e0F40IJFds4s8ySSRnlrm9C9A6LIY3kI=;
+        b=wP6BiIEnZBXH4RRmngsNtHaWnJ2gBaF3OPU9+cuOAgoM3l4ppQ4YYrHDQ2ymTAsG/x
+         MWeL4wDMs+BSjx0DvNu+SNaJ3VGc8P5nGBhiKpiQ1K+VVGCGBa1Hukh+Q9btdDyeGU2A
+         2GXyKfkUPU2SMAU/w2Xiw+0JsrlfAB+dZqYJLb5oeIu0q+J43hlVPgI2AtKmZwJMRHie
+         mmCzlxrDQ2XlAKMI3w/vgkpcjHwKlJ7xpujJdLQs+zbj20ViQhMZpvse4nMBgwDgVLtF
+         V/c84NNuCes7MQLonUiIYPLyohTna3gCk0f4/zHXjY2Hyzwgk23rEtYKbnhU1xvJRBIv
+         XmQg==
+X-Gm-Message-State: AOJu0YxXb0KwxBJtm4GBVuR/zUMgwcdBVAdKRbm58f55pRl5RfB8fi6H
+	n4FfPoTjjdM5xXQnWpF6thPp/W+cdCNsaJ9fP2TsjO+yLIe9nMSSB63Vpf6s8g==
+X-Gm-Gg: ATEYQzxGe2ge5aB/54JfaqIJf+e9n8HJWPRmgHimAQO8yVbudCyOMVbR5koLX9rxb9Q
+	ubqs/Bjr5o/Mauci4BMvPde6d2pXR55UQxSDncthMsAIYf5GQRPpQf8gH43cDgrWI3QPEX4oKad
+	MLf3YIu8JMDcLfbqJdeDoQlJGAi7U3ZuSS3Xv+fw+/sqGD44pBPSzSalwz1thBROZevyFApZHvW
+	JfebyK4jk1KCi+pKyzhiOo2fhQkatkhpg/9euBw1VzdvJGjTCsxWrOQLXmcEd0yVoKnRIz5rF7A
+	kXpaBuFREw8v3m7TqjdfRftfdhmLwFGInegRgLCf+dq96GJQo7Ac8Vt6uWJlD9Fa580TfVr8jqO
+	NMB973Vge89MfPFyLQCYrrXAEHxCq5pfB9MnjfPM8dEKouTihniTUEMp4bh757mAW/ntzWQ/foG
+	dVopA4J3p+bD4fcROtwO/Ka8nsH3jrzcY=
+X-Received: by 2002:a05:600c:8209:b0:485:3c41:360b with SMTP id 5b1f17b1804b1-4853c413a55mr42304355e9.35.1773066352084;
+        Mon, 09 Mar 2026 07:25:52 -0700 (PDT)
 Received: from biju.lan ([2a00:23c4:a758:8a01:7e80:c383:72cf:ebc3])
         by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439dad8d968sm25970311f8f.6.2026.03.09.07.25.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
@@ -59,9 +59,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 02/29] dt-bindings: serial: renesas,rsci: Document RZ/G3E support
-Date: Mon,  9 Mar 2026 14:25:02 +0000
-Message-ID: <20260309142549.987737-3-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 03/29] clk: renesas: r9a09g047: Add RSCI clocks/resets
+Date: Mon,  9 Mar 2026 14:25:03 +0000
+Message-ID: <20260309142549.987737-4-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260309142549.987737-1-biju.das.jz@bp.renesas.com>
 References: <20260309142549.987737-1-biju.das.jz@bp.renesas.com>
@@ -71,175 +71,181 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 09 Mar 2026 14:25:57 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22170
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22171
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[ Upstream commit 0774c43c006bf6e411514920cc57a42abe9374c1 ]
+[ Upstream commit c6b63d54c6f8d81e72c8b9b8e8d1cb5ada03c5dd ]
 
-Add documentation for the serial communication interface (RSCI) found on
-the Renesas RZ/G3E (R9A09G047) SoC. The RSCI IP on this SoC is identical
-to that on the RZ/T2H (R9A09G077) SoC, but it has a 32-stage FIFO compared
-to 16 on RZ/T2H. It supports both FIFO and non-FIFO mode operation. RZ/G3E
-has 6 clocks(5 module clocks + 1 external clock) compared to 3 clocks
-(2 module clocks + 1 external clock) on RZ/T2H, and it has multiple resets.
-It has 6 interrupts compared to 4 on RZ/T2H.
+Add RSCI clock and reset entries.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Tested-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://patch.msgid.link/20251129164325.209213-2-biju.das.jz@bp.renesas.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://patch.msgid.link/20251027154615.115759-2-biju.das.jz@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- .../bindings/serial/renesas,rsci.yaml         | 99 ++++++++++++++++---
- 1 file changed, 88 insertions(+), 11 deletions(-)
+ drivers/clk/renesas/r9a09g047-cpg.c | 126 ++++++++++++++++++++++++++++
+ 1 file changed, 126 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/serial/renesas,rsci.yaml b/Documentation/devicetree/bindings/serial/renesas,rsci.yaml
-index 6b1f827a335b..1f8cee8171de 100644
---- a/Documentation/devicetree/bindings/serial/renesas,rsci.yaml
-+++ b/Documentation/devicetree/bindings/serial/renesas,rsci.yaml
-@@ -10,46 +10,72 @@ maintainers:
-   - Geert Uytterhoeven <geert+renesas@glider.be>
-   - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+diff --git a/drivers/clk/renesas/r9a09g047-cpg.c b/drivers/clk/renesas/r9a09g047-cpg.c
+index 4e8881e0006b..c791b3d47f16 100644
+--- a/drivers/clk/renesas/r9a09g047-cpg.c
++++ b/drivers/clk/renesas/r9a09g047-cpg.c
+@@ -44,6 +44,9 @@ enum clk_ids {
+ 	CLK_PLLCLN_DIV8,
+ 	CLK_PLLCLN_DIV16,
+ 	CLK_PLLCLN_DIV20,
++	CLK_PLLCLN_DIV64,
++	CLK_PLLCLN_DIV256,
++	CLK_PLLCLN_DIV1024,
+ 	CLK_PLLDTY_ACPU,
+ 	CLK_PLLDTY_ACPU_DIV2,
+ 	CLK_PLLDTY_ACPU_DIV4,
+@@ -142,6 +145,9 @@ static const struct cpg_core_clk r9a09g047_core_clks[] __initconst = {
+ 	DEF_FIXED(".pllcln_div8", CLK_PLLCLN_DIV8, CLK_PLLCLN, 1, 8),
+ 	DEF_FIXED(".pllcln_div16", CLK_PLLCLN_DIV16, CLK_PLLCLN, 1, 16),
+ 	DEF_FIXED(".pllcln_div20", CLK_PLLCLN_DIV20, CLK_PLLCLN, 1, 20),
++	DEF_FIXED(".pllcln_div64", CLK_PLLCLN_DIV64, CLK_PLLCLN, 1, 64),
++	DEF_FIXED(".pllcln_div256", CLK_PLLCLN_DIV256, CLK_PLLCLN, 1, 256),
++	DEF_FIXED(".pllcln_div1024", CLK_PLLCLN_DIV1024, CLK_PLLCLN, 1, 1024),
  
--allOf:
--  - $ref: serial.yaml#
--
- properties:
-   compatible:
-     oneOf:
--      - items:
--          - const: renesas,r9a09g087-rsci # RZ/N2H
--          - const: renesas,r9a09g077-rsci # RZ/T2H
-+      - enum:
-+          - renesas,r9a09g047-rsci # RZ/G3E
-+          - renesas,r9a09g077-rsci # RZ/T2H
- 
-       - items:
-+          - const: renesas,r9a09g087-rsci # RZ/N2H
-           - const: renesas,r9a09g077-rsci # RZ/T2H
- 
-   reg:
-     maxItems: 1
- 
-   interrupts:
-+    minItems: 4
-     items:
-       - description: Error interrupt
-       - description: Receive buffer full interrupt
-       - description: Transmit buffer empty interrupt
-       - description: Transmit end interrupt
-+      - description: Active edge detection interrupt
-+      - description: Break field detection interrupt
- 
-   interrupt-names:
-+    minItems: 4
-     items:
-       - const: eri
-       - const: rxi
-       - const: txi
-       - const: tei
-+      - const: aed
-+      - const: bfd
- 
-   clocks:
-     minItems: 2
--    maxItems: 3
-+    maxItems: 6
- 
-   clock-names:
--    minItems: 2
-+    oneOf:
-+      - items:
-+          - const: operation
-+          - const: bus
-+          - const: sck # optional external clock input
-+
-+        minItems: 2
-+
-+      - items:
-+          - const: pclk
-+          - const: tclk
-+          - const: tclk_div4
-+          - const: tclk_div16
-+          - const: tclk_div64
-+          - const: sck # optional external clock input
-+
-+        minItems: 5
-+
-+  resets:
-     items:
--      - const: operation
--      - const: bus
--      - const: sck # optional external clock input
-+      - description: Input for resetting the APB clock
-+      - description: Input for resetting TCLK
-+
-+  reset-names:
-+    items:
-+      - const: presetn
-+      - const: tresetn
- 
-   power-domains:
-     maxItems: 1
-@@ -62,6 +88,57 @@ required:
-   - clock-names
-   - power-domains
- 
-+allOf:
-+  - $ref: serial.yaml#
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: renesas,r9a09g077-rsci
-+    then:
-+      properties:
-+        interrupts:
-+          maxItems: 4
-+
-+        interrupt-names:
-+          maxItems: 4
-+
-+        clocks:
-+          minItems: 2
-+          maxItems: 3
-+
-+        clock-names:
-+          minItems: 2
-+          maxItems: 3
-+
-+        resets: false
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: renesas,r9a09g047-rsci
-+    then:
-+      properties:
-+        interrupts:
-+          minItems: 6
-+
-+        interrupt-names:
-+          minItems: 6
-+
-+        clocks:
-+          minItems: 5
-+          maxItems: 6
-+
-+        clock-names:
-+          minItems: 5
-+          maxItems: 6
-+
-+      required:
-+        - resets
-+        - reset-names
-+
- unevaluatedProperties: false
- 
- examples:
+ 	DEF_DDIV(".plldty_acpu", CLK_PLLDTY_ACPU, CLK_PLLDTY, CDDIV0_DIVCTL2, dtable_2_64),
+ 	DEF_FIXED(".plldty_acpu_div2", CLK_PLLDTY_ACPU_DIV2, CLK_PLLDTY_ACPU, 1, 2),
+@@ -210,6 +216,106 @@ static const struct rzv2h_mod_clk r9a09g047_mod_clks[] __initconst = {
+ 						BUS_MSTOP(5, BIT(13))),
+ 	DEF_MOD("wdt_3_clk_loco",		CLK_QEXTAL, 5, 2, 2, 18,
+ 						BUS_MSTOP(5, BIT(13))),
++	DEF_MOD("rsci0_pclk",			CLK_PLLCLN_DIV16, 5, 13, 2, 29,
++						BUS_MSTOP(11, BIT(3))),
++	DEF_MOD("rsci0_tclk",			CLK_PLLCLN_DIV16, 5, 14, 2, 30,
++						BUS_MSTOP(11, BIT(3))),
++	DEF_MOD("rsci0_ps_ps3_n",		CLK_PLLCLN_DIV1024, 5, 15, 2, 31,
++						BUS_MSTOP(11, BIT(3))),
++	DEF_MOD("rsci0_ps_ps2_n",		CLK_PLLCLN_DIV256, 6, 0, 3, 0,
++						BUS_MSTOP(11, BIT(3))),
++	DEF_MOD("rsci0_ps_ps1_n",		CLK_PLLCLN_DIV64, 6, 1, 3, 1,
++						BUS_MSTOP(11, BIT(3))),
++	DEF_MOD("rsci1_pclk",			CLK_PLLCLN_DIV16, 6, 2, 3, 2,
++						BUS_MSTOP(11, BIT(4))),
++	DEF_MOD("rsci1_tclk",			CLK_PLLCLN_DIV16, 6, 3, 3, 3,
++						BUS_MSTOP(11, BIT(4))),
++	DEF_MOD("rsci1_ps_ps3_n",		CLK_PLLCLN_DIV1024, 6, 4, 3, 4,
++						BUS_MSTOP(11, BIT(4))),
++	DEF_MOD("rsci1_ps_ps2_n",		CLK_PLLCLN_DIV256, 6, 5, 3, 5,
++						BUS_MSTOP(11, BIT(4))),
++	DEF_MOD("rsci1_ps_ps1_n",		CLK_PLLCLN_DIV64, 6, 6, 3, 6,
++						BUS_MSTOP(11, BIT(4))),
++	DEF_MOD("rsci2_pclk",			CLK_PLLCLN_DIV16, 6, 7, 3, 7,
++						BUS_MSTOP(11, BIT(5))),
++	DEF_MOD("rsci2_tclk",			CLK_PLLCLN_DIV16, 6, 8, 3, 8,
++						BUS_MSTOP(11, BIT(5))),
++	DEF_MOD("rsci2_ps_ps3_n",		CLK_PLLCLN_DIV1024, 6, 9, 3, 9,
++						BUS_MSTOP(11, BIT(5))),
++	DEF_MOD("rsci2_ps_ps2_n",		CLK_PLLCLN_DIV256, 6, 10, 3, 10,
++						BUS_MSTOP(11, BIT(5))),
++	DEF_MOD("rsci2_ps_ps1_n",		CLK_PLLCLN_DIV64, 6, 11, 3, 11,
++						BUS_MSTOP(11, BIT(5))),
++	DEF_MOD("rsci3_pclk",			CLK_PLLCLN_DIV16, 6, 12, 3, 12,
++						BUS_MSTOP(11, BIT(6))),
++	DEF_MOD("rsci3_tclk",			CLK_PLLCLN_DIV16, 6, 13, 3, 13,
++						BUS_MSTOP(11, BIT(6))),
++	DEF_MOD("rsci3_ps_ps3_n",		CLK_PLLCLN_DIV1024, 6, 14, 3, 14,
++						BUS_MSTOP(11, BIT(6))),
++	DEF_MOD("rsci3_ps_ps2_n",		CLK_PLLCLN_DIV256, 6, 15, 3, 15,
++						BUS_MSTOP(11, BIT(6))),
++	DEF_MOD("rsci3_ps_ps1_n",		CLK_PLLCLN_DIV64, 7, 0, 3, 16,
++						BUS_MSTOP(11, BIT(6))),
++	DEF_MOD("rsci4_pclk",			CLK_PLLCLN_DIV16, 7, 1, 3, 17,
++						BUS_MSTOP(11, BIT(7))),
++	DEF_MOD("rsci4_tclk",			CLK_PLLCLN_DIV16, 7, 2, 3, 18,
++						BUS_MSTOP(11, BIT(7))),
++	DEF_MOD("rsci4_ps_ps3_n",		CLK_PLLCLN_DIV1024, 7, 3, 3, 19,
++						BUS_MSTOP(11, BIT(7))),
++	DEF_MOD("rsci4_ps_ps2_n",		CLK_PLLCLN_DIV256, 7, 4, 3, 20,
++						BUS_MSTOP(11, BIT(7))),
++	DEF_MOD("rsci4_ps_ps1_n",		CLK_PLLCLN_DIV64, 7, 5, 3, 21,
++						BUS_MSTOP(11, BIT(7))),
++	DEF_MOD("rsci5_pclk",			CLK_PLLCLN_DIV16, 7, 6, 3, 22,
++						BUS_MSTOP(11, BIT(8))),
++	DEF_MOD("rsci5_tclk",			CLK_PLLCLN_DIV16, 7, 7, 3, 23,
++						BUS_MSTOP(11, BIT(8))),
++	DEF_MOD("rsci5_ps_ps3_n",		CLK_PLLCLN_DIV1024, 7, 8, 3, 24,
++						BUS_MSTOP(11, BIT(8))),
++	DEF_MOD("rsci5_ps_ps2_n",		CLK_PLLCLN_DIV256, 7, 9, 3, 25,
++						BUS_MSTOP(11, BIT(8))),
++	DEF_MOD("rsci5_ps_ps1_n",		CLK_PLLCLN_DIV64, 7, 10, 3, 26,
++						BUS_MSTOP(11, BIT(8))),
++	DEF_MOD("rsci6_pclk",			CLK_PLLCLN_DIV16, 7, 11, 3, 27,
++						BUS_MSTOP(11, BIT(9))),
++	DEF_MOD("rsci6_tclk",			CLK_PLLCLN_DIV16, 7, 12, 3, 28,
++						BUS_MSTOP(11, BIT(9))),
++	DEF_MOD("rsci6_ps_ps3_n",		CLK_PLLCLN_DIV1024, 7, 13, 3, 29,
++						BUS_MSTOP(11, BIT(9))),
++	DEF_MOD("rsci6_ps_ps2_n",		CLK_PLLCLN_DIV256, 7, 14, 3, 30,
++						BUS_MSTOP(11, BIT(9))),
++	DEF_MOD("rsci6_ps_ps1_n",		CLK_PLLCLN_DIV64, 7, 15, 3, 31,
++						BUS_MSTOP(11, BIT(9))),
++	DEF_MOD("rsci7_pclk",			CLK_PLLCLN_DIV16, 8, 0, 4, 0,
++						BUS_MSTOP(11, BIT(10))),
++	DEF_MOD("rsci7_tclk",			CLK_PLLCLN_DIV16, 8, 1, 4, 1,
++						BUS_MSTOP(11, BIT(10))),
++	DEF_MOD("rsci7_ps_ps3_n",		CLK_PLLCLN_DIV1024, 8, 2, 4, 2,
++						BUS_MSTOP(11, BIT(10))),
++	DEF_MOD("rsci7_ps_ps2_n",		CLK_PLLCLN_DIV256, 8, 3, 4, 3,
++						BUS_MSTOP(11, BIT(10))),
++	DEF_MOD("rsci7_ps_ps1_n",		CLK_PLLCLN_DIV64, 8, 4, 4, 4,
++						BUS_MSTOP(11, BIT(10))),
++	DEF_MOD("rsci8_pclk",			CLK_PLLCLN_DIV16, 8, 5, 4, 5,
++						BUS_MSTOP(11, BIT(11))),
++	DEF_MOD("rsci8_tclk",			CLK_PLLCLN_DIV16, 8, 6, 4, 6,
++						BUS_MSTOP(11, BIT(11))),
++	DEF_MOD("rsci8_ps_ps3_n",		CLK_PLLCLN_DIV1024, 8, 7, 4, 7,
++						BUS_MSTOP(11, BIT(11))),
++	DEF_MOD("rsci8_ps_ps2_n",		CLK_PLLCLN_DIV256, 8, 8, 4, 8,
++						BUS_MSTOP(11, BIT(11))),
++	DEF_MOD("rsci8_ps_ps1_n",		CLK_PLLCLN_DIV64, 8, 9, 4, 9,
++						BUS_MSTOP(11, BIT(11))),
++	DEF_MOD("rsci9_pclk",			CLK_PLLCLN_DIV16, 8, 10, 4, 10,
++						BUS_MSTOP(11, BIT(12))),
++	DEF_MOD("rsci9_tclk",			CLK_PLLCLN_DIV16, 8, 11, 4, 11,
++						BUS_MSTOP(11, BIT(12))),
++	DEF_MOD("rsci9_ps_ps3_n",		CLK_PLLCLN_DIV1024, 8, 12, 4, 12,
++						BUS_MSTOP(11, BIT(12))),
++	DEF_MOD("rsci9_ps_ps2_n",		CLK_PLLCLN_DIV256, 8, 13, 4, 13,
++						BUS_MSTOP(11, BIT(12))),
++	DEF_MOD("rsci9_ps_ps1_n",		CLK_PLLCLN_DIV64, 8, 14, 4, 14,
++						BUS_MSTOP(11, BIT(12))),
+ 	DEF_MOD("scif_0_clk_pck",		CLK_PLLCM33_DIV16, 8, 15, 4, 15,
+ 						BUS_MSTOP(3, BIT(14))),
+ 	DEF_MOD("i3c_0_pclkrw",			CLK_PLLCLN_DIV16, 9, 0, 4, 16,
+@@ -325,6 +431,26 @@ static const struct rzv2h_reset r9a09g047_resets[] __initconst = {
+ 	DEF_RST(7, 6, 3, 7),		/* WDT_1_RESET */
+ 	DEF_RST(7, 7, 3, 8),		/* WDT_2_RESET */
+ 	DEF_RST(7, 8, 3, 9),		/* WDT_3_RESET */
++	DEF_RST(8, 1, 3, 18),		/* RSCI0_PRESETN */
++	DEF_RST(8, 2, 3, 19),		/* RSCI0_TRESETN */
++	DEF_RST(8, 3, 3, 20),		/* RSCI1_PRESETN */
++	DEF_RST(8, 4, 3, 21),		/* RSCI1_TRESETN */
++	DEF_RST(8, 5, 3, 22),		/* RSCI2_PRESETN */
++	DEF_RST(8, 6, 3, 23),		/* RSCI2_TRESETN */
++	DEF_RST(8, 7, 3, 24),		/* RSCI3_PRESETN */
++	DEF_RST(8, 8, 3, 25),		/* RSCI3_TRESETN */
++	DEF_RST(8, 9, 3, 26),		/* RSCI4_PRESETN */
++	DEF_RST(8, 10, 3, 27),		/* RSCI4_TRESETN */
++	DEF_RST(8, 11, 3, 28),		/* RSCI5_PRESETN */
++	DEF_RST(8, 12, 3, 29),		/* RSCI5_TRESETN */
++	DEF_RST(8, 13, 3, 30),		/* RSCI6_PRESETN */
++	DEF_RST(8, 14, 3, 31),		/* RSCI6_TRESETN */
++	DEF_RST(8, 15, 4, 0),		/* RSCI7_PRESETN */
++	DEF_RST(9, 0, 4, 1),		/* RSCI7_TRESETN */
++	DEF_RST(9, 1, 4, 2),		/* RSCI8_PRESETN */
++	DEF_RST(9, 2, 4, 3),		/* RSCI8_TRESETN */
++	DEF_RST(9, 3, 4, 4),		/* RSCI9_PRESETN */
++	DEF_RST(9, 4, 4, 5),		/* RSCI9_TRESETN */
+ 	DEF_RST(9, 5, 4, 6),		/* SCIF_0_RST_SYSTEM_N */
+ 	DEF_RST(9, 6, 4, 7),		/* I3C_0_PRESETN */
+ 	DEF_RST(9, 7, 4, 8),		/* I3C_0_TRESETN */
 -- 
 2.43.0
 
