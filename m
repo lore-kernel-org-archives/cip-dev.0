@@ -2,56 +2,56 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F4FCEF3715
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E610EF3714
 	for <webhook@archiver.kernel.org>; Mon,  9 Mar 2026 08:11:43 +0000 (UTC)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.9240.1773043894454099022
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.9257.1773043897253487692
  for <cip-dev@lists.cip-project.org>;
- Mon, 09 Mar 2026 01:11:34 -0700
+ Mon, 09 Mar 2026 01:11:37 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=TO7Pqadx;
- spf=pass (domain: gmail.com, ip: 209.85.128.51, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4852fdb36a8so18315445e9.2
-        for <cip-dev@lists.cip-project.org>; Mon, 09 Mar 2026 01:11:34 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=Ozsibp15;
+ spf=pass (domain: gmail.com, ip: 209.85.128.47, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4852b81c73aso16029265e9.3
+        for <cip-dev@lists.cip-project.org>; Mon, 09 Mar 2026 01:11:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773043893; x=1773648693; darn=lists.cip-project.org;
+        d=gmail.com; s=20230601; t=1773043895; x=1773648695; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=r+clHL807DC65xKdLDevb2T1f0PBfNN1u1PxwRu+HSA=;
-        b=TO7PqadxXthlljhniRxduCu8x3V732YGMYRD+LDKq2R5Nabk5RhpqDohZKTOBvufHt
-         CNH0Ah9heCEzEJFTjMPA06HDisMLf8DZ8BS4c4TdDWknWzpcWEnV2Wwqhp1/geQWpl4m
-         IuP7dW604Xc59mkR6DzmRUPm82j53Bla5RnQofBY4u30rrNcy+QKVhrfuVpRrxSFwKev
-         wTJ4TZV3Bz8L5lDG8FSF5kzC0undJGq8fg6INuOpuU8q4y2vWJd1H3fi8eYKbS/4tBJV
-         ASMiB/tsbUQuXO2xq4BfcCqrmFZGcBWX/robiO5m3vCqKGH7mi58BU2O4zBg5R1HvujG
-         GetQ==
+        bh=W76wgDrfPpQ2sy9m8fT18S+bkJTZIKN2LE6XEmhI+ag=;
+        b=Ozsibp15nkKbhYfIVMC57jxI/3hEQk52wl7EUgj+VQOA6CZaU2q74X99Kbzzp17IYI
+         VgwOucKc5lJoT0jYhyhA/fBdweKpTSo0bKfTTZGUMPT7EsfiLblcHnzs7RoB3ey4tDGz
+         tK4Vo0sHYuqeZJxMceHKEf2MUcx4twQAErUcRE4mkCSbtn1RkNrrDZhxBEvb0ca3vz7N
+         HPr/OplvVCtgUNeBWUd+zEaUvxkJowHfzVfUUsupZVf0sq4cPTdoKxrxKYCFiLEx88cJ
+         W+ybaD/hfJgz5Q8+QJTkMPCz9sg4/nzjugleCrn9JPWeG7qAb0K1emdWsNi424mS/lS9
+         SV1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773043893; x=1773648693;
+        d=1e100.net; s=20230601; t=1773043895; x=1773648695;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=r+clHL807DC65xKdLDevb2T1f0PBfNN1u1PxwRu+HSA=;
-        b=DHHf980WL55RGFDugeiZPICfQjDdjEZrzlmKZEPLuGsmpvcPnGuEInjDsRt131UV+j
-         +q5JRPpCvfPH1w5Imwb+KXMLtPz68BKspgH7ck1HtwnamOJRs04MEZFUTrw9wemWkKlr
-         JsdjIn9XqUHkIJWMB1jqmhmOsobF8Jux2XCg5LUsg/AK7U9z1HPX9EzX5Ca3qX23bWgN
-         Jn6J/QJBbeY63kH/b7pTQSJN1ja07/lQRhqaH2IM8R+NQbtUs+KDjKjgC8G34syMiVGE
-         YC1vhbt2JFZVanyZzk9sk8Olyg9hhT72rToxZyQn3gWoBYuLs5SdjTbkoG4tDuZwe5ad
-         qW6w==
-X-Gm-Message-State: AOJu0YyetmY92aepQa/GICuVigddYqMnUe9GqXMrU4ycJeUbUaK73xZC
-	+rCQf+03VDltlbdTtj39JkG2BhC6JgP9RrLRtJUqjPsLxRKgzJT4Vcj0GsXASg==
-X-Gm-Gg: ATEYQzxnChqw1U5whZhXP3NY3b8wVB1v5PLVQ+hPq3EC2hUPTPBwLMdbupX9fiusClQ
-	MEHVmfcH0A2Ln93YzxfhHF4Qm29oSgv0uzUWIU7gtUzADQoK25hWYh4tOculck/mK4T2RFxEkXG
-	T8hMVxzHWmJ6jly7qohnKgDeKmJECdYklWYnjaZTaeNg7FTJfZ97OyVrPyH5nLFxfppcfSNuWlE
-	y+7FH8G3SHNBIsW4aMcAs2ntjHi7IRA5UPIlMY3WOLWJ9tUkGHL3idAUEBBXNEAg4CCFzeZtjnc
-	0zD85pf40TCwfHgDdSmb7thlNX3HocHJoxVOhtP8PrQpZK5FKbVVFrGgoEUUd4Iyv08KsEt/Xfr
-	pEfq88+EVpgWfPOw4WH9CEjI/QOCs1ExUL3KAOp+PZ8elM5pAhW1eAvZEicDEVS1FUe8KT6Dk64
-	uFOIg42EV1ocHL7BdmtX7vsS+lEjTJlVwI8CnE2dDVzcxehtmG
-X-Received: by 2002:a05:600c:3d90:b0:480:1d0b:2d32 with SMTP id 5b1f17b1804b1-48526930a4fmr163640935e9.12.1773043892510;
-        Mon, 09 Mar 2026 01:11:32 -0700 (PDT)
+        bh=W76wgDrfPpQ2sy9m8fT18S+bkJTZIKN2LE6XEmhI+ag=;
+        b=lPkkmRbJeeHjrmvb1Vy529f5xkcOsm/fZA2M1FY7bftLoxxViz8avWiXzsPd65s3+x
+         hmHVt6fvwT1R1Jc0O7hMCMUM8OLhTlsU9IjulJ1Qys9JyVbTmIFeWVOUn2Mm2nA4ksGM
+         GgHDyiEP3/2DZ9bcvjW5TP5ckr9JfeHHUoKeFw5WxixXSYeYoFWoOUDgH5fBaUpJbM95
+         P032N22MgcDLrzIczgB4h4MtoacPG/SQDwyFHtbTtMC/8sjHa+PQE0TxZGgpEJE8IX7J
+         pSoNOEJAZKWTVulzsT0z3v6lQZzHP8Kfu9DLrXgAZlFGDihLISRx+rYhi1mXH1KcgDXy
+         z9tQ==
+X-Gm-Message-State: AOJu0YwSo3AgYFvnnVQH3RgIsx04VHbIDZYfdjd4P+QPEkUQIEV+vD+t
+	s9KyqL9VHKfkQEwTF2i63rMVWfjovfkN/Iqr3rb1ecBMz67myBxFlN3yYeXuUw==
+X-Gm-Gg: ATEYQzzFZaljk5gkc8BvV1J9efK+SA0rsKazWBNdewj8c+vod6s0nI+b5QrWrbEzAhF
+	zdkrGg5l5mXbFRPkbo+oiB/2nYJMt30sV3KtpSsne/0IgtDeuhRoZKnJGU9h5K6ufMhH8RDhvMx
+	YV4bxj0T7K1KVfdq+9f4783yU6oEmnxTQmDZKdhzCIuPQ0fpPt+XLXHdSueCEkeqd5GRBTdeFYB
+	Ni7EtN6ROxvgDYPbdKAq34baUTBcGOlEBFxjuoaGZHX2uTNTJnVcA3MJN0zeLkBlzu4ec4p1M7f
+	zi6VkewNXx54oYCHrBzkMQdBRNE1UPUyhMByQcU+LAQAXfv0u8HXcQUhphVLh2z9lVX6+EUUGWv
+	X84Wyhc14iiKNBd46esKmwsRzaA63/F/orAyQhbKwmq4tNdPkUYA84OhLqDmUiPVnsgKfdlvHfm
+	dm6hnWeJTkYfQ4US2m6GVfLHFyEVmJWbqSgrGLohw8qfvLDOnsaagmGk+UUZg=
+X-Received: by 2002:a05:600c:46cb:b0:485:3dfc:57c with SMTP id 5b1f17b1804b1-4853dfc073cmr16345815e9.21.1773043894962;
+        Mon, 09 Mar 2026 01:11:34 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a758:8a01:7e80:c383:72cf:ebc3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4853f8f9938sm4252135e9.23.2026.03.09.01.11.31
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4853f8f9938sm4252135e9.23.2026.03.09.01.11.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2026 01:11:32 -0700 (PDT)
+        Mon, 09 Mar 2026 01:11:34 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,9 +59,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 2/6] irqchip/renesas-rzv2h: Remove unneeded includes
-Date: Mon,  9 Mar 2026 08:11:22 +0000
-Message-ID: <20260309081129.154109-3-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 5/6] dt-bindings: can: renesas,rcar-canfd: Specify reset-names
+Date: Mon,  9 Mar 2026 08:11:25 +0000
+Message-ID: <20260309081129.154109-6-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260309081129.154109-1-biju.das.jz@bp.renesas.com>
 References: <20260309081129.154109-1-biju.das.jz@bp.renesas.com>
@@ -71,46 +71,99 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 09 Mar 2026 08:11:43 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22157
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22159
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-[ Upstream commit 41a5f82885e152c364e587ab30df4e582e96b73a ]
+[ Upstream commit af6b427c7ad096724da7399b180dc3bb9f033322 ]
 
-The RZ/V2H ICU driver does not use clocks, of_address, or syscore.
+Specify the expected reset-names for the Renesas CAN-FD controller on
+RZ/G2L and RZ/G3E SoCs.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/d4fbffc39af2eaa7bc50a0a97ffb3a22e3c4cb6a.1751446168.git.geert+renesas@glider.be
+The reset names rstp_n and rstc_n are defined in the SoC hardware manual
+and are already used by the driver since commit 76e9353a80e9 ("can:
+rcar_canfd: Add support for RZ/G2L family"). The reset-names property
+existed previously but was dropped by commit 466c8ef7b66b ("dt-bindings:
+can: renesas,rcar-canfd: Simplify the conditional schema").
 
+Restore and constrain reset-names in the binding so DT schema checks
+match the actual hardware requirements and driver expectations.
+
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://patch.msgid.link/20260114154525.3169992-2-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/irqchip/irq-renesas-rzv2h.c | 3 ---
- 1 file changed, 3 deletions(-)
+ .../bindings/net/can/renesas,rcar-canfd.yaml  | 33 +++++++++++--------
+ 1 file changed, 19 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/irqchip/irq-renesas-rzv2h.c b/drivers/irqchip/irq-renesas-rzv2h.c
-index f826b680a286..118c1fc177f6 100644
---- a/drivers/irqchip/irq-renesas-rzv2h.c
-+++ b/drivers/irqchip/irq-renesas-rzv2h.c
-@@ -11,18 +11,15 @@
+diff --git a/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml b/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
+index 3be1bff284a3..70bd639bebc1 100644
+--- a/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
++++ b/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
+@@ -120,6 +120,11 @@ properties:
  
- #include <linux/bitfield.h>
- #include <linux/cleanup.h>
--#include <linux/clk.h>
- #include <linux/err.h>
- #include <linux/io.h>
- #include <linux/irqchip.h>
- #include <linux/irqchip/irq-renesas-rzv2h.h>
- #include <linux/irqdomain.h>
--#include <linux/of_address.h>
- #include <linux/of_platform.h>
- #include <linux/pm_runtime.h>
- #include <linux/reset.h>
- #include <linux/spinlock.h>
--#include <linux/syscore_ops.h>
+   resets: true
  
- /* DT "interrupts" indexes */
- #define ICU_IRQ_START				1
++  reset-names:
++    items:
++      - const: rstp_n
++      - const: rstc_n
++
+   renesas,no-can-fd:
+     $ref: /schemas/types.yaml#/definitions/flag
+     description:
+@@ -193,13 +198,6 @@ allOf:
+           minItems: 2
+           maxItems: 2
+ 
+-        reset-names:
+-          minItems: 2
+-          maxItems: 2
+-
+-      required:
+-        - reset-names
+-
+   - if:
+       properties:
+         compatible:
+@@ -237,13 +235,6 @@ allOf:
+           minItems: 2
+           maxItems: 2
+ 
+-        reset-names:
+-          minItems: 2
+-          maxItems: 2
+-
+-      required:
+-        - reset-names
+-
+   - if:
+       properties:
+         compatible:
+@@ -289,6 +280,20 @@ allOf:
+       properties:
+         renesas,no-can-fd: false
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - renesas,r9a09g047-canfd
++              - renesas,rzg2l-canfd
++    then:
++      required:
++        - reset-names
++    else:
++      properties:
++        reset-names: false
++
+ unevaluatedProperties: false
+ 
+ examples:
 -- 
 2.43.0
 
