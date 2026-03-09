@@ -2,28 +2,28 @@ Return-Path: <cosmin-gabriel.tanislav.xa@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 531F8F41800
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45177F417FE
 	for <webhook@archiver.kernel.org>; Mon,  9 Mar 2026 15:07:20 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.msgproc02-g2.16855.1773068834291413158
  for <cip-dev@lists.cip-project.org>;
- Mon, 09 Mar 2026 08:07:14 -0700
+ Mon, 09 Mar 2026 08:07:15 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: cosmin-gabriel.tanislav.xa@renesas.com)
-X-CSE-ConnectionGUID: 1vsjCNW6QRuGZzbZrvPubQ==
-X-CSE-MsgGUID: RalSX2IeTT2OkXUtoRcA1g==
+X-CSE-ConnectionGUID: 7LrpMn1WRpyHNVQy91BbLg==
+X-CSE-MsgGUID: eBMkpfZjQcSS6I+KedUKeA==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 10 Mar 2026 00:07:13 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 10 Mar 2026 00:07:15 +0900
 Received: from demon-pc.localdomain (unknown [10.226.93.213])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 4BA02400720E;
-	Tue, 10 Mar 2026 00:07:12 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0C32840071E2;
+	Tue, 10 Mar 2026 00:07:13 +0900 (JST)
 From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.12.y-cip v3 03/17] arm64: defconfig: Enable the RZ/V2H(P) RSPI driver
-Date: Mon,  9 Mar 2026 17:06:05 +0200
-Message-ID: <20260309150619.761962-4-cosmin-gabriel.tanislav.xa@renesas.com>
+Subject: [PATCH 6.12.y-cip v3 04/17] clk: renesas: r9a09g077: Add SPI module clocks
+Date: Mon,  9 Mar 2026 17:06:06 +0200
+Message-ID: <20260309150619.761962-5-cosmin-gabriel.tanislav.xa@renesas.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260309150619.761962-1-cosmin-gabriel.tanislav.xa@renesas.com>
 References: <20260309150619.761962-1-cosmin-gabriel.tanislav.xa@renesas.com>
@@ -33,43 +33,98 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 09 Mar 2026 15:07:20 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22201
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22202
 
-From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+commit 5fb2f67341bd4b7c482f2bbda6b78244a51c3923 upstream.
 
-commit abd7c0293816a5fa5766710d2e7b576384fdec4d upstream.
+The Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs have four SPI
+peripherals, each with their own clock divider, which divides PLL4 by
+either 24, 25, 30 or 32, similar to the SCI peripheral.
 
-Enable the Renesas RZ/V2H(P) RSPI driver for the benefit of
-RZ/V2H(P) based platforms.
+The dividers feed into the usual module clocks.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Add them all.
+
+Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250624192304.338979-6-fabrizio.castro.jz@renesas.com
+Link: https://patch.msgid.link/20251105104151.1489281-2-cosmin-gabriel.tanislav.xa@renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[cosmin.tanislav: resolve merge conflict]
 Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 ---
 
 V3:
- * no changes
+ * describe changes made to apply on top of CIP
 
 V2:
  * remove internal Reviewed-by tags
 
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/renesas/r9a09g077-cpg.c | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index efa6efe31a9b..43ddc37d8015 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -566,6 +566,7 @@ CONFIG_SPI_ROCKCHIP=y
- CONFIG_SPI_ROCKCHIP_SFC=m
- CONFIG_SPI_RPCIF=m
- CONFIG_SPI_RSPI=m
-+CONFIG_SPI_RZV2H_RSPI=m
- CONFIG_SPI_RZV2M_CSI=m
- CONFIG_SPI_QCOM_QSPI=m
- CONFIG_SPI_QUP=y
+diff --git a/drivers/clk/renesas/r9a09g077-cpg.c b/drivers/clk/renesas/r9a09g077-cpg.c
+index af49565a544e..a1d420254ca6 100644
+--- a/drivers/clk/renesas/r9a09g077-cpg.c
++++ b/drivers/clk/renesas/r9a09g077-cpg.c
+@@ -46,12 +46,15 @@
+ #define DIVCA55C2	CONF_PACK(SCKCR2, 10, 1)
+ #define DIVCA55C3	CONF_PACK(SCKCR2, 11, 1)
+ #define DIVCA55S	CONF_PACK(SCKCR2, 12, 1)
++#define DIVSPI3ASYNC	CONF_PACK(SCKCR2, 16, 2)
+ 
++#define DIVSPI0ASYNC	CONF_PACK(SCKCR3, 0, 2)
++#define DIVSPI1ASYNC	CONF_PACK(SCKCR3, 2, 2)
++#define DIVSPI2ASYNC	CONF_PACK(SCKCR3, 4, 2)
+ #define DIVSCI0ASYNC	CONF_PACK(SCKCR3, 6, 2)
+ 
+ #define SEL_PLL		CONF_PACK(SCKCR, 22, 1)
+ 
+-
+ enum rzt2h_clk_types {
+ 	CLK_TYPE_RZT2H_DIV = CLK_TYPE_CUSTOM,	/* Clock with divider */
+ 	CLK_TYPE_RZT2H_MUX,			/* Clock with clock source selector */
+@@ -84,6 +87,10 @@ enum clk_ids {
+ 	CLK_SEL_CLK_PLL4,
+ 	CLK_PLL4D1,
+ 	CLK_SCI0ASYNC,
++	CLK_SPI0ASYNC,
++	CLK_SPI1ASYNC,
++	CLK_SPI2ASYNC,
++	CLK_SPI3ASYNC,
+ 
+ 	/* Module Clocks */
+ 	MOD_CLK_BASE,
+@@ -134,6 +141,15 @@ static const struct cpg_core_clk r9a09g077_core_clks[] __initconst = {
+ 	DEF_DIV(".sci0async", CLK_SCI0ASYNC, CLK_PLL4D1, DIVSCI0ASYNC,
+ 		dtable_24_25_30_32),
+ 
++	DEF_DIV(".spi0async", CLK_SPI0ASYNC, CLK_PLL4D1, DIVSPI0ASYNC,
++		dtable_24_25_30_32),
++	DEF_DIV(".spi1async", CLK_SPI1ASYNC, CLK_PLL4D1, DIVSPI1ASYNC,
++		dtable_24_25_30_32),
++	DEF_DIV(".spi2async", CLK_SPI2ASYNC, CLK_PLL4D1, DIVSPI2ASYNC,
++		dtable_24_25_30_32),
++	DEF_DIV(".spi3async", CLK_SPI3ASYNC, CLK_PLL4D1, DIVSPI3ASYNC,
++		dtable_24_25_30_32),
++
+ 	/* Core output clk */
+ 	DEF_DIV("CA55C0", R9A09G077_CLK_CA55C0, CLK_SEL_CLK_PLL0, DIVCA55C0,
+ 		dtable_1_2),
+@@ -156,10 +172,14 @@ static const struct mssr_mod_clk r9a09g077_mod_clks[] __initconst = {
+ 	DEF_MOD("sci0fck", 8, CLK_SCI0ASYNC),
+ 	DEF_MOD("iic0", 100, R9A09G077_CLK_PCLKL),
+ 	DEF_MOD("iic1", 101, R9A09G077_CLK_PCLKL),
++	DEF_MOD("spi0", 104, CLK_SPI0ASYNC),
++	DEF_MOD("spi1", 105, CLK_SPI1ASYNC),
++	DEF_MOD("spi2", 106, CLK_SPI2ASYNC),
+ 	DEF_MOD("adc0", 206, R9A09G077_CLK_PCLKH),
+ 	DEF_MOD("adc1", 207, R9A09G077_CLK_PCLKH),
+ 	DEF_MOD("adc2", 225, R9A09G077_CLK_PCLKM),
+ 	DEF_MOD("iic2", 601, R9A09G077_CLK_PCLKL),
++	DEF_MOD("spi3", 602, CLK_SPI3ASYNC),
+ 	DEF_MOD("sdhi0", 1212, R9A09G077_CLK_PCLKAM),
+ 	DEF_MOD("sdhi1", 1213, R9A09G077_CLK_PCLKAM),
+ };
 -- 
 2.53.0
 
