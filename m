@@ -2,56 +2,56 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E3D4F3C275
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91239F3C273
 	for <webhook@archiver.kernel.org>; Mon,  9 Mar 2026 14:25:57 +0000 (UTC)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.15521.1773066354519683948
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.15640.1773066353639838531
  for <cip-dev@lists.cip-project.org>;
- Mon, 09 Mar 2026 07:25:54 -0700
+ Mon, 09 Mar 2026 07:25:53 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=S+pphEw0;
- spf=pass (domain: gmail.com, ip: 209.85.128.52, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4852e9ca034so19671845e9.2
-        for <cip-dev@lists.cip-project.org>; Mon, 09 Mar 2026 07:25:54 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=aWg47QGa;
+ spf=pass (domain: gmail.com, ip: 209.85.221.51, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-439b9b1900bso5988504f8f.1
+        for <cip-dev@lists.cip-project.org>; Mon, 09 Mar 2026 07:25:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773066353; x=1773671153; darn=lists.cip-project.org;
+        d=gmail.com; s=20230601; t=1773066352; x=1773671152; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HTreNAs3ON+xtKgLZuRmRUsIUIft59+OGiTbNZlAjrU=;
-        b=S+pphEw0VIlkiLKyUJGYimcM122gGSlgHpvTuSG4jFXKmrS0NDRv1eApytFU0ShsTi
-         SSPw79S0FzBLOJa+DeG4BmcvP+FTf7utkrkYIblE48vYGkYRcL/mAKmABP2ZY0gBhLku
-         Ig/ZZRMFCYqFrcBvhOkleFOjXa6bhmnnJdvrtUYXA1byvKK8+VCxNF9eW1UMZkyqCPKq
-         AOP2tY7h/UcrLrJYWdVS9HIdPPaGtzn9fgTqvkR4i4BsVx0KvBoa3PHQcCzjoTQGWjXW
-         MiDFy8dIDrEavv6bg3iqTSFEhQdF3m3j5EkFcvgBNn6qkqVbqhReTpqlopdXfFYxZLi2
-         0k/A==
+        bh=RhfPXVNj7HLMqBc7igiXpm4m3wmAzCowQ1W9dfGizE0=;
+        b=aWg47QGa8fy86zmm8AEOdjNRT/68blP4ejkxpqUggreHB9R+6ton/brnjW9Zo2/PJ8
+         DVTSc7dAzB694rw5Dj7M9HETpqcFD+4aG0bH+N3M12yaVOD5A6KYp8NSiZezOE7Hy9Vx
+         8M/hogv4uwaXUa8S96n31fY1dCD+0yh9xet/jJ9gadiCSFTMxunISHnCGh1zELv7xt9T
+         84Yv9+1GdmsEo/OK8XSl/RNNxULES/XGW811WSaNpHPDSPR8HD6CsCkwS2eYM3Ji/1cp
+         s3EjusG5w8Xj6lCCkynvLGQwQkcPZ8/I6df0MZUx4duikqwSKk78z5+sw321cb0JVI1b
+         uEjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773066353; x=1773671153;
+        d=1e100.net; s=20230601; t=1773066352; x=1773671152;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=HTreNAs3ON+xtKgLZuRmRUsIUIft59+OGiTbNZlAjrU=;
-        b=vmWZlaFhIaKITBAspxqA3PD6nwCfzhda4007OQX6JZCth+/DByyo5e9oN3Lu9EqnWH
-         M5XzwgGhO6/Cn/JrcCbT1Ja8koCZLor/SAddSNJOJCiCwztB+4s85ST6nnYTWQ8EUdnZ
-         1knSmDqeTexvEq8NEiwA3M2QBB8nHsnFy3gIi8HudIUlxaDtIg/RcK6GV7m7OwkaMr9M
-         OyPy6e/tPe2VOOjizZx97YxerPCBmYEDy/8Xm4vW4V+VM0ARrORMqvsvaU+9Q+7Q9tgb
-         zjC1+SINwyLkgg8kp3/CLXFDiocPgHQ8ZBPXPPc1wedDpzBop2tqsEoGwtnxHuuF7FDa
-         ZwiA==
-X-Gm-Message-State: AOJu0YyLTB199xfatAw5TBznVoBLY4ey7TZNReW+p7EZRawgv0LOY4h2
-	zHWg2R+eNmMv7YrnyGi1lOGCdAqWTFaTdtICBl3vGpahTLpPlSWOJ9fkBPS52Q==
-X-Gm-Gg: ATEYQzweH+FJbqKPLTP0Nk0SjSl2StWq1cvvWjL1oTHhLaqIKyjcFSb25+o+9YuAl2Z
-	kX9Gt6cKSLGgE2KPfDefK5AqAWj58PbwsAbn3uOwmacJXyjVFVPPh6dcJT1xRmLb/F/F1nGwqax
-	1jl+Qf6l5FjmHVE0RKlbCdZsTNGkt9XPys2jiknb+pcGRWznQv0r3vtxf/sNu9aI3j5GhEvi09A
-	T8GTFci5Uxjwu+ahmhGmbAoEE9xn/5wELGbgZePB8/GKp9oTYPma5ERYFw+yZF/szu4jLTp7nzM
-	3QC3Wp6u8Ck1x2XPqWGNnPcwm8qYgbfLzVIMsl0Hb74Hgwsctw2NVydAvO9zzmtNb9psFwy+ARk
-	KpFLXoJxWA+L503bU9h/qAdgYAgNdvd7iKSPvCBPDl1I5gmv73EmYMa1cNXDL9NO0UK2Sk8uDNQ
-	iHc0xain0cAasFjV6mVI6fjF7dHPcpq18=
-X-Received: by 2002:a05:6000:200d:b0:436:1b1:6cbd with SMTP id ffacd0b85a97d-439da64fc06mr21062639f8f.6.1773066352541;
-        Mon, 09 Mar 2026 07:25:52 -0700 (PDT)
+        bh=RhfPXVNj7HLMqBc7igiXpm4m3wmAzCowQ1W9dfGizE0=;
+        b=IkWjroO827spqG+iRkBDM4jXWTsGnE6+peUsdxIa+GSAlnJgnBjElA0jkFr3VNE2c1
+         vNEcybMt1iEGuSa7H5+amF6TFwuNeqySae+Xc698/q3EKqq0RqGHzPWzEtg6cXIVdPCe
+         sjm28Jh+t0tFhnXL5VEotdsh6FsZ0VsyJJVr26uQJmNwtxJDBeUPKCW+lgZgJpFSfmtu
+         cXniQGVUCQ4/HXt8ISbkGoHI0+rakW3gLGjfxqPaHXdvLtaLCn+K/LheIcHAfnWL7uIm
+         EitXKlMbkX4jr/W+K+xBgAQ/RQs6r+O3d0kkuLT0loP61ETrBsM/Q6WqMYLsmPVG9bg/
+         /Lkw==
+X-Gm-Message-State: AOJu0YzoUHbRSx5XDBmXMwnLMbwrQf3wK+jkKGmfsbvBJhG7dcpFqcmD
+	16OSbJEKQUFVSTTwh3doYjibgtLO34vOq556xMWIbmp5iIqKb3K7mgr+5amDCw==
+X-Gm-Gg: ATEYQzzLmhnQvn/lbCTZ2DejRsC2FkI/qJr3s0SBx42a82XvqsTQ7h7U7cJTMn0Iary
+	GkEfb803ArDZ9MLC1hWLRvnam8sfnR5QR+/KHi14ujWP5yMF6+ql0/qIVdE5VgeeMKW3dkLY8mY
+	8X1FNmlrHMdWkkvPOkX1zNdAOxEwD1z5Bdm1xifKbbXd6vmwvzKiNSnTjUMKSRm/xoXSfKF8cnk
+	Xve5rcbkgDkhdcPcDVLZ62ZYE1pvE4TqaImdg5KOeJiIzrZGZZRwNRsaVNP7vi6CsoKBGzRjdyN
+	5+23SFDlG4lsxrgPjCmLIpurGBvRwZvmTVPJ8j6DUIlx2MMi6f4HfdAMWzEPCiKzQ8KIX/1quL7
+	CdwGUuakcD6K6wJyTejWWuREP3c+/PWe557UkTsVutEKDmcYQEyIiO0rDKS5Ew1QYxaiwAsjCP8
+	rukxDbnlJ2YwnTOthmYPk6iT9WdKHeIJ4=
+X-Received: by 2002:a5d:64c9:0:b0:439:af42:c282 with SMTP id ffacd0b85a97d-439da8a37a2mr19622417f8f.58.1773066351632;
+        Mon, 09 Mar 2026 07:25:51 -0700 (PDT)
 Received: from biju.lan ([2a00:23c4:a758:8a01:7e80:c383:72cf:ebc3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439dad8d968sm25970311f8f.6.2026.03.09.07.25.52
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439dad8d968sm25970311f8f.6.2026.03.09.07.25.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2026 07:25:52 -0700 (PDT)
+        Mon, 09 Mar 2026 07:25:51 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,9 +59,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 04/29] serial: sh-sci: Convert to DEFINE_SIMPLE_DEV_PM_OPS()
-Date: Mon,  9 Mar 2026 14:25:04 +0000
-Message-ID: <20260309142549.987737-5-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 02/29] dt-bindings: serial: renesas,rsci: Document RZ/G3E support
+Date: Mon,  9 Mar 2026 14:25:02 +0000
+Message-ID: <20260309142549.987737-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260309142549.987737-1-biju.das.jz@bp.renesas.com>
 References: <20260309142549.987737-1-biju.das.jz@bp.renesas.com>
@@ -71,65 +71,175 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 09 Mar 2026 14:25:57 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22172
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22170
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[ Upstream commit 65acd0d86f2fa104fc0a0c9d86aa1ee6b1a4763e ]
+[ Upstream commit 0774c43c006bf6e411514920cc57a42abe9374c1 ]
 
-Convert the Renesas SuperH SCI(F) serial port driver from
-SIMPLE_DEV_PM_OPS() to DEFINE_SIMPLE_DEV_PM_OPS() and pm_sleep_ptr().
-This lets us drop the __maybe_unused annotations from its suspend and
-resume callbacks, and reduces kernel size in case CONFIG_PM or
-CONFIG_PM_SLEEP is disabled.
+Add documentation for the serial communication interface (RSCI) found on
+the Renesas RZ/G3E (R9A09G047) SoC. The RSCI IP on this SoC is identical
+to that on the RZ/T2H (R9A09G077) SoC, but it has a 32-stage FIFO compared
+to 16 on RZ/T2H. It supports both FIFO and non-FIFO mode operation. RZ/G3E
+has 6 clocks(5 module clocks + 1 external clock) compared to 3 clocks
+(2 module clocks + 1 external clock) on RZ/T2H, and it has multiple resets.
+It has 6 interrupts compared to 4 on RZ/T2H.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/a5628fe028362ae3f8729021a7864dd39f7869bf.1752086885.git.geert+renesas@glider.be
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Tested-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Link: https://patch.msgid.link/20251129164325.209213-2-biju.das.jz@bp.renesas.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/tty/serial/sh-sci.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ .../bindings/serial/renesas,rsci.yaml         | 99 ++++++++++++++++---
+ 1 file changed, 88 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 03d248b2d8da..4e094d8ee882 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -3752,7 +3752,7 @@ static int sci_probe(struct platform_device *dev)
- 	return 0;
- }
+diff --git a/Documentation/devicetree/bindings/serial/renesas,rsci.yaml b/Documentation/devicetree/bindings/serial/renesas,rsci.yaml
+index 6b1f827a335b..1f8cee8171de 100644
+--- a/Documentation/devicetree/bindings/serial/renesas,rsci.yaml
++++ b/Documentation/devicetree/bindings/serial/renesas,rsci.yaml
+@@ -10,46 +10,72 @@ maintainers:
+   - Geert Uytterhoeven <geert+renesas@glider.be>
+   - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
  
--static __maybe_unused int sci_suspend(struct device *dev)
-+static int sci_suspend(struct device *dev)
- {
- 	struct sci_port *sport = dev_get_drvdata(dev);
+-allOf:
+-  - $ref: serial.yaml#
+-
+ properties:
+   compatible:
+     oneOf:
+-      - items:
+-          - const: renesas,r9a09g087-rsci # RZ/N2H
+-          - const: renesas,r9a09g077-rsci # RZ/T2H
++      - enum:
++          - renesas,r9a09g047-rsci # RZ/G3E
++          - renesas,r9a09g077-rsci # RZ/T2H
  
-@@ -3770,7 +3770,7 @@ static __maybe_unused int sci_suspend(struct device *dev)
- 	return 0;
- }
+       - items:
++          - const: renesas,r9a09g087-rsci # RZ/N2H
+           - const: renesas,r9a09g077-rsci # RZ/T2H
  
--static __maybe_unused int sci_resume(struct device *dev)
-+static int sci_resume(struct device *dev)
- {
- 	struct sci_port *sport = dev_get_drvdata(dev);
+   reg:
+     maxItems: 1
  
-@@ -3791,14 +3791,14 @@ static __maybe_unused int sci_resume(struct device *dev)
- 	return 0;
- }
+   interrupts:
++    minItems: 4
+     items:
+       - description: Error interrupt
+       - description: Receive buffer full interrupt
+       - description: Transmit buffer empty interrupt
+       - description: Transmit end interrupt
++      - description: Active edge detection interrupt
++      - description: Break field detection interrupt
  
--static SIMPLE_DEV_PM_OPS(sci_dev_pm_ops, sci_suspend, sci_resume);
-+static DEFINE_SIMPLE_DEV_PM_OPS(sci_dev_pm_ops, sci_suspend, sci_resume);
+   interrupt-names:
++    minItems: 4
+     items:
+       - const: eri
+       - const: rxi
+       - const: txi
+       - const: tei
++      - const: aed
++      - const: bfd
  
- static struct platform_driver sci_driver = {
- 	.probe		= sci_probe,
- 	.remove_new	= sci_remove,
- 	.driver		= {
- 		.name	= "sh-sci",
--		.pm	= &sci_dev_pm_ops,
-+		.pm	= pm_sleep_ptr(&sci_dev_pm_ops),
- 		.of_match_table = of_match_ptr(of_sci_match),
- 	},
- };
+   clocks:
+     minItems: 2
+-    maxItems: 3
++    maxItems: 6
+ 
+   clock-names:
+-    minItems: 2
++    oneOf:
++      - items:
++          - const: operation
++          - const: bus
++          - const: sck # optional external clock input
++
++        minItems: 2
++
++      - items:
++          - const: pclk
++          - const: tclk
++          - const: tclk_div4
++          - const: tclk_div16
++          - const: tclk_div64
++          - const: sck # optional external clock input
++
++        minItems: 5
++
++  resets:
+     items:
+-      - const: operation
+-      - const: bus
+-      - const: sck # optional external clock input
++      - description: Input for resetting the APB clock
++      - description: Input for resetting TCLK
++
++  reset-names:
++    items:
++      - const: presetn
++      - const: tresetn
+ 
+   power-domains:
+     maxItems: 1
+@@ -62,6 +88,57 @@ required:
+   - clock-names
+   - power-domains
+ 
++allOf:
++  - $ref: serial.yaml#
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: renesas,r9a09g077-rsci
++    then:
++      properties:
++        interrupts:
++          maxItems: 4
++
++        interrupt-names:
++          maxItems: 4
++
++        clocks:
++          minItems: 2
++          maxItems: 3
++
++        clock-names:
++          minItems: 2
++          maxItems: 3
++
++        resets: false
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: renesas,r9a09g047-rsci
++    then:
++      properties:
++        interrupts:
++          minItems: 6
++
++        interrupt-names:
++          minItems: 6
++
++        clocks:
++          minItems: 5
++          maxItems: 6
++
++        clock-names:
++          minItems: 5
++          maxItems: 6
++
++      required:
++        - resets
++        - reset-names
++
+ unevaluatedProperties: false
+ 
+ examples:
 -- 
 2.43.0
 
