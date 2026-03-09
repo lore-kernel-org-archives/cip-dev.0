@@ -2,56 +2,56 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EACD4EF3700
-	for <webhook@archiver.kernel.org>; Mon,  9 Mar 2026 07:51:20 +0000 (UTC)
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.9080.1773042677856943834
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02386EF36FE
+	for <webhook@archiver.kernel.org>; Mon,  9 Mar 2026 07:51:21 +0000 (UTC)
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.9057.1773042679639003944
  for <cip-dev@lists.cip-project.org>;
- Mon, 09 Mar 2026 00:51:18 -0700
+ Mon, 09 Mar 2026 00:51:19 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=Sy4hHOye;
- spf=pass (domain: gmail.com, ip: 209.85.221.52, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-439c56e822eso5733564f8f.2
-        for <cip-dev@lists.cip-project.org>; Mon, 09 Mar 2026 00:51:17 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=hmoRYO0W;
+ spf=pass (domain: gmail.com, ip: 209.85.221.44, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-439af7d77f0so7179655f8f.0
+        for <cip-dev@lists.cip-project.org>; Mon, 09 Mar 2026 00:51:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773042676; x=1773647476; darn=lists.cip-project.org;
+        d=gmail.com; s=20230601; t=1773042677; x=1773647477; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZZTXixhdI2mCbKM3NgoYsHJE3LYbW02LKAfjvipLPIM=;
-        b=Sy4hHOyeNgORp3/0lZTS5qOWT3RaRgzU5UXt/wEMqUk0MX+oz59LF3vgjPlVLrN7Bn
-         EDgkgrWFC+o5ogAfxN0N2HSY05EI9W71+honJ6MdMsPJWPoiTxHogiyWUYQUgbGdLKFG
-         J88uy2HNY9iXmC5lUTqSZFV59Sqoj2+r6M4rVoOI9X/8yJQC2wBmILVUzmb71JEheiJw
-         wecDLvpK9d6jsPBIgyftg1u0ietctFAQ7bYhKHqJ0VEMhnN6VEtqqmPkbloHV4o1QcWx
-         1f5QM/06ckJ9vBg5JhTIBWkskdhZuaOevGcSLZIESwXD86Led0pReIbcpAjaDUhXHbMX
-         E1+w==
+        bh=u2zKA+empTk4Nj4qgWLwVFLD7KZtHj7ZadIkI/zk3Z8=;
+        b=hmoRYO0WyrVw7e8AdAPNfJx0D8qqMDr81XIQspR8osobRQy4lOqOtu7bG5kJSlaNpF
+         5iVUdulhUwvsLHLMCpCdofPhV/XYPAg5RbEpDyed2k0mEzN8KpvMkkJhnCARMVPDNkVa
+         q3jIzl+sotlxw185aVFaa5wrBfWn+2KXv7z2nXmodBnzv8wwteaOp41BdyJe5+1VDyku
+         RLtHQ0p3GUmVtB5q/mGxMAOYvFsC3ilptPLg2OSIvIhRBc82hSArZUxiK+/BMSiEzp2f
+         XkspxKYp2WFvX/Y6ycY3LIvXkTERRl87jiP28JhGVfKVg8KJKzs3heqxipeybMEp2/0J
+         H7nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773042676; x=1773647476;
+        d=1e100.net; s=20230601; t=1773042677; x=1773647477;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=ZZTXixhdI2mCbKM3NgoYsHJE3LYbW02LKAfjvipLPIM=;
-        b=e/MZ5KpbUiA2Zt41AUnpdrPXOzaGLbKVTmwiYB9d+pNb8YmbFSrPpVpIFBc1LuLlRF
-         6coBLGEJHLBbL223NCHGoThj0R3XbrUIChruPJZ3HGmLVLPVLqjpLKy4+AY3Cfam5Def
-         qP3IOQKI2kwfyGUqg2l+4/IbjdkIWTkCGJs7M/LeCCX8rIa9yScvCvIHqQHgBpfz/AeC
-         0c2RhxlUtRg1sNQOWgK56x4GdHBS77uAjMyNcQW3zCzbCn4vsf5SGP0apYYUMgjBmFmi
-         sus3/QUdLC7NlO3TaG0e6/L6F4qPRr4Y6AbS7f8a9BAcKJ033qfkWfPrY+KD34+5YJIm
-         qkKA==
-X-Gm-Message-State: AOJu0YxsyT5Dwccdacw27vSbPbDkshoOZWH34FjYUegkTzn2BHiUa2Ef
-	HXWAnxwppkfXcq7GKjmtCfSus9RvEgDkJpNK/Z2m4T7UUa8smcHNepRaTvyXcA==
-X-Gm-Gg: ATEYQzx8O8BILyuWELiqKUhubWDQekrhM8KwbfHXl5SNcUpl0HoC494Unafaf2vz6+y
-	w7QaHXETqbxj0Q5cUZCQh2oN/NEGq6uYiGTpn2n3m+dkdtLWXc17nGtrcccUD/Zr+9/DPOmd8KD
-	t/EqDiDHl+HNNTRpzfqjNzh0D5mFiBhUTLuNHGdbl9omIywgkEJjtwWHrvzpfeFve00aC8YuVki
-	7zEuSfNfvEOiNVvETTXhw+aveuMDcj7qr4mYsWnLKLUPn3OB3/i8geiSgmGY1DcAqj1qrpyK0BC
-	QFuiL9t3u26WuanzD9L2HmzRYAx+D7Kl7zGZha6BaPp7Uuc6PUPgfzbLq7bFXd4Lx0sXn6Y6H+i
-	x+mL7cz/IBi4KB0qK0UBqZfHan+WPNWvineh3k3fDbiVv7Z6TVjwELp++P/0gSNYGIa+4uzIqdn
-	jqUmYRU4ICA6Cu8bTBzymnT68bczZbRTvEb1ZBbNCPXtHbJcoctgxUylM1T1Q=
-X-Received: by 2002:a05:6000:178b:b0:439:b7c9:2edc with SMTP id ffacd0b85a97d-439da8902f6mr18327914f8f.48.1773042675600;
-        Mon, 09 Mar 2026 00:51:15 -0700 (PDT)
+        bh=u2zKA+empTk4Nj4qgWLwVFLD7KZtHj7ZadIkI/zk3Z8=;
+        b=tQhu+K6YfTsOrIaTFA7PwbV170JLqgobvJ0mnqzuu91bS+5kXCSU9+cYAW3uRqtmeM
+         VBwht4Mycevak3WYCK0ANtT3/7uYQOMjMqv5awX7OdQdYVSowRcWILnQpLDV7sTWZ/WR
+         U8I1vXoNLfkhDj/myGZlajrnGh8j64nze/K/edaCNbF2nY/mXLjdRjz2xFH9jL+YMt3G
+         YwlR2op4NDz79PAqvZtg7k7lkfvTb//xevrUE1rpoCofqbDbXvLEP0ekMSZDoRTesEFI
+         0s0Nflj9DAVN/vA4JTuy7i0tpHkYk6X0BAHdRRHcaBmT8glFFC95I9n9pR+MKeLL7uoX
+         kDAA==
+X-Gm-Message-State: AOJu0YzMAGcMHwwbzF94C4qmBZZcaG7H8etUM/RUC/sESL9vjLH5i+PR
+	HTwTrXwwzEMd6+KfUwaluQuRFDqj4ZqSLS9/tY5VJLZ450fxZ1kWZ8+bsxKbOw==
+X-Gm-Gg: ATEYQzx87jfz8ZYdXM21+ITClaC9lDs5tm9VUHc4efJvcYLUq11aLyBlliokexWqAPF
+	RgqA3W2p1GvgSS4BRrNXcT0rdihaxT7IM1LQZFFuZftqcJfHqF6QFZ4t33K8qv2d6eEkgDaIIkH
+	LYp2EeYOAq6d6N7ABexvbqeYEiBJdvIeJ9DAGRq3YrNKZ5slqsnVi7X5y1W+xVQSixNXWfJazGX
+	qevlFAGLa9fXvBHVUFY8box0Tj7WhVmCyjFZhomjM4hJMq2vBHMuLd6JLfGcHzP/+Jw+cZWG7SV
+	v/maCRYbj85H32a6XKhWYIAG1zBcSpMQi6SF2xHSVwc0BOctQhtkM3m+8wGRO68lUgO++4qGDnS
+	PGO9O7BOANU94REd50HOmCumQbe3W+jF81S0O0qeVzaCoprRxJoMZLmUSZ8QvtFLXWuf+6ZrXXZ
+	UwN4TuGchHTcnaWMgfXqAWgysrPrvculuFNlU1B3Ba6UhtKIvn
+X-Received: by 2002:a05:6000:22c4:b0:439:a897:6515 with SMTP id ffacd0b85a97d-439da67c000mr17526498f8f.36.1773042677383;
+        Mon, 09 Mar 2026 00:51:17 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a758:8a01:7e80:c383:72cf:ebc3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439dae2ba06sm25639376f8f.24.2026.03.09.00.51.15
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439dae2ba06sm25639376f8f.24.2026.03.09.00.51.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2026 00:51:15 -0700 (PDT)
+        Mon, 09 Mar 2026 00:51:17 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,9 +59,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 2/6] irqchip/renesas-rzv2h: Remove unneeded includes
-Date: Mon,  9 Mar 2026 07:51:04 +0000
-Message-ID: <20260309075112.35445-3-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 4/6] dt-bindings: can: renesas,rcar-canfd: Document renesas,fd-only property
+Date: Mon,  9 Mar 2026 07:51:06 +0000
+Message-ID: <20260309075112.35445-5-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260309075112.35445-1-biju.das.jz@bp.renesas.com>
 References: <20260309075112.35445-1-biju.das.jz@bp.renesas.com>
@@ -70,47 +70,84 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 09 Mar 2026 07:51:20 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22150
+ <cip-dev@lists.cip-project.org>; Mon, 09 Mar 2026 07:51:21 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22152
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[ Upstream commit 41a5f82885e152c364e587ab30df4e582e96b73a ]
+[ Upstream commit 1766de15a571662fcd9c0a870de3a06890142a1e ]
 
-The RZ/V2H ICU driver does not use clocks, of_address, or syscore.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/d4fbffc39af2eaa7bc50a0a97ffb3a22e3c4cb6a.1751446168.git.geert+renesas@glider.be
+The CANFD on RZ/{G2L,G3E} and R-Car Gen4 support 3 modes FD-Only mode,
+Classical CAN mode and CAN-FD mode. In FD-Only mode, communication in
+Classical CAN frame format is disabled. Document renesas,fd-only to handle
+this mode. As these SoCs support 3 modes, update the description of
+renesas,no-can-fd property and disallow it for R-Car Gen3.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Link: https://patch.msgid.link/20251126155911.320563-2-biju.das.jz@bp.renesas.com
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/irqchip/irq-renesas-rzv2h.c | 3 ---
- 1 file changed, 3 deletions(-)
+ .../bindings/net/can/renesas,rcar-canfd.yaml  | 38 +++++++++++++++++--
+ 1 file changed, 35 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/irqchip/irq-renesas-rzv2h.c b/drivers/irqchip/irq-renesas-rzv2h.c
-index ea67da9459b7..6096199cce52 100644
---- a/drivers/irqchip/irq-renesas-rzv2h.c
-+++ b/drivers/irqchip/irq-renesas-rzv2h.c
-@@ -11,18 +11,15 @@
+diff --git a/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml b/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
+index f4ac21c68427..e129bdceef84 100644
+--- a/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
++++ b/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
+@@ -125,9 +125,17 @@ properties:
+   renesas,no-can-fd:
+     $ref: /schemas/types.yaml#/definitions/flag
+     description:
+-      The controller can operate in either CAN FD only mode (default) or
+-      Classical CAN only mode.  The mode is global to all channels.
+-      Specify this property to put the controller in Classical CAN only mode.
++      The controller can operate in either CAN-FD mode (default) or FD-Only
++      mode (RZ/{G2L,G3E} and R-Car Gen4) or Classical CAN mode. Specify this
++      property to put the controller in Classical CAN mode.
++
++  renesas,fd-only:
++    $ref: /schemas/types.yaml#/definitions/flag
++    description:
++      The CANFD on RZ/{G2L,G3E} and R-Car Gen4 SoCs support 3 modes FD-Only
++      mode, Classical CAN mode and CAN-FD mode (default). In FD-Only mode,
++      communication in Classical CAN frame format is disabled. Specify this
++      property to put the controller in FD-Only mode.
  
- #include <linux/bitfield.h>
- #include <linux/cleanup.h>
--#include <linux/clk.h>
- #include <linux/err.h>
- #include <linux/io.h>
- #include <linux/irqchip.h>
- #include <linux/irqchip/irq-renesas-rzv2h.h>
- #include <linux/irqdomain.h>
--#include <linux/of_address.h>
- #include <linux/of_platform.h>
- #include <linux/pm_runtime.h>
- #include <linux/reset.h>
- #include <linux/spinlock.h>
--#include <linux/syscore_ops.h>
+   assigned-clocks:
+     description:
+@@ -267,6 +275,30 @@ allOf:
+       patternProperties:
+         "^channel[6-7]$": false
  
- /* DT "interrupts" indexes */
- #define ICU_IRQ_START				1
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - renesas,rcar-gen3-canfd
++    then:
++      properties:
++        renesas,fd-only: false
++
++  - if:
++      required:
++        - renesas,no-can-fd
++    then:
++      properties:
++        renesas,fd-only: false
++
++  - if:
++      required:
++        - renesas,fd-only
++    then:
++      properties:
++        renesas,no-can-fd: false
++
+ unevaluatedProperties: false
+ 
+ examples:
 -- 
 2.43.0
 
