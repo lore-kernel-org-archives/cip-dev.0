@@ -2,56 +2,56 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2610EF36F8
-	for <webhook@archiver.kernel.org>; Mon,  9 Mar 2026 07:51:20 +0000 (UTC)
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.9081.1773042679038559139
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10B97EF3704
+	for <webhook@archiver.kernel.org>; Mon,  9 Mar 2026 07:51:21 +0000 (UTC)
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.9056.1773042677224188405
  for <cip-dev@lists.cip-project.org>;
- Mon, 09 Mar 2026 00:51:19 -0700
+ Mon, 09 Mar 2026 00:51:17 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=O5yAycrK;
- spf=pass (domain: gmail.com, ip: 209.85.221.47, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-439aeed8a5bso8629018f8f.3
-        for <cip-dev@lists.cip-project.org>; Mon, 09 Mar 2026 00:51:18 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=hJXLhSIV;
+ spf=pass (domain: gmail.com, ip: 209.85.221.45, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-439bcec8613so5700557f8f.3
+        for <cip-dev@lists.cip-project.org>; Mon, 09 Mar 2026 00:51:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773042677; x=1773647477; darn=lists.cip-project.org;
+        d=gmail.com; s=20230601; t=1773042675; x=1773647475; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5GVkV79pzap/c2NM606S5rGzzKXJhaQWLJxw+MkVRUI=;
-        b=O5yAycrK0pGT046qhrqbgtIlYm4lBdVTuLla/5I/ud/PAADubYzYbc3YlcrECn8HKH
-         rRWs0Dd3k510h725SGBHxHQibFKPQg4Lhxw0vYzM8Rd7r4+mUJEpkvxKEXg74SYgaogw
-         1g2CD8Q1/2j3J3RcpyKLU/grTWhQrTGp4aicZypNE8dA44lePicWpxcKrlJvQPn+lWDD
-         Y6Ytmb1WSbeUErzaRtUXX5okxGNZv4RQr2f+R2Bf7rQ3R9ZLsOSMw/JfK5G3E9bde3Pf
-         yA4XsjCrPJOKUvb1h++5wcThEaMCsTC0vm6B5PnIs30xyxNg7YpHFUuOhqGzdZk7kCQd
-         jp3w==
+        bh=w+wCfH9QSrSPvSdx9W92F2K6/k+zLgehahmgt7AEjgE=;
+        b=hJXLhSIVfMe3F9WqImc08bLnxRGH0b2J0OregCagNx17znnL5deHlhWOwmj9T5iM+t
+         +OwPKnZO+9ud5AY/9tnx2l9IZgqpBaGRm8NB2K+DTFbQQqoTIqb3nwQT7MNSv1nV4Ca2
+         bq5grDY8Sy32cR921p8QyMoO392tsO1aeno4etQE/XBCN5L/mHoV7kkNYyHjC7+s5gNm
+         pg2Tb4sm9zPZTiPDQl0sNsdBCAMp0v5wUbzA11YlUyX9U07blptqT8L8hg6D3cu3ryYA
+         grgoAFaQj9gwv6Dw/PwBHli+5AueFhVnZeMg2/8JJVgtIAFhEMJuMYUkeNStmDQ6GR4a
+         TA/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773042677; x=1773647477;
+        d=1e100.net; s=20230601; t=1773042675; x=1773647475;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=5GVkV79pzap/c2NM606S5rGzzKXJhaQWLJxw+MkVRUI=;
-        b=ONy5QwMFOG7SbMFnNShtBTYBsNG6XCcXUNNDI40FKPuFAuiFDlWkxcC9ryTvfw7+us
-         otl3ASZRTBoZhDpoY1bRd+AYoTheYmbni5+p0gInb3ETTE//zZusKW3DKuCoRc4ay8Bf
-         bk1RwdRdIQ9xLyMELN2d3KEnpY1tMqOF0/H5cLx0GJ0P3jBi2Y2+1usy5Mpj2maoA/PU
-         n4c9XTL4klDck7sNxZtbeciakR2lsG4Z5KjtM4AL4XdgNnAWHDjO+jhQY5oyj9FY2++Q
-         HTEE340huvfLEsTFM2pr7Acd2HaWJdhdHgfW8xW4V4KuwbMNx6dkugaI0ww0VF7CiJwd
-         3ccg==
-X-Gm-Message-State: AOJu0YwB+EaVKlSsFiU6h6VRR6wuamjogLWcXJUkXbmReRI2ivnyZDaD
-	9qeEF9HSAzLv4pB8+PvJD61SXqosAxJlDSicjT20rO0wOfBTcM3ZogHsLLSGxA==
-X-Gm-Gg: ATEYQzxnmgDE6cdnyR/RngqBEER8qn1IVtXNlq/04xw9jDu0mF0D3c1eEgd8u9uMez8
-	psa8KR1uq1ATY/Y9ygyCI5yDbWTDLNUsPNOxVbChR8UJ9wGcwU+d3f6SriSoj5StrVjCGH1MOdm
-	asyllEINVD8wmRdwEykHcOC1izqPb2QGUI05sdFBnAbSkMPb9Zx/EtCcPX90NrvIWCwKYEF4WRK
-	CG46Fu64jIlzld12APYx8WjvbN10XkfWk0SqgOYwUgQMX1ctB8RSSg7omomYHueP7ALqGY1mta6
-	kq6LoAgv6t58pcSSDLGR1eZIqnTHPMsXaSLvuNpkvG1j7W8Gk1thkemEsCr5JZoU3tcYtX3y+YX
-	n4XvU8i6krhnN3uPmNZaE3Q9w6PB+fTbRvG3jCQ5jRMphnU04//Wi+YZdOx4D+RBblFu3veKm1y
-	BZZz9o5lw3DsGvO/EsUKxIHWGq2lC28UsSHg6MgD0f72RfFHfk
-X-Received: by 2002:a05:6000:144c:b0:439:c4ea:41a0 with SMTP id ffacd0b85a97d-439da8a0402mr15076265f8f.59.1773042676772;
-        Mon, 09 Mar 2026 00:51:16 -0700 (PDT)
+        bh=w+wCfH9QSrSPvSdx9W92F2K6/k+zLgehahmgt7AEjgE=;
+        b=aiXwbUEaV0jsE4N+xNG2+oImzgg1hmzE7fuqfTdO6E0MKuuna1d0USqjB0LSP+S1lS
+         9adpD0ZGcszxnE1rfEnIF/7PJpXOkhS/lYVvP0MbWtBJJQqNufYarTFnlVZX6gAbEPOi
+         oqb9mez4WBNj0Gzs5wLCOfcjsOKGm+tIkB0SCrkSWIZ2aOZyfDasOam8xUVZAX36OB5w
+         UG/66I/C8BvA8g9TB2ENpo2MruM5vthcjstZrMEBN+pUtLtEffSTaQ73pnOL6yZ7LzV/
+         Bd2AlPbC8lQt3pnR3tScjS5taCUprEbjM7YY/JtUuOfmR60n+GOK2r56N7qrvBdiMFvz
+         ZQ5g==
+X-Gm-Message-State: AOJu0YwW0Uxnxvmf1EsArbZkp610vf8uikKeyAe/yZQ05hAcRUMnA/q7
+	qAEvAxT5tzqHMxDbIKZ2cW6WIvHHY607r2nDYCVgV2Y8okHDnz7Mfcg9D5CRog==
+X-Gm-Gg: ATEYQzwUOWNCsQx9A1x+Fey1f7nqChmpcFFkHet+Z26ArhbWN1Sb2gVxT9qqLq3qOkq
+	tR8ailriq7il+aBhaAHRRMJ2JdOPAhfCvEnr2UlsK4nzLnnJiVc43mzz6O4GNmDeWpj7NTTrbDS
+	6+yYfXi3zP4X1vKI8RQcJC3/D4wuZBK0cBDgVS5XpiGen0v/XMfdBRuy7Qu92HHqSOQhSsYruAI
+	Qvx66SDu3+4fimh/hCOSfekmkoWK41xuM4aXYL0wfVi/vFPZFvWLacIPSRoYKgOw7LXtCqZiG/a
+	6S6dsF2sPlniV1+3QvAJvfV20RbGHFdIEV7+TrIhvCNOZdRwDYTBGg14h/MkrVcDnyNEMaJZHBu
+	cUgUuE7a8HAQlGDo46XZIAF+ooZgkvq3JW0zoi20I+Q/tdJJhtPp4Le+rX30ANP+d/OfmI2M3yZ
+	iTm5k/UTRUZCuehRkl87XOQZ02fGAUxVc6zcejtqiAq8kelalZ
+X-Received: by 2002:a05:6000:1845:b0:439:c5cf:fc68 with SMTP id ffacd0b85a97d-439da3483b0mr17081784f8f.1.1773042674962;
+        Mon, 09 Mar 2026 00:51:14 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a758:8a01:7e80:c383:72cf:ebc3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439dae2ba06sm25639376f8f.24.2026.03.09.00.51.15
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439dae2ba06sm25639376f8f.24.2026.03.09.00.51.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2026 00:51:16 -0700 (PDT)
+        Mon, 09 Mar 2026 00:51:14 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,9 +59,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 3/6] irqchip/renesas-rzv2h: Add suspend/resume support
-Date: Mon,  9 Mar 2026 07:51:05 +0000
-Message-ID: <20260309075112.35445-4-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 1/6] irqchip/renesas-rzv2h: Prevent TINT spurious interrupt during resume
+Date: Mon,  9 Mar 2026 07:51:03 +0000
+Message-ID: <20260309075112.35445-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260309075112.35445-1-biju.das.jz@bp.renesas.com>
 References: <20260309075112.35445-1-biju.das.jz@bp.renesas.com>
@@ -70,137 +70,77 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 09 Mar 2026 07:51:20 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22151
+ <cip-dev@lists.cip-project.org>; Mon, 09 Mar 2026 07:51:21 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22149
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[ Upstream commit 3a74e73b863a2493c0502a08e20ab026a0134ca1 ]
+[ Upstream commit cd4a3ced4d1cdb14ffe905657b98a91e9d239dfb ]
 
-On RZ/G3E using PSCI, s2ram powers down the SoC. Add suspend/resume
-callbacks to restore IRQ type for NMI, TINT and external IRQ interrupts.
+A glitch in the edge detection circuit can cause a spurious interrupt. The
+hardware manual recommends clearing the status flag after setting the
+ICU_TSSRk register as a countermeasure.
 
+Currently, a spurious interrupt is generated on the resume path of s2idle
+for the PMIC RTC TINT interrupt due to a glitch related to unnecessary
+enabling/disabling of the TINT enable bit.
+
+Fix this issue by not setting TSSR(TINT Source) and TITSR(TINT Detection
+Method Selection) registers if the values are the same as those set
+in these registers.
+
+Fixes: 0d7605e75ac2 ("irqchip: Add RZ/V2H(P) Interrupt Control Unit (ICU) driver")
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Signed-off-by: Thomas Gleixner <tglx@kernel.org>
-Link: https://patch.msgid.link/20260113125315.359967-3-biju.das.jz@bp.renesas.com
-[ Biju:
-  Dropped function parameter from rzv2h_irqc_irq_{suspend,resume}()
-  Dropped rzv2h_irqc_syscore
-  Dropped const qualifier from rzv2h_irqc_syscore_ops
-  Replaced register_syscore->register_syscore_ops
-]
+Cc: stable@vger.kernel.org
+Link: https://patch.msgid.link/20260113125315.359967-2-biju.das.jz@bp.renesas.com
+[ Biju: Added non-const variant of field_get ]
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/irqchip/irq-renesas-rzv2h.c | 56 +++++++++++++++++++++++++++--
- 1 file changed, 53 insertions(+), 3 deletions(-)
+ drivers/irqchip/irq-renesas-rzv2h.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/irqchip/irq-renesas-rzv2h.c b/drivers/irqchip/irq-renesas-rzv2h.c
-index 6096199cce52..ff3f84cfa8a1 100644
+index 766adccf11dc..ea67da9459b7 100644
 --- a/drivers/irqchip/irq-renesas-rzv2h.c
 +++ b/drivers/irqchip/irq-renesas-rzv2h.c
-@@ -20,6 +20,7 @@
- #include <linux/pm_runtime.h>
- #include <linux/reset.h>
- #include <linux/spinlock.h>
-+#include <linux/syscore_ops.h>
+@@ -92,6 +92,8 @@
+ #define ICU_RZG3E_TSSEL_MAX_VAL			0x8c
+ #define ICU_RZV2H_TSSEL_MAX_VAL			0x55
  
- /* DT "interrupts" indexes */
- #define ICU_IRQ_START				1
-@@ -91,6 +92,18 @@
- 
- #define field_get(_mask, _reg) (((_reg) & (_mask)) >> (ffs(_mask) - 1))
- 
-+/**
-+ * struct rzv2h_irqc_reg_cache - registers cache (necessary for suspend/resume)
-+ * @nitsr: ICU_NITSR register
-+ * @iitsr: ICU_IITSR register
-+ * @titsr: ICU_TITSR registers
-+ */
-+struct rzv2h_irqc_reg_cache {
-+	u32	nitsr;
-+	u32	iitsr;
-+	u32	titsr[2];
-+};
++#define field_get(_mask, _reg) (((_reg) & (_mask)) >> (ffs(_mask) - 1))
 +
  /**
   * struct rzv2h_hw_info - Interrupt Control Unit controller hardware info structure.
   * @tssel_lut:		TINT lookup table
-@@ -120,13 +133,15 @@ struct rzv2h_hw_info {
-  * @fwspec:	IRQ firmware specific data
-  * @lock:	Lock to serialize access to hardware registers
-  * @info:	Pointer to struct rzv2h_hw_info
-+ * @cache:	Registers cache for suspend/resume
-  */
--struct rzv2h_icu_priv {
-+static struct rzv2h_icu_priv {
- 	void __iomem			*base;
- 	struct irq_fwspec		fwspec[ICU_NUM_IRQ];
- 	raw_spinlock_t			lock;
- 	const struct rzv2h_hw_info	*info;
--};
-+	struct rzv2h_irqc_reg_cache	cache;
-+} *rzv2h_icu_data;
+@@ -331,6 +333,7 @@ static int rzv2h_tint_set_type(struct irq_data *d, unsigned int type)
+ 	u32 titsr, titsr_k, titsel_n, tien;
+ 	struct rzv2h_icu_priv *priv;
+ 	u32 tssr, tssr_k, tssel_n;
++	u32 titsr_cur, tssr_cur;
+ 	unsigned int hwirq;
+ 	u32 tint, sense;
+ 	int tint_nr;
+@@ -379,12 +382,18 @@ static int rzv2h_tint_set_type(struct irq_data *d, unsigned int type)
+ 	guard(raw_spinlock)(&priv->lock);
  
- void rzv2h_icu_register_dma_req(struct platform_device *icu_dev, u8 dmac_index, u8 dmac_channel,
- 				u16 req_no)
-@@ -421,6 +436,40 @@ static int rzv2h_icu_set_type(struct irq_data *d, unsigned int type)
- 	return irq_chip_set_type_parent(d, IRQ_TYPE_LEVEL_HIGH);
- }
+ 	tssr = readl_relaxed(priv->base + priv->info->t_offs + ICU_TSSR(tssr_k));
++	titsr = readl_relaxed(priv->base + priv->info->t_offs + ICU_TITSR(titsr_k));
++
++	tssr_cur = field_get(ICU_TSSR_TSSEL_MASK(tssel_n, priv->info->field_width), tssr);
++	titsr_cur = field_get(ICU_TITSR_TITSEL_MASK(titsel_n), titsr);
++	if (tssr_cur == tint && titsr_cur == sense)
++		return 0;
++
+ 	tssr &= ~(ICU_TSSR_TSSEL_MASK(tssel_n, priv->info->field_width) | tien);
+ 	tssr |= ICU_TSSR_TSSEL_PREP(tint, tssel_n, priv->info->field_width);
  
-+static int rzv2h_irqc_irq_suspend(void)
-+{
-+	struct rzv2h_irqc_reg_cache *cache = &rzv2h_icu_data->cache;
-+	void __iomem *base = rzv2h_icu_data->base;
-+
-+	cache->nitsr = readl_relaxed(base + ICU_NITSR);
-+	cache->iitsr = readl_relaxed(base + ICU_IITSR);
-+	for (unsigned int i = 0; i < 2; i++)
-+		cache->titsr[i] = readl_relaxed(base + rzv2h_icu_data->info->t_offs + ICU_TITSR(i));
-+
-+	return 0;
-+}
-+
-+static void rzv2h_irqc_irq_resume(void)
-+{
-+	struct rzv2h_irqc_reg_cache *cache = &rzv2h_icu_data->cache;
-+	void __iomem *base = rzv2h_icu_data->base;
-+
-+	/*
-+	 * Restore only interrupt type. TSSRx will be restored at the
-+	 * request of pin controller to avoid spurious interrupts due
-+	 * to invalid PIN states.
-+	 */
-+	for (unsigned int i = 0; i < 2; i++)
-+		writel_relaxed(cache->titsr[i], base + rzv2h_icu_data->info->t_offs + ICU_TITSR(i));
-+	writel_relaxed(cache->iitsr, base + ICU_IITSR);
-+	writel_relaxed(cache->nitsr, base + ICU_NITSR);
-+}
-+
-+static struct syscore_ops rzv2h_irqc_syscore_ops = {
-+	.suspend	= rzv2h_irqc_irq_suspend,
-+	.resume		= rzv2h_irqc_irq_resume,
-+};
-+
- static const struct irq_chip rzv2h_icu_chip = {
- 	.name			= "rzv2h-icu",
- 	.irq_eoi		= rzv2h_icu_eoi,
-@@ -508,7 +557,6 @@ static int rzv2h_icu_init_common(struct device_node *node, struct device_node *p
- 				 const struct rzv2h_hw_info *hw_info)
- {
- 	struct irq_domain *irq_domain, *parent_domain;
--	struct rzv2h_icu_priv *rzv2h_icu_data;
- 	struct platform_device *pdev;
- 	struct reset_control *resetn;
- 	int ret;
-@@ -575,6 +623,8 @@ static int rzv2h_icu_init_common(struct device_node *node, struct device_node *p
+ 	writel_relaxed(tssr, priv->base + priv->info->t_offs + ICU_TSSR(tssr_k));
  
- 	rzv2h_icu_data->info = hw_info;
+-	titsr = readl_relaxed(priv->base + priv->info->t_offs + ICU_TITSR(titsr_k));
+ 	titsr &= ~ICU_TITSR_TITSEL_MASK(titsel_n);
+ 	titsr |= ICU_TITSR_TITSEL_PREP(sense, titsel_n);
  
-+	register_syscore_ops(&rzv2h_irqc_syscore_ops);
-+
- 	/*
- 	 * coccicheck complains about a missing put_device call before returning, but it's a false
- 	 * positive. We still need &pdev->dev after successfully returning from this function.
 -- 
 2.43.0
 
