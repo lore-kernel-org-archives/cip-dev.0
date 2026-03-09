@@ -2,28 +2,28 @@ Return-Path: <cosmin-gabriel.tanislav.xa@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4301AF41807
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53960F41808
 	for <webhook@archiver.kernel.org>; Mon,  9 Mar 2026 15:07:41 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.msgproc01-g2.16933.1773068839276120535
  for <cip-dev@lists.cip-project.org>;
- Mon, 09 Mar 2026 08:07:38 -0700
+ Mon, 09 Mar 2026 08:07:35 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: cosmin-gabriel.tanislav.xa@renesas.com)
-X-CSE-ConnectionGUID: dPELB30vS5+rShPZNNXlLw==
-X-CSE-MsgGUID: zQRYPDQdTjiY3dOL5HNV3g==
+X-CSE-ConnectionGUID: x80sA0V3TtSscg9zf2zRtQ==
+X-CSE-MsgGUID: TAMH0QcOT2aC3TE3m5JD4w==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 10 Mar 2026 00:07:38 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 10 Mar 2026 00:07:34 +0900
 Received: from demon-pc.localdomain (unknown [10.226.93.213])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0866E40071E2;
-	Tue, 10 Mar 2026 00:07:36 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 8978B400720E;
+	Tue, 10 Mar 2026 00:07:33 +0900 (JST)
 From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.12.y-cip v3 17/17] arm64: dts: renesas: r9a09g087: Add SPI nodes
-Date: Mon,  9 Mar 2026 17:06:19 +0200
-Message-ID: <20260309150619.761962-18-cosmin-gabriel.tanislav.xa@renesas.com>
+Subject: [PATCH 6.12.y-cip v3 15/17] spi: dt-bindings: renesas,rzv2h-rspi: document RZ/T2H and RZ/N2H
+Date: Mon,  9 Mar 2026 17:06:17 +0200
+Message-ID: <20260309150619.761962-16-cosmin-gabriel.tanislav.xa@renesas.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260309150619.761962-1-cosmin-gabriel.tanislav.xa@renesas.com>
 References: <20260309150619.761962-1-cosmin-gabriel.tanislav.xa@renesas.com>
@@ -33,112 +33,133 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 09 Mar 2026 15:07:41 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22215
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22213
 
-commit 3c77f58d108c80c464a0676aeaa3dbf791883f19 upstream.
+commit e93d7b2d8b349f659fa9456048ee86e10eb422f9 upstream.
 
-Add support for the four SPI controllers on the Renesas RZ/N2H Soc.
+The Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs have four SPI
+peripherals.
+
+Compared to the previously supported RZ/V2H, these SoCs have a smaller
+FIFO, no resets, and only two clocks: PCLKSPIn and PCLK. PCLKSPIn,
+being the clock from which the SPI transfer clock is generated, is the
+equivalent of the TCLK from V2H.
+
+Document them, and use RZ/T2H as a fallback for RZ/N2H as the SPIs are
+entirely compatible.
 
 Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20251119161434.595677-14-cosmin-gabriel.tanislav.xa@renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[cosmin.tanislav: resolve merge conflict]
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Link: https://patch.msgid.link/20251119161434.595677-11-cosmin-gabriel.tanislav.xa@renesas.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 ---
 
 V3:
- * describe changes made to apply on top of CIP
+ * no changes
 
 V2:
  * remove internal Reviewed-by tags
 
- arch/arm64/boot/dts/renesas/r9a09g087.dtsi | 72 ++++++++++++++++++++++
- 1 file changed, 72 insertions(+)
+ .../bindings/spi/renesas,rzv2h-rspi.yaml      | 62 ++++++++++++++++---
+ 1 file changed, 52 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-index 9e2ad080215a..c056c476e0d7 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-@@ -90,6 +90,78 @@ sci0: serial@80005000 {
- 			status = "disabled";
- 		};
+diff --git a/Documentation/devicetree/bindings/spi/renesas,rzv2h-rspi.yaml b/Documentation/devicetree/bindings/spi/renesas,rzv2h-rspi.yaml
+index ab27fefc3c3a..4331df3e3d47 100644
+--- a/Documentation/devicetree/bindings/spi/renesas,rzv2h-rspi.yaml
++++ b/Documentation/devicetree/bindings/spi/renesas,rzv2h-rspi.yaml
+@@ -9,12 +9,15 @@ title: Renesas RZ/V2H(P) Renesas Serial Peripheral Interface (RSPI)
+ maintainers:
+   - Fabrizio Castro <fabrizio.castro.jz@renesas.com>
  
-+		rspi0: spi@80007000 {
-+			compatible = "renesas,r9a09g087-rspi", "renesas,r9a09g077-rspi";
-+			reg = <0x0 0x80007000 0x0 0x400>;
-+			interrupts = <GIC_SPI 636 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 637 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 638 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 634 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 635 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "idle", "error", "end", "rx", "tx";
-+			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKM>,
-+				 <&cpg CPG_MOD 104>;
-+			clock-names = "pclk", "pclkspi";
-+			power-domains = <&cpg>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
+-allOf:
+-  - $ref: spi-controller.yaml#
+-
+ properties:
+   compatible:
+-    const: renesas,r9a09g057-rspi # RZ/V2H(P)
++    oneOf:
++      - enum:
++          - renesas,r9a09g057-rspi # RZ/V2H(P)
++          - renesas,r9a09g077-rspi # RZ/T2H
++      - items:
++          - const: renesas,r9a09g087-rspi # RZ/N2H
++          - const: renesas,r9a09g077-rspi # RZ/T2H
+ 
+   reg:
+     maxItems: 1
+@@ -36,13 +39,12 @@ properties:
+       - const: tx
+ 
+   clocks:
++    minItems: 2
+     maxItems: 3
+ 
+   clock-names:
+-    items:
+-      - const: pclk
+-      - const: pclk_sfr
+-      - const: tclk
++    minItems: 2
++    maxItems: 3
+ 
+   resets:
+     maxItems: 2
+@@ -62,12 +64,52 @@ required:
+   - interrupt-names
+   - clocks
+   - clock-names
+-  - resets
+-  - reset-names
+   - power-domains
+   - '#address-cells'
+   - '#size-cells'
+ 
++allOf:
++  - $ref: spi-controller.yaml#
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - renesas,r9a09g057-rspi
++    then:
++      properties:
++        clocks:
++          minItems: 3
 +
-+		rspi1: spi@80007400 {
-+			compatible = "renesas,r9a09g087-rspi", "renesas,r9a09g077-rspi";
-+			reg = <0x0 0x80007400 0x0 0x400>;
-+			interrupts = <GIC_SPI 641 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 642 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 643 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 639 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 640 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "idle", "error", "end", "rx", "tx";
-+			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKM>,
-+				 <&cpg CPG_MOD 105>;
-+			clock-names = "pclk", "pclkspi";
-+			power-domains = <&cpg>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
++        clock-names:
++          items:
++            - const: pclk
++            - const: pclk_sfr
++            - const: tclk
 +
-+		rspi2: spi@80007800 {
-+			compatible = "renesas,r9a09g087-rspi", "renesas,r9a09g077-rspi";
-+			reg = <0x0 0x80007800 0x0 0x400>;
-+			interrupts = <GIC_SPI 646 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 647 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 648 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 644 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 645 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "idle", "error", "end", "rx", "tx";
-+			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKM>,
-+				 <&cpg CPG_MOD 106>;
-+			clock-names = "pclk", "pclkspi";
-+			power-domains = <&cpg>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
++      required:
++        - resets
++        - reset-names
 +
-+		rspi3: spi@81007000 {
-+			compatible = "renesas,r9a09g087-rspi", "renesas,r9a09g077-rspi";
-+			reg = <0x0 0x81007000 0x0 0x400>;
-+			interrupts = <GIC_SPI 651 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 652 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 653 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 649 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 650 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "idle", "error", "end", "rx", "tx";
-+			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKM>,
-+				 <&cpg CPG_MOD 602>;
-+			clock-names = "pclk", "pclkspi";
-+			power-domains = <&cpg>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - renesas,r9a09g077-rspi
++    then:
++      properties:
++        clocks:
++          maxItems: 2
 +
- 		wdt0: watchdog@80082000 {
- 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
- 			reg = <0 0x80082000 0 0x400>,
++        clock-names:
++          items:
++            - const: pclk
++            - const: pclkspi
++
++        resets: false
++        reset-names: false
++
+ unevaluatedProperties: false
+ 
+ examples:
 -- 
 2.53.0
 
