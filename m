@@ -1,218 +1,112 @@
-Return-Path: <cosmin-gabriel.tanislav.xa@renesas.com>
+Return-Path: <adithya.balakumar@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96569F4180C
-	for <webhook@archiver.kernel.org>; Mon,  9 Mar 2026 15:07:41 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.16946.1773068851689841512
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3B6CFCC9B8
+	for <webhook@archiver.kernel.org>; Tue, 10 Mar 2026 04:30:42 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.132])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.33056.1773117031976602193
  for <cip-dev@lists.cip-project.org>;
- Mon, 09 Mar 2026 08:07:33 -0700
+ Mon, 09 Mar 2026 21:30:32 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: cosmin-gabriel.tanislav.xa@renesas.com)
-X-CSE-ConnectionGUID: g579YqC1R1ubhuDXzmd0hw==
-X-CSE-MsgGUID: uqNPHG/UTdKtno+A5Ugmqw==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 10 Mar 2026 00:07:32 +0900
-Received: from demon-pc.localdomain (unknown [10.226.93.213])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id C0369400720E;
-	Tue, 10 Mar 2026 00:07:31 +0900 (JST)
-From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-To: cip-dev@lists.cip-project.org,
-	pavel@nabladev.com,
-	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.12.y-cip v3 14/17] spi: rzv2h-rspi: add support for RZ/T2H and RZ/N2H
-Date: Mon,  9 Mar 2026 17:06:16 +0200
-Message-ID: <20260309150619.761962-15-cosmin-gabriel.tanislav.xa@renesas.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260309150619.761962-1-cosmin-gabriel.tanislav.xa@renesas.com>
-References: <20260309150619.761962-1-cosmin-gabriel.tanislav.xa@renesas.com>
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.132, mailfrom: adithya.balakumar@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1121) id 62A4UUpf168806; Tue, 10 Mar 2026 13:30:30 +0900
+X-Iguazu-Qid: 2rWgzTVwjsoTbdcyPZ
+X-Iguazu-QSIG: v=2; s=0; t=1773117030; q=2rWgzTVwjsoTbdcyPZ; m=OmYNXVxcY3bF5FMqO4dNW45rDeWlfLhsRNiKypEyo1Q=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	 id 4fVLXQ0Xytz1xnZ; Tue, 10 Mar 2026 13:30:29 +0900 (JST)
+From: Adithya.Balakumar@toshiba-tsip.com
+To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
+Cc: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>,
+        shivanand.kunijadar@toshiba-tsip.com, dinesh.kumar@toshiba-tsip.com,
+        koshiro.onuki.h55@mail.toshiba, kazuhiro3.hayashi@toshiba.co.jp,
+        michael.adler@siemens.com, christian.storm@siemens.com
+Subject: [isar-cip-core][RFC v1 2/7] wfx-onboarding-progress-client: Custom progress client for device onboarding with wfx
+Date: Tue, 10 Mar 2026 00:45:49 -0400
+X-TSB-HOP2: ON
+Message-Id: <20260310044554.990348-3-Adithya.Balakumar@toshiba-tsip.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20260310044554.990348-1-Adithya.Balakumar@toshiba-tsip.com>
+References: <20260310044554.990348-1-Adithya.Balakumar@toshiba-tsip.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 10 Mar 2026 04:30:23.0983 (UTC) FILETIME=[9CD757F0:01DCB046]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 09 Mar 2026 15:07:41 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22212
+ <cip-dev@lists.cip-project.org>; Tue, 10 Mar 2026 04:30:42 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22218
 
-commit 0cc8cd824b9fb7fb087a2ec6b0c80d812cc4fde7 upstream.
+From: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
 
-Compared to the previously supported RZ/V2H, the Renesas RZ/T2H
-(R9A09G077) and RZ/N2H (R9A09G087) SoCs have a smaller FIFO, no resets,
-and only two clocks: PCLKSPIn and PCLK. PCLKSPIn, being the clock from
-which the SPI transfer clock is generated, is the equivalent of the TCLK
-clock from RZ/V2H. They also support generating the SPI transfer clock
-from PCLK.
+The onboarding update is treated as a configuration update and therefore would not
+need a bootloader state update. But the activation of the onboarding update would
+need a reboot or atleast restart of relevant services.
 
-PCLKSPIn supports multiple dividers, generating multiple possible
-frequencies from its parent. To handle this, do the following changes.
+Setting the firmware tag in wfx jobs does reboot the system for activation (see [1])
+of the update but also updates the bootloader state which is undesirable for this use case.
 
-Use the minimum frequency of SPI clock to calculate the SPI controller's
-min_speed_hz, and the maximum frequency to calculate max_speed_hz.
+Hence the need for this simple module that currently just restarts swupdate service  during
+activation of the onboarding update.
 
-Add a new function, rzv2h_rspi_find_rate_variable(), which is used for
-the .find_tclk_rate() callback, and which supports handling clocks with
-a variable rate, with the following overall logic.
+[1] https://sbabic.github.io/swupdate/suricatta.html#update-activation
 
-Iterate through all possible BRDV values.
-
-For each BRDV, calculate two different SPRs, one for the clock's minimum
-frequency, and one for the maxmimum, and iterate through each SPR
-between them.
-
-If the minimum SPR is higher than the upper SPR limit, the minimum rate
-is too high to achieve the requested SPI frequency, skip to the next
-BRDV.
-
-For each SPR, calculate a rate and let the clock framework round it to
-the closest supported rate of the clock.
-
-The rate and SPR that generate a transfer frequency closest to the
-requested SPI transfer frequency will be picked.
-
-Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Link: https://patch.msgid.link/20251119161434.595677-12-cosmin-gabriel.tanislav.xa@renesas.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Signed-off-by: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
 ---
+ .../files/postinst                            |  4 +++
+ .../wfx-onboarding-progress-client_0.1.bb     | 26 +++++++++++++++++++
+ 2 files changed, 30 insertions(+)
+ create mode 100644 recipes-core/wfx-onboarding-progress-client/files/postinst
+ create mode 100644 recipes-core/wfx-onboarding-progress-client/wfx-onboarding-progress-client_0.1.bb
 
-V3:
- * no changes
-
-V2:
- * remove internal Reviewed-by tags
-
- drivers/spi/spi-rzv2h-rspi.c | 108 +++++++++++++++++++++++++++++++++++
- 1 file changed, 108 insertions(+)
-
-diff --git a/drivers/spi/spi-rzv2h-rspi.c b/drivers/spi/spi-rzv2h-rspi.c
-index da110efba971..1db7e4e5d64e 100644
---- a/drivers/spi/spi-rzv2h-rspi.c
-+++ b/drivers/spi/spi-rzv2h-rspi.c
-@@ -261,6 +261,105 @@ static inline u32 rzv2h_rspi_calc_bitrate(unsigned long tclk_rate, u8 spr,
- 	return DIV_ROUND_UP(tclk_rate, (2 * (spr + 1) * (1 << brdv)));
- }
- 
-+static void rzv2h_rspi_find_rate_variable(struct clk *clk, u32 hz,
-+					  u8 spr_min, u8 spr_max,
-+					  struct rzv2h_rspi_best_clock *best)
-+{
-+	long clk_rate, clk_min_rate, clk_max_rate;
-+	int min_rate_spr, max_rate_spr;
-+	unsigned long error;
-+	u32 actual_hz;
-+	u8 brdv;
-+	int spr;
+diff --git a/recipes-core/wfx-onboarding-progress-client/files/postinst b/recipes-core/wfx-onboarding-progress-client/files/postinst
+new file mode 100644
+index 0000000..0d39e3a
+--- /dev/null
++++ b/recipes-core/wfx-onboarding-progress-client/files/postinst
+@@ -0,0 +1,4 @@
++#!/bin/sh
++set -e
 +
-+	/*
-+	 * On T2H / N2H, the source for the SPI clock is PCLKSPIn, which is a
-+	 * 1/32, 1/30, 1/25 or 1/24 divider of PLL4, which is 2400MHz,
-+	 * resulting in either 75MHz, 80MHz, 96MHz or 100MHz.
-+	 */
-+	clk_min_rate = clk_round_rate(clk, 0);
-+	if (clk_min_rate < 0)
-+		return;
++systemctl enable wfx-onboarding-progress.service
+\ No newline at end of file
+diff --git a/recipes-core/wfx-onboarding-progress-client/wfx-onboarding-progress-client_0.1.bb b/recipes-core/wfx-onboarding-progress-client/wfx-onboarding-progress-client_0.1.bb
+new file mode 100644
+index 0000000..97d58dc
+--- /dev/null
++++ b/recipes-core/wfx-onboarding-progress-client/wfx-onboarding-progress-client_0.1.bb
+@@ -0,0 +1,26 @@
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Toshiba Corporation 2026
++#
++# Authors:
++#  Adithya Balakumar <adithya.balakumar@toshiba-tsip.com>
++#
++# SPDX-License-Identifier: MIT
++#
 +
-+	clk_max_rate = clk_round_rate(clk, ULONG_MAX);
-+	if (clk_max_rate < 0)
-+		return;
++inherit dpkg
 +
-+	/*
-+	 * From the manual:
-+	 * Bit rate = f(PCLKSPIn) / (2 * (n + 1) * 2^N)
-+	 *
-+	 * If we adapt it to the current context, we get the following:
-+	 * hz = rate / ((spr + 1) * (1 << (brdv + 1)))
-+	 *
-+	 * This can be written in multiple forms depending on what we want to
-+	 * determine.
-+	 *
-+	 * To find the rate, having hz, spr and brdv:
-+	 * rate = hz * (spr + 1) * (1 << (brdv + 1)
-+	 *
-+	 * To find the spr, having rate, hz, and spr:
-+	 * spr = rate / (hz * (1 << (brdv + 1)) - 1
-+	 */
++SRC_URI += "git://gitlab.com/cip-playground/cip-wfx-onboarding-client-plugin.git;protocol=https;destsuffix=cip-wfx-onboarding-client-plugin;name=cip-wfx-onboarding-client-plugin;branch=master"
++SRCREV_cip-wfx-onboarding-client-plugin ?= "5732bce8ae2d1d744827d42e00cc13ba251bf75c"
 +
-+	for (brdv = RSPI_SPCMD_BRDV_MIN; brdv <= RSPI_SPCMD_BRDV_MAX; brdv++) {
-+		/* Calculate the divisor needed to find the SPR from a rate. */
-+		u32 rate_div = hz * (1 << (brdv + 1));
++WFX_ONBOARDING_PROGRESS_CLIENT = "cip-wfx-onboarding-client-plugin/onboarding-progress-client"
 +
-+		/*
-+		 * If the SPR for the minimum rate is greater than the maximum
-+		 * allowed value skip this BRDV. The divisor increases with each
-+		 * BRDV iteration, so the following BRDV might result in a
-+		 * minimum SPR that is in the valid range.
-+		 */
-+		min_rate_spr = DIV_ROUND_CLOSEST(clk_min_rate, rate_div) - 1;
-+		if (min_rate_spr > spr_max)
-+			continue;
++SRC_URI += "file://postinst"
 +
-+		/*
-+		 * If the SPR for the maximum rate is less than the minimum
-+		 * allowed value, exit. The divisor only increases with each
-+		 * BRDV iteration, so the following BRDV cannot result in a
-+		 * maximum SPR that is in the valid range.
-+		 */
-+		max_rate_spr = DIV_ROUND_CLOSEST(clk_max_rate, rate_div) - 1;
-+		if (max_rate_spr < spr_min)
-+			break;
++do_prepare_build[cleandirs] += "${S}"
++do_prepare_build() {
++    cp -r ${WORKDIR}/${WFX_ONBOARDING_PROGRESS_CLIENT}/* ${S}/
 +
-+		if (min_rate_spr < spr_min)
-+			min_rate_spr = spr_min;
-+
-+		if (max_rate_spr > spr_max)
-+			max_rate_spr = spr_max;
-+
-+		for (spr = min_rate_spr; spr <= max_rate_spr; spr++) {
-+			clk_rate = (spr + 1) * rate_div;
-+
-+			clk_rate = clk_round_rate(clk, clk_rate);
-+			if (clk_rate <= 0)
-+				continue;
-+
-+			actual_hz = rzv2h_rspi_calc_bitrate(clk_rate, spr, brdv);
-+			error = abs((long)hz - (long)actual_hz);
-+
-+			if (error >= best->error)
-+				continue;
-+
-+			*best = (struct rzv2h_rspi_best_clock) {
-+				.clk = clk,
-+				.clk_rate = clk_rate,
-+				.error = error,
-+				.actual_hz = actual_hz,
-+				.brdv = brdv,
-+				.spr = spr,
-+			};
-+
-+			if (!error)
-+				return;
-+		}
-+	}
++    deb_add_changelog
 +}
-+
- static void rzv2h_rspi_find_rate_fixed(struct clk *clk, u32 hz,
- 				       u8 spr_min, u8 spr_max,
- 				       struct rzv2h_rspi_best_clock *best)
-@@ -558,8 +657,17 @@ static const struct rzv2h_rspi_info rzv2h_info = {
- 	.num_clks = 3,
- };
- 
-+static const struct rzv2h_rspi_info rzt2h_info = {
-+	.find_tclk_rate = rzv2h_rspi_find_rate_variable,
-+	.find_pclk_rate = rzv2h_rspi_find_rate_fixed,
-+	.tclk_name = "pclkspi",
-+	.fifo_size = 4,
-+	.num_clks = 2,
-+};
-+
- static const struct of_device_id rzv2h_rspi_match[] = {
- 	{ .compatible = "renesas,r9a09g057-rspi", &rzv2h_info },
-+	{ .compatible = "renesas,r9a09g077-rspi", &rzt2h_info },
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, rzv2h_rspi_match);
 -- 
-2.53.0
+2.39.5
+
+
 
