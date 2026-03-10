@@ -2,28 +2,28 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACC5CFD4F00
-	for <webhook@archiver.kernel.org>; Tue, 10 Mar 2026 16:01:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49FE3FD4F02
+	for <webhook@archiver.kernel.org>; Tue, 10 Mar 2026 16:01:11 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.msgproc01-g2.43710.1773158455808667489
  for <cip-dev@lists.cip-project.org>;
- Tue, 10 Mar 2026 09:01:00 -0700
+ Tue, 10 Mar 2026 09:01:02 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: C1O8bBH/TdirsBacq25Opw==
-X-CSE-MsgGUID: erFvUr1hRYuQPuW3h/B/iw==
+X-CSE-ConnectionGUID: ACkTD/8uT46lCT3QHYgPQg==
+X-CSE-MsgGUID: 4UG00mYuSAWYfvdXksD55w==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 11 Mar 2026 01:01:00 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 11 Mar 2026 01:01:02 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.92.14])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 0AE504019133;
-	Wed, 11 Mar 2026 01:00:58 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id C04A34019133;
+	Wed, 11 Mar 2026 01:01:00 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.12.y-cip 4/5] arm64: dts: renesas: r9a09g056: Add ICU node
-Date: Tue, 10 Mar 2026 16:00:49 +0000
-Message-ID: <20260310160050.40977-5-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.12.y-cip 5/5] arm64: dts: renesas: r9a09g056n48-rzv2n-evk: Add NMI wakeup button support
+Date: Tue, 10 Mar 2026 16:00:50 +0000
+Message-ID: <20260310160050.40977-6-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260310160050.40977-1-ovidiu.panait.rb@renesas.com>
 References: <20260310160050.40977-1-ovidiu.panait.rb@renesas.com>
@@ -32,135 +32,57 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 10 Mar 2026 16:01:01 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22239
+ <cip-dev@lists.cip-project.org>; Tue, 10 Mar 2026 16:01:11 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22240
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit b449dbc0bb0301277a6de444901a7122214c090d upstream.
+commit 41e60d92c88c0085511b38077dad2939bf63ddfc upstream.
 
-Add node for the Interrupt Control Unit IP found on the Renesas
-RZ/V2N SoC, and modify the pinctrl node as its interrupt parent
-is the ICU node.
+Add support for the NMI connected user pushbutton on the RZ/V2N EVK.
+The button is wired to the SoC NMI input and can be used to wake the
+system from low-power states.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20251125224533.294235-2-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://patch.msgid.link/20251125224533.294235-5-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a09g056.dtsi | 92 ++++++++++++++++++++++
- 1 file changed, 92 insertions(+)
+ .../boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts     | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g056.dtsi b/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
-index 96765312398c..cfd52a3158ac 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
-@@ -178,12 +178,104 @@ soc: soc {
- 		#size-cells = <2>;
- 		ranges;
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
+index 2846a1b23cd7..e7bb4334ca47 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
++++ b/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
+@@ -8,6 +8,7 @@
+ /dts-v1/;
  
-+		icu: interrupt-controller@10400000 {
-+			compatible = "renesas,r9a09g056-icu";
-+			reg = <0 0x10400000 0 0x10000>;
-+			#interrupt-cells = <2>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 419 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 420 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 421 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 426 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 427 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 428 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 429 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 430 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 431 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 432 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 433 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 434 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 435 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 436 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 437 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 438 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 439 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 440 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 441 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 442 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 443 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 444 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 445 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 446 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 447 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 448 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 449 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 450 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 262 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 263 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 264 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 265 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 451 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 452 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 453 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 454 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "nmi",
-+					  "port_irq0", "port_irq1", "port_irq2",
-+					  "port_irq3", "port_irq4", "port_irq5",
-+					  "port_irq6", "port_irq7", "port_irq8",
-+					  "port_irq9", "port_irq10", "port_irq11",
-+					  "port_irq12", "port_irq13", "port_irq14",
-+					  "port_irq15",
-+					  "tint0", "tint1", "tint2", "tint3",
-+					  "tint4", "tint5", "tint6", "tint7",
-+					  "tint8", "tint9", "tint10", "tint11",
-+					  "tint12", "tint13", "tint14", "tint15",
-+					  "tint16", "tint17", "tint18", "tint19",
-+					  "tint20", "tint21", "tint22", "tint23",
-+					  "tint24", "tint25", "tint26", "tint27",
-+					  "tint28", "tint29", "tint30", "tint31",
-+					  "int-ca55-0", "int-ca55-1",
-+					  "int-ca55-2", "int-ca55-3",
-+					  "icu-error-ca55",
-+					  "gpt-u0-gtciada", "gpt-u0-gtciadb",
-+					  "gpt-u1-gtciada", "gpt-u1-gtciadb";
-+			clocks = <&cpg CPG_MOD 0x5>;
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x36>;
-+		};
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
+ #include "r9a09g056.dtsi"
+ 
+ / {
+@@ -44,6 +45,18 @@ hdmi_con_out: endpoint {
+ 		};
+ 	};
+ 
++	keys: keys {
++		compatible = "gpio-keys";
 +
- 		pinctrl: pinctrl@10410000 {
- 			compatible = "renesas,r9a09g056-pinctrl";
- 			reg = <0 0x10410000 0 0x10000>;
- 			clocks = <&cpg CPG_CORE R9A09G056_IOTOP_0_SHCLK>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			interrupt-parent = <&icu>;
- 			gpio-ranges = <&pinctrl 0 0 96>;
- 			power-domains = <&cpg>;
- 			resets = <&cpg 0xa5>, <&cpg 0xa6>;
++		key-wakeup {
++			interrupts-extended = <&icu 0 IRQ_TYPE_EDGE_FALLING>;
++			linux,code = <KEY_WAKEUP>;
++			label = "NMI_SW";
++			debounce-interval = <20>;
++			wakeup-source;
++		};
++	};
++
+ 	memory@48000000 {
+ 		device_type = "memory";
+ 		/* first 128MB is reserved for secure area. */
 -- 
 2.51.0
 
