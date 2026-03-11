@@ -2,56 +2,56 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17304104BECF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 665BF104BED5
 	for <webhook@archiver.kernel.org>; Wed, 11 Mar 2026 10:05:17 +0000 (UTC)
 Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.17329.1773223510414627498
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.17334.1773223512759320936
  for <cip-dev@lists.cip-project.org>;
- Wed, 11 Mar 2026 03:05:10 -0700
+ Wed, 11 Mar 2026 03:05:13 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=gDcbUiZD;
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=ngksDOUg;
  spf=pass (domain: gmail.com, ip: 209.85.221.42, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-4327790c4e9so10904774f8f.2
-        for <cip-dev@lists.cip-project.org>; Wed, 11 Mar 2026 03:05:10 -0700 (PDT)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-439af7d77f0so9127013f8f.0
+        for <cip-dev@lists.cip-project.org>; Wed, 11 Mar 2026 03:05:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773223509; x=1773828309; darn=lists.cip-project.org;
+        d=gmail.com; s=20230601; t=1773223511; x=1773828311; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pIJMtk4umd+TrXIVGS2cMeifmpx8PCBIgC8XyRmrK9M=;
-        b=gDcbUiZD1iXG5i86iSEm1qFS0iBwEDSDFV7XTNVDdyoM/1w/7nFrGVdJLdbLom0iSO
-         tQ9dFQCMZslXJrUOswNIMNRYnBGDZV6GBueuyU1I8RZpYEaTOyFA8+TATEmamPCCzVOj
-         vmoSjJQgUU6D5t084Esu121TqCIXT0g/9/oURw9reY7J2J3NF4fj1e3J0RT4+wKSzP8R
-         hzOknxdlexf3ZThK9m/ZL7fNI3Lyr0z6fH031hfpakZ3Hew26y8blTSoFT6yf+RbcsU3
-         CgjjgbGHlu71jz0+LJqaW/fl/sZT/ZJaCoGTLpOHhFWWdLJycu0qDBUJ4RDiVQrpWbIi
-         369g==
+        bh=rDcfLASpAYa7eshvOSyuV8ylsidwiaTVyQzHBwE/ya0=;
+        b=ngksDOUgcPqvnPAvasKKp7L+8rfpy6Z+lhQu/AiaEGlYJasIPt4pbaXj5LEB5L6dHO
+         2wLsN9OPTw9r/C7vDwusSGC692Wg9u0PQoJWUIgCHDlypfAtRy7xV2eDa90et2g1aTwX
+         vELqtMA6OpjyVej7e6dFLO1kDI2ejKKOdeDvXP096j92PrwNsQ58lLHEILO6CbaLteUk
+         i6vi2awH6p1hX782AFDsW0+hpxcWzTmzEb7kulRMd6B47fkcwVsV+BoHGv/KLgUjfIN1
+         mi75TEzkRLxlWG9cUx+86JtafWY+5pBcFaXSHuuLVq9yKXZr4/SnCquO65j8v2xNtVPV
+         XNgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773223509; x=1773828309;
+        d=1e100.net; s=20230601; t=1773223511; x=1773828311;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=pIJMtk4umd+TrXIVGS2cMeifmpx8PCBIgC8XyRmrK9M=;
-        b=HOkEyBEC0cza7E9oQz/d8b3JUJoKepVHL29JgPT7DJPUykHsq98c8WVamJcLxsmp5p
-         PTQTtphbzLoinbUFo5AcOBPfjJ14/ZVYeS06XMaEu4OY+ZNyM48Od75RGounPifDu8z6
-         iFWp+ukF9RaO3o7j9Rg9DKU78ovC8jwdDL0Gplqeezn2Hb0IyRGVRXuo7AwPO8rCRqdQ
-         KJTkXZgfQs8/IRRAesHII6L5vXMekLqtmjjtOKF1EW68X43q2mR+qxEsGuWqm6sCkQXi
-         HtJkLk6M06CJWEigTMhtg1ddlKfhyQSmqwHJowJ/Ik/UVb0X8gKk6enIZBTsF7pA8pDH
-         tZOA==
-X-Gm-Message-State: AOJu0YyP/kBr6Dz+E3dDjAISFXmapVZue/D5DhyJGX6v4loZSKb1BhZE
-	0hB4Zj6JAOlNuVXjriwcxDHhppaz41Znygtqznc+1x3LetITpL7MOGZEm+YpkA==
-X-Gm-Gg: ATEYQzzVwTS8f9unKrs5vmYQnS93aViM+8bJ6wkZEe84mIe7yVF5AkpmSLs2kJB3xXH
-	qn2qd9s/Duyad6q8xPAxfjCAfpeR6yZvQtNinHqj9fFqC+4FfrfFM+d5OTQqmbMSyggJpffqzYK
-	T/EaNHtHeufQjo0Z3Ms5nTPiesPS8Wcrc5IbeUN+Q1isTSTkMR0gqiCbnvDtqiZ9S2jUADGLIW6
-	g1s+jmk4GDynWrN8ZiBvQsQevo+DKN6n42m7m+7qrWYSbFWEd5suUQU5PKwnxUor+1ZHY0etzNI
-	Y110bdeEaMdBQd8af8tl1X3tGMVGRl1UaI5+VluA2Kt+bgey67rWgpiaYlji39FI/vWEsDpK+tZ
-	X68gN87a2rVgSqWZdat9YSYP5xnTdkevZ6hOF8eidbFWKKzQEjYuYhPKv3VUC5gI+cewUEiFfOf
-	cZbn3dWMEpqn15W2KkID+RPGkYmgLCLLE=
-X-Received: by 2002:a05:6000:381:b0:439:beee:43b5 with SMTP id ffacd0b85a97d-439f81decdcmr3840147f8f.3.1773223508182;
-        Wed, 11 Mar 2026 03:05:08 -0700 (PDT)
+        bh=rDcfLASpAYa7eshvOSyuV8ylsidwiaTVyQzHBwE/ya0=;
+        b=vRmwnnxXT5gGLaIpNp4OMSaxBcb8y7PkrmFF9ba3W+yp0cIJ3ZX550tjUCCa4oZyFJ
+         ZF4Muoip/bRQ3It1bcHqiEtE8n7OohTvZYjcDxzm2Ni8gZeFi9xMQDyVuG/cRL4rZjqa
+         IXlO7N+PjQwHeljvWYJKR20pgpo8OlBMz3/i9TzAiUuhUXL2pnLLftZhD+roUtEy8bM+
+         wxQ9wlSCnvOlUCRTjBwUM79XufA61JC+K1nT1QcCJIQUzgVUhK3F1dUegV+qIw4V7U1t
+         WMw13Y8AP7Sq3Fmv2akB50dTK1kp+BgwK5yy6whyjYbkJOHfizSGrNKUfTD9C/aGTohz
+         SUuw==
+X-Gm-Message-State: AOJu0YwIFm7DrKPuLPlnbc2VkGkpU0qqbrJ1Qk60hIiN0B7VZaGVGoyp
+	QdN/+QC+TdY/HKIbG4hQzYUKCUsLjVCy05aTELgO3BBpmBvg6eaZBpReNxhEdQ==
+X-Gm-Gg: ATEYQzzzY3R0r441x1Zh6pdqLT1+kj5r3Yw8LugQeNehzagQzy4+6z3bWNjo7j56F26
+	9UyUYU04RFLoCz2wGnY7I2LxzpXiIb0XOJQiGmM2IoxPphef+VgoKpqHJBr2jHOXlGMwzG5O44h
+	314PcWvnaTVu7Z3om/PfBBuWdgLco7I1Fox9z/CJ5NzANHS5pgSIXG8Ke0VvABJTZBnvy4MhJKi
+	3i4ORV9ffN6BkmaYHsSR9/mES4KYS2uq/4V8XdIB8FJMQZ6SHYMZ/oy73VJCbxj+DS8C+F4sb5n
+	JMNTw9tv//cKNrK6e89bOd+UnM9fZCyUoKofj3Va0xCHKFAor7kl0VhDeC6Fs6B9v18//Va4RmX
+	+nZd9pD8UunRHrW2X609oSaWW1GLcsry5yoDc4JJ3ggcvJ8+RlKovqRvm4Dk5tyyYQuwOheTmiH
+	UlJ/4fJ1btIX5ik8ijd47KJWsnEtja3Us=
+X-Received: by 2002:a5d:588f:0:b0:439:d755:a895 with SMTP id ffacd0b85a97d-439f843412amr3577981f8f.42.1773223510869;
+        Wed, 11 Mar 2026 03:05:10 -0700 (PDT)
 Received: from biju.lan ([2a00:23c4:a758:8a01:38b7:8ca3:cb55:d344])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439f81acc22sm5177153f8f.16.2026.03.11.03.05.07
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439f81acc22sm5177153f8f.16.2026.03.11.03.05.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2026 03:05:07 -0700 (PDT)
+        Wed, 11 Mar 2026 03:05:10 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,9 +59,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip v2 14/27] serial: rsci: Drop unused macro DCR
-Date: Wed, 11 Mar 2026 10:04:33 +0000
-Message-ID: <20260311100458.162447-15-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip v2 18/27] serial: sh-sci: Rename port SCI_PORT_RSCI->RSCI_PORT_SCIF16
+Date: Wed, 11 Mar 2026 10:04:37 +0000
+Message-ID: <20260311100458.162447-19-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260311100458.162447-1-biju.das.jz@bp.renesas.com>
 References: <20260311100458.162447-1-biju.das.jz@bp.renesas.com>
@@ -71,45 +71,92 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 11 Mar 2026 10:05:17 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22260
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22264
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[ Upstream commit 36816a033dd41fda415ae0696931d6bfe87671a2 ]
+[ Upstream commit d53f4aa9edaafda28e426d8e5eda7dc50f7ca94e ]
 
-Drop unused macro DCR and its bit definition.
+Rename port SCI_PORT_RSCI->RSCI_PORT_SCIF16 to differentiate it from
+RZ/G3E port that has 32-stage FIFO.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Tested-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://patch.msgid.link/20251129164325.209213-8-biju.das.jz@bp.renesas.com
+Link: https://patch.msgid.link/20251129164325.209213-12-biju.das.jz@bp.renesas.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/tty/serial/rsci.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/tty/serial/rsci.c          | 2 +-
+ drivers/tty/serial/sh-sci-common.h | 2 +-
+ drivers/tty/serial/sh-sci.c        | 8 ++++----
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/tty/serial/rsci.c b/drivers/tty/serial/rsci.c
-index ca593665b551..0ca9d38fe8d2 100644
+index fb419f34f35d..8a4f2618e53c 100644
 --- a/drivers/tty/serial/rsci.c
 +++ b/drivers/tty/serial/rsci.c
-@@ -24,7 +24,6 @@ MODULE_IMPORT_NS(SH_SCI);
- #define CCR3	0x14
- #define CCR4	0x18
- #define FCR	0x24
--#define DCR	0x30
- #define CSR	0x48
- #define FRSR	0x50
- #define FTSR	0x54
-@@ -119,8 +118,6 @@ MODULE_IMPORT_NS(SH_SCI);
- /* FFCLR (FIFO Flag CLear Register) */
- #define FFCLR_DRC		BIT(0)	/* DR Clear */
+@@ -461,7 +461,7 @@ static const struct sci_port_ops rsci_port_ops = {
+ };
  
--#define DCR_DEPOL		BIT(0)
--
- static u32 rsci_serial_in(struct uart_port *p, int offset)
+ struct sci_of_data of_sci_rsci_data = {
+-	.type = SCI_PORT_RSCI,
++	.type = RSCI_PORT_SCIF16,
+ 	.ops = &rsci_port_ops,
+ 	.uart_ops = &rsci_uart_ops,
+ 	.params = &rsci_port_params,
+diff --git a/drivers/tty/serial/sh-sci-common.h b/drivers/tty/serial/sh-sci-common.h
+index e3c028df14f1..1b9480c7f4cb 100644
+--- a/drivers/tty/serial/sh-sci-common.h
++++ b/drivers/tty/serial/sh-sci-common.h
+@@ -7,7 +7,7 @@
+ 
+ /* Private port IDs */
+ enum SCI_PORT_TYPE {
+-	SCI_PORT_RSCI = BIT(7) | 0,
++	RSCI_PORT_SCIF16 = BIT(7) | 0,
+ };
+ 
+ enum SCI_CLKS {
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 0be3d5c45388..69cd9aa60922 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -1184,7 +1184,7 @@ static int sci_handle_errors(struct uart_port *port)
+ 
+ static bool sci_is_rsci_type(u8 type)
  {
- 	return readl(p->membase + offset);
+-	return (type == SCI_PORT_RSCI);
++	return (type == RSCI_PORT_SCIF16);
+ }
+ 
+ static int sci_handle_fifo_overrun(struct uart_port *port)
+@@ -3179,7 +3179,7 @@ static int sci_init_clocks(struct sci_port *sci_port, struct device *dev)
+ 
+ 	if (sci_port->type == PORT_HSCIF) {
+ 		clk_names[SCI_SCK] = "hsck";
+-	} else if (sci_port->type == SCI_PORT_RSCI) {
++	} else if (sci_port->type == RSCI_PORT_SCIF16) {
+ 		clk_names[SCI_FCK] = "operation";
+ 		clk_names[SCI_BRG_INT] = "bus";
+ 	}
+@@ -3191,7 +3191,7 @@ static int sci_init_clocks(struct sci_port *sci_port, struct device *dev)
+ 		if (IS_ERR(clk))
+ 			return PTR_ERR(clk);
+ 
+-		if (!clk && sci_port->type == SCI_PORT_RSCI &&
++		if (!clk && sci_port->type == RSCI_PORT_SCIF16 &&
+ 		    (i == SCI_FCK || i == SCI_BRG_INT))
+ 			return dev_err_probe(dev, -ENODEV, "failed to get %s\n", name);
+ 
+@@ -3329,7 +3329,7 @@ static int sci_init_single(struct platform_device *dev,
+ 		else
+ 			sci_port->rx_trigger = 8;
+ 		break;
+-	case SCI_PORT_RSCI:
++	case RSCI_PORT_SCIF16:
+ 		sci_port->rx_trigger = 16;
+ 		break;
+ 	default:
 -- 
 2.43.0
 
