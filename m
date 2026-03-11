@@ -2,56 +2,56 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0923104BEC9
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAA07104BEC5
 	for <webhook@archiver.kernel.org>; Wed, 11 Mar 2026 10:05:16 +0000 (UTC)
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.17325.1773223508466967533
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.17322.1773223506371718944
  for <cip-dev@lists.cip-project.org>;
- Wed, 11 Mar 2026 03:05:08 -0700
+ Wed, 11 Mar 2026 03:05:06 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=KPUDfwh6;
- spf=pass (domain: gmail.com, ip: 209.85.221.48, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-439b611274bso6883788f8f.3
-        for <cip-dev@lists.cip-project.org>; Wed, 11 Mar 2026 03:05:08 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=PRSMPfxC;
+ spf=pass (domain: gmail.com, ip: 209.85.221.42, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-439c6fc2910so5584789f8f.0
+        for <cip-dev@lists.cip-project.org>; Wed, 11 Mar 2026 03:05:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773223507; x=1773828307; darn=lists.cip-project.org;
+        d=gmail.com; s=20230601; t=1773223504; x=1773828304; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JiMKaFX4bXVJjRm5rNkO79+GKXOYFyAz3TFI/oBgSG4=;
-        b=KPUDfwh6G5xRaySBxib4f98fZtbm28Vj5KkbgJnqD8Fco3Zg/QpHCvG2vXCYAjRAFW
-         bVZPVH6mn59rYPslP0KMDheUtpLT8yqHKvd1n0qaqbqXXxPNPkEE6sxwzwZbqhfFU2Y0
-         nYwLzhLv90aYrtDrH64Ndg2YciTsA4Dw4CIYL6hBJpnCKTpk9LhCIRm7N8qcgz/EH1ZN
-         9xADtYBI5Logs/mTy4x7Gd5JQbogJJZ6KqmDIag7l+MW2zBtofVpNS05XUR53/zq5jCR
-         RhROcJNYhgG48ox/JvdJoRbQaTvBirBmwcKn3Shnn1r+rz6svX1/f/JioRuszfLrNkxw
-         8cJA==
+        bh=O24j8uXQXYIHV2Or5pHws4d6zQwjf2vdNRXLo6Z4WLA=;
+        b=PRSMPfxCj6qJMbCzBRQanxJw+TobfUuTN3Wab3IU/icUCb6py6sR3zbB5mRWaysvWf
+         hYbWDwfaimfpwznPhmxf7hjSke9+YEWEQng6eH02ZNF/p2j/0Cm+HZ4+t7TofO1AQdvK
+         cT13I3x+qmHf/Qowop1hm35Hl44BHkS/5GbWkQEWLog94Mf3rpO+zbxsXK8bowhfRVAe
+         +uo1gwI7lTt+so2THUEbsJ1NXiZEms5xaSlN9gkPb+xkeibOMOvznaSYfazOtTA38Tx+
+         YAlhl81IC5uTQYqDAO6FgcV4yZHEayKzw1GBPhA4ALN7N27y0zNUPCtknnN+a0e7cr7W
+         TZpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773223507; x=1773828307;
+        d=1e100.net; s=20230601; t=1773223504; x=1773828304;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=JiMKaFX4bXVJjRm5rNkO79+GKXOYFyAz3TFI/oBgSG4=;
-        b=TW8H69u6XkOzPPLoOtSspUnCLLILH75HtIoyMWvG1tFQ45VL4MTNZvYxMjiwGHgYdD
-         WE3AdBpmqXH4/odXkS5DQbccyTG2r1b6ngFAp6AYpz1SA6Ub5Eml8Snsx6DZr4KZX6Xi
-         7jnDTDWW0QyP1AeEmp7OCf7JVue4mHL1PxjWH0gyUF6vX6QPQSD8xhe4W4//x39JLRDn
-         Rv+51tTpu27JrUMsaVVbgJgdJ42EDySngblsWtTq/yPRlroFonzcjrOsKq0amrthogPX
-         JW5sdK99tZ4hwsXmdVAOz/NO6YBe/RHV6AkHsJVcVEUWnV81eP1WkmquT3HFIuLxJCjj
-         lH8w==
-X-Gm-Message-State: AOJu0YzB50+PwH0ckvYuZD7pJ1tw3/pdHhBVFE3Dh67bznbDZQtaCIpV
-	268MnZ11Kzi+2YnJH2L/idDeslNO7gTkQ4cJVXhwQlMIYNIIFT8HEEtUwUK9pA==
-X-Gm-Gg: ATEYQzzuzHU7fn2E2qFSZ1gyz/d8TaVAFvsawPJsfVRVHvT478dD76lOgNK42tc48cu
-	CwfyLGIHVOKepcOpqecblXhwjUfBQsZlVY0gN8W7l5zdhy9ALLUiaN6Y9no7Xp6bPz72YMJtSwx
-	6DExZBj6nKZu11rMpYr6ETk2MSGCzRFM3MHc8EkFqPaFduXfoLo5HRzy0erm/9QMSQliJ6gNx1H
-	PTMl+Ri0VAcWZRu/rjEeUGytvMn0JgfWYnjo3FnwAsF9kgFD/T+7mstZ0Kx/725eiH2f5PtCxVc
-	CEpHL1tabU33nBjXdKnxKUJVI4aMxoWr+qxukbIle+msbTsUuCJzZIJ2/a5SqUBwSUxooR5KDaG
-	VJOwhX3azyn41RGKnyBfcYTWjU5qv90QmL1h4/krHSwj9CveCJj4KAmLhpEiMTRSjS3JarVSnT3
-	zxooa81eFmin4UAJl3C4Wov1SvNY7N8j0=
-X-Received: by 2002:a05:6000:2486:b0:439:f612:9a58 with SMTP id ffacd0b85a97d-439f8222da0mr3749938f8f.30.1773223506392;
-        Wed, 11 Mar 2026 03:05:06 -0700 (PDT)
+        bh=O24j8uXQXYIHV2Or5pHws4d6zQwjf2vdNRXLo6Z4WLA=;
+        b=pflQ40ZYzhWmfFyvFCI3NYUMpwSYULIVgJlKAXCk0e+1KUAqEwYS+SJhOwy6kxhUTm
+         o5SO41nGEmz/QHMYltsDm+KS7jrlTXERO1NRElyRdPaBXsRjqj0wbVevtO7KHTNyw2uR
+         q25wlOueTkrOfGrYve2vja/mPdq0WrfKKNgQbubSaS+94tC/2+r5ffXq8mJrL73V2cQi
+         3eKDRounX29z8Q2n6FEZhKP2102IZBGrMSZ0FT8yO8KEEbMBYD1c0ZL2gzPQLV5jDxdc
+         QgjPBq5O9UuSi1xkU0ymc0JgVcqQtqMvzhnkpvALJNRITsi2fObyLk2S8tCgN+YIN9X/
+         nLoA==
+X-Gm-Message-State: AOJu0YxPWHoV4pGPZz4GOX4Oew6cJdT5aB5H9G54e+CBc7cFnP6We341
+	hmS7akYHyck8S933RKjzTNJfqvUJkmfEbGSwr7MevEcVg4RrJHEYfoke1mYkzA==
+X-Gm-Gg: ATEYQzyaQ2jPIMwRdeY0PS3Ig1DWN3uuoAK9dh65GezkA3QoQwb00tvf5UQ7zMcOAR9
+	yFDtwIFEfDIXrlOdbNMvnjeeQqKtmd+1MVJosBLUxJpWeLRrQT5QaKcfrfss2SBXhj3XIBbfDGp
+	6MxKJxBtt+KwTggwHqDJhbS4fbsXGRAuhLZOA3L+CHrZLCiM6wqIdKew1y3sRt+oOLBPV6274wg
+	3XSsJSOBXbcpgcRXqFA655oxuFN8mMNdVkRqQEL8Af8zMcyi81HeYuE8o8jDc9gyW7bZBjOwKFI
+	EDHD8P3Guexgk/HFo5YvUK26BDFInl8QqtuIMFO2NzG0/n7boKM6zI/R17q+sSXoO4+UrZ8tOfh
+	+8EZyqhyoGrtIx7g7lxJyR6ij0EknTbyvvX5UU8sKwZ5KcFgLaAzOAaH6qNLyaH2ELabATYUosg
+	+VMSEyHNp6qL6wNJ9xEplrxKttH2CTkuc=
+X-Received: by 2002:a05:6000:604:b0:439:e334:426a with SMTP id ffacd0b85a97d-439f8435927mr3853883f8f.46.1773223503904;
+        Wed, 11 Mar 2026 03:05:03 -0700 (PDT)
 Received: from biju.lan ([2a00:23c4:a758:8a01:38b7:8ca3:cb55:d344])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439f81acc22sm5177153f8f.16.2026.03.11.03.05.05
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439f81acc22sm5177153f8f.16.2026.03.11.03.05.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2026 03:05:05 -0700 (PDT)
+        Wed, 11 Mar 2026 03:05:03 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,9 +59,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip v2 11/27] serial: sh-sci: Drop checking port type for device file{create, remove}
-Date: Wed, 11 Mar 2026 10:04:30 +0000
-Message-ID: <20260311100458.162447-12-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip v2 08/27] serial: sh-sci: Fix deadlock during RSCI FIFO overrun error
+Date: Wed, 11 Mar 2026 10:04:27 +0000
+Message-ID: <20260311100458.162447-9-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260311100458.162447-1-biju.das.jz@bp.renesas.com>
 References: <20260311100458.162447-1-biju.das.jz@bp.renesas.com>
@@ -71,65 +71,49 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 11 Mar 2026 10:05:16 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22257
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22254
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[ Upstream commit 42f7303c5f668403f06d9b938d3de2bda3736530 ]
+[ Upstream commit 75a9f4c54770f062f4b3813a83667452b326dda3 ]
 
-Ports that support FIFO has fifosize > 1. Replace checking the port type
-with fifosize for device file{create, remove}.
+On RSCI IP, a deadlock occurs during a FIFO overrun error, as it uses a
+different register to clear the FIFO overrun error status.
 
+Cc: stable@kernel.org
+Fixes: 0666e3fe95ab ("serial: sh-sci: Add support for RZ/T2H SCI")
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Tested-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://patch.msgid.link/20251129164325.209213-5-biju.das.jz@bp.renesas.com
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://patch.msgid.link/20251114101350.106699-3-biju.das.jz@bp.renesas.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/tty/serial/sh-sci.c | 15 ++++-----------
- 1 file changed, 4 insertions(+), 11 deletions(-)
+ drivers/tty/serial/sh-sci.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 4da0251c0b10..7f23b63eca13 100644
+index 1cb9d474c0f1..80b2b9b3542e 100644
 --- a/drivers/tty/serial/sh-sci.c
 +++ b/drivers/tty/serial/sh-sci.c
-@@ -3550,16 +3550,14 @@ static struct uart_driver sci_uart_driver = {
- static void sci_remove(struct platform_device *dev)
- {
- 	struct sci_port *s = platform_get_drvdata(dev);
--	unsigned int type = s->type;	/* uart_remove_... clears it */
+@@ -1198,8 +1198,16 @@ static int sci_handle_fifo_overrun(struct uart_port *port)
  
- 	sci_ports_in_use &= ~BIT(s->port.line);
- 	uart_remove_one_port(&sci_uart_driver, &s->port);
+ 	status = s->ops->read_reg(port, s->params->overrun_reg);
+ 	if (status & s->params->overrun_mask) {
+-		status &= ~s->params->overrun_mask;
+-		s->ops->write_reg(port, s->params->overrun_reg, status);
++		if (s->type == SCI_PORT_RSCI) {
++			/*
++			 * All of the CFCLR_*C clearing bits match the corresponding
++			 * CSR_*status bits. So, reuse the overrun mask for clearing.
++			 */
++			s->ops->clear_SCxSR(port, s->params->overrun_mask);
++		} else {
++			status &= ~s->params->overrun_mask;
++			s->ops->write_reg(port, s->params->overrun_reg, status);
++		}
  
--	if (s->port.fifosize > 1)
-+	if (s->port.fifosize > 1) {
- 		device_remove_file(&dev->dev, &dev_attr_rx_fifo_trigger);
--	if (type == PORT_SCIFA || type == PORT_SCIFB || type == PORT_HSCIF ||
--	    type == SCI_PORT_RSCI)
- 		device_remove_file(&dev->dev, &dev_attr_rx_fifo_timeout);
-+	}
- }
+ 		port->icount.overrun++;
  
- static const struct sci_of_data of_sci_scif_sh2 = {
-@@ -3915,15 +3913,10 @@ static int sci_probe(struct platform_device *dev)
- 		ret = device_create_file(&dev->dev, &dev_attr_rx_fifo_trigger);
- 		if (ret)
- 			return ret;
--	}
--	if (sp->type == PORT_SCIFA || sp->type == PORT_SCIFB ||
--	    sp->type == PORT_HSCIF || sp->type == SCI_PORT_RSCI) {
-+
- 		ret = device_create_file(&dev->dev, &dev_attr_rx_fifo_timeout);
- 		if (ret) {
--			if (sp->port.fifosize > 1) {
--				device_remove_file(&dev->dev,
--						   &dev_attr_rx_fifo_trigger);
--			}
-+			device_remove_file(&dev->dev, &dev_attr_rx_fifo_trigger);
- 			return ret;
- 		}
- 	}
 -- 
 2.43.0
 
