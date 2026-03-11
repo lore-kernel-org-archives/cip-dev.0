@@ -2,64 +2,64 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4986F105D290
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 663B2105D291
 	for <webhook@archiver.kernel.org>; Wed, 11 Mar 2026 11:04:19 +0000 (UTC)
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.18269.1773227054256440882
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.18262.1773227049998833224
  for <cip-dev@lists.cip-project.org>;
- Wed, 11 Mar 2026 04:04:14 -0700
+ Wed, 11 Mar 2026 04:04:10 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=GOCkkWJC;
- spf=pass (domain: tuxon.dev, ip: 209.85.128.48, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-48534e9076fso27090695e9.0
-        for <cip-dev@lists.cip-project.org>; Wed, 11 Mar 2026 04:04:14 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=KfaxwtvL;
+ spf=pass (domain: tuxon.dev, ip: 209.85.128.47, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4853fd7b59aso19331845e9.2
+        for <cip-dev@lists.cip-project.org>; Wed, 11 Mar 2026 04:04:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1773227053; x=1773831853; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1773227048; x=1773831848; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YEZWLu0eZM37b3W1Ml/FBnU8Cow52ew0V5ulNisue60=;
-        b=GOCkkWJC4vzKUMPUmfO4uF9EsNU0N0NlzrcU8ia/ctTXPSt3sGKiwJfzZc5k9P53bo
-         8p6amx5qBLMO9wdezhvi+adnnFaAw/ycKKKVnfD+bqoCWB4UpRBp6NDjOqY2e7533ufF
-         M1UmZwVCLGQu5QHXkHCLdwK2KzLyQOBG//xhcWw7OFqG4YS90QSLLY5X6kf9duxomJjJ
-         7rAC61gBKjG2Ewj3Y/gk/AOsRxlesS8JIGM6OFW/0rIMckq50n+35vuqCKfWSunRbWHx
-         AdJoGFleu7zRT4thMOQ0InJQXTtzGUG8q/RvOYszpAkQfAlzTPTDZxID4DJIx31OFf0G
-         wC7w==
+        bh=e2wIVQj2p8pptuteQA9wlqTeg7vTpryS+v/8xSL/RGQ=;
+        b=KfaxwtvLFXweC8nqAd128EICB28d658Qvp3vfIqWCzLOlwFWC4Vk5gthEznZZAD16s
+         c5EuyrE5DazraY9uWJhQcYfABsMfx0yNBGohxTv+vAE08TqlDkqZljzTwp6d8/8TaDaL
+         ofrsqBUYLlI6Mc8BceiWIEf9Yfw0i8hUIGzNb+CpBeogMUHeoJrSARdD0dtrM7GmUy3d
+         MgEbd2bBZQ7xSDGelZjSQWbunDEYkRWrXIZFykLoiHjrXzygjXAJP8M6fpB5HB9HbEaZ
+         A0Mz/RdHjGE8SKH2lcBCJBhJyZUFiG793tps7ig6Y0neLFAjg8FG1m2pl1LQmhHNiu5U
+         PtSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773227053; x=1773831853;
+        d=1e100.net; s=20230601; t=1773227048; x=1773831848;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=YEZWLu0eZM37b3W1Ml/FBnU8Cow52ew0V5ulNisue60=;
-        b=nM9yeQnjPKVpfeAbSCRGH8kaNCwiNI0+lUF4sAPilr87yl9n7VR/qDsgrjWquXrp0R
-         B9Jr1clvgHu0vK0ah9KQo1TgeoCTW+/+iVbUveZHlX41+AcsJ4ipnWoR3KjkiyVfzj40
-         cB48zYZZSjeuWlzJ5Pj4F1MUz/fPmX+olhp5bo6Fiy2bGoRk/l0rKHyiOKolGKlfyT3c
-         XZ+OFblcgszXl7sweMCMfSIkCjnZR+mqRd2UoMgWEmIXK5fa0sSrv7Zq4l2xDLhBjmu7
-         IA0fhUKmO2AtoNW9OwdyW9cLuNS7wbVGv6rNFuu7z3ZbbNynpvShXCYXKhB2BMST6Z9O
-         GuhQ==
-X-Gm-Message-State: AOJu0YwbFbUHuhCczRjqVEJMMvU7Vl+glSlYCsj0VSgPmKiA4wnfueZP
-	UkcCno7GdnYnWqetP2gZ3cb76A21+323FV29D4fymjNz5V8tmKJohi+Xa4+LDO/meFE=
-X-Gm-Gg: ATEYQzxUWK7LtMJ3MuWCgjncpqEsc9+K0IkPPfYc4wdXH/1s2NMI9+ODxbHF/5USNjW
-	SI4VlQHEO+SooZYsfUH0hlzkZafcyPPQH7Vg/e0e+tT3Pxy90vT10nXEdWpiaO0gcRD7ZgUOEuR
-	HoVyXrbaZ+WnS+3k/IOmG6CRdp/yPNGYWaOqES9Vc8A7+MWKa5TXFCqrxl8F5SlGwxFPvEegBfD
-	2DD4akGksLKxCANH0Pyxen1ExHwGHnfebMaC5RqwS4TKFxFyltaon9nJUSdWd0IG1zZIrDBBhUB
-	E073GiwLMzRpW9oafmeUUTjZBS60hrtfWAZcBJYDb56OivZt8oD/d+0Izn+xT7Q3eGDwfWHZXf3
-	vdTT5vr1juLFQMsfdgNgDn7YiC9zW6K9te9PleB+1A8FzEBZlLHlwAg7hY1OkFD4HouHrMQrj7n
-	PjbYyDdPm/sLFo6Vq4Jc0+cJbYXNYzbmEidbtYn1QAZD+6ugp+f5V0
-X-Received: by 2002:a05:600c:1d0e:b0:480:2521:4d92 with SMTP id 5b1f17b1804b1-4854b10f2b3mr35256445e9.24.1773227052616;
-        Wed, 11 Mar 2026 04:04:12 -0700 (PDT)
+        bh=e2wIVQj2p8pptuteQA9wlqTeg7vTpryS+v/8xSL/RGQ=;
+        b=WE5PLpFs2aeTcC2WD8+0DJmsMyyvuX51iDzgnIFAyK/PNxNe5StmzXGPhD3Irupu8j
+         Ww1RRag1bjhFi0rRR7Jhn9Yb3NALQk7QEDew9/DpUk5Qzuz0K3BmxiX9VtVod9o8WUeI
+         2s6iQai53eT9/um28X/ZgjHbZpx47LXZOmpz8osS/91CO73kepVXXQrxzAIXxBUHUDVG
+         +jb+F0dOesANUo+hw/fKhcdn8UIsXXSrKiVFCoeONH/k0S+svvtmQOTKVxRvxQClebXS
+         fVFyocCjYN6TD4roO5vxI/IBLywFieaeKhJK+aVSbdi2jcdWg6HssNS/ET6F6T/dVett
+         oPjg==
+X-Gm-Message-State: AOJu0YyjAeg8OPMN1Yu7D0NcNi06/ysVDgzekfOTHszMxEEu4mLtOwjg
+	7GKAcCo4A7djZ3p2T+Ernv2k5HkOURQ0yvlEjXrHeegUeUeosBD0WX0AACzqiPytf0E=
+X-Gm-Gg: ATEYQzxvWqkfzGrG5R3sRAzmsdJQ0hUexGktj1IWt4HwrarpXq2DDc+k8MhNkwCCP70
+	1h6sRZ2Ng3d4oK1wYbujD1/9EfXOGET0c39m91hV1rxfPQALfkjjbIdkp4dlYs6hh3hnqrQ7/gs
+	uaW+nZuqvyBwYXLRqxldfd9TGOYE096CKrZjOSQRfc3d3+rWtQGwFb3D+y/XpVgsL7e0YcPOy6F
+	FuODGaABkMqDeT4J1LkAA+TLkyz0/AEMqt3wAaKQrF4X7NKYJFjolRVhXMslGFyBeqfFop0jDjk
+	uRM34savox5wzzRyLZ9/tnR/47z1J9fCovJI6yjiT/zRA0RiZ3Fhkak3td/htoEsWNgpwyFbxsL
+	fAKXUcuScG7HzvzHhAuc17QYkiSN2irSpyVYwWan+Cu/0IS6PjQORE76798zfsRE1+D4s/3P5G3
+	pDF7Y0o9PoHsYskIDGhOKFsIYEeqCb1dP6QKfYWL9PWnYjFkgO8sAAq2d0MbN4tjQ=
+X-Received: by 2002:a05:600c:1d16:b0:485:3949:e5c6 with SMTP id 5b1f17b1804b1-4854b0a53eemr33048425e9.3.1773227048360;
+        Wed, 11 Mar 2026 04:04:08 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.205])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4854b0b95f4sm25004085e9.5.2026.03.11.04.04.11
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4854b0b95f4sm25004085e9.5.2026.03.11.04.04.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2026 04:04:12 -0700 (PDT)
+        Wed, 11 Mar 2026 04:04:07 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 10/28] PCI: Rename PCIE_RESET_CONFIG_DEVICE_WAIT_MS to PCIE_RESET_CONFIG_WAIT_MS
-Date: Wed, 11 Mar 2026 13:03:39 +0200
-Message-ID: <20260311110357.1938200-11-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 07/28] lib/bitmap: add bitmap_{read,write}()
+Date: Wed, 11 Mar 2026 13:03:36 +0200
+Message-ID: <20260311110357.1938200-8-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260311110357.1938200-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20260311110357.1938200-1-claudiu.beznea.uj@bp.renesas.com>
@@ -69,39 +69,137 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 11 Mar 2026 11:04:19 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22289
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22286
 
-From: Niklas Cassel <cassel@kernel.org>
+From: Syed Nayyar Waris <syednwaris@gmail.com>
 
-commit 817f989700fddefa56e5e443e7d138018ca6709d upstream.
+commit 63c15822b8dd02a2423cfd92232245ace3f7a11b upstream.
 
-Rename PCIE_RESET_CONFIG_DEVICE_WAIT_MS to PCIE_RESET_CONFIG_WAIT_MS.
+The two new functions allow reading/writing values of length up to
+BITS_PER_LONG bits at arbitrary position in the bitmap.
 
-Suggested-by: Bjorn Helgaas <helgaas@kernel.org>
-Signed-off-by: Niklas Cassel <cassel@kernel.org>
-Signed-off-by: Manivannan Sadhasivam <mani@kernel.org>
-Link: https://patch.msgid.link/20250625102347.1205584-10-cassel@kernel.org
-[claudiu.beznea: dropped the changes for
- drivers/pci/controller/plda/pcie-starfive.c because it is not available
- in v5.10 CIP]
+The code was taken from "bitops: Introduce the for_each_set_clump macro"
+by Syed Nayyar Waris with a number of changes and simplifications:
+ - instead of using roundup(), which adds an unnecessary dependency
+   on <linux/math.h>, we calculate space as BITS_PER_LONG-offset;
+ - indentation is reduced by not using else-clauses (suggested by
+   checkpatch for bitmap_get_value());
+ - bitmap_get_value()/bitmap_set_value() are renamed to bitmap_read()
+   and bitmap_write();
+ - some redundant computations are omitted.
+
+Cc: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Syed Nayyar Waris <syednwaris@gmail.com>
+Signed-off-by: William Breathitt Gray <william.gray@linaro.org>
+Link: https://lore.kernel.org/lkml/fe12eedf3666f4af5138de0e70b67a07c7f40338.1592224129.git.syednwaris@gmail.com/
+Suggested-by: Yury Norov <yury.norov@gmail.com>
+Co-developed-by: Alexander Potapenko <glider@google.com>
+Signed-off-by: Alexander Potapenko <glider@google.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Acked-by: Yury Norov <yury.norov@gmail.com>
+Signed-off-by: Yury Norov <yury.norov@gmail.com>
+Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/pci/pci.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/bitmap.h | 77 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 77 insertions(+)
 
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index a391e4db9401..9001851a8ad7 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -24,7 +24,7 @@
-  *    completes before sending a Configuration Request to the device
-  *    immediately below that Port."
-  */
--#define PCIE_RESET_CONFIG_DEVICE_WAIT_MS	100
-+#define PCIE_RESET_CONFIG_WAIT_MS	100
+diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
+index 29b19d2ba5ba..22e3269342f7 100644
+--- a/include/linux/bitmap.h
++++ b/include/linux/bitmap.h
+@@ -78,6 +78,10 @@ struct device;
+  *  bitmap_to_arr32(buf, src, nbits)            Copy nbits from buf to u32[] dst
+  *  bitmap_get_value8(map, start)               Get 8bit value from map at start
+  *  bitmap_set_value8(map, value, start)        Set 8bit value to map at start
++ *  bitmap_read(map, start, nbits)              Read an nbits-sized value from
++ *                                              map at start
++ *  bitmap_write(map, value, start, nbits)      Write an nbits-sized value to
++ *                                              map at start
+  *
+  * Note, bitmap_zero() and bitmap_fill() operate over the region of
+  * unsigned longs, that is, bits behind bitmap till the unsigned long
+@@ -601,6 +605,79 @@ static inline void bitmap_set_value8(unsigned long *map, unsigned long value,
+ 	map[index] |= value << offset;
+ }
  
- extern const unsigned char pcie_link_speed[];
- extern bool pci_early_dump;
++/**
++ * bitmap_read - read a value of n-bits from the memory region
++ * @map: address to the bitmap memory region
++ * @start: bit offset of the n-bit value
++ * @nbits: size of value in bits, nonzero, up to BITS_PER_LONG
++ *
++ * Returns: value of @nbits bits located at the @start bit offset within the
++ * @map memory region. For @nbits = 0 and @nbits > BITS_PER_LONG the return
++ * value is undefined.
++ */
++static inline unsigned long bitmap_read(const unsigned long *map,
++					unsigned long start,
++					unsigned long nbits)
++{
++	size_t index = BIT_WORD(start);
++	unsigned long offset = start % BITS_PER_LONG;
++	unsigned long space = BITS_PER_LONG - offset;
++	unsigned long value_low, value_high;
++
++	if (unlikely(!nbits || nbits > BITS_PER_LONG))
++		return 0;
++
++	if (space >= nbits)
++		return (map[index] >> offset) & BITMAP_LAST_WORD_MASK(nbits);
++
++	value_low = map[index] & BITMAP_FIRST_WORD_MASK(start);
++	value_high = map[index + 1] & BITMAP_LAST_WORD_MASK(start + nbits);
++	return (value_low >> offset) | (value_high << space);
++}
++
++/**
++ * bitmap_write - write n-bit value within a memory region
++ * @map: address to the bitmap memory region
++ * @value: value to write, clamped to nbits
++ * @start: bit offset of the n-bit value
++ * @nbits: size of value in bits, nonzero, up to BITS_PER_LONG.
++ *
++ * bitmap_write() behaves as-if implemented as @nbits calls of __assign_bit(),
++ * i.e. bits beyond @nbits are ignored:
++ *
++ *   for (bit = 0; bit < nbits; bit++)
++ *           __assign_bit(start + bit, bitmap, val & BIT(bit));
++ *
++ * For @nbits == 0 and @nbits > BITS_PER_LONG no writes are performed.
++ */
++static inline void bitmap_write(unsigned long *map, unsigned long value,
++				unsigned long start, unsigned long nbits)
++{
++	size_t index;
++	unsigned long offset;
++	unsigned long space;
++	unsigned long mask;
++	bool fit;
++
++	if (unlikely(!nbits || nbits > BITS_PER_LONG))
++		return;
++
++	mask = BITMAP_LAST_WORD_MASK(nbits);
++	value &= mask;
++	offset = start % BITS_PER_LONG;
++	space = BITS_PER_LONG - offset;
++	fit = space >= nbits;
++	index = BIT_WORD(start);
++
++	map[index] &= (fit ? (~(mask << offset)) : ~BITMAP_FIRST_WORD_MASK(start));
++	map[index] |= value << offset;
++	if (fit)
++		return;
++
++	map[index + 1] &= BITMAP_FIRST_WORD_MASK(start + nbits);
++	map[index + 1] |= (value >> space);
++}
++
+ #endif /* __ASSEMBLY__ */
+ 
+ #endif /* __LINUX_BITMAP_H */
 -- 
 2.43.0
 
