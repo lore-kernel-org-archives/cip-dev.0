@@ -2,149 +2,137 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DE8B10611EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8771F10611EA
 	for <webhook@archiver.kernel.org>; Wed, 11 Mar 2026 11:05:30 +0000 (UTC)
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.18690.1773227125846307603
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.18693.1773227129643845192
  for <cip-dev@lists.cip-project.org>;
- Wed, 11 Mar 2026 04:05:26 -0700
+ Wed, 11 Mar 2026 04:05:29 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=F6DLbXCH;
- spf=pass (domain: tuxon.dev, ip: 209.85.221.50, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-439b78b638eso11356061f8f.2
-        for <cip-dev@lists.cip-project.org>; Wed, 11 Mar 2026 04:05:25 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=Qbx0YUHs;
+ spf=pass (domain: tuxon.dev, ip: 209.85.128.51, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-48532925a4bso19972995e9.1
+        for <cip-dev@lists.cip-project.org>; Wed, 11 Mar 2026 04:05:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1773227124; x=1773831924; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1773227128; x=1773831928; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BpFIyR5hD45AhwsvJHTbL/45o+ojOv1J7+L3zA6sYuM=;
-        b=F6DLbXCHK4Yjt5XV0edMtYMwIXI28aNwpd/3z5Q2Ce7YB69BmU91oEs3aNWZzB9s4K
-         nLMrpHUKfONF3TmEhPRCFLciD0//sWKByeAxJCfV5OH+NmUhqPnYm4YxEIZAgtPPBZfi
-         Eau8sGoLMDWPmkg1jwZ7nR7uBNrAltLC5zot60ktJB3wszZkezuePXu1PDQPN/u8UWiq
-         rNeocssxeg9Q5VHskHbvgj+WkscRdoGzdw1fXUmu+hSFQNGPMyfq5hDkaWOVAezS4C/A
-         9IlT1v1xhZCHZd2rQSlIo+BS+cqJtqaChmf001ytbDjsB4Zkht0IkoB6TANDGWa6dIr2
-         S0Kg==
+        bh=5lOCwcE1nbTc3unb3WziR6fBHvu6MKiwhNderAn8a7s=;
+        b=Qbx0YUHs8V8Edq7EiDgch92e6p7BzAS2nHXsgpGv5AzgGsLnTY+/tIRmT5ZEITdoJU
+         NyTYWHQIB7/eFb8tDc4rWDK132f9wrzXQiC/ryLWV2x3S7NQswNPvCXR+UPPCZVUI1q6
+         4EH1Ap96F9MJUwyLLTFccLgmJ6k0v+kpAsCLXbEkH/YRrhKB0LpAcs2pRnwgRy0DDQ74
+         0PE46Ys66JS98WpvdyVqFTzCcguSrWk8xyOq5xgKmKzRjhOK2KzFG1FKNzRkrDYSKAG3
+         3d8X0qaiTDNcJ9YJqmE5AiCI7gG+LVgenzX3kyaRqduXngF2XOE+AcnhA4zWt2e2M0GG
+         /NbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773227124; x=1773831924;
+        d=1e100.net; s=20230601; t=1773227128; x=1773831928;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=BpFIyR5hD45AhwsvJHTbL/45o+ojOv1J7+L3zA6sYuM=;
-        b=jV6w84xVe+bKNwuaSsqW8jW2uj/pr57MeOcRZgroMEEtKITSGrk1/mTV8HdXIcLkMF
-         vvTh1jvdpDQtxzqpFvpVPHtjHYoJ1p1nCqHg7cAhzHHyTcuHwGjW+WX9TjxJ13LIStD1
-         oS/0TbpW3aEkXnM36goU3qU2qQXIQXXxAW0Ejyerw3KmdOWwqpRI8o0Khh3x9RKzbEFj
-         SUx7oWCBnl76MsnNKyWbsrOWrphov2QKarbkvY/R4Ho7mwbO5O8dOeonzqoNc+Q30KmQ
-         VSC3EQFCIWPizjZi89YSivujg8VXyeAgW50H9TqazkZghPaPpOsqdUud6vvOUQ5imtGe
-         l+bw==
-X-Gm-Message-State: AOJu0YzGU2i+WSw73zRpygnwOJimQP3Hz3uH8npJ1vq/ezmoWBn3L+lr
-	FlabKSJUy6UwJvIAM6rEFKq3mXYdp9+xO9rUL1tTJyemuodJHumWwqiSrLscwytb3XCkdJUVJGw
-	9+FiQ
-X-Gm-Gg: ATEYQzwc+u5Y1DgkIMKegf0gnosUv5FiV4RbZDGDM6UA33ND+UXC+PLSv4TChCdRvds
-	mqaBQzLQUp+xyuHtMYSTLEivoFQdLzFcqIUkWY3j2vNaJ52Uz6y1g+8oKdHwSQ/EqOie5GTfGEC
-	+BIH2cRZqyZY/e9WI6illil2ffkeiDQtKjygUfm0uWk3d9w3jQ1WNALRpVMpsO4jMiKS2l4dqv9
-	51oZn2t/H4lOjL53GN0ZtbN2b8JkFJd8XqcrN9VzWs9+1cQLoifuvL1jZQi4SvtGd59kq1JQfxS
-	AsreryrkvgwhwUtkASUacLumGejMg7PASYN6jAlG7RCHzq/inD3U/9i0v6LENnhyPGkp7ch36x0
-	80u+DET551EWh/4qCpuqGTwfhPUtinCvKIKgBvq3ya45lcKUKHykNUTL3ZyreEw4XrBcHpfAA52
-	Iq6jUzTdI7TsBkNd+l2FFJxmMWWd4ahFQHqXWxMF5/EeaoKCU2wgHo
-X-Received: by 2002:a05:600c:4fcb:b0:485:35a4:939c with SMTP id 5b1f17b1804b1-4854b132402mr35015405e9.29.1773227123721;
-        Wed, 11 Mar 2026 04:05:23 -0700 (PDT)
+        bh=5lOCwcE1nbTc3unb3WziR6fBHvu6MKiwhNderAn8a7s=;
+        b=C+WS0X2e5SOFlg8cNdCY4PBRDUhz7yqJoQZnHFmzk+xC2vBPy4q4P84s9HWuIyp7D9
+         rgPaScqxO5h/MfS8Sme2yuKwSsNckMgb+FC5nk9oj0wQUWcPdnA7PT9IfSc7JVJdF53H
+         6jdN6VeNmqQhCbXOtWlNTIMlIKknbjqe4qY46ZWzhdUhsz3TWSTOIJqM2O7XkorzX9ML
+         9J514MdD0oHp8KaYPBn7RoP+bW1R9VgmU/I8/kgb0Eerp8uLlPCOaZt+LZS+kOYIoeBh
+         7GxxzPmgVXYQ3+OptV8Ft0EUhYFvbPghp99sq5PJYZZKk4sMrAAAX3kvsyQwGZfNGECY
+         2eKA==
+X-Gm-Message-State: AOJu0Yx9+2fbLl7MK+Ks3M417Rvcpc38PAqUN9afQ8KHic5mC+dUpW2f
+	yFzYwvP9XJ/CIkYrnDiLgpR9i5rST0CV0HHYXZf4QNuWa6nakysPQl0XX+RiZib7xUvUeC44CA4
+	xhDJ0
+X-Gm-Gg: ATEYQzyEnxSMznN5cOKU3ASrm7nzhfCn3nyIpJgT1FNH/8wwjsJ4lpNHloPi4ETgSFy
+	Dae06O5ongvP0qD07wmDJh8SIZUKElOiK7wJJL/tVthEt6oR7E/l94NHx9Qj5HMu0nTVeaZEqCb
+	R/IE2CaYrFUziyxXyoVsCoTOnjZ2UJKX1CTsjYi2GljHzjpCp4TWTiE1D6Ty3081s13SAdvfh7t
+	1S1Vb4cCVvjC1/E6pyTuhxciVeitbAc7wkHoCy39Q5mtjZQl/h8P092YYF73vEv/+vG4RoLbmGh
+	KbNuPwD0aeDOoK+JvLVsbrBkxhvdBlvLBzd5ADe0mzTthOch8uQZKiWDE4qbHUNP1H/+05TAlpU
+	KcxyxIQskOuuAb9I+wwL+jNH9/c053zFZCiUL7FJPZIBlOjIk0GWc3TqFHv1QlP3hIWaXI3Kys5
+	GZryN9m6+cDyCbC4QQ6CoWqDV64hRtd+INCNofgEneEGcCm2EWxB1b0Hg79VLkZIk=
+X-Received: by 2002:a05:600c:1f8e:b0:485:4394:b0e with SMTP id 5b1f17b1804b1-4854b0be737mr36698635e9.12.1773227127843;
+        Wed, 11 Mar 2026 04:05:27 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.205])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4854a2d7de3sm18998525e9.3.2026.03.11.04.05.22
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4854a2d7de3sm18998525e9.3.2026.03.11.04.05.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2026 04:05:23 -0700 (PDT)
+        Wed, 11 Mar 2026 04:05:27 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 6.1.y-cip 01/17] clk: renesas: r9a08g045: Add PCIe clocks and resets
-Date: Wed, 11 Mar 2026 13:05:04 +0200
-Message-ID: <20260311110520.1938414-2-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 04/17] PCI: Add PCIE_RESET_CONFIG_DEVICE_WAIT_MS waiting time value
+Date: Wed, 11 Mar 2026 13:05:07 +0200
+Message-ID: <20260311110520.1938414-5-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260311110520.1938414-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20260311110520.1938414-1-claudiu.beznea.uj@bp.renesas.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 11 Mar 2026 11:05:30 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22309
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22312
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Kevin Xie <kevin.xie@starfivetech.com>
 
-commit 6b234eda88d781d244094836afc37c90b57832f3 upstream.
+commit d5ceb9496c565eb5763c127c6eb2d2b3068ab1df upstream.
 
-Add clocks and resets for the PCIe IP available on the Renesas RZ/G3S
-SoC.  The clkl1pm clock is required for PCIe link power management (PM)
-control and should be enabled based on the state of the CLKREQ# pin.
-Therefore, mark it as a no_pm clock to allow the PCIe driver to manage
-it during link PM transitions.
+Add the PCIE_RESET_CONFIG_DEVICE_WAIT_MS macro to define the minimum
+waiting time between exit from a conventional reset and sending the
+first configuration request to the device.
 
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250704161410.3931884-3-claudiu.beznea.uj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[claudiu.beznea: fixed conflict by dropping I3C clocks and resets as
- these are not yet present in v6.1 CIP]
+As described in PCIe r6.0, sec 6.6.1 <Conventional Reset>, there are two
+different use cases of the value:
+
+   - "With a Downstream Port that does not support Link speeds greater
+     than 5.0 GT/s, software must wait a minimum of 100 ms following exit
+     from a Conventional Reset before sending a Configuration Request to
+     the device immediately below that Port."
+
+   - "With a Downstream Port that supports Link speeds greater than
+     5.0 GT/s, software must wait a minimum of 100 ms after Link training
+     completes before sending a Configuration Request to the device
+     immediately below that Port."
+
+[kwilczynski: commit log]
+Link: https://lore.kernel.org/linux-pci/20240328091835.14797-21-minda.chen@starfivetech.com
+Signed-off-by: Kevin Xie <kevin.xie@starfivetech.com>
+Signed-off-by: Krzysztof Wilczyński <kwilczynski@kernel.org>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Mason Huo <mason.huo@starfivetech.com>
+[claudiu.beznea: fixed conflict by keeping only the definition for
+ PCIE_RESET_CONFIG_DEVICE_WAIT_MS]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/clk/renesas/r9a08g045-cpg.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ drivers/pci/pci.h | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9a08g045-cpg.c
-index c3b64f94e188..3e8eae79af09 100644
---- a/drivers/clk/renesas/r9a08g045-cpg.c
-+++ b/drivers/clk/renesas/r9a08g045-cpg.c
-@@ -283,6 +283,10 @@ static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
- 					MSTOP(BUS_MCPU2, BIT(14))),
- 	DEF_MOD("tsu_pclk",		R9A08G045_TSU_PCLK, R9A08G045_CLK_TSU, 0x5ac, 0,
- 					MSTOP(BUS_MCPU2, BIT(15))),
-+	DEF_MOD("pci_aclk",		R9A08G045_PCI_ACLK, R9A08G045_CLK_M0, 0x608, 0,
-+					MSTOP(BUS_PERI_COM, BIT(10))),
-+	DEF_MOD("pci_clkl1pm",		R9A08G045_PCI_CLKL1PM, R9A08G045_CLK_ZT, 0x608, 1,
-+					MSTOP(BUS_PERI_COM, BIT(10))),
- 	DEF_MOD("vbat_bclk",		R9A08G045_VBAT_BCLK, R9A08G045_OSCCLK, 0x614, 0,
- 					MSTOP(BUS_MCPU3, GENMASK(8, 7))),
- };
-@@ -319,6 +323,13 @@ static const struct rzg2l_reset r9a08g045_resets[] = {
- 	DEF_RST(R9A08G045_ADC_PRESETN, 0x8a8, 0),
- 	DEF_RST(R9A08G045_ADC_ADRST_N, 0x8a8, 1),
- 	DEF_RST(R9A08G045_TSU_PRESETN, 0x8ac, 0),
-+	DEF_RST(R9A08G045_PCI_ARESETN, 0x908, 0),
-+	DEF_RST(R9A08G045_PCI_RST_B, 0x908, 1),
-+	DEF_RST(R9A08G045_PCI_RST_GP_B, 0x908, 2),
-+	DEF_RST(R9A08G045_PCI_RST_PS_B, 0x908, 3),
-+	DEF_RST(R9A08G045_PCI_RST_RSM_B, 0x908, 4),
-+	DEF_RST(R9A08G045_PCI_RST_CFG_B, 0x908, 5),
-+	DEF_RST(R9A08G045_PCI_RST_LOAD_B, 0x908, 6),
- 	DEF_RST(R9A08G045_VBAT_BRESETN, 0x914, 0),
- };
+diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+index 38ad75ce52c3..8f47441b16db 100644
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@ -11,6 +11,21 @@
  
-@@ -330,6 +341,10 @@ static const unsigned int r9a08g045_crit_mod_clks[] __initconst = {
- 	MOD_CLK_BASE + R9A08G045_VBAT_BCLK,
- };
+ #define PCI_VSEC_ID_INTEL_TBT	0x1234	/* Thunderbolt */
  
-+static const unsigned int r9a08g045_no_pm_mod_clks[] = {
-+	MOD_CLK_BASE + R9A08G045_PCI_CLKL1PM,
-+};
++/*
++ * PCIe r6.0, sec 6.6.1 <Conventional Reset>
++ *
++ * - "With a Downstream Port that does not support Link speeds greater
++ *    than 5.0 GT/s, software must wait a minimum of 100 ms following exit
++ *    from a Conventional Reset before sending a Configuration Request to
++ *    the device immediately below that Port."
++ *
++ * - "With a Downstream Port that supports Link speeds greater than
++ *    5.0 GT/s, software must wait a minimum of 100 ms after Link training
++ *    completes before sending a Configuration Request to the device
++ *    immediately below that Port."
++ */
++#define PCIE_RESET_CONFIG_DEVICE_WAIT_MS	100
 +
- const struct rzg2l_cpg_info r9a08g045_cpg_info = {
- 	/* Core Clocks */
- 	.core_clks = r9a08g045_core_clks,
-@@ -346,6 +361,10 @@ const struct rzg2l_cpg_info r9a08g045_cpg_info = {
- 	.num_mod_clks = ARRAY_SIZE(r9a08g045_mod_clks),
- 	.num_hw_mod_clks = R9A08G045_VBAT_BCLK + 1,
+ extern const unsigned char pcie_link_speed[];
+ extern bool pci_early_dump;
  
-+	/* No PM modules Clocks */
-+	.no_pm_mod_clks = r9a08g045_no_pm_mod_clks,
-+	.num_no_pm_mod_clks = ARRAY_SIZE(r9a08g045_no_pm_mod_clks),
-+
- 	/* Resets */
- 	.resets = r9a08g045_resets,
- 	.num_resets = R9A08G045_VBAT_BRESETN + 1, /* Last reset ID + 1 */
 -- 
 2.43.0
 
