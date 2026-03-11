@@ -2,136 +2,62 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 756851062891
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54345106288F
 	for <webhook@archiver.kernel.org>; Wed, 11 Mar 2026 12:36:44 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.20385.1773232602772254028
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.20384.1773232602165262372
  for <cip-dev@lists.cip-project.org>;
- Wed, 11 Mar 2026 05:36:43 -0700
+ Wed, 11 Mar 2026 05:36:42 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-CSE-ConnectionGUID: CQf1+0JiTa+Bb+Zp0OFj6Q==
-X-CSE-MsgGUID: lNPZ3VumS9eerGkz4dVchw==
+X-CSE-ConnectionGUID: zDOWYOkuRdynIe0vbDWG8A==
+X-CSE-MsgGUID: TirIcPwVRAawJ8CeUjY8wg==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 11 Mar 2026 21:36:42 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 11 Mar 2026 21:36:40 +0900
 Received: from Ubuntu-22.. (unknown [10.24.0.227])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id EAA5D400F2D4;
-	Wed, 11 Mar 2026 21:36:40 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 3CCD2400F2D4;
+	Wed, 11 Mar 2026 21:36:39 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 1/2] arm64: dts: renesas: r9a09g077: Add DT nodes for SCI channels 1-5
-Date: Wed, 11 Mar 2026 12:36:37 +0000
-Message-ID: <20260311123638.25773-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 0/2] arm64: dts: renesas: r9a09g077/r9a09g087: Add DT nodes for SCI channels 1-5
+Date: Wed, 11 Mar 2026 12:36:36 +0000
+Message-ID: <20260311123638.25773-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260311123638.25773-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20260311123638.25773-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 11 Mar 2026 12:36:44 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22341
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22340
 
-commit be5d60d94b982d46a734750d93624bd85a1c7089 upstream.
+Hi all,
 
-The RZ/T2H SoC exposes six SCI controllers; sci0 was already present in
-the SoC DTSI. Add the remaining SCI nodes (sci1-sci5).
+The RZ/T2H and RZ/N2H SoCs expose six SCI controllers; sci0 was already
+present in the SoC DTSI. This patch adds the remaining SCI nodes
+(sci1-sci5) to the respective SoC DTSIs.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250812200344.3253781-2-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[PL: manually fixed merge conflicts]
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
+Note the patches have been picked up from upstream and manually merged
+to resolve conflicts.
+
+Note, these patches apply on top of the RSPI series [0].
+
+[0] https://lore.kernel.org/all/20260309150619.761962-1-cosmin-gabriel.tanislav.xa@renesas.com/
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (2):
+  arm64: dts: renesas: r9a09g077: Add DT nodes for SCI channels 1-5
+  arm64: dts: renesas: r9a09g087: Add DT nodes for SCI channels 1-5
+
  arch/arm64/boot/dts/renesas/r9a09g077.dtsi | 70 ++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
+ arch/arm64/boot/dts/renesas/r9a09g087.dtsi | 70 ++++++++++++++++++++++
+ 2 files changed, 140 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g077.dtsi b/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
-index 78436a486ffe3..2c9bff718cbc3 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
-@@ -90,6 +90,76 @@ sci0: serial@80005000 {
- 			status = "disabled";
- 		};
- 
-+		sci1: serial@80005400 {
-+			compatible = "renesas,r9a09g077-rsci";
-+			reg = <0 0x80005400 0 0x400>;
-+			interrupts = <GIC_SPI 594 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 595 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 596 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 597 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi", "tei";
-+			clocks = <&cpg CPG_MOD 9>, <&cpg CPG_CORE R9A09G077_CLK_PCLKM>;
-+			clock-names = "operation", "bus";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
-+		sci2: serial@80005800 {
-+			compatible = "renesas,r9a09g077-rsci";
-+			reg = <0 0x80005800 0 0x400>;
-+			interrupts = <GIC_SPI 598 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 599 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 600 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 601 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi", "tei";
-+			clocks = <&cpg CPG_MOD 10>, <&cpg CPG_CORE R9A09G077_CLK_PCLKM>;
-+			clock-names = "operation", "bus";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
-+		sci3: serial@80005c00 {
-+			compatible = "renesas,r9a09g077-rsci";
-+			reg = <0 0x80005c00 0 0x400>;
-+			interrupts = <GIC_SPI 602 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 603 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 604 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 605 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi", "tei";
-+			clocks = <&cpg CPG_MOD 11>, <&cpg CPG_CORE R9A09G077_CLK_PCLKM>;
-+			clock-names = "operation", "bus";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
-+		sci4: serial@80006000 {
-+			compatible = "renesas,r9a09g077-rsci";
-+			reg = <0 0x80006000 0 0x400>;
-+			interrupts = <GIC_SPI 606 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 607 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 608 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 609 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi", "tei";
-+			clocks = <&cpg CPG_MOD 12>, <&cpg CPG_CORE R9A09G077_CLK_PCLKM>;
-+			clock-names = "operation", "bus";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
-+		sci5: serial@81005000 {
-+			compatible = "renesas,r9a09g077-rsci";
-+			reg = <0 0x81005000 0 0x400>;
-+			interrupts = <GIC_SPI 610 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 611 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 612 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 613 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi", "tei";
-+			clocks = <&cpg CPG_MOD 600>, <&cpg CPG_CORE R9A09G077_CLK_PCLKM>;
-+			clock-names = "operation", "bus";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
- 		rspi0: spi@80007000 {
- 			compatible = "renesas,r9a09g077-rspi";
- 			reg = <0x0 0x80007000 0x0 0x400>;
 -- 
 2.43.0
 
