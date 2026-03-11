@@ -2,137 +2,204 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8771F10611EA
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B701D10611F1
 	for <webhook@archiver.kernel.org>; Wed, 11 Mar 2026 11:05:30 +0000 (UTC)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.18693.1773227129643845192
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.18307.1773227126896415641
  for <cip-dev@lists.cip-project.org>;
- Wed, 11 Mar 2026 04:05:29 -0700
+ Wed, 11 Mar 2026 04:05:27 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=Qbx0YUHs;
- spf=pass (domain: tuxon.dev, ip: 209.85.128.51, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-48532925a4bso19972995e9.1
-        for <cip-dev@lists.cip-project.org>; Wed, 11 Mar 2026 04:05:29 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=qqeEpORj;
+ spf=pass (domain: tuxon.dev, ip: 209.85.128.48, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4852e9ca034so43321475e9.2
+        for <cip-dev@lists.cip-project.org>; Wed, 11 Mar 2026 04:05:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1773227128; x=1773831928; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1773227125; x=1773831925; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5lOCwcE1nbTc3unb3WziR6fBHvu6MKiwhNderAn8a7s=;
-        b=Qbx0YUHs8V8Edq7EiDgch92e6p7BzAS2nHXsgpGv5AzgGsLnTY+/tIRmT5ZEITdoJU
-         NyTYWHQIB7/eFb8tDc4rWDK132f9wrzXQiC/ryLWV2x3S7NQswNPvCXR+UPPCZVUI1q6
-         4EH1Ap96F9MJUwyLLTFccLgmJ6k0v+kpAsCLXbEkH/YRrhKB0LpAcs2pRnwgRy0DDQ74
-         0PE46Ys66JS98WpvdyVqFTzCcguSrWk8xyOq5xgKmKzRjhOK2KzFG1FKNzRkrDYSKAG3
-         3d8X0qaiTDNcJ9YJqmE5AiCI7gG+LVgenzX3kyaRqduXngF2XOE+AcnhA4zWt2e2M0GG
-         /NbQ==
+        bh=EtYPNYwoyyBWPsd+500W+Lsaqcq9TBMbdIjIYI5SCGo=;
+        b=qqeEpORjvr61k24H/MH48d1JXIBJUDlctapwY/RFXpAEA3nlxbRsQECf4d/BRVIXcd
+         8dqr5YKCW6mjyQwcGRrNEPDrGpxtx8NV0SjZWiiaa7UVuoeV7RWuidzdOCarc4Txr8Kj
+         1UEzkSmUApNafzjWKZGDuZmOwKWXV9cR3CkG87XPTW7jEYJkKZp8K719V/Uz3EBoF7Hj
+         EmteuJEJh09msw3uCT1OuXZlA4Fndl5eG91lHmlj+qn96IVv0F2NUOO+A0dkOi5SOMXi
+         juafgbjE2/FAmzzg9U11tniIHLCZcWgOTSC22RIgYe9lcEOUqk10EtIckLQO6/mOB7qE
+         mF2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773227128; x=1773831928;
+        d=1e100.net; s=20230601; t=1773227125; x=1773831925;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=5lOCwcE1nbTc3unb3WziR6fBHvu6MKiwhNderAn8a7s=;
-        b=C+WS0X2e5SOFlg8cNdCY4PBRDUhz7yqJoQZnHFmzk+xC2vBPy4q4P84s9HWuIyp7D9
-         rgPaScqxO5h/MfS8Sme2yuKwSsNckMgb+FC5nk9oj0wQUWcPdnA7PT9IfSc7JVJdF53H
-         6jdN6VeNmqQhCbXOtWlNTIMlIKknbjqe4qY46ZWzhdUhsz3TWSTOIJqM2O7XkorzX9ML
-         9J514MdD0oHp8KaYPBn7RoP+bW1R9VgmU/I8/kgb0Eerp8uLlPCOaZt+LZS+kOYIoeBh
-         7GxxzPmgVXYQ3+OptV8Ft0EUhYFvbPghp99sq5PJYZZKk4sMrAAAX3kvsyQwGZfNGECY
-         2eKA==
-X-Gm-Message-State: AOJu0Yx9+2fbLl7MK+Ks3M417Rvcpc38PAqUN9afQ8KHic5mC+dUpW2f
-	yFzYwvP9XJ/CIkYrnDiLgpR9i5rST0CV0HHYXZf4QNuWa6nakysPQl0XX+RiZib7xUvUeC44CA4
-	xhDJ0
-X-Gm-Gg: ATEYQzyEnxSMznN5cOKU3ASrm7nzhfCn3nyIpJgT1FNH/8wwjsJ4lpNHloPi4ETgSFy
-	Dae06O5ongvP0qD07wmDJh8SIZUKElOiK7wJJL/tVthEt6oR7E/l94NHx9Qj5HMu0nTVeaZEqCb
-	R/IE2CaYrFUziyxXyoVsCoTOnjZ2UJKX1CTsjYi2GljHzjpCp4TWTiE1D6Ty3081s13SAdvfh7t
-	1S1Vb4cCVvjC1/E6pyTuhxciVeitbAc7wkHoCy39Q5mtjZQl/h8P092YYF73vEv/+vG4RoLbmGh
-	KbNuPwD0aeDOoK+JvLVsbrBkxhvdBlvLBzd5ADe0mzTthOch8uQZKiWDE4qbHUNP1H/+05TAlpU
-	KcxyxIQskOuuAb9I+wwL+jNH9/c053zFZCiUL7FJPZIBlOjIk0GWc3TqFHv1QlP3hIWaXI3Kys5
-	GZryN9m6+cDyCbC4QQ6CoWqDV64hRtd+INCNofgEneEGcCm2EWxB1b0Hg79VLkZIk=
-X-Received: by 2002:a05:600c:1f8e:b0:485:4394:b0e with SMTP id 5b1f17b1804b1-4854b0be737mr36698635e9.12.1773227127843;
-        Wed, 11 Mar 2026 04:05:27 -0700 (PDT)
+        bh=EtYPNYwoyyBWPsd+500W+Lsaqcq9TBMbdIjIYI5SCGo=;
+        b=OhzIFxPjWbOy9RNT2LkWkBKDFP2Vu9alUIkXUQX7nCEh/bkIKJCPOvlM1sUDSbASfN
+         cR10DvjGmBSlFFqdphb5P1jM0AVyfNnirBvHjquzQeZQ77ARXCraMjR7ddDJb8XqNTsc
+         3axIcwKEnW/Zju4meXm5l1xKzPmiRZArXIyRurJPvEiSL6xTusSRQqNYIlTBxnCQp9Wu
+         jhfTPcTic58pTv28GVVcccJB6uqhFIT6gF7fFEdT7p2/TpoofG4EbsEg+WPOdTz6WuG+
+         Iw/XOJkubIajY76PuWN6OkJwwJHjVAKZC2m/hPlYWI30KC+3Fei3oGW9P8QFNi3xwSFj
+         y8Wg==
+X-Gm-Message-State: AOJu0YwywrJUupQwyGvyprQpLCxzY5WbGT2BUsijEM2h536Bow94whct
+	ZQpmIiOdbEl2poT3bkKbteexSt5z56xTAnkfhlp+bg+ribS10kxcjTS3T2l6K+yzkPs=
+X-Gm-Gg: ATEYQzwhsylw8FrYOMbbKvw9bRFe5VzGBlPoroRy6lbZhTrxh/zFsQWJQ8UUS4uIICa
+	MVwQyQgCznKKcG3jvcHtustC9+egIoLTyRGutfN/Ft72drtWDG2ASf+JI2G3RaauMJorL8e16bR
+	06AGBbO+Oksa3CeMh8nQTc4NbKPoMlOYh5Ntx1vkaDuM7n0YRYM6jttUL2UOBS5fia0Z3lOsVzt
+	Ds7PRgdDs31fORGLSUJgyzPYoDMmMHegjgaeckl9vuyQy50s7YWNL/agqH9Bhfm3SDFiEwuCL0x
+	3VECVoKmRvSKwNib6S3AC6Y9yDZMc1YoFFxoahsdQBFJyVK2bv2mEv3f3+W5hHVdmCeOTsT0yAZ
+	2CsOFch8YZZpXOhigfsYqct7cAVH02y/uZGhCB8UatSCnYMZ3WMAPk/HCVA8wmJrvtB8QLsHNjI
+	LcopJ9dHXK9K74Mxz2jA7OPQiH8rqyOpZcoil+r8eK5vbyzUtoBSxtGdYUiE6aeM0=
+X-Received: by 2002:a05:600c:3b18:b0:485:39d1:b4ca with SMTP id 5b1f17b1804b1-4854b0b32femr34170715e9.9.1773227125109;
+        Wed, 11 Mar 2026 04:05:25 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.205])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4854a2d7de3sm18998525e9.3.2026.03.11.04.05.26
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4854a2d7de3sm18998525e9.3.2026.03.11.04.05.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2026 04:05:27 -0700 (PDT)
+        Wed, 11 Mar 2026 04:05:24 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 6.1.y-cip 04/17] PCI: Add PCIE_RESET_CONFIG_DEVICE_WAIT_MS waiting time value
-Date: Wed, 11 Mar 2026 13:05:07 +0200
-Message-ID: <20260311110520.1938414-5-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 02/17] lib/bitmap: add bitmap_{read,write}()
+Date: Wed, 11 Mar 2026 13:05:05 +0200
+Message-ID: <20260311110520.1938414-3-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260311110520.1938414-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20260311110520.1938414-1-claudiu.beznea.uj@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 11 Mar 2026 11:05:30 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22312
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22310
 
-From: Kevin Xie <kevin.xie@starfivetech.com>
+From: Syed Nayyar Waris <syednwaris@gmail.com>
 
-commit d5ceb9496c565eb5763c127c6eb2d2b3068ab1df upstream.
+commit 63c15822b8dd02a2423cfd92232245ace3f7a11b upstream.
 
-Add the PCIE_RESET_CONFIG_DEVICE_WAIT_MS macro to define the minimum
-waiting time between exit from a conventional reset and sending the
-first configuration request to the device.
+The two new functions allow reading/writing values of length up to
+BITS_PER_LONG bits at arbitrary position in the bitmap.
 
-As described in PCIe r6.0, sec 6.6.1 <Conventional Reset>, there are two
-different use cases of the value:
+The code was taken from "bitops: Introduce the for_each_set_clump macro"
+by Syed Nayyar Waris with a number of changes and simplifications:
+ - instead of using roundup(), which adds an unnecessary dependency
+   on <linux/math.h>, we calculate space as BITS_PER_LONG-offset;
+ - indentation is reduced by not using else-clauses (suggested by
+   checkpatch for bitmap_get_value());
+ - bitmap_get_value()/bitmap_set_value() are renamed to bitmap_read()
+   and bitmap_write();
+ - some redundant computations are omitted.
 
-   - "With a Downstream Port that does not support Link speeds greater
-     than 5.0 GT/s, software must wait a minimum of 100 ms following exit
-     from a Conventional Reset before sending a Configuration Request to
-     the device immediately below that Port."
-
-   - "With a Downstream Port that supports Link speeds greater than
-     5.0 GT/s, software must wait a minimum of 100 ms after Link training
-     completes before sending a Configuration Request to the device
-     immediately below that Port."
-
-[kwilczynski: commit log]
-Link: https://lore.kernel.org/linux-pci/20240328091835.14797-21-minda.chen@starfivetech.com
-Signed-off-by: Kevin Xie <kevin.xie@starfivetech.com>
-Signed-off-by: Krzysztof Wilczyński <kwilczynski@kernel.org>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Mason Huo <mason.huo@starfivetech.com>
-[claudiu.beznea: fixed conflict by keeping only the definition for
- PCIE_RESET_CONFIG_DEVICE_WAIT_MS]
+Cc: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Syed Nayyar Waris <syednwaris@gmail.com>
+Signed-off-by: William Breathitt Gray <william.gray@linaro.org>
+Link: https://lore.kernel.org/lkml/fe12eedf3666f4af5138de0e70b67a07c7f40338.1592224129.git.syednwaris@gmail.com/
+Suggested-by: Yury Norov <yury.norov@gmail.com>
+Co-developed-by: Alexander Potapenko <glider@google.com>
+Signed-off-by: Alexander Potapenko <glider@google.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Acked-by: Yury Norov <yury.norov@gmail.com>
+Signed-off-by: Yury Norov <yury.norov@gmail.com>
+Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/pci/pci.h | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ include/linux/bitmap.h | 77 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 77 insertions(+)
 
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index 38ad75ce52c3..8f47441b16db 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -11,6 +11,21 @@
+diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
+index 3c8d2b87a9ed..729ec2453149 100644
+--- a/include/linux/bitmap.h
++++ b/include/linux/bitmap.h
+@@ -77,6 +77,10 @@ struct device;
+  *  bitmap_to_arr64(buf, src, nbits)            Copy nbits from buf to u64[] dst
+  *  bitmap_get_value8(map, start)               Get 8bit value from map at start
+  *  bitmap_set_value8(map, value, start)        Set 8bit value to map at start
++ *  bitmap_read(map, start, nbits)              Read an nbits-sized value from
++ *                                              map at start
++ *  bitmap_write(map, value, start, nbits)      Write an nbits-sized value to
++ *                                              map at start
+  *
+  * Note, bitmap_zero() and bitmap_fill() operate over the region of
+  * unsigned longs, that is, bits behind bitmap till the unsigned long
+@@ -613,6 +617,79 @@ static inline void bitmap_set_value8(unsigned long *map, unsigned long value,
+ 	map[index] |= value << offset;
+ }
  
- #define PCI_VSEC_ID_INTEL_TBT	0x1234	/* Thunderbolt */
- 
-+/*
-+ * PCIe r6.0, sec 6.6.1 <Conventional Reset>
++/**
++ * bitmap_read - read a value of n-bits from the memory region
++ * @map: address to the bitmap memory region
++ * @start: bit offset of the n-bit value
++ * @nbits: size of value in bits, nonzero, up to BITS_PER_LONG
 + *
-+ * - "With a Downstream Port that does not support Link speeds greater
-+ *    than 5.0 GT/s, software must wait a minimum of 100 ms following exit
-+ *    from a Conventional Reset before sending a Configuration Request to
-+ *    the device immediately below that Port."
-+ *
-+ * - "With a Downstream Port that supports Link speeds greater than
-+ *    5.0 GT/s, software must wait a minimum of 100 ms after Link training
-+ *    completes before sending a Configuration Request to the device
-+ *    immediately below that Port."
++ * Returns: value of @nbits bits located at the @start bit offset within the
++ * @map memory region. For @nbits = 0 and @nbits > BITS_PER_LONG the return
++ * value is undefined.
 + */
-+#define PCIE_RESET_CONFIG_DEVICE_WAIT_MS	100
++static inline unsigned long bitmap_read(const unsigned long *map,
++					unsigned long start,
++					unsigned long nbits)
++{
++	size_t index = BIT_WORD(start);
++	unsigned long offset = start % BITS_PER_LONG;
++	unsigned long space = BITS_PER_LONG - offset;
++	unsigned long value_low, value_high;
 +
- extern const unsigned char pcie_link_speed[];
- extern bool pci_early_dump;
++	if (unlikely(!nbits || nbits > BITS_PER_LONG))
++		return 0;
++
++	if (space >= nbits)
++		return (map[index] >> offset) & BITMAP_LAST_WORD_MASK(nbits);
++
++	value_low = map[index] & BITMAP_FIRST_WORD_MASK(start);
++	value_high = map[index + 1] & BITMAP_LAST_WORD_MASK(start + nbits);
++	return (value_low >> offset) | (value_high << space);
++}
++
++/**
++ * bitmap_write - write n-bit value within a memory region
++ * @map: address to the bitmap memory region
++ * @value: value to write, clamped to nbits
++ * @start: bit offset of the n-bit value
++ * @nbits: size of value in bits, nonzero, up to BITS_PER_LONG.
++ *
++ * bitmap_write() behaves as-if implemented as @nbits calls of __assign_bit(),
++ * i.e. bits beyond @nbits are ignored:
++ *
++ *   for (bit = 0; bit < nbits; bit++)
++ *           __assign_bit(start + bit, bitmap, val & BIT(bit));
++ *
++ * For @nbits == 0 and @nbits > BITS_PER_LONG no writes are performed.
++ */
++static inline void bitmap_write(unsigned long *map, unsigned long value,
++				unsigned long start, unsigned long nbits)
++{
++	size_t index;
++	unsigned long offset;
++	unsigned long space;
++	unsigned long mask;
++	bool fit;
++
++	if (unlikely(!nbits || nbits > BITS_PER_LONG))
++		return;
++
++	mask = BITMAP_LAST_WORD_MASK(nbits);
++	value &= mask;
++	offset = start % BITS_PER_LONG;
++	space = BITS_PER_LONG - offset;
++	fit = space >= nbits;
++	index = BIT_WORD(start);
++
++	map[index] &= (fit ? (~(mask << offset)) : ~BITMAP_FIRST_WORD_MASK(start));
++	map[index] |= value << offset;
++	if (fit)
++		return;
++
++	map[index + 1] &= BITMAP_FIRST_WORD_MASK(start + nbits);
++	map[index + 1] |= (value >> space);
++}
++
+ #endif /* __ASSEMBLY__ */
  
+ #endif /* __LINUX_BITMAP_H */
 -- 
 2.43.0
 
