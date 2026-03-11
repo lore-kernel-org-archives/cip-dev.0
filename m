@@ -2,55 +2,56 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32DE4104BEBC
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 355B4104BEBE
 	for <webhook@archiver.kernel.org>; Wed, 11 Mar 2026 10:05:06 +0000 (UTC)
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.17640.1773223501203572531
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.17646.1773223503813868720
  for <cip-dev@lists.cip-project.org>;
- Wed, 11 Mar 2026 03:05:01 -0700
+ Wed, 11 Mar 2026 03:05:04 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=mCmnHD74;
- spf=pass (domain: gmail.com, ip: 209.85.221.42, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-439b790af67so656558f8f.0
-        for <cip-dev@lists.cip-project.org>; Wed, 11 Mar 2026 03:05:00 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=Qlra3Hbn;
+ spf=pass (domain: gmail.com, ip: 209.85.221.45, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-439d8dc4ae4so3689335f8f.2
+        for <cip-dev@lists.cip-project.org>; Wed, 11 Mar 2026 03:05:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773223499; x=1773828299; darn=lists.cip-project.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vdV4s+5Bcf5NVDvzyiZKzzoiNQCHzvUQ9+XMhkD4mXQ=;
-        b=mCmnHD743ZB5MiCaNb+bwGU32YL06+tP7mc+CG2axWCKTeACQKr4ZxNGXl0hWkywTo
-         tBAyUIK8j8oTsw8fO7jXJtIxZTxRAsDi9n0b9Uhbb10IC/PvQuPC+V339nYbzFwoImlZ
-         RGIl7ZVgW3J8bnOcsp6QNQbbbUhsfJ40PwYJ/oPIKYzMRu782dDqjRiVyuT4Kd1nw8cO
-         1JeEovoiUhx5perzSzRPMF8XwBYfCostX2icWlCi2ROmZ1yXnV7CJpC6a61Xf6p+tAPS
-         PBCIM6dmH4HinBiixVyq1epW/ONVJZx7+QWjYFoUzZ0czvmhWwUDol1oooFzi22mq7YY
-         6DRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773223499; x=1773828299;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1773223502; x=1773828302; darn=lists.cip-project.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vdV4s+5Bcf5NVDvzyiZKzzoiNQCHzvUQ9+XMhkD4mXQ=;
-        b=oU7bTK+2zWL5FM2g2Gjf1hpcVhK/ZHt6rm5inpUJ8RVUiOmwIYFBEGGxmkg9xWcFbE
-         VGoo4eoBCEt3N/Jg70NuV1DCRX2uj/tZDTdlFW7nZ+hJWh8t/Q1Ty1LY3mLlJzULVdqL
-         vu/a2LuButdjI9Vn3Dh7DGE9/cnGNoSLn0bWVACytNE/3yqzIytmflMMg6FokLCkUray
-         nOzO+47DtYIJuDFQrnnBPmfUkXtRqytxr9tuLXclEmHpSmMOpvXbj/HmgWhREJMtZqab
-         Bso8IHA6M1FaS6teAi9ZXpDTtT2VnGvU580aT/GrsUBwp9rgqOKtzmsTbswnQZbg4xay
-         v+jw==
-X-Gm-Message-State: AOJu0Yw31/JxnHQC9Dx/n0OI5V2TbVv8ABB3vlbqqUE4NtK1Z5h1iTzV
-	9t2uvXRbnvDU6QMdqoKI/LcPgs2jiQRxkzF2r03pJOslpmjXlEmWB1CrgdS2pw==
-X-Gm-Gg: ATEYQzzxy3+5XcPQ5UgL7bbsdJ4nv0uadepHlnHd4MC8Q7hYBeRSpQ2bcEsCLZox07B
-	Y4o2G0zAv/eWomhfaLJ+MYjoaWThghkLT/3TUiLsJJ1MzwB+wqkmpTaqr/EMn1eweEpPhB0K0BS
-	fpOpdp1xPIJc21fqKYwQQX80BtxVDZ0O7IL95pBz+pPrFLglaUlSK5N+b+oUWrahfUS6lHzneMl
-	CFsudJ/0R6BLiRlSqWUfHA8dmwkAK+DeBfZpSztYdwLiDzY8/LR9MoulhX8DzPAEgmHJfo8yae9
-	b461k4y8Fpi0zD72h0nHstAoBQ3v13YP4HQR8nkBfxXr6gXTV4MpO7e8GEbfCerV2aHDQKk6Mzz
-	j1jjhXSABWRIXgENSg5b0fyDLhKG/PHvxEYb02vJQ9iU2ldczJzqFVULaDzIGgoBlRCLrsmkfF8
-	CQVj4aoNlRFfKnQQjaQcHXgwGtKnCheXI=
-X-Received: by 2002:a05:6000:26d0:b0:439:c018:60e1 with SMTP id ffacd0b85a97d-439eff5ee41mr11858082f8f.21.1773223499091;
-        Wed, 11 Mar 2026 03:04:59 -0700 (PDT)
+        bh=DvOU5rhiBMiM7to84vnhz1rpwWTu+MfEbMGkq6n02XQ=;
+        b=Qlra3HbnyMysN4mWmV8nXxiFvLjKYTeyEMo2ZIahMz9IzdGp3bd41e1ZbZdizs9urn
+         isX26la9zx4F4sEFnA8Ya+cihoZ0+l0khMbI9guvB2ykDXZN2f2hZRmhRRUoTiwio3eV
+         1Yn+BtPbWE9y5LKwunzsoKA0Vox76j5IPgEf+DvLUSJmwYLe/rJJ8DONLi7fz335svRd
+         geZnPJ/raw8autpRLoFStTp0uTlsqNWb6M/SjXUj8jMyzrhUGm+F3VOM35jb+oXADroZ
+         zyRoD8cKpxD2udrigXvrYm8o2G/lW+Izv3gyl3lxnrQ1MM/kNzKjBqxxlKP3AmW8b+It
+         pgNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773223502; x=1773828302;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=DvOU5rhiBMiM7to84vnhz1rpwWTu+MfEbMGkq6n02XQ=;
+        b=duL35jfkyapluNAtszZ0OK7kfgMbwdm/8og5b5A9huTNkS0ukhYLn33W7SqxqlkVaL
+         mcqgOblMec9NPoluynYJqmmB/qbbxJsFqtIjROQTJs4NUg0RUIfj5xeRfcamycs/4OgK
+         thdRgkgdzmfYzTzI6AjWlRg0gc1g+AKef3RIGSDQHOJRbJOa+2Ancf5wvRrtEAMUl0nJ
+         ToyzjyT0GWBe4p0UfYNK8xccOOK5r54MtmYmnauipWIKi54ZQ7n6teA7ifZkqG6ms5u/
+         NUaKSNybik480kp8lNWXrcYKvgOBl//V80uauSXLeI4+FEWS9wUkt/2NBescthgTqGYB
+         y/ug==
+X-Gm-Message-State: AOJu0YyV2diWwKheKmFbnMtdn6QNSjxmp/AvZ0omoNArZdQq1MEqSSQb
+	HGrv9kUc5lKDj1etsnLmWYsYkHOwu3kyfBtV1KAagtsV/fzbLw5b+d1+Bhi8ew==
+X-Gm-Gg: ATEYQzzTu3DM1LtKSjO7WjUfTxdm5o+SCquPkdpRiC1PmOmvJUdDBxVJRRQmrnmoTVV
+	MYx12SzN9jHb1TTysFm02q0KYxIbzCI6B5Qj0aj2iBVN6fOvJmvjEFB+YILaQ24XqCuoAxX1TZO
+	etn8A4pon/ZIpEkAQz2WhZRAx1uZ5FlXGEEppsTB2b5grrAZjaALdG/vRmKtd8cF/zQwvwOkGxH
+	x+KPzlyL4u8pXktjHqx9wO9I5rpe4nT/+kzpHoGkbAm/4b5wKx4H+naLQ+QGybVQnxkziOX9TUV
+	9DctfmF2Ain9Q6W1+1I5MniVUzoxyFk38+2uD32KPNU91HteU+D7or+viNSlVUQhbK+VZ4WpmGN
+	pmOpxdo15Q5QEqV26HoZU25dHlv/T12hXr5p/Qcd2pCeq8wa64HDiYoHhW7Icn8KRifL2xN1b88
+	SgPSF2ccwumTKwYuPzW8kSgxgvQv3/CkU=
+X-Received: by 2002:a05:6000:420b:b0:439:ca1f:3929 with SMTP id ffacd0b85a97d-439f8434259mr3495553f8f.48.1773223501893;
+        Wed, 11 Mar 2026 03:05:01 -0700 (PDT)
 Received: from biju.lan ([2a00:23c4:a758:8a01:38b7:8ca3:cb55:d344])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439f81acc22sm5177153f8f.16.2026.03.11.03.04.58
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439f81acc22sm5177153f8f.16.2026.03.11.03.05.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2026 03:04:58 -0700 (PDT)
+        Wed, 11 Mar 2026 03:05:01 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -58,86 +59,138 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip v2 00/27] Add RZ/G3E RSCI support
-Date: Wed, 11 Mar 2026 10:04:19 +0000
-Message-ID: <20260311100458.162447-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip v2 05/27] tty: serial: sh-sci: fix RSCI FIFO overrun handling
+Date: Wed, 11 Mar 2026 10:04:24 +0000
+Message-ID: <20260311100458.162447-6-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260311100458.162447-1-biju.das.jz@bp.renesas.com>
+References: <20260311100458.162447-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 11 Mar 2026 10:05:06 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22246
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22251
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 
-Add RZ/G3E RSCI support for FIFO and non-FIFO mode. RSCI IP found on
-RZ/G3E SoC is similar to one on RZ/T2H, but has 32-stage fifo. RZ/G3E has
-6 clocks (5 module clocks + 1 external clock) compared to 3 clocks
-(2 module clocks + 1 external clock) on RZ/T2H, and it has multiple
-resets. It has 6 irqs compared to 4 on RZ/T2H. Add support for the
-hardware flow control.
+[ Upstream commit ef8fef45c74b5a0059488fda2df65fa133f7d7d0 ]
 
-v1->v2:
- * Dropped patch#28 "bitfield: Add FIELD_MODIFY() helper" as it is
-   already present in 6.12.cip 
- * The set_rtrg() uses field_prep() and later it was replaced by patch#29
-   that uses PREP_MODIFY. So squashed the commit, as field_prep() is not
-   present in 6.12.cip
- * Fixed the typo arround->around in patch#21 commit description
+The receive error handling code is shared between RSCI and all other
+SCIF port types, but the RSCI overrun_reg is specified as a memory
+offset, while for other SCIF types it is an enum value used to index
+into the sci_port_params->regs array, as mentioned above the
+sci_serial_in() function.
 
-Biju Das (23):
-  dt-bindings: serial: rsci: Drop "uart-has-rtscts: false"
-  dt-bindings: serial: renesas,rsci: Document RZ/G3E support
-  clk: renesas: r9a09g047: Add RSCI clocks/resets
-  serial: sh-sci: Fix deadlock during RSCI FIFO overrun error
-  serial: sh-sci: Update rx_trigger size for RZ/T2H RSCI
-  serial: rsci: Add set_rtrg() callback
-  serial: sh-sci: Drop checking port type for device file{create,
-    remove}
-  serial: rsci: Drop rsci_clear_SCxSR()
-  serial: sh-sci: Drop extra lines
-  serial: rsci: Drop unused macro DCR
-  serial: rsci: Drop unused TDR register
-  serial: sh-sci: Use devm_reset_control_array_get_exclusive()
-  serial: sh-sci: Add sci_is_rsci_type()
-  serial: sh-sci: Rename port SCI_PORT_RSCI->RSCI_PORT_SCIF16
-  serial: sh-sci: Add RSCI_PORT_SCIF32 port ID
-  serial: sh-sci: Add support for RZ/G3E RSCI clks
-  serial: sh-sci: Make sci_scbrr_calc() public
-  serial: sh-sci: Add finish_console_write() callback
-  serial: rsci: Rename early_console data, port_params and callback()
-    names
-  serial: sh-sci: Add support for RZ/G3E RSCI
-  arm64: dts: renesas: r9a09g047: Add RSCI nodes
-  arm64: dts: renesas: renesas-smarc2: Move aliases to board DTS
-  arm64: dts: renesas: r9a09g047e57-smarc: Enable rsci{2,4,9} nodes
+For RSCI, the overrun_reg is CSR (0x48), causing the sci_getreg() call
+inside the sci_handle_fifo_overrun() function to index outside the
+bounds of the regs array, which currently has a size of 20, as specified
+by SCI_NR_REGS.
 
-Cosmin Tanislav (1):
-  tty: serial: sh-sci: fix RSCI FIFO overrun handling
+Because of this, we end up accessing memory outside of RSCI's
+rsci_port_params structure, which, when interpreted as a plat_sci_reg,
+happens to have a non-zero size, causing the following WARN when
+sci_serial_in() is called, as the accidental size does not match the
+supported register sizes.
 
-Geert Uytterhoeven (1):
-  serial: sh-sci: Convert to DEFINE_SIMPLE_DEV_PM_OPS()
+The existence of the overrun_reg needs to be checked because
+SCIx_SH3_SCIF_REGTYPE has overrun_reg set to SCLSR, but SCLSR is not
+present in the regs array.
 
-Lad Prabhakar (2):
-  serial: sh-sci: Sort include files alphabetically
-  serial: sh-sci: Merge sh-sci.h into sh-sci.c
+Avoid calling sci_getreg() for port types which don't use standard
+register handling.
 
- .../bindings/serial/renesas,rsci.yaml         | 101 +++++-
- arch/arm64/boot/dts/renesas/r9a09g047.dtsi    | 220 +++++++++++++
- .../boot/dts/renesas/r9a09g047e57-smarc.dts   |  64 ++++
- .../boot/dts/renesas/renesas-smarc2.dtsi      |  13 +-
- .../boot/dts/renesas/rzg3e-smarc-som.dtsi     |   4 +
- drivers/clk/renesas/r9a09g047-cpg.c           | 126 +++++++
- drivers/tty/serial/rsci.c                     | 309 ++++++++++++++++--
- drivers/tty/serial/rsci.h                     |   3 +-
- drivers/tty/serial/sh-sci-common.h            |  10 +-
- drivers/tty/serial/sh-sci.c                   | 292 ++++++++++++++---
- drivers/tty/serial/sh-sci.h                   | 178 ----------
- 11 files changed, 1040 insertions(+), 280 deletions(-)
- delete mode 100644 drivers/tty/serial/sh-sci.h
+Use the ops->read_reg() and ops->write_reg() functions to properly read
+and write registers for RSCI, and change the type of the status variable
+to accommodate the 32-bit CSR register.
 
+sci_getreg() and sci_serial_in() are also called with overrun_reg in the
+sci_mpxed_interrupt() interrupt handler, but that code path is not used
+for RSCI, as it does not have a muxed interrupt.
+
+------------[ cut here ]------------
+Invalid register access
+WARNING: CPU: 0 PID: 0 at drivers/tty/serial/sh-sci.c:522 sci_serial_in+0x38/0xac
+Modules linked in: renesas_usbhs at24 rzt2h_adc industrialio_adc sha256 cfg80211 bluetooth ecdh_generic ecc rfkill fuse drm backlight ipv6
+CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.17.0-rc1+ #30 PREEMPT
+Hardware name: Renesas RZ/T2H EVK Board based on r9a09g077m44 (DT)
+pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : sci_serial_in+0x38/0xac
+lr : sci_serial_in+0x38/0xac
+sp : ffff800080003e80
+x29: ffff800080003e80 x28: ffff800082195b80 x27: 000000000000000d
+x26: ffff8000821956d0 x25: 0000000000000000 x24: ffff800082195b80
+x23: ffff000180e0d800 x22: 0000000000000010 x21: 0000000000000000
+x20: 0000000000000010 x19: ffff000180e72000 x18: 000000000000000a
+x17: ffff8002bcee7000 x16: ffff800080000000 x15: 0720072007200720
+x14: 0720072007200720 x13: 0720072007200720 x12: 0720072007200720
+x11: 0000000000000058 x10: 0000000000000018 x9 : ffff8000821a6a48
+x8 : 0000000000057fa8 x7 : 0000000000000406 x6 : ffff8000821fea48
+x5 : ffff00033ef88408 x4 : ffff8002bcee7000 x3 : ffff800082195b80
+x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff800082195b80
+Call trace:
+ sci_serial_in+0x38/0xac (P)
+ sci_handle_fifo_overrun.isra.0+0x70/0x134
+ sci_er_interrupt+0x50/0x39c
+ __handle_irq_event_percpu+0x48/0x140
+ handle_irq_event+0x44/0xb0
+ handle_fasteoi_irq+0xf4/0x1a0
+ handle_irq_desc+0x34/0x58
+ generic_handle_domain_irq+0x1c/0x28
+ gic_handle_irq+0x4c/0x140
+ call_on_irq_stack+0x30/0x48
+ do_interrupt_handler+0x80/0x84
+ el1_interrupt+0x34/0x68
+ el1h_64_irq_handler+0x18/0x24
+ el1h_64_irq+0x6c/0x70
+ default_idle_call+0x28/0x58 (P)
+ do_idle+0x1f8/0x250
+ cpu_startup_entry+0x34/0x3c
+ rest_init+0xd8/0xe0
+ console_on_rootfs+0x0/0x6c
+ __primary_switched+0x88/0x90
+---[ end trace 0000000000000000 ]---
+
+Cc: stable <stable@kernel.org>
+Fixes: 0666e3fe95ab ("serial: sh-sci: Add support for RZ/T2H SCI")
+Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Link: https://patch.msgid.link/20250923154707.1089900-1-cosmin-gabriel.tanislav.xa@renesas.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/tty/serial/sh-sci.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 4e094d8ee882..caa98b1257d4 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -1014,16 +1014,18 @@ static int sci_handle_fifo_overrun(struct uart_port *port)
+ 	struct sci_port *s = to_sci_port(port);
+ 	const struct plat_sci_reg *reg;
+ 	int copied = 0;
+-	u16 status;
++	u32 status;
+ 
+-	reg = sci_getreg(port, s->params->overrun_reg);
+-	if (!reg->size)
+-		return 0;
++	if (s->type != SCI_PORT_RSCI) {
++		reg = sci_getreg(port, s->params->overrun_reg);
++		if (!reg->size)
++			return 0;
++	}
+ 
+-	status = sci_serial_in(port, s->params->overrun_reg);
++	status = s->ops->read_reg(port, s->params->overrun_reg);
+ 	if (status & s->params->overrun_mask) {
+ 		status &= ~s->params->overrun_mask;
+-		sci_serial_out(port, s->params->overrun_reg, status);
++		s->ops->write_reg(port, s->params->overrun_reg, status);
+ 
+ 		port->icount.overrun++;
+ 
 -- 
 2.43.0
 
