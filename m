@@ -2,227 +2,174 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FBD1105D279
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EE9C105D285
 	for <webhook@archiver.kernel.org>; Wed, 11 Mar 2026 11:04:08 +0000 (UTC)
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.18640.1773227047919651445
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.18255.1773227041913820840
  for <cip-dev@lists.cip-project.org>;
- Wed, 11 Mar 2026 04:04:08 -0700
+ Wed, 11 Mar 2026 04:04:02 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=rFZeT0bp;
- spf=pass (domain: tuxon.dev, ip: 209.85.128.42, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-48374014a77so165549285e9.3
-        for <cip-dev@lists.cip-project.org>; Wed, 11 Mar 2026 04:04:07 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=COaKWdTS;
+ spf=pass (domain: tuxon.dev, ip: 209.85.128.53, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-485410a0a8aso25306745e9.2
+        for <cip-dev@lists.cip-project.org>; Wed, 11 Mar 2026 04:04:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1773227046; x=1773831846; darn=lists.cip-project.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C4YeGpkPXsY+wCacfxPGS9043KwrQxJRyDJiQ1ZNPm4=;
-        b=rFZeT0bp1HvHjE9cuVdOfwy1pH/BGgnuo9IrLRAAUaRhLLveSq2tPhNTCJIjvOwdhN
-         SWXYlExJC1hG6F9lXB/DbLqrO8VDAj8Ez5YmPSE6ODb4rK1cXlZLmwSFOznNmm7LcwcP
-         m38nmgC9qh784OfKylzixB5R00niefirHSE7hJBcqwz4gS4YT18m8O2LqPcb5O5E49Dp
-         6x7GNK20/PRcZDXP4eJBBDTwPDF8FT1v7cjkvHAQBwRyeGTi4Oj33XNNYcEQtv30M7l4
-         4TOrM8b7pFrWH26emF7tkAhTLUdMf0b2MziO6kzhBjttMGa3poi57WEne+IGg3LcRcZD
-         qtHQ==
+        d=tuxon.dev; s=google; t=1773227040; x=1773831840; darn=lists.cip-project.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8OaeA09fH2q1EVghjlGaXv6GmG0EYrdD4F1d9Up1rRU=;
+        b=COaKWdTS1fOTjDItqTqYshUmDPG82UqRC+J5szt/6/UcXLVZmibk3Xdso9H/N9wE42
+         bckiRBYpug5cm0U4+HcRoga7CTIQHicT16Hl+mpdw0ND+79jx/3TlUMYwTB2TopJ6n5f
+         31vXAECYMGxmB1WWI3BXZyX1SuAf7XRIosGa9m0hXEKQk1lOkw+Y/DnrEZidL6shPCEu
+         er22kuaAKxTMcjLZmxCRH4juSP4XV73QHhmq/PVdx9qbemeH4fqdRh208Kkv6jAKNexH
+         wya4qLRHXU9Os9sn0QuHXWG0C7yFqB4dGacTSVJU/FQWbztCiRoFfKCaquv7o8UyL40S
+         1G0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773227046; x=1773831846;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=C4YeGpkPXsY+wCacfxPGS9043KwrQxJRyDJiQ1ZNPm4=;
-        b=bggeMzX1YjsZ5X75P5UCFJJ3KaCUjyBzFyh6JnIKC8WjzyBestK/IecTtqOfK2oFvH
-         q+5JDII5oQXiHB7Zi9epWnVr9sWPYY1AyGUMlXmVfSWuGvhQB8dNaFuE5MK1BxI6of2k
-         L1I/9L+vP8a4gAt3a5SamkEL0lYNU/mXNKgTbsA2pfIVQZXaHnEGhV5DOwPOtK62aU85
-         hNIOu40lRtMh+z3RzfqzJTNJR//ZrjMDteAZzlm6rM4U0P7ixIFRWpEHFhtcjXlKRM5X
-         vlDsOB+is5/88mx0/MHOfi3z1A9P8hl6J3y+CzY3gW2VgoVYuzbdlyKmHOv4CGZrfPXV
-         PaLw==
-X-Gm-Message-State: AOJu0Yw2tzBtrjFgow3y8GSaJ7/JtJi4im86rc+LFsDAtULMUtm2FJv9
-	/FKhZl6f2YYlEbsGEQIjAW3pxoT0SiF00jdxTXAKr13xhZOkVDf7MGxoHmg3J5Xg25Y=
-X-Gm-Gg: ATEYQzyZzTBdLat9zeRbqlrrag7ZFHd84SGFnxTbKZn9Q80wT/guobxgV4ZNNcxyoco
-	wSt9+xLeM4c+F6N95OxNxiICxCDtUeBMI8auf3xsSjtxSYeEwCafFwKaMil7ZmI8Foof7/1EbtK
-	lX5CR667NlCjaKEReXPz5WPCLuo+SBcuT4JlCkgSZ8UWeQJWUM5HqfnWeIMokOMMfeQSfkGVv93
-	TRWdl5udvO/CrAvzy61vM1FH3wv7mjmPSsW1ehMDnD6YM0d/j5wQIai7NrYf+v70tudSpdL6Tll
-	ecbNRZ+u5vrt6cHUPLF5CIV7zHyMHI4mOqFCilj+p23Hx53dW0ptue4QFdkHu2f6pcboSpDhyBJ
-	cWD0eG80LP7oWy9W1saXXr5sz4finVI/6VOpX6MEl+5w6sf8ktcZ2EE1RbvbMENi1dR4l+i7MsY
-	E6ZzhC2BjGV1GVOHJ1lk34wcU3yd/t+8Y+MVpt6ku4oGnRPxA5HcfB
-X-Received: by 2002:a05:600c:1e88:b0:485:3ff1:d5c3 with SMTP id 5b1f17b1804b1-4854b0cb356mr34793405e9.5.1773227046062;
-        Wed, 11 Mar 2026 04:04:06 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1773227040; x=1773831840;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8OaeA09fH2q1EVghjlGaXv6GmG0EYrdD4F1d9Up1rRU=;
+        b=b/JerLuYm19o1jSLvm/LwXsyRnGWonqAvgvMy4v6kVzRfsEEISKg0opZWZwkXSeMlh
+         bgyH+QSPvT3YWoTWFdJkjprVmhYtN5bcAv+/q7OrfCAr+Gzv3OwdSudGvOBqUG6drlR4
+         UeJBb/sLXCHJoBih3mnpc3YVARNwbM2qnPBCZbM8sd1hBJYHcHcN77Sz5KNQBK9TJtED
+         lmx1Tl19AjhhbZsoQlaly/1bXW9YdmOcEra/V02zB266mqeW2hj8M1wMvDGuj4OeBxu+
+         LpNQqz2CzZkyyw5AqgahpnHHPBPax8tx01O31snySw45l/6iigPe1hDptzyQevUjl6cr
+         /fSA==
+X-Gm-Message-State: AOJu0YxBhCPhroBES9KJ31T8ePqJtnDnEimvcr6gUC/490DnsV9g3psi
+	nuosMvGUd8Hg1FcGBNhyFYg2upLbMBndwimDYiqggb5k2GPjC453x6m2FEvgzh86K6Y=
+X-Gm-Gg: ATEYQzz1vyXIHJM4koqxSAo8ZmuaXIodTkwFv+QFQAMXH1pKdhNtKN8VlknuNfH9q4V
+	70b369IeHp8hcVXQTguSUE9/3VF64B7UBUaCX9hyUGXIkPmZ01zxYYK9ER2k/3NJ08n7SqPdz/8
+	n8AORadHTzx9SlApKZyNe5fYmH7guVyULQ4NGIWWoF2Aqd+K926NePf20VCd57AJl4DTaOJn0Om
+	SXl8/ritB2YXhAlahk1rDjg7opKycM+s62yyqwd8uvsNcHwFDVaNf/u2TPYaHQpGlKYOyJ2yS5A
+	0tM7cgHoHEYscXq1tlojtsFvU8RqtQ09A/FTkK0oJSvS9AXiZ9VUAm8n+/BGF0jtOMzn1PuITQ4
+	ARuL1ms1e7fqkJpMpJeaNdMF+x5soyTrKlc0L8wyEph1nIm/UaskhP7xAIMzt6cwhuBm6tW8HG8
+	CWThLyZ+E9mi5KYsXiRmS3vrgHEUUlctJyNQMEzjrTICob41pb6g5i
+X-Received: by 2002:a05:600c:8a0c:20b0:485:4552:8fbb with SMTP id 5b1f17b1804b1-4854b107fefmr25514595e9.22.1773227040189;
+        Wed, 11 Mar 2026 04:04:00 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.205])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4854b0b95f4sm25004085e9.5.2026.03.11.04.04.04
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4854b0b95f4sm25004085e9.5.2026.03.11.04.03.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2026 04:04:05 -0700 (PDT)
+        Wed, 11 Mar 2026 04:03:58 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 05/28] soc: renesas: rz-sysc: Populate readable_reg/writeable_reg in regmap config
-Date: Wed, 11 Mar 2026 13:03:34 +0200
-Message-ID: <20260311110357.1938200-6-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 00/28] Add RZ/G3S PCIe support
+Date: Wed, 11 Mar 2026 13:03:29 +0200
+Message-ID: <20260311110357.1938200-1-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260311110357.1938200-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20260311110357.1938200-1-claudiu.beznea.uj@bp.renesas.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 11 Mar 2026 11:04:08 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22284
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22279
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit c432180a7d95081353a96fd6d5bd75b0fc8a27c3 upstream.
+Hi,
 
-Not all system controller registers are accessible from Linux. Accessing
-such registers generates synchronous external abort. Populate the
-readable_reg and writeable_reg members of the regmap config to inform the
-regmap core which registers can be accessed. The list will need to be
-updated whenever new system controller functionality is exported through
-regmap.
+Series adds PCIe support for the Renesas RZ/G3S SoC.
+Please have a look.
 
-Fixes: 2da2740fb9c8 ("soc: renesas: rz-sysc: Add syscon/regmap support")
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20251105070526.264445-3-claudiu.beznea.uj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[claudiu.beznea: dropped sysc file for:
- - RZ/G3E (drivers/soc/renesas/r9a09g047-sys.c)
- - RZ/V2N (drivers/soc/renesas/r9a09g056-sys.c)
- - RZ/V2H (drivers/soc/renesas/r9a09g057-sys.c)
- as these are not present in v5.10 CIP]
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
- drivers/soc/renesas/r9a08g045-sysc.c | 69 ++++++++++++++++++++++++++++
- drivers/soc/renesas/rz-sysc.c        |  2 +
- drivers/soc/renesas/rz-sysc.h        |  4 ++
- 3 files changed, 75 insertions(+)
+Thank you,
+Claudiu
 
-diff --git a/drivers/soc/renesas/r9a08g045-sysc.c b/drivers/soc/renesas/r9a08g045-sysc.c
-index 0504d4e68761..03d653d5cde5 100644
---- a/drivers/soc/renesas/r9a08g045-sysc.c
-+++ b/drivers/soc/renesas/r9a08g045-sysc.c
-@@ -6,10 +6,29 @@
-  */
- 
- #include <linux/bits.h>
-+#include <linux/device.h>
- #include <linux/init.h>
- 
- #include "rz-sysc.h"
- 
-+#define SYS_XSPI_MAP_STAADD_CS0		0x348
-+#define SYS_XSPI_MAP_ENDADD_CS0		0x34c
-+#define SYS_XSPI_MAP_STAADD_CS1		0x350
-+#define SYS_XSPI_MAP_ENDADD_CS1		0x354
-+#define SYS_GETH0_CFG			0x380
-+#define SYS_GETH1_CFG			0x390
-+#define SYS_PCIE_CFG			0x3a0
-+#define SYS_PCIE_MON			0x3a4
-+#define SYS_PCIE_ERR_MON		0x3ac
-+#define SYS_PCIE_PHY			0x3b4
-+#define SYS_I2C0_CFG			0x400
-+#define SYS_I2C1_CFG			0x410
-+#define SYS_I2C2_CFG			0x420
-+#define SYS_I2C3_CFG			0x430
-+#define SYS_I3C_CFG			0x440
-+#define SYS_USB_PWRRDY			0xd70
-+#define SYS_PCIE_RST_RSM_B		0xd74
-+
- static const struct rz_sysc_soc_id_init_data rzg3s_sysc_soc_id_init_data __initconst = {
- 	.family = "RZ/G3S",
- 	.id = 0x85e0447,
-@@ -18,7 +37,57 @@ static const struct rz_sysc_soc_id_init_data rzg3s_sysc_soc_id_init_data __initc
- 	.specific_id_mask = GENMASK(27, 0),
- };
- 
-+static bool rzg3s_regmap_readable_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case SYS_XSPI_MAP_STAADD_CS0:
-+	case SYS_XSPI_MAP_ENDADD_CS0:
-+	case SYS_XSPI_MAP_STAADD_CS1:
-+	case SYS_XSPI_MAP_ENDADD_CS1:
-+	case SYS_GETH0_CFG:
-+	case SYS_GETH1_CFG:
-+	case SYS_PCIE_CFG:
-+	case SYS_PCIE_MON:
-+	case SYS_PCIE_ERR_MON:
-+	case SYS_PCIE_PHY:
-+	case SYS_I2C0_CFG:
-+	case SYS_I2C1_CFG:
-+	case SYS_I2C2_CFG:
-+	case SYS_I2C3_CFG:
-+	case SYS_I3C_CFG:
-+	case SYS_USB_PWRRDY:
-+	case SYS_PCIE_RST_RSM_B:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
-+static bool rzg3s_regmap_writeable_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case SYS_XSPI_MAP_STAADD_CS0:
-+	case SYS_XSPI_MAP_ENDADD_CS0:
-+	case SYS_XSPI_MAP_STAADD_CS1:
-+	case SYS_XSPI_MAP_ENDADD_CS1:
-+	case SYS_PCIE_CFG:
-+	case SYS_PCIE_PHY:
-+	case SYS_I2C0_CFG:
-+	case SYS_I2C1_CFG:
-+	case SYS_I2C2_CFG:
-+	case SYS_I2C3_CFG:
-+	case SYS_I3C_CFG:
-+	case SYS_USB_PWRRDY:
-+	case SYS_PCIE_RST_RSM_B:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
- const struct rz_sysc_init_data rzg3s_sysc_init_data __initconst = {
- 	.soc_id_init_data = &rzg3s_sysc_soc_id_init_data,
-+	.readable_reg = rzg3s_regmap_readable_reg,
-+	.writeable_reg = rzg3s_regmap_writeable_reg,
- 	.max_register = 0xe20,
- };
-diff --git a/drivers/soc/renesas/rz-sysc.c b/drivers/soc/renesas/rz-sysc.c
-index 115961483845..805994c9710e 100644
---- a/drivers/soc/renesas/rz-sysc.c
-+++ b/drivers/soc/renesas/rz-sysc.c
-@@ -127,6 +127,8 @@ static int rz_sysc_probe(struct platform_device *pdev)
- 	regmap_cfg->val_bits = 32;
- 	regmap_cfg->fast_io = true;
- 	regmap_cfg->max_register = data->max_register;
-+	regmap_cfg->readable_reg = data->readable_reg;
-+	regmap_cfg->writeable_reg = data->writeable_reg;
- 
- 	regmap = devm_regmap_init_mmio(dev, sysc->base, regmap_cfg);
- 	if (IS_ERR(regmap))
-diff --git a/drivers/soc/renesas/rz-sysc.h b/drivers/soc/renesas/rz-sysc.h
-index 8a3507989c04..5b85b6431a47 100644
---- a/drivers/soc/renesas/rz-sysc.h
-+++ b/drivers/soc/renesas/rz-sysc.h
-@@ -29,10 +29,14 @@ struct rz_sysc_soc_id_init_data {
- /**
-  * struct rz_sysc_init_data - RZ SYSC initialization data
-  * @soc_id_init_data: RZ SYSC SoC ID initialization data
-+ * @writeable_reg: Regmap writeable register check function
-+ * @readable_reg: Regmap readable register check function
-  * @max_register: Maximum SYSC register offset to be used by the regmap config
-  */
- struct rz_sysc_init_data {
- 	const struct rz_sysc_soc_id_init_data *soc_id_init_data;
-+	bool (*writeable_reg)(struct device *dev, unsigned int reg);
-+	bool (*readable_reg)(struct device *dev, unsigned int reg);
- 	u32 max_register;
- };
- 
+Amjad Ouled-Ameur (1):
+  reset: make shared pulsed reset controls re-triggerable
+
+Claudiu Beznea (16):
+  soc: renesas: Add SYSC driver for Renesas RZ family
+  soc: renesas: rz-sysc: Move RZ/G3S SoC detection to the SYSC driver
+  soc: renesas: rz-sysc: Populate readable_reg/writeable_reg in regmap
+    config
+  clk: renesas: r9a08g045: Add PCIe clocks and resets
+  of/irq: Update the out_irq->np before returning success
+  dt-bindings: PCI: Add Renesas RZ/G3S PCIe controller binding
+  PCI: Add Renesas RZ/G3S host controller driver
+  PCI: rzg3s-host: Initialize MSI status bitmap before use
+  PCI: rzg3s-host: Use pci_generic_config_write() for the root bus
+  PCI: rzg3s-host: Drop the lock on RZG3S_PCI_MSIRS and
+    RZG3S_PCI_PINTRCVIS
+  arm64: dts: renesas: r9a08g045: Enable SYS node
+  arm64: dts: renesas: r9a08g045: Use syscon compatible for the system
+    controller
+  arm64: dts: renesas: r9a08g045: Add PCIe node
+  arm64: dts: renesas: rzg3s-smarc-som: Add PCIe reference clock
+  arm64: dts: renesas: rzg3s-smarc: Enable PCIe
+  arm64: defconfig: Enable PCIe for the Renesas RZ/G3S SoC
+
+Felix Gu (1):
+  PCI: rzg3s-host: Fix device node reference leak in
+    rzg3s_pcie_host_parse_port()
+
+John Madieu (1):
+  soc: renesas: rz-sysc: Add syscon/regmap support
+
+Jonathan Cameron (1):
+  of: Add cleanup.h based auto release via __free(device_node) markings
+
+Kevin Xie (1):
+  PCI: Add PCIE_RESET_CONFIG_DEVICE_WAIT_MS waiting time value
+
+Marc Zyngier (1):
+  of/irq: Allow matching of an interrupt-map local to an interrupt
+    controller
+
+Marek Vasut (1):
+  genirq/msi: Silence 'set affinity failed' warning
+
+Niklas Cassel (2):
+  PCI: Rename PCIE_RESET_CONFIG_DEVICE_WAIT_MS to
+    PCIE_RESET_CONFIG_WAIT_MS
+  PCI: Move link up wait time and max retries macros to pci.h
+
+Peter Griffin (1):
+  mfd: syscon: Add of_syscon_register_regmap() API
+
+Philipp Zabel (1):
+  reset: Add reset_control_bulk API
+
+Syed Nayyar Waris (1):
+  lib/bitmap: add bitmap_{read,write}()
+
+ .../bindings/pci/renesas,r9a08g045-pcie.yaml  |  249 +++
+ MAINTAINERS                                   |    8 +
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |   68 +-
+ .../boot/dts/renesas/rzg3s-smarc-som.dtsi     |    5 +
+ arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi  |   11 +
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/clk/renesas/r9a08g045-cpg.c           |   19 +
+ drivers/mfd/syscon.c                          |   48 +
+ drivers/of/irq.c                              |   37 +-
+ drivers/pci/controller/Kconfig                |    9 +
+ drivers/pci/controller/Makefile               |    1 +
+ drivers/pci/controller/pcie-rzg3s-host.c      | 1782 +++++++++++++++++
+ drivers/pci/pci.h                             |   19 +
+ drivers/reset/core.c                          |  288 +++
+ drivers/soc/renesas/Kconfig                   |    9 +
+ drivers/soc/renesas/Makefile                  |    2 +
+ drivers/soc/renesas/r9a08g045-sysc.c          |   93 +
+ drivers/soc/renesas/renesas-soc.c             |    3 -
+ drivers/soc/renesas/rz-sysc.c                 |  157 ++
+ drivers/soc/renesas/rz-sysc.h                 |   45 +
+ include/linux/bitmap.h                        |   77 +
+ include/linux/mfd/syscon.h                    |    9 +
+ include/linux/msi.h                           |    2 +
+ include/linux/of.h                            |    2 +
+ include/linux/reset.h                         |  335 ++++
+ kernel/irq/msi.c                              |    2 +-
+ 26 files changed, 3267 insertions(+), 14 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/renesas,r9a08g045-pcie.yaml
+ create mode 100644 drivers/pci/controller/pcie-rzg3s-host.c
+ create mode 100644 drivers/soc/renesas/r9a08g045-sysc.c
+ create mode 100644 drivers/soc/renesas/rz-sysc.c
+ create mode 100644 drivers/soc/renesas/rz-sysc.h
+
 -- 
 2.43.0
 
