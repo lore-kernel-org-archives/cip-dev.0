@@ -2,65 +2,64 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C367F105D294
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D829E105D29D
 	for <webhook@archiver.kernel.org>; Wed, 11 Mar 2026 11:04:29 +0000 (UTC)
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.18658.1773227068194165839
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.18652.1773227059206588550
  for <cip-dev@lists.cip-project.org>;
- Wed, 11 Mar 2026 04:04:28 -0700
+ Wed, 11 Mar 2026 04:04:19 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=jYPNT1Uj;
- spf=pass (domain: tuxon.dev, ip: 209.85.128.49, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4852f8ac7e9so52511335e9.1
-        for <cip-dev@lists.cip-project.org>; Wed, 11 Mar 2026 04:04:27 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=N/cVgoGu;
+ spf=pass (domain: tuxon.dev, ip: 209.85.128.50, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-48539d21b76so26470035e9.1
+        for <cip-dev@lists.cip-project.org>; Wed, 11 Mar 2026 04:04:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1773227067; x=1773831867; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1773227058; x=1773831858; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dp5jKumLZs73w/EkEmG1BZMzqq/mw3c7ShBYrXbkQIg=;
-        b=jYPNT1UjKeaZV/h32bFLTPOQaYKYH8B+ENe9TcEg6ZARdSAT+KE8JVPynVPg1TRwxV
-         HTVyQs3xF+joWtWUxbs6DyBa32DKHnlgIyVu3b8usEHaf85J+92ZKrui64/M8Sddejwp
-         6evKrrzx5fHIkc/seo1+Nkf1F0uSf8bOi1TXHTiZEW6oq1ik0fBmaYT8oe7ZqVl2D93j
-         53WjRrv1R+WrGsaKfh1LPLpsQ1BXWJq+xXI+oU9R5p0ZjIQlUQil4IXFRWlCc3XRMNcg
-         16PtkfoSYYc7i4cnleXpe6uo6IsVWs2sZf2zrNcqjGVFM8pWlG0H5KLo2zigmIhzmxPW
-         6b5Q==
+        bh=3mQ6YmFWX5oKn9DwqKtC5Glr74QJ8EKG7nz630UR4oY=;
+        b=N/cVgoGuWmyByKBoarVH9JPyEt7bwxNs8RxwUUTEzkjNsGjiPFMIcv6qsazGfbx5QX
+         115/o3m/WLtsDI2Y4AoXPq9QxqxmaK1VAU8Gba6HQyVmaF4n3dbKiarqDjETHwmcCQCS
+         l4Nd+HlgqCL7wCoVS7z6LUPciMqK8Qfv8FcPrWRX6ALj6QRqRYlrrbzgSK9cR/p2iY7M
+         Oey92u2JZ81+YZdLFjs9zzUAzGPytQPYO/g/hOIDZM2K2nuat00RAUpnkfjfY2p+aAIN
+         mTBHuW9UbqPHfqC0MdqJGtIkC80O6/MkiEITPocKPScQVpLzME6jasF+Gqo1JTjYcO0K
+         7WyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773227067; x=1773831867;
+        d=1e100.net; s=20230601; t=1773227058; x=1773831858;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=dp5jKumLZs73w/EkEmG1BZMzqq/mw3c7ShBYrXbkQIg=;
-        b=Nb4KiCvg/RQATJlDXujQzHU3f7DgyYurOGXCWgc8wqgbiOgjT44w9OBrEsmCQwgQLe
-         xDN2IQQhS7Jk8egqAzqv6KrIfEDupCgTQuG/zVepW9zDaGCa9Wathrz18oPnpnR90bIc
-         7EuruMT9JpDZUDGP8QLrjnaD854MfOGI3amtJAdFnG0CovMDv4dM1PxaFrx+iFa4QQlj
-         1lzESsIBnMa6LcYatMAz3NIFn4glYFNq71JSGrBpEaQ8yohyTafWHMex5ns2bOTfEFVE
-         4aeg4PaKumx39HgvPdxq2SyhyUH2AYvUhaPn9rAsJsXJvMiPwxkkJON+ymFEf6sC7B2m
-         fodg==
-X-Gm-Message-State: AOJu0Yx48a/+M+S7iY/+6gRiOYQTJ/+EtgHObS9mOU+se3tlVZXWCCbB
-	QngSJOlPuinAy3cGrKltHpoOyQ/ndRC2b5qPP/ZdTFKuWwTNfo6mMFjlQZp9TupjQlseInQamxd
-	EOjhr
-X-Gm-Gg: ATEYQzyh0sdhchU975l/yDOJuOolCaDxfa7mNPS6sEnCCX26mivHssmkmeBhLkYWFD9
-	ytkq1MzGZmOSdiiBPHGuJJzGubHQUidGaO1hRk6fjhCo7mSzJG7wtXugwhzfl6YYUn80XjNDO7H
-	XQcsurwwH0YkteIvCjNQo9CPfTyG9IGGbE2+yAP10q7uqcZm4wa7AQjH6/Y9DHb/9Jf4DMyxj4R
-	j5RyiL+uMTQX8dgHZOaufJx0OEp063BjNMnLSwuaPuzM9MnjMdxUH0Ze2EYRJYzdA6FSF3PS01H
-	NWxHjXOnpAhBkj75JNh9Zd9qkQDtuKmEuXUv+/eiNbeiRImSfljbKvEfpRMOKiRmhnY/l0ZSsP7
-	CCHTkWMxf7fbtGyRYDkhneEG6BJq+mS2Ax/4VfCCzvXsbxUQQauy5HCxJlKyCyJ3B1SsCjpsxoQ
-	bPlhtz82bezNmV9UGm4JMB+jC5xL/VHVOm83etI5QcTLUjD4HFPeu0dCvMb7vi1FI=
-X-Received: by 2002:a05:600c:6092:b0:485:43a4:6f5 with SMTP id 5b1f17b1804b1-4854b0f6b07mr35323445e9.14.1773227066413;
-        Wed, 11 Mar 2026 04:04:26 -0700 (PDT)
+        bh=3mQ6YmFWX5oKn9DwqKtC5Glr74QJ8EKG7nz630UR4oY=;
+        b=hg3gtRIGrp3bCgFhWixrDgNn+c0TFtVfYRfefuCMWFbcqRu2KOgPxqIBbVIrqhCXOp
+         LDoCDIc20xjyE098bXt8OkjWSd1VXmBXhmpHE3/VMyzCmdjUejAWw76utHW8SkVJmiw/
+         QM13LJQdQzwXSjg7y2kVLk3y7nSpOI4EiJRS6CJ0mYDhwT3HeVoAeBc786f7LjiZPldJ
+         csSwjg/97dJ1i6bZJoL9O3C6GHaYssqjGWleQx28rmKjmbeKAmhz7sbXsmLHyqxgk362
+         v2bFcr/jq133a3gJISS+C2b6tQ9W8GSwVrhU7nt5GuoeGIkONOhVJ5YtO1F9wPafOAlj
+         ILwA==
+X-Gm-Message-State: AOJu0YzQRTCUzT1hmMU5yx+Pc66dmrNiOyOE2vKrdvmZWpUXkcQ5uoRE
+	Sm1H+jDfWfIozSR+3Q20ASEsQFiQIckmVjwLRS6+Cf/wGZi/PHzwzZrp585SJNgcv28=
+X-Gm-Gg: ATEYQzyOKdBZKjmU0F32h3/7MmQv2vuXrUhXCJgyPVZ7cGmZT04dl1joIj6AVhnPgLH
+	VEkGgJFAHgvqc3an4+fpZBQE2IXCbLd8Nxhp1Vp1VejOUwqlZ6LKFhcYIo6xiyOfYio6gnt1+aJ
+	VpypnL0NceE/1YJ0IPnRu4Mbkr4J9hC5NNmYTKHR5S4CxT8Z2j/TrYtiLBb/I5/irnbWQ/CW+Up
+	UtxaUhwv3ALDhigC51lKj77VzF//vXV8bIEax9vzhegnM9hTnsBBO2xPAtkEO8fedysqr/xrSCn
+	D3A8TbtNWtkYDzLeQnI7YSAkiL6w3yWOqsuZqm4FVjBVaD/++sN80+C+Ga6NwNryjpKAFH/GTGg
+	AUM91KO0jHrZZzIyvsotFAAxSL+ral0vUGKSHsajsWwCRyBE3jHtfM+rVlaSmMcOZbkZsisLv15
+	45XL5g3KpOElsIrBvwA+O5F12tG/r/KxfrNIUpoNEwbv0BI2wgcny0
+X-Received: by 2002:a05:600c:8b0a:b0:485:3ae8:2236 with SMTP id 5b1f17b1804b1-4854b123cd6mr34473955e9.32.1773227057614;
+        Wed, 11 Mar 2026 04:04:17 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.205])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4854b0b95f4sm25004085e9.5.2026.03.11.04.04.25
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4854b0b95f4sm25004085e9.5.2026.03.11.04.04.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2026 04:04:25 -0700 (PDT)
+        Wed, 11 Mar 2026 04:04:16 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 21/28] PCI: rzg3s-host: Drop the lock on RZG3S_PCI_MSIRS and RZG3S_PCI_PINTRCVIS
-Date: Wed, 11 Mar 2026 13:03:50 +0200
-Message-ID: <20260311110357.1938200-22-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 14/28] of: Add cleanup.h based auto release via __free(device_node) markings
+Date: Wed, 11 Mar 2026 13:03:43 +0200
+Message-ID: <20260311110357.1938200-15-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260311110357.1938200-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20260311110357.1938200-1-claudiu.beznea.uj@bp.renesas.com>
@@ -70,71 +69,71 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 11 Mar 2026 11:04:29 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22300
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22293
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-commit 62d4911290f9cbb16f5b6ba6782660148a656fc7 upstream.
+commit 9448e55d032d99af8e23487f51a542d51b2f1a48 upstream.
 
-The RZG3S_PCI_MSIRS and RZG3S_PCI_PINTRCVIS registers are of the R/W1C
-type. According to the RZ/G3S HW Manual, Rev. 1.10, chapter 34.2.1
-Register Type, R/W1C register bits are cleared to 0b by writing 1b, while
-writing 0b has no effect. Therefore, there is no need to take a lock
-around writes to these registers.
+The recent addition of scope based cleanup support to the kernel
+provides a convenient tool to reduce the chances of leaking reference
+counts where of_node_put() should have been called in an error path.
 
-Drop the locking.
+This enables
+	struct device_node *child __free(device_node) = NULL;
 
-Along with this, add a note about the R/W1C register type to the register
-offset definitions.
+	for_each_child_of_node(np, child) {
+		if (test)
+			return test;
+	}
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Signed-off-by: Manivannan Sadhasivam <mani@kernel.org>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Link: https://patch.msgid.link/20251217111510.138848-3-claudiu.beznea.uj@bp.renesas.com
+with no need for a manual call of of_node_put().
+A following patch will reduce the scope of the child variable to the
+for loop, to avoid an issues with ordering of autocleanup, and make it
+obvious when this assigned a non NULL value.
+
+In this simple example the gains are small but there are some very
+complex error handling cases buried in these loops that will be
+greatly simplified by enabling early returns with out the need
+for this manual of_node_put() call.
+
+Note that there are coccinelle checks in
+scripts/coccinelle/iterators/for_each_child.cocci to detect a failure
+to call of_node_put(). This new approach does not cause false positives.
+Longer term we may want to add scripting to check this new approach is
+done correctly with no double of_node_put() calls being introduced due
+to the auto cleanup. It may also be useful to script finding places
+this new approach is useful.
+
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Link: https://lore.kernel.org/r/20240225142714.286440-2-jic23@kernel.org
+Signed-off-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/pci/controller/pcie-rzg3s-host.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ include/linux/of.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/controller/pcie-rzg3s-host.c
-index 8291f4642c91..80d4a4623ccc 100644
---- a/drivers/pci/controller/pcie-rzg3s-host.c
-+++ b/drivers/pci/controller/pcie-rzg3s-host.c
-@@ -72,6 +72,7 @@
- #define RZG3S_PCI_PINTRCVIE_INTX(i)		BIT(i)
- #define RZG3S_PCI_PINTRCVIE_MSI			BIT(4)
- 
-+/* Register is R/W1C, it doesn't require locking. */
- #define RZG3S_PCI_PINTRCVIS			0x114
- #define RZG3S_PCI_PINTRCVIS_INTX(i)		BIT(i)
- #define RZG3S_PCI_PINTRCVIS_MSI			BIT(4)
-@@ -113,6 +114,8 @@
- #define RZG3S_PCI_MSIRE_ENA			BIT(0)
- 
- #define RZG3S_PCI_MSIRM(id)			(0x608 + (id) * 0x10)
-+
-+/* Register is R/W1C, it doesn't require locking. */
- #define RZG3S_PCI_MSIRS(id)			(0x60c + (id) * 0x10)
- 
- #define RZG3S_PCI_AWBASEL(id)			(0x1000 + (id) * 0x20)
-@@ -536,8 +539,6 @@ static void rzg3s_pcie_msi_irq_ack(struct irq_data *d)
- 	u8 reg_bit = d->hwirq % RZG3S_PCI_MSI_INT_PER_REG;
- 	u8 reg_id = d->hwirq / RZG3S_PCI_MSI_INT_PER_REG;
- 
--	guard(raw_spinlock_irqsave)(&host->hw_lock);
--
- 	writel_relaxed(BIT(reg_bit), host->axi + RZG3S_PCI_MSIRS(reg_id));
+diff --git a/include/linux/of.h b/include/linux/of.h
+index 65c0e3105809..5f4dd8db7a67 100644
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -13,6 +13,7 @@
+  */
+ #include <linux/types.h>
+ #include <linux/bitops.h>
++#include <linux/cleanup.h>
+ #include <linux/errno.h>
+ #include <linux/kobject.h>
+ #include <linux/mod_devicetable.h>
+@@ -128,6 +129,7 @@ static inline struct device_node *of_node_get(struct device_node *node)
  }
+ static inline void of_node_put(struct device_node *node) { }
+ #endif /* !CONFIG_OF_DYNAMIC */
++DEFINE_FREE(device_node, struct device_node *, if (_T) of_node_put(_T))
  
-@@ -878,8 +879,6 @@ static void rzg3s_pcie_intx_irq_ack(struct irq_data *d)
- {
- 	struct rzg3s_pcie_host *host = irq_data_get_irq_chip_data(d);
- 
--	guard(raw_spinlock_irqsave)(&host->hw_lock);
--
- 	rzg3s_pcie_update_bits(host->axi, RZG3S_PCI_PINTRCVIS,
- 			       RZG3S_PCI_PINTRCVIS_INTX(d->hwirq),
- 			       RZG3S_PCI_PINTRCVIS_INTX(d->hwirq));
+ /* Pointer for first entry in chain of all nodes. */
+ extern struct device_node *of_root;
 -- 
 2.43.0
 
