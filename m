@@ -2,56 +2,56 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7FEB1067051
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C214D1067055
 	for <webhook@archiver.kernel.org>; Thu, 12 Mar 2026 15:35:32 +0000 (UTC)
 Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.24718.1773329729457691318
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.24577.1773329731499113434
  for <cip-dev@lists.cip-project.org>;
- Thu, 12 Mar 2026 08:35:29 -0700
+ Thu, 12 Mar 2026 08:35:31 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=ZR/ptCrk;
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=fMWkBsT9;
  spf=pass (domain: gmail.com, ip: 209.85.128.42, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4852c9b4158so9810855e9.0
-        for <cip-dev@lists.cip-project.org>; Thu, 12 Mar 2026 08:35:29 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4852c9b4158so9811395e9.0
+        for <cip-dev@lists.cip-project.org>; Thu, 12 Mar 2026 08:35:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773329727; x=1773934527; darn=lists.cip-project.org;
+        d=gmail.com; s=20230601; t=1773329729; x=1773934529; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yHSW1/21PzvMhTekpROFEwCLjPZx304kTM0OmtZUFbY=;
-        b=ZR/ptCrkX4H80+zHZWXqBp7XqgdKYx+SygRnxh8vGIxSy44ADTvcRJCmLjidTWy7qA
-         QbpVAJ4detoJsPNydLEzBZJrjm8dOcOTEiTK2k2tCjFry7t7dDxKNkkO94giLhKIrEBP
-         6pKnwi5j8wI81Y56SbnouskJH21Vd7tkKrR3DNvPrqK9/mXF/2R3VwJRakU/t6TfylVa
-         5qSHhIzT2Se4VB/ZRsbh0fjui5Mq6KM8gIy8HL5JxPrARtLCKC9YKMDuNEL9/AE6Bo+9
-         wOV+W8WlzJ4IOTu9NgZmNViiscqv+7RlvR2I0ag2KdDLXy1jELsr1cKNXsQctyZ3063U
-         9zIQ==
+        bh=dA+09xarHrmxyzELVEdIWGABzrqnDxJIAUfMhJ+SW2A=;
+        b=fMWkBsT9lsSRVrZVhtN866/vuOrOJgK75kl3nnKKvrwpCwZGvs/WTKPI25c0MBL5Eq
+         kgiNmYBuxGzrPbTsrjc3Z2mgtDjzF2c35vBcFgNbdhzXuUV913g/YUcESF52HfGacXgO
+         F3Sywj042ockIQskHubik1zz/IUSwVCizE+vBBzH80od6BihWzxQzyGaopqPtnJUWfUR
+         Te72iQxiB24VfRufoQ8Aw72ChE13Rk0G4XkH5ZnUCH0OXRMBDzg1g/PebWxgIEJYiJ17
+         8pL4fP0FZKy8qT+rTSbnhVDDvlbknlStXP50IOvTwaHLez0a2mx1cCkooI0s8BfChgPI
+         mMTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773329727; x=1773934527;
+        d=1e100.net; s=20230601; t=1773329729; x=1773934529;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=yHSW1/21PzvMhTekpROFEwCLjPZx304kTM0OmtZUFbY=;
-        b=g4KlHIS/knMIbPqVxj6OOya/Fbx9/yl36koizu9qI2CIibaV0o0ss+ybKzSUNMN+f5
-         Uk75zTuiTVIB07IB97LKEaOmIacwdoZ8wyv9o0AaVxI2k+/n990cIrOdiOH1jvmEPhlj
-         bGXT5oyNE8MH2eKm4MCO4uslRNuH6t0tGzrYO7kHNeIyZM08GRJOSSSvERq/5mOAS3oO
-         /b8ZFB/Zlpaj7qm16rdRK0C8wu+JTbEd6cyg+BjpDe5Zd0+EB3tC6fpew5Yx+0C2DVWT
-         MdhXtNr/lEBNzwdgqmPpC/M9qArb0RFNzzA5ckwyT9fi+pG91kgN/QiY102c2BTX7JTV
-         2M2g==
-X-Gm-Message-State: AOJu0YwJHfA5cebIyCDv/bOv9ntoBclai1Ngnuds6A3xGOHC29Ujr5Bk
-	+x68SBHLqU8kUHCKLtZYJmCRaZqtoj80QFeTsa3UMUJEv01esMj8g4EidPhVUA==
-X-Gm-Gg: ATEYQzy7DbA77IJT7EggBnpM8OR44y8kYS3kv/AmlreY44j4bUGEm/nAwFNnqHpwvRm
-	JJqX904PwZ6hEDqXFIhgpfAQRqUvjVhBJ5a+JnLXmgJos4iNh9xEgcMQsdCy80+LHHa1yo3atws
-	Zxn0bwW0EAlKXbAXeq7oVzJ58SWp5kW/0YGS7XB2rnCX82UCmEycOGFAQZEBAMHzgRHx9Ti+4VV
-	slkhw+cDeYt7Gxk++RPF5+tE2BpRnEn8dIkXO9SR9alKeZd6CvF8BYWwIBxI37lyhiQodIAPe+k
-	HBD77K0l+T2QdXEMAWcFlfz0BPvKx19FSsuo7Udo3JMI/j4VzEctUy9XUqu/tzgFphDW3rbt1La
-	UN+64KB/STNr2ILoQDSKgxpPZ0x/5ADjcIN7JpHwIpMaIx8Oj2YgkeIit9iDeIpSHB1pZ+GbI1m
-	hTE8w8zvwsZhx320jH/SSUCa8aNVbKW0I43NOpDYbFQjmcAYk=
-X-Received: by 2002:a05:600c:4fd5:b0:485:379b:57be with SMTP id 5b1f17b1804b1-4854b0cb6c7mr112436135e9.1.1773329727428;
-        Thu, 12 Mar 2026 08:35:27 -0700 (PDT)
+        bh=dA+09xarHrmxyzELVEdIWGABzrqnDxJIAUfMhJ+SW2A=;
+        b=UFaXCaclbSYkGE3FOkuRQl2rmdoBlDkzkQopa8qOPXJhTeJ6YG7liNclymjH0YAuds
+         By8rJwdtOng7xp/88iQ7oK6PKfkerCEf2az1sQqZEEqZLRLwymeAe3tgb1N4XnRweiSb
+         CxkD85n4yCfs3V8FoiHxEC3baZEXhcNKa6zBXR0381rUXHYNnbSLXHJYPWARgkVpEde9
+         3g6XDUbcoC4yhbSPqu32Vs6206y/4XjobzPRT15BiS9Q9TdDHSZ1uieAoFNqdQSB7OeI
+         kxvCdkpaS0F5NsMPHTcWVg0XLdiUaL1G7b6Nzm5muuoeWp/11l83CRpwOmHp+FtENZEm
+         TUFw==
+X-Gm-Message-State: AOJu0Yznr2VvSCLH8AS+rGGQfqiX2g3ymvabSa5I4G3QctGUgCTizsty
+	c2Y8WAbE7pDlqi07BheohFmCsThr2niuCM9PnNUtX+DeYCWawGBfzb5NBHGWhA==
+X-Gm-Gg: ATEYQzwjERbQyO43XTHw8G7q77NIaoELrRA9R23tSitjSo0+bIeWRa+yDyGEvCrVCnH
+	JMJsdr6ELE394uGC5Sxo8W++rCaUR9NZeA9ASPc8dHpY6dNvFrknJCCZkq/pfkRo7IfBZVhhSzs
+	zlQuC4XLpdxoV2H1wRto8yYk/+ocDu1Hwij/P34Qt5R+gZCEL9S1GzmHucEp4smcRxsVzLRna9/
+	2/4h/yAlcnZa+QMX4XpqVj/X+dg6ry4wna1/FukeGvgsT3Nnso0sV1rlHOjVfXD6GJHp8KXGF+z
+	GJ8vH8XDe2+xrA4VClJgNbhr/ytAWdKC2cuy2kyA+NvFzySpHb94ZS4OHEwOaEnkDJRHxPiTRdU
+	MljGhOoQqonicozNM2QDyzOWRPwjU56hcJYJ4ITbHy5JqZHdHWUARWQfbuzkNCqjs7JlRucM2Qv
+	kOmggxfee/wEEpM2K5/gsgvMeT8Ez38urjnhuHG9Gnz9IzkAk=
+X-Received: by 2002:a05:600c:a010:b0:485:3b50:fe54 with SMTP id 5b1f17b1804b1-4854b0e705emr118120375e9.11.1773329729362;
+        Thu, 12 Mar 2026 08:35:29 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a758:8a01:775:4d0d:d776:157e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48541ab9f9esm246968205e9.4.2026.03.12.08.35.26
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48541ab9f9esm246968205e9.4.2026.03.12.08.35.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Mar 2026 08:35:27 -0700 (PDT)
+        Thu, 12 Mar 2026 08:35:29 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,9 +59,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 05/11] usb: host: xhci-plat: Add .post_resume_quirk for struct xhci_plat_priv
-Date: Thu, 12 Mar 2026 15:35:10 +0000
-Message-ID: <20260312153522.1131675-6-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 07/11] dt-bindings: phy: renesas: Document Renesas RZ/G3E USB3.0 PHY
+Date: Thu, 12 Mar 2026 15:35:12 +0000
+Message-ID: <20260312153522.1131675-8-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260312153522.1131675-1-biju.das.jz@bp.renesas.com>
 References: <20260312153522.1131675-1-biju.das.jz@bp.renesas.com>
@@ -71,68 +71,99 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 12 Mar 2026 15:35:32 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22361
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22363
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[ Upstream commit 2ef16e4eb41fe711479d92805e4b9e430c7bbefd ]
+[ Upstream commit 4f816512aaa1fa3b74df7473ef771ebef511255e ]
 
-Some SoCs (eg Renesas RZ/G3E SoC) have special sequence after
-xhci_resume, add .post_resume_quick for it.
+Document Renesas RZ/G3E USB3.0 PHY. This IP is connected between
+USB3HOST and PHY module. The main functions of the module are
+as follows:
+ - Reset control
+ - Control of PHY input pins
+ - Monitoring of PHY output pins
 
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/r/20250916150255.4231-6-biju.das.jz@bp.renesas.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://patch.msgid.link/20251029084037.108610-2-biju.das.jz@bp.renesas.com
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/usb/host/xhci-plat.c | 14 ++++++++++++++
- drivers/usb/host/xhci-plat.h |  1 +
- 2 files changed, 15 insertions(+)
+ .../bindings/phy/renesas,rzg3e-usb3-phy.yaml  | 63 +++++++++++++++++++
+ 1 file changed, 63 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/renesas,rzg3e-usb3-phy.yaml
 
-diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-index 448656d68e49..48e0463ee194 100644
---- a/drivers/usb/host/xhci-plat.c
-+++ b/drivers/usb/host/xhci-plat.c
-@@ -74,6 +74,16 @@ static int xhci_priv_resume_quirk(struct usb_hcd *hcd)
- 	return priv->resume_quirk(hcd);
- }
- 
-+static int xhci_priv_post_resume_quirk(struct usb_hcd *hcd)
-+{
-+	struct xhci_plat_priv *priv = hcd_to_xhci_priv(hcd);
+diff --git a/Documentation/devicetree/bindings/phy/renesas,rzg3e-usb3-phy.yaml b/Documentation/devicetree/bindings/phy/renesas,rzg3e-usb3-phy.yaml
+new file mode 100644
+index 000000000000..b86dc7a291a4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/phy/renesas,rzg3e-usb3-phy.yaml
+@@ -0,0 +1,63 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/phy/renesas,rzg3e-usb3-phy.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+	if (!priv->post_resume_quirk)
-+		return 0;
++title: Renesas RZ/G3E USB 3.0 PHY
 +
-+	return priv->post_resume_quirk(hcd);
-+}
++maintainers:
++  - Biju Das <biju.das.jz@bp.renesas.com>
 +
- static void xhci_plat_quirks(struct device *dev, struct xhci_hcd *xhci)
- {
- 	struct xhci_plat_priv *priv = xhci_to_priv(xhci);
-@@ -505,6 +515,10 @@ static int xhci_plat_resume_common(struct device *dev, struct pm_message pmsg)
- 	if (ret)
- 		goto disable_clks;
- 
-+	ret = xhci_priv_post_resume_quirk(hcd);
-+	if (ret)
-+		goto disable_clks;
++properties:
++  compatible:
++    const: renesas,r9a09g047-usb3-phy
 +
- 	pm_runtime_disable(dev);
- 	pm_runtime_set_active(dev);
- 	pm_runtime_enable(dev);
-diff --git a/drivers/usb/host/xhci-plat.h b/drivers/usb/host/xhci-plat.h
-index 6475130eac4b..8c904b0fe555 100644
---- a/drivers/usb/host/xhci-plat.h
-+++ b/drivers/usb/host/xhci-plat.h
-@@ -19,6 +19,7 @@ struct xhci_plat_priv {
- 	int (*init_quirk)(struct usb_hcd *);
- 	int (*suspend_quirk)(struct usb_hcd *);
- 	int (*resume_quirk)(struct usb_hcd *);
-+	int (*post_resume_quirk)(struct usb_hcd *);
- };
- 
- #define hcd_to_xhci_priv(h) ((struct xhci_plat_priv *)hcd_to_xhci(h)->priv)
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: APB bus clock
++      - description: USB 2.0 PHY reference clock
++      - description: USB 3.0 PHY reference clock
++
++  clock-names:
++    items:
++      - const: pclk
++      - const: core
++      - const: ref_alt_clk_p
++
++  power-domains:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++  '#phy-cells':
++    const: 0
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - power-domains
++  - resets
++  - '#phy-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/renesas,r9a09g047-cpg.h>
++
++    usb-phy@15870000 {
++        compatible = "renesas,r9a09g047-usb3-phy";
++        reg = <0x15870000 0x10000>;
++        clocks = <&cpg CPG_MOD 0xb0>, <&cpg CPG_CORE 13>, <&cpg CPG_CORE 12>;
++        clock-names = "pclk", "core", "ref_alt_clk_p";
++        power-domains = <&cpg>;
++        resets = <&cpg 0xaa>;
++        #phy-cells = <0>;
++    };
 -- 
 2.43.0
 
