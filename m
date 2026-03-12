@@ -2,55 +2,56 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DB9C1067049
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E434106704D
 	for <webhook@archiver.kernel.org>; Thu, 12 Mar 2026 15:35:32 +0000 (UTC)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.24570.1773329725961441685
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.24575.1773329727852272186
  for <cip-dev@lists.cip-project.org>;
- Thu, 12 Mar 2026 08:35:26 -0700
+ Thu, 12 Mar 2026 08:35:28 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=XrSakpAG;
- spf=pass (domain: gmail.com, ip: 209.85.128.41, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4852fdb36a8so13337605e9.2
-        for <cip-dev@lists.cip-project.org>; Thu, 12 Mar 2026 08:35:25 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=AtyjGx22;
+ spf=pass (domain: gmail.com, ip: 209.85.128.46, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4852e9ca034so11486025e9.2
+        for <cip-dev@lists.cip-project.org>; Thu, 12 Mar 2026 08:35:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773329724; x=1773934524; darn=lists.cip-project.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tYRJPMccBPTqSNLDzccMmbdzLB5g3pRKouTKTC3g9UA=;
-        b=XrSakpAGkwE+njCLAo7VFb0cBxWzEr9c9rws76iQDcEACm9l89nEQp1MY2xSK+2ZBp
-         RRjYs9rVlsj1savW7PZ4p4UHx7uuaBVhus6YSSvORDuLq67qRd/z0EFGeqKRBH/0CwJm
-         3SIYUXASH90sNvETVHj46MQSr9ErKCF0AfA6zHfuB+AH2QTPza5dNNJ88Azq/Ui5ZP4p
-         fKZKo8TsfLTA1VQlVlj8cXcJ53XI//GEmT+rTNqyn+eYthlBiGnMYpGWnvm11yt+7SrP
-         4HRKngYFyKLTkqGvB5M4C7tBPiyikFM3QXRBBUB08QX9IqOSsmuQG84khXUTsPMMCOV6
-         zKRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773329724; x=1773934524;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1773329726; x=1773934526; darn=lists.cip-project.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tYRJPMccBPTqSNLDzccMmbdzLB5g3pRKouTKTC3g9UA=;
-        b=F5WYrOALZ7EhsvA1iw6nki2V+89pyavinPCNTRlY1nC3dty+nE9JElbTdYg6X1RS7A
-         8/zKP9W8h2OBD2A8H93oUia7ZBPOMpas6vcDwmk1dctLPUK3IQfyza8P8HTJBPla7AeA
-         F7j1s4Gyriiw4vjBos80Po5YrjQw1GnTogcRUVLwUOQuI1SbobfCVG2AgQvZnwfJLNsw
-         8BBd/gaNVPysJgqYB8LOJ63c2COOzStQ0VXW2Um/r8fhGsxKlvN/VA+tU+K5USG9cknn
-         /dimwOzECY2+7GOrxSzwcOtgCHtruGjrLpe9R9k7o0n/cFJfO8SkTMj1AHKy8hWml6tv
-         3Rug==
-X-Gm-Message-State: AOJu0YyHx286g1XWQHCYmHhXUXPG/9hzbuZCzAaPh37B5zs7VYFh/rgF
-	dErS/JvhsH04vmUbZ21Tk/cZPsgNqsNr5h2K/g8J6snxobPZwlytgNNQ8VDUbQ==
-X-Gm-Gg: ATEYQzyB2ZdV02cw8tnCStotJwrmGRemXVlfu+0Nj3wedfmiSZA4J14460KYwijns3+
-	pdVFmgqZgGvLSU3wqzI5/FZn/9l/zs7TgMyppuMlcLa9BVZI3hc9uP9LeutnbjhDC4rzgSeX3Hn
-	lwJjwqmn6z5EFqTCOF1V3ruXv6jTJQytJ+KlLLdov9GP8DOhcg+Al0SyHqBgq0LNVVzC1pGYq+/
-	ePt35z/ogZ2zCaRi/r5smXmjy9dYlgcGy/d2ZyTfQcTqA11HVb8OKywQCNEyuo0Ly7MpoqrTmON
-	0yb8MbYbC3hlHfG6sb6bIyYTZKEwaDz3s0EYQLMNw8AfSpmQkSsZHSupSuVJdnqysvCL+KNBndY
-	hn3GiGCePn8P9v9t8d3URLZ/EHeq33hF+MC91mf8haCuwcSVYdWdKrlq5fvcPfQinIa9mr5Sawz
-	/QSzfW6xJsCZrYceBh6/x0QVDSI+5K4Py8jx0vLNPxY/obGrA=
-X-Received: by 2002:a05:600c:c4a2:b0:485:353f:c651 with SMTP id 5b1f17b1804b1-4854b12cfb6mr118410465e9.22.1773329723778;
-        Thu, 12 Mar 2026 08:35:23 -0700 (PDT)
+        bh=/BbP3C7K/bOsdoFT6sLaef/35j0inasrlT9xXMmNHEg=;
+        b=AtyjGx22WtvFpOZWzDEXqTai19uNloQvL2b38zzjZ3VPfsuvXIW1ujpBFw5OAgNTYQ
+         OA5ByWIQaqNH4nKd0UiyrNZj3Rtcx6ZHq1HwR4k7vIGcOdATqSX6KjDpQCRrb3Iz0Xwu
+         5ryDUgyb8HvA63UG/a6VAYgEByVIiWtlBL0N1DfZ0ChYBBHqEa6roKFf4zfD0eGOwxX6
+         0K/FuB0V9dNSs/3dEs22rROzw/XdLySC6HImQsQezY6gqb7eTbVNzFBfwsQ9T9eTu+X7
+         mYsmpiI2HcIKoZhvwPpiijsjmLGhb/z/TeaCoKEaCEG++bGp013ljIhoYhRftmF2fP0x
+         oXow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773329726; x=1773934526;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=/BbP3C7K/bOsdoFT6sLaef/35j0inasrlT9xXMmNHEg=;
+        b=IE+L69TQn/o+qrEkKn69fBNOinC/77XxBkIQGjzpimL5seWlSJMMvl8rafvKcd2f0h
+         3mTCg9GDGsJ3peOTKFC1SWhzc4muhoPX10XweoUVNJHKYaquN5clDMcEm6WGOMvpqLJw
+         IkLtYPjModlEvaaAY87KDttrfhWfuBXV+CsKbLHZIBcIGL9rWkrisDRh5Sxo+Y34Mek+
+         fmqEggjqMtNI5S//der6UNol/RfPQuH4jcNXAyaiV9SG53OtL9SZJxAo/CnlDqolY7yz
+         K2xQow5iatnSLSkaArZp1QiedpE7n6zEGodJDtpgGFymFDSW5uq/T/VMFysA5xR4LAb+
+         BQRQ==
+X-Gm-Message-State: AOJu0Yz3JnSnzv0j2fVfRc/M1D3SMVnCDhEkv0eCrw4aqXICc0Nj/49e
+	zMUQ4J9C79e3FqjMd/TPJu8XN+DzA2qNpkiG+AmK3HSeWWvj4vtPfTOB49ghSg==
+X-Gm-Gg: ATEYQzyUX3ThHIYuHSXau3UmuWEqPdWIqAX79LkY7kjOyV+Pv2evjpRqx3l2/aL/E+F
+	MRuiG92p7dsfqn0aXYYVGBQmZseWp93gvnj/IOdCu0lqsNX6VPcOn4HAhrc88Ad9t0R3c0MGcRD
+	owVim+J7e9t1FWqlQYaTWu4hm/3uHkF9Oalytz6YY8kyELAsnZWoahoNyUkzV3Q14X5SQHWkrxp
+	/WmkkAA2G1QpDGNfN6oIt6co4uLbjxKE2WUm13SCxPk6KEr+QbedBBHeZcqXcjMOX1ezvsbo/dT
+	r6pEkP49bqu1vkJOf8cnxr0HK3Lgp+Caivgmor1a5muceF1DXiqxcLMZ+ciKjphQayJta2kzxdI
+	hnnQwxoMl4vgRFbfvN2PN7V3BVkLvp75XBKex8PJUohLXvx/mytRz76gYvU1Ng49Kwny4t7mBrJ
+	xrprJ+8NUNOHwMTxTrDxoed1SI6FDUU4GpDCUbL/f0NPXp3Zs=
+X-Received: by 2002:a05:600c:3b18:b0:482:e5d4:b7ca with SMTP id 5b1f17b1804b1-4854b0b32d8mr122128455e9.8.1773329725848;
+        Thu, 12 Mar 2026 08:35:25 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a758:8a01:775:4d0d:d776:157e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48541ab9f9esm246968205e9.4.2026.03.12.08.35.23
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48541ab9f9esm246968205e9.4.2026.03.12.08.35.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Mar 2026 08:35:23 -0700 (PDT)
+        Thu, 12 Mar 2026 08:35:25 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -58,22 +59,27 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 00/11] Add RZ/G3E USB3.2 Gen1 Host Controller support
-Date: Thu, 12 Mar 2026 15:35:05 +0000
-Message-ID: <20260312153522.1131675-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 03/11] dt-bindings: usb: Document Renesas RZ/G3E USB3HOST
+Date: Thu, 12 Mar 2026 15:35:08 +0000
+Message-ID: <20260312153522.1131675-4-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260312153522.1131675-1-biju.das.jz@bp.renesas.com>
+References: <20260312153522.1131675-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 12 Mar 2026 15:35:32 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22356
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22359
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Add RZ/G3E USB3.2 Gen1 Host Controller and PHY support. The USB3HOST
-is compliant with the Universal Serial Bus 3.2 Specification Revision 1.0.
+[ Upstream commit dd0d2618e3f815a030622599e540d3be1964a888 ]
+
+Document the Renesas RZ/G3E USB3.2 Gen2 Host Controller (a.k.a USB3HOST).
+The USB3HOST is compliant with the Universal Serial Bus 3.2 Specification
+Revision 1.0.
  - Supports 1 downstream USB receptacles
      - Number of SSP Gen2 or SS ports: 1
      - Number of HS or FS or LS ports: 1
@@ -83,43 +89,109 @@ is compliant with the Universal Serial Bus 3.2 Specification Revision 1.0.
    these split-transactions.
  - Supports Power Control and Over Current Detection.
 
-Biju Das (11):
-  dt-bindings: clock: renesas,r9a09g047-cpg: Add USB3.0 core clocks
-  clk: renesas: r9a09g047: Add USB3.0 clocks/resets
-  dt-bindings: usb: Document Renesas RZ/G3E USB3HOST
-  usb: host: xhci-rcar: Move R-Car reg definitions
-  usb: host: xhci-plat: Add .post_resume_quirk for struct xhci_plat_priv
-  usb: host: xhci-rcar: Add Renesas RZ/G3E USB3 Host driver support
-  dt-bindings: phy: renesas: Document Renesas RZ/G3E USB3.0 PHY
-  phy: renesas: Add Renesas RZ/G3E USB3.0 PHY driver
-  arm64: dts: renesas: r9a09g047: Add USB3 PHY/Host nodes
-  arm64: dts: renesas: r9a09g047e57-smarc: Enable USB3HOST
-  arm64: defconfig: Enable RZ/G3E USB3 PHY driver
-
- .../bindings/phy/renesas,rzg3e-usb3-phy.yaml  |  63 +++++
- .../bindings/usb/renesas,rzg3e-xhci.yaml      |  87 ++++++
- arch/arm64/boot/dts/renesas/r9a09g047.dtsi    |  30 ++
- .../boot/dts/renesas/r9a09g047e57-smarc.dts   |  10 +
- .../boot/dts/renesas/renesas-smarc2.dtsi      |   8 +
- arch/arm64/configs/defconfig                  |   1 +
- drivers/clk/renesas/r9a09g047-cpg.c           |   9 +-
- drivers/phy/renesas/Kconfig                   |   7 +
- drivers/phy/renesas/Makefile                  |   1 +
- drivers/phy/renesas/phy-rzg3e-usb3.c          | 259 ++++++++++++++++++
- drivers/usb/host/Kconfig                      |   2 +-
- drivers/usb/host/xhci-plat.c                  |  14 +
- drivers/usb/host/xhci-plat.h                  |   1 +
- drivers/usb/host/xhci-rcar-regs.h             |  49 ++++
- drivers/usb/host/xhci-rcar.c                  | 100 ++++---
- drivers/usb/host/xhci-rzg3e-regs.h            |  12 +
- .../dt-bindings/clock/renesas,r9a09g047-cpg.h |   2 +
- 17 files changed, 609 insertions(+), 46 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/phy/renesas,rzg3e-usb3-phy.yaml
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Link: https://lore.kernel.org/r/20250916150255.4231-4-biju.das.jz@bp.renesas.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ .../bindings/usb/renesas,rzg3e-xhci.yaml      | 87 +++++++++++++++++++
+ 1 file changed, 87 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/usb/renesas,rzg3e-xhci.yaml
- create mode 100644 drivers/phy/renesas/phy-rzg3e-usb3.c
- create mode 100644 drivers/usb/host/xhci-rcar-regs.h
- create mode 100644 drivers/usb/host/xhci-rzg3e-regs.h
 
+diff --git a/Documentation/devicetree/bindings/usb/renesas,rzg3e-xhci.yaml b/Documentation/devicetree/bindings/usb/renesas,rzg3e-xhci.yaml
+new file mode 100644
+index 000000000000..98260f9fb442
+--- /dev/null
++++ b/Documentation/devicetree/bindings/usb/renesas,rzg3e-xhci.yaml
+@@ -0,0 +1,87 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/usb/renesas,rzg3e-xhci.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas RZ/G3E USB 3.2 Gen2 Host controller
++
++maintainers:
++  - Biju Das <biju.das.jz@bp.renesas.com>
++
++properties:
++  compatible:
++    const: renesas,r9a09g047-xhci
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    items:
++      - description: Logical OR of all interrupt signals.
++      - description: System management interrupt
++      - description: Host system error interrupt
++      - description: Power management event interrupt
++      - description: xHC interrupt
++
++  interrupt-names:
++    items:
++      - const: all
++      - const: smi
++      - const: hse
++      - const: pme
++      - const: xhc
++
++  clocks:
++    maxItems: 1
++
++  phys:
++    maxItems: 2
++
++  phy-names:
++    items:
++      - const: usb2-phy
++      - const: usb3-phy
++
++  power-domains:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - interrupt-names
++  - clocks
++  - power-domains
++  - resets
++  - phys
++  - phy-names
++
++allOf:
++  - $ref: usb-xhci.yaml
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/renesas,r9a09g047-cpg.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    usb@15850000 {
++      compatible = "renesas,r9a09g047-xhci";
++      reg = <0x15850000 0x10000>;
++      interrupts = <GIC_SPI 759 IRQ_TYPE_LEVEL_HIGH>,
++                   <GIC_SPI 758 IRQ_TYPE_LEVEL_HIGH>,
++                   <GIC_SPI 757 IRQ_TYPE_LEVEL_HIGH>,
++                   <GIC_SPI 756 IRQ_TYPE_LEVEL_HIGH>,
++                   <GIC_SPI 755 IRQ_TYPE_LEVEL_HIGH>;
++      interrupt-names = "all", "smi", "hse", "pme", "xhc";
++      clocks = <&cpg CPG_MOD 0xaf>;
++      power-domains = <&cpg>;
++      resets = <&cpg 0xaa>;
++      phys = <&usb3_phy>, <&usb3_phy>;
++      phy-names = "usb2-phy", "usb3-phy";
++    };
 -- 
 2.43.0
 
