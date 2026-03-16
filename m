@@ -2,56 +2,105 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40091F506DC
-	for <webhook@archiver.kernel.org>; Mon, 16 Mar 2026 14:34:24 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.51757.1773671662049070421
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11AF3F506DE
+	for <webhook@archiver.kernel.org>; Mon, 16 Mar 2026 14:34:34 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.51761.1773671664892965895
  for <cip-dev@lists.cip-project.org>;
- Mon, 16 Mar 2026 07:34:22 -0700
+ Mon, 16 Mar 2026 07:34:25 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: W5HEyqvhS4GtqnpLss5jyQ==
-X-CSE-MsgGUID: qR9vnedaR32/aa8pAWjrQw==
+ dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
+X-CSE-ConnectionGUID: b32pjLTYStqnLYuIgkb02Q==
+X-CSE-MsgGUID: MLrF6DYeRhWPflKOrj9WLw==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 16 Mar 2026 23:34:20 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 16 Mar 2026 23:34:23 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.92.8])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 4EAAA4005E1A;
-	Mon, 16 Mar 2026 23:34:19 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id C62864006196;
+	Mon, 16 Mar 2026 23:34:22 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.1.y-cip 0/3] Add RZ/V2N DMAC support
-Date: Mon, 16 Mar 2026 14:34:14 +0000
-Message-ID: <20260316143417.76612-1-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.1.y-cip 2/3] clk: renesas: r9a09g056: Add entries for the DMACs
+Date: Mon, 16 Mar 2026 14:34:16 +0000
+Message-ID: <20260316143417.76612-3-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260316143417.76612-1-ovidiu.panait.rb@renesas.com>
+References: <20260316143417.76612-1-ovidiu.panait.rb@renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 16 Mar 2026 14:34:24 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22384
+ <cip-dev@lists.cip-project.org>; Mon, 16 Mar 2026 14:34:34 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22386
 
-Hi,
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-This series adds DMAC support for the Renesas RZ/V2N SoC.
+commit 75faf216112a69cdbf415fa057abbe7ed2ae6da6 upstream.
 
-Patches were cherry-picked from mainline kernel.
+Add clock and reset entries for the DMAC IPs.
 
-Best regards,
-Ovidiu
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://patch.msgid.link/20251125221420.288809-2-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+---
+ drivers/clk/renesas/r9a09g056-cpg.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-Lad Prabhakar (3):
-  dt-bindings: dma: rz-dmac: Document RZ/V2N SoC support
-  clk: renesas: r9a09g056: Add entries for the DMACs
-  arm64: dts: renesas: r9a09g056: Add DMAC nodes
-
- .../bindings/dma/renesas,rz-dmac.yaml         |   1 +
- arch/arm64/boot/dts/renesas/r9a09g056.dtsi    | 165 ++++++++++++++++++
- drivers/clk/renesas/r9a09g056-cpg.c           |  19 ++
- 3 files changed, 185 insertions(+)
-
+diff --git a/drivers/clk/renesas/r9a09g056-cpg.c b/drivers/clk/renesas/r9a09g056-cpg.c
+index b7d66148b42c..b1e8ae47e7f9 100644
+--- a/drivers/clk/renesas/r9a09g056-cpg.c
++++ b/drivers/clk/renesas/r9a09g056-cpg.c
+@@ -50,6 +50,8 @@ enum clk_ids {
+ 	CLK_PLLDTY_ACPU_DIV4,
+ 	CLK_PLLDTY_DIV8,
+ 	CLK_PLLDTY_DIV16,
++	CLK_PLLDTY_RCPU,
++	CLK_PLLDTY_RCPU_DIV4,
+ 	CLK_PLLETH_DIV_250_FIX,
+ 	CLK_PLLETH_DIV_125_FIX,
+ 	CLK_CSDIV_PLLETH_GBE0,
+@@ -173,6 +175,8 @@ static const struct cpg_core_clk r9a09g056_core_clks[] __initconst = {
+ 	DEF_FIXED(".plldty_acpu_div4", CLK_PLLDTY_ACPU_DIV4, CLK_PLLDTY_ACPU, 1, 4),
+ 	DEF_FIXED(".plldty_div8", CLK_PLLDTY_DIV8, CLK_PLLDTY, 1, 8),
+ 	DEF_FIXED(".plldty_div16", CLK_PLLDTY_DIV16, CLK_PLLDTY, 1, 16),
++	DEF_DDIV(".plldty_rcpu", CLK_PLLDTY_RCPU, CLK_PLLDTY, CDDIV3_DIVCTL2, dtable_2_64),
++	DEF_FIXED(".plldty_rcpu_div4", CLK_PLLDTY_RCPU_DIV4, CLK_PLLDTY_RCPU, 1, 4),
+ 
+ 	DEF_FIXED(".plleth_250_fix", CLK_PLLETH_DIV_250_FIX, CLK_PLLETH, 1, 4),
+ 	DEF_FIXED(".plleth_125_fix", CLK_PLLETH_DIV_125_FIX, CLK_PLLETH_DIV_250_FIX, 1, 2),
+@@ -214,6 +218,16 @@ static const struct cpg_core_clk r9a09g056_core_clks[] __initconst = {
+ };
+ 
+ static const struct rzv2h_mod_clk r9a09g056_mod_clks[] __initconst = {
++	DEF_MOD("dmac_0_aclk",			CLK_PLLCM33_GEAR, 0, 0, 0, 0,
++						BUS_MSTOP(5, BIT(9))),
++	DEF_MOD("dmac_1_aclk",			CLK_PLLDTY_ACPU_DIV2, 0, 1, 0, 1,
++						BUS_MSTOP(3, BIT(2))),
++	DEF_MOD("dmac_2_aclk",			CLK_PLLDTY_ACPU_DIV2, 0, 2, 0, 2,
++						BUS_MSTOP(3, BIT(3))),
++	DEF_MOD("dmac_3_aclk",			CLK_PLLDTY_RCPU_DIV4, 0, 3, 0, 3,
++						BUS_MSTOP(10, BIT(11))),
++	DEF_MOD("dmac_4_aclk",			CLK_PLLDTY_RCPU_DIV4, 0, 4, 0, 4,
++						BUS_MSTOP(10, BIT(12))),
+ 	DEF_MOD_CRITICAL("icu_0_pclk_i",	CLK_PLLCM33_DIV16, 0, 5, 0, 5,
+ 						BUS_MSTOP_NONE),
+ 	DEF_MOD_CRITICAL("gic_0_gicclk",	CLK_PLLDTY_ACPU_DIV4, 1, 3, 0, 19,
+@@ -356,6 +370,11 @@ static const struct rzv2h_mod_clk r9a09g056_mod_clks[] __initconst = {
+ 
+ static const struct rzv2h_reset r9a09g056_resets[] __initconst = {
+ 	DEF_RST(3, 0, 1, 1),		/* SYS_0_PRESETN */
++	DEF_RST(3, 1, 1, 2),		/* DMAC_0_ARESETN */
++	DEF_RST(3, 2, 1, 3),		/* DMAC_1_ARESETN */
++	DEF_RST(3, 3, 1, 4),		/* DMAC_2_ARESETN */
++	DEF_RST(3, 4, 1, 5),		/* DMAC_3_ARESETN */
++	DEF_RST(3, 5, 1, 6),		/* DMAC_4_ARESETN */
+ 	DEF_RST(3, 6, 1, 7),		/* ICU_0_PRESETN_I */
+ 	DEF_RST(3, 8, 1, 9),		/* GIC_0_GICRESET_N */
+ 	DEF_RST(3, 9, 1, 10),		/* GIC_0_DBG_GICRESET_N */
 -- 
 2.34.1
 
