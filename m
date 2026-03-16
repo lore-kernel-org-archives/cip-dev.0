@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6814F506F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF43BF506F6
 	for <webhook@archiver.kernel.org>; Mon, 16 Mar 2026 14:59:55 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.msgproc01-g2.52447.1773673175962015446
  for <cip-dev@lists.cip-project.org>;
- Mon, 16 Mar 2026 07:59:46 -0700
+ Mon, 16 Mar 2026 07:59:51 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-CSE-ConnectionGUID: QI6nETfnSbmhMXSKw4kWaw==
-X-CSE-MsgGUID: PgIFWjB/SsKiztpjRSotiw==
+X-CSE-ConnectionGUID: juGZ6ejWQ4+lG0+sduK1Jw==
+X-CSE-MsgGUID: R+FAMuo7RrSm5JULi11vuQ==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 16 Mar 2026 23:59:45 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 16 Mar 2026 23:59:50 +0900
 Received: from Ubuntu-22.. (unknown [10.24.0.53])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 7625541B7814;
-	Mon, 16 Mar 2026 23:59:44 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id AA17341B781A;
+	Mon, 16 Mar 2026 23:59:49 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 16/35] arm64: dts: renesas: rzt2h-n2h-evk: Enable USB2.0 support
-Date: Mon, 16 Mar 2026 14:58:53 +0000
-Message-ID: <20260316145915.8580-17-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 19/35] net: stmmac: dwmac-renesas-gbeth: Add support for RZ/T2H SoC
+Date: Mon, 16 Mar 2026 14:58:56 +0000
+Message-ID: <20260316145915.8580-20-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260316145915.8580-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20260316145915.8580-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -34,186 +34,157 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 16 Mar 2026 14:59:55 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22408
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22411
 
-commit 7e7bac722ddbd2fc9ba5c5916929cdd2507b97af upstream.
+commit 57e9e4d7023a0d23869753b1baf4a89e6774107a upstream.
 
-Enable USB2.0 support on RZ/T2H and RZ/N2H EVKs.
+Extend the Renesas GBETH stmmac glue driver to support the RZ/T2H SoC,
+where the GMAC is connected through a MIIC PCS. Introduce a new
+`has_pcs` flag in `struct renesas_gbeth_of_data` to indicate when PCS
+handling is required.
+
+When enabled, the driver parses the `pcs-handle` phandle, creates a PCS
+instance with `miic_create()`, and wires it into phylink. Proper cleanup
+is done with `miic_destroy()`. New init/exit/select hooks are added to
+`plat_stmmacenet_data` for PCS integration.
+
+Update Kconfig to select `PCS_RZN1_MIIC` when building the Renesas GBETH
+driver so the PCS support is always available.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20250904100435.4033858-1-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[PL: resolve merge conflict]
+Link: https://patch.msgid.link/20250908105901.3198975-4-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- .../dts/renesas/r9a09g077m44-rzt2h-evk.dts    | 36 ++++++++++++++++
- .../dts/renesas/r9a09g087m44-rzn2h-evk.dts    | 41 +++++++++++++++++++
- .../dts/renesas/rzt2h-n2h-evk-common.dtsi     | 22 ++++++++++
- 3 files changed, 99 insertions(+)
+ drivers/net/ethernet/stmicro/stmmac/Kconfig   | 12 +++--
+ .../stmicro/stmmac/dwmac-renesas-gbeth.c      | 51 +++++++++++++++++++
+ 2 files changed, 58 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts
-index d0a982a101b1..7fccc72c9f8d 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts
-@@ -31,6 +31,28 @@
+diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+index fcf5da66fd02..9e29577652b9 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
++++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+@@ -132,15 +132,17 @@ config DWMAC_QCOM_ETHQOS
+ 	  stmmac device driver.
+ 
+ config DWMAC_RENESAS_GBETH
+-	tristate "Renesas RZ/V2H(P) GBETH support"
++	tristate "Renesas RZ/V2H(P) GBETH and RZ/T2H, RZ/N2H GMAC support"
+ 	default ARCH_RENESAS
+ 	depends on OF && (ARCH_RENESAS || COMPILE_TEST)
++	select PCS_RZN1_MIIC
+ 	help
+-	  Support for Gigabit Ethernet Interface (GBETH) on Renesas
+-	  RZ/V2H(P) SoCs.
++	  Support for Gigabit Ethernet Interface (GBETH)/ Ethernet MAC (GMAC)
++	  on Renesas SoCs.
+ 
+-	  This selects the Renesas RZ/V2H(P) Soc specific glue layer support
+-	  for the stmmac device driver.
++	  This selects Renesas SoC glue layer support for the stmmac device
++	  driver. This driver is used for the RZ/V2H(P) family, RZ/T2H and
++	  RZ/N2H SoCs.
+ 
+ config DWMAC_ROCKCHIP
+ 	tristate "Rockchip dwmac support"
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c
+index 0156a974db1d..62a33b3fb00d 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c
+@@ -17,6 +17,7 @@
+ #include <linux/device.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
++#include <linux/pcs-rzn1-miic.h>
+ #include <linux/platform_device.h>
+ #include <linux/reset.h>
+ #include <linux/types.h>
+@@ -33,6 +34,7 @@
+  *                handled by the glue driver or core driver.
+  * @set_clk_tx_rate: Flag to indicate if Tx clock is fixed or
+  *                   set_clk_tx_rate is needed.
++ * @has_pcs: Flag to indicate if the MAC has a PCS
   */
- #define SD1_MICRO_SD	1
- 
-+/*
-+ * USB Pin Configuration:
-+ *
-+ * This board is equipped with three USB connectors: Type-A (CN80), Mini-B
-+ * (CN79), and Micro-AB (CN33). The RZ/T2H SoC has a single USB channel, so
-+ * either the USB host interface or the USB function interface can be used,
-+ * but not both simultaneously when using the CN79 and CN80 connectors.
-+ *
-+ * By default, the Type-A (CN80) and Mini-B (CN79) connectors are enabled.
-+ * Configure the switches as follows:
-+ *   - P00_0 - P00_2 (control signals for USB power supply): SW1[5] = ON
-+ *   - USB_VBUSIN (used for USB function): SW7[7] = OFF; SW7[8] = ON
-+ *   - USB_VBUSEN (used for USB_HF_VBUSEN): SW7[9] = OFF; SW7[10] = ON
-+ *
-+ * To enable the Micro-AB (CN33) USB OTG connector, set the following macro
-+ * to 1 and configure the switches as follows:
-+ *   - P00_0 - P00_2 (control signals for USB power supply): SW1[5] = ON
-+ *   - USB_VBUSIN (used for USB OTG): SW7[7] = ON; SW7[8] = OFF
-+ *   - USB_VBUSEN (used for USB_OTG_VBUSEN): SW7[9] = ON; SW7[10] = OFF
-+ */
-+#define USB_OTG		0
-+
- #include "rzt2h-n2h-evk-common.dtsi"
- 
- / {
-@@ -175,5 +197,19 @@ i2c1_pins: i2c1-pins {
- 		pinmux = <RZT2H_PORT_PINMUX(5, 0, 0x17)>, /* SDA */
- 			 <RZT2H_PORT_PINMUX(4, 7, 0x17)>; /* SCL */
- 	};
-+
-+#if USB_OTG
-+	usb-exicen-hog {
-+		gpio-hog;
-+		gpios = <RZT2H_GPIO(0, 2) GPIO_ACTIVE_HIGH>;
-+		output-high;
-+		line-name = "usb_exicen_a";
-+	};
-+#endif
-+
-+	usb_pins: usb-pins {
-+		pinmux = <RZT2H_PORT_PINMUX(0, 0, 0x13)>, /* VBUSEN */
-+			 <RZT2H_PORT_PINMUX(0, 1, 0x13)>; /* OVRCUR */
-+	};
+ struct renesas_gbeth_of_data {
+ 	const char * const *clks;
+@@ -40,6 +42,7 @@ struct renesas_gbeth_of_data {
+ 	u32 stmmac_flags;
+ 	bool handle_reset;
+ 	bool set_clk_tx_rate;
++	bool has_pcs;
  };
  
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
-index 90bfcd76845b..82b8eff086d1 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
-@@ -33,6 +33,33 @@
-  */
- #define SD1_MICRO_SD	1
- 
-+/*
-+ * USB Pin Configuration:
-+ *
-+ * This board is equipped with three USB connectors: Type-A (CN7), Mini-B
-+ * (CN8), and Micro-AB (CN9). The RZ/N2H SoC has a single USB channel, so
-+ * either the USB host interface or the USB function interface can be used,
-+ * but not both simultaneously when using the CN7 and CN8 connectors.
-+ *
-+ * By default, the Type-A (CN7) and Mini-B (CN8) connectors are enabled.
-+ * Configure the switches as follows:
-+ *   - P02_2 - P02_3 (control signals for USB power supply): DSW2[6] = OFF;
-+ *     - P02_2 (used for VBUSEN): DSW14[5] = OFF; DSW14[6] = ON
-+ *     - P02_3 (used for USB_OVRCUR): DSW14[1] = OFF; DSW14[2] = ON
-+ *   - USB_VBUSIN (used for VBUS of CN8): DSW16[1] = OFF; DSW16[2] = ON
-+ *   - USB_VBUSEN (used for USB_HF_VBUSEN): DSW16[3] = OFF; DSW16[4] = ON
-+ *
-+ * To enable the Micro-AB (CN9) USB OTG connector, set the following macro
-+ * to 1 and configure the switches as follows:
-+ *   - P02_2 - P02_3 (control signals for USB power supply): DSW2[6] = OFF;
-+ *     - P02_2 (used for VBUSEN): DSW14[5] = OFF; DSW14[6] = ON
-+ *     - P02_3 (used for USB_OVRCUR): DSW14[1] = OFF; DSW14[2] = ON
-+ *   - USB_VBUSIN (used for VBUS for OTG): DSW16[1] = ON; DSW16[2] = OFF
-+ *   - USB_VBUSEN (used for USB_OTG_VBUSEN): DSW16[3] = ON; DSW16[4] = OFF
-+ *   - USB_EXICEN (used for USB OTG EXICEN): DSW14[3] = OFF; DSW14[4] = ON
-+ */
-+#define USB_OTG		0
-+
- #include "rzt2h-n2h-evk-common.dtsi"
- 
- /*
-@@ -249,5 +276,19 @@ i2c1_pins: i2c1-pins {
- 		pinmux = <RZT2H_PORT_PINMUX(3, 3, 0x17)>,
- 			 <RZT2H_PORT_PINMUX(3, 4, 0x17)>;
- 	};
-+
-+#if USB_OTG
-+	usb-exicen-hog {
-+		gpio-hog;
-+		gpios = <RZT2H_GPIO(2, 4) GPIO_ACTIVE_HIGH>;
-+		output-high;
-+		line-name = "usb_exicen_a";
-+	};
-+#endif
-+
-+	usb_pins: usb-pins {
-+		pinmux = <RZT2H_PORT_PINMUX(2, 2, 0x13)>, /* VBUSEN */
-+			 <RZT2H_PORT_PINMUX(2, 3, 0x13)>; /* OVRCUR */
-+	};
+ struct renesas_gbeth {
+@@ -53,6 +56,41 @@ static const char *const renesas_gbeth_clks[] = {
+ 	"tx", "tx-180", "rx", "rx-180",
  };
  
-diff --git a/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi b/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
-index d2cc1774a8aa..b06d5012fa24 100644
---- a/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
-@@ -144,10 +144,20 @@ channel@3 {
- 	};
- };
- 
-+&ehci {
-+	dr_mode = "otg";
-+	status = "okay";
++static const char *const renesas_gmac_clks[] = {
++	"tx",
 +};
 +
- &extal_clk {
- 	clock-frequency = <25000000>;
++static int renesas_gmac_pcs_init(struct stmmac_priv *priv)
++{
++	struct device_node *np = priv->device->of_node;
++	struct device_node *pcs_node;
++	struct phylink_pcs *pcs;
++
++	pcs_node = of_parse_phandle(np, "pcs-handle", 0);
++	if (pcs_node) {
++		pcs = miic_create(priv->device, pcs_node);
++		of_node_put(pcs_node);
++		if (IS_ERR(pcs))
++			return PTR_ERR(pcs);
++
++		priv->hw->phylink_pcs = pcs;
++	}
++
++	return 0;
++}
++
++static void renesas_gmac_pcs_exit(struct stmmac_priv *priv)
++{
++	if (priv->hw->phylink_pcs)
++		miic_destroy(priv->hw->phylink_pcs);
++}
++
++static struct phylink_pcs *renesas_gmac_select_pcs(struct stmmac_priv *priv,
++						   phy_interface_t interface)
++{
++	return priv->hw->phylink_pcs;
++}
++
+ static int renesas_gbeth_init(struct platform_device *pdev, void *priv)
+ {
+ 	struct plat_stmmacenet_data *plat_dat;
+@@ -149,6 +187,11 @@ static int renesas_gbeth_probe(struct platform_device *pdev)
+ 	plat_dat->init = renesas_gbeth_init;
+ 	plat_dat->exit = renesas_gbeth_exit;
+ 	plat_dat->flags |= gbeth->of_data->stmmac_flags;
++	if (of_data->has_pcs) {
++		plat_dat->pcs_init = renesas_gmac_pcs_init;
++		plat_dat->pcs_exit = renesas_gmac_pcs_exit;
++		plat_dat->select_pcs = renesas_gmac_select_pcs;
++	}
+ 
+ 	return devm_stmmac_pltfr_probe(pdev, plat_dat, &stmmac_res);
+ }
+@@ -162,7 +205,15 @@ static const struct renesas_gbeth_of_data renesas_gbeth_of_data = {
+ 			STMMAC_FLAG_SPH_DISABLE,
  };
  
-+&hsusb {
-+	dr_mode = "otg";
-+	status = "okay";
++static const struct renesas_gbeth_of_data renesas_gmac_of_data = {
++	.clks = renesas_gmac_clks,
++	.num_clks = ARRAY_SIZE(renesas_gmac_clks),
++	.stmmac_flags = STMMAC_FLAG_HWTSTAMP_CORRECT_LATENCY,
++	.has_pcs = true,
 +};
 +
- &i2c0 {
- 	eeprom: eeprom@50 {
- 		compatible = "renesas,r1ex24016", "atmel,24c16";
-@@ -156,6 +166,11 @@ eeprom: eeprom@50 {
- 	};
+ static const struct of_device_id renesas_gbeth_match[] = {
++	{ .compatible = "renesas,r9a09g077-gbeth", .data = &renesas_gmac_of_data },
+ 	{ .compatible = "renesas,rzv2h-gbeth", .data = &renesas_gbeth_of_data },
+ 	{ /* Sentinel */ }
  };
- 
-+&ohci {
-+	dr_mode = "otg";
-+	status = "okay";
-+};
-+
- &pinctrl {
- 	/*
- 	 * SCI0 Pin Configuration:
-@@ -297,6 +312,13 @@ &sdhi1 {
- };
- #endif
- 
-+&usb2_phy {
-+	pinctrl-0 = <&usb_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
- &wdt2 {
- 	status = "okay";
- 	timeout-sec = <60>;
 -- 
 2.43.0
 
