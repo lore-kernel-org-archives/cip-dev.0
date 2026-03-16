@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6925F53D67
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C23A6F53D68
 	for <webhook@archiver.kernel.org>; Mon, 16 Mar 2026 15:00:16 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.msgproc02-g2.52771.1773673200178532310
  for <cip-dev@lists.cip-project.org>;
- Mon, 16 Mar 2026 08:00:12 -0700
+ Mon, 16 Mar 2026 08:00:10 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-CSE-ConnectionGUID: wwvTao9QR+aPRbRyjGZdyw==
-X-CSE-MsgGUID: 4itcztlaTOG0EUrAS5Ie4w==
+X-CSE-ConnectionGUID: JXjUWAQ6RH+bGOVT0IdkQQ==
+X-CSE-MsgGUID: M0o7bX6cQzGHgydqcXVJUg==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 17 Mar 2026 00:00:11 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 17 Mar 2026 00:00:10 +0900
 Received: from Ubuntu-22.. (unknown [10.24.0.53])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 7824C41B7CE8;
-	Tue, 17 Mar 2026 00:00:10 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id B98EF41B7CD1;
+	Tue, 17 Mar 2026 00:00:08 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 31/35] arm64: dts: renesas: r9a09g077: Add ETHSS node
-Date: Mon, 16 Mar 2026 14:59:08 +0000
-Message-ID: <20260316145915.8580-32-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 30/35] net: pcs: Kconfig: Fix unmet dependency warning
+Date: Mon, 16 Mar 2026 14:59:07 +0000
+Message-ID: <20260316145915.8580-31-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260316145915.8580-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20260316145915.8580-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -34,71 +34,45 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 16 Mar 2026 15:00:16 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22423
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22422
 
-commit fea7a8b7d7b538974f097a1771f63de9b0ee2259 upstream.
+commit dfc85640796b414385e50c932eb2b8ce4d38ce72 upstream.
 
-Add an Ethernet Switch Subsystem (ETHSS) device node to the RZ/T2H
-(R9A09G077) SoC. The ETHSS IP block is responsible for handling MII
-pass-through or conversion to RMII/RGMII.
+Fix the Kconfig dependencies for PCS_RZN1_MIIC to avoid the unmet direct
+dependency warning when enabling DWMAC_RENESAS_GBETH. The PCS driver is
+used on multiple Renesas SoCs including RZ/N1, RZ/N2H and RZ/T2H, but the
+existing condition only allowed ARCH_RZN1, ARCH_R9A09G077, or
+ARCH_R9A09G087. This conflicted with the GBETH/GMAC driver which selects
+PCS_RZN1_MIIC under ARCH_RENESAS.
 
+Update the dependency to ARCH_RENESAS || COMPILE_TEST so that the PCS
+driver is available on all Renesas platforms.
+
+Fixes: 08f89e42121d ("net: pcs: rzn1-miic: Add RZ/T2H MIIC support")
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Closes: https://lore.kernel.org/all/aMlgg_QpJOEDGcEA@monster/
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20251028175458.1037397-2-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://patch.msgid.link/20250916162335.3339558-1-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a09g077.dtsi | 37 ++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+ drivers/net/pcs/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g077.dtsi b/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
-index 2f5625c34539..9b0c07571a10 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
-@@ -337,6 +337,43 @@ i2c2: i2c@81008000 {
- 			status = "disabled";
- 		};
- 
-+		ethss: ethss@80110000 {
-+			compatible = "renesas,r9a09g077-miic";
-+			reg =  <0 0x80110000 0 0x10000>;
-+			clocks = <&cpg CPG_CORE R9A09G077_ETCLKE>,
-+				 <&cpg CPG_CORE R9A09G077_ETCLKB>,
-+				 <&cpg CPG_CORE R9A09G077_ETCLKD>,
-+				 <&cpg CPG_MOD 403>;
-+			clock-names = "mii_ref", "rgmii_ref", "rmii_ref", "hclk";
-+			resets = <&cpg 405>, <&cpg 406>;
-+			reset-names = "rst", "crst";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			mii_conv0: mii-conv@0 {
-+				reg = <0>;
-+				status = "disabled";
-+			};
-+
-+			mii_conv1: mii-conv@1 {
-+				reg = <1>;
-+				status = "disabled";
-+			};
-+
-+			mii_conv2: mii-conv@2 {
-+				reg = <2>;
-+				status = "disabled";
-+			};
-+
-+			mii_conv3: mii-conv@3 {
-+				reg = <3>;
-+				status = "disabled";
-+			};
-+		};
-+
- 		cpg: clock-controller@80280000 {
- 			compatible = "renesas,r9a09g077-cpg-mssr";
- 			reg = <0 0x80280000 0 0x1000>,
+diff --git a/drivers/net/pcs/Kconfig b/drivers/net/pcs/Kconfig
+index 76dbc11d9575..ecbc3530e780 100644
+--- a/drivers/net/pcs/Kconfig
++++ b/drivers/net/pcs/Kconfig
+@@ -28,7 +28,7 @@ config PCS_MTK_LYNXI
+ config PCS_RZN1_MIIC
+ 	tristate "Renesas RZ/N1, RZ/N2H, RZ/T2H MII converter"
+ 	depends on OF
+-	depends on ARCH_RZN1 || ARCH_R9A09G077 || ARCH_R9A09G087 || COMPILE_TEST
++	depends on ARCH_RENESAS || COMPILE_TEST
+ 	help
+ 	  This module provides a driver for the MII converter available on
+ 	  Renesas RZ/N1, RZ/N2H, and RZ/T2H SoCs. This PCS converts MII to
 -- 
 2.43.0
 
