@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BB42F506F0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75FEDF506EC
 	for <webhook@archiver.kernel.org>; Mon, 16 Mar 2026 14:59:45 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.52440.1773673159009042004
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.52447.1773673175962015446
  for <cip-dev@lists.cip-project.org>;
- Mon, 16 Mar 2026 07:59:44 -0700
+ Mon, 16 Mar 2026 07:59:36 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-CSE-ConnectionGUID: 9g+Qe056RU+WZntktgPKsg==
-X-CSE-MsgGUID: oqk2z2mlTH22OsYK3lLBbw==
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+X-CSE-ConnectionGUID: 2uF6yuo0QueOqm1JsG7HDA==
+X-CSE-MsgGUID: V9Cv7LI0TVy3t6wgEYTETg==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 16 Mar 2026 23:59:44 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 16 Mar 2026 23:59:35 +0900
 Received: from Ubuntu-22.. (unknown [10.24.0.53])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id B7BAE41B7814;
-	Mon, 16 Mar 2026 23:59:42 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 1CC6241B781A;
+	Mon, 16 Mar 2026 23:59:33 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 15/35] arm64: dts: renesas: r9a09g087: Add USB2.0 support
-Date: Mon, 16 Mar 2026 14:58:52 +0000
-Message-ID: <20260316145915.8580-16-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 10/35] phy: renesas: rcar-gen3-usb2: Move debug print after register value is updated
+Date: Mon, 16 Mar 2026 14:58:47 +0000
+Message-ID: <20260316145915.8580-11-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260316145915.8580-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20260316145915.8580-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -34,80 +34,44 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 16 Mar 2026 14:59:45 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22407
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22402
 
-commit 00998e5fe0d85798b7d1f30d2ddfd9990cf5d7ef upstream.
+commit 5f54134428b48261151c725c64b40be54e373345 upstream.
 
-Add EHCI, OHCI, PHY and HSUSB nodes to RZ/N2H (R9A09G087) SoC DTSI.
+Relocate the debug print in rcar_gen3_enable_vbus_ctrl() to appear after
+the `val` variable is assigned and updated based on the VBUS state. This
+ensures that the debug log reflects the actual register value being
+written, improving debugging accuracy.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250821161946.1096033-6-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[PL: resolve merge conflict]
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Link: https://lore.kernel.org/r/20250808215209.3692744-6-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a09g087.dtsi | 47 ++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-index 47a9888e227d..b9e1ff1c6594 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-@@ -437,6 +437,53 @@ adc2: adc@80008000 {
- 			status = "disabled";
- 		};
+diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+index d039eca7d888..5659ac22511d 100644
+--- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+@@ -210,7 +210,6 @@ static void rcar_gen3_enable_vbus_ctrl(struct rcar_gen3_chan *ch, int vbus)
+ 	u32 vbus_ctrl_val = USB2_ADPCTRL_DRVVBUS;
+ 	u32 val;
  
-+		ohci: usb@92040000 {
-+			compatible = "generic-ohci";
-+			reg = <0 0x92040000 0 0x100>;
-+			interrupts = <GIC_SPI 586 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 408>;
-+			phys = <&usb2_phy 1>;
-+			phy-names = "usb";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
-+		ehci: usb@92040100 {
-+			compatible = "generic-ehci";
-+			reg = <0 0x92040100 0 0x100>;
-+			interrupts = <GIC_SPI 586 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 408>;
-+			phys = <&usb2_phy 2>;
-+			phy-names = "usb";
-+			companion = <&ohci>;
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
-+		usb2_phy: usb-phy@92040200 {
-+			compatible = "renesas,usb2-phy-r9a09g087", "renesas,usb2-phy-r9a09g077";
-+			reg = <0 0x92040200 0 0x700>;
-+			interrupts = <GIC_SPI 586 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 408>,
-+				 <&cpg CPG_CORE R9A09G087_USB_CLK>;
-+			#phy-cells = <1>;
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
-+		hsusb: usb@92041000 {
-+			compatible = "renesas,usbhs-r9a09g087", "renesas,usbhs-r9a09g077";
-+			reg = <0 0x92041000 0 0x1000>;
-+			interrupts = <GIC_SPI 587 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 588 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 589 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 408>;
-+			phys = <&usb2_phy 3>;
-+			phy-names = "usb";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
- 		sdhi0: mmc@92080000  {
- 			compatible = "renesas,sdhi-r9a09g087",
- 				     "renesas,sdhi-r9a09g057";
+-	dev_vdbg(ch->dev, "%s: %08x, %d\n", __func__, val, vbus);
+ 	if (ch->phy_data->no_adp_ctrl || ch->phy_data->vblvl_ctrl) {
+ 		if (ch->vbus)
+ 			regulator_hardware_enable(ch->vbus, vbus);
+@@ -224,6 +223,7 @@ static void rcar_gen3_enable_vbus_ctrl(struct rcar_gen3_chan *ch, int vbus)
+ 		val |= vbus_ctrl_val;
+ 	else
+ 		val &= ~vbus_ctrl_val;
++	dev_vdbg(ch->dev, "%s: %08x, %d\n", __func__, val, vbus);
+ 	writel(val, usb2_base + vbus_ctrl_reg);
+ }
+ 
 -- 
 2.43.0
 
