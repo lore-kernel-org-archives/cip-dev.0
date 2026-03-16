@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC4D4F506EA
-	for <webhook@archiver.kernel.org>; Mon, 16 Mar 2026 14:59:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38118F506F0
+	for <webhook@archiver.kernel.org>; Mon, 16 Mar 2026 14:59:35 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.msgproc01-g2.52440.1773673159009042004
  for <cip-dev@lists.cip-project.org>;
- Mon, 16 Mar 2026 07:59:32 -0700
+ Mon, 16 Mar 2026 07:59:27 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-CSE-ConnectionGUID: jHj4tb4sSq+p7Qt7vAtvyg==
-X-CSE-MsgGUID: o/KlhoWeQDO+3XPQi9ejqQ==
+X-CSE-ConnectionGUID: H7RmxwttQHq+V4cd4rhYfQ==
+X-CSE-MsgGUID: aDUtRcFrT9qBDye9/3PFfA==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 16 Mar 2026 23:59:31 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 16 Mar 2026 23:59:26 +0900
 Received: from Ubuntu-22.. (unknown [10.24.0.53])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id A1BA641B7814;
-	Mon, 16 Mar 2026 23:59:30 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 6C40341B781A;
+	Mon, 16 Mar 2026 23:59:25 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 08/35] phy: renesas: rcar-gen3-usb2: Allow SoC-specific OBINT bits via phy_data
-Date: Mon, 16 Mar 2026 14:58:45 +0000
-Message-ID: <20260316145915.8580-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 05/35] clk: renesas: r9a09g077: Add Ethernet Subsystem core and module clocks
+Date: Mon, 16 Mar 2026 14:58:42 +0000
+Message-ID: <20260316145915.8580-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260316145915.8580-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20260316145915.8580-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -33,149 +33,69 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 16 Mar 2026 14:59:34 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22400
+ <cip-dev@lists.cip-project.org>; Mon, 16 Mar 2026 14:59:35 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22397
 
-commit 4b7aa47e4c2c921b9511389bf42a4e30d64373e6 upstream.
+commit 09e3a0467375fe7bb19c66eaf5ad3edfd90ea16c upstream.
 
-Update the PHY driver to support SoC-specific OBINT enable bits by
-introducing the `obint_enable_bits` field in the `rcar_gen3_phy_drv_data`
-structure. This allows each SoC to specify bits required.
+Add module and core clocks used by Ethernet Subsystem (Ethernet_SS),
+Ethernet MAC (GMAC), Ethernet Switch (ETHSW).
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-Link: https://lore.kernel.org/r/20250808215209.3692744-4-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/20250904071954.3176806-3-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[PL: resolve merge conflict]
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 27 ++++++++++++------------
- 1 file changed, 14 insertions(+), 13 deletions(-)
+ drivers/clk/renesas/r9a09g077-cpg.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index 004b36bddad0..eca118e597e6 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -71,8 +71,7 @@
- /* OBINTSTA and OBINTEN */
- #define USB2_OBINT_SESSVLDCHG		BIT(12)
- #define USB2_OBINT_IDDIGCHG		BIT(11)
--#define USB2_OBINT_BITS			(USB2_OBINT_SESSVLDCHG | \
--					 USB2_OBINT_IDDIGCHG)
-+#define USB2_OBINT_IDCHG_EN		BIT(0) /*  RZ/G2L specific */
+diff --git a/drivers/clk/renesas/r9a09g077-cpg.c b/drivers/clk/renesas/r9a09g077-cpg.c
+index 0b141ee2c5de..979888e89eb9 100644
+--- a/drivers/clk/renesas/r9a09g077-cpg.c
++++ b/drivers/clk/renesas/r9a09g077-cpg.c
+@@ -75,7 +75,7 @@ enum rzt2h_clk_types {
  
- /* VBCTRL */
- #define USB2_VBCTRL_OCCLREN		BIT(16)
-@@ -93,7 +92,6 @@
- #define USB2_ADPCTRL_DRVVBUS		BIT(4)
+ enum clk_ids {
+ 	/* Core Clock Outputs exported to DT */
+-	LAST_DT_CORE_CLK = R9A09G077_USB_CLK,
++	LAST_DT_CORE_CLK = R9A09G077_ETCLKE,
  
- /*  RZ/G2L specific */
--#define USB2_OBINT_IDCHG_EN		BIT(0)
- #define USB2_LINECTRL1_USB2_IDMON	BIT(0)
- 
- #define NUM_OF_PHYS			4
-@@ -129,7 +127,6 @@ struct rcar_gen3_chan {
- 	struct work_struct work;
- 	spinlock_t lock;	/* protects access to hardware and driver data structure. */
- 	enum usb_dr_mode dr_mode;
--	u32 obint_enable_bits;
- 	bool extcon_host;
- 	bool is_otg_channel;
- 	bool uses_otg_pins;
-@@ -140,6 +137,7 @@ struct rcar_gen3_phy_drv_data {
- 	bool no_adp_ctrl;
- 	bool init_bus;
- 	bool utmi_ctrl;
-+	u32 obint_enable_bits;
+ 	/* External Input Clocks */
+ 	CLK_EXTAL,
+@@ -182,11 +182,18 @@ static const struct cpg_core_clk r9a09g077_core_clks[] __initconst = {
+ 	DEF_DIV("CA55S", R9A09G077_CLK_CA55S, CLK_SEL_CLK_PLL0, DIVCA55S,
+ 		dtable_1_2),
+ 	DEF_FIXED("PCLKGPTL", R9A09G077_CLK_PCLKGPTL, CLK_SEL_CLK_PLL1, 2, 1),
++	DEF_FIXED("PCLKH", R9A09G077_CLK_PCLKH, CLK_SEL_CLK_PLL1, 4, 1),
+ 	DEF_FIXED("PCLKM", R9A09G077_CLK_PCLKM, CLK_SEL_CLK_PLL1, 8, 1),
+ 	DEF_FIXED("PCLKL", R9A09G077_CLK_PCLKL, CLK_SEL_CLK_PLL1, 16, 1),
++	DEF_FIXED("PCLKAH", R9A09G077_CLK_PCLKAH, CLK_PLL4D1, 6, 1),
+ 	DEF_FIXED("PCLKAM", R9A09G077_CLK_PCLKAM, CLK_PLL4D1, 12, 1),
+ 	DEF_FIXED("SDHI_CLKHS", R9A09G077_SDHI_CLKHS, CLK_SEL_CLK_PLL2, 1, 1),
+ 	DEF_FIXED("USB_CLK", R9A09G077_USB_CLK, CLK_PLL4D1, 48, 1),
++	DEF_FIXED("ETCLKA", R9A09G077_ETCLKA, CLK_SEL_CLK_PLL1, 5, 1),
++	DEF_FIXED("ETCLKB", R9A09G077_ETCLKB, CLK_SEL_CLK_PLL1, 8, 1),
++	DEF_FIXED("ETCLKC", R9A09G077_ETCLKC, CLK_SEL_CLK_PLL1, 10, 1),
++	DEF_FIXED("ETCLKD", R9A09G077_ETCLKD, CLK_SEL_CLK_PLL1, 20, 1),
++	DEF_FIXED("ETCLKE", R9A09G077_ETCLKE, CLK_SEL_CLK_PLL1, 40, 1),
  };
  
- /*
-@@ -224,9 +222,9 @@ static void rcar_gen3_control_otg_irq(struct rcar_gen3_chan *ch, int enable)
- 	u32 val = readl(usb2_base + USB2_OBINTEN);
- 
- 	if (ch->uses_otg_pins && enable)
--		val |= ch->obint_enable_bits;
-+		val |= ch->phy_data->obint_enable_bits;
- 	else
--		val &= ~ch->obint_enable_bits;
-+		val &= ~ch->phy_data->obint_enable_bits;
- 	writel(val, usb2_base + USB2_OBINTEN);
- }
- 
-@@ -429,7 +427,7 @@ static void rcar_gen3_init_otg(struct rcar_gen3_chan *ch)
- 	mdelay(20);
- 
- 	writel(0xffffffff, usb2_base + USB2_OBINTSTA);
--	writel(ch->obint_enable_bits, usb2_base + USB2_OBINTEN);
-+	writel(ch->phy_data->obint_enable_bits, usb2_base + USB2_OBINTEN);
- 
- 	rcar_gen3_device_recognition(ch);
- }
-@@ -449,9 +447,9 @@ static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
- 
- 	scoped_guard(spinlock, &ch->lock) {
- 		status = readl(usb2_base + USB2_OBINTSTA);
--		if (status & ch->obint_enable_bits) {
-+		if (status & ch->phy_data->obint_enable_bits) {
- 			dev_vdbg(dev, "%s: %08x\n", __func__, status);
--			writel(ch->obint_enable_bits, usb2_base + USB2_OBINTSTA);
-+			writel(ch->phy_data->obint_enable_bits, usb2_base + USB2_OBINTSTA);
- 			rcar_gen3_device_recognition(ch);
- 			ret = IRQ_HANDLED;
- 		}
-@@ -590,28 +588,35 @@ static const struct phy_ops rz_g1c_phy_usb2_ops = {
- static const struct rcar_gen3_phy_drv_data rcar_gen3_phy_usb2_data = {
- 	.phy_usb2_ops = &rcar_gen3_phy_usb2_ops,
- 	.no_adp_ctrl = false,
-+	.obint_enable_bits = USB2_OBINT_SESSVLDCHG |
-+			     USB2_OBINT_IDDIGCHG,
- };
- 
- static const struct rcar_gen3_phy_drv_data rz_g1c_phy_usb2_data = {
- 	.phy_usb2_ops = &rz_g1c_phy_usb2_ops,
- 	.no_adp_ctrl = false,
-+	.obint_enable_bits = USB2_OBINT_SESSVLDCHG |
-+			     USB2_OBINT_IDDIGCHG,
- };
- 
- static const struct rcar_gen3_phy_drv_data rz_g2l_phy_usb2_data = {
- 	.phy_usb2_ops = &rcar_gen3_phy_usb2_ops,
- 	.no_adp_ctrl = true,
-+	.obint_enable_bits = USB2_OBINT_IDCHG_EN,
- };
- 
- static const struct rcar_gen3_phy_drv_data rz_g3s_phy_usb2_data = {
- 	.phy_usb2_ops = &rcar_gen3_phy_usb2_ops,
- 	.no_adp_ctrl = true,
- 	.init_bus = true,
-+	.obint_enable_bits = USB2_OBINT_IDCHG_EN,
- };
- 
- static const struct rcar_gen3_phy_drv_data rz_v2h_phy_usb2_data = {
- 	.phy_usb2_ops = &rcar_gen3_phy_usb2_ops,
- 	.no_adp_ctrl = true,
- 	.utmi_ctrl = true,
-+	.obint_enable_bits = USB2_OBINT_IDCHG_EN,
- };
- 
- static const struct of_device_id rcar_gen3_phy_usb2_match_table[] = {
-@@ -756,7 +761,6 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 	if (IS_ERR(channel->base))
- 		return PTR_ERR(channel->base);
- 
--	channel->obint_enable_bits = USB2_OBINT_BITS;
- 	channel->dr_mode = rcar_gen3_get_dr_mode(dev->of_node);
- 	if (channel->dr_mode != USB_DR_MODE_UNKNOWN) {
- 		channel->is_otg_channel = true;
-@@ -795,9 +799,6 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 			goto error;
- 	}
- 
--	if (channel->phy_data->no_adp_ctrl)
--		channel->obint_enable_bits = USB2_OBINT_IDCHG_EN;
--
- 	spin_lock_init(&channel->lock);
- 	for (i = 0; i < NUM_OF_PHYS; i++) {
- 		channel->rphys[i].phy = devm_phy_create(dev, NULL,
+ static const struct mssr_mod_clk r9a09g077_mod_clks[] __initconst = {
+@@ -203,7 +210,12 @@ static const struct mssr_mod_clk r9a09g077_mod_clks[] __initconst = {
+ 	DEF_MOD("adc0", 206, R9A09G077_CLK_PCLKH),
+ 	DEF_MOD("adc1", 207, R9A09G077_CLK_PCLKH),
+ 	DEF_MOD("adc2", 225, R9A09G077_CLK_PCLKM),
++	DEF_MOD("gmac0", 400, R9A09G077_CLK_PCLKM),
++	DEF_MOD("ethsw", 401, R9A09G077_CLK_PCLKM),
++	DEF_MOD("ethss", 403, R9A09G077_CLK_PCLKM),
+ 	DEF_MOD("usb", 408, R9A09G077_CLK_PCLKAM),
++	DEF_MOD("gmac1", 416, R9A09G077_CLK_PCLKAM),
++	DEF_MOD("gmac2", 417, R9A09G077_CLK_PCLKAM),
+ 	DEF_MOD("sci5fck", 600, CLK_SCI5ASYNC),
+ 	DEF_MOD("iic2", 601, R9A09G077_CLK_PCLKL),
+ 	DEF_MOD("spi3", 602, CLK_SPI3ASYNC),
 -- 
 2.43.0
 
