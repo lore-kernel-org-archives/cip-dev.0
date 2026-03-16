@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AD84F506F5
-	for <webhook@archiver.kernel.org>; Mon, 16 Mar 2026 14:59:35 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.52441.1773673162325782965
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BB42F506F0
+	for <webhook@archiver.kernel.org>; Mon, 16 Mar 2026 14:59:45 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.52440.1773673159009042004
  for <cip-dev@lists.cip-project.org>;
- Mon, 16 Mar 2026 07:59:28 -0700
+ Mon, 16 Mar 2026 07:59:44 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-CSE-ConnectionGUID: ldyBm0kaSA6uakpz7Vmp6Q==
-X-CSE-MsgGUID: WUzYBuQcR/iRmJsrzJjaYw==
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+X-CSE-ConnectionGUID: 9g+Qe056RU+WZntktgPKsg==
+X-CSE-MsgGUID: oqk2z2mlTH22OsYK3lLBbw==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 16 Mar 2026 23:59:28 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 16 Mar 2026 23:59:44 +0900
 Received: from Ubuntu-22.. (unknown [10.24.0.53])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 30C5C41B781A;
-	Mon, 16 Mar 2026 23:59:26 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id B7BAE41B7814;
+	Mon, 16 Mar 2026 23:59:42 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 06/35] dt-bindings: phy: renesas,usb2-phy: Add RZ/T2H and RZ/N2H support
-Date: Mon, 16 Mar 2026 14:58:43 +0000
-Message-ID: <20260316145915.8580-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 15/35] arm64: dts: renesas: r9a09g087: Add USB2.0 support
+Date: Mon, 16 Mar 2026 14:58:52 +0000
+Message-ID: <20260316145915.8580-16-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260316145915.8580-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20260316145915.8580-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -33,65 +33,81 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 16 Mar 2026 14:59:35 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22398
+ <cip-dev@lists.cip-project.org>; Mon, 16 Mar 2026 14:59:45 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22407
 
-commit ab9c8aeb2d208381a7c948ea2f753cbe8a451502 upstream.
+commit 00998e5fe0d85798b7d1f30d2ddfd9990cf5d7ef upstream.
 
-Document the USB2 PHY controller for the Renesas RZ/T2H (r9a09g077) and
-RZ/N2H (r9a09g087) SoCs. These SoCs share the same PHY block, which is
-similar to the one on RZ/G2L but differs in clocks, resets, and register
-bits. To account for these differences, a new compatible string
-`renesas,usb2-phy-r9a09g077` is introduced.
-
-The RZ/N2H SoC uses the same PHY as RZ/T2H, so it reuses the RZ/T2H
-compatible string as a fallback.
+Add EHCI, OHCI, PHY and HSUSB nodes to RZ/N2H (R9A09G087) SoC DTSI.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20250808215209.3692744-2-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Link: https://lore.kernel.org/20250821161946.1096033-6-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[PL: resolve merge conflict]
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- .../bindings/phy/renesas,usb2-phy.yaml          | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ arch/arm64/boot/dts/renesas/r9a09g087.dtsi | 47 ++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml b/Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml
-index f45c5f039ae8..179cb4bfc424 100644
---- a/Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml
-@@ -44,6 +44,12 @@ properties:
-           - const: renesas,usb2-phy-r9a09g056 # RZ/V2N
-           - const: renesas,usb2-phy-r9a09g057
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
+index 47a9888e227d..b9e1ff1c6594 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
+@@ -437,6 +437,53 @@ adc2: adc@80008000 {
+ 			status = "disabled";
+ 		};
  
-+      - const: renesas,usb2-phy-r9a09g077 # RZ/T2H
++		ohci: usb@92040000 {
++			compatible = "generic-ohci";
++			reg = <0 0x92040000 0 0x100>;
++			interrupts = <GIC_SPI 586 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 408>;
++			phys = <&usb2_phy 1>;
++			phy-names = "usb";
++			power-domains = <&cpg>;
++			status = "disabled";
++		};
 +
-+      - items:
-+          - const: renesas,usb2-phy-r9a09g087 # RZ/N2H
-+          - const: renesas,usb2-phy-r9a09g077
++		ehci: usb@92040100 {
++			compatible = "generic-ehci";
++			reg = <0 0x92040100 0 0x100>;
++			interrupts = <GIC_SPI 586 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 408>;
++			phys = <&usb2_phy 2>;
++			phy-names = "usb";
++			companion = <&ohci>;
++			power-domains = <&cpg>;
++			status = "disabled";
++		};
 +
-   reg:
-     maxItems: 1
- 
-@@ -120,6 +126,17 @@ allOf:
-       required:
-         - resets
- 
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: renesas,usb2-phy-r9a09g077
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 2
-+        resets: false
++		usb2_phy: usb-phy@92040200 {
++			compatible = "renesas,usb2-phy-r9a09g087", "renesas,usb2-phy-r9a09g077";
++			reg = <0 0x92040200 0 0x700>;
++			interrupts = <GIC_SPI 586 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 408>,
++				 <&cpg CPG_CORE R9A09G087_USB_CLK>;
++			#phy-cells = <1>;
++			power-domains = <&cpg>;
++			status = "disabled";
++		};
 +
- additionalProperties: false
- 
- examples:
++		hsusb: usb@92041000 {
++			compatible = "renesas,usbhs-r9a09g087", "renesas,usbhs-r9a09g077";
++			reg = <0 0x92041000 0 0x1000>;
++			interrupts = <GIC_SPI 587 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 588 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 589 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 408>;
++			phys = <&usb2_phy 3>;
++			phy-names = "usb";
++			power-domains = <&cpg>;
++			status = "disabled";
++		};
++
+ 		sdhi0: mmc@92080000  {
+ 			compatible = "renesas,sdhi-r9a09g087",
+ 				     "renesas,sdhi-r9a09g057";
 -- 
 2.43.0
 
