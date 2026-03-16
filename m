@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69D9BF53D60
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C821F013FA
 	for <webhook@archiver.kernel.org>; Mon, 16 Mar 2026 15:00:06 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.msgproc02-g2.52771.1773673200178532310
  for <cip-dev@lists.cip-project.org>;
- Mon, 16 Mar 2026 08:00:00 -0700
+ Mon, 16 Mar 2026 08:00:01 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-CSE-ConnectionGUID: QPHO+ehkSfOqI8iPxkHZPQ==
-X-CSE-MsgGUID: 6kBOE9JtS52et/nsgHnCgA==
+X-CSE-ConnectionGUID: w0VlKkGxTjWXImBkcMZ4rw==
+X-CSE-MsgGUID: e5/RoYbHTUe9OapkbLIvIA==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 16 Mar 2026 23:59:59 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 17 Mar 2026 00:00:01 +0900
 Received: from Ubuntu-22.. (unknown [10.24.0.53])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 5815941B7814;
-	Mon, 16 Mar 2026 23:59:58 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 161AE41B7814;
+	Mon, 16 Mar 2026 23:59:59 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 24/35] net: pcs: rzn1-miic: Move configuration data to SoC-specific struct
-Date: Mon, 16 Mar 2026 14:59:01 +0000
-Message-ID: <20260316145915.8580-25-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 25/35] net: pcs: rzn1-miic: move port range handling into SoC data
+Date: Mon, 16 Mar 2026 14:59:02 +0000
+Message-ID: <20260316145915.8580-26-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260316145915.8580-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20260316145915.8580-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -34,258 +34,137 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 16 Mar 2026 15:00:06 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22416
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22417
 
-commit f39e968dc168a7bd31fbdb320f4ff4ffd98d4589 upstream.
+commit c112520de041758e037682bb63c51ab0d69e1adf upstream.
 
-Move configuration data such as the modctrl matching table, converter
-count, and string lookup tables into the SoC-specific miic_of_data
-structure. Update the helper functions to use the per-SoC configuration
-instead of relying on fixed-size arrays or global tables, and allocate
-DT configuration memory dynamically.
+Define per-SoC miic_port_start and miic_port_max fields in struct
+miic_of_data and use them to validate the device-tree "reg" port number
+and to compute the driver's internal zero-based port index as
+(port - miic_port_start). Replace uses of the hard-coded MIIC_MAX_NR_PORTS
+with the SoC-provided miic_port_max when iterating over ports.
 
-This refactoring keeps the existing RZ/N1 support intact while preparing
-the driver to handle the different configuration requirements of the
-RZ/T2H SoC.
+On RZ/N1 the MIIC ports are numbered 1..5, whereas RZ/T2H numbers its MIIC
+ports 0..3. By making the port base and range part of the OF data the
+driver no longer assumes a fixed numbering scheme and can support SoCs that
+enumerate ports from either zero or one and that expose different numbers
+of ports.
+
+This change is preparatory work for adding RZ/T2H support.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Link: https://patch.msgid.link/20250910204132.319975-5-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://patch.msgid.link/20250910204132.319975-6-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/net/pcs/pcs-rzn1-miic.c | 109 ++++++++++++++++++++++----------
- 1 file changed, 77 insertions(+), 32 deletions(-)
+ drivers/net/pcs/pcs-rzn1-miic.c | 26 ++++++++++++++++++--------
+ 1 file changed, 18 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/net/pcs/pcs-rzn1-miic.c b/drivers/net/pcs/pcs-rzn1-miic.c
-index 82a26edcdfac..87c3512bd569 100644
+index 87c3512bd569..b0bd3eef0e82 100644
 --- a/drivers/net/pcs/pcs-rzn1-miic.c
 +++ b/drivers/net/pcs/pcs-rzn1-miic.c
-@@ -16,6 +16,7 @@
- #include <linux/phylink.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-+#include <linux/slab.h>
- #include <dt-bindings/net/pcs-rzn1-miic.h>
+@@ -49,8 +49,6 @@
+ #define MIIC_SWCTRL			0x304
+ #define MIIC_SWDUPC			0x308
  
- #define MIIC_PRCMD			0x0
-@@ -50,7 +51,7 @@
- 
- #define MIIC_MAX_NR_PORTS		5
- 
--#define MIIC_MODCTRL_CONF_CONV_NUM	6
-+#define MIIC_MODCTRL_CONF_CONV_MAX	6
+-#define MIIC_MAX_NR_PORTS		5
+-
+ #define MIIC_MODCTRL_CONF_CONV_MAX	6
  #define MIIC_MODCTRL_CONF_NONE		-1
  
- /**
-@@ -58,11 +59,13 @@
-  *			  See section 8.2.1 of manual.
-  * @mode_cfg: Configuration value for convctrl
-  * @conv: Configuration of ethernet port muxes. First index is SWITCH_PORTIN,
-- *	  then index 1 - 5 are CONV1 - CONV5.
-+ *	  then index 1 - 5 are CONV1 - CONV5 for RZ/N1 SoCs. In case
-+ *	  of RZ/T2H and RZ/N2H SoCs, the first index is SWITCH_PORTIN then
-+ *	  index 0 - 3 are CONV0 - CONV3.
+@@ -146,6 +144,8 @@ struct miic {
+  * @conf_to_string_count: Number of entries in the conf_to_string array
+  * @index_to_string: String representations of the index values
+  * @index_to_string_count: Number of entries in the index_to_string array
++ * @miic_port_start: MIIC port start number
++ * @miic_port_max: Maximum MIIC supported
   */
- struct modctrl_match {
- 	u32 mode_cfg;
--	u8 conv[MIIC_MODCTRL_CONF_CONV_NUM];
-+	u8 conv[MIIC_MODCTRL_CONF_CONV_MAX];
- };
- 
- static struct modctrl_match modctrl_match_table[] = {
-@@ -111,7 +114,7 @@ static const char * const conf_to_string[] = {
- 	[MIIC_HSR_PORTB]	= "HSR_PORTB",
- };
- 
--static const char *index_to_string[MIIC_MODCTRL_CONF_CONV_NUM] = {
-+static const char * const index_to_string[] = {
- 	"SWITCH_PORTIN",
- 	"CONV1",
- 	"CONV2",
-@@ -125,11 +128,33 @@ static const char *index_to_string[MIIC_MODCTRL_CONF_CONV_NUM] = {
-  * @base: base address of the MII converter
-  * @dev: Device associated to the MII converter
-  * @lock: Lock used for read-modify-write access
-+ * @of_data: Pointer to OF data
-  */
- struct miic {
- 	void __iomem *base;
- 	struct device *dev;
- 	spinlock_t lock;
-+	const struct miic_of_data *of_data;
-+};
-+
-+/**
-+ * struct miic_of_data - OF data for MII converter
-+ * @match_table: Matching table for convctrl configuration
-+ * @match_table_count: Number of entries in the matching table
-+ * @conf_conv_count: Number of entries in the conf_conv array
-+ * @conf_to_string: String representations of the configuration values
-+ * @conf_to_string_count: Number of entries in the conf_to_string array
-+ * @index_to_string: String representations of the index values
-+ * @index_to_string_count: Number of entries in the index_to_string array
-+ */
-+struct miic_of_data {
-+	struct modctrl_match *match_table;
-+	u8 match_table_count;
-+	u8 conf_conv_count;
-+	const char * const *conf_to_string;
-+	u8 conf_to_string_count;
-+	const char * const *index_to_string;
-+	u8 index_to_string_count;
+ struct miic_of_data {
+ 	struct modctrl_match *match_table;
+@@ -155,6 +155,8 @@ struct miic_of_data {
+ 	u8 conf_to_string_count;
+ 	const char * const *index_to_string;
+ 	u8 index_to_string_count;
++	u8 miic_port_start;
++	u8 miic_port_max;
  };
  
  /**
-@@ -407,12 +432,11 @@ static int miic_init_hw(struct miic *miic, u32 cfg_mode)
- 	return 0;
- }
+@@ -342,6 +344,7 @@ static const struct phylink_pcs_ops miic_phylink_ops = {
  
--static bool miic_modctrl_match(s8 table_val[MIIC_MODCTRL_CONF_CONV_NUM],
--			       s8 dt_val[MIIC_MODCTRL_CONF_CONV_NUM])
-+static bool miic_modctrl_match(s8 *table_val, s8 *dt_val, u8 count)
+ struct phylink_pcs *miic_create(struct device *dev, struct device_node *np)
  {
- 	int i;
++	const struct miic_of_data *of_data;
+ 	struct platform_device *pdev;
+ 	struct miic_port *miic_port;
+ 	struct device_node *pcs_np;
+@@ -354,9 +357,6 @@ struct phylink_pcs *miic_create(struct device *dev, struct device_node *np)
+ 	if (of_property_read_u32(np, "reg", &port))
+ 		return ERR_PTR(-EINVAL);
  
--	for (i = 0; i < MIIC_MODCTRL_CONF_CONV_NUM; i++) {
-+	for (i = 0; i < count; i++) {
- 		if (dt_val[i] == MIIC_MODCTRL_CONF_NONE)
+-	if (port > MIIC_MAX_NR_PORTS || port < 1)
+-		return ERR_PTR(-EINVAL);
+-
+ 	/* The PCS pdev is attached to the parent node */
+ 	pcs_np = of_get_parent(np);
+ 	if (!pcs_np)
+@@ -375,18 +375,24 @@ struct phylink_pcs *miic_create(struct device *dev, struct device_node *np)
+ 		return ERR_PTR(-EPROBE_DEFER);
+ 	}
+ 
++	miic = platform_get_drvdata(pdev);
++	of_data = miic->of_data;
++	if (port > of_data->miic_port_max || port < of_data->miic_port_start) {
++		put_device(&pdev->dev);
++		return ERR_PTR(-EINVAL);
++	}
++
+ 	miic_port = kzalloc(sizeof(*miic_port), GFP_KERNEL);
+ 	if (!miic_port) {
+ 		put_device(&pdev->dev);
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+ 
+-	miic = platform_get_drvdata(pdev);
+ 	device_link_add(dev, miic->dev, DL_FLAG_AUTOREMOVE_CONSUMER);
+ 	put_device(&pdev->dev);
+ 
+ 	miic_port->miic = miic;
+-	miic_port->port = port - 1;
++	miic_port->port = port - of_data->miic_port_start;
+ 	miic_port->pcs.ops = &miic_phylink_ops;
+ 	miic_port->pcs.neg_mode = true;
+ 
+@@ -419,7 +425,7 @@ static int miic_init_hw(struct miic *miic, u32 cfg_mode)
+ 	miic_reg_writel(miic, MIIC_MODCTRL,
+ 			FIELD_PREP(MIIC_MODCTRL_SW_MODE, cfg_mode));
+ 
+-	for (port = 0; port < MIIC_MAX_NR_PORTS; port++) {
++	for (port = 0; port < miic->of_data->miic_port_max; port++) {
+ 		miic_converter_enable(miic, port, 0);
+ 		/* Disable speed/duplex control from these registers, datasheet
+ 		 * says switch registers should be used to setup switch port
+@@ -508,6 +514,8 @@ static int miic_parse_dt(struct miic *miic, u32 *mode_cfg)
+ 		if (of_property_read_u32(conv, "reg", &port))
  			continue;
  
-@@ -423,53 +447,59 @@ static bool miic_modctrl_match(s8 table_val[MIIC_MODCTRL_CONF_CONV_NUM],
- 	return true;
- }
- 
--static void miic_dump_conf(struct device *dev,
--			   s8 conf[MIIC_MODCTRL_CONF_CONV_NUM])
-+static void miic_dump_conf(struct miic *miic, s8 *conf)
- {
-+	const struct miic_of_data *of_data = miic->of_data;
- 	const char *conf_name;
- 	int i;
- 
--	for (i = 0; i < MIIC_MODCTRL_CONF_CONV_NUM; i++) {
-+	for (i = 0; i < of_data->conf_conv_count; i++) {
- 		if (conf[i] != MIIC_MODCTRL_CONF_NONE)
--			conf_name = conf_to_string[conf[i]];
-+			conf_name = of_data->conf_to_string[conf[i]];
- 		else
- 			conf_name = "NONE";
- 
--		dev_err(dev, "%s: %s\n", index_to_string[i], conf_name);
-+		dev_err(miic->dev, "%s: %s\n",
-+			of_data->index_to_string[i], conf_name);
- 	}
- }
- 
--static int miic_match_dt_conf(struct device *dev,
--			      s8 dt_val[MIIC_MODCTRL_CONF_CONV_NUM],
--			      u32 *mode_cfg)
-+static int miic_match_dt_conf(struct miic *miic, s8 *dt_val, u32 *mode_cfg)
- {
-+	const struct miic_of_data *of_data = miic->of_data;
- 	struct modctrl_match *table_entry;
- 	int i;
- 
--	for (i = 0; i < ARRAY_SIZE(modctrl_match_table); i++) {
--		table_entry = &modctrl_match_table[i];
-+	for (i = 0; i < of_data->match_table_count; i++) {
-+		table_entry = &of_data->match_table[i];
- 
--		if (miic_modctrl_match(table_entry->conv, dt_val)) {
-+		if (miic_modctrl_match(table_entry->conv, dt_val,
-+				       miic->of_data->conf_conv_count)) {
- 			*mode_cfg = table_entry->mode_cfg;
- 			return 0;
- 		}
- 	}
- 
--	dev_err(dev, "Failed to apply requested configuration\n");
--	miic_dump_conf(dev, dt_val);
-+	dev_err(miic->dev, "Failed to apply requested configuration\n");
-+	miic_dump_conf(miic, dt_val);
- 
- 	return -EINVAL;
- }
- 
--static int miic_parse_dt(struct device *dev, u32 *mode_cfg)
-+static int miic_parse_dt(struct miic *miic, u32 *mode_cfg)
- {
--	s8 dt_val[MIIC_MODCTRL_CONF_CONV_NUM];
--	struct device_node *np = dev->of_node;
-+	struct device_node *np = miic->dev->of_node;
- 	struct device_node *conv;
-+	int port, ret;
-+	s8 *dt_val;
- 	u32 conf;
--	int port;
- 
--	memset(dt_val, MIIC_MODCTRL_CONF_NONE, sizeof(dt_val));
-+	dt_val = kmalloc_array(miic->of_data->conf_conv_count,
-+			       sizeof(*dt_val), GFP_KERNEL);
-+	if (!dt_val)
-+		return -ENOMEM;
-+
-+	memset(dt_val, MIIC_MODCTRL_CONF_NONE, sizeof(*dt_val));
- 
- 	if (of_property_read_u32(np, "renesas,miic-switch-portin", &conf) == 0)
- 		dt_val[0] = conf;
-@@ -482,7 +512,10 @@ static int miic_parse_dt(struct device *dev, u32 *mode_cfg)
++		/* Adjust for 0 based index */
++		port += !miic->of_data->miic_port_start;
+ 		if (of_property_read_u32(conv, "renesas,miic-input", &conf) == 0)
  			dt_val[port] = conf;
  	}
- 
--	return miic_match_dt_conf(dev, dt_val, mode_cfg);
-+	ret = miic_match_dt_conf(miic, dt_val, mode_cfg);
-+	kfree(dt_val);
-+
-+	return ret;
- }
- 
- static int miic_probe(struct platform_device *pdev)
-@@ -492,16 +525,18 @@ static int miic_probe(struct platform_device *pdev)
- 	u32 mode_cfg;
- 	int ret;
- 
--	ret = miic_parse_dt(dev, &mode_cfg);
--	if (ret < 0)
--		return ret;
--
- 	miic = devm_kzalloc(dev, sizeof(*miic), GFP_KERNEL);
- 	if (!miic)
- 		return -ENOMEM;
- 
--	spin_lock_init(&miic->lock);
-+	miic->of_data = of_device_get_match_data(dev);
- 	miic->dev = dev;
-+
-+	ret = miic_parse_dt(miic, &mode_cfg);
-+	if (ret < 0)
-+		return ret;
-+
-+	spin_lock_init(&miic->lock);
- 	miic->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(miic->base))
- 		return PTR_ERR(miic->base);
-@@ -538,8 +573,18 @@ static void miic_remove(struct platform_device *pdev)
- 	pm_runtime_put(&pdev->dev);
- }
- 
-+static struct miic_of_data rzn1_miic_of_data = {
-+	.match_table = modctrl_match_table,
-+	.match_table_count = ARRAY_SIZE(modctrl_match_table),
-+	.conf_conv_count = MIIC_MODCTRL_CONF_CONV_MAX,
-+	.conf_to_string = conf_to_string,
-+	.conf_to_string_count = ARRAY_SIZE(conf_to_string),
-+	.index_to_string = index_to_string,
-+	.index_to_string_count = ARRAY_SIZE(index_to_string),
-+};
-+
- static const struct of_device_id miic_of_mtable[] = {
--	{ .compatible = "renesas,rzn1-miic" },
-+	{ .compatible = "renesas,rzn1-miic", .data = &rzn1_miic_of_data },
- 	{ /* sentinel */ }
+@@ -581,6 +589,8 @@ static struct miic_of_data rzn1_miic_of_data = {
+ 	.conf_to_string_count = ARRAY_SIZE(conf_to_string),
+ 	.index_to_string = index_to_string,
+ 	.index_to_string_count = ARRAY_SIZE(index_to_string),
++	.miic_port_start = 1,
++	.miic_port_max = 5,
  };
- MODULE_DEVICE_TABLE(of, miic_of_mtable);
+ 
+ static const struct of_device_id miic_of_mtable[] = {
 -- 
 2.43.0
 
