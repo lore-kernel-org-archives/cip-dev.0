@@ -2,56 +2,56 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96CA1FD709D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF1B0FD709F
 	for <webhook@archiver.kernel.org>; Tue, 17 Mar 2026 11:17:45 +0000 (UTC)
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.73442.1773746258730292411
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.73591.1773746257504820427
  for <cip-dev@lists.cip-project.org>;
- Tue, 17 Mar 2026 04:17:39 -0700
+ Tue, 17 Mar 2026 04:17:37 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=Ao2v5Oz2;
- spf=pass (domain: gmail.com, ip: 209.85.128.46, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4852b81c73aso50010955e9.3
-        for <cip-dev@lists.cip-project.org>; Tue, 17 Mar 2026 04:17:38 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=YqXcfL9K;
+ spf=pass (domain: gmail.com, ip: 209.85.128.43, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4852afd42ceso48422765e9.2
+        for <cip-dev@lists.cip-project.org>; Tue, 17 Mar 2026 04:17:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773746257; x=1774351057; darn=lists.cip-project.org;
+        d=gmail.com; s=20230601; t=1773746255; x=1774351055; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wzGZ5/rIZMSyvy3llRxHygUGk8zmt3p77IOfp6qQAas=;
-        b=Ao2v5Oz27XvR4kvqwPBdWbiHH+xbGKEDgsoC+fbpMBkHJgT7an0JMA+C7xdjt+jCNM
-         oTj1IRyzgPRIHRGhUKPdDNI4pk9w8cHP3kEmVouL6Im6UicnT1vcJX52QekZCxRzaVjN
-         n6UOz74KuPZRQUpU0Ij5pHwfeF17IraxdkLrFKGutKvtcwClK+Y/C4UnqWrc5ILP8UhI
-         8yBmybQkhOY+dhro3G/VgFxsfuuNCU7D/HdWDv5Rc0oyuQDfHNktNmG3mLmApzu7WdJU
-         oqCf699hEeWIG+eTDyWFYjhVPICqmXCieLiTDRfCdjJL2uVkXMfKbU2ARlKvXLcvQJxB
-         Za+Q==
+        bh=iiWlpnDPnz/KD+OMk36yNBnSCxa1UrXNpQ60mRlKq14=;
+        b=YqXcfL9KmTI28D2exRTWEuuCOJ924KwdjmSWzjK6guJMZdTmGkyZuD2LVeXyVxJzxh
+         WR0KUXlW35CjCR2S5wO3TODOhTtZEXlx3W29pU4kFx+XFMc1CXkaOo38M40Pi1SwCMup
+         HYlAwIkn6Cqk+tuQ3aY+rgEcIZS2k6Wr9MUCiXZPZvK786qBabpUmAYjBgWbO7Zxb2gm
+         0rJ49njfTWIRteAtUM9f95cfBqhpS1LqNN951J7PCqUMDb2xhbszeO27OdfDfypZarSR
+         kQob+Cfg/ZAYwsKOEKkSqjCcna8BJaWyuMUWUF78t0b4S8FPetZ5omAvspaCC39chOgX
+         0bCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773746257; x=1774351057;
+        d=1e100.net; s=20251104; t=1773746255; x=1774351055;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=wzGZ5/rIZMSyvy3llRxHygUGk8zmt3p77IOfp6qQAas=;
-        b=WA1SPR3goHa52ZQLJzCGEu8Ri4oNv23s9ynuFyvMLIyUK+rlzZFPTJGXgjaWwJq9XY
-         gOIvL2bNHvJzsdXwr4u99E/S7Q0SeyCuQtgHCwVwNHM1ra2qf7x6T5MHfAefmnBDA/Dl
-         Lp17c+ePsNsNXrPPGS/Sr7AWnrK2YOk5m9/KTajFRqMxRJQvtw2sxhHDO5UHxpboUWWq
-         ajRtgpwNpBsDZqSBqvmiDwVPDcfdiy/LF7WMO2ypYsM+d0F1lbZG47ltguEWZT0j4ehx
-         POZq/2UfXYwOtgezDOS3LSYcFJI8rdgKvTK+CK7aox5EEFX0+WVQsDt1IWku/GYFRPOY
-         pyYA==
-X-Gm-Message-State: AOJu0YxZyJy7iKnNjXSArbK8V76Zf1ozIft5jpMfCXZw0Usg/yfBvcIa
-	e252xVywkhizt6KhnzMQhWcfXp4itPDGWNtS0u2eccu7eP3EcSVz5wxM1eUSlA==
-X-Gm-Gg: ATEYQzyaGS2eGBRCWiAU4fBWIfvpQ0BgMvMtdLnrrRawOn4EA2z4rrsgsCeCI+e8UHF
-	uVjhfC6I93PfTQ/QKx1Ha89DX0jlEgDVzVUqcvlAEHv4V+W6/0TZ2HBOdRplHKpK0UxqEiznwc9
-	N9Bo6wLTNPd3Jkjtft7J6wWbDnSSlTcBLZImrZQXBdobu4Str8U/0FDJO/CvBBMLMFH0877K78V
-	G+NPJxEu3iDbNA5NLzM1CkykxmT0le2XdSwsCzNDlxjR+yEL4UM1s5q7liohoxLW1wXKoYk5xZZ
-	hXvl4VSxUATFixxl45cKCeFdDUMAd5WqvXtyf7n5N500ZfKscDtE4m5Z500QDuVxF5tbB2wEhD4
-	lhLcrWHn4FQKTn8wIWTxo9tsPU4EQh3VYa344ImDZqrTNXh1V3HXQzjU7MrGe1E7XQO7hRUWIDi
-	3tC27L/HyPVMtXIxEh6SbaVrHUNWrbyxY2xrrPc4bE+qm6DBhKQRiCfkioIXU=
-X-Received: by 2002:a05:600c:a15:b0:485:34a2:919e with SMTP id 5b1f17b1804b1-48556710fd5mr287800435e9.33.1773746256811;
-        Tue, 17 Mar 2026 04:17:36 -0700 (PDT)
+        bh=iiWlpnDPnz/KD+OMk36yNBnSCxa1UrXNpQ60mRlKq14=;
+        b=NMXisd4vdE2PkJA6rr1Hey/HuyO8jVWw8l2WeZivJiE9tEbVEY0F5/V7eOQ+TbosCf
+         hn5HhNq9lm4K3tJ2Sz7JRf5WcuIMXfm3utbzIfIIkYP9ufagMd1fknLoLheeaJ5YuSfZ
+         v92OpqLZ37RtpwPhq5DsS9Hgzl6feShHuG+RHvms3tUb1cO5zxjCPXkD9hxi+aa+NqKO
+         h9AHXYqGzOGKlhfm5zZZAuoyeIPLaAzP+XTRRSSVk/bb2HgZ/BenBFNlF4B0zj/DBvYM
+         tqRF/CSuHd8JA8opa0GxFPG0q3psNtjuydpQRB75q+b7hjFB+F46crDY4uLUJsYgB7xP
+         OR+Q==
+X-Gm-Message-State: AOJu0Yz0zMChpzjkQ4pvtf26n0eTMfHEbwQU9YDCkcVNnJHw1346n7kI
+	8dv1HjsnAcRLa4zYzlm7DjFfRn8Ja6D2FjpRNhogVe9snaKVMiiqJSps64rcPA==
+X-Gm-Gg: ATEYQzxskv0FCfBUkzluKd/TyaifP5lbRa1ToJWybafI31oczDYpjZeQcF0P8V8N4E8
+	QHHsUWJVrjOM6vo/weTxgiq1OzfiCMBjA1qUVzQvNMQAnwzSQdPidSylzggDw4ZNOammL8UZv7B
+	k9bpVa/FWo9Rdvx9kaibFTre6CcPb+6jcjdgCPxiDEt5viImSYci0AbxiZ+uDnGDkSGWm19/gE8
+	BuOogXLKaKzmVXRQRTYyi2gFTs6GFh+Tru0IKkfBz4lNB96+7AtkVklZfBmc4x+kRBtOcfP5CJQ
+	EVlhI1vikF7IN+HFiN9u/LDaUhbBpQe7sENPXUehgkxFC7yE1/2fZG6cLcKQXiEAjWxHOqYljgx
+	MfE4YW1vV8tKS9GNDhsnRIHslAicsSzwsSjLMLpA3vSdJTLgfTQPnrdvzVFxKjPkUa3ox6Of7Ns
+	gznouankL7m7phYRXajmpMagMQdTS7Cg7ywZrXadPU7BB3vWXo
+X-Received: by 2002:a05:600c:4fc6:b0:479:1b0f:dfff with SMTP id 5b1f17b1804b1-485566cfccfmr267533505e9.10.1773746255095;
+        Tue, 17 Mar 2026 04:17:35 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a758:8a01:e16b:fc56:e220:9aa9])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4856ea8dd57sm59723235e9.3.2026.03.17.04.17.35
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4856ea8dd57sm59723235e9.3.2026.03.17.04.17.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Mar 2026 04:17:36 -0700 (PDT)
+        Tue, 17 Mar 2026 04:17:34 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,9 +59,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 21/39] bitfield: Add FIELD_MODIFY() helper
-Date: Tue, 17 Mar 2026 11:16:46 +0000
-Message-ID: <20260317111718.281633-22-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 19/39] serial: sh-sci: Fix deadlock during RSCI FIFO overrun error
+Date: Tue, 17 Mar 2026 11:16:44 +0000
+Message-ID: <20260317111718.281633-20-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260317111718.281633-1-biju.das.jz@bp.renesas.com>
 References: <20260317111718.281633-1-biju.das.jz@bp.renesas.com>
@@ -71,80 +71,49 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 17 Mar 2026 11:17:45 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22454
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22452
 
-From: Luo Jie <quic_luoj@quicinc.com>
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[ Upstream commit a256ae22570ee4c3427fdc703a58a89afee6a332 ]
+[ Upstream commit 75a9f4c54770f062f4b3813a83667452b326dda3 ]
 
-Add a helper for replacing the contents of bitfield in memory
-with the specified value.
+On RSCI IP, a deadlock occurs during a FIFO overrun error, as it uses a
+different register to clear the FIFO overrun error status.
 
-Even though a helper xxx_replace_bits() is available, it is not
-well documented, and only reports errors at the run time, which
-will not be helpful to catch possible overflow errors due to
-incorrect parameter types used.
-
-FIELD_MODIFY(REG_FIELD_C, &reg, c) is the wrapper to the code below.
-
-	reg &= ~REG_FIELD_C;
-	reg |= FIELD_PREP(REG_FIELD_C, c);
-
-Yury: trim commit message, align backslashes.
-
-Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
-Signed-off-by: Yury Norov <yury.norov@gmail.com>
+Cc: stable@kernel.org
+Fixes: 0666e3fe95ab ("serial: sh-sci: Add support for RZ/T2H SCI")
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://patch.msgid.link/20251114101350.106699-3-biju.das.jz@bp.renesas.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- include/linux/bitfield.h | 21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
+ drivers/tty/serial/sh-sci.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
-index ebfa12f69501..d0dfb2d86ec1 100644
---- a/include/linux/bitfield.h
-+++ b/include/linux/bitfield.h
-@@ -8,6 +8,7 @@
- #define _LINUX_BITFIELD_H
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index b64bd8a155c7..398f6518ff28 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -1200,8 +1200,16 @@ static int sci_handle_fifo_overrun(struct uart_port *port)
  
- #include <linux/build_bug.h>
-+#include <linux/typecheck.h>
- #include <asm/byteorder.h>
+ 	status = s->ops->read_reg(port, s->params->overrun_reg);
+ 	if (status & s->params->overrun_mask) {
+-		status &= ~s->params->overrun_mask;
+-		s->ops->write_reg(port, s->params->overrun_reg, status);
++		if (s->type == SCI_PORT_RSCI) {
++			/*
++			 * All of the CFCLR_*C clearing bits match the corresponding
++			 * CSR_*status bits. So, reuse the overrun mask for clearing.
++			 */
++			s->ops->clear_SCxSR(port, s->params->overrun_mask);
++		} else {
++			status &= ~s->params->overrun_mask;
++			s->ops->write_reg(port, s->params->overrun_reg, status);
++		}
  
- /*
-@@ -38,8 +39,7 @@
-  *	  FIELD_PREP(REG_FIELD_D, 0x40);
-  *
-  * Modify:
-- *  reg &= ~REG_FIELD_C;
-- *  reg |= FIELD_PREP(REG_FIELD_C, c);
-+ *  FIELD_MODIFY(REG_FIELD_C, &reg, c);
-  */
+ 		port->icount.overrun++;
  
- #define __bf_shf(x) (__builtin_ffsll(x) - 1)
-@@ -155,6 +155,23 @@
- 		(typeof(_mask))(((_reg) & (_mask)) >> __bf_shf(_mask));	\
- 	})
- 
-+/**
-+ * FIELD_MODIFY() - modify a bitfield element
-+ * @_mask: shifted mask defining the field's length and position
-+ * @_reg_p: pointer to the memory that should be updated
-+ * @_val: value to store in the bitfield
-+ *
-+ * FIELD_MODIFY() modifies the set of bits in @_reg_p specified by @_mask,
-+ * by replacing them with the bitfield value passed in as @_val.
-+ */
-+#define FIELD_MODIFY(_mask, _reg_p, _val)						\
-+	({										\
-+		typecheck_pointer(_reg_p);						\
-+		__BF_FIELD_CHECK(_mask, *(_reg_p), _val, "FIELD_MODIFY: ");		\
-+		*(_reg_p) &= ~(_mask);							\
-+		*(_reg_p) |= (((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask));	\
-+	})
-+
- extern void __compiletime_error("value doesn't fit into mask")
- __field_overflow(void);
- extern void __compiletime_error("bad bitfield mask")
 -- 
 2.43.0
 
