@@ -2,56 +2,56 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA21FD8740
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B579FD8743
 	for <webhook@archiver.kernel.org>; Tue, 17 Mar 2026 11:17:56 +0000 (UTC)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.73602.1773746267856472251
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.73604.1773746268839001736
  for <cip-dev@lists.cip-project.org>;
- Tue, 17 Mar 2026 04:17:48 -0700
+ Tue, 17 Mar 2026 04:17:49 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=JBhFLpsS;
- spf=pass (domain: gmail.com, ip: 209.85.128.52, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-486b96760easo4148185e9.2
-        for <cip-dev@lists.cip-project.org>; Tue, 17 Mar 2026 04:17:47 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=I5+jNCjL;
+ spf=pass (domain: gmail.com, ip: 209.85.128.43, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4852afd42ceso48424565e9.2
+        for <cip-dev@lists.cip-project.org>; Tue, 17 Mar 2026 04:17:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773746266; x=1774351066; darn=lists.cip-project.org;
+        d=gmail.com; s=20230601; t=1773746267; x=1774351067; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bfis0D2rkuOGhoxqsVc3GEtfiYZuscc8qKOaCI9iw9Q=;
-        b=JBhFLpsSkScYehCPLeky9Xsop7BrxhTT+UQCjujF+VUhSEaqd88LSn1VRK82ZvdQpS
-         ThCk9nbngJAKjYLNWt8Wid0hCc14QSumfZFDMxErtThAI0Kug0sGE2Lz6jKp/3EUSO2S
-         xJhitH0kwaIlonhpMnDOx2RgkYPd9sSs1SMOwQKgfZn7M3jE+WOqziCsRuyF9XIHPHDc
-         nlhFKZ6NyYbkG2DpaeK3rtypFg2KxuXjGeTrVFjbcty6egJ/ucCHC4sSUfD82y22//OS
-         iaVCaYkybplyiB3YAaP2ygpNjlsEj7R4hOi1aRyoTYFiaZe2wajE/QeVQANuuzpJEV9y
-         jksg==
+        bh=+sSgRsbEqM90OnvFSPO8jh7dFWfKT34QWwrkr5SmXeM=;
+        b=I5+jNCjLRs29EeYcoyUIzWWqPdvUNt+oc2dlISccODQ/QMtB8KRpu0yJKTIimjWv32
+         n/8EnsxmcAIjRBLfpwyh6yFMGApZVNsouJwlaSvLR9lwPuFPRj4+GkR5Rt0jSBUwya47
+         48ULKI37PuXJ5KsrhBqnWKe5ixuz7Slo/RbXqNH28bdaN7xWJD1Sw5jrmhrKdfxl4Sy+
+         nod6cKP29Kc6QvHsQG0YsBeopn01Nf+uhbkXX/ulbpzAhNFcilF00eZzOICb9HiZyhkp
+         lkZzG62YDL3VEoUpo+50ZIN5Ltv/mty90J0CC6XlCiJE6qxYSpvrhmequsrzctbVWnmi
+         J8Tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773746266; x=1774351066;
+        d=1e100.net; s=20251104; t=1773746267; x=1774351067;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=bfis0D2rkuOGhoxqsVc3GEtfiYZuscc8qKOaCI9iw9Q=;
-        b=PM+8qBjGXUAXP93b0ELoMjcgutTBxAJGswCaDuTFvysfVpk3X1r4RTNK4cFLZ7JsX7
-         C+12quuKRBaZLL7A2I02jzWAHZSBFIPoc4XwOrfi/kJI6WPcBzE3YCxVBVXSbFkstGRM
-         k8r7J4PbgddNH33r4hr4BeaiUodfus0US/mnGds5V30yH/qf9tIKyr390X2KvewluV2J
-         elKwrFRiEXfcs3CGO5L8ssXuN4JNKKst+ZIj/xteBhuX7MMkNTmi3bFXTNP1z2oiHZvV
-         k3TTrCfRk2YLeLld6cwET+jROuW3nMb7I0DFxjL78DowcsL9H/CX7mqBLPykMSvgx3J1
-         k9lQ==
-X-Gm-Message-State: AOJu0YwSLc6oP/BcgL/UQEPLEIHK/ZOU9HqpQFZDZm/fNycMF4go9cgj
-	pdCYCAmxhqD56i5twczpGG86vTGRWFWx1jUXVlGQtEyTqoOjdpJb7pTO9jxZ3A==
-X-Gm-Gg: ATEYQzxL3V2QXQRq0RLEXTF1hIqKODLp0WoZ5f6Q/ndFOGccC8BhSmhh15M4acOATKY
-	qf+rWMRxsfM80fD6wUrK98gdhZRdRXpmLSpDR+SYZfPhLxX6mGJo5p2aOGklvA0aF8r+k5HBWh6
-	bwTMRU0JprD2iSaMDZetaXFvy5iWPeHqLivj3aa+bwmP2mX3Dr0fzd64qglXvbhIIi8F9kgeAHF
-	hQKWbmXBEA0cgPFszxCIAWuZZ60zUlu91VEaLuvOJZykTuJqCwSu+W1blSirzGhoAew4dpvYQmJ
-	3LufusrSMZwBJz86hJadX2W1gWAUnCvCjuWRT8HRBivr3IR/wh0/q+thyj1sY4ECzcCDebUNpPm
-	Me+MT1fu0AdRXeYxU5GZMxLT/+x1imU2UsEp9UMqAXufwozhf8OAWahOlLRHBd0GifjKHIQCX2Y
-	QEjCxt3sdl/lFx5f8aWNeZVRYDhIbRVWVzuDKglEBcU+hYmqBB
-X-Received: by 2002:a05:600c:548f:b0:477:b642:9dc1 with SMTP id 5b1f17b1804b1-4855670514dmr276341305e9.20.1773746265887;
-        Tue, 17 Mar 2026 04:17:45 -0700 (PDT)
+        bh=+sSgRsbEqM90OnvFSPO8jh7dFWfKT34QWwrkr5SmXeM=;
+        b=o+SNWC3j9DMTbvCqhA7IizqcfELJG4mOOdQsnnYEs8t9DBWxwLVsHPzqihGIwm9YJg
+         oKmMtv3DSmwu8XCXLd6P8Gm8XE6X47BeugQe6un2N7ilZS2h/D2JPR3Lgz+0V7mK+QkL
+         6yhrEFGB0ICdfEk3bIfESRU6YSVlC8V5nywrDzIxwEpWO6ceBxey2tokKg5QYbGjRJJh
+         DE6AIQ2DUGY1lxDVJ4YBUNeWwyyB9Xtrwt2fHwc9aCWu6vakKpuNw6kHmUhLpT9goec7
+         XVHUVtJyLV4x4DwSq+sdc5bR6dw6BbIOmPAc5lRw8ZFce4lZslhl0J1XuvAt3Aee4k1l
+         ZXWw==
+X-Gm-Message-State: AOJu0YxbCR7IO7x6HIoSyOhiUJov36olD1EhCs/Hk1wtc8M97aVrgLzM
+	GTRp/cFOGMu1a9kiKuOnUmLXBoBVj72iHQjeYMLFaJcyZ9PqvdKWJY2Hkzq2Rw==
+X-Gm-Gg: ATEYQzxcMtUHDXQioY6m2vEmBT1iWbT46iYxdF3pc90OZVGnT3Zg3kqQjdUk6KVJBTV
+	bMAgiF3Zl5n4Aob86G5L46UwA3Tljvw/8K3ytKUSInMIo5LeLkqmAKz/hSJ8AJpPg1LIKP92XSm
+	WUaoIqYn8rcidh9R+mny8sX8KTaNQDb80J5yYREsNTV5OCcJSwRhERiK2fNwRvrfeNWWPWKPYkM
+	vHq3grPNR/Ah0JI18Sh8JQawIfd2VEPXLz+6BAsUAAXcp93NFbqGAW392qzs6h7h6p1/raTZ/mF
+	shR1k7Prd9JdeFS8oYP+nfLvqqDGRsCuwk9zjdcSCRUkTdr3umo4H/utwWX0BXvpJQ0hXuAKB69
+	QAPYPOttSQKQEmYlEz9VgvJ5UIDsw9F3vB/3L3BUVtnLG6z3czBgfgAqDDYcpFikbWTMIV+Ely+
+	K2Agby/NeT8PjK8rF3YnmPcJzkO2/V2PaDEhzjb7pNV6AMUTmFWz87xpsNQOE=
+X-Received: by 2002:a05:600c:628c:b0:485:3aa1:a7f1 with SMTP id 5b1f17b1804b1-485566c6a59mr258055865e9.7.1773746266771;
+        Tue, 17 Mar 2026 04:17:46 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a758:8a01:e16b:fc56:e220:9aa9])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4856ea8dd57sm59723235e9.3.2026.03.17.04.17.45
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4856ea8dd57sm59723235e9.3.2026.03.17.04.17.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Mar 2026 04:17:45 -0700 (PDT)
+        Tue, 17 Mar 2026 04:17:46 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,9 +59,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 33/39] serial: sh-sci: Make sci_scbrr_calc() public
-Date: Tue, 17 Mar 2026 11:16:58 +0000
-Message-ID: <20260317111718.281633-34-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 34/39] serial: sh-sci: Add finish_console_write() callback
+Date: Tue, 17 Mar 2026 11:16:59 +0000
+Message-ID: <20260317111718.281633-35-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260317111718.281633-1-biju.das.jz@bp.renesas.com>
 References: <20260317111718.281633-1-biju.das.jz@bp.renesas.com>
@@ -71,65 +71,53 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 17 Mar 2026 11:17:56 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22466
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22467
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[ Upstream commit 5632bda5e848c4592eefa4451092beb4ce29ab76 ]
+[ Upstream commit bbcd508c84d4884c620f4f4bb7d382539466b9a3 ]
 
-Make the function sci_scbrr_calc() public for code reuse to support RZ/G3E
-RSCI IP.
+Add finish_console_write() callback as RZ/G3E RSCI IP needs special
+handling compared to other SoCs.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Tested-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://patch.msgid.link/20251129164325.209213-15-biju.das.jz@bp.renesas.com
+Link: https://patch.msgid.link/20251129164325.209213-16-biju.das.jz@bp.renesas.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[ Biju: Dropped double quotes around EXPORT_SYMBOL_NS_GPL ]
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/tty/serial/sh-sci-common.h | 3 +++
- drivers/tty/serial/sh-sci.c        | 6 +++---
- 2 files changed, 6 insertions(+), 3 deletions(-)
+ drivers/tty/serial/sh-sci-common.h | 1 +
+ drivers/tty/serial/sh-sci.c        | 5 ++++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/tty/serial/sh-sci-common.h b/drivers/tty/serial/sh-sci-common.h
-index 5d30771278b4..976e394ab968 100644
+index 976e394ab968..f363a659c46a 100644
 --- a/drivers/tty/serial/sh-sci-common.h
 +++ b/drivers/tty/serial/sh-sci-common.h
-@@ -169,6 +169,9 @@ void sci_port_enable(struct sci_port *sci_port);
- int sci_startup(struct uart_port *port);
- void sci_shutdown(struct uart_port *port);
+@@ -93,6 +93,7 @@ struct sci_port_ops {
+ 	void (*shutdown_complete)(struct uart_port *port);
  
-+int sci_scbrr_calc(struct sci_port *s, unsigned int bps, unsigned int *brr,
-+		   unsigned int *srr, unsigned int *cks);
-+
- #define min_sr(_port)		ffs((_port)->sampling_rate_mask)
- #define max_sr(_port)		fls((_port)->sampling_rate_mask)
- 
+ 	void (*prepare_console_write)(struct uart_port *port, u32 ctrl);
++	void (*finish_console_write)(struct uart_port *port, u32 ctrl);
+ 	void (*console_save)(struct uart_port *port);
+ 	void (*console_restore)(struct uart_port *port);
+ 	size_t (*suspend_regs_size)(void);
 diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 13a1c6671cc9..decc6ccff256 100644
+index decc6ccff256..bb38396b7764 100644
 --- a/drivers/tty/serial/sh-sci.c
 +++ b/drivers/tty/serial/sh-sci.c
-@@ -2581,9 +2581,8 @@ static int sci_brg_calc(struct sci_port *s, unsigned int bps,
- }
+@@ -3439,7 +3439,10 @@ static void serial_console_write(struct console *co, const char *s,
+ 		cpu_relax();
  
- /* calculate sample rate, BRR, and clock select */
--static int sci_scbrr_calc(struct sci_port *s, unsigned int bps,
--		   unsigned int *brr, unsigned int *srr,
--		   unsigned int *cks)
-+int sci_scbrr_calc(struct sci_port *s, unsigned int bps, unsigned int *brr,
-+		   unsigned int *srr, unsigned int *cks)
- {
- 	unsigned long freq = s->clk_rates[SCI_FCK];
- 	unsigned int sr, br, prediv, scrate, c;
-@@ -2647,6 +2646,7 @@ static int sci_scbrr_calc(struct sci_port *s, unsigned int bps,
- 		min_err, *brr, *srr + 1, *cks);
- 	return min_err;
- }
-+EXPORT_SYMBOL_NS_GPL(sci_scbrr_calc, SH_SCI);
+ 	/* restore the SCSCR */
+-	sci_port->ops->write_reg(port, regs->control, ctrl);
++	if (sci_port->ops->finish_console_write)
++		sci_port->ops->finish_console_write(port, ctrl);
++	else
++		sci_port->ops->write_reg(port, regs->control, ctrl);
  
- static void sci_reset(struct uart_port *port)
- {
+ 	if (locked)
+ 		spin_unlock_irqrestore(&port->lock, flags);
 -- 
 2.43.0
 
