@@ -2,56 +2,56 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2339CFD708D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 233CBFD7091
 	for <webhook@archiver.kernel.org>; Tue, 17 Mar 2026 11:17:56 +0000 (UTC)
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.73447.1773746266268490576
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.73607.1773746273850482813
  for <cip-dev@lists.cip-project.org>;
- Tue, 17 Mar 2026 04:17:46 -0700
+ Tue, 17 Mar 2026 04:17:54 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=ZUvGhdud;
- spf=pass (domain: gmail.com, ip: 209.85.128.46, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-485392de558so33520335e9.1
-        for <cip-dev@lists.cip-project.org>; Tue, 17 Mar 2026 04:17:46 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=XSwrYcXj;
+ spf=pass (domain: gmail.com, ip: 209.85.128.50, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-483487335c2so53406905e9.2
+        for <cip-dev@lists.cip-project.org>; Tue, 17 Mar 2026 04:17:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773746264; x=1774351064; darn=lists.cip-project.org;
+        d=gmail.com; s=20230601; t=1773746272; x=1774351072; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qssqDcYM0UsKLcXiSnjbF0SeCNlrx24l3I/7cruQ0wU=;
-        b=ZUvGhdud1n4QKN0OMGEZtL5DTC1XkcciAbwdq0RpdAA4Ln0r6oRIHHQdXbBpQcuj7P
-         AJFSrq8ZvnKJIQHyFlwXWHh4N6TQUeSQD0wQwyu6HzqrXbIBkajxf/tYDx7zFQIraXVc
-         lEZSFhJR7fMHq2upt0mHOLOGAtScCK95YQ9yHYs21pc/6EWvqwmyqYlKldZmtXfEI+1S
-         4yz4138jUeWgGkxXtQrdDR0PJoFXFmwtDARpAwlQvA9p3M+ovrB8Q87QtLO1F2NxIsS+
-         CLQU2jVx9izXekDLCMfmQOy8NEb/SmqYrOnz/UOdiFYBYeGFiyRQbVdCPnV+fikEMBEK
-         RTTg==
+        bh=ecaZsv6gi1PIEBZCjHvO+xqk7OFgrQFsuEP+lchEtlc=;
+        b=XSwrYcXjSm48uKT+m6LiP6ntvcd/zIGz/2E8jEKumRFsQVOEqtIQptGzRySQ2SYGzl
+         tIzZhi4lv7MtLjaYramSpB6OmWL6Nsciz+UWZQbOdYO5747iuwDvAvuquXAoF5zp5dv7
+         yocWxlZv6wA9z/Hf23CRtu8uq9yJGoSx0TY43FClVf9f5CM2gReBsq/ngAMFnuZZWC7q
+         CtjWRhaak6A5eXp5KXOKS1YbI2Fh/ICiGTqz7P7bSaa1CkfWhvc1UXXictYsDi1ozMTe
+         LT6DcR31Rkwiq4h9XVvLJ4uLPfv3R0CJcP2yVu2YL0D4SFxpdBt68FzbrePjudsW66NI
+         lmYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773746264; x=1774351064;
+        d=1e100.net; s=20251104; t=1773746272; x=1774351072;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=qssqDcYM0UsKLcXiSnjbF0SeCNlrx24l3I/7cruQ0wU=;
-        b=VDIfgyPd0oUM1KiACX4u+r/pMyo8o1bjV5EsJQnAJ427Jx8c/CsrNOcqjeFS6wYrXZ
-         nTxFKanPIBFulfhjJ5MYgwPRkupxx63UpXZNPUinQDIm4ty0NoYRgaWebyBZkwVO5pzE
-         pwgXTRMa8j+NRs7fGW+RX9QFoCbJvTz+0tq+84n3PYLTnOisziFrqZc3Jk6/4Vxu43vJ
-         lSQhpc0zqgfpyIhMX46aj65zWr5yVl+9C0mOQbrQwAxvxl1eJJU5z4Cfz4gZgKpqc/13
-         U+XVevTraaJWUYt2DbO1qre9rfVPZZRD8Nz3+IWgH3mFOOFehZWnUpLTgZL0Tq7kDD8C
-         NFiQ==
-X-Gm-Message-State: AOJu0Yw1qTGy5GzFeQvP7EZq3fJko0Y73wdlt1Htj4FWoCplP5xfDvUW
-	zul1lFnmiA9UeXzb4yJY9J2zPGEQzmS960oRonovr8Lp+0sWQ5h0gL2zqsIhOg==
-X-Gm-Gg: ATEYQzyZDYdSEsdnPGBSpHr/X99YbHI2qJpnXWe1RElbzUhRI1bViPZDGXDrvRd6awt
-	saaK6Odo4urw7RoJL0OE/mW2Q2QVQzrVCWkbOjvU8w3fI62P9aYy/RhH608gu5TmxwzYJ01mM5p
-	Q0lZj+0l7SCcDVPu9wBgvhHmeTZbvN6i0/im+EgUHW8Nc/lxzhwxya+MG1hIdU9S2enwbIv5GFj
-	qSuWyc3LBZy6xN9wHSksKTcA1P8JDxBxabeoYUWMq0GN7+Ry/NJrmjmnIgLVuu52Ga6CJnhE3KG
-	htY+yNYS3eP7PBtDEXNQXywHDfNpZKUvhFZHx4LphXFnokZmumDSOC3708JjW4zf+MWAxynDJ/G
-	q/xfpOLvPq+eoO5UJ4gfMZFhbETPb564CHpR5I3U2oRfW/Nd6nIGYye7iS55OaYKRC6BbPn2cyU
-	ZjXs0KkV+YgzymQIx+9YFs1pSeo1petAllCId/02ar7a1ryGyJ
-X-Received: by 2002:a05:600c:4f8b:b0:485:3e6c:aa84 with SMTP id 5b1f17b1804b1-4855670f7d3mr275302995e9.33.1773746264205;
-        Tue, 17 Mar 2026 04:17:44 -0700 (PDT)
+        bh=ecaZsv6gi1PIEBZCjHvO+xqk7OFgrQFsuEP+lchEtlc=;
+        b=ImsbXkgyzRq1KbwbjjU5B1FbrG0xlKskohHNZ7Mr2kJO39gt+9smveB/76vh2mel5Q
+         CE1CvQa67x41Vffmr80iBd50HDYS3Zhb1f/vwE2+UhprHRq0/eAUjWxdVOwQsCr8aznc
+         p6h7DNsQiJ+q5UgcyrYK3QTSSzmoom9avPX6raJWobbnwPxSH1/NB/s4BtC5SCqggv22
+         TfX3hWg+LCKBZK759WNY+T3U2Fi0I59awWAJDBboUXYdI+RLDCxfNAw5NiGSqGSVn+D3
+         HaIuADbyIhYTTlreacgvODNeendYMh03v+JYdYb2z2TkONisfwPkH/7PfZix1yQ5ZarG
+         AVLA==
+X-Gm-Message-State: AOJu0YxIZ5dbiNcMwc19H61UZoBARjp3zMJPVSjO41NIK8TAS9/wZwi8
+	dLkLJOpubqMaYvUeKxvngTV2o6jBDPL0dmupytBx/KlgSvqd+oHNooz4qvHeYQ==
+X-Gm-Gg: ATEYQzz0kcjdyWzXaALCX74/MqtAs7Zd5UPJf+xJ6fZtwFwYBaPOoRnqan0M6d1gfrg
+	849Y6fkPDBR386+atqm+DvaglLzvpr0e3hsiH4B+nEYut4Ike47QTwGeMQqcTkjbF0fAeyvKlOo
+	l+DfIGCx+bvwDOO3O8QeeAR5M3jHGIASCPhGNJV6OATpF03tnaa1gyWKJKlBAm6SH56XiHBzJJv
+	RN884T46lKP7ZbWrthIVMcaZrhG/AvjalL7vK8ufMcMBP8hngbLfZKxEHw3glVZCF7t7osRPzvT
+	StB982M8B0PAc566RyoU1eKSfpnG3k5n6Qm6McEv6svQNUESj4K3IRuttoEn7ixKJlYDv6v8o8d
+	dMceYJUfo0YnrpKUblgIJgH7loJMv7ELidF7AQ1Xc+iIQzcgPUMXaOm/gu+mHd+LyxvIwcEnG/L
+	Q6Wn77T5pimfowiTuGaa20xE5kYJber3NjTYnEoLdOGrAHek+B
+X-Received: by 2002:a05:600c:3552:b0:485:3a59:99ca with SMTP id 5b1f17b1804b1-485566fab0bmr275932655e9.16.1773746271843;
+        Tue, 17 Mar 2026 04:17:51 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a758:8a01:e16b:fc56:e220:9aa9])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4856ea8dd57sm59723235e9.3.2026.03.17.04.17.43
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4856ea8dd57sm59723235e9.3.2026.03.17.04.17.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Mar 2026 04:17:43 -0700 (PDT)
+        Tue, 17 Mar 2026 04:17:51 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,9 +59,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 31/39] serial: sh-sci: Add RSCI_PORT_SCIF32 port ID
-Date: Tue, 17 Mar 2026 11:16:56 +0000
-Message-ID: <20260317111718.281633-32-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 39/39] arm64: dts: renesas: r9a09g047e57-smarc: Enable rsci{2,4,9} nodes
+Date: Tue, 17 Mar 2026 11:17:04 +0000
+Message-ID: <20260317111718.281633-40-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260317111718.281633-1-biju.das.jz@bp.renesas.com>
 References: <20260317111718.281633-1-biju.das.jz@bp.renesas.com>
@@ -71,51 +71,148 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 17 Mar 2026 11:17:56 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22464
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22472
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[ Upstream commit 4cb2bd1bf41a0d6dbe1fc4bf8d8f83f40b914572 ]
+[ Upstream commit 835666e7403c3ddc6f3122888d975464f8272efe ]
 
-The RZ/G3E RSCI IP has 32-stage FIFO compared to 16-stage FIFO on RZ/T2H.
-Add RSCI_PORT_SCIF32 port ID to differentiate it from RZ/T2H RSCI and
-update sci_is_rsci_type() and sci_is_fifo_type()
+Enable device rsci{2,4,9} nodes for the RZ/G3E SMARC EVK.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Tested-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://patch.msgid.link/20251129164325.209213-13-biju.das.jz@bp.renesas.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://patch.msgid.link/20251129185203.380002-4-biju.das.jz@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/tty/serial/sh-sci-common.h | 1 +
- drivers/tty/serial/sh-sci.c        | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ .../boot/dts/renesas/r9a09g047e57-smarc.dts   | 58 +++++++++++++++++++
+ .../boot/dts/renesas/renesas-smarc2.dtsi      |  7 +++
+ .../boot/dts/renesas/rzg3e-smarc-som.dtsi     |  4 ++
+ 3 files changed, 69 insertions(+)
 
-diff --git a/drivers/tty/serial/sh-sci-common.h b/drivers/tty/serial/sh-sci-common.h
-index 1b9480c7f4cb..abcd5bcc7c36 100644
---- a/drivers/tty/serial/sh-sci-common.h
-+++ b/drivers/tty/serial/sh-sci-common.h
-@@ -8,6 +8,7 @@
- /* Private port IDs */
- enum SCI_PORT_TYPE {
- 	RSCI_PORT_SCIF16 = BIT(7) | 0,
-+	RSCI_PORT_SCIF32 = BIT(7) | 1,
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
+index 8847dd8ba00c..f7868029f19a 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
++++ b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
+@@ -12,6 +12,8 @@
+ #define SW_GPIO9_CAN1_STB	0
+ #define SW_LCD_EN		0
+ #define SW_PDM_EN		0
++#define SW_SER0_PMOD		1
++#define SW_SER2_EN		1
+ #define SW_SD0_DEV_SEL		0
+ #define SW_SDIO_M2E		0
+ 
+@@ -40,6 +42,9 @@ / {
+ 
+ 	aliases {
+ 		i2c0 = &i2c0;
++		serial0 = &rsci4;
++		serial1 = &rsci9;
++		serial2 = &rsci2;
+ 		serial3 = &scif0;
+ 		mmc1 = &sdhi1;
+ 	};
+@@ -148,6 +153,28 @@ nmi_pins: nmi {
+ 		input-schmitt-enable;
+ 	};
+ 
++	rsci2_pins: rsci2 {
++		pinmux = <RZG3E_PORT_PINMUX(1, 0, 1)>, /* RXD2 */
++			 <RZG3E_PORT_PINMUX(1, 1, 1)>, /* TXD2 */
++			 <RZG3E_PORT_PINMUX(1, 2, 6)>, /* CTS2N */
++			 <RZG3E_PORT_PINMUX(1, 3, 1)>; /* RTS2N */
++		bias-pull-up;
++	};
++
++	rsci4_pins: rsci4 {
++		pinmux = <RZG3E_PORT_PINMUX(7, 6, 5)>, /* RXD4 */
++			 <RZG3E_PORT_PINMUX(7, 7, 5)>, /* TXD4 */
++			 <RZG3E_PORT_PINMUX(8, 0, 6)>, /* CTS4N */
++			 <RZG3E_PORT_PINMUX(8, 1, 5)>; /* RTS4N */
++		bias-pull-up;
++	};
++
++	rsci9_pins: rsci9 {
++		pinmux = <RZG3E_PORT_PINMUX(8, 2, 5)>, /* RXD9 */
++			 <RZG3E_PORT_PINMUX(8, 3, 5)>; /* TXD9 */
++		bias-pull-up;
++	};
++
+ 	scif_pins: scif {
+ 		pins = "SCIF_TXD", "SCIF_RXD";
+ 		renesas,output-impedance = <1>;
+@@ -179,6 +206,37 @@ sd1-data {
+ 	};
  };
  
- enum SCI_CLKS {
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 680edd9d1771..54274112c3f5 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1186,7 +1186,7 @@ static int sci_handle_errors(struct uart_port *port)
- 
- static bool sci_is_rsci_type(u8 type)
- {
--	return (type == RSCI_PORT_SCIF16);
-+	return (type == RSCI_PORT_SCIF16 || type == RSCI_PORT_SCIF32);
- }
- 
- static int sci_handle_fifo_overrun(struct uart_port *port)
++#if SW_SER0_PMOD && SW_SER2_EN
++&rsci2 {
++	pinctrl-0 = <&rsci2_pins>;
++	pinctrl-names = "default";
++
++	uart-has-rtscts;
++
++	status = "okay";
++};
++#endif
++
++#if (!SW_LCD_EN) && (SW_SER0_PMOD)
++&rsci4 {
++	pinctrl-0 = <&rsci4_pins>;
++	pinctrl-names = "default";
++
++	uart-has-rtscts;
++
++	status = "okay";
++};
++#endif
++
++#if (!SW_LCD_EN)
++&rsci9 {
++	pinctrl-0 = <&rsci9_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++#endif
++
+ &scif0 {
+ 	pinctrl-0 = <&scif_pins>;
+ 	pinctrl-names = "default";
+diff --git a/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi b/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
+index a296c2c1c7ab..69c0101ff7f5 100644
+--- a/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
++++ b/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
+@@ -13,6 +13,13 @@
+  *     0 - SMARC SDIO signal is connected to uSD1
+  *     1 - SMARC SDIO signal is connected to M.2 Key E connector
+  *
++ * Please set the switch position SW_OPT_MUX.4 on the carrier board and the
++ * corresponding macro SW_SER0_PMOD on the board DTS:
++ *
++ * SW_SER0_PMOD:
++ *     0 - SER0 signals connect to M.2 Key-E, SER2 signals are unconnected
++ *     1 - SER0 signals connect to PMOD, SER2 signals connect to M.2 Key-E
++ *
+  * Please set the switch position SW_GPIO_CAN_PMOD on the carrier board and the
+  * corresponding macro SW_GPIO8_CAN0_STB/SW_GPIO8_CAN0_STB on the board DTS:
+  *
+diff --git a/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
+index f05b9fec05f0..3b571c096752 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
+@@ -13,6 +13,10 @@
+  *      0 - SD0 is connected to eMMC (default)
+  *      1 - SD0 is connected to uSD0 card
+  *
++ * Switch position SYS.4, Macro SW_SER2_EN:
++ *      0 - Select Module DSI connector(GPIO)
++ *      1 - Select SER2
++ *
+  * Switch position SYS.5, Macro SW_LCD_EN:
+  *      0 - Select Misc. Signals routing
+  *      1 - Select LCD
 -- 
 2.43.0
 
