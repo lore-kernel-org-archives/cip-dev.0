@@ -2,56 +2,56 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FDC5FD7099
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96CA1FD709D
 	for <webhook@archiver.kernel.org>; Tue, 17 Mar 2026 11:17:45 +0000 (UTC)
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.73590.1773746256527707627
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.73442.1773746258730292411
  for <cip-dev@lists.cip-project.org>;
- Tue, 17 Mar 2026 04:17:36 -0700
+ Tue, 17 Mar 2026 04:17:39 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=PXoZ1Miy;
- spf=pass (domain: gmail.com, ip: 209.85.128.48, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4856cd3f1ffso14818655e9.3
-        for <cip-dev@lists.cip-project.org>; Tue, 17 Mar 2026 04:17:36 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=Ao2v5Oz2;
+ spf=pass (domain: gmail.com, ip: 209.85.128.46, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4852b81c73aso50010955e9.3
+        for <cip-dev@lists.cip-project.org>; Tue, 17 Mar 2026 04:17:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773746255; x=1774351055; darn=lists.cip-project.org;
+        d=gmail.com; s=20230601; t=1773746257; x=1774351057; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QhxPYX9QsVsGjh0HXEsu/460zQHQEc87Erj/elBafGM=;
-        b=PXoZ1Miymhz9RtA10IwZFIEte0iOqCNRLY1JN8X9/9Pi5lQoOJaPhhLu8XQ+j5dN9M
-         27USSfTFckr9cSQhQuICvxpL8vIf+SLWFFyyAW5IfxhusRLg1auf6Qfg4RvCKfCHLkhg
-         a/Z591e5d1rn2uSqamns9YnmHJmzby2EBHk1mFY0J55Ijv0pUHtSK40ZsIab6dJfSkBm
-         VSPXoY/oEvo6qvtTG7IvW3hBJUBvXqtuHudlG1cGEqHSMN9goGc8kQWSqL+WV6AfkGUe
-         vQefJLcfPF7rKDKg4t+KHgrT7K39mFZIdJD+6UgO4GGkVBGq/2s7frbB1WSgqyb1yPIy
-         k9Ug==
+        bh=wzGZ5/rIZMSyvy3llRxHygUGk8zmt3p77IOfp6qQAas=;
+        b=Ao2v5Oz27XvR4kvqwPBdWbiHH+xbGKEDgsoC+fbpMBkHJgT7an0JMA+C7xdjt+jCNM
+         oTj1IRyzgPRIHRGhUKPdDNI4pk9w8cHP3kEmVouL6Im6UicnT1vcJX52QekZCxRzaVjN
+         n6UOz74KuPZRQUpU0Ij5pHwfeF17IraxdkLrFKGutKvtcwClK+Y/C4UnqWrc5ILP8UhI
+         8yBmybQkhOY+dhro3G/VgFxsfuuNCU7D/HdWDv5Rc0oyuQDfHNktNmG3mLmApzu7WdJU
+         oqCf699hEeWIG+eTDyWFYjhVPICqmXCieLiTDRfCdjJL2uVkXMfKbU2ARlKvXLcvQJxB
+         Za+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773746255; x=1774351055;
+        d=1e100.net; s=20251104; t=1773746257; x=1774351057;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=QhxPYX9QsVsGjh0HXEsu/460zQHQEc87Erj/elBafGM=;
-        b=q5QfdRUfIPpnN7tgdjjrm6Xa8vpEC/SHytiMrAA+XF6chNQf3EKc4b/i1qFo6mpB4S
-         UlPA75FZ/+EQJpT1kgHd/FTwlyfC+zY7AjJQRhlprQHzK8XeDy/d9D7zpkee9EhU14iu
-         pTLnoqPsccicn0SKfaEaInBaUjsJEwR/R3MDdhW4G8OSioDhXIQbpfgsaCTKIQ0tW9Y9
-         rWmlG/CS5nmoBRW7yflOZYm+56ymZO0s6mEdqCBDMCGNpOyrcuFq1Qenav7iqfcjiIWH
-         ZnNjrvRE8tBKPm1JlE1DpZi9io5KHleMR/9IRJsKFIw7Mjt6cUGB/pXILdVJYIO3HUc/
-         Qujw==
-X-Gm-Message-State: AOJu0YyrAK5fR2p+S3Ci3TwiF/NK1LYXA4jucxJnRV2Vg6XWc5fI6GSn
-	DGT6ppriaEbF9nfNEhpEEl/N7U9NjI2M9AKLOCsEreHXZD2IrGNh/F6CmXRm4w==
-X-Gm-Gg: ATEYQzyz+epiwT3alcTp69pN4ekFqaw70Kfodi3R+TM0F/M226SyHrfqAikG4McVBf/
-	xEkZV1bp97IYufxi3D6FRhfMstqucuJMHbEJO9h4y6R04C0zNRecrWaTPl4iofg5SBdqjacSYSb
-	uEea5SyrQQ4ns9or5Ug2ptuyFpqnviQD3Lk83LtMt6lol0F8hE5LcaGTTQdwTq6xhstPTr5xE5g
-	8BOxCBCKU4Dbfjslz7dbM2v4o8KISpidXeE2+XiURrpi6uehZi0fiEfJ5OVS4irTPJyhBIfI4wc
-	qEfyB8xDBcGC/8A94GhQ+t7ch+N8WLopvis5eA9QCvWPZmJ3/iTNROo76RpfQZproOgOftQ8Adm
-	FZXKNecc0W0Tza/ZJp+OHJJWAHSnpFEWE1PUK8pif6QcYR0Qtw0fCXIwIxZdIOAlJrgSHqmU4hd
-	TIc7cOQf9na7u4r/jbLh2BFxIFiqg8cJp0n59yEWpZTLUASLME0tP3L9lXEhU=
-X-Received: by 2002:a05:600c:4f8b:b0:485:3e6c:aa84 with SMTP id 5b1f17b1804b1-4855670f7d3mr275292935e9.33.1773746254307;
-        Tue, 17 Mar 2026 04:17:34 -0700 (PDT)
+        bh=wzGZ5/rIZMSyvy3llRxHygUGk8zmt3p77IOfp6qQAas=;
+        b=WA1SPR3goHa52ZQLJzCGEu8Ri4oNv23s9ynuFyvMLIyUK+rlzZFPTJGXgjaWwJq9XY
+         gOIvL2bNHvJzsdXwr4u99E/S7Q0SeyCuQtgHCwVwNHM1ra2qf7x6T5MHfAefmnBDA/Dl
+         Lp17c+ePsNsNXrPPGS/Sr7AWnrK2YOk5m9/KTajFRqMxRJQvtw2sxhHDO5UHxpboUWWq
+         ajRtgpwNpBsDZqSBqvmiDwVPDcfdiy/LF7WMO2ypYsM+d0F1lbZG47ltguEWZT0j4ehx
+         POZq/2UfXYwOtgezDOS3LSYcFJI8rdgKvTK+CK7aox5EEFX0+WVQsDt1IWku/GYFRPOY
+         pyYA==
+X-Gm-Message-State: AOJu0YxZyJy7iKnNjXSArbK8V76Zf1ozIft5jpMfCXZw0Usg/yfBvcIa
+	e252xVywkhizt6KhnzMQhWcfXp4itPDGWNtS0u2eccu7eP3EcSVz5wxM1eUSlA==
+X-Gm-Gg: ATEYQzyaGS2eGBRCWiAU4fBWIfvpQ0BgMvMtdLnrrRawOn4EA2z4rrsgsCeCI+e8UHF
+	uVjhfC6I93PfTQ/QKx1Ha89DX0jlEgDVzVUqcvlAEHv4V+W6/0TZ2HBOdRplHKpK0UxqEiznwc9
+	N9Bo6wLTNPd3Jkjtft7J6wWbDnSSlTcBLZImrZQXBdobu4Str8U/0FDJO/CvBBMLMFH0877K78V
+	G+NPJxEu3iDbNA5NLzM1CkykxmT0le2XdSwsCzNDlxjR+yEL4UM1s5q7liohoxLW1wXKoYk5xZZ
+	hXvl4VSxUATFixxl45cKCeFdDUMAd5WqvXtyf7n5N500ZfKscDtE4m5Z500QDuVxF5tbB2wEhD4
+	lhLcrWHn4FQKTn8wIWTxo9tsPU4EQh3VYa344ImDZqrTNXh1V3HXQzjU7MrGe1E7XQO7hRUWIDi
+	3tC27L/HyPVMtXIxEh6SbaVrHUNWrbyxY2xrrPc4bE+qm6DBhKQRiCfkioIXU=
+X-Received: by 2002:a05:600c:a15:b0:485:34a2:919e with SMTP id 5b1f17b1804b1-48556710fd5mr287800435e9.33.1773746256811;
+        Tue, 17 Mar 2026 04:17:36 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a758:8a01:e16b:fc56:e220:9aa9])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4856ea8dd57sm59723235e9.3.2026.03.17.04.17.33
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4856ea8dd57sm59723235e9.3.2026.03.17.04.17.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Mar 2026 04:17:33 -0700 (PDT)
+        Tue, 17 Mar 2026 04:17:36 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,9 +59,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 18/39] serial: sh-sci: Merge sh-sci.h into sh-sci.c
-Date: Tue, 17 Mar 2026 11:16:43 +0000
-Message-ID: <20260317111718.281633-19-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 21/39] bitfield: Add FIELD_MODIFY() helper
+Date: Tue, 17 Mar 2026 11:16:46 +0000
+Message-ID: <20260317111718.281633-22-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260317111718.281633-1-biju.das.jz@bp.renesas.com>
 References: <20260317111718.281633-1-biju.das.jz@bp.renesas.com>
@@ -71,419 +71,80 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 17 Mar 2026 11:17:45 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22451
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22454
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Luo Jie <quic_luoj@quicinc.com>
 
-[ Upstream commit 719f3df3e113e03d2c8cf324827da1fd17a9bd8f ]
+[ Upstream commit a256ae22570ee4c3427fdc703a58a89afee6a332 ]
 
-Inline the contents of sh-sci.h into sh-sci.c and remove the
-header file. The header only contained register definitions
-and macros used exclusively by the sh-sci driver, making the
-separate header unnecessary.
+Add a helper for replacing the contents of bitfield in memory
+with the specified value.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://patch.msgid.link/20251023104313.210989-3-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Even though a helper xxx_replace_bits() is available, it is not
+well documented, and only reports errors at the run time, which
+will not be helpful to catch possible overflow errors due to
+incorrect parameter types used.
+
+FIELD_MODIFY(REG_FIELD_C, &reg, c) is the wrapper to the code below.
+
+	reg &= ~REG_FIELD_C;
+	reg |= FIELD_PREP(REG_FIELD_C, c);
+
+Yury: trim commit message, align backslashes.
+
+Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+Signed-off-by: Yury Norov <yury.norov@gmail.com>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/tty/serial/sh-sci.c | 176 ++++++++++++++++++++++++++++++++++-
- drivers/tty/serial/sh-sci.h | 178 ------------------------------------
- 2 files changed, 175 insertions(+), 179 deletions(-)
- delete mode 100644 drivers/tty/serial/sh-sci.h
+ include/linux/bitfield.h | 21 +++++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 6ae2e54b5bec..b64bd8a155c7 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -17,6 +17,7 @@
+diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
+index ebfa12f69501..d0dfb2d86ec1 100644
+--- a/include/linux/bitfield.h
++++ b/include/linux/bitfield.h
+@@ -8,6 +8,7 @@
+ #define _LINUX_BITFIELD_H
+ 
+ #include <linux/build_bug.h>
++#include <linux/typecheck.h>
+ #include <asm/byteorder.h>
+ 
+ /*
+@@ -38,8 +39,7 @@
+  *	  FIELD_PREP(REG_FIELD_D, 0x40);
+  *
+  * Modify:
+- *  reg &= ~REG_FIELD_C;
+- *  reg |= FIELD_PREP(REG_FIELD_C, c);
++ *  FIELD_MODIFY(REG_FIELD_C, &reg, c);
   */
- #undef DEBUG
  
-+#include <linux/bitops.h>
- #include <linux/clk.h>
- #include <linux/console.h>
- #include <linux/cpufreq.h>
-@@ -28,6 +29,7 @@
- #include <linux/errno.h>
- #include <linux/init.h>
- #include <linux/interrupt.h>
-+#include <linux/io.h>
- #include <linux/ioport.h>
- #include <linux/ktime.h>
- #include <linux/major.h>
-@@ -41,6 +43,7 @@
- #include <linux/reset.h>
- #include <linux/scatterlist.h>
- #include <linux/serial.h>
-+#include <linux/serial_core.h>
- #include <linux/serial_sci.h>
- #include <linux/sh_dma.h>
- #include <linux/slab.h>
-@@ -58,7 +61,178 @@
- #include "rsci.h"
- #include "serial_mctrl_gpio.h"
- #include "sh-sci-common.h"
--#include "sh-sci.h"
-+
-+#define SCI_MAJOR		204
-+#define SCI_MINOR_START		8
-+
-+/*
-+ * SCI register subset common for all port types.
-+ * Not all registers will exist on all parts.
-+ */
-+enum {
-+	SCSMR,		/* Serial Mode Register */
-+	SCBRR,		/* Bit Rate Register */
-+	SCSCR,		/* Serial Control Register */
-+	SCxSR,		/* Serial Status Register */
-+	SCFCR,		/* FIFO Control Register */
-+	SCFDR,		/* FIFO Data Count Register */
-+	SCxTDR,		/* Transmit (FIFO) Data Register */
-+	SCxRDR,		/* Receive (FIFO) Data Register */
-+	SCLSR,		/* Line Status Register */
-+	SCTFDR,		/* Transmit FIFO Data Count Register */
-+	SCRFDR,		/* Receive FIFO Data Count Register */
-+	SCSPTR,		/* Serial Port Register */
-+	HSSRR,		/* Sampling Rate Register */
-+	SCPCR,		/* Serial Port Control Register */
-+	SCPDR,		/* Serial Port Data Register */
-+	SCDL,		/* BRG Frequency Division Register */
-+	SCCKS,		/* BRG Clock Select Register */
-+	HSRTRGR,	/* Rx FIFO Data Count Trigger Register */
-+	HSTTRGR,	/* Tx FIFO Data Count Trigger Register */
-+	SEMR,		/* Serial extended mode register */
-+};
-+
-+/* SCSMR (Serial Mode Register) */
-+#define SCSMR_C_A	BIT(7)	/* Communication Mode */
-+#define SCSMR_CSYNC	BIT(7)	/*   - Clocked synchronous mode */
-+#define SCSMR_ASYNC	0	/*   - Asynchronous mode */
-+#define SCSMR_CHR	BIT(6)	/* 7-bit Character Length */
-+#define SCSMR_PE	BIT(5)	/* Parity Enable */
-+#define SCSMR_ODD	BIT(4)	/* Odd Parity */
-+#define SCSMR_STOP	BIT(3)	/* Stop Bit Length */
-+#define SCSMR_CKS	0x0003	/* Clock Select */
-+
-+/* Serial Mode Register, SCIFA/SCIFB only bits */
-+#define SCSMR_CKEDG	BIT(12)	/* Transmit/Receive Clock Edge Select */
-+#define SCSMR_SRC_MASK	0x0700	/* Sampling Control */
-+#define SCSMR_SRC_16	0x0000	/* Sampling rate 1/16 */
-+#define SCSMR_SRC_5	0x0100	/* Sampling rate 1/5 */
-+#define SCSMR_SRC_7	0x0200	/* Sampling rate 1/7 */
-+#define SCSMR_SRC_11	0x0300	/* Sampling rate 1/11 */
-+#define SCSMR_SRC_13	0x0400	/* Sampling rate 1/13 */
-+#define SCSMR_SRC_17	0x0500	/* Sampling rate 1/17 */
-+#define SCSMR_SRC_19	0x0600	/* Sampling rate 1/19 */
-+#define SCSMR_SRC_27	0x0700	/* Sampling rate 1/27 */
-+
-+/* Serial Control Register, SCI only bits */
-+#define SCSCR_TEIE	BIT(2)  /* Transmit End Interrupt Enable */
-+
-+/* Serial Control Register, SCIFA/SCIFB only bits */
-+#define SCSCR_TDRQE	BIT(15)	/* Tx Data Transfer Request Enable */
-+#define SCSCR_RDRQE	BIT(14)	/* Rx Data Transfer Request Enable */
-+
-+/* Serial Control Register, HSCIF-only bits */
-+#define HSSCR_TOT_SHIFT	14
-+
-+/* SCxSR (Serial Status Register) on SCI */
-+#define SCI_TDRE	BIT(7)	/* Transmit Data Register Empty */
-+#define SCI_RDRF	BIT(6)	/* Receive Data Register Full */
-+#define SCI_ORER	BIT(5)	/* Overrun Error */
-+#define SCI_FER		BIT(4)	/* Framing Error */
-+#define SCI_PER		BIT(3)	/* Parity Error */
-+#define SCI_TEND	BIT(2)	/* Transmit End */
-+#define SCI_RESERVED	0x03	/* All reserved bits */
-+
-+#define SCI_DEFAULT_ERROR_MASK (SCI_PER | SCI_FER)
-+
-+#define SCI_RDxF_CLEAR	(u32)(~(SCI_RESERVED | SCI_RDRF))
-+#define SCI_ERROR_CLEAR	(u32)(~(SCI_RESERVED | SCI_PER | SCI_FER | SCI_ORER))
-+#define SCI_TDxE_CLEAR	(u32)(~(SCI_RESERVED | SCI_TEND | SCI_TDRE))
-+#define SCI_BREAK_CLEAR	(u32)(~(SCI_RESERVED | SCI_PER | SCI_FER | SCI_ORER))
-+
-+/* SCxSR (Serial Status Register) on SCIF, SCIFA, SCIFB, HSCIF */
-+#define SCIF_ER		BIT(7)	/* Receive Error */
-+#define SCIF_TEND	BIT(6)	/* Transmission End */
-+#define SCIF_TDFE	BIT(5)	/* Transmit FIFO Data Empty */
-+#define SCIF_BRK	BIT(4)	/* Break Detect */
-+#define SCIF_FER	BIT(3)	/* Framing Error */
-+#define SCIF_PER	BIT(2)	/* Parity Error */
-+#define SCIF_RDF	BIT(1)	/* Receive FIFO Data Full */
-+#define SCIF_DR		BIT(0)	/* Receive Data Ready */
-+/* SCIF only (optional) */
-+#define SCIF_PERC	0xf000	/* Number of Parity Errors */
-+#define SCIF_FERC	0x0f00	/* Number of Framing Errors */
-+/*SCIFA/SCIFB and SCIF on SH7705/SH7720/SH7721 only */
-+#define SCIFA_ORER	BIT(9)	/* Overrun Error */
-+
-+#define SCIF_DEFAULT_ERROR_MASK (SCIF_PER | SCIF_FER | SCIF_BRK | SCIF_ER)
-+
-+#define SCIF_RDxF_CLEAR		(u32)(~(SCIF_DR | SCIF_RDF))
-+#define SCIF_ERROR_CLEAR	(u32)(~(SCIF_PER | SCIF_FER | SCIF_ER))
-+#define SCIF_TDxE_CLEAR		(u32)(~(SCIF_TDFE))
-+#define SCIF_BREAK_CLEAR	(u32)(~(SCIF_PER | SCIF_FER | SCIF_BRK))
-+
-+/* SCFCR (FIFO Control Register) */
-+#define SCFCR_RTRG1	BIT(7)	/* Receive FIFO Data Count Trigger */
-+#define SCFCR_RTRG0	BIT(6)
-+#define SCFCR_TTRG1	BIT(5)	/* Transmit FIFO Data Count Trigger */
-+#define SCFCR_TTRG0	BIT(4)
-+#define SCFCR_MCE	BIT(3)	/* Modem Control Enable */
-+#define SCFCR_TFRST	BIT(2)	/* Transmit FIFO Data Register Reset */
-+#define SCFCR_RFRST	BIT(1)	/* Receive FIFO Data Register Reset */
-+#define SCFCR_LOOP	BIT(0)	/* Loopback Test */
-+
-+/* SCLSR (Line Status Register) on (H)SCIF */
-+#define SCLSR_TO	BIT(2)	/* Timeout */
-+#define SCLSR_ORER	BIT(0)	/* Overrun Error */
-+
-+/* SCSPTR (Serial Port Register), optional */
-+#define SCSPTR_RTSIO	BIT(7)	/* Serial Port RTS# Pin Input/Output */
-+#define SCSPTR_RTSDT	BIT(6)	/* Serial Port RTS# Pin Data */
-+#define SCSPTR_CTSIO	BIT(5)	/* Serial Port CTS# Pin Input/Output */
-+#define SCSPTR_CTSDT	BIT(4)	/* Serial Port CTS# Pin Data */
-+#define SCSPTR_SCKIO	BIT(3)	/* Serial Port Clock Pin Input/Output */
-+#define SCSPTR_SCKDT	BIT(2)	/* Serial Port Clock Pin Data */
-+#define SCSPTR_SPB2IO	BIT(1)	/* Serial Port Break Input/Output */
-+#define SCSPTR_SPB2DT	BIT(0)	/* Serial Port Break Data */
-+
-+/* HSSRR HSCIF */
-+#define HSCIF_SRE	BIT(15)	/* Sampling Rate Register Enable */
-+#define HSCIF_SRDE	BIT(14) /* Sampling Point Register Enable */
-+
-+#define HSCIF_SRHP_SHIFT	8
-+#define HSCIF_SRHP_MASK		0x0f00
-+
-+/* SCPCR (Serial Port Control Register), SCIFA/SCIFB only */
-+#define SCPCR_RTSC	BIT(4)	/* Serial Port RTS# Pin / Output Pin */
-+#define SCPCR_CTSC	BIT(3)	/* Serial Port CTS# Pin / Input Pin */
-+#define SCPCR_SCKC	BIT(2)	/* Serial Port SCK Pin / Output Pin */
-+#define SCPCR_RXDC	BIT(1)	/* Serial Port RXD Pin / Input Pin */
-+#define SCPCR_TXDC	BIT(0)	/* Serial Port TXD Pin / Output Pin */
-+
-+/* SCPDR (Serial Port Data Register), SCIFA/SCIFB only */
-+#define SCPDR_RTSD	BIT(4)	/* Serial Port RTS# Output Pin Data */
-+#define SCPDR_CTSD	BIT(3)	/* Serial Port CTS# Input Pin Data */
-+#define SCPDR_SCKD	BIT(2)	/* Serial Port SCK Output Pin Data */
-+#define SCPDR_RXDD	BIT(1)	/* Serial Port RXD Input Pin Data */
-+#define SCPDR_TXDD	BIT(0)	/* Serial Port TXD Output Pin Data */
-+
-+/*
-+ * BRG Clock Select Register (Some SCIF and HSCIF)
-+ * The Baud Rate Generator for external clock can provide a clock source for
-+ * the sampling clock. It outputs either its frequency divided clock, or the
-+ * (undivided) (H)SCK external clock.
-+ */
-+#define SCCKS_CKS	BIT(15)	/* Select (H)SCK (1) or divided SC_CLK (0) */
-+#define SCCKS_XIN	BIT(14)	/* SC_CLK uses bus clock (1) or SCIF_CLK (0) */
-+
-+#define SCxSR_TEND(port)	(((port)->type == PORT_SCI) ? SCI_TEND   : SCIF_TEND)
-+#define SCxSR_RDxF(port)	(((port)->type == PORT_SCI) ? SCI_RDRF   : SCIF_DR | SCIF_RDF)
-+#define SCxSR_TDxE(port)	(((port)->type == PORT_SCI) ? SCI_TDRE   : SCIF_TDFE)
-+#define SCxSR_FER(port)		(((port)->type == PORT_SCI) ? SCI_FER    : SCIF_FER)
-+#define SCxSR_PER(port)		(((port)->type == PORT_SCI) ? SCI_PER    : SCIF_PER)
-+#define SCxSR_BRK(port)		(((port)->type == PORT_SCI) ? 0x00       : SCIF_BRK)
-+
-+#define SCxSR_ERRORS(port)	(to_sci_port(port)->params->error_mask)
-+
-+#define SCxSR_RDxF_CLEAR(port) \
-+	(((port)->type == PORT_SCI) ? SCI_RDxF_CLEAR : SCIF_RDxF_CLEAR)
-+#define SCxSR_ERROR_CLEAR(port) \
-+	(to_sci_port(port)->params->error_clear)
-+#define SCxSR_TDxE_CLEAR(port) \
-+	(((port)->type == PORT_SCI) ? SCI_TDxE_CLEAR : SCIF_TDxE_CLEAR)
-+#define SCxSR_BREAK_CLEAR(port) \
-+	(((port)->type == PORT_SCI) ? SCI_BREAK_CLEAR : SCIF_BREAK_CLEAR)
+ #define __bf_shf(x) (__builtin_ffsll(x) - 1)
+@@ -155,6 +155,23 @@
+ 		(typeof(_mask))(((_reg) & (_mask)) >> __bf_shf(_mask));	\
+ 	})
  
- #define SCIx_IRQ_IS_MUXED(port)			\
- 	((port)->irqs[SCIx_ERI_IRQ] ==	\
-diff --git a/drivers/tty/serial/sh-sci.h b/drivers/tty/serial/sh-sci.h
-deleted file mode 100644
-index 951681aba586..000000000000
---- a/drivers/tty/serial/sh-sci.h
-+++ /dev/null
-@@ -1,178 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#include <linux/bitops.h>
--#include <linux/serial_core.h>
--#include <linux/io.h>
--
--#define SCI_MAJOR		204
--#define SCI_MINOR_START		8
--
--
--/*
-- * SCI register subset common for all port types.
-- * Not all registers will exist on all parts.
-- */
--enum {
--	SCSMR,				/* Serial Mode Register */
--	SCBRR,				/* Bit Rate Register */
--	SCSCR,				/* Serial Control Register */
--	SCxSR,				/* Serial Status Register */
--	SCFCR,				/* FIFO Control Register */
--	SCFDR,				/* FIFO Data Count Register */
--	SCxTDR,				/* Transmit (FIFO) Data Register */
--	SCxRDR,				/* Receive (FIFO) Data Register */
--	SCLSR,				/* Line Status Register */
--	SCTFDR,				/* Transmit FIFO Data Count Register */
--	SCRFDR,				/* Receive FIFO Data Count Register */
--	SCSPTR,				/* Serial Port Register */
--	HSSRR,				/* Sampling Rate Register */
--	SCPCR,				/* Serial Port Control Register */
--	SCPDR,				/* Serial Port Data Register */
--	SCDL,				/* BRG Frequency Division Register */
--	SCCKS,				/* BRG Clock Select Register */
--	HSRTRGR,			/* Rx FIFO Data Count Trigger Register */
--	HSTTRGR,			/* Tx FIFO Data Count Trigger Register */
--	SEMR,				/* Serial extended mode register */
--};
--
--
--/* SCSMR (Serial Mode Register) */
--#define SCSMR_C_A	BIT(7)	/* Communication Mode */
--#define SCSMR_CSYNC	BIT(7)	/*   - Clocked synchronous mode */
--#define SCSMR_ASYNC	0	/*   - Asynchronous mode */
--#define SCSMR_CHR	BIT(6)	/* 7-bit Character Length */
--#define SCSMR_PE	BIT(5)	/* Parity Enable */
--#define SCSMR_ODD	BIT(4)	/* Odd Parity */
--#define SCSMR_STOP	BIT(3)	/* Stop Bit Length */
--#define SCSMR_CKS	0x0003	/* Clock Select */
--
--/* Serial Mode Register, SCIFA/SCIFB only bits */
--#define SCSMR_CKEDG	BIT(12)	/* Transmit/Receive Clock Edge Select */
--#define SCSMR_SRC_MASK	0x0700	/* Sampling Control */
--#define SCSMR_SRC_16	0x0000	/* Sampling rate 1/16 */
--#define SCSMR_SRC_5	0x0100	/* Sampling rate 1/5 */
--#define SCSMR_SRC_7	0x0200	/* Sampling rate 1/7 */
--#define SCSMR_SRC_11	0x0300	/* Sampling rate 1/11 */
--#define SCSMR_SRC_13	0x0400	/* Sampling rate 1/13 */
--#define SCSMR_SRC_17	0x0500	/* Sampling rate 1/17 */
--#define SCSMR_SRC_19	0x0600	/* Sampling rate 1/19 */
--#define SCSMR_SRC_27	0x0700	/* Sampling rate 1/27 */
--
--/* Serial Control Register, SCI only bits */
--#define SCSCR_TEIE	BIT(2)  /* Transmit End Interrupt Enable */
--
--/* Serial Control Register, SCIFA/SCIFB only bits */
--#define SCSCR_TDRQE	BIT(15)	/* Tx Data Transfer Request Enable */
--#define SCSCR_RDRQE	BIT(14)	/* Rx Data Transfer Request Enable */
--
--/* Serial Control Register, HSCIF-only bits */
--#define HSSCR_TOT_SHIFT	14
--
--/* SCxSR (Serial Status Register) on SCI */
--#define SCI_TDRE	BIT(7)	/* Transmit Data Register Empty */
--#define SCI_RDRF	BIT(6)	/* Receive Data Register Full */
--#define SCI_ORER	BIT(5)	/* Overrun Error */
--#define SCI_FER		BIT(4)	/* Framing Error */
--#define SCI_PER		BIT(3)	/* Parity Error */
--#define SCI_TEND	BIT(2)	/* Transmit End */
--#define SCI_RESERVED	0x03	/* All reserved bits */
--
--#define SCI_DEFAULT_ERROR_MASK (SCI_PER | SCI_FER)
--
--#define SCI_RDxF_CLEAR	(u32)(~(SCI_RESERVED | SCI_RDRF))
--#define SCI_ERROR_CLEAR	(u32)(~(SCI_RESERVED | SCI_PER | SCI_FER | SCI_ORER))
--#define SCI_TDxE_CLEAR	(u32)(~(SCI_RESERVED | SCI_TEND | SCI_TDRE))
--#define SCI_BREAK_CLEAR	(u32)(~(SCI_RESERVED | SCI_PER | SCI_FER | SCI_ORER))
--
--/* SCxSR (Serial Status Register) on SCIF, SCIFA, SCIFB, HSCIF */
--#define SCIF_ER		BIT(7)	/* Receive Error */
--#define SCIF_TEND	BIT(6)	/* Transmission End */
--#define SCIF_TDFE	BIT(5)	/* Transmit FIFO Data Empty */
--#define SCIF_BRK	BIT(4)	/* Break Detect */
--#define SCIF_FER	BIT(3)	/* Framing Error */
--#define SCIF_PER	BIT(2)	/* Parity Error */
--#define SCIF_RDF	BIT(1)	/* Receive FIFO Data Full */
--#define SCIF_DR		BIT(0)	/* Receive Data Ready */
--/* SCIF only (optional) */
--#define SCIF_PERC	0xf000	/* Number of Parity Errors */
--#define SCIF_FERC	0x0f00	/* Number of Framing Errors */
--/*SCIFA/SCIFB and SCIF on SH7705/SH7720/SH7721 only */
--#define SCIFA_ORER	BIT(9)	/* Overrun Error */
--
--#define SCIF_DEFAULT_ERROR_MASK (SCIF_PER | SCIF_FER | SCIF_BRK | SCIF_ER)
--
--#define SCIF_RDxF_CLEAR		(u32)(~(SCIF_DR | SCIF_RDF))
--#define SCIF_ERROR_CLEAR	(u32)(~(SCIF_PER | SCIF_FER | SCIF_ER))
--#define SCIF_TDxE_CLEAR		(u32)(~(SCIF_TDFE))
--#define SCIF_BREAK_CLEAR	(u32)(~(SCIF_PER | SCIF_FER | SCIF_BRK))
--
--/* SCFCR (FIFO Control Register) */
--#define SCFCR_RTRG1	BIT(7)	/* Receive FIFO Data Count Trigger */
--#define SCFCR_RTRG0	BIT(6)
--#define SCFCR_TTRG1	BIT(5)	/* Transmit FIFO Data Count Trigger */
--#define SCFCR_TTRG0	BIT(4)
--#define SCFCR_MCE	BIT(3)	/* Modem Control Enable */
--#define SCFCR_TFRST	BIT(2)	/* Transmit FIFO Data Register Reset */
--#define SCFCR_RFRST	BIT(1)	/* Receive FIFO Data Register Reset */
--#define SCFCR_LOOP	BIT(0)	/* Loopback Test */
--
--/* SCLSR (Line Status Register) on (H)SCIF */
--#define SCLSR_TO	BIT(2)	/* Timeout */
--#define SCLSR_ORER	BIT(0)	/* Overrun Error */
--
--/* SCSPTR (Serial Port Register), optional */
--#define SCSPTR_RTSIO	BIT(7)	/* Serial Port RTS# Pin Input/Output */
--#define SCSPTR_RTSDT	BIT(6)	/* Serial Port RTS# Pin Data */
--#define SCSPTR_CTSIO	BIT(5)	/* Serial Port CTS# Pin Input/Output */
--#define SCSPTR_CTSDT	BIT(4)	/* Serial Port CTS# Pin Data */
--#define SCSPTR_SCKIO	BIT(3)	/* Serial Port Clock Pin Input/Output */
--#define SCSPTR_SCKDT	BIT(2)	/* Serial Port Clock Pin Data */
--#define SCSPTR_SPB2IO	BIT(1)	/* Serial Port Break Input/Output */
--#define SCSPTR_SPB2DT	BIT(0)	/* Serial Port Break Data */
--
--/* HSSRR HSCIF */
--#define HSCIF_SRE	BIT(15)	/* Sampling Rate Register Enable */
--#define HSCIF_SRDE	BIT(14) /* Sampling Point Register Enable */
--
--#define HSCIF_SRHP_SHIFT	8
--#define HSCIF_SRHP_MASK		0x0f00
--
--/* SCPCR (Serial Port Control Register), SCIFA/SCIFB only */
--#define SCPCR_RTSC	BIT(4)	/* Serial Port RTS# Pin / Output Pin */
--#define SCPCR_CTSC	BIT(3)	/* Serial Port CTS# Pin / Input Pin */
--#define SCPCR_SCKC	BIT(2)	/* Serial Port SCK Pin / Output Pin */
--#define SCPCR_RXDC	BIT(1)	/* Serial Port RXD Pin / Input Pin */
--#define SCPCR_TXDC	BIT(0)	/* Serial Port TXD Pin / Output Pin */
--
--/* SCPDR (Serial Port Data Register), SCIFA/SCIFB only */
--#define SCPDR_RTSD	BIT(4)	/* Serial Port RTS# Output Pin Data */
--#define SCPDR_CTSD	BIT(3)	/* Serial Port CTS# Input Pin Data */
--#define SCPDR_SCKD	BIT(2)	/* Serial Port SCK Output Pin Data */
--#define SCPDR_RXDD	BIT(1)	/* Serial Port RXD Input Pin Data */
--#define SCPDR_TXDD	BIT(0)	/* Serial Port TXD Output Pin Data */
--
--/*
-- * BRG Clock Select Register (Some SCIF and HSCIF)
-- * The Baud Rate Generator for external clock can provide a clock source for
-- * the sampling clock. It outputs either its frequency divided clock, or the
-- * (undivided) (H)SCK external clock.
-- */
--#define SCCKS_CKS	BIT(15)	/* Select (H)SCK (1) or divided SC_CLK (0) */
--#define SCCKS_XIN	BIT(14)	/* SC_CLK uses bus clock (1) or SCIF_CLK (0) */
--
--#define SCxSR_TEND(port)	(((port)->type == PORT_SCI) ? SCI_TEND   : SCIF_TEND)
--#define SCxSR_RDxF(port)	(((port)->type == PORT_SCI) ? SCI_RDRF   : SCIF_DR | SCIF_RDF)
--#define SCxSR_TDxE(port)	(((port)->type == PORT_SCI) ? SCI_TDRE   : SCIF_TDFE)
--#define SCxSR_FER(port)		(((port)->type == PORT_SCI) ? SCI_FER    : SCIF_FER)
--#define SCxSR_PER(port)		(((port)->type == PORT_SCI) ? SCI_PER    : SCIF_PER)
--#define SCxSR_BRK(port)		(((port)->type == PORT_SCI) ? 0x00       : SCIF_BRK)
--
--#define SCxSR_ERRORS(port)	(to_sci_port(port)->params->error_mask)
--
--#define SCxSR_RDxF_CLEAR(port) \
--	(((port)->type == PORT_SCI) ? SCI_RDxF_CLEAR : SCIF_RDxF_CLEAR)
--#define SCxSR_ERROR_CLEAR(port) \
--	(to_sci_port(port)->params->error_clear)
--#define SCxSR_TDxE_CLEAR(port) \
--	(((port)->type == PORT_SCI) ? SCI_TDxE_CLEAR : SCIF_TDxE_CLEAR)
--#define SCxSR_BREAK_CLEAR(port) \
--	(((port)->type == PORT_SCI) ? SCI_BREAK_CLEAR : SCIF_BREAK_CLEAR)
++/**
++ * FIELD_MODIFY() - modify a bitfield element
++ * @_mask: shifted mask defining the field's length and position
++ * @_reg_p: pointer to the memory that should be updated
++ * @_val: value to store in the bitfield
++ *
++ * FIELD_MODIFY() modifies the set of bits in @_reg_p specified by @_mask,
++ * by replacing them with the bitfield value passed in as @_val.
++ */
++#define FIELD_MODIFY(_mask, _reg_p, _val)						\
++	({										\
++		typecheck_pointer(_reg_p);						\
++		__BF_FIELD_CHECK(_mask, *(_reg_p), _val, "FIELD_MODIFY: ");		\
++		*(_reg_p) &= ~(_mask);							\
++		*(_reg_p) |= (((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask));	\
++	})
++
+ extern void __compiletime_error("value doesn't fit into mask")
+ __field_overflow(void);
+ extern void __compiletime_error("bad bitfield mask")
 -- 
 2.43.0
 
