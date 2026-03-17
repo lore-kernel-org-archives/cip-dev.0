@@ -2,55 +2,56 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBD58FD8746
-	for <webhook@archiver.kernel.org>; Tue, 17 Mar 2026 11:36:56 +0000 (UTC)
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.73767.1773747406530447858
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01494FD8748
+	for <webhook@archiver.kernel.org>; Tue, 17 Mar 2026 11:36:57 +0000 (UTC)
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.73934.1773747409843449768
  for <cip-dev@lists.cip-project.org>;
- Tue, 17 Mar 2026 04:36:46 -0700
+ Tue, 17 Mar 2026 04:36:50 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=neJYQXO9;
- spf=pass (domain: gmail.com, ip: 209.85.128.47, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-48534237460so61163915e9.3
-        for <cip-dev@lists.cip-project.org>; Tue, 17 Mar 2026 04:36:46 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=IxccjOwn;
+ spf=pass (domain: gmail.com, ip: 209.85.128.54, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-48374014a77so61505855e9.3
+        for <cip-dev@lists.cip-project.org>; Tue, 17 Mar 2026 04:36:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773747405; x=1774352205; darn=lists.cip-project.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=us8OGSJYZsKIFiuWcz0Sckr4CzN9Mwwe34sm5EGWlfg=;
-        b=neJYQXO9kwS0Vu3tUw1d8RE9JyHe7kfvLff/YKBNhlA5D+DcJN4eJR2K92orWwbWx1
-         VLc2vNC22WQW3wFnNiFO73Ub1/Md7ytieaRRlv7VUYOJqH6nb52NNi+U/kfvf09/7FhR
-         idZiCb6Fp3NkZfdlKik0qXdSjOZaEBZesTXkZdVT8FPng7nhk4d+o5n5/Q1qbaJk+Plh
-         sYn5JK1aLWhdBTepvQdzr2fiQ+JgwhtlMNxRHlvALRl3Y6OA7r3fIEZ+bdy0GPSDpEsR
-         hEkxdgvV3Yr0zIk+JxK/aiw0hJizCWD9+xG+pcvMG7ZRbEMSKveSZ+7WKJwhk+p/IDOG
-         sGBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773747405; x=1774352205;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1773747408; x=1774352208; darn=lists.cip-project.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=us8OGSJYZsKIFiuWcz0Sckr4CzN9Mwwe34sm5EGWlfg=;
-        b=Y9MyN4cJNhpTsZsG0U5o9Uull3knN6kluJhsdLqWi4F9k3C4SSX8jGGEw5isFbuBnT
-         RpUncNqxpyaqFE2VUmwSiyHCyaruVONrwzuqhoDR7nZnWdHWlB2g+SoruWqP5BUyAQMs
-         ZSfbioLu/A391SZhpBmthX1Fy4QtFCdPV5SLn65YqDF17AD+eZNwPQPVF0nUd/TvzBFN
-         47e9YMcMwEIGyqbqTAsLNok1ccgx8XFQBkk5l/GzFQgYcISts1BT+JdgEXWtzRuRnxJ2
-         EH+N25QwaVMrZiEOX7p5drIawv3DGVCmyXs8wyXLoFF8MYpEAhKUok8rVglgCgb+o8dB
-         dYZg==
-X-Gm-Message-State: AOJu0YyqtVQBdO5iW4totAWijLK8VjWQL7eYz294J7UoEEOjredJ3zjn
-	IgSfDU0edFyn28rx6MjBbPDoVgd2tavWoqpoCkxkYRjL0c623Ik37kNSOB8biw==
-X-Gm-Gg: ATEYQzyBXi7U7RX9V6Ab3VsCH/sf1JC6IEfsmqCxFGQLNqC3mYuCpeQwnnlpKLji4/Q
-	aCxVlY3lL2lUU2bfHVZx6DVSCpDxylfzwBXyAq/ALFeWTdDsCHkh3watuCWfwd08HAoUkYWcyXs
-	Bly+JM35HQumVQ4eKBCyC9MDMhlmHfv2s7T9DrT6t+z1pZq7mwyzycIT1wooR9c/0vxNd/MQtZe
-	ygClR9GoGT0NhcJBdXP/NzSKqdih2AnOt30JFMVL8XJmWP40i8A4jILrdw5w9sp+NSoceyjqqsY
-	KBCTuFqU1yAnimrqs3CzLeCd1p2q0wA37BVWti22D03PFj6o/pgkljbYLrX/mvTM5mTiElHwKnH
-	3WXPwnLc/J9T5vbwiNl7m4uuFQoNTM8ksWEJvfg1FC1DOnwQ/olz7xv6qSyJ8r9tVan6Tmw0TZq
-	7iUM4bjAxshZeonRusHJSqWt+DhAY5sKQ/IJ4MdzncyDu90eW0
-X-Received: by 2002:a05:600c:348e:b0:485:ae14:8182 with SMTP id 5b1f17b1804b1-485ae1486d1mr28090915e9.11.1773747404414;
-        Tue, 17 Mar 2026 04:36:44 -0700 (PDT)
+        bh=UOF+pNBDLG5CrkS+/Huyc90OdHcHVia+fTFchDT5gQo=;
+        b=IxccjOwn7fRSl6RC1y2ORi1i2guWy40tL8uUPiD+P/vAcDxJWa65ScI3gK52iPcGkd
+         xOtfPSw/TpjODaslY6rfJF5CCmXnoYPDTNSh1whshUPTbPXWM20rZ+tHNdZhRrWz+azd
+         AFWJurMLhJrFTScfHn8KMMwGd/bBuXZvQEvRTZuZ18x1e82jwSAYn1fkCUH4+ZdiJ+rY
+         SVO9jO0dIvQyJkgMddHeOcOUUn+PHQCuXCg5AxMgUjoHDIbr1hP4h6eZmO54UAnN64H0
+         sXGQ+WtnGpeh1kLOd2b4/TtRcs60UHjHxWAjeHXkDi+wQpQcgA/2cIkRwEzQqhYDxyRw
+         CBmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1773747408; x=1774352208;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=UOF+pNBDLG5CrkS+/Huyc90OdHcHVia+fTFchDT5gQo=;
+        b=AjeVloVJVmoslTWRRDsQK6n18dYa84isjIambQ1cu6D/INU/rUp+QTV3w5rocbDVxY
+         W8iivAArio6KurUVw5B1D7an3aTIFIab7jXGBMUUWAQuHr0CV7vLNVhI9qsNuEK2kl0o
+         S2rMDOknHDlJkKZSurCLCFt9b4whE43xMTmQ2E5gvi7M42E1jGwfAIgKVD7cTRsw6M5x
+         2Us7NIgfuWyVbMTOxQn7yYTOdwJUhIllwuOKCcEutXfSX/jt98aQERDVymGqjvGPl7Lz
+         yv5dCnoUF7VKFyOg7LR5Ehg9m2DQpNlb/sPRaG/2Ui2Dq6hk/Dgbqz1lvUndlH2ourlp
+         ylRg==
+X-Gm-Message-State: AOJu0Yyc1dkx5ZTchI8+fzoHhJWF6nFnOovd6uzomeeeu0j/Ky8qY8tx
+	WpwGNxuEo8ybekba75E0SR7Dxahp9PJFkK/NE8X3agBJGx14b5/kWEbzGprUXg==
+X-Gm-Gg: ATEYQzxSlfT9tOaQoHQ3GmZj5apOzq6s/wkF7g08ACE4FsJXdlW4vnKJMPJUECojV+S
+	Zfn+dDzqoL+HoSldcdXqqOn3QWbjO2pSc3TSvQA1O5xFH5t45yessdkH0bLw4NH8xz1OCXhp9Nq
+	pUYa0OnHiP4GXhElkS7VdqQKxRkmTM2iEdM4eeGjAYFWg7MKwep5swterfAM+RmF6rOQ+YRg8mv
+	DMbkUz2jzoEH4BZFtLWH0uY/OSqE1dB2rT1aTak0cWWLQ32ncT60aG18D1M8++rg5auMbSd6lOS
+	dGNg/jj0fzzW5hbV9vnDqqvkXCOQrNJ6vMJFTCLtD+a7u7l1g+0rxVFy8mOMV1blPMMB+q3aV/C
+	c1EWPZbKg9MPUUJcJa/E0muu2BwOhby9aUDEZZZWtw/mRXzeDibyZIUMhL47pvDLlnmPyhfOEt5
+	q/1dUZdIFz5iG2o6npO+SC1G2O0QpzoCH5zkJFD5YXc35o7Tti99RwnZ36Fes=
+X-Received: by 2002:a05:600c:1988:b0:485:3f58:d84 with SMTP id 5b1f17b1804b1-4855a8d6fd7mr259181635e9.32.1773747407721;
+        Tue, 17 Mar 2026 04:36:47 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a758:8a01:e16b:fc56:e220:9aa9])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4856ea97af2sm57469965e9.4.2026.03.17.04.36.43
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4856ea97af2sm57469965e9.4.2026.03.17.04.36.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Mar 2026 04:36:44 -0700 (PDT)
+        Tue, 17 Mar 2026 04:36:47 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -58,75 +59,80 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 00/11] Add Renesas RZ/G3E USB3.2 Gen1 Host Controller support
-Date: Tue, 17 Mar 2026 11:36:27 +0000
-Message-ID: <20260317113643.311192-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 05/11] usb: host: xhci-plat: Add .post_resume_quirk for struct xhci_plat_priv
+Date: Tue, 17 Mar 2026 11:36:32 +0000
+Message-ID: <20260317113643.311192-6-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260317113643.311192-1-biju.das.jz@bp.renesas.com>
+References: <20260317113643.311192-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 17 Mar 2026 11:36:56 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22474
+ <cip-dev@lists.cip-project.org>; Tue, 17 Mar 2026 11:36:57 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22479
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Hi All,
+[ Upstream commit 2ef16e4eb41fe711479d92805e4b9e430c7bbefd ]
 
-Add Renesas RZ/G3E USB3.2 Gen1 Host Controller and PHY support. The
-USB3 HOST is compliant with the Universal Serial Bus 3.2 Specification
-Revision 1.0.
- - Supports 1 downstream USB receptacles
-     - Number of SSP Gen2 or SS ports: 1
-     - Number of HS or FS or LS ports: 1
- - Supports Super Speed Plus Gen2x1 (10 Gbps), Super Speed (5 Gbps),
-   High Speed (480 Mbps), Full Speed (12Mbps), and Low Speed (1.5 Mbps).
- - Supports all transfer-types: Control, Bulk, Interrupt, Isochronous, and
-   these split-transactions.
- - Supports Power Control and Over Current Detection.
+Some SoCs (eg Renesas RZ/G3E SoC) have special sequence after
+xhci_resume, add .post_resume_quick for it.
 
-Replaced devm_reset_control_get_shared_deasserted() with
-devm_reset_control_get_shared() + reset_control_deassert() +
-devm_add_action_or_reset()
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Link: https://lore.kernel.org/r/20250916150255.4231-6-biju.das.jz@bp.renesas.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/usb/host/xhci-plat.c | 14 ++++++++++++++
+ drivers/usb/host/xhci-plat.h |  1 +
+ 2 files changed, 15 insertions(+)
 
-Biju Das (11):
-  dt-bindings: clock: renesas,r9a09g047-cpg: Add USB3.0 core clocks
-  clk: renesas: r9a09g047: Add USB3.0 clocks/resets
-  dt-bindings: usb: Document Renesas RZ/G3E USB3HOST
-  usb: host: xhci-rcar: Move R-Car reg definitions
-  usb: host: xhci-plat: Add .post_resume_quirk for struct xhci_plat_priv
-  usb: host: xhci-rcar: Add Renesas RZ/G3E USB3 Host driver support
-  dt-bindings: phy: renesas: Document Renesas RZ/G3E USB3.0 PHY
-  phy: renesas: Add Renesas RZ/G3E USB3.0 PHY driver
-  arm64: dts: renesas: r9a09g047: Add USB3 PHY/Host nodes
-  arm64: dts: renesas: r9a09g047e57-smarc: Enable USB3HOST
-  arm64: defconfig: Enable RZ/G3E USB3 PHY driver
-
- .../bindings/phy/renesas,rzg3e-usb3-phy.yaml  |  63 ++++
- .../bindings/usb/renesas,rzg3e-xhci.yaml      |  87 ++++++
- arch/arm64/boot/dts/renesas/r9a09g047.dtsi    |  30 ++
- .../boot/dts/renesas/r9a09g047e57-smarc.dts   |  10 +
- .../boot/dts/renesas/renesas-smarc2.dtsi      |   8 +
- arch/arm64/configs/defconfig                  |   1 +
- drivers/clk/renesas/r9a09g047-cpg.c           |   9 +-
- drivers/phy/renesas/Kconfig                   |   7 +
- drivers/phy/renesas/Makefile                  |   1 +
- drivers/phy/renesas/phy-rzg3e-usb3.c          | 273 ++++++++++++++++++
- drivers/usb/host/Kconfig                      |   2 +-
- drivers/usb/host/xhci-plat.c                  |  14 +
- drivers/usb/host/xhci-plat.h                  |   1 +
- drivers/usb/host/xhci-rcar-regs.h             |  49 ++++
- drivers/usb/host/xhci-rcar.c                  | 100 ++++---
- drivers/usb/host/xhci-rzg3e-regs.h            |  12 +
- .../dt-bindings/clock/renesas,r9a09g047-cpg.h |   2 +
- 17 files changed, 623 insertions(+), 46 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/phy/renesas,rzg3e-usb3-phy.yaml
- create mode 100644 Documentation/devicetree/bindings/usb/renesas,rzg3e-xhci.yaml
- create mode 100644 drivers/phy/renesas/phy-rzg3e-usb3.c
- create mode 100644 drivers/usb/host/xhci-rcar-regs.h
- create mode 100644 drivers/usb/host/xhci-rzg3e-regs.h
-
+diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+index 131d75063849..0e472dc62d96 100644
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -74,6 +74,16 @@ static int xhci_priv_resume_quirk(struct usb_hcd *hcd)
+ 	return priv->resume_quirk(hcd);
+ }
+ 
++static int xhci_priv_post_resume_quirk(struct usb_hcd *hcd)
++{
++	struct xhci_plat_priv *priv = hcd_to_xhci_priv(hcd);
++
++	if (!priv->post_resume_quirk)
++		return 0;
++
++	return priv->post_resume_quirk(hcd);
++}
++
+ static void xhci_plat_quirks(struct device *dev, struct xhci_hcd *xhci)
+ {
+ 	struct xhci_plat_priv *priv = xhci_to_priv(xhci);
+@@ -485,6 +495,10 @@ static int __maybe_unused xhci_plat_resume(struct device *dev)
+ 	if (ret)
+ 		goto disable_clks;
+ 
++	ret = xhci_priv_post_resume_quirk(hcd);
++	if (ret)
++		goto disable_clks;
++
+ 	pm_runtime_disable(dev);
+ 	pm_runtime_set_active(dev);
+ 	pm_runtime_enable(dev);
+diff --git a/drivers/usb/host/xhci-plat.h b/drivers/usb/host/xhci-plat.h
+index 14534aa5967d..25f9541bd144 100644
+--- a/drivers/usb/host/xhci-plat.h
++++ b/drivers/usb/host/xhci-plat.h
+@@ -19,6 +19,7 @@ struct xhci_plat_priv {
+ 	int (*init_quirk)(struct usb_hcd *);
+ 	int (*suspend_quirk)(struct usb_hcd *);
+ 	int (*resume_quirk)(struct usb_hcd *);
++	int (*post_resume_quirk)(struct usb_hcd *);
+ };
+ 
+ #define hcd_to_xhci_priv(h) ((struct xhci_plat_priv *)hcd_to_xhci(h)->priv)
 -- 
 2.43.0
 
