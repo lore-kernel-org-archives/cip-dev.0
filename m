@@ -2,83 +2,83 @@ Return-Path: <iwamatsu@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F7C910854DC
-	for <webhook@archiver.kernel.org>; Wed, 18 Mar 2026 21:58:53 +0000 (UTC)
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.26601.1773871130519240794
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F39A51088E42
+	for <webhook@archiver.kernel.org>; Wed, 18 Mar 2026 22:00:02 +0000 (UTC)
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.26470.1773871193837730847
  for <cip-dev@lists.cip-project.org>;
- Wed, 18 Mar 2026 14:58:50 -0700
+ Wed, 18 Mar 2026 14:59:54 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=g1KyZcaD;
- spf=pass (domain: gmail.com, ip: 209.85.160.175, mailfrom: iwamatsu@gmail.com)
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-506bcb23a78so28321cf.3
-        for <cip-dev@lists.cip-project.org>; Wed, 18 Mar 2026 14:58:50 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773871129; cv=none;
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=G9ByX1KX;
+ spf=pass (domain: gmail.com, ip: 209.85.219.42, mailfrom: iwamatsu@gmail.com)
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-899fc265126so6149526d6.1
+        for <cip-dev@lists.cip-project.org>; Wed, 18 Mar 2026 14:59:53 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1773871193; cv=none;
         d=google.com; s=arc-20240605;
-        b=N6MNNJfuwYDT/s4Li9Adr95+s1Tts1s5RE5r/IffuQIK/AXQjbySfnQcnzm/kC/lTn
-         EESj582046JYW0auEGu9D3U9wfvHRzXOViXybZCVj9dnP964iiuoZ9o6P98UNEcZt/Vj
-         uMNV/VS6SGp6ZPMT/YKE4n95rT/UH04mo3Jp5U+exmfeln0FsTfciHrF3QTRaPm3/IwS
-         uie/vogB++V6jVA7felPZ5oW/1wmSQQMaFtWZBMZMlnNzMrs+HHbRhAD2bEvl+Ts9ISH
-         IAdpohvABf9MYHRsE04sEU9idQ9ln0abpR49ot9ljRVJjprcElnTw+T5z9fxlUqGOkVY
-         s4Pw==
+        b=kg12rGzGK74ttMbjarY0qK8HRCiYhWRkUlwzQWJioqWn6QgvoWdH9d0RNDS3dBgtnY
+         rolDJtTNpr/r9aYt0Zxy/GQ/7bhiFtABLDlq8T8pa2UUt4MZIHiBy/KwRrYOT8HHCcYx
+         WH8aelHysazKoYtBpUFuPeBAA4SeCztMkDfgT+/aHHWLjyfdtl43jPdIN6GnmEAvIkm0
+         jZudbF9vA1ZYAWKzv8DsyAMGbcJIyyjwBxzg6v6ZUUlySxFRMfc1YtawpIW2yWrDqtyY
+         T0DdIax97L+i1UzzOdO7r86nzHk7cmgK4CEgtH1ZdkiHzX932v/B7Mb3qstX782G/eR3
+         7xvg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=kSrI/6abzOWHjmNpcKIvI+KHJD2b18+kzBC8j23sffE=;
-        fh=CnqP7mnkDPiIm4NB1X+8VC7xjAJ6yIKa1Qlj2mA22t0=;
-        b=lQkxDo14Ll0LMgNNoIaAstDlbAaQlM9vtdfSla4In1JCNG3F/J1rKHVrpUsUrbNQpm
-         AUJpslKaMwGcSeowsGi+HK3Lg/BBBaHqmppFtTg3GBEOume7N9DKC1YpkjbEyGOhABLp
-         PqYJmXn7/mzozud1CWGHJm5llZ+Qwq4lXKiPLnyP2B4LWn97JF6hMYtawmim4m9+jtZn
-         3GNQPe2MowV7OJ5bpYpU1mPsbQnkmV3tZmZc0R17YLYNJnF7MRFaVhsIjDSYjNDRXucI
-         kx+YbvLvtqymWeRxI7EtDki7FsQfgcT3uLYsbqB9LUTYChrnRzkRhlfpO8btdt+V2N0I
-         3BCg==;
+        bh=dJ/hfi4UQWI7WQAZr026WXAWMdxdrO9fep/6z1EFz6s=;
+        fh=m+qa2aEGOdm3Og990qtqInV7DgsFjXiBEq62CoMEmgI=;
+        b=IbJNMZ1MDkRDfZk6PcrqqYmvhD16RKFeIuGzvmxGQJqoN/ZFOB93vttaUFMLmUjPEA
+         Kcv/N/aLo4wWtWzMTsepH+5Ae6yNM4z8dDKMkKfEQksiSFUFbUJ5DW6WyzN0CFvOoAlR
+         o3s3NxwDki+fXA+64sQL7L3ul2QfwChVuHd2bxu3x/5Y9SeXgY4WeXs/iCa+DDLIaJH8
+         KCpHdw7m8Fo/990A8VkaeqwrtZVlztY+i2QCMAtAvhl+9icLbeMr9RrUOoG0cGPoDg/W
+         FjRmPryVrvepTzeYT8aLZusmeJYRgY8eF4tkdQiQ9ejtyX3mX585GHvfmiiChxOptM3l
+         o46w==;
         darn=lists.cip-project.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773871129; x=1774475929; darn=lists.cip-project.org;
+        d=gmail.com; s=20230601; t=1773871193; x=1774475993; darn=lists.cip-project.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kSrI/6abzOWHjmNpcKIvI+KHJD2b18+kzBC8j23sffE=;
-        b=g1KyZcaD1zY8DwAhMeUFldyRbxjCtPWB90+LU8UPLCTwxrFNpnSZzyDFVqpypptfrq
-         eo4M0i1mdcrBmQ8Tk0RhkI18pIRaeI5LIvnPO9C0m6jYj8kykaV7LE+nwqWfEANNjN5S
-         g+ov6c5VOJn4YWtadUsmlh6tRCPt6m2YDrkgK3xdsOMqxbzS/YMP9hEahy/2pHlHyzjU
-         zqeASZCZOWqbcr2aV/yH9LFASm7e+JZD2QS8+p5ACsiPpO44RBWABA3LU0C2gKeJR6nO
-         5jDuH4nSUfFOxVo7qO/i+3X0a3DVL8kUFWCVFZmSTqeX3hEfUpr2U9fKKBWtxeuoVMGD
-         ihCw==
+        bh=dJ/hfi4UQWI7WQAZr026WXAWMdxdrO9fep/6z1EFz6s=;
+        b=G9ByX1KXyCh6NuhN4K2rzTknSlLxUQruJDkmLKeGdTQjr9lOfFtPYETiK4GNTB1ddI
+         NMu3b5WqOvlC9UmDi6DoB/umzUqWK3dpIGShQowJ/JwHNJ4tG0rgd6jx0+Td3I2dg18Z
+         Q/zciuuD6jnls/iJGAzjWogxhO4ReM+mhvw/jYHtI1GLT6IaHac+nbqb4pfX1CFDVeQT
+         xGpNSp1tBPI97Lm7nVe/CjRvYB87Z4680NnTZ7ThZkfVaE9EvrWnEa1fjiURsGDjUXqk
+         7Z+bpE20zSOsjV4vEsJb2d6/jusChjnvYWiUDR/fsPp2LX8vTSAnnRjyufucc60v77c9
+         QauA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773871129; x=1774475929;
+        d=1e100.net; s=20251104; t=1773871193; x=1774475993;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=kSrI/6abzOWHjmNpcKIvI+KHJD2b18+kzBC8j23sffE=;
-        b=GG/J1KKtzeSPlzCZsJN9rL4HeYUaOTnTNev59aUfbHLeyr/oVoN7Lj+VgIME9tHVg/
-         RJ7nmhJmPVDbUozL1laaYuvCujfbTERyTxKqE7T90dSIFnz7hU4+iTf0OBH1Ejus9Df1
-         RYB1LBp/MKbASXZ+PSAhg7XwyfylrIjPVlB4RE14R+deegNcZEeaad64jO4gUCzAUnCe
-         KN/FR4B+EnHwJVpkdG0+ZhFVTCb2FwxQjGCxTG2bBgiyGJor+LWW/F0JmrKs+57DLpkI
-         5mKTILvx541vmW4qkW6VNSy8oI/2LDMYyHI81C5y7aNm+8q8G6TmqRrh3ZlSrGSOWcLR
-         nn5g==
-X-Forwarded-Encrypted: i=1; AJvYcCWjNJEPL8HDloBFB2mOFQMxJFXogXXFr3TlSCCGANAST5VJ6zMJgRUJX8b7Pqdbf54a9+sQsmn2@lists.cip-project.org
-X-Gm-Message-State: AOJu0Yy4pB5gDIHPAMcj932K3c4zP/zyVeobDHMk96/dtEqaJW6ORqwW
-	vzpYALS2BqNYmGJqBCvnDVTp8YFNReARp9Kazk88hQlV3LsJW6XwwTouSN/+Rjitm4P0xrUxGGq
-	85AVGHzTEMpI/G5a7RdmBwz/8iPZ+Oqk=
-X-Gm-Gg: ATEYQzzOrPl8bVi+/sMegOtxMHrAdrRQYrZBRRVnmJ8veoH4Zq+RcaYdzO3Jf1x11/+
-	TilO78bhABeQZTaOwKZlwjVdWOBVsaS/mSYDuomQAYL73gnaM0rkU9HM400m3riV0XwBipLBeKz
-	3kXGylfZ/omQeXxt9It7VwY9orpX1XfHCcN+ZDEFTQZ1b0yWGNrmGFW1hAv+yQnLXg20tNavYFO
-	6/2YQrhZZ6yZMoaqG8fNaGiIBXNoxw3iDUePKjKPEUW63sh+logfue3nT/gdfYYTSQXUKLhKAJr
-	DUA=
-X-Received: by 2002:a05:622a:553:b0:509:59c:5799 with SMTP id
- d75a77b69052e-50b147a2c14mr66082281cf.21.1773871129426; Wed, 18 Mar 2026
- 14:58:49 -0700 (PDT)
+        bh=dJ/hfi4UQWI7WQAZr026WXAWMdxdrO9fep/6z1EFz6s=;
+        b=VvMY+2STjdHT4Orlnu/qVEWojEDdAG15x+sQ+9swGGOpEpKkKC/vzd83THiHHzOQEG
+         7tcb/HdCeG+LX5R/T4GNikVZzI1cjfzihM29QaT0NFF1vCAaUjNumAqfJHxsxC5/Wc53
+         LX7sJun22Vik6Uex+f5cioJKMLrMNDKtaMcpAVqXezN5GOi0uYkKswbVBGdN0/om+COI
+         vk2aFLUxrHyBeV2zGOJTVr2nkaQp87WKK/Q0TiSKBOc+LbHrpPp9CzlJOQqP1llw/wzt
+         QEHx+rZ5XyxHonIuaDy8K8OiFnSH6DVgA8YPATvns/Uem1gxD6QS2oBPltB+CrnQEOwr
+         wKJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVxeLZB6zE0S02am5lBuzf8DmWwntpHbOdiu8BTScUR1DrX0f5Wxn+wfTdHR9WmQE4RIho8CTEV@lists.cip-project.org
+X-Gm-Message-State: AOJu0YwR256hYYqNTpmlLMe5NyqDVZj6+h+ltkAMzJyWMq3EnVy4XjtE
+	SJsvwhKlhNA73PueAicV/P+bOis3/B2hT2MDCLFfml0TRE2IVs0gj2FzMHrmNfe87SZnj7Lg0CM
+	H/xSnXM1GzWOCDjjIjncmR2i9PNFCbtg=
+X-Gm-Gg: ATEYQzxumD6RYdDOJZZ0jOfqEcRCs3fhbnw6p8FXa2g05vHuMl6atQgNG5yDAliC+3w
+	7b7GvBiVntvaPBQBFdfP9qTTCLNW+U+7n64InprevhgbSyZqkwPjTfPVsoEwjfaV9FCkWdGhCr4
+	+kSQOKxBRd6tXYluZ2DB+ZmQwA2h37+O12Iao/x/tvRam6p00L2hcc0JJEwGH5ss2xvfQ6vzDOm
+	cRG2SUnHKM1Hczyzg5bM2mx1x8UstG4fG3NGUOWNI3OLVAgKpR9UKcc0jeLDjnjYtNgqJn5P1zM
+	n4aHhKyN6/reMw==
+X-Received: by 2002:a05:6214:f05:b0:899:e8b8:8741 with SMTP id
+ 6a1803df08f44-89c6b50cdb7mr74292696d6.2.1773871192732; Wed, 18 Mar 2026
+ 14:59:52 -0700 (PDT)
 MIME-Version: 1.0
-References: <20260317113643.311192-1-biju.das.jz@bp.renesas.com> <abp6OA9YNPPSCOaq@duo.ucw.cz>
-In-Reply-To: <abp6OA9YNPPSCOaq@duo.ucw.cz>
+References: <20260312153522.1131675-1-biju.das.jz@bp.renesas.com> <abp4Y2FVspUgEpCT@duo.ucw.cz>
+In-Reply-To: <abp4Y2FVspUgEpCT@duo.ucw.cz>
 From: "Nobuhiro Iwamatsu (Toshiba)" <iwamatsu@gmail.com>
-Date: Thu, 19 Mar 2026 06:58:38 +0900
-X-Gm-Features: AaiRm52BAGp5Uupl2pnfS1I4gbvtlc8riQMXCXfgDDeUpkoUeAR1N6bGR5caAzM
-Message-ID: <CACe6DC5-+FhQC6NLqCEBwA0t3OytAaKg=jN9us-ohcXZpC5jKQ@mail.gmail.com>
-Subject: Re: [cip-dev] [PATCH 6.1.y-cip 00/11] Add Renesas RZ/G3E USB3.2 Gen1
- Host Controller support
+Date: Thu, 19 Mar 2026 06:59:41 +0900
+X-Gm-Features: AaiRm52KZmhIcBgkZaCnyOkwhlMbPXwLookZ1emlTa5z3C474FMnnCXR3DRqbBs
+Message-ID: <CACe6DC4UgnnvZkv8F23jMa5ih4Oxo1=Vs=_ZR2nDo8iufD3JiQ@mail.gmail.com>
+Subject: Re: [cip-dev] [PATCH 6.12.y-cip 00/11] Add RZ/G3E USB3.2 Gen1 Host
+ Controller support
 To: pavel@nabladev.com
 Cc: Biju <biju.das.au@gmail.com>, cip-dev@lists.cip-project.org, 
 	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>, Biju Das <biju.das.jz@bp.renesas.com>, 
@@ -88,24 +88,20 @@ Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 18 Mar 2026 21:58:53 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22503
+ <cip-dev@lists.cip-project.org>; Wed, 18 Mar 2026 22:00:02 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22504
 
 Hi all,
 
-2026=E5=B9=B43=E6=9C=8818=E6=97=A5(=E6=B0=B4) 19:11 Pavel Machek via lists.=
+2026=E5=B9=B43=E6=9C=8818=E6=97=A5(=E6=B0=B4) 19:03 Pavel Machek via lists.=
 cip-project.org
 <pavel=3Dnabladev.com@lists.cip-project.org>:
 >
 > Hi!
 >
-> > From: Biju Das <biju.das.jz@bp.renesas.com>
-> >
-> > Hi All,
-> >
-> > Add Renesas RZ/G3E USB3.2 Gen1 Host Controller and PHY support. The
-> > USB3 HOST is compliant with the Universal Serial Bus 3.2
-> > Specification
+> > Add RZ/G3E USB3.2 Gen1 Host Controller and PHY support. The USB3HOST
+> > is compliant with the Universal Serial Bus 3.2 Specification Revision 1=
+.0.
 >
 > I had some minor comments here, but those should be fixed in mainline,
 > first, so they should not block the merge.
@@ -114,14 +110,15 @@ cip-project.org
 >
 > I can apply the series if it passes testing and there are no other
 > comments.
+>
 
 I reviewed this series, looks good to me too.
 I applied with Pavel's reviewed-by tag, thanks.
 
->
 > Best regards,
 >                                                                 Pavel
 >
+
 Best regards,
-  Nobuhiro
+ Nobuhiro
 
