@@ -2,58 +2,55 @@ Return-Path: <nobuhiro.iwamatsu.x90@mail.toshiba>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DD3610854C9
-	for <webhook@archiver.kernel.org>; Wed, 18 Mar 2026 01:54:24 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.152])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.5129.1773798858866231256
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AD3C10854CB
+	for <webhook@archiver.kernel.org>; Wed, 18 Mar 2026 02:04:14 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.134])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.5254.1773799448306799558
  for <cip-dev@lists.cip-project.org>;
- Tue, 17 Mar 2026 18:54:20 -0700
+ Tue, 17 Mar 2026 19:04:08 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.s=key2.smx header.b=soxzaGG+;
- spf=pass (domain: mail.toshiba, ip: 210.130.202.152, mailfrom: nobuhiro.iwamatsu.x90@mail.toshiba)
+ dkim=pass header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.s=key2.smx header.b=D8jnbakn;
+ spf=pass (domain: mail.toshiba, ip: 210.130.202.134, mailfrom: nobuhiro.iwamatsu.x90@mail.toshiba)
 DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=mail.toshiba;h=From:To:CC:
-	Subject:Date:Message-ID:References:In-Reply-To:Content-Type:
-	Content-Transfer-Encoding:MIME-Version;i=nobuhiro.iwamatsu.x90@mail.toshiba;
-	s=key2.smx;t=1773798845;x=1775008445;bh=/EPom6jrLsxqjVrKLn7e6SRE3lcZklkNAQWrR
-	w9a+1A=;b=soxzaGG+QQxsiK5Oi9tUQEinFaiyqWSkBX+7nNcibyelGDm4vY/+Sz1w25pdAgfWnUs
-	Ybvd0Z7VUgXmZ8++BfqGnGR4xb9D/AFvYbxd8XcaKuBU0zb6x9RoAVkm2yACIrtmtHIsJeGb2QnjX
-	kd7qQYoCVnMfGhkzyCsiOgy5WD1FzZz9gEphUSbGQ61sqECvewu2vq0oUcGggzjD0WgzAoI7uEpuS
-	CUIt5REJjCv1MY6/oXwv1jcs8SnLrJ/Va01/MTUd1VaCPRr0iNPMDxf42K7a/BslVVlp2jfSz9BBp
-	v2ZBnufOYix6PHr2cLBaedGdZLZVVi+8X+XzGG5S/u1Q==;
-Received: by mo-csw.securemx.jp (mx-mo-csw1802) id 62I1s4Ga2705729; Wed, 18 Mar 2026 10:54:04 +0900
-X-Iguazu-Qid: 2yAaAsf2wD4VnywbWW
-X-Iguazu-QSIG: v=2; s=0; t=1773798844; q=2yAaAsf2wD4VnywbWW; m=RtINCFayVqz/TlSNhNv1ZRpzbL5LDvB52LIiEIBR510=
-Received: from imx12-a.toshiba.co.jp (unknown [38.106.60.135])
+	Subject:Date:Message-ID:Content-Type:Content-Transfer-Encoding:MIME-Version;
+	i=nobuhiro.iwamatsu.x90@mail.toshiba;s=key2.smx;t=1773799431;x=1775009031;bh=
+	WPw+00rB11VOOSELztaS5F5q9tGPvChgXyALxYtSv0Y=;b=D8jnbaknTDNjcdnu5wrRximkzNgHNM
+	4Pm7XLJYmcHAmUTLRQVf5KWRktbX4cpI8DkKFIkwsaXbfQea3Idx3g0FL5XtpU8D5ClNE6zcSdHj1
+	h8OsXIJaKDIHE3YTk79Pa/LnmDUiAYFs8/phXBZ/Wa69j32MbpWKeJPkuqAB/EKJEZbRaAB+3r0gk
+	lLrVRgDEXBU9TBvL9MU0uzYXnEyEG+dwbKoY0H43ryfx/ikcK2I3I1wfBYwPhVRZ0rHC5KH1JCfMS
+	kTAAAEP+rLOj52qmKkYj/netTuMvzrPvfbRILkNolzn/r8E6YCutZKzsDwJvG4Htk9BkwJ1AKMvAe
+	179Q==;
+Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 62I23o3i2740209; Wed, 18 Mar 2026 11:03:50 +0900
+X-Iguazu-Qid: 2yAazS63SmRwUqWYOi
+X-Iguazu-QSIG: v=2; s=0; t=1773799430; q=2yAazS63SmRwUqWYOi; m=GasUfqnVNC7T2u30t8yQbdUfhkkhWn/5Ymi5q0jdMFo=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	 id 4fbBhC3jFHzyPQ; Wed, 18 Mar 2026 10:54:03 +0900 (JST)
+	 id 4fbBvV1s3LzyPZ; Wed, 18 Mar 2026 11:03:50 +0900 (JST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=W51tMwYRpFDwPI7RVzS/k1klamSSE6ji/bjKQv/4VQCNrWW6Q40WbEGpXj8frKyrBNJmzkJdVGMB3SmUoPIVPEc0d7IZn1i3GG+Wp590sJGQyhTJC9az+34tXQZHuAmfy2Bj4Mxz4VWM75gEwtGeDQ9+uQjIdX+alQbrDmGrpDr4xV4INbhG/2R88C+NukIgDtfW8QsmpChpnlBnwv0R2o4GIBs4BnfNof3ntnM92ND8KRR4bMBljaHjx0yxDANT3N9mM1zUS4BrADOexYoUqkeAq0PeS/0IzDY8/5odQKG7lQMwin4APXy2jId1Y5pZ76k2k+cllak8hXv1pkJl5w==
+ b=wgdmDZVUljz+OkXdvPCaXDBGlmVZiUY97SVpOZrBRKv8jMKhcrs5DsUAFMvKwKxd5LJcIc10ul1MU//FUP9EczDE31c/PoMEqFTEDxVCtwmuKHrxHjyXEJZdbaFc6Ypr6yiR6FJF9RX4IEiq15k9ERQbVNvIy3aPPKhteZYot//Yo9P5H2cJKFUKGboQZ3EJY5gNFVxoYuLtgCwVe83MghN87PaRidLgcXJkFvuMZicGTFt3aiDz92wtlJwC0Gpyo6aF04FUfrWxTYXqnmsrX4m5VqIhXwmgra1hF4bieYlH6+RwcyNcxmAPFb2jABJhcZMjwJhhI2FS5s0xar1/BA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=U6GltJJoByKT33QZYFanuzHzZuMq7IxjiK8xCUFtqqo=;
- b=T17ybtFSQMkCR6fuLnBl2GxrXs4iF15uFwGWxii15za0IHYl1dVrKjCvaCVJahBVDhZTPUloSROBnwX8f5l7+h5gsLiH6EPIHwUZCI4UC9rSy1LDZjUu8My0y5Mohj3hwGItkuscyH4kPHAkcjlasrwCeYToXL1qolwf8eZZOAx22SWyoLQZuhmuy7rDWW92mqmFlK8FOtRNwA9nAKT+FDp+wgB9zQYAB5SRORx22bQMrMb+QLR5JKUneSfm7WQvQdCgQZzPYereVDJq+ontGTTGa6Qcp8e0QCEIOqjeKGiaYs310WcNILMFSMt/6R/ibUc/Hwf7q3U+AOVVNLnJqA==
+ bh=6/tO6ezaG/Jbexz8hxtA7dXAG0bKRxAeO27ccRgIVp8=;
+ b=BPMTHYj7CywZHNSDSdqzE8/2k6u5N1HMofFM9eAEOK6aqMjG9Mib4gk6cDtNGoah7dZXCnITNhnSaEJ71J5sJf+OF/FgomqGGb1ONnNpx8USNJ3W633PdikAXzTX8CiK4bRw3rYmLOpRDR7MKN+ZpKA2PvOtkAbfyFpETiPHtVSNvmYrJLBPE/e7OPJMzVM9RkZ55tj7/I2IrjS1nCJf3/wfNMKx4074t5Nq/4rpWHnzF9Qf584rcTd52ISONcm9pKlT1N7qzkvFNuW+aGd4u2qG+Xge/j60cKZdNce1nUVt7Aiv5Et+mgAfNbqcM5p7j5WkShBgvR/RPw3gFsgCJg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=mail.toshiba; dmarc=pass action=none header.from=mail.toshiba;
  dkim=pass header.d=mail.toshiba; arc=none
 From: <nobuhiro.iwamatsu.x90@mail.toshiba>
-To: <Chris.Paterson2@renesas.com>, <cip-dev@lists.cip-project.org>
-CC: <jan.kiszka@siemens.com>, <pavel@nabladev.com>,
-        <masami.ichikawa@cybertrust.co.jp>, <uli@fpond.eu>
-Subject: RE: [ANNOUNCE] Release v5.10.251-cip70
-Thread-Topic: [ANNOUNCE] Release v5.10.251-cip70
-Thread-Index: AdyysicQDBmKBhleQPmTXOq74MpVEgDQ0WAwAB/WGAA=
-Date: Wed, 18 Mar 2026 01:53:59 +0000
+To: <gregkh@linuxfoundation.org>, <sashal@kernel.org>
+CC: <stable@vger.kernel.org>, <cip-dev@lists.cip-project.org>,
+        <pavel@nabladev.com>, <chris.paterson2@renesas.com>
+Subject: [for 5.10.y] Please revert "8af1c121b0102 riscv:
+ Sparse-Memory/vmemmap out-of-bounds fix"
+Thread-Topic: [for 5.10.y] Please revert "8af1c121b0102 riscv:
+ Sparse-Memory/vmemmap out-of-bounds fix"
+Thread-Index: Ady2el02gK+YDzd5RYq5PYUOV/kTSA==
+Date: Wed, 18 Mar 2026 02:03:44 +0000
 X-TSB-HOP2: ON
 Message-ID: 
- <TY7PR01MB148180E90E48BEC0CE621DC7DCD4EA@TY7PR01MB14818.jpnprd01.prod.outlook.com>
-References: 
- <TY7PR01MB14818C5A866AAFB66A71EA103CD45A@TY7PR01MB14818.jpnprd01.prod.outlook.com>
- <OSZPR01MB81230F9D0E8455689D3C7A1FB741A@OSZPR01MB8123.jpnprd01.prod.outlook.com>
-In-Reply-To: 
- <OSZPR01MB81230F9D0E8455689D3C7A1FB741A@OSZPR01MB8123.jpnprd01.prod.outlook.com>
+ <TY7PR01MB1481866BE80F41418D964AE61CD4EA@TY7PR01MB14818.jpnprd01.prod.outlook.com>
 Accept-Language: ja-JP, en-US
 Content-Language: ja-JP
 X-MS-Has-Attach: 
@@ -61,186 +58,157 @@ X-MS-TNEF-Correlator:
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=mail.toshiba;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY7PR01MB14818:EE_|OSCPR01MB15578:EE_
-x-ms-office365-filtering-correlation-id: 39b59632-361b-43af-a7f9-08de849138d2
+x-ms-traffictypediagnostic: TY7PR01MB14818:EE_|OS7PR01MB13879:EE_
+x-ms-office365-filtering-correlation-id: 3f6bce0a-bfb1-49e8-afea-08de84929602
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: 
- BCL:0;ARA:13230040|376014|366016|1800799024|38070700021|18002099003|56012099003|22082099003;
+ BCL:0;ARA:13230040|366016|376014|1800799024|38070700021|18002099003|56012099003;
 x-microsoft-antispam-message-info: 
- QvP5ucEjPHNTHlUXLaM4GG0HX5kvqwGdW3lRvblxypAINSsq69fpQZpTl3/PbZgtfK9Zcuyxh2/R5nEvgUFRtoBsR2V10TPIuwp2zrQGefK5gT1nfU5NRE8VpK6oBF/kJa0oEw9rQ3I9s0yfz50LYwU/yrdHSSIV0UrfGvj7cEj0FSG166INtjDu9qonRgjnIMjgjOkf0Ibufzp6JDHASBcW2jDAY9U+jwtagVVeyFbrvT/XCXtf4DP5tsgsm4NM2q5besOfIGIiTh/MGV+SClZeVNDiNCBe6ijtiazCnnBV5xBfLjwAmhGRRZhdCXUzYjtFzdPKTO/dRWph0r40dzGwHx6VvemNkwQgQPdzvn62+vSdRUjHuMWkftae4D9vbcnsqbL6JzXxph50TAYMcVoYk7/jU3ysXybduCngZGtgqAc6omfjxAEamsJ0yrML8DReW+aMrkqcWjdcfh/6SmqTO5jLLsPWw7TC6ng5dbjA4x8V7W8v6pV9YnvaBkxR+xN8Ex1SbYzhelv72/Csn0/bYqO1TjnMZJZFTqRh6FmW9g0MQKL5ajn0E5kcyO0BKnVp+cuswR5IlZ9X2z+3JIOSxJVQXd3DC3QeOZJQg0f6rpYUjl0XdC74+/NYZDypbegez16bd8M8RmrqrsnFQA4P0Z/8/sqExb/EBd3KoY3ujm+9aX//wpNHcMQMbCvGkm61sb3qnjYvff05WVcUMcqV1cdjDM1TifMaJEAZ2N8=
+ z64L26l3eC6b21wSEZOy9x7Sx0Bx6/rlgv0wEgxmr/1xpQV++pnL5/W82Xy/gSMYQ/Q3tHJonewyUEu8T049a87TSgbgS2ZavE4CH4FA8r7p2jWW6/G8THOaLbxt/fqfN/HYpDXAA2kizi61TgiExDFB7li5xMPOouJvSVy3SEy6fgyBx6kkr+PQ+HuAPajfwSCQiZCy7aq0/AHZQ6BREgMxSqwpleQ7X5ez36lJm+lD7tVRwLKWwC5qI+m+qF4Wlqb6Hnh+O+srTmgLxhEbl8u8+zEXfD7DOMKQFl2qTq6wwpWnn8RmPajG8d8Qufue4cW6Yp+0g7wCKao74LOyFbOxf40Oi3GeYmyHi5D32h6xLKeXxcxeTMW0ulNaq+5zQBbaQ7N/9eHNSMuSY1QFygmqEkbD4YUAgxtdHbj4W0OO0A70QrZbhhV495AAWohA/qyf4IUHCBU7fIG1yyc5+lwZUqVPB/ka+6HwfNnxhiCHXJCx5G5/IJ6wey7CMCegNVhakqvaZcx81lJekct9Kd6FRafI+vansVpahtxOaLiIhDInMz9CnZ0haddWeDGCjHD1OdOI8OSPWw/LP0Z7BvXKWfbD9NwjJk7xSyaRsC62X/31GBc0bmjkUTkvC+q+7i/gGzI/KTXEAwGohvdb7K3O7IzFpQn2bY1GN5Yndp6JOd0F1PcxH4ICPmeZ7r4jw5f9Srw9w9xFVsuBVza8m9Xs483VWKQ3LF6hdA6DOMUd60M0xCUX5UpIXv9/Hp5jNdPcOpUuB2+oaoUJ+qbZt4nY40BoAn5z2zMWxU/J7kY=
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7PR01MB14818.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700021)(18002099003)(56012099003)(22082099003);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7PR01MB14818.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700021)(18002099003)(56012099003);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?YS9ZaWR6WE5iZEliZm1NRXp6RkllMWVpWUx0OUZUSjBLc2hJRmlUVnNk?=
- =?iso-2022-jp?B?dG1CelNZcHEyUzJGbWgrUlkwV1NEbEFEQkZ0bjZ5ZEZZWXQvTXljU1Fz?=
- =?iso-2022-jp?B?ZGtmRmxGUUF0eWRXa2FKWjNSV01xaFVSRXhLaHZIQnlWN3JWUURsT3Qx?=
- =?iso-2022-jp?B?U256TktwbFpWMVFHUFdWcHpJV1ZoblFNUVJDQS8vTnF5emluRzRSUGdW?=
- =?iso-2022-jp?B?TzFRckVQcjFxSHRXUkZrMVV0TkRmaTQ5SXB2M0E1RWxtWHUzZUpTSEl2?=
- =?iso-2022-jp?B?aEtRcG14MHh5N21YbGJBZ0szNWVLcU95NWJFUVhqM0owMHJQVzBGSVRZ?=
- =?iso-2022-jp?B?ZU5NaDdDUm1LeS9pM0VQL01jaFN3U2dXTytjK2J6VE95TFVPcm9HL3Z6?=
- =?iso-2022-jp?B?S0ZxOTB2blRxclpCOGZRcDd2YnV0OVdvM2Q3Nnl0L3FNTE12Y2FXaDln?=
- =?iso-2022-jp?B?SmRCM3JEWDlxM3pHSnlSWlpMUjdhN0tRNE1aL2R3Vnh0Y2d0WkpYNjJt?=
- =?iso-2022-jp?B?VjdybFp3M2VwN28rcjVpT1Nmdi9pWmV2aGJkQjlZL1ZCdlBLVUNHZHc0?=
- =?iso-2022-jp?B?K1JkM1VUZUJzVGNvcHAyUDBFL1lzTnE1UFEyVllzWU1IQnRUTUlVZEZG?=
- =?iso-2022-jp?B?MDdUSGJGZk9RRHJVOHFBd0hmWndONVNyc1NvdXJYbDFpajVzSnduOWxG?=
- =?iso-2022-jp?B?Y29wMUVRNXNRcmg2WXc3QjJCL1lBMEpIYjQ2KzZ3bmdhSkJEZWpBN3NH?=
- =?iso-2022-jp?B?aU1jNjl6dVYzejJwZTAydGxQbDZLRnFFTFJPY2x6dnhSV1EwRVRTd3RJ?=
- =?iso-2022-jp?B?WjFnSzdzZGNCTVZyT0FteGkvdWhOVk1jZVdFUVJxbjRLbW5BK05EdkhN?=
- =?iso-2022-jp?B?YkpmVEdBalRJMnJhM2xrcEg2OW90Z0Z6UlR2bkxLTzdUTkZFVmE2aGpz?=
- =?iso-2022-jp?B?MUlxVzRXZzdMUVh4dmhvSUFwNmhXTFhkeVc2MVVJQjcxZkVZZmpQQU53?=
- =?iso-2022-jp?B?NkN4STZBM2lLNVR0WTQxRjBiRUlxNVYwTXUyank4dWMwZVFnZkxTYmZD?=
- =?iso-2022-jp?B?QnE3cXJSYlREdHFORDR5Z1pKQXBwemZPZjhFQVoxZVcxQmpnTUNha1d3?=
- =?iso-2022-jp?B?OW9BT3BTM0t4YzExN3pKZEdxSXM4UVROQmRtT014bHJoVmlKQ1lQUGZ2?=
- =?iso-2022-jp?B?eVJmZk9MRGk2SFBJLy8zaGcxS0dYcDFGTFovbFVtamcwMi8rT24yS0lw?=
- =?iso-2022-jp?B?bGZVaXBlb3ZaK01scFc2VWk1eExvTmVpSGRFK2ZKQzRUQU9LeFdTd211?=
- =?iso-2022-jp?B?eitobmRORy9PNk0vL3Z1QTB0citQR01lUk5hcWkwamIwcG1Sb0M3VXlU?=
- =?iso-2022-jp?B?ZFBVQjIxRmVlb2Nta3I2bER3R0JYcUl3dlg4V1JLa1paVWZWcFhFNVlw?=
- =?iso-2022-jp?B?SnlKUkw0by9lOFFGd0EyaHhOTXg2NERPZnJoN1VrMXZkeXhYYjZKZkF6?=
- =?iso-2022-jp?B?Ry93OTB2enJDREMvSThtb3JxU3JOSzBGM1pvbVA3L0F0ZnJRN3NEVTAy?=
- =?iso-2022-jp?B?ZmoyUGtpZ29BK2VEYWhnblYwU0xZRVVnVWthTUwxYVExWHozNUtLU1RL?=
- =?iso-2022-jp?B?L2xIS3NzaVNabVd0QVZ4LzV6cnlYNVFsUHJxcWpCakRocTFJTnhPVWYz?=
- =?iso-2022-jp?B?Z2dSUkNLVE5rSTJ6NmdhUlRJQW9ZTWZjbzBiVm1KUnU4TlNLL3M0aDZX?=
- =?iso-2022-jp?B?aGhiYmdyU0tiTW00anRlbldwVXkzVmd3Q1p2OHc0ZEZXMlZkRTFpOW1s?=
- =?iso-2022-jp?B?TlorS1VzdCtFMzR1VVptdVlwZGtOYjkrTVZoTkM5aVh4TlFwRUVoQWU3?=
- =?iso-2022-jp?B?VFYvalpiNGd5N0ZBVXNORnVlL1lkR1ZlQ0k5TGljQWR6OVAzM1NZT0Jk?=
- =?iso-2022-jp?B?U0kwQlRxSHpNRVF5VFNmb2c4d0FEWmRpQTF0TkltbzI2eDJSeHRWS2U3?=
- =?iso-2022-jp?B?MGdpVGx5UGJEYjFmUW4xdG1pS3N5dEY5Y0pqZUo5bHpRbDdpQ2NlUWdV?=
- =?iso-2022-jp?B?ZnJxSUU3a1dTZVhkSTFKL290U2xhWWJTblY0RFd2Mkw5KzU1UXA1QW5h?=
- =?iso-2022-jp?B?amtXQnJYTnNEMVgvSHNvSWZNWXJlNWJ6UUVKcEFoYWN6enNoYW9GRlh4?=
- =?iso-2022-jp?B?SDVXb21NeUhNVDIwZ0h5KzFDWEJTVTlTMWZtQmh3ZEF4UWpxNnVocGR4?=
- =?iso-2022-jp?B?TUYxd0hXMTF0U0E1N3dYSEs2dEVZa1VVSDhSdVZ1c01ET2FCcitlZU9w?=
- =?iso-2022-jp?B?eThQU2kxUVY2dXdPaklLblBERVRWZEVqamhrSjU5NTI2cDMrcDVvK3BB?=
- =?iso-2022-jp?B?T244SjBqR3hTNUMxWG5qMkpYcjMya1RvTXNrWGdIbk5iY1pPSC9TM25y?=
- =?iso-2022-jp?B?MXpiWGVhVko5WnNRV2toTTdUd095bUZNK0RQbzJhWjZBLzVtVyt4OC8r?=
- =?iso-2022-jp?B?QnhvdjdlTmovalRLd2xMN1ordHc0TzNzQWpQTWNkRlU3UHhSdkp6YTht?=
- =?iso-2022-jp?B?RnhMNTNCaz0=?=
+ =?iso-2022-jp?B?R3JTNVcwY1JVN2RCNDNmdzFlR2Vad0xaYkErT3FqRGxoR3E4aWFyMWFY?=
+ =?iso-2022-jp?B?TmdTd204R1doOFlkd1lZRWY5S1FkRUU4KzBNbE1oamFPQmdvUHJNUERu?=
+ =?iso-2022-jp?B?dUx3aWlsNkt5MmRmU3FiWWNlbHh2SlA4RElZUGNrTmxrc2FXNVd2UGJn?=
+ =?iso-2022-jp?B?V2RIYW5qNEdkYnRYQXVlUEl0MzU4dzhnVjVNQkxTZ3BNdkFXRGxFMWhC?=
+ =?iso-2022-jp?B?bCsyUGx6cDd4WmcvMmFEN0dLKzh4aXM3VDA0cmhtVHkvVEE1a3dubU9Q?=
+ =?iso-2022-jp?B?TmN4R2ExVVFDOWs4d3kvektIeFhuREJsNk5uWWRkR3UwOU4wWGYzbVUv?=
+ =?iso-2022-jp?B?d2c2UnlWZnJrUktobzQrdS9qSCswNEY3d0JaaFZGenBOd2o4MmpOUVBY?=
+ =?iso-2022-jp?B?V2hlOVRzZTJxaDI1clliOC9GMmYxeFVYVmhyNmNYM3BMMjZDQ1ZNRzJ6?=
+ =?iso-2022-jp?B?cG9kdHB6SzZSWUo4Q0lOdUlCNVRYR2krUXVVclhSTGZhRXkyMzlzSlVZ?=
+ =?iso-2022-jp?B?dG1qNXduYU5ROGFZRjBBWDNlVTdRcVA1aVJLcjhMeXVSMTVSbG5Nb1hx?=
+ =?iso-2022-jp?B?bDB2c0ViZHJRb2dEQXAzeVByZjhQb2F6SzFqL1p6bDQ1RndOVk1qRUhp?=
+ =?iso-2022-jp?B?R2FLT295TW9QVk1qYXM3RjhTQmtJanBKVXBWVG1kbFZOdWRLYnlsZFFr?=
+ =?iso-2022-jp?B?NTBNQjRNNWRSSEl6RW04OExkcnh3V3l1UGM1SXVUUmY4K3NXeXhwRXBW?=
+ =?iso-2022-jp?B?UzR6U3ZNeG1BZEhxY0QrWVNJTGdXU3BtWjd2RXhwYXNqR215V0lxaHRG?=
+ =?iso-2022-jp?B?aklzbm1MNEpZQzJrTkNJME1YZlZVZ1hUVmh0MGFsTGVMMW1UQ3BaeEpl?=
+ =?iso-2022-jp?B?NjhxQnRKcVpDY1BXeHhqM3hwb0VZZm1OTWZHN25uQ2lnKzJ4VDRaYzM4?=
+ =?iso-2022-jp?B?NlVUeFNlRmFuOTRXcWJ6Vk54TVBaYmJlaGMzZDEzdEZRd0pVZTh3dUJS?=
+ =?iso-2022-jp?B?MWdVdHcwOUl2c3Ziem1ZNm8wejgzaGg4MTJ0V2tCM0dSbkxMNENNT2tT?=
+ =?iso-2022-jp?B?MG5hbnJoQmNaMTdlWE50S083UEQxZU1idml1aXRsWXZiZTdJbU1sVU9D?=
+ =?iso-2022-jp?B?dklsbWpEb3ozM010RTFaYTZ1eVp2VXZ4ZWd0d1FmcWJMb2Rhd0FEelFj?=
+ =?iso-2022-jp?B?S2FQSys2d050TDZYNzc3ajVSTW9WS1Jya0UwZmlyQVRFcENvOHNGV0JM?=
+ =?iso-2022-jp?B?dlhIWjI1cTJEWXlONndPNW1EbHpsb0k0N1ltMmhSN0tMK09jV1hPNzlv?=
+ =?iso-2022-jp?B?THdUR3h3bkNVL3hxSXVlN1NtR0ZkWVZtUUdCbGs5NnhqVHN3Q0RBUjdm?=
+ =?iso-2022-jp?B?K2FrNTFDUUtIL2RjelVRVE9ZZWM0a2dtZFovTDNqQUFSSWxtNnRIS2pj?=
+ =?iso-2022-jp?B?NEJPTVBuOGp5TFlrS094bUpNakRUSWhhNms4MzROeExnbEJkdWM0cVVz?=
+ =?iso-2022-jp?B?RUlmeUliNkg3aGZHYTBEbUVPRENTMWhrbTd1OXNPU25ZUWRKeWU0Wk1T?=
+ =?iso-2022-jp?B?UW1XZmFBOTB4cEJDelBMOU5DUTVpT2tCZURvZ2lZV29FMFozRSs0Z0lV?=
+ =?iso-2022-jp?B?RDNrbEhSSi81ekRxZDNnb0hEb3dnUmZYRlU3cGxwblQvTklaUVphbis4?=
+ =?iso-2022-jp?B?bGk3cFp0bWpvMDhaOEc5NEZ1eFBMZkhUQzBEaW1YV0x4NXFTcGdNcVFy?=
+ =?iso-2022-jp?B?cmc5WElhdUc0N2loZ25lQmhEUUptdDgrazluVS94OWdlSDFBMVN2TjJw?=
+ =?iso-2022-jp?B?L0h1dElLUG8zVFpTRjlQMktSaCtXZnR2MllYRDhrcTJQSzZGbUd3aHJJ?=
+ =?iso-2022-jp?B?cGk4cmN2OWlZU29nelRBaVNVckRvWGI3bHQ1T2VKV2hqN01lV3pidUpR?=
+ =?iso-2022-jp?B?aHUwYjRwSGJjRjQ1OGZnbHBxS3dNVDVHWWd5dDJQTTJibWY2dS94V3VN?=
+ =?iso-2022-jp?B?anFCZFZWNDZwWW5kZDAxblhYMnpSdWErTm5MY3JSYTBha1RjZzVHdEtK?=
+ =?iso-2022-jp?B?cWhmbXh4U3hobzE0VS9vMUUya1dtbkRqUFQxdXBnMnEyekl2N0lTTHNU?=
+ =?iso-2022-jp?B?bXhWUWZCR29iaHB2YTFUQlg5M2Y3VGNqMGx3bTIwSy90QS9ETnJlaDNM?=
+ =?iso-2022-jp?B?Vi85TXhOUzhNRjZzeHVCclRGSUhwQ3RiUFc2elZlZU13UTBOY2E2Qkpz?=
+ =?iso-2022-jp?B?cHJPSDIvTlhaVUVLajJ6V0xsUEFZTTVLNVlXRWd0UzNkYzZ2SWcxdzFr?=
+ =?iso-2022-jp?B?dG5RRDFXcnlqaFN6WUgyRldYSUJyV0NPcGdpVDNMVXR2WmlDUnJNeFdM?=
+ =?iso-2022-jp?B?cE1MMSs1aEI1eUlWWEJwbGJCa1VRRkxDWllsaFhFaHROYW9uZWkvenMv?=
+ =?iso-2022-jp?B?VmJORVZWeUVOK3BVcE9rSTZZbnBNd3JsZWZ4QldOOGlsWUJOZmRDdDRk?=
+ =?iso-2022-jp?B?Vk1SMENGUWJya3hjUjNvYlRBSUVZSmMrTFUvczlqQW1obHZWMDVid3k2?=
+ =?iso-2022-jp?B?eW01SjFRQT0=?=
 Content-Type: text/plain; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-Exchange-RoutingPolicyChecked: 
-	vmhYNo1fxTmzxGRt9ZfchyzxHoBPjn69SxEaYX21lCdsR+/Bx3nI/Irkw2kCx9Mr+rcAyDFEPiBntm+JnIQHjU2Z9ArFH2uL6UBntIJ0ZP3dRNMsLZkCvzSvHeMajTHQN4mwF/e3OuWYcORhe6KptukPyOAzTd+q6c2Ia5vI4UwtfCBCCKRb1CRw/qOhPKpKlnEQKq8fVvqHtcfrDdLlSNNPcXMUC5IBK1Tb6IrDiB1i1XMTQlu81PM5Ju0dX2Ai4VJ6JA4BJdJy+j86zNWvvDWbnKh/5qk0EdOKszgnSuiqtOCOsCuCBP7LVPEOCQ5R8ObEJK0GT7rcOpzduML1UQ==
+	uFX66OWJtZT3zM6tYPbr1/XksZhgg75QSgJWgmeMk2q/OASu4hT33AQj6hygLCnsZgXeNLWvgspAazmLxsQiM9RwxJ7PDRSSEaTYEv3qaGt6T/tCTCuu8SCExLDiRK/y2Hw3n+0Dfg0cDT2Cnvgm0o0zcS40gPZXjOXud7tBPkul7cnz7g54xRykUimuBP5S9ch1RJH6YE5D/MnofzxjGWgep/gNq4pdpw1uOOm8omgoqDI44bkfYjgiSQIirhA/n25jfMvHZ9LNTrnAj0URvHGHiVBzHW07PH2e8QknU0OemCC4ufciz9THKsk7x+bDX9eZPYc5Y/zsBBwsE5orDg==
 X-OriginatorOrg: mail.toshiba
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: TY7PR01MB14818.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 39b59632-361b-43af-a7f9-08de849138d2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Mar 2026 01:53:59.1109
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3f6bce0a-bfb1-49e8-afea-08de84929602
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Mar 2026 02:03:44.9576
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jCU0nfy1GbXb9hFdrgclW/riiIf6Z1B9myNoEeTxo7rqozRPRMqI6AusgkkyjaWeYxPTnJyyfV+Sp/GEqjUdYjZ0NAr9Py6ieYEb5Hy4yOo3VqfY9ciN2deKwqEdu3gm
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSCPR01MB15578
+X-MS-Exchange-CrossTenant-userprincipalname: JnVIbElUOpnUlpjwVZE/N/Qs77ZZmTvLD7MWMsFbsQlwPEvGz5N2Ep2UlTlGAGHFN3VtBw+nq8SL55sn5egt1qZakloU8vZLcyOczDKg9AViKofJ8hlpD8IEL70B0/ut
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS7PR01MB13879
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 18 Mar 2026 01:54:24 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22493
+ <cip-dev@lists.cip-project.org>; Wed, 18 Mar 2026 02:04:14 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22494
 
-Hi Chris,
+Hi Greg and Sasha,
 
-Thank you for the report.
-I am already aware of this issue and have responded to the report from Kern=
-elCI.
-  https://lore.kernel.org/cip-dev/CACe6DC4EcZ1hunb1ce56gR-mUbPvF=3DraUneJdP=
-AisWM33MAyVw@mail.gmail.com/
+Please revert "8af1c121b0102 riscv: Sparse-Memory/vmemmap out-of-bounds fix=
+" in Linux-5.10.y branch.
+Since `phys_ram_base` is not defined in riscv, a build error will occur if =
+`CONFIG_SPARSEMEM_MANUAL=3Dy`.
 
-  ```
-  This is caused by the following commit in LTS with CONFIG_SPARSEMEM_MANUA=
-L=3Dy.
-    8af1c121b0102 riscv: Sparse-Memory/vmemmap out-of-bounds fix
-
-  phys_ram_base does not exist, getting in a build error. This commit
-  must be reverted.
-  ```
-
-This is the same as what Pavel has already written.
-
-I am going to request that this commit be reverted.
+```
+[...]
+                 from arch/riscv/kernel/soc.c:7:
+./arch/riscv/include/asm/pgtable-64.h: In function =1B$B!F=1B(Bpud_page=1B$=
+B!G=1B(B:
+./arch/riscv/include/asm/pgtable.h:47:58: error: =1B$B!F=1B(Bphys_ram_base=
+=1B$B!G=1B(B undeclared (first use in this function)
+   47 | #define vmemmap         ((struct page *)VMEMMAP_START - (phys_ram_b=
+ase >> PAGE_SHIFT))
+      |                                                          ^~~~~~~~~~=
+~~~
+./include/asm-generic/memory_model.h:54:34: note: in expansion of macro =1B=
+$B!F=1B(Bvmemmap=1B$B!G=1B(B
+   54 | #define __pfn_to_page(pfn)      (vmemmap + (pfn))
+      |                                  ^~~~~~~
+./include/asm-generic/memory_model.h:82:21: note: in expansion of macro =1B=
+$B!F=1B(B__pfn_to_page=1B$B!G=1B(B
+   82 | #define pfn_to_page __pfn_to_page
+      |                     ^~~~~~~~~~~~~
+./arch/riscv/include/asm/pgtable-64.h:70:16: note: in expansion of macro =
+=1B$B!F=1B(Bpfn_to_page=1B$B!G=1B(B
+   70 |         return pfn_to_page(pud_val(pud) >> _PAGE_PFN_SHIFT);
+      |                ^~~~~~~~~~~
+./arch/riscv/include/asm/pgtable.h:47:58: note: each undeclared identifier =
+is reported only once for each function it appears in
+   47 | #define vmemmap         ((struct page *)VMEMMAP_START - (phys_ram_b=
+ase >> PAGE_SHIFT))
+      |                                                          ^~~~~~~~~~=
+~~~
+./include/asm-generic/memory_model.h:54:34: note: in expansion of macro =1B=
+$B!F=1B(Bvmemmap=1B$B!G=1B(B
+   54 | #define __pfn_to_page(pfn)      (vmemmap + (pfn))
+      |                                  ^~~~~~~
+./include/asm-generic/memory_model.h:82:21: note: in expansion of macro =1B=
+$B!F=1B(B__pfn_to_page=1B$B!G=1B(B
+   82 | #define pfn_to_page __pfn_to_page
+      |                     ^~~~~~~~~~~~~
+./arch/riscv/include/asm/pgtable-64.h:70:16: note: in expansion of macro =
+=1B$B!F=1B(Bpfn_to_page=1B$B!G=1B(B
+   70 |         return pfn_to_page(pud_val(pud) >> _PAGE_PFN_SHIFT);
+      |                ^~~~~~~~~~~
+  AS      arch/riscv/kernel/vdso/flush_icache.o
+./arch/riscv/include/asm/pgtable.h: In function =1B$B!F=1B(Bpmd_page=1B$B!G=
+=1B(B:
+./arch/riscv/include/asm/pgtable.h:47:58: error: =1B$B!F=1B(Bphys_ram_base=
+=1B$B!G=1B(B undeclared (first use in this function)
+   47 | #define vmemmap         ((struct page *)VMEMMAP_START - (phys_ram_b=
+ase >> PAGE_SHIFT))
+      |                                                          ^~~~~~~~~~=
+~~~
+./include/asm-generic/memory_model.h:54:34: note: in expansion of macro =1B=
+$B!F=1B(Bvmemmap=1B$B!G=1B(B
+   54 | #define __pfn_to_page(pfn)      (vmemmap + (pfn))
+      |                                  ^~~~~~~
+./include/asm-generic/memory_model.h:82:21: note: in expansion of macro =1B=
+$B!F=1B(B__pfn_to_page=1B$B!G=1B(B
+   82 | #define pfn_to_page __pfn_to_page
+      |                     ^~~~~~~~~~~~~
+./arch/riscv/include/asm/pgtable.h:181:16: note: in expansion of macro =1B$=
+B!F=1B(Bpfn_to_page=1B$B!G=1B(B
+  181 |         return pfn_to_page(pmd_val(pmd) >> _PAGE_PFN_SHIFT);
+      |                ^~~~~~~~~~~                                         =
+               ^~~~~~~~~~~~~
+[...]
+```
 
 Best regards,
   Nobuhiro
-
-> -----Original Message-----
-> From: Chris Paterson <Chris.Paterson2@renesas.com>
-> Sent: Tuesday, March 17, 2026 7:09 PM
-> To: iwamatsu nobuhiro(=1B$B4d>>=1B(B =1B$B?.MN=1B(B =1B$B""#D#I#T#C!{#C#P=
-#T=1B(B) <nobuhiro.iwamatsu.x90@mail.toshiba>;
-> cip-dev@lists.cip-project.org
-> Cc: jan.kiszka@siemens.com; pavel@nabladev.com; masami.ichikawa@cybertrus=
-t.co.jp; uli <uli@fpond.eu>
-> Subject: RE: [ANNOUNCE] Release v5.10.251-cip70
->=20
-> Hello Iwamatsu-san,
->=20
-> > From: nobuhiro.iwamatsu.x90@mail.toshiba
-> > <nobuhiro.iwamatsu.x90@mail.toshiba>
-> > Sent: 13 March 2026 06:51
-> >
-> > Hi all,
-> >
-> > CIP kernel team has released Linux kernel v5.10.251-cip70.
-> > The linux-5.10.y-cip tree has been updated base version from v5.10.249
-> > to v5.10.251.
->=20
-> Our KernelCI pipeline has reported a build issue for this release:
-> https://dashboard.kernelci.org/tree/cip/linux-5.10.y-cip/99e8b9912822c35e=
-388d236d0aadca61195f75e6
->=20
-> Specifically, the riscv cip_merged_defconfig build has " error: =1B$B!F=
-=1B(Bphys_ram_base=1B$B!G=1B(B undeclared (first use in this function) "
-> https://dashboard.kernelci.org/build/maestro%3A69b3acb5e8c48c93579bdc61
-> https://dashboard.kernelci.org/issue/maestro%3A51c12e2d53ea10cd0ae264568f=
-82d96b2dbc0245?iv=3D1
->=20
-> Kind regards, Chris
->=20
->=20
-> > This release includes updates to the ASoC for Renesas ARM SoCs.
-> >
-> > Information about this release is as follows:
-> >
-> >   v5.10.251-cip70:
-> >     repository:
-> >       https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-> >     branch:
-> >       linux-5.10.y-cip
-> >     commit hash:
-> >       99e8b9912822c35e388d236d0aadca61195f75e6
-> >     fixed CVEs:
-> >       CVE-2025-38201: netfilter: nft_set_pipapo: clamp maximum map
-> > bucket size to INT_MAX
-> >       CVE-2025-71235: scsi: qla2xxx: Delay module unload while fabric
-> > scan in progress
-> >       CVE-2026-23222: crypto: omap - Allocate OMAP_CRYPTO_FORCE_COPY
-> > scatterlists correctly
-> >       CVE-2025-71232: scsi: qla2xxx: Free sp in error path to fix
-> > system crash
-> >       CVE-2022-50516: fs: dlm: fix invalid derefence of sb_lvbptr
-> >       CVE-2025-71237: nilfs2: Fix potential block overflow that cause
-> > system hang
-> >       CVE-2025-71236: scsi: qla2xxx: Validate sp before freeing
-> > associated memory
-> >       CVE-2026-23229: crypto: virtio - Add spinlock protection with
-> > virtqueue notification
-> >     added commits:
-> >       CIP: Bump version suffix to -cip70 after merge from stable
-> >       ASoC: renesas: rz-ssi: Add support for 32 bits sample width
-> >       ASoC: renesas: rz-ssi: Add support for 24 bits sample width
-> >       ASoC: renesas: rz-ssi: Move DMA configuration
-> >       ASoC: renesas: rz-ssi: Remove trailing comma in the terminator en=
-try
-> >       ASoC: renesas: rz-ssi: Use dev variable in probe()
-> >       ASoC: renesas: rz-ssi: Fix
-> > rz_ssi_priv::hw_params_cache::sample_width
-> >       ASoC: renesas: rz-ssi: Fix channel swap issue in full duplex mode
-> >       dmaengine: sh: rz-dmac: Fix rz_dmac_terminate_all()
-> >       iopoll: Do not use timekeeping in read_poll_timeout_atomic()
-> >       i2c: riic: Move suspend handling to NOIRQ phase
-> >
-> > Best regards,
-> >   Nobuhiro
-
 
 
