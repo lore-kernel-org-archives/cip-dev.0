@@ -1,131 +1,144 @@
-Return-Path: <benedikt.niedermayr@siemens.com>
+Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E9E1EC01C1
-	for <webhook@archiver.kernel.org>; Mon, 23 Mar 2026 10:16:01 +0000 (UTC)
-Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.13817.1774260951479171810
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3644EC01CC
+	for <webhook@archiver.kernel.org>; Mon, 23 Mar 2026 11:05:51 +0000 (UTC)
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.14666.1774263941240307763
  for <cip-dev@lists.cip-project.org>;
- Mon, 23 Mar 2026 03:15:52 -0700
+ Mon, 23 Mar 2026 04:05:41 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=benedikt.niedermayr@siemens.com header.s=fm1 header.b=O168BtWU;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-1323861-20260323101548842c4133280002071f-wsprmm@rts-flowmailer.siemens.com)
-Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 20260323101548842c4133280002071f
-        for <cip-dev@lists.cip-project.org>;
-        Mon, 23 Mar 2026 11:15:48 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=benedikt.niedermayr@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=pMV0uVGaFjOaNoI9LBW4pccdsIX9MCOw1P/Uvj/mPsI=;
- b=O168BtWU6KKu2JXEcC2FBrjJoyADH8nQF64G2IxjyBmOIPgZyyjV/7bAEoZTVkNGbcIcKe
- tQUoNBEpKW9dcUpPYagYMg9mT6Jbo4WwMP65J/pOawoksB1wMeF/MtYiRnVEhrvRd/iKAwKr
- X72LR4zk6pMiqgNtTgS5aqU2TGS7qMFxR5zr7FLXghZhE8ZLQF52+IngCRfsVF8+efKRjUTY
- xTRtj/uOdotJfDVuOCyTshJcQ8dtTkToKT+xXCb0LR1rtGpTy8YRBAKSScihl//aszZwylHi
- kflVtkXjnoUVeL8jTR/swHZMJjul7+9ugYRE1gqzqEYGZsWSgzrCWDHQ==;
-From: Benedikt Niedermayr <benedikt.niedermayr@siemens.com>
-To: cip-dev@lists.cip-project.org
-Subject: [isar-cip-core][PATCH v3 1/1] start-qemu: allow more variable injections
-Date: Mon, 23 Mar 2026 11:15:45 +0100
-Message-ID: <20260323101546.3273376-2-benedikt.niedermayr@siemens.com>
-In-Reply-To: <20260323101546.3273376-1-benedikt.niedermayr@siemens.com>
-References: <20260323101546.3273376-1-benedikt.niedermayr@siemens.com>
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=adYwuf/F;
+ spf=pass (domain: tuxon.dev, ip: 209.85.221.53, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-43b45bb7548so2908413f8f.1
+        for <cip-dev@lists.cip-project.org>; Mon, 23 Mar 2026 04:05:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1774263939; x=1774868739; darn=lists.cip-project.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mEgk8GSQEsn3SVpxN+cX+X4If2GOWS5cIolLFwIFJFU=;
+        b=adYwuf/Fskc9lFbxGp3wiFAeziY/gYQDf7TD/fy+37gKUbxQoViwoZWRlH4IvwNJfW
+         AUjq+UK2oLS3SyvLTMeZF7adfXi1md25LsPppbyuUkDMoVmaOySo6dHFn5bo5Hk1zBli
+         8kHaBueNq9KDkeh+pgjzYf87cvzve+I1DclEaSz4wdhr4LrKx76bQOp/qMqZ0JW5x3u6
+         0EFxqJxRpYhSwNT0BYC1813pgjlKb9dxNvjw3Pg5Q50TGrMyWUnvRvsAscCnI9lDcCmG
+         S6TPbJOf7lxTDGNd8wb6HjlXWU3a4wNB+EKbgmqecau6QXx1m10/RBps5ifvrfHs3TBy
+         1NeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774263939; x=1774868739;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mEgk8GSQEsn3SVpxN+cX+X4If2GOWS5cIolLFwIFJFU=;
+        b=Oaj3WVnK3PSMmyx/VUej3ey6oOane5y3mvNEwD749/qFjGCD0u0YGP5Aa9bRTjzOkc
+         5FtByaBRpWmx/WTA10pbgs1jDMjUFE3nl8hc6ZG2RnbqX77G0kbJs1WOflyh/D/gG+gb
+         dQd2oFT1kWRrbsu7Lmp0cYXS63nryLCO9j00bLdA7KS4Vm1b6xA+1xa5gQQ2eV+ECGzh
+         EskmbmU50MYG/xjFjOSHZJujvekdNFCkyLsw3FfADlKMLh8SjuWYuv7Hox6GssdbGBuD
+         LTdJIcY30yQSzXPbblXtTTa7RIhm4AvWIfGDUV106uO952sygnK5n4JfXbsFx8CdAAyZ
+         lLcg==
+X-Gm-Message-State: AOJu0YwhebNzO7pkU90QqQUxEyS9dVanc2xt0ElIlVMFLSGa3vjPlsXo
+	IeoSfQ0sqejU97BjbT/rmLNdymiYQP4HR1s8wY/scXA+jkiT5j/+NtoEmUcgA89CYBU=
+X-Gm-Gg: ATEYQzyZvO+UEXKd2c6bJu/sfjPvTsC4xG5k6z9lgEhsg2N0n9l1Umrl4dZkEwGXRIg
+	oRVH0GM7ZeP6isqHpK2FfjbkJkUOWFc3JHytXVsNYEREK0FcNPRd5xCHwA6Q4AeSw5+uJu4sPrV
+	d45qifxjUqHJ5yOAMkKwrCjwoLslpQF9uFDJFzRlveJ/8RjFAAX55DFcETW1GnSYa4zo1PkcVRu
+	WYNRRtoqncxxUB7DKiJubNgUEeKec8LRzZB+S9zXnN0xMMiAd+75maNRaf1pBRHWNHICjpCGR5O
+	V0DYIx2gTiMVOlwFvvuKjqsIKlDaeqvOeWTqxSgumQgdRl2Tb2phDtMKROzQ+chS2sj/982SBPi
+	sUPYBrgAuVgWWyU4WrwM59hJ6hXflMpvXHJs5T+SdhqrcBPN1QnlL0+E6jbFAwtF38GwKM3t35Q
+	Au0bdW5l65gImD2ucCPOKGCWWObWYfdiM=
+X-Received: by 2002:a05:6000:2512:b0:43b:48d3:2a46 with SMTP id ffacd0b85a97d-43b64278272mr18413322f8f.33.1774263939196;
+        Mon, 23 Mar 2026 04:05:39 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.216])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b6470f902sm30220785f8f.28.2026.03.23.04.05.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Mar 2026 04:05:38 -0700 (PDT)
+Message-ID: <69b5da97-4fa2-4ce6-a1f7-74b9bce6712f@tuxon.dev>
+Date: Mon, 23 Mar 2026 13:05:36 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-1323861:519-21489:flowmailer
+User-Agent: Mozilla Thunderbird
+Subject: Re: [cip-dev] [PATCH 6.1.y-cip 00/17] Add RZ/G3S PCIe support
+To: nobuhiro.iwamatsu.x90@mail.toshiba, pavel@nabladev.com
+Cc: cip-dev@lists.cip-project.org
+References: <189BC4ACC53FCB81.1328210@lists.cip-project.org>
+Content-Language: en-US
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <189BC4ACC53FCB81.1328210@lists.cip-project.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 23 Mar 2026 10:16:01 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22527
+ <cip-dev@lists.cip-project.org>; Mon, 23 Mar 2026 11:05:51 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22529
 
-This allows to inject more variables into the script so that a local
-"kas menu" run isn't mandatory anymore and thus it could be reused in
-different environments by adjusting related environment variables only.
+Hi, CIP maintainers,
 
-Currently the script requires parsing the .config.yaml which is only available
-after running "kas menu" locally. In cases the isar-cip-core is included into
-custom layers where it mostly happens that the "kas menu" of the
-including custom layer is called rather than "kas menu" of isar-cip-core,
-(in some cases the including custom layer doesn't use kas menu at all)
-one might still want to reuse the start-qemu.sh script.
+Gentle ping on this series and the v6.1, v6.12 backports.
 
-This patch specifically allows to inject the BASE_DIR, IMAGE_PREFIX, FTPM_STMM
-and IMAGE_DATA_ENCRYPTION via environment variables from now on.
+Thank you!
 
-Signed-off-by: Benedikt Niedermayr <benedikt.niedermayr@siemens.com>
----
- start-qemu.sh | 34 ++++++++++++++++++++++++----------
- 1 file changed, 24 insertions(+), 10 deletions(-)
-
-diff --git a/start-qemu.sh b/start-qemu.sh
-index 7ccbefeb5f47..3ec121ed3a93 100755
---- a/start-qemu.sh
-+++ b/start-qemu.sh
-@@ -18,11 +18,15 @@ usage()
- 	echo "if the built was done via \"kas-container menu\"."
- 	echo
- 	echo "Environment variables (default to settings in .config.yaml):"
--	echo "  QEMU_PATH         use a locally built QEMU version"
--	echo "  SWUPDATE_BOOT     boot swupdate image"
--	echo "  SECURE_BOOT       start a secure boot environment"
--	echo "  DISTRO_RELEASE    select a specific Debian release"
--	echo "  TARGET_IMAGE      select a specific image type"
-+	echo "  QEMU_PATH             use a locally built QEMU version"
-+	echo "  SWUPDATE_BOOT         boot swupdate image"
-+	echo "  SECURE_BOOT           start a secure boot environment"
-+	echo "  DISTRO_RELEASE        select a specific Debian release"
-+	echo "  TARGET_IMAGE          select a specific image type"
-+	echo "  FTPM_STMM             use fTPM with STMM support"
-+	echo "  IMAGE_DATA_ENCRYPTION use data encryption"
-+	echo "  BASE_DIR              base directory where the build folder is located"
-+	echo "  IMAGE_PREFIX          prefix of the produced image files"
- 	exit 1
- }
- 
-@@ -80,8 +84,15 @@ else
- 	fi
- fi
- 
--if grep -s -q "IMAGE_DATA_ENCRYPTION: true" .config.yaml && \
--   ! grep -s -q "FTPM_STMM: true" .config.yaml; then
-+if grep -s -q "FTPM_STMM: true" .config.yaml; then
-+	FTPM_STMM="true"
-+fi
-+
-+if grep -s -q "IMAGE_DATA_ENCRYPTION: true" .config.yaml; then
-+	IMAGE_DATA_ENCRYPTION="true"
-+fi
-+
-+if [ -n "${IMAGE_DATA_ENCRYPTION}" ] && [ -z "${FTPM_STMM}" ] ; then
- 	case "${arch}" in
- 		x86|x86_64|amd64)
- 			TPM2_DEVICE="tpm-tis"
-@@ -124,7 +135,7 @@ case "${arch}" in
- 			-device virtio-serial-device \
- 			-device virtconsole,chardev=con -chardev vc,id=con \
- 			-device virtio-net-device,netdev=net"
--		if grep -s -q "FTPM_STMM: true" .config.yaml; then
-+		if [ -n "${FTPM_STMM}" ]; then
- 			QEMU_EXTRA_ARGS="${QEMU_EXTRA_ARGS} \
- 				-machine virt,secure=on \
- 				-device sdhci-pci -device emmc,drive=disk,rpmb-partition-size=2097152 \
-@@ -175,8 +186,11 @@ case "${arch}" in
- 		;;
- esac
- 
--BASE_DIR=$(readlink -f $(dirname $0))
--IMAGE_PREFIX="${BASE_DIR}/build/tmp/deploy/images/qemu-${QEMU_ARCH}/${TARGET_IMAGE}-cip-core-${DISTRO_RELEASE}-qemu-${QEMU_ARCH}${TEST_IMAGE}"
-+BASE_DIR_DEFAULT="$(readlink -f "$(dirname "$0")")"
-+BASE_DIR="${BASE_DIR:-$BASE_DIR_DEFAULT}"
-+IMAGE_PREFIX_DEFAULT="${BASE_DIR}/build/tmp/deploy/images/qemu-${QEMU_ARCH}/${TARGET_IMAGE}-cip-core-${DISTRO_RELEASE}-qemu-${QEMU_ARCH}${TEST_IMAGE}"
-+IMAGE_PREFIX="${IMAGE_PREFIX:-$IMAGE_PREFIX_DEFAULT}"
-+
- 
- if [ -z "${DISPLAY}" ]; then
- 	QEMU_EXTRA_ARGS="${QEMU_EXTRA_ARGS} -nographic"
--- 
-2.43.0
+On 3/11/26 13:05, claudiu beznea via lists.cip-project.org wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> Hi,
+> 
+> Series adds PCIe support for the Renesas RZ/G3S SoC.
+> Please have a look.
+> 
+> Thank you,
+> Claudiu
+> 
+> Claudiu Beznea (11):
+>    clk: renesas: r9a08g045: Add PCIe clocks and resets
+>    dt-bindings: PCI: Add Renesas RZ/G3S PCIe controller binding
+>    PCI: Add Renesas RZ/G3S host controller driver
+>    PCI: rzg3s-host: Initialize MSI status bitmap before use
+>    PCI: rzg3s-host: Use pci_generic_config_write() for the root bus
+>    PCI: rzg3s-host: Drop the lock on RZG3S_PCI_MSIRS and
+>      RZG3S_PCI_PINTRCVIS
+>    arm64: dts: renesas: r9a08g045: Use syscon compatible for the system
+>      controller
+>    arm64: dts: renesas: r9a08g045: Add PCIe node
+>    arm64: dts: renesas: rzg3s-smarc-som: Add PCIe reference clock
+>    arm64: dts: renesas: rzg3s-smarc: Enable PCIe
+>    arm64: defconfig: Enable PCIe for the Renesas RZ/G3S SoC
+> 
+> Felix Gu (1):
+>    PCI: rzg3s-host: Fix device node reference leak in
+>      rzg3s_pcie_host_parse_port()
+> 
+> Kevin Xie (1):
+>    PCI: Add PCIE_RESET_CONFIG_DEVICE_WAIT_MS waiting time value
+> 
+> Marek Vasut (1):
+>    genirq/msi: Silence 'set affinity failed' warning
+> 
+> Niklas Cassel (2):
+>    PCI: Rename PCIE_RESET_CONFIG_DEVICE_WAIT_MS to
+>      PCIE_RESET_CONFIG_WAIT_MS
+>    PCI: Move link up wait time and max retries macros to pci.h
+> 
+> Syed Nayyar Waris (1):
+>    lib/bitmap: add bitmap_{read,write}()
+> 
+>   .../bindings/pci/renesas,r9a08g045-pcie.yaml  |  249 +++
+>   MAINTAINERS                                   |    8 +
+>   arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |   67 +-
+>   .../boot/dts/renesas/rzg3s-smarc-som.dtsi     |    5 +
+>   arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi  |   11 +
+>   arch/arm64/configs/defconfig                  |    1 +
+>   drivers/clk/renesas/r9a08g045-cpg.c           |   19 +
+>   drivers/pci/controller/Kconfig                |    9 +
+>   drivers/pci/controller/Makefile               |    1 +
+>   drivers/pci/controller/pcie-rzg3s-host.c      | 1764 +++++++++++++++++
+>   drivers/pci/pci.h                             |   19 +
+>   include/linux/bitmap.h                        |   77 +
+>   include/linux/msi.h                           |    2 +
+>   kernel/irq/msi.c                              |    2 +-
+>   14 files changed, 2232 insertions(+), 2 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/pci/renesas,r9a08g045-pcie.yaml
+>   create mode 100644 drivers/pci/controller/pcie-rzg3s-host.c
+> 
 
 
