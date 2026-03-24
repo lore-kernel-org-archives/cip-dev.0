@@ -1,528 +1,500 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <felix.moessbauer@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9143EE9A77D
-	for <webhook@archiver.kernel.org>; Tue, 24 Mar 2026 12:30:36 +0000 (UTC)
-Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.18223.1774355432977811123
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9899D58CCA
+	for <webhook@archiver.kernel.org>; Tue, 24 Mar 2026 12:48:06 +0000 (UTC)
+Received: from AM0PR83CU005.outbound.protection.outlook.com (AM0PR83CU005.outbound.protection.outlook.com [52.101.69.49])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.18579.1774356478194686203
  for <cip-dev@lists.cip-project.org>;
- Tue, 24 Mar 2026 05:30:35 -0700
+ Tue, 24 Mar 2026 05:47:58 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=Gkk9r/xa;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-51332-202603241230290cedbbce56000207f8-dzkg5r@rts-flowmailer.siemens.com)
-Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 202603241230290cedbbce56000207f8
-        for <cip-dev@lists.cip-project.org>;
-        Tue, 24 Mar 2026 13:30:30 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=Quirin.Gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
- bh=U9BY3UrO0rtfm0pQD/5vCOQyO1nMV6kxl8vnTjGjFs8=;
- b=Gkk9r/xabnK1OX8jmFjPJFLd+i8cre0DQHkOlc0vpAK7rOh9AnIsN3KVJGzjxSPWpvoJjW
- JHIFwRUv4lkmBRRHSrMeb0yqbLu8cWjXSA7CaXZ6jmx5ksj6e9M0rGOphZYn4tUgnzdMq0qb
- o8AmIv1zG4cfctIZdPbMlLZ2JaxuyyXew4plO2n2tpXuVHZDMEwsidV07NOIh8NPznEAecTU
- 2zj8dEr24WIS5zcNf3PsGIpeXHuIjGfTg1y+bjF6eGox05LjaJjix1vRU+FoyAYDhoe0ZDo3
- Fa8dpqE3ReOxk+ZzBpyDXCnScD3V/jKOE+HLi8H+Fed0kP8GWC8tvzgQ==;
-From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
-To: cip-dev@lists.cip-project.org,
-	jan.kiszka@siemens.com
-Subject: [cip-dev][isar-cip-core][PATCH] chore: Add maintainer to all package recipes
-Date: Tue, 24 Mar 2026 13:29:56 +0100
-Message-ID: <20260324123028.3459200-1-Quirin.Gylstorff@siemens.com>
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=o70VFy8p;
+ spf=pass (domain: siemens.com, ip: 52.101.69.49, mailfrom: felix.moessbauer@siemens.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IobsadqWTF+oQ8XHd2dgPbdhnt4bmwp2LSW/Cy3JkVDzvLXIRkCu9wLiJRXZijevHMNG7QcCh2fclRJ+EXCzB1b+ldBsDnlQTUfcbT7TqLg2x0nATIDZaJ7a6n5ExxSvryErtOKf643EGtHtO3msWJzMJvnzT1HPMWOXnA4OIEW+/9KRbUUvgIWB4UeHOVxo6HMJZuwNRDfaz5bsv6UcSfFDtg88H24JQeP8rRcBPLFvbBBaIurq/O031scHmPN4fQLzElnvSUvOK3WCVZ1hw6qSjD25/0wUBahbCALehA5lrabyPeK7EG1nB4FoUhFylXxsnCsF3zBcBIKsV9jJdg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rUUTxfWXc1E8JnmnTAwMN2HZxnok3RorfcZ46DWZ4+8=;
+ b=bkRtXPdYid5RUSl8cWChI4wOd0/pew61Ll1+8DYSfOT1dNjZTH14j/3f0IAeMGTzCTqmrdeOYgyo78Gm5ytiY51AyeaTp7DyWIEB446JuNpg2KhYeqpl2YAVjyJIkxyfLkzW9yze4Caj7bSShWwntUEXQEmAjMVXu2XjvylY/opewJRo0wiOwjshhlDYMabFRRVqXBsuS6oiYPL8WkNzbMdizRC8KtakmoqE3ogFIYcjnyqcO26sfaDl1cY5evmp/LCl7saOrO6pCsYDs20WaaXAHmupL0/j9bQMWbK6SiKDCRLevZRvqx6QZzIUh4tc/gefY9dPX+6BTtQzqY1O9Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rUUTxfWXc1E8JnmnTAwMN2HZxnok3RorfcZ46DWZ4+8=;
+ b=o70VFy8pj1T9Ifjvi4o6NVzHNkV6UPsqO1qD7sgROVd+6Uhne5N8yzR3Nt00T1UkhqxLoYmLP4jAU2hTBwOBQ60+dXz775ejLukDzf56N9F31YV1b1FOLClNPsy52M1O05TdGM4w2yKiurKUBlA+Vlslytw3g0WQLlQ1hj3wLtlT16I5CeCzvx97bMEt5kZ33/SPPplYoPviAPZY4zp6lbWnl3Vb0yBpRmmJ9I4IReNGqFtsJzbkjWoP1upWgRrzyExmkvuKGN9sAj5AJNy5cv/8b/aSuRF5xzFfvvPO+Tt+dIYLG7LqX5zQd+rdTmXuHanVWLo3fg/tsq8nZFxU8A==
+Received: from DU0PR10MB6828.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:47f::13)
+ by AS5PR10MB8242.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:67f::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9723.31; Tue, 24 Mar
+ 2026 12:47:51 +0000
+Received: from DU0PR10MB6828.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::9412:cd7f:3f72:92ab]) by DU0PR10MB6828.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::9412:cd7f:3f72:92ab%3]) with mapi id 15.20.9723.030; Tue, 24 Mar 2026
+ 12:47:51 +0000
+From: "MOESSBAUER, Felix" <felix.moessbauer@siemens.com>
+To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+	"Gylstorff, Quirin" <quirin.gylstorff@siemens.com>, "Kiszka, Jan"
+	<jan.kiszka@siemens.com>
+Subject: Re: [cip-dev][isar-cip-core][PATCH] chore: Add maintainer to all
+ package recipes
+Thread-Topic: [cip-dev][isar-cip-core][PATCH] chore: Add maintainer to all
+ package recipes
+Thread-Index: AQHcu4oRxJM8q7lTI0KgKWAaXcqGPbW9ocEA
+Date: Tue, 24 Mar 2026 12:47:51 +0000
+Message-ID: <d924c1e45eab6ab1ad9cd5a2d194c1a4ca8ff028.camel@siemens.com>
+References: <20260324123028.3459200-1-Quirin.Gylstorff@siemens.com>
+In-Reply-To: <20260324123028.3459200-1-Quirin.Gylstorff@siemens.com>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Evolution 3.56.2-9 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DU0PR10MB6828:EE_|AS5PR10MB8242:EE_
+x-ms-office365-filtering-correlation-id: 9171fa16-f791-41f6-8f91-08de89a38fc8
+x-ms-exchange-atpmessageproperties: SA
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|1800799024|366016|376014|38070700021|56012099003|22082099003|18002099003|55112099003;
+x-microsoft-antispam-message-info: 
+ pKWpR9xcFk3F6P2pTP3/MegdkoVfV7uX0gQYmTnVcdukDdBBehiVfYf5EBCm+OKeE16RK40BhOn+Ryj4ZQAdQ9Zrxj9J7JnBhg3l4hfbWjqO36BtuXdqYMebd3e5VRi4w97Fp6myqM3KO6NjcLYN+U22kBNB4R4+5Ljsh3gLp6JIfnjJ76evtfSfFWMBRxgYILqz76mri4g0jU0jZ0/C/+2e9C6J5rbyPLu9DIMQ5D8E/+6J0yHWoM0tLyI5MZuY/QZEF+NYWC75/KPfp5cfkcdxsyXEJxXb5oSpdSXrdvWUOknra/Qvzcy/x7MvWKQBEYz5maO6afDEsd0doB/JCRRDUi19bzg4L9rVL6ol0BX0Ix6J/DX/e5US8H4SMcvwCvM76+0XWlfDQY5YUFEHRkWm0LVKx5QejynMudtiScLMQGuaDAf1bPf/Nn8N4TZPBvkQ+WBBblBJp+QLjnr/4BLkQ1bL6Y/J//zeu3wzn3fUcb4zB42RegfZTq6A3lSPelyMGqfG+VXOmQwPsvLF339W8oaFPYXWh/irnSY+tRgJ8JJWDNGjHwHnC9Xox6/qv5qZJWK48PNKFSqhuU/6ADDU4AtEuLeR1l30jJNI5R5Op1imUvBizXZqwbQ19Sij04tMYgAU8LavSWAwDTlamDA9Lzm0LKww1k7zKMg55hLgSv1YVgd5cLMCnN6lcokIetVPgTO3HUBVk2VJVENwhSywFCWFDxkDeHSFzqnC8FGdqU64Kf8PXwL7YZiRuVol
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR10MB6828.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700021)(56012099003)(22082099003)(18002099003)(55112099003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?utf-8?B?OFNEckorYjQwYTdjSEhybHZYVXJhcUp5RFBLT3I2NW9XMTJRbFZSSWFXbDFy?=
+ =?utf-8?B?MGdhOEhaT2dsMWJuMnRiZENJOXNUdGtwNDVldmxkY1c2MFpxK0xCbGxMWkM1?=
+ =?utf-8?B?cDU3MXo0RlBlQWgzd0JvUlpFbU1IdzFGZ25jOGNEOWo4UHJvMnRVUDdieExF?=
+ =?utf-8?B?ai84Y0VsbzFwVU5vcEFkSStsOUxaYkIxSWpYLzNhcTMyckphMXo1NmlxS1Z4?=
+ =?utf-8?B?VHJnRUlmVlBJL3Jnd0ZCODdERWFNUDZEdWt5b3o4OXZBRENKbWRMWDlvend3?=
+ =?utf-8?B?Y0ZXWk5mRHVGQ1ZEeW1NblhZZCtZRTNUUEpvNzc1Y282RUs0NWF2OUdHN0hQ?=
+ =?utf-8?B?M0ZJclZpSm5RMFNDa3VHU3dxckdFTEpJRytzeXFyRHZZb0FNZFRzeXJrTWVH?=
+ =?utf-8?B?ZjFyRjRDSWVpWUw0WUhTb1l2U1NvSlN2QmhSaUkzcFprWVd4bi8zS3FmZ1ZU?=
+ =?utf-8?B?Q0FUaDZ5ZGRwSXFOMGZ4K2tzSmQvZXFmU1p4UEQxUG5wUk43MlVZMDhJUUtF?=
+ =?utf-8?B?a0N1ZytqNTE4MTZJbXFsczVNdW1IcjRHdGRHVEZaUE51RStJTnp4NDhyaFpu?=
+ =?utf-8?B?ZkpFOXIxWEc5cThQdGpONTlNaCtFRGFEZ3Q3WElWeFA2bVpIbUJUM29OSWJH?=
+ =?utf-8?B?cEJ1SHdVbEpKZERzdVFRbTJHR3AxSndKcktUVWU4WnJPK0VsT1loc0VpT1kr?=
+ =?utf-8?B?QzhtbUxqWGlSYjlIRzgxWWhMR3psbGtJdDhvUExyR1VDTklGZituYU9iSVZG?=
+ =?utf-8?B?SnRnSEVnWTZSSTN1U3d3Uk94MlNwSWRHV3dYaHQxZWhJRndmWlJQSmxhZjlT?=
+ =?utf-8?B?RTMva2JYcWREcWs1Skd6UUJrQ1N3UEhvRHBha2t4VUN3M0x4SGtFSFFsZi8x?=
+ =?utf-8?B?TS9JeTUxNXJMcitRejlvUFlvTWZIREpIWFZsaFhPckpCUlMvdkNMOVkzSHpa?=
+ =?utf-8?B?bHlRK0hOZnYxNHJkNXY0WVg2MThWc2FTcHJ0R2N0a0RWWXd3ZmtqV3NnZzRD?=
+ =?utf-8?B?eTUrZEVvbTBMUk5IOE1laWgxRVpScnZ4OWdndUNQY0k5bTBTVlZvcEpxTGEz?=
+ =?utf-8?B?eDU1M29iaU5Va2E0N1NXdHVhZE11YUxtVzE1ZERZbkJmR0NQcStMRjdkaHdE?=
+ =?utf-8?B?eUNaZUZKbGJ3TEE4dXpZTVArUEhvOFVLOE1wRk9tYURvakFqNFZicFU3clRV?=
+ =?utf-8?B?VW5DYzErQ0RyZ0YvWE92S0NueVNTeDAvVXhDdVNGc0xmWTJISUVuTjJPbmtq?=
+ =?utf-8?B?ZDZ1bVlkU20xN3IwLzVjLzlzc0hyRWJuWUlnQ3VUWkozaUdMaE5KN1pJRDVt?=
+ =?utf-8?B?OWRXWFpkTEY2S3RkbGZjMzZCT0d4OEEvdEhWczhNaFRzaWRLTDJJSUViem1R?=
+ =?utf-8?B?OTF6OFAvMU1sTXlUTkcya1paOTNLSTN0MGN5L2pkemRtZTM4NHFuMmdRdVBq?=
+ =?utf-8?B?elBlTWhkd0NkcENLY2V4VG5nZGozemxYQjMrcWIxa1N6eFBTL3lEaTFSVER6?=
+ =?utf-8?B?Z0dBQXh3ZXpndEU0anA1Z1YyNE9FQTl2QjBQSEJ5aGJhRXp3Rk5oaTgvMGJJ?=
+ =?utf-8?B?cFZZZ0UwZ1ljM3FqaGY0bEVxM01KSGtJSGwwbFBWM1BXaVczS2I2MDhoMENB?=
+ =?utf-8?B?bWdtdjZ0NUJVVmt0R0ZRSmJmaUQrOTdpSGpkVWk1SExEY3BxOEpEcGdsMlcw?=
+ =?utf-8?B?YjlCY3VTaWppSFdjZkQvVGdMNDBRSGY0VHdOTG1SbUF6OFB5OEZPU2RsdEdk?=
+ =?utf-8?B?N0szNkdTbEduTmFGcDJaaUhCNzdjbFhQNWltMlVrN3dCeDY0RllzcVdSTm1W?=
+ =?utf-8?B?UUJ6K1hySE5jTG9DRkFaV3lMSDIzNnVVSWwzYmVjaHBpOWMrS2loZ29aenZT?=
+ =?utf-8?B?YkJkUW44dDdWMkhJeHliMUVNREZ4N0J6ZHJId0FPbmQraTEydm9YNWhnaUhv?=
+ =?utf-8?B?VC9CTm1ZV0ZSTEJVVExxcms1cVZYdTVjREVEdTVzL0J0MGx0YU5CT0VKS2Va?=
+ =?utf-8?B?Zk5najFuc0U1NU5sS295N3FrVEVGYVd2VTY0SDEwWUNrWTFZVjl1S1QwcEZM?=
+ =?utf-8?B?TlJhdkYwM3JJc3pRUE5jWGQxOUlRMHhSTXFKazNwN0lEVmU0Wi8zSWtKdjNx?=
+ =?utf-8?B?YlRzaWlJc0c2cWVBN2NJL09vL1duS0xMa3dkTk8wZ2p3cW5ndTJIQkM3dDRS?=
+ =?utf-8?B?ZlFIWEJOK1NKclNwYmZ4QWxDSmMyMnhWUzhsbStyWXp4d3ZScUxyNVpTVDhu?=
+ =?utf-8?B?aEd5TndRaWs4RnpuOUpFV1F5QzRkSGgxSkZqaGN4R2VrdkJBeWhOemNTKzF3?=
+ =?utf-8?B?RE84UzJwK1dtUGVTcWZkelRpbFJIaEdlR3dzelFPR0JsRGZvQXZuVnM2TXhy?=
+ =?utf-8?Q?uF8+falJJVo9h0amjY6CuNR/wWnYD2b11ouLd?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D867AA82BF65584F98F3BEA762F405CA@EURPRD10.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-51332:519-21489:flowmailer
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR10MB6828.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9171fa16-f791-41f6-8f91-08de89a38fc8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Mar 2026 12:47:51.7634
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: LQJrTvM2Alfd4kfyHsTCaMktUeQ/68Bzd48EKV3Y1C+wCX6ogMxgt2Rc2Cs81YnoJzXa7cAY0Wdq04OQACFjUlmELox1oWaOTMrW/QC0GOE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS5PR10MB8242
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 24 Mar 2026 12:30:36 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22551
+ <cip-dev@lists.cip-project.org>; Tue, 24 Mar 2026 12:48:06 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22552
 
-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-
-This avoids the warning introduced with https://github.com/ilbers/isar/commit/712a62478d0ad34b7364f2892f485b7a014610c9
-```
-WARNING:  do_prepare_build: MAINTAINER contains '@example.com'. Please set a valid maintainer.
-```
-
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
----
- .../hss-payload-generator/hss-payload-generator_2025.07.bb      | 2 ++
- recipes-core/change-root-homedir/change-root-homedir_0.2.bb     | 2 ++
- recipes-core/customizations/common.inc                          | 2 ++
- recipes-core/home-fs/home-fs_0.1.bb                             | 2 ++
- recipes-core/journald-config/journald-config_0.1.bb             | 2 ++
- recipes-core/kernel-panic/kernel-panic.bb                       | 2 ++
- recipes-core/ltp/ltp.inc                                        | 2 ++
- recipes-core/move-homedir-var/move-homedir-var_0.1.bb           | 2 ++
- recipes-core/security-customizations/security-customizations.bb | 2 ++
- recipes-core/swupdate-config-wfx/swupdate-config-wfx_0.1.bb     | 2 ++
- recipes-core/swupdate-config/swupdate-config_0.2.bb             | 2 ++
- .../swupdate-handler-roundrobin_0.1.bb                          | 2 ++
- recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb          | 2 ++
- recipes-core/swupdate/swupdate_2022.12+dsfg-4-cip.bb            | 2 ++
- recipes-core/swupdate/swupdate_2023.12.bb                       | 2 ++
- recipes-core/tmp-fs/tmp-fs_0.2.bb                               | 2 ++
- recipes-devtools/dosfstools/dosfstools_latest.bb                | 2 ++
- .../ebg-secure-boot-signer/ebg-secure-boot-signer_0.2.bb        | 2 ++
- recipes-devtools/secure-boot-secrets/secure-boot-secrets.inc    | 2 ++
- .../swupdate-certificates/swupdate-certificates-key.inc         | 2 ++
- .../swupdate-certificates/swupdate-certificates.inc             | 2 ++
- recipes-devtools/swupdate-signer/swupdate-signer-cms_0.1.bb     | 2 ++
- recipes-devtools/swupdate-signer/swupdate-signer-empty.bb       | 2 ++
- .../initramfs-abrootfs-hook/initramfs-abrootfs-hook_0.3.bb      | 2 ++
- .../initramfs-cip-functions/initramfs-cip-functions_0.1.bb      | 2 ++
- .../initramfs-crypt-hook/initramfs-crypt-hook_0.10.bb           | 2 ++
- .../initramfs-erofs-hook/initramfs-erofs-hook_0.2.bb            | 2 ++
- .../initramfs-factory-reset-hook_0.3.bb                         | 2 ++
- .../initramfs-overlay-hook/initramfs-overlay-hook_0.4.bb        | 2 ++
- .../initramfs-squashfs-hook/initramfs-squashfs-hook_0.2.bb      | 2 ++
- .../initramfs-verity-hook/initramfs-verity-hook_0.3.bb          | 2 ++
- recipes-python/shtab/python-shtab_1.5.5-4.bb                    | 2 ++
- recipes-security/fail2ban-config/fail2ban-config.bb             | 2 ++
- recipes-support/factory-reset-helper/factory-reset-helper.inc   | 2 ++
- 34 files changed, 68 insertions(+)
-
-diff --git a/recipes-bsp/hss-payload-generator/hss-payload-generator_2025.07.bb b/recipes-bsp/hss-payload-generator/hss-payload-generator_2025.07.bb
-index fa86094..cfb821f 100644
---- a/recipes-bsp/hss-payload-generator/hss-payload-generator_2025.07.bb
-+++ b/recipes-bsp/hss-payload-generator/hss-payload-generator_2025.07.bb
-@@ -11,6 +11,8 @@
- 
- inherit dpkg
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- SRC_URI = " \
-     https://github.com/polarfire-soc/hart-software-services/archive/refs/tags/v${PV}.tar.gz;downloadfilename=hart-software-services-v${PV}.tar.gz \
-     file://rules"
-diff --git a/recipes-core/change-root-homedir/change-root-homedir_0.2.bb b/recipes-core/change-root-homedir/change-root-homedir_0.2.bb
-index a0725c1..702e518 100644
---- a/recipes-core/change-root-homedir/change-root-homedir_0.2.bb
-+++ b/recipes-core/change-root-homedir/change-root-homedir_0.2.bb
-@@ -10,6 +10,8 @@
- 
- inherit dpkg-raw
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- DESCRIPTION = "Move roots homedir to /home for read-only rootfs"
- 
- SRC_URI = "file://postinst"
-diff --git a/recipes-core/customizations/common.inc b/recipes-core/customizations/common.inc
-index c4d201f..81a36ed 100644
---- a/recipes-core/customizations/common.inc
-+++ b/recipes-core/customizations/common.inc
-@@ -11,6 +11,8 @@
- 
- inherit dpkg-raw
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- FILESPATH:append := ":${FILE_DIRNAME}/files"
- 
- SRC_URI = " \
-diff --git a/recipes-core/home-fs/home-fs_0.1.bb b/recipes-core/home-fs/home-fs_0.1.bb
-index fb9e351..fd88f21 100644
---- a/recipes-core/home-fs/home-fs_0.1.bb
-+++ b/recipes-core/home-fs/home-fs_0.1.bb
-@@ -10,6 +10,8 @@
- 
- inherit dpkg-raw
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- SRC_URI = "file://postinst \
-            file://home.mount"
- 
-diff --git a/recipes-core/journald-config/journald-config_0.1.bb b/recipes-core/journald-config/journald-config_0.1.bb
-index 00dbfce..62fc0c7 100644
---- a/recipes-core/journald-config/journald-config_0.1.bb
-+++ b/recipes-core/journald-config/journald-config_0.1.bb
-@@ -10,6 +10,8 @@
- 
- inherit dpkg-raw
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- SRC_URI = "file://persistent-journal.conf"
- 
- do_install[cleandirs] = "${D}/usr/lib/systemd/journald.conf.d/"
-diff --git a/recipes-core/kernel-panic/kernel-panic.bb b/recipes-core/kernel-panic/kernel-panic.bb
-index 511febb..22a4dde 100644
---- a/recipes-core/kernel-panic/kernel-panic.bb
-+++ b/recipes-core/kernel-panic/kernel-panic.bb
-@@ -11,6 +11,8 @@
- 
- inherit dpkg-raw
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- DESCRIPTION = "Systemd service file to cause kernel panic"
- 
- SRC_URI = " \
-diff --git a/recipes-core/ltp/ltp.inc b/recipes-core/ltp/ltp.inc
-index 27e26a0..4d524f1 100644
---- a/recipes-core/ltp/ltp.inc
-+++ b/recipes-core/ltp/ltp.inc
-@@ -11,6 +11,8 @@
- 
- inherit dpkg
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- DESCRIPTION = "Linux Test project for CIP"
- 
- SRC_URI = " \
-diff --git a/recipes-core/move-homedir-var/move-homedir-var_0.1.bb b/recipes-core/move-homedir-var/move-homedir-var_0.1.bb
-index 608bb69..54e807a 100644
---- a/recipes-core/move-homedir-var/move-homedir-var_0.1.bb
-+++ b/recipes-core/move-homedir-var/move-homedir-var_0.1.bb
-@@ -10,6 +10,8 @@
- 
- inherit dpkg-raw
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- DEBIAN_CONFLICTS = "home-fs"
- SRC_URI = "file://${BPN}.tmpfiles.tmpl"
- 
-diff --git a/recipes-core/security-customizations/security-customizations.bb b/recipes-core/security-customizations/security-customizations.bb
-index d8fa22b..382f0c8 100644
---- a/recipes-core/security-customizations/security-customizations.bb
-+++ b/recipes-core/security-customizations/security-customizations.bb
-@@ -11,6 +11,8 @@
- 
- inherit dpkg-raw
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- DESCRIPTION = "CIP Security configuration for IEC62443-4-2 evaluation"
- 
- SRC_URI = "file://postinst \
-diff --git a/recipes-core/swupdate-config-wfx/swupdate-config-wfx_0.1.bb b/recipes-core/swupdate-config-wfx/swupdate-config-wfx_0.1.bb
-index 3569888..c800c84 100644
---- a/recipes-core/swupdate-config-wfx/swupdate-config-wfx_0.1.bb
-+++ b/recipes-core/swupdate-config-wfx/swupdate-config-wfx_0.1.bb
-@@ -11,6 +11,8 @@
- 
- inherit dpkg-raw
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- PROVIDES := "${PN}"
- DEBIAN_PROVIDES := "${PN}"
- 
-diff --git a/recipes-core/swupdate-config/swupdate-config_0.2.bb b/recipes-core/swupdate-config/swupdate-config_0.2.bb
-index 63fa320..cdfd8b9 100644
---- a/recipes-core/swupdate-config/swupdate-config_0.2.bb
-+++ b/recipes-core/swupdate-config/swupdate-config_0.2.bb
-@@ -11,6 +11,8 @@
- 
- inherit dpkg-raw
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- PROVIDES := "${PN}"
- DEBIAN_PROVIDES := "${PN}"
- 
-diff --git a/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb b/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb
-index 59ac49e..2ba192c 100644
---- a/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb
-+++ b/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb
-@@ -10,6 +10,8 @@
- 
- inherit dpkg-raw
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- PROVIDES = "swupdate-handlers"
- 
- SRC_URI += "git://gitlab.com/cip-project/cip-sw-updates/swupdate-handler-roundrobin.git;protocol=https;destsuffix=swupdate-handler-roundrobin;name=swupdate-handler-roundrobin;nobranch=1"
-diff --git a/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb b/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb
-index 035887e..1ab14c4 100644
---- a/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb
-+++ b/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb
-@@ -10,6 +10,8 @@
- 
- inherit dpkg-gbp
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- require swupdate.inc
- 
- DEB_BUILD_PROFILES += "nodoc"
-diff --git a/recipes-core/swupdate/swupdate_2022.12+dsfg-4-cip.bb b/recipes-core/swupdate/swupdate_2022.12+dsfg-4-cip.bb
-index 3a73c89..6193027 100644
---- a/recipes-core/swupdate/swupdate_2022.12+dsfg-4-cip.bb
-+++ b/recipes-core/swupdate/swupdate_2022.12+dsfg-4-cip.bb
-@@ -10,6 +10,8 @@
- 
- inherit dpkg
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- require swupdate.inc
- 
- DEPENDS += "libebgenv-dev"
-diff --git a/recipes-core/swupdate/swupdate_2023.12.bb b/recipes-core/swupdate/swupdate_2023.12.bb
-index 6822153..5dd7c27 100644
---- a/recipes-core/swupdate/swupdate_2023.12.bb
-+++ b/recipes-core/swupdate/swupdate_2023.12.bb
-@@ -10,6 +10,8 @@
- 
- inherit dpkg
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- require swupdate.inc
- 
- DEPENDS += "libebgenv-dev"
-diff --git a/recipes-core/tmp-fs/tmp-fs_0.2.bb b/recipes-core/tmp-fs/tmp-fs_0.2.bb
-index bb5fcce..f2b7976 100644
---- a/recipes-core/tmp-fs/tmp-fs_0.2.bb
-+++ b/recipes-core/tmp-fs/tmp-fs_0.2.bb
-@@ -10,6 +10,8 @@
- 
- inherit dpkg-raw
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- SRC_URI = "file://postinst"
- 
- do_install() {
-diff --git a/recipes-devtools/dosfstools/dosfstools_latest.bb b/recipes-devtools/dosfstools/dosfstools_latest.bb
-index 37a8f42..d0ac128 100644
---- a/recipes-devtools/dosfstools/dosfstools_latest.bb
-+++ b/recipes-devtools/dosfstools/dosfstools_latest.bb
-@@ -11,6 +11,8 @@
- 
- inherit dpkg
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- CHANGELOG_V="<orig-version>+cip"
- 
- SRC_URI = "apt://${BPN}"
-diff --git a/recipes-devtools/ebg-secure-boot-signer/ebg-secure-boot-signer_0.2.bb b/recipes-devtools/ebg-secure-boot-signer/ebg-secure-boot-signer_0.2.bb
-index 57ad1be..6963d09 100644
---- a/recipes-devtools/ebg-secure-boot-signer/ebg-secure-boot-signer_0.2.bb
-+++ b/recipes-devtools/ebg-secure-boot-signer/ebg-secure-boot-signer_0.2.bb
-@@ -12,6 +12,8 @@
- 
- inherit dpkg-raw
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- DESCRIPTION = "Signing script for EFI Boot Guard setups"
- 
- DEPENDS = "secure-boot-secrets"
-diff --git a/recipes-devtools/secure-boot-secrets/secure-boot-secrets.inc b/recipes-devtools/secure-boot-secrets/secure-boot-secrets.inc
-index 5277d9b..38b57ee 100644
---- a/recipes-devtools/secure-boot-secrets/secure-boot-secrets.inc
-+++ b/recipes-devtools/secure-boot-secrets/secure-boot-secrets.inc
-@@ -11,6 +11,8 @@
- 
- inherit dpkg-raw
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- PROVIDES += "secure-boot-secrets"
- DEBIAN_PROVIDES = "secure-boot-secrets"
- 
-diff --git a/recipes-devtools/swupdate-certificates/swupdate-certificates-key.inc b/recipes-devtools/swupdate-certificates/swupdate-certificates-key.inc
-index 2abb963..4124b31 100644
---- a/recipes-devtools/swupdate-certificates/swupdate-certificates-key.inc
-+++ b/recipes-devtools/swupdate-certificates/swupdate-certificates-key.inc
-@@ -11,6 +11,8 @@
- 
- inherit dpkg-raw
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- FILESEXTRAPATHS:prepend := "${FILE_DIRNAME}/files:"
- 
- PROVIDES += "swupdate-certificates-key"
-diff --git a/recipes-devtools/swupdate-certificates/swupdate-certificates.inc b/recipes-devtools/swupdate-certificates/swupdate-certificates.inc
-index 344775d..3c59887 100644
---- a/recipes-devtools/swupdate-certificates/swupdate-certificates.inc
-+++ b/recipes-devtools/swupdate-certificates/swupdate-certificates.inc
-@@ -11,6 +11,8 @@
- 
- inherit dpkg-raw
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- FILESEXTRAPATHS:prepend := "${FILE_DIRNAME}/files:"
- 
- PROVIDES += "swupdate-certificates"
-diff --git a/recipes-devtools/swupdate-signer/swupdate-signer-cms_0.1.bb b/recipes-devtools/swupdate-signer/swupdate-signer-cms_0.1.bb
-index 44bbd0a..ee8d172 100644
---- a/recipes-devtools/swupdate-signer/swupdate-signer-cms_0.1.bb
-+++ b/recipes-devtools/swupdate-signer/swupdate-signer-cms_0.1.bb
-@@ -10,6 +10,8 @@
- 
- inherit dpkg-raw
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- PROVIDES = "swupdate-signer"
- DEBIAN_PROVIDES = "swupdate-signer"
- 
-diff --git a/recipes-devtools/swupdate-signer/swupdate-signer-empty.bb b/recipes-devtools/swupdate-signer/swupdate-signer-empty.bb
-index fde9cb4..af9de76 100644
---- a/recipes-devtools/swupdate-signer/swupdate-signer-empty.bb
-+++ b/recipes-devtools/swupdate-signer/swupdate-signer-empty.bb
-@@ -10,6 +10,8 @@
- 
- inherit dpkg-raw
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- PROVIDES = "swupdate-signer"
- DEBIAN_PROVIDES = "swupdate-signer"
- 
-diff --git a/recipes-initramfs/initramfs-abrootfs-hook/initramfs-abrootfs-hook_0.3.bb b/recipes-initramfs/initramfs-abrootfs-hook/initramfs-abrootfs-hook_0.3.bb
-index 3538bcf..48f6458 100644
---- a/recipes-initramfs/initramfs-abrootfs-hook/initramfs-abrootfs-hook_0.3.bb
-+++ b/recipes-initramfs/initramfs-abrootfs-hook/initramfs-abrootfs-hook_0.3.bb
-@@ -11,6 +11,8 @@
- 
- inherit initramfs-hook
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- RDEPENDS += "initramfs-cip-functions"
- DEBIAN_DEPENDS .= ", util-linux, initramfs-cip-functions"
- DEBIAN_CONFLICTS = "initramfs-verity-hook"
-diff --git a/recipes-initramfs/initramfs-cip-functions/initramfs-cip-functions_0.1.bb b/recipes-initramfs/initramfs-cip-functions/initramfs-cip-functions_0.1.bb
-index d497aa4..73ee68d 100644
---- a/recipes-initramfs/initramfs-cip-functions/initramfs-cip-functions_0.1.bb
-+++ b/recipes-initramfs/initramfs-cip-functions/initramfs-cip-functions_0.1.bb
-@@ -11,6 +11,8 @@
- 
- inherit dpkg-raw
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- DESCRIPTION = "helper functions for cip initramfs-tools extensions"
- 
- SRC_URI += "file://cip-initramfs-functions"
-diff --git a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.10.bb b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.10.bb
-index e132b9e..18a10a8 100644
---- a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.10.bb
-+++ b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.10.bb
-@@ -11,6 +11,8 @@
- 
- inherit initramfs-hook
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- RDEPENDS += "initramfs-cip-functions"
- 
- DEBIAN_DEPENDS .= ", \
-diff --git a/recipes-initramfs/initramfs-erofs-hook/initramfs-erofs-hook_0.2.bb b/recipes-initramfs/initramfs-erofs-hook/initramfs-erofs-hook_0.2.bb
-index e423248..2015503 100644
---- a/recipes-initramfs/initramfs-erofs-hook/initramfs-erofs-hook_0.2.bb
-+++ b/recipes-initramfs/initramfs-erofs-hook/initramfs-erofs-hook_0.2.bb
-@@ -11,4 +11,6 @@
- 
- inherit initramfs-hook
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- HOOK_ADD_MODULES = "erofs"
-diff --git a/recipes-initramfs/initramfs-factory-reset-hook/initramfs-factory-reset-hook_0.3.bb b/recipes-initramfs/initramfs-factory-reset-hook/initramfs-factory-reset-hook_0.3.bb
-index 7dc04eb..e962a51 100644
---- a/recipes-initramfs/initramfs-factory-reset-hook/initramfs-factory-reset-hook_0.3.bb
-+++ b/recipes-initramfs/initramfs-factory-reset-hook/initramfs-factory-reset-hook_0.3.bb
-@@ -10,6 +10,8 @@
- 
- inherit initramfs-hook
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- DESCRIPTION = "Delete the content of the given Devices"
- 
- # list of partitions by label
-diff --git a/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.4.bb b/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.4.bb
-index 4ec382c..57b26ec 100644
---- a/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.4.bb
-+++ b/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.4.bb
-@@ -12,6 +12,8 @@
- 
- inherit initramfs-hook
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- INITRAMFS_OVERLAY_RECOVERY_SCRIPT ??= "overlay_recovery_action.script"
- 
- SRC_URI += " \
-diff --git a/recipes-initramfs/initramfs-squashfs-hook/initramfs-squashfs-hook_0.2.bb b/recipes-initramfs/initramfs-squashfs-hook/initramfs-squashfs-hook_0.2.bb
-index 1f5decc..9ff4cbf 100644
---- a/recipes-initramfs/initramfs-squashfs-hook/initramfs-squashfs-hook_0.2.bb
-+++ b/recipes-initramfs/initramfs-squashfs-hook/initramfs-squashfs-hook_0.2.bb
-@@ -11,4 +11,6 @@
- 
- inherit initramfs-hook
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- HOOK_ADD_MODULES = "squashfs"
-diff --git a/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.3.bb b/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.3.bb
-index a0ee803..b2fb704 100644
---- a/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.3.bb
-+++ b/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.3.bb
-@@ -11,6 +11,8 @@
- 
- inherit initramfs-hook
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- SRC_URI += " \
-     file://hook \
-     file://local-top-complete.tmpl \
-diff --git a/recipes-python/shtab/python-shtab_1.5.5-4.bb b/recipes-python/shtab/python-shtab_1.5.5-4.bb
-index 7a5cfd2..8ccef35 100644
---- a/recipes-python/shtab/python-shtab_1.5.5-4.bb
-+++ b/recipes-python/shtab/python-shtab_1.5.5-4.bb
-@@ -11,6 +11,8 @@
- 
- inherit dpkg-gbp
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- SRC_URI += " \
-     git://salsa.debian.org/python-team/packages/python-shtab.git;protocol=https;branch=main \
-     "
-diff --git a/recipes-security/fail2ban-config/fail2ban-config.bb b/recipes-security/fail2ban-config/fail2ban-config.bb
-index 87d1497..4900069 100644
---- a/recipes-security/fail2ban-config/fail2ban-config.bb
-+++ b/recipes-security/fail2ban-config/fail2ban-config.bb
-@@ -12,6 +12,8 @@ DESCRIPTION = "Basic fail2ban config with systemd as backend"
- 
- inherit dpkg-raw
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- SRC_URI += "file://systemd-defaults.conf"
- 
- DEBIAN_DEPENDS += "fail2ban, python3-systemd, python3-pyinotify"
-diff --git a/recipes-support/factory-reset-helper/factory-reset-helper.inc b/recipes-support/factory-reset-helper/factory-reset-helper.inc
-index 56ac5b4..9e17daa 100644
---- a/recipes-support/factory-reset-helper/factory-reset-helper.inc
-+++ b/recipes-support/factory-reset-helper/factory-reset-helper.inc
-@@ -10,6 +10,8 @@
- 
- inherit dpkg-raw
- 
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
- DESCRIPTION = "helper script to execute a factory reset"
- 
- PROVIDES = "factory-reset-helper"
--- 
-2.53.0
-
+T24gVHVlLCAyMDI2LTAzLTI0IGF0IDEzOjI5ICswMTAwLCBRdWlyaW4gR3lsc3RvcmZmIHZpYSBs
+aXN0cy5jaXAtDQpwcm9qZWN0Lm9yZyB3cm90ZToNCj4gRnJvbTogUXVpcmluIEd5bHN0b3JmZiA8
+cXVpcmluLmd5bHN0b3JmZkBzaWVtZW5zLmNvbT4NCj4gDQo+IFRoaXMgYXZvaWRzIHRoZSB3YXJu
+aW5nIGludHJvZHVjZWQgd2l0aCBodHRwczovL2dpdGh1Yi5jb20vaWxiZXJzL2lzYXIvY29tbWl0
+LzcxMmE2MjQ3OGQwYWQzNGI3MzY0ZjI4OTJmNDg1YjdhMDE0NjEwYzkNCj4gYGBgDQo+IFdBUk5J
+Tkc6ICBkb19wcmVwYXJlX2J1aWxkOiBNQUlOVEFJTkVSIGNvbnRhaW5zICdAZXhhbXBsZS5jb20n
+LiBQbGVhc2Ugc2V0IGEgdmFsaWQgbWFpbnRhaW5lci4NCg0KVGhhbmtzIQ0KDQpXaGlsZSB3ZSBh
+cmUgYXQgaXQ6IEkgbm90aWNlZCB0aGF0IHdlIGFsc28gaGF2ZSBtYW55IHBhY2thZ2VzIHdpdGgg
+YQ0KZGVmYXVsdCBERVNDUklQVElPTiAoIm11c3Qgbm90IGJlIGVtcHR5IikuIENhbiB5b3UgcGxl
+YXNlIGZpeCB0aGVzZSBhcw0Kd2VsbC4NCg0KVG8gZWFzaWx5IGZpbmQgdGhlbSwgZ2VuZXJhdGUg
+dGhlIFNCT00gYW5kIGNoZWNrIHRoZSAic3VtbWFyeSIgZm9yIHRoZQ0Kc3RyaW5nICJtdXN0IG5v
+dCBiZSBlbXB0eSIuDQoNCkZlbGl4DQoNCj4gYGBgDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBRdWly
+aW4gR3lsc3RvcmZmIDxxdWlyaW4uZ3lsc3RvcmZmQHNpZW1lbnMuY29tPg0KPiAtLS0NCj4gIC4u
+Li9oc3MtcGF5bG9hZC1nZW5lcmF0b3IvaHNzLXBheWxvYWQtZ2VuZXJhdG9yXzIwMjUuMDcuYmIg
+ICAgICB8IDIgKysNCj4gIHJlY2lwZXMtY29yZS9jaGFuZ2Utcm9vdC1ob21lZGlyL2NoYW5nZS1y
+b290LWhvbWVkaXJfMC4yLmJiICAgICB8IDIgKysNCj4gIHJlY2lwZXMtY29yZS9jdXN0b21pemF0
+aW9ucy9jb21tb24uaW5jICAgICAgICAgICAgICAgICAgICAgICAgICB8IDIgKysNCj4gIHJlY2lw
+ZXMtY29yZS9ob21lLWZzL2hvbWUtZnNfMC4xLmJiICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICB8IDIgKysNCj4gIHJlY2lwZXMtY29yZS9qb3VybmFsZC1jb25maWcvam91cm5hbGQtY29uZmln
+XzAuMS5iYiAgICAgICAgICAgICB8IDIgKysNCj4gIHJlY2lwZXMtY29yZS9rZXJuZWwtcGFuaWMv
+a2VybmVsLXBhbmljLmJiICAgICAgICAgICAgICAgICAgICAgICB8IDIgKysNCj4gIHJlY2lwZXMt
+Y29yZS9sdHAvbHRwLmluYyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8
+IDIgKysNCj4gIHJlY2lwZXMtY29yZS9tb3ZlLWhvbWVkaXItdmFyL21vdmUtaG9tZWRpci12YXJf
+MC4xLmJiICAgICAgICAgICB8IDIgKysNCj4gIHJlY2lwZXMtY29yZS9zZWN1cml0eS1jdXN0b21p
+emF0aW9ucy9zZWN1cml0eS1jdXN0b21pemF0aW9ucy5iYiB8IDIgKysNCj4gIHJlY2lwZXMtY29y
+ZS9zd3VwZGF0ZS1jb25maWctd2Z4L3N3dXBkYXRlLWNvbmZpZy13ZnhfMC4xLmJiICAgICB8IDIg
+KysNCj4gIHJlY2lwZXMtY29yZS9zd3VwZGF0ZS1jb25maWcvc3d1cGRhdGUtY29uZmlnXzAuMi5i
+YiAgICAgICAgICAgICB8IDIgKysNCj4gIC4uLi9zd3VwZGF0ZS1oYW5kbGVyLXJvdW5kcm9iaW5f
+MC4xLmJiICAgICAgICAgICAgICAgICAgICAgICAgICB8IDIgKysNCj4gIHJlY2lwZXMtY29yZS9z
+d3VwZGF0ZS9zd3VwZGF0ZV8yMDIxLjExLTErZGViaWFuLWdicC5iYiAgICAgICAgICB8IDIgKysN
+Cj4gIHJlY2lwZXMtY29yZS9zd3VwZGF0ZS9zd3VwZGF0ZV8yMDIyLjEyK2RzZmctNC1jaXAuYmIg
+ICAgICAgICAgICB8IDIgKysNCj4gIHJlY2lwZXMtY29yZS9zd3VwZGF0ZS9zd3VwZGF0ZV8yMDIz
+LjEyLmJiICAgICAgICAgICAgICAgICAgICAgICB8IDIgKysNCj4gIHJlY2lwZXMtY29yZS90bXAt
+ZnMvdG1wLWZzXzAuMi5iYiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8IDIgKysNCj4g
+IHJlY2lwZXMtZGV2dG9vbHMvZG9zZnN0b29scy9kb3Nmc3Rvb2xzX2xhdGVzdC5iYiAgICAgICAg
+ICAgICAgICB8IDIgKysNCj4gIC4uLi9lYmctc2VjdXJlLWJvb3Qtc2lnbmVyL2ViZy1zZWN1cmUt
+Ym9vdC1zaWduZXJfMC4yLmJiICAgICAgICB8IDIgKysNCj4gIHJlY2lwZXMtZGV2dG9vbHMvc2Vj
+dXJlLWJvb3Qtc2VjcmV0cy9zZWN1cmUtYm9vdC1zZWNyZXRzLmluYyAgICB8IDIgKysNCj4gIC4u
+Li9zd3VwZGF0ZS1jZXJ0aWZpY2F0ZXMvc3d1cGRhdGUtY2VydGlmaWNhdGVzLWtleS5pbmMgICAg
+ICAgICB8IDIgKysNCj4gIC4uLi9zd3VwZGF0ZS1jZXJ0aWZpY2F0ZXMvc3d1cGRhdGUtY2VydGlm
+aWNhdGVzLmluYyAgICAgICAgICAgICB8IDIgKysNCj4gIHJlY2lwZXMtZGV2dG9vbHMvc3d1cGRh
+dGUtc2lnbmVyL3N3dXBkYXRlLXNpZ25lci1jbXNfMC4xLmJiICAgICB8IDIgKysNCj4gIHJlY2lw
+ZXMtZGV2dG9vbHMvc3d1cGRhdGUtc2lnbmVyL3N3dXBkYXRlLXNpZ25lci1lbXB0eS5iYiAgICAg
+ICB8IDIgKysNCj4gIC4uLi9pbml0cmFtZnMtYWJyb290ZnMtaG9vay9pbml0cmFtZnMtYWJyb290
+ZnMtaG9va18wLjMuYmIgICAgICB8IDIgKysNCj4gIC4uLi9pbml0cmFtZnMtY2lwLWZ1bmN0aW9u
+cy9pbml0cmFtZnMtY2lwLWZ1bmN0aW9uc18wLjEuYmIgICAgICB8IDIgKysNCj4gIC4uLi9pbml0
+cmFtZnMtY3J5cHQtaG9vay9pbml0cmFtZnMtY3J5cHQtaG9va18wLjEwLmJiICAgICAgICAgICB8
+IDIgKysNCj4gIC4uLi9pbml0cmFtZnMtZXJvZnMtaG9vay9pbml0cmFtZnMtZXJvZnMtaG9va18w
+LjIuYmIgICAgICAgICAgICB8IDIgKysNCj4gIC4uLi9pbml0cmFtZnMtZmFjdG9yeS1yZXNldC1o
+b29rXzAuMy5iYiAgICAgICAgICAgICAgICAgICAgICAgICB8IDIgKysNCj4gIC4uLi9pbml0cmFt
+ZnMtb3ZlcmxheS1ob29rL2luaXRyYW1mcy1vdmVybGF5LWhvb2tfMC40LmJiICAgICAgICB8IDIg
+KysNCj4gIC4uLi9pbml0cmFtZnMtc3F1YXNoZnMtaG9vay9pbml0cmFtZnMtc3F1YXNoZnMtaG9v
+a18wLjIuYmIgICAgICB8IDIgKysNCj4gIC4uLi9pbml0cmFtZnMtdmVyaXR5LWhvb2svaW5pdHJh
+bWZzLXZlcml0eS1ob29rXzAuMy5iYiAgICAgICAgICB8IDIgKysNCj4gIHJlY2lwZXMtcHl0aG9u
+L3NodGFiL3B5dGhvbi1zaHRhYl8xLjUuNS00LmJiICAgICAgICAgICAgICAgICAgICB8IDIgKysN
+Cj4gIHJlY2lwZXMtc2VjdXJpdHkvZmFpbDJiYW4tY29uZmlnL2ZhaWwyYmFuLWNvbmZpZy5iYiAg
+ICAgICAgICAgICB8IDIgKysNCj4gIHJlY2lwZXMtc3VwcG9ydC9mYWN0b3J5LXJlc2V0LWhlbHBl
+ci9mYWN0b3J5LXJlc2V0LWhlbHBlci5pbmMgICB8IDIgKysNCj4gIDM0IGZpbGVzIGNoYW5nZWQs
+IDY4IGluc2VydGlvbnMoKykNCj4gDQo+IGRpZmYgLS1naXQgYS9yZWNpcGVzLWJzcC9oc3MtcGF5
+bG9hZC1nZW5lcmF0b3IvaHNzLXBheWxvYWQtZ2VuZXJhdG9yXzIwMjUuMDcuYmIgYi9yZWNpcGVz
+LWJzcC9oc3MtcGF5bG9hZC1nZW5lcmF0b3IvaHNzLXBheWxvYWQtZ2VuZXJhdG9yXzIwMjUuMDcu
+YmINCj4gaW5kZXggZmE4NjA5NC4uY2ZiODIxZiAxMDA2NDQNCj4gLS0tIGEvcmVjaXBlcy1ic3Av
+aHNzLXBheWxvYWQtZ2VuZXJhdG9yL2hzcy1wYXlsb2FkLWdlbmVyYXRvcl8yMDI1LjA3LmJiDQo+
+ICsrKyBiL3JlY2lwZXMtYnNwL2hzcy1wYXlsb2FkLWdlbmVyYXRvci9oc3MtcGF5bG9hZC1nZW5l
+cmF0b3JfMjAyNS4wNy5iYg0KPiBAQCAtMTEsNiArMTEsOCBAQA0KPiAgDQo+ICBpbmhlcml0IGRw
+a2cNCj4gIA0KPiArTUFJTlRBSU5FUiA9ICJjaXAtZGV2IDxjaXAtZGV2QGxpc3RzLmNpcC1wcm9q
+ZWN0Lm9yZz4iDQo+ICsNCj4gIFNSQ19VUkkgPSAiIFwNCj4gICAgICBodHRwczovL2dpdGh1Yi5j
+b20vcG9sYXJmaXJlLXNvYy9oYXJ0LXNvZnR3YXJlLXNlcnZpY2VzL2FyY2hpdmUvcmVmcy90YWdz
+L3Yke1BWfS50YXIuZ3o7ZG93bmxvYWRmaWxlbmFtZT1oYXJ0LXNvZnR3YXJlLXNlcnZpY2VzLXYk
+e1BWfS50YXIuZ3ogXA0KPiAgICAgIGZpbGU6Ly9ydWxlcyINCj4gZGlmZiAtLWdpdCBhL3JlY2lw
+ZXMtY29yZS9jaGFuZ2Utcm9vdC1ob21lZGlyL2NoYW5nZS1yb290LWhvbWVkaXJfMC4yLmJiIGIv
+cmVjaXBlcy1jb3JlL2NoYW5nZS1yb290LWhvbWVkaXIvY2hhbmdlLXJvb3QtaG9tZWRpcl8wLjIu
+YmINCj4gaW5kZXggYTA3MjVjMS4uNzAyZTUxOCAxMDA2NDQNCj4gLS0tIGEvcmVjaXBlcy1jb3Jl
+L2NoYW5nZS1yb290LWhvbWVkaXIvY2hhbmdlLXJvb3QtaG9tZWRpcl8wLjIuYmINCj4gKysrIGIv
+cmVjaXBlcy1jb3JlL2NoYW5nZS1yb290LWhvbWVkaXIvY2hhbmdlLXJvb3QtaG9tZWRpcl8wLjIu
+YmINCj4gQEAgLTEwLDYgKzEwLDggQEANCj4gIA0KPiAgaW5oZXJpdCBkcGtnLXJhdw0KPiAgDQo+
+ICtNQUlOVEFJTkVSID0gImNpcC1kZXYgPGNpcC1kZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnPiIN
+Cj4gKw0KPiAgREVTQ1JJUFRJT04gPSAiTW92ZSByb290cyBob21lZGlyIHRvIC9ob21lIGZvciBy
+ZWFkLW9ubHkgcm9vdGZzIg0KPiAgDQo+ICBTUkNfVVJJID0gImZpbGU6Ly9wb3N0aW5zdCINCj4g
+ZGlmZiAtLWdpdCBhL3JlY2lwZXMtY29yZS9jdXN0b21pemF0aW9ucy9jb21tb24uaW5jIGIvcmVj
+aXBlcy1jb3JlL2N1c3RvbWl6YXRpb25zL2NvbW1vbi5pbmMNCj4gaW5kZXggYzRkMjAxZi4uODFh
+MzZlZCAxMDA2NDQNCj4gLS0tIGEvcmVjaXBlcy1jb3JlL2N1c3RvbWl6YXRpb25zL2NvbW1vbi5p
+bmMNCj4gKysrIGIvcmVjaXBlcy1jb3JlL2N1c3RvbWl6YXRpb25zL2NvbW1vbi5pbmMNCj4gQEAg
+LTExLDYgKzExLDggQEANCj4gIA0KPiAgaW5oZXJpdCBkcGtnLXJhdw0KPiAgDQo+ICtNQUlOVEFJ
+TkVSID0gImNpcC1kZXYgPGNpcC1kZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnPiINCj4gKw0KPiAg
+RklMRVNQQVRIOmFwcGVuZCA6PSAiOiR7RklMRV9ESVJOQU1FfS9maWxlcyINCj4gIA0KPiAgU1JD
+X1VSSSA9ICIgXA0KPiBkaWZmIC0tZ2l0IGEvcmVjaXBlcy1jb3JlL2hvbWUtZnMvaG9tZS1mc18w
+LjEuYmIgYi9yZWNpcGVzLWNvcmUvaG9tZS1mcy9ob21lLWZzXzAuMS5iYg0KPiBpbmRleCBmYjll
+MzUxLi5mZDg4ZjIxIDEwMDY0NA0KPiAtLS0gYS9yZWNpcGVzLWNvcmUvaG9tZS1mcy9ob21lLWZz
+XzAuMS5iYg0KPiArKysgYi9yZWNpcGVzLWNvcmUvaG9tZS1mcy9ob21lLWZzXzAuMS5iYg0KPiBA
+QCAtMTAsNiArMTAsOCBAQA0KPiAgDQo+ICBpbmhlcml0IGRwa2ctcmF3DQo+ICANCj4gK01BSU5U
+QUlORVIgPSAiY2lwLWRldiA8Y2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmc+Ig0KPiArDQo+
+ICBTUkNfVVJJID0gImZpbGU6Ly9wb3N0aW5zdCBcDQo+ICAgICAgICAgICAgIGZpbGU6Ly9ob21l
+Lm1vdW50Ig0KPiAgDQo+IGRpZmYgLS1naXQgYS9yZWNpcGVzLWNvcmUvam91cm5hbGQtY29uZmln
+L2pvdXJuYWxkLWNvbmZpZ18wLjEuYmIgYi9yZWNpcGVzLWNvcmUvam91cm5hbGQtY29uZmlnL2pv
+dXJuYWxkLWNvbmZpZ18wLjEuYmINCj4gaW5kZXggMDBkYmZjZS4uNjJmYzBjNyAxMDA2NDQNCj4g
+LS0tIGEvcmVjaXBlcy1jb3JlL2pvdXJuYWxkLWNvbmZpZy9qb3VybmFsZC1jb25maWdfMC4xLmJi
+DQo+ICsrKyBiL3JlY2lwZXMtY29yZS9qb3VybmFsZC1jb25maWcvam91cm5hbGQtY29uZmlnXzAu
+MS5iYg0KPiBAQCAtMTAsNiArMTAsOCBAQA0KPiAgDQo+ICBpbmhlcml0IGRwa2ctcmF3DQo+ICAN
+Cj4gK01BSU5UQUlORVIgPSAiY2lwLWRldiA8Y2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmc+
+Ig0KPiArDQo+ICBTUkNfVVJJID0gImZpbGU6Ly9wZXJzaXN0ZW50LWpvdXJuYWwuY29uZiINCj4g
+IA0KPiAgZG9faW5zdGFsbFtjbGVhbmRpcnNdID0gIiR7RH0vdXNyL2xpYi9zeXN0ZW1kL2pvdXJu
+YWxkLmNvbmYuZC8iDQo+IGRpZmYgLS1naXQgYS9yZWNpcGVzLWNvcmUva2VybmVsLXBhbmljL2tl
+cm5lbC1wYW5pYy5iYiBiL3JlY2lwZXMtY29yZS9rZXJuZWwtcGFuaWMva2VybmVsLXBhbmljLmJi
+DQo+IGluZGV4IDUxMWZlYmIuLjIyYTRkZGUgMTAwNjQ0DQo+IC0tLSBhL3JlY2lwZXMtY29yZS9r
+ZXJuZWwtcGFuaWMva2VybmVsLXBhbmljLmJiDQo+ICsrKyBiL3JlY2lwZXMtY29yZS9rZXJuZWwt
+cGFuaWMva2VybmVsLXBhbmljLmJiDQo+IEBAIC0xMSw2ICsxMSw4IEBADQo+ICANCj4gIGluaGVy
+aXQgZHBrZy1yYXcNCj4gIA0KPiArTUFJTlRBSU5FUiA9ICJjaXAtZGV2IDxjaXAtZGV2QGxpc3Rz
+LmNpcC1wcm9qZWN0Lm9yZz4iDQo+ICsNCj4gIERFU0NSSVBUSU9OID0gIlN5c3RlbWQgc2Vydmlj
+ZSBmaWxlIHRvIGNhdXNlIGtlcm5lbCBwYW5pYyINCj4gIA0KPiAgU1JDX1VSSSA9ICIgXA0KPiBk
+aWZmIC0tZ2l0IGEvcmVjaXBlcy1jb3JlL2x0cC9sdHAuaW5jIGIvcmVjaXBlcy1jb3JlL2x0cC9s
+dHAuaW5jDQo+IGluZGV4IDI3ZTI2YTAuLjRkNTI0ZjEgMTAwNjQ0DQo+IC0tLSBhL3JlY2lwZXMt
+Y29yZS9sdHAvbHRwLmluYw0KPiArKysgYi9yZWNpcGVzLWNvcmUvbHRwL2x0cC5pbmMNCj4gQEAg
+LTExLDYgKzExLDggQEANCj4gIA0KPiAgaW5oZXJpdCBkcGtnDQo+ICANCj4gK01BSU5UQUlORVIg
+PSAiY2lwLWRldiA8Y2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmc+Ig0KPiArDQo+ICBERVND
+UklQVElPTiA9ICJMaW51eCBUZXN0IHByb2plY3QgZm9yIENJUCINCj4gIA0KPiAgU1JDX1VSSSA9
+ICIgXA0KPiBkaWZmIC0tZ2l0IGEvcmVjaXBlcy1jb3JlL21vdmUtaG9tZWRpci12YXIvbW92ZS1o
+b21lZGlyLXZhcl8wLjEuYmIgYi9yZWNpcGVzLWNvcmUvbW92ZS1ob21lZGlyLXZhci9tb3ZlLWhv
+bWVkaXItdmFyXzAuMS5iYg0KPiBpbmRleCA2MDhiYjY5Li41NGU4MDdhIDEwMDY0NA0KPiAtLS0g
+YS9yZWNpcGVzLWNvcmUvbW92ZS1ob21lZGlyLXZhci9tb3ZlLWhvbWVkaXItdmFyXzAuMS5iYg0K
+PiArKysgYi9yZWNpcGVzLWNvcmUvbW92ZS1ob21lZGlyLXZhci9tb3ZlLWhvbWVkaXItdmFyXzAu
+MS5iYg0KPiBAQCAtMTAsNiArMTAsOCBAQA0KPiAgDQo+ICBpbmhlcml0IGRwa2ctcmF3DQo+ICAN
+Cj4gK01BSU5UQUlORVIgPSAiY2lwLWRldiA8Y2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmc+
+Ig0KPiArDQo+ICBERUJJQU5fQ09ORkxJQ1RTID0gImhvbWUtZnMiDQo+ICBTUkNfVVJJID0gImZp
+bGU6Ly8ke0JQTn0udG1wZmlsZXMudG1wbCINCj4gIA0KPiBkaWZmIC0tZ2l0IGEvcmVjaXBlcy1j
+b3JlL3NlY3VyaXR5LWN1c3RvbWl6YXRpb25zL3NlY3VyaXR5LWN1c3RvbWl6YXRpb25zLmJiIGIv
+cmVjaXBlcy1jb3JlL3NlY3VyaXR5LWN1c3RvbWl6YXRpb25zL3NlY3VyaXR5LWN1c3RvbWl6YXRp
+b25zLmJiDQo+IGluZGV4IGQ4ZmEyMmIuLjM4MmYwYzggMTAwNjQ0DQo+IC0tLSBhL3JlY2lwZXMt
+Y29yZS9zZWN1cml0eS1jdXN0b21pemF0aW9ucy9zZWN1cml0eS1jdXN0b21pemF0aW9ucy5iYg0K
+PiArKysgYi9yZWNpcGVzLWNvcmUvc2VjdXJpdHktY3VzdG9taXphdGlvbnMvc2VjdXJpdHktY3Vz
+dG9taXphdGlvbnMuYmINCj4gQEAgLTExLDYgKzExLDggQEANCj4gIA0KPiAgaW5oZXJpdCBkcGtn
+LXJhdw0KPiAgDQo+ICtNQUlOVEFJTkVSID0gImNpcC1kZXYgPGNpcC1kZXZAbGlzdHMuY2lwLXBy
+b2plY3Qub3JnPiINCj4gKw0KPiAgREVTQ1JJUFRJT04gPSAiQ0lQIFNlY3VyaXR5IGNvbmZpZ3Vy
+YXRpb24gZm9yIElFQzYyNDQzLTQtMiBldmFsdWF0aW9uIg0KPiAgDQo+ICBTUkNfVVJJID0gImZp
+bGU6Ly9wb3N0aW5zdCBcDQo+IGRpZmYgLS1naXQgYS9yZWNpcGVzLWNvcmUvc3d1cGRhdGUtY29u
+ZmlnLXdmeC9zd3VwZGF0ZS1jb25maWctd2Z4XzAuMS5iYiBiL3JlY2lwZXMtY29yZS9zd3VwZGF0
+ZS1jb25maWctd2Z4L3N3dXBkYXRlLWNvbmZpZy13ZnhfMC4xLmJiDQo+IGluZGV4IDM1Njk4ODgu
+LmM4MDBjODQgMTAwNjQ0DQo+IC0tLSBhL3JlY2lwZXMtY29yZS9zd3VwZGF0ZS1jb25maWctd2Z4
+L3N3dXBkYXRlLWNvbmZpZy13ZnhfMC4xLmJiDQo+ICsrKyBiL3JlY2lwZXMtY29yZS9zd3VwZGF0
+ZS1jb25maWctd2Z4L3N3dXBkYXRlLWNvbmZpZy13ZnhfMC4xLmJiDQo+IEBAIC0xMSw2ICsxMSw4
+IEBADQo+ICANCj4gIGluaGVyaXQgZHBrZy1yYXcNCj4gIA0KPiArTUFJTlRBSU5FUiA9ICJjaXAt
+ZGV2IDxjaXAtZGV2QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZz4iDQo+ICsNCj4gIFBST1ZJREVTIDo9
+ICIke1BOfSINCj4gIERFQklBTl9QUk9WSURFUyA6PSAiJHtQTn0iDQo+ICANCj4gZGlmZiAtLWdp
+dCBhL3JlY2lwZXMtY29yZS9zd3VwZGF0ZS1jb25maWcvc3d1cGRhdGUtY29uZmlnXzAuMi5iYiBi
+L3JlY2lwZXMtY29yZS9zd3VwZGF0ZS1jb25maWcvc3d1cGRhdGUtY29uZmlnXzAuMi5iYg0KPiBp
+bmRleCA2M2ZhMzIwLi5jZGZkOGI5IDEwMDY0NA0KPiAtLS0gYS9yZWNpcGVzLWNvcmUvc3d1cGRh
+dGUtY29uZmlnL3N3dXBkYXRlLWNvbmZpZ18wLjIuYmINCj4gKysrIGIvcmVjaXBlcy1jb3JlL3N3
+dXBkYXRlLWNvbmZpZy9zd3VwZGF0ZS1jb25maWdfMC4yLmJiDQo+IEBAIC0xMSw2ICsxMSw4IEBA
+DQo+ICANCj4gIGluaGVyaXQgZHBrZy1yYXcNCj4gIA0KPiArTUFJTlRBSU5FUiA9ICJjaXAtZGV2
+IDxjaXAtZGV2QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZz4iDQo+ICsNCj4gIFBST1ZJREVTIDo9ICIk
+e1BOfSINCj4gIERFQklBTl9QUk9WSURFUyA6PSAiJHtQTn0iDQo+ICANCj4gZGlmZiAtLWdpdCBh
+L3JlY2lwZXMtY29yZS9zd3VwZGF0ZS1oYW5kbGVyLXJvdW5kcm9iaW4vc3d1cGRhdGUtaGFuZGxl
+ci1yb3VuZHJvYmluXzAuMS5iYiBiL3JlY2lwZXMtY29yZS9zd3VwZGF0ZS1oYW5kbGVyLXJvdW5k
+cm9iaW4vc3d1cGRhdGUtaGFuZGxlci1yb3VuZHJvYmluXzAuMS5iYg0KPiBpbmRleCA1OWFjNDll
+Li4yYmExOTJjIDEwMDY0NA0KPiAtLS0gYS9yZWNpcGVzLWNvcmUvc3d1cGRhdGUtaGFuZGxlci1y
+b3VuZHJvYmluL3N3dXBkYXRlLWhhbmRsZXItcm91bmRyb2Jpbl8wLjEuYmINCj4gKysrIGIvcmVj
+aXBlcy1jb3JlL3N3dXBkYXRlLWhhbmRsZXItcm91bmRyb2Jpbi9zd3VwZGF0ZS1oYW5kbGVyLXJv
+dW5kcm9iaW5fMC4xLmJiDQo+IEBAIC0xMCw2ICsxMCw4IEBADQo+ICANCj4gIGluaGVyaXQgZHBr
+Zy1yYXcNCj4gIA0KPiArTUFJTlRBSU5FUiA9ICJjaXAtZGV2IDxjaXAtZGV2QGxpc3RzLmNpcC1w
+cm9qZWN0Lm9yZz4iDQo+ICsNCj4gIFBST1ZJREVTID0gInN3dXBkYXRlLWhhbmRsZXJzIg0KPiAg
+DQo+ICBTUkNfVVJJICs9ICJnaXQ6Ly9naXRsYWIuY29tL2NpcC1wcm9qZWN0L2NpcC1zdy11cGRh
+dGVzL3N3dXBkYXRlLWhhbmRsZXItcm91bmRyb2Jpbi5naXQ7cHJvdG9jb2w9aHR0cHM7ZGVzdHN1
+ZmZpeD1zd3VwZGF0ZS1oYW5kbGVyLXJvdW5kcm9iaW47bmFtZT1zd3VwZGF0ZS1oYW5kbGVyLXJv
+dW5kcm9iaW47bm9icmFuY2g9MSINCj4gZGlmZiAtLWdpdCBhL3JlY2lwZXMtY29yZS9zd3VwZGF0
+ZS9zd3VwZGF0ZV8yMDIxLjExLTErZGViaWFuLWdicC5iYiBiL3JlY2lwZXMtY29yZS9zd3VwZGF0
+ZS9zd3VwZGF0ZV8yMDIxLjExLTErZGViaWFuLWdicC5iYg0KPiBpbmRleCAwMzU4ODdlLi4xYWIx
+NGM0IDEwMDY0NA0KPiAtLS0gYS9yZWNpcGVzLWNvcmUvc3d1cGRhdGUvc3d1cGRhdGVfMjAyMS4x
+MS0xK2RlYmlhbi1nYnAuYmINCj4gKysrIGIvcmVjaXBlcy1jb3JlL3N3dXBkYXRlL3N3dXBkYXRl
+XzIwMjEuMTEtMStkZWJpYW4tZ2JwLmJiDQo+IEBAIC0xMCw2ICsxMCw4IEBADQo+ICANCj4gIGlu
+aGVyaXQgZHBrZy1nYnANCj4gIA0KPiArTUFJTlRBSU5FUiA9ICJjaXAtZGV2IDxjaXAtZGV2QGxp
+c3RzLmNpcC1wcm9qZWN0Lm9yZz4iDQo+ICsNCj4gIHJlcXVpcmUgc3d1cGRhdGUuaW5jDQo+ICAN
+Cj4gIERFQl9CVUlMRF9QUk9GSUxFUyArPSAibm9kb2MiDQo+IGRpZmYgLS1naXQgYS9yZWNpcGVz
+LWNvcmUvc3d1cGRhdGUvc3d1cGRhdGVfMjAyMi4xMitkc2ZnLTQtY2lwLmJiIGIvcmVjaXBlcy1j
+b3JlL3N3dXBkYXRlL3N3dXBkYXRlXzIwMjIuMTIrZHNmZy00LWNpcC5iYg0KPiBpbmRleCAzYTcz
+Yzg5Li42MTkzMDI3IDEwMDY0NA0KPiAtLS0gYS9yZWNpcGVzLWNvcmUvc3d1cGRhdGUvc3d1cGRh
+dGVfMjAyMi4xMitkc2ZnLTQtY2lwLmJiDQo+ICsrKyBiL3JlY2lwZXMtY29yZS9zd3VwZGF0ZS9z
+d3VwZGF0ZV8yMDIyLjEyK2RzZmctNC1jaXAuYmINCj4gQEAgLTEwLDYgKzEwLDggQEANCj4gIA0K
+PiAgaW5oZXJpdCBkcGtnDQo+ICANCj4gK01BSU5UQUlORVIgPSAiY2lwLWRldiA8Y2lwLWRldkBs
+aXN0cy5jaXAtcHJvamVjdC5vcmc+Ig0KPiArDQo+ICByZXF1aXJlIHN3dXBkYXRlLmluYw0KPiAg
+DQo+ICBERVBFTkRTICs9ICJsaWJlYmdlbnYtZGV2Ig0KPiBkaWZmIC0tZ2l0IGEvcmVjaXBlcy1j
+b3JlL3N3dXBkYXRlL3N3dXBkYXRlXzIwMjMuMTIuYmIgYi9yZWNpcGVzLWNvcmUvc3d1cGRhdGUv
+c3d1cGRhdGVfMjAyMy4xMi5iYg0KPiBpbmRleCA2ODIyMTUzLi41ZGQ3YzI3IDEwMDY0NA0KPiAt
+LS0gYS9yZWNpcGVzLWNvcmUvc3d1cGRhdGUvc3d1cGRhdGVfMjAyMy4xMi5iYg0KPiArKysgYi9y
+ZWNpcGVzLWNvcmUvc3d1cGRhdGUvc3d1cGRhdGVfMjAyMy4xMi5iYg0KPiBAQCAtMTAsNiArMTAs
+OCBAQA0KPiAgDQo+ICBpbmhlcml0IGRwa2cNCj4gIA0KPiArTUFJTlRBSU5FUiA9ICJjaXAtZGV2
+IDxjaXAtZGV2QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZz4iDQo+ICsNCj4gIHJlcXVpcmUgc3d1cGRh
+dGUuaW5jDQo+ICANCj4gIERFUEVORFMgKz0gImxpYmViZ2Vudi1kZXYiDQo+IGRpZmYgLS1naXQg
+YS9yZWNpcGVzLWNvcmUvdG1wLWZzL3RtcC1mc18wLjIuYmIgYi9yZWNpcGVzLWNvcmUvdG1wLWZz
+L3RtcC1mc18wLjIuYmINCj4gaW5kZXggYmI1ZmNjZS4uZjJiNzk3NiAxMDA2NDQNCj4gLS0tIGEv
+cmVjaXBlcy1jb3JlL3RtcC1mcy90bXAtZnNfMC4yLmJiDQo+ICsrKyBiL3JlY2lwZXMtY29yZS90
+bXAtZnMvdG1wLWZzXzAuMi5iYg0KPiBAQCAtMTAsNiArMTAsOCBAQA0KPiAgDQo+ICBpbmhlcml0
+IGRwa2ctcmF3DQo+ICANCj4gK01BSU5UQUlORVIgPSAiY2lwLWRldiA8Y2lwLWRldkBsaXN0cy5j
+aXAtcHJvamVjdC5vcmc+Ig0KPiArDQo+ICBTUkNfVVJJID0gImZpbGU6Ly9wb3N0aW5zdCINCj4g
+IA0KPiAgZG9faW5zdGFsbCgpIHsNCj4gZGlmZiAtLWdpdCBhL3JlY2lwZXMtZGV2dG9vbHMvZG9z
+ZnN0b29scy9kb3Nmc3Rvb2xzX2xhdGVzdC5iYiBiL3JlY2lwZXMtZGV2dG9vbHMvZG9zZnN0b29s
+cy9kb3Nmc3Rvb2xzX2xhdGVzdC5iYg0KPiBpbmRleCAzN2E4ZjQyLi5kMGFjMTI4IDEwMDY0NA0K
+PiAtLS0gYS9yZWNpcGVzLWRldnRvb2xzL2Rvc2ZzdG9vbHMvZG9zZnN0b29sc19sYXRlc3QuYmIN
+Cj4gKysrIGIvcmVjaXBlcy1kZXZ0b29scy9kb3Nmc3Rvb2xzL2Rvc2ZzdG9vbHNfbGF0ZXN0LmJi
+DQo+IEBAIC0xMSw2ICsxMSw4IEBADQo+ICANCj4gIGluaGVyaXQgZHBrZw0KPiAgDQo+ICtNQUlO
+VEFJTkVSID0gImNpcC1kZXYgPGNpcC1kZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnPiINCj4gKw0K
+PiAgQ0hBTkdFTE9HX1Y9IjxvcmlnLXZlcnNpb24+K2NpcCINCj4gIA0KPiAgU1JDX1VSSSA9ICJh
+cHQ6Ly8ke0JQTn0iDQo+IGRpZmYgLS1naXQgYS9yZWNpcGVzLWRldnRvb2xzL2ViZy1zZWN1cmUt
+Ym9vdC1zaWduZXIvZWJnLXNlY3VyZS1ib290LXNpZ25lcl8wLjIuYmIgYi9yZWNpcGVzLWRldnRv
+b2xzL2ViZy1zZWN1cmUtYm9vdC1zaWduZXIvZWJnLXNlY3VyZS1ib290LXNpZ25lcl8wLjIuYmIN
+Cj4gaW5kZXggNTdhZDFiZS4uNjk2M2QwOSAxMDA2NDQNCj4gLS0tIGEvcmVjaXBlcy1kZXZ0b29s
+cy9lYmctc2VjdXJlLWJvb3Qtc2lnbmVyL2ViZy1zZWN1cmUtYm9vdC1zaWduZXJfMC4yLmJiDQo+
+ICsrKyBiL3JlY2lwZXMtZGV2dG9vbHMvZWJnLXNlY3VyZS1ib290LXNpZ25lci9lYmctc2VjdXJl
+LWJvb3Qtc2lnbmVyXzAuMi5iYg0KPiBAQCAtMTIsNiArMTIsOCBAQA0KPiAgDQo+ICBpbmhlcml0
+IGRwa2ctcmF3DQo+ICANCj4gK01BSU5UQUlORVIgPSAiY2lwLWRldiA8Y2lwLWRldkBsaXN0cy5j
+aXAtcHJvamVjdC5vcmc+Ig0KPiArDQo+ICBERVNDUklQVElPTiA9ICJTaWduaW5nIHNjcmlwdCBm
+b3IgRUZJIEJvb3QgR3VhcmQgc2V0dXBzIg0KPiAgDQo+ICBERVBFTkRTID0gInNlY3VyZS1ib290
+LXNlY3JldHMiDQo+IGRpZmYgLS1naXQgYS9yZWNpcGVzLWRldnRvb2xzL3NlY3VyZS1ib290LXNl
+Y3JldHMvc2VjdXJlLWJvb3Qtc2VjcmV0cy5pbmMgYi9yZWNpcGVzLWRldnRvb2xzL3NlY3VyZS1i
+b290LXNlY3JldHMvc2VjdXJlLWJvb3Qtc2VjcmV0cy5pbmMNCj4gaW5kZXggNTI3N2Q5Yi4uMzhi
+NTdlZSAxMDA2NDQNCj4gLS0tIGEvcmVjaXBlcy1kZXZ0b29scy9zZWN1cmUtYm9vdC1zZWNyZXRz
+L3NlY3VyZS1ib290LXNlY3JldHMuaW5jDQo+ICsrKyBiL3JlY2lwZXMtZGV2dG9vbHMvc2VjdXJl
+LWJvb3Qtc2VjcmV0cy9zZWN1cmUtYm9vdC1zZWNyZXRzLmluYw0KPiBAQCAtMTEsNiArMTEsOCBA
+QA0KPiAgDQo+ICBpbmhlcml0IGRwa2ctcmF3DQo+ICANCj4gK01BSU5UQUlORVIgPSAiY2lwLWRl
+diA8Y2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmc+Ig0KPiArDQo+ICBQUk9WSURFUyArPSAi
+c2VjdXJlLWJvb3Qtc2VjcmV0cyINCj4gIERFQklBTl9QUk9WSURFUyA9ICJzZWN1cmUtYm9vdC1z
+ZWNyZXRzIg0KPiAgDQo+IGRpZmYgLS1naXQgYS9yZWNpcGVzLWRldnRvb2xzL3N3dXBkYXRlLWNl
+cnRpZmljYXRlcy9zd3VwZGF0ZS1jZXJ0aWZpY2F0ZXMta2V5LmluYyBiL3JlY2lwZXMtZGV2dG9v
+bHMvc3d1cGRhdGUtY2VydGlmaWNhdGVzL3N3dXBkYXRlLWNlcnRpZmljYXRlcy1rZXkuaW5jDQo+
+IGluZGV4IDJhYmI5NjMuLjQxMjRiMzEgMTAwNjQ0DQo+IC0tLSBhL3JlY2lwZXMtZGV2dG9vbHMv
+c3d1cGRhdGUtY2VydGlmaWNhdGVzL3N3dXBkYXRlLWNlcnRpZmljYXRlcy1rZXkuaW5jDQo+ICsr
+KyBiL3JlY2lwZXMtZGV2dG9vbHMvc3d1cGRhdGUtY2VydGlmaWNhdGVzL3N3dXBkYXRlLWNlcnRp
+ZmljYXRlcy1rZXkuaW5jDQo+IEBAIC0xMSw2ICsxMSw4IEBADQo+ICANCj4gIGluaGVyaXQgZHBr
+Zy1yYXcNCj4gIA0KPiArTUFJTlRBSU5FUiA9ICJjaXAtZGV2IDxjaXAtZGV2QGxpc3RzLmNpcC1w
+cm9qZWN0Lm9yZz4iDQo+ICsNCj4gIEZJTEVTRVhUUkFQQVRIUzpwcmVwZW5kIDo9ICIke0ZJTEVf
+RElSTkFNRX0vZmlsZXM6Ig0KPiAgDQo+ICBQUk9WSURFUyArPSAic3d1cGRhdGUtY2VydGlmaWNh
+dGVzLWtleSINCj4gZGlmZiAtLWdpdCBhL3JlY2lwZXMtZGV2dG9vbHMvc3d1cGRhdGUtY2VydGlm
+aWNhdGVzL3N3dXBkYXRlLWNlcnRpZmljYXRlcy5pbmMgYi9yZWNpcGVzLWRldnRvb2xzL3N3dXBk
+YXRlLWNlcnRpZmljYXRlcy9zd3VwZGF0ZS1jZXJ0aWZpY2F0ZXMuaW5jDQo+IGluZGV4IDM0NDc3
+NWQuLjNjNTk4ODcgMTAwNjQ0DQo+IC0tLSBhL3JlY2lwZXMtZGV2dG9vbHMvc3d1cGRhdGUtY2Vy
+dGlmaWNhdGVzL3N3dXBkYXRlLWNlcnRpZmljYXRlcy5pbmMNCj4gKysrIGIvcmVjaXBlcy1kZXZ0
+b29scy9zd3VwZGF0ZS1jZXJ0aWZpY2F0ZXMvc3d1cGRhdGUtY2VydGlmaWNhdGVzLmluYw0KPiBA
+QCAtMTEsNiArMTEsOCBAQA0KPiAgDQo+ICBpbmhlcml0IGRwa2ctcmF3DQo+ICANCj4gK01BSU5U
+QUlORVIgPSAiY2lwLWRldiA8Y2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmc+Ig0KPiArDQo+
+ICBGSUxFU0VYVFJBUEFUSFM6cHJlcGVuZCA6PSAiJHtGSUxFX0RJUk5BTUV9L2ZpbGVzOiINCj4g
+IA0KPiAgUFJPVklERVMgKz0gInN3dXBkYXRlLWNlcnRpZmljYXRlcyINCj4gZGlmZiAtLWdpdCBh
+L3JlY2lwZXMtZGV2dG9vbHMvc3d1cGRhdGUtc2lnbmVyL3N3dXBkYXRlLXNpZ25lci1jbXNfMC4x
+LmJiIGIvcmVjaXBlcy1kZXZ0b29scy9zd3VwZGF0ZS1zaWduZXIvc3d1cGRhdGUtc2lnbmVyLWNt
+c18wLjEuYmINCj4gaW5kZXggNDRiYmQwYS4uZWU4ZDE3MiAxMDA2NDQNCj4gLS0tIGEvcmVjaXBl
+cy1kZXZ0b29scy9zd3VwZGF0ZS1zaWduZXIvc3d1cGRhdGUtc2lnbmVyLWNtc18wLjEuYmINCj4g
+KysrIGIvcmVjaXBlcy1kZXZ0b29scy9zd3VwZGF0ZS1zaWduZXIvc3d1cGRhdGUtc2lnbmVyLWNt
+c18wLjEuYmINCj4gQEAgLTEwLDYgKzEwLDggQEANCj4gIA0KPiAgaW5oZXJpdCBkcGtnLXJhdw0K
+PiAgDQo+ICtNQUlOVEFJTkVSID0gImNpcC1kZXYgPGNpcC1kZXZAbGlzdHMuY2lwLXByb2plY3Qu
+b3JnPiINCj4gKw0KPiAgUFJPVklERVMgPSAic3d1cGRhdGUtc2lnbmVyIg0KPiAgREVCSUFOX1BS
+T1ZJREVTID0gInN3dXBkYXRlLXNpZ25lciINCj4gIA0KPiBkaWZmIC0tZ2l0IGEvcmVjaXBlcy1k
+ZXZ0b29scy9zd3VwZGF0ZS1zaWduZXIvc3d1cGRhdGUtc2lnbmVyLWVtcHR5LmJiIGIvcmVjaXBl
+cy1kZXZ0b29scy9zd3VwZGF0ZS1zaWduZXIvc3d1cGRhdGUtc2lnbmVyLWVtcHR5LmJiDQo+IGlu
+ZGV4IGZkZTljYjQuLmFmOWRlNzYgMTAwNjQ0DQo+IC0tLSBhL3JlY2lwZXMtZGV2dG9vbHMvc3d1
+cGRhdGUtc2lnbmVyL3N3dXBkYXRlLXNpZ25lci1lbXB0eS5iYg0KPiArKysgYi9yZWNpcGVzLWRl
+dnRvb2xzL3N3dXBkYXRlLXNpZ25lci9zd3VwZGF0ZS1zaWduZXItZW1wdHkuYmINCj4gQEAgLTEw
+LDYgKzEwLDggQEANCj4gIA0KPiAgaW5oZXJpdCBkcGtnLXJhdw0KPiAgDQo+ICtNQUlOVEFJTkVS
+ID0gImNpcC1kZXYgPGNpcC1kZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnPiINCj4gKw0KPiAgUFJP
+VklERVMgPSAic3d1cGRhdGUtc2lnbmVyIg0KPiAgREVCSUFOX1BST1ZJREVTID0gInN3dXBkYXRl
+LXNpZ25lciINCj4gIA0KPiBkaWZmIC0tZ2l0IGEvcmVjaXBlcy1pbml0cmFtZnMvaW5pdHJhbWZz
+LWFicm9vdGZzLWhvb2svaW5pdHJhbWZzLWFicm9vdGZzLWhvb2tfMC4zLmJiIGIvcmVjaXBlcy1p
+bml0cmFtZnMvaW5pdHJhbWZzLWFicm9vdGZzLWhvb2svaW5pdHJhbWZzLWFicm9vdGZzLWhvb2tf
+MC4zLmJiDQo+IGluZGV4IDM1MzhiY2YuLjQ4ZjY0NTggMTAwNjQ0DQo+IC0tLSBhL3JlY2lwZXMt
+aW5pdHJhbWZzL2luaXRyYW1mcy1hYnJvb3Rmcy1ob29rL2luaXRyYW1mcy1hYnJvb3Rmcy1ob29r
+XzAuMy5iYg0KPiArKysgYi9yZWNpcGVzLWluaXRyYW1mcy9pbml0cmFtZnMtYWJyb290ZnMtaG9v
+ay9pbml0cmFtZnMtYWJyb290ZnMtaG9va18wLjMuYmINCj4gQEAgLTExLDYgKzExLDggQEANCj4g
+IA0KPiAgaW5oZXJpdCBpbml0cmFtZnMtaG9vaw0KPiAgDQo+ICtNQUlOVEFJTkVSID0gImNpcC1k
+ZXYgPGNpcC1kZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnPiINCj4gKw0KPiAgUkRFUEVORFMgKz0g
+ImluaXRyYW1mcy1jaXAtZnVuY3Rpb25zIg0KPiAgREVCSUFOX0RFUEVORFMgLj0gIiwgdXRpbC1s
+aW51eCwgaW5pdHJhbWZzLWNpcC1mdW5jdGlvbnMiDQo+ICBERUJJQU5fQ09ORkxJQ1RTID0gImlu
+aXRyYW1mcy12ZXJpdHktaG9vayINCj4gZGlmZiAtLWdpdCBhL3JlY2lwZXMtaW5pdHJhbWZzL2lu
+aXRyYW1mcy1jaXAtZnVuY3Rpb25zL2luaXRyYW1mcy1jaXAtZnVuY3Rpb25zXzAuMS5iYiBiL3Jl
+Y2lwZXMtaW5pdHJhbWZzL2luaXRyYW1mcy1jaXAtZnVuY3Rpb25zL2luaXRyYW1mcy1jaXAtZnVu
+Y3Rpb25zXzAuMS5iYg0KPiBpbmRleCBkNDk3YWE0Li43M2VlNjhkIDEwMDY0NA0KPiAtLS0gYS9y
+ZWNpcGVzLWluaXRyYW1mcy9pbml0cmFtZnMtY2lwLWZ1bmN0aW9ucy9pbml0cmFtZnMtY2lwLWZ1
+bmN0aW9uc18wLjEuYmINCj4gKysrIGIvcmVjaXBlcy1pbml0cmFtZnMvaW5pdHJhbWZzLWNpcC1m
+dW5jdGlvbnMvaW5pdHJhbWZzLWNpcC1mdW5jdGlvbnNfMC4xLmJiDQo+IEBAIC0xMSw2ICsxMSw4
+IEBADQo+ICANCj4gIGluaGVyaXQgZHBrZy1yYXcNCj4gIA0KPiArTUFJTlRBSU5FUiA9ICJjaXAt
+ZGV2IDxjaXAtZGV2QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZz4iDQo+ICsNCj4gIERFU0NSSVBUSU9O
+ID0gImhlbHBlciBmdW5jdGlvbnMgZm9yIGNpcCBpbml0cmFtZnMtdG9vbHMgZXh0ZW5zaW9ucyIN
+Cj4gIA0KPiAgU1JDX1VSSSArPSAiZmlsZTovL2NpcC1pbml0cmFtZnMtZnVuY3Rpb25zIg0KPiBk
+aWZmIC0tZ2l0IGEvcmVjaXBlcy1pbml0cmFtZnMvaW5pdHJhbWZzLWNyeXB0LWhvb2svaW5pdHJh
+bWZzLWNyeXB0LWhvb2tfMC4xMC5iYiBiL3JlY2lwZXMtaW5pdHJhbWZzL2luaXRyYW1mcy1jcnlw
+dC1ob29rL2luaXRyYW1mcy1jcnlwdC1ob29rXzAuMTAuYmINCj4gaW5kZXggZTEzMmI5ZS4uMThh
+MTBhOCAxMDA2NDQNCj4gLS0tIGEvcmVjaXBlcy1pbml0cmFtZnMvaW5pdHJhbWZzLWNyeXB0LWhv
+b2svaW5pdHJhbWZzLWNyeXB0LWhvb2tfMC4xMC5iYg0KPiArKysgYi9yZWNpcGVzLWluaXRyYW1m
+cy9pbml0cmFtZnMtY3J5cHQtaG9vay9pbml0cmFtZnMtY3J5cHQtaG9va18wLjEwLmJiDQo+IEBA
+IC0xMSw2ICsxMSw4IEBADQo+ICANCj4gIGluaGVyaXQgaW5pdHJhbWZzLWhvb2sNCj4gIA0KPiAr
+TUFJTlRBSU5FUiA9ICJjaXAtZGV2IDxjaXAtZGV2QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZz4iDQo+
+ICsNCj4gIFJERVBFTkRTICs9ICJpbml0cmFtZnMtY2lwLWZ1bmN0aW9ucyINCj4gIA0KPiAgREVC
+SUFOX0RFUEVORFMgLj0gIiwgXA0KPiBkaWZmIC0tZ2l0IGEvcmVjaXBlcy1pbml0cmFtZnMvaW5p
+dHJhbWZzLWVyb2ZzLWhvb2svaW5pdHJhbWZzLWVyb2ZzLWhvb2tfMC4yLmJiIGIvcmVjaXBlcy1p
+bml0cmFtZnMvaW5pdHJhbWZzLWVyb2ZzLWhvb2svaW5pdHJhbWZzLWVyb2ZzLWhvb2tfMC4yLmJi
+DQo+IGluZGV4IGU0MjMyNDguLjIwMTU1MDMgMTAwNjQ0DQo+IC0tLSBhL3JlY2lwZXMtaW5pdHJh
+bWZzL2luaXRyYW1mcy1lcm9mcy1ob29rL2luaXRyYW1mcy1lcm9mcy1ob29rXzAuMi5iYg0KPiAr
+KysgYi9yZWNpcGVzLWluaXRyYW1mcy9pbml0cmFtZnMtZXJvZnMtaG9vay9pbml0cmFtZnMtZXJv
+ZnMtaG9va18wLjIuYmINCj4gQEAgLTExLDQgKzExLDYgQEANCj4gIA0KPiAgaW5oZXJpdCBpbml0
+cmFtZnMtaG9vaw0KPiAgDQo+ICtNQUlOVEFJTkVSID0gImNpcC1kZXYgPGNpcC1kZXZAbGlzdHMu
+Y2lwLXByb2plY3Qub3JnPiINCj4gKw0KPiAgSE9PS19BRERfTU9EVUxFUyA9ICJlcm9mcyINCj4g
+ZGlmZiAtLWdpdCBhL3JlY2lwZXMtaW5pdHJhbWZzL2luaXRyYW1mcy1mYWN0b3J5LXJlc2V0LWhv
+b2svaW5pdHJhbWZzLWZhY3RvcnktcmVzZXQtaG9va18wLjMuYmIgYi9yZWNpcGVzLWluaXRyYW1m
+cy9pbml0cmFtZnMtZmFjdG9yeS1yZXNldC1ob29rL2luaXRyYW1mcy1mYWN0b3J5LXJlc2V0LWhv
+b2tfMC4zLmJiDQo+IGluZGV4IDdkYzA0ZWIuLmU5NjJhNTEgMTAwNjQ0DQo+IC0tLSBhL3JlY2lw
+ZXMtaW5pdHJhbWZzL2luaXRyYW1mcy1mYWN0b3J5LXJlc2V0LWhvb2svaW5pdHJhbWZzLWZhY3Rv
+cnktcmVzZXQtaG9va18wLjMuYmINCj4gKysrIGIvcmVjaXBlcy1pbml0cmFtZnMvaW5pdHJhbWZz
+LWZhY3RvcnktcmVzZXQtaG9vay9pbml0cmFtZnMtZmFjdG9yeS1yZXNldC1ob29rXzAuMy5iYg0K
+PiBAQCAtMTAsNiArMTAsOCBAQA0KPiAgDQo+ICBpbmhlcml0IGluaXRyYW1mcy1ob29rDQo+ICAN
+Cj4gK01BSU5UQUlORVIgPSAiY2lwLWRldiA8Y2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmc+
+Ig0KPiArDQo+ICBERVNDUklQVElPTiA9ICJEZWxldGUgdGhlIGNvbnRlbnQgb2YgdGhlIGdpdmVu
+IERldmljZXMiDQo+ICANCj4gICMgbGlzdCBvZiBwYXJ0aXRpb25zIGJ5IGxhYmVsDQo+IGRpZmYg
+LS1naXQgYS9yZWNpcGVzLWluaXRyYW1mcy9pbml0cmFtZnMtb3ZlcmxheS1ob29rL2luaXRyYW1m
+cy1vdmVybGF5LWhvb2tfMC40LmJiIGIvcmVjaXBlcy1pbml0cmFtZnMvaW5pdHJhbWZzLW92ZXJs
+YXktaG9vay9pbml0cmFtZnMtb3ZlcmxheS1ob29rXzAuNC5iYg0KPiBpbmRleCA0ZWMzODJjLi41
+N2IyNmVjIDEwMDY0NA0KPiAtLS0gYS9yZWNpcGVzLWluaXRyYW1mcy9pbml0cmFtZnMtb3Zlcmxh
+eS1ob29rL2luaXRyYW1mcy1vdmVybGF5LWhvb2tfMC40LmJiDQo+ICsrKyBiL3JlY2lwZXMtaW5p
+dHJhbWZzL2luaXRyYW1mcy1vdmVybGF5LWhvb2svaW5pdHJhbWZzLW92ZXJsYXktaG9va18wLjQu
+YmINCj4gQEAgLTEyLDYgKzEyLDggQEANCj4gIA0KPiAgaW5oZXJpdCBpbml0cmFtZnMtaG9vaw0K
+PiAgDQo+ICtNQUlOVEFJTkVSID0gImNpcC1kZXYgPGNpcC1kZXZAbGlzdHMuY2lwLXByb2plY3Qu
+b3JnPiINCj4gKw0KPiAgSU5JVFJBTUZTX09WRVJMQVlfUkVDT1ZFUllfU0NSSVBUID8/PSAib3Zl
+cmxheV9yZWNvdmVyeV9hY3Rpb24uc2NyaXB0Ig0KPiAgDQo+ICBTUkNfVVJJICs9ICIgXA0KPiBk
+aWZmIC0tZ2l0IGEvcmVjaXBlcy1pbml0cmFtZnMvaW5pdHJhbWZzLXNxdWFzaGZzLWhvb2svaW5p
+dHJhbWZzLXNxdWFzaGZzLWhvb2tfMC4yLmJiIGIvcmVjaXBlcy1pbml0cmFtZnMvaW5pdHJhbWZz
+LXNxdWFzaGZzLWhvb2svaW5pdHJhbWZzLXNxdWFzaGZzLWhvb2tfMC4yLmJiDQo+IGluZGV4IDFm
+NWRlY2MuLjlmZjRjYmYgMTAwNjQ0DQo+IC0tLSBhL3JlY2lwZXMtaW5pdHJhbWZzL2luaXRyYW1m
+cy1zcXVhc2hmcy1ob29rL2luaXRyYW1mcy1zcXVhc2hmcy1ob29rXzAuMi5iYg0KPiArKysgYi9y
+ZWNpcGVzLWluaXRyYW1mcy9pbml0cmFtZnMtc3F1YXNoZnMtaG9vay9pbml0cmFtZnMtc3F1YXNo
+ZnMtaG9va18wLjIuYmINCj4gQEAgLTExLDQgKzExLDYgQEANCj4gIA0KPiAgaW5oZXJpdCBpbml0
+cmFtZnMtaG9vaw0KPiAgDQo+ICtNQUlOVEFJTkVSID0gImNpcC1kZXYgPGNpcC1kZXZAbGlzdHMu
+Y2lwLXByb2plY3Qub3JnPiINCj4gKw0KPiAgSE9PS19BRERfTU9EVUxFUyA9ICJzcXVhc2hmcyIN
+Cj4gZGlmZiAtLWdpdCBhL3JlY2lwZXMtaW5pdHJhbWZzL2luaXRyYW1mcy12ZXJpdHktaG9vay9p
+bml0cmFtZnMtdmVyaXR5LWhvb2tfMC4zLmJiIGIvcmVjaXBlcy1pbml0cmFtZnMvaW5pdHJhbWZz
+LXZlcml0eS1ob29rL2luaXRyYW1mcy12ZXJpdHktaG9va18wLjMuYmINCj4gaW5kZXggYTBlZTgw
+My4uYjJmYjcwNCAxMDA2NDQNCj4gLS0tIGEvcmVjaXBlcy1pbml0cmFtZnMvaW5pdHJhbWZzLXZl
+cml0eS1ob29rL2luaXRyYW1mcy12ZXJpdHktaG9va18wLjMuYmINCj4gKysrIGIvcmVjaXBlcy1p
+bml0cmFtZnMvaW5pdHJhbWZzLXZlcml0eS1ob29rL2luaXRyYW1mcy12ZXJpdHktaG9va18wLjMu
+YmINCj4gQEAgLTExLDYgKzExLDggQEANCj4gIA0KPiAgaW5oZXJpdCBpbml0cmFtZnMtaG9vaw0K
+PiAgDQo+ICtNQUlOVEFJTkVSID0gImNpcC1kZXYgPGNpcC1kZXZAbGlzdHMuY2lwLXByb2plY3Qu
+b3JnPiINCj4gKw0KPiAgU1JDX1VSSSArPSAiIFwNCj4gICAgICBmaWxlOi8vaG9vayBcDQo+ICAg
+ICAgZmlsZTovL2xvY2FsLXRvcC1jb21wbGV0ZS50bXBsIFwNCj4gZGlmZiAtLWdpdCBhL3JlY2lw
+ZXMtcHl0aG9uL3NodGFiL3B5dGhvbi1zaHRhYl8xLjUuNS00LmJiIGIvcmVjaXBlcy1weXRob24v
+c2h0YWIvcHl0aG9uLXNodGFiXzEuNS41LTQuYmINCj4gaW5kZXggN2E1Y2ZkMi4uOGNjZWYzNSAx
+MDA2NDQNCj4gLS0tIGEvcmVjaXBlcy1weXRob24vc2h0YWIvcHl0aG9uLXNodGFiXzEuNS41LTQu
+YmINCj4gKysrIGIvcmVjaXBlcy1weXRob24vc2h0YWIvcHl0aG9uLXNodGFiXzEuNS41LTQuYmIN
+Cj4gQEAgLTExLDYgKzExLDggQEANCj4gIA0KPiAgaW5oZXJpdCBkcGtnLWdicA0KPiAgDQo+ICtN
+QUlOVEFJTkVSID0gImNpcC1kZXYgPGNpcC1kZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnPiINCj4g
+Kw0KPiAgU1JDX1VSSSArPSAiIFwNCj4gICAgICBnaXQ6Ly9zYWxzYS5kZWJpYW4ub3JnL3B5dGhv
+bi10ZWFtL3BhY2thZ2VzL3B5dGhvbi1zaHRhYi5naXQ7cHJvdG9jb2w9aHR0cHM7YnJhbmNoPW1h
+aW4gXA0KPiAgICAgICINCj4gZGlmZiAtLWdpdCBhL3JlY2lwZXMtc2VjdXJpdHkvZmFpbDJiYW4t
+Y29uZmlnL2ZhaWwyYmFuLWNvbmZpZy5iYiBiL3JlY2lwZXMtc2VjdXJpdHkvZmFpbDJiYW4tY29u
+ZmlnL2ZhaWwyYmFuLWNvbmZpZy5iYg0KPiBpbmRleCA4N2QxNDk3Li40OTAwMDY5IDEwMDY0NA0K
+PiAtLS0gYS9yZWNpcGVzLXNlY3VyaXR5L2ZhaWwyYmFuLWNvbmZpZy9mYWlsMmJhbi1jb25maWcu
+YmINCj4gKysrIGIvcmVjaXBlcy1zZWN1cml0eS9mYWlsMmJhbi1jb25maWcvZmFpbDJiYW4tY29u
+ZmlnLmJiDQo+IEBAIC0xMiw2ICsxMiw4IEBAIERFU0NSSVBUSU9OID0gIkJhc2ljIGZhaWwyYmFu
+IGNvbmZpZyB3aXRoIHN5c3RlbWQgYXMgYmFja2VuZCINCj4gIA0KPiAgaW5oZXJpdCBkcGtnLXJh
+dw0KPiAgDQo+ICtNQUlOVEFJTkVSID0gImNpcC1kZXYgPGNpcC1kZXZAbGlzdHMuY2lwLXByb2pl
+Y3Qub3JnPiINCj4gKw0KPiAgU1JDX1VSSSArPSAiZmlsZTovL3N5c3RlbWQtZGVmYXVsdHMuY29u
+ZiINCj4gIA0KPiAgREVCSUFOX0RFUEVORFMgKz0gImZhaWwyYmFuLCBweXRob24zLXN5c3RlbWQs
+IHB5dGhvbjMtcHlpbm90aWZ5Ig0KPiBkaWZmIC0tZ2l0IGEvcmVjaXBlcy1zdXBwb3J0L2ZhY3Rv
+cnktcmVzZXQtaGVscGVyL2ZhY3RvcnktcmVzZXQtaGVscGVyLmluYyBiL3JlY2lwZXMtc3VwcG9y
+dC9mYWN0b3J5LXJlc2V0LWhlbHBlci9mYWN0b3J5LXJlc2V0LWhlbHBlci5pbmMNCj4gaW5kZXgg
+NTZhYzViNC4uOWUxN2RhYSAxMDA2NDQNCj4gLS0tIGEvcmVjaXBlcy1zdXBwb3J0L2ZhY3Rvcnkt
+cmVzZXQtaGVscGVyL2ZhY3RvcnktcmVzZXQtaGVscGVyLmluYw0KPiArKysgYi9yZWNpcGVzLXN1
+cHBvcnQvZmFjdG9yeS1yZXNldC1oZWxwZXIvZmFjdG9yeS1yZXNldC1oZWxwZXIuaW5jDQo+IEBA
+IC0xMCw2ICsxMCw4IEBADQo+ICANCj4gIGluaGVyaXQgZHBrZy1yYXcNCj4gIA0KPiArTUFJTlRB
+SU5FUiA9ICJjaXAtZGV2IDxjaXAtZGV2QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZz4iDQo+ICsNCj4g
+IERFU0NSSVBUSU9OID0gImhlbHBlciBzY3JpcHQgdG8gZXhlY3V0ZSBhIGZhY3RvcnkgcmVzZXQi
+DQo+ICANCj4gIFBST1ZJREVTID0gImZhY3RvcnktcmVzZXQtaGVscGVyIg0KPiAtLSANCj4gMi41
+My4wDQoNCi0tIA0KU2llbWVucyBBRw0KTGludXggRXhwZXJ0IENlbnRlcg0KRnJpZWRyaWNoLUx1
+ZHdpZy1CYXVlci1TdHIuIDMNCjg1NzQ4IEdhcmNoaW5nLCBHZXJtYW55DQoNCg==
 
