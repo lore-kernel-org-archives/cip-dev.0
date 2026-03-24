@@ -2,138 +2,134 @@ Return-Path: <pavel@nabladev.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B31FE9A74A
-	for <webhook@archiver.kernel.org>; Tue, 24 Mar 2026 09:26:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AB28E9A74C
+	for <webhook@archiver.kernel.org>; Tue, 24 Mar 2026 09:29:45 +0000 (UTC)
 Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.15631.1774344385365221228
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.15675.1774344583862626832
  for <cip-dev@lists.cip-project.org>;
- Tue, 24 Mar 2026 02:26:25 -0700
+ Tue, 24 Mar 2026 02:29:44 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=gUMZ8SDm;
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=QuaVt4KL;
  spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0523510CC2D;
-	Tue, 24 Mar 2026 10:26:22 +0100 (CET)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3FF0F10BCC6;
+	Tue, 24 Mar 2026 10:29:41 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1774344383;
+	s=dkim; t=1774344581;
 	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=tXzODnvqRkMNnLoJ5MohlQESogY7eil9j3zTLWdSD74=;
-	b=gUMZ8SDmtOlAxE0Qmgeq/MBeEQkPyQkpU7pGy5mTmjSv7ydgVZn3hsq4igHWbCHF1r004T
-	HKyI8WMYA4HwII6PmKXWse0cKDQjKpHRlaDZYFJXki9boVSvVdq17EgFVxfltkGmwCA2qu
-	rzFSZuLUBiPNcWKtGlcK3XmJ4SvL2josuExLIG33NTnGYDv86r5V38+1iV3eI1UWdmOV+2
-	wBdZFKUJu4MedELCG9f0C/UgnDa/L0ytAmUfZtrW+I1p3DcLVVn2h660j8OMFFznht5w+t
-	SfhWcYmGk0EuIe03q5B4ku2FqRj+nEaKfPmri8P7zbKLzwL0Xw3afEuh8zyA/g==
-Date: Tue, 24 Mar 2026 10:26:21 +0100
+	 in-reply-to:references; bh=3cgU3ZbqsD/rdVzRvkKODJhpOeXg+LfXeMXTK3yB7Tk=;
+	b=QuaVt4KLtYFSENa7hgpinYjEvoJY52vZZm6XAP7RSePPgQ9vZz1TG89R25gZ76NARv0dWS
+	DhrJ8uyU1yOkDpvCuw1863O48nhScS9p38D3EO99b7dHpPeuz3H8kDkg6cpVDxapXROxh2
+	bun9EXNsKFInJa+nLgV7McPY+QEoQi2ImrC0a4AKWKIkEYicB0JM9GW4hqdBwgmHKFE2CP
+	eEFGanV925IGMQ7/zVMuxTFP9CP0DIN3FzDnrAyGWRul45NGuBtqq47Qvy7B6Lm4uNrF5R
+	vsYp8AsZeabzQqOKUBYUC+qC5qrFpu818JVVICvPID+Txry7GNbJmIJ6tkG7pA==
+Date: Tue, 24 Mar 2026 10:29:39 +0100
 From: Pavel Machek <pavel@nabladev.com>
 To: Claudiu <claudiu.beznea@tuxon.dev>
 Cc: nobuhiro.iwamatsu.x90@mail.toshiba, pavel@nabladev.com,
 	cip-dev@lists.cip-project.org
-Subject: Re: [PATCH 5.10.y-cip 05/28] soc: renesas: rz-sysc: Populate
- readable_reg/writeable_reg in regmap config
-Message-ID: <acJYvRx1EYafqZD_@duo.ucw.cz>
+Subject: Re: [PATCH 5.10.y-cip 07/28] lib/bitmap: add bitmap_{read,write}()
+Message-ID: <acJZg1O-1aB15Oyl@duo.ucw.cz>
 References: <20260311110357.1938200-1-claudiu.beznea.uj@bp.renesas.com>
- <20260311110357.1938200-6-claudiu.beznea.uj@bp.renesas.com>
+ <20260311110357.1938200-8-claudiu.beznea.uj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="HNadcxxI8i2M5z5l"
+	protocol="application/pgp-signature"; boundary="gxDJfi9PqO74uCOa"
 Content-Disposition: inline
-In-Reply-To: <20260311110357.1938200-6-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20260311110357.1938200-8-claudiu.beznea.uj@bp.renesas.com>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 24 Mar 2026 09:26:35 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22542
+ <cip-dev@lists.cip-project.org>; Tue, 24 Mar 2026 09:29:45 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22543
 
 
---HNadcxxI8i2M5z5l
+--gxDJfi9PqO74uCOa
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi1
+Hi!
 
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> From: Syed Nayyar Waris <syednwaris@gmail.com>
 >=20
-> commit c432180a7d95081353a96fd6d5bd75b0fc8a27c3 upstream.
+> commit 63c15822b8dd02a2423cfd92232245ace3f7a11b upstream.
 >=20
-> Not all system controller registers are accessible from Linux. Accessing
-> such registers generates synchronous external abort. Populate the
-> readable_reg and writeable_reg members of the regmap config to inform the
-> regmap core which registers can be accessed. The list will need to be
-> updated whenever new system controller functionality is exported through
-> regmap.
+> The two new functions allow reading/writing values of length up to
+> BITS_PER_LONG bits at arbitrary position in the bitmap.
 >=20
-
-> +++ b/drivers/soc/renesas/r9a08g045-sysc.c
-> @@ -18,7 +37,57 @@ static const struct rz_sysc_soc_id_init_data rzg3s_sys=
-c_soc_id_init_data __initc
->  	.specific_id_mask =3D GENMASK(27, 0),
->  };
+> The code was taken from "bitops: Introduce the for_each_set_clump macro"
+> by Syed Nayyar Waris with a number of changes and simplifications:
+>  - instead of using roundup(), which adds an unnecessary dependency
+>    on <linux/math.h>, we calculate space as BITS_PER_LONG-offset;
+>  - indentation is reduced by not using else-clauses (suggested by
+>    checkpatch for bitmap_get_value());
+>  - bitmap_get_value()/bitmap_set_value() are renamed to bitmap_read()
+>    and bitmap_write();
+>  - some redundant computations are omitted.
+>=20
+> +++ b/include/linux/bitmap.h
+> @@ -601,6 +605,79 @@ static inline void bitmap_set_value8(unsigned long *=
+map, unsigned long value,
+>  	map[index] |=3D value << offset;
+>  }
 > =20
-> +static bool rzg3s_regmap_readable_reg(struct device *dev, unsigned int r=
-eg)
+> +/**
+> + * bitmap_read - read a value of n-bits from the memory region
+> + * @map: address to the bitmap memory region
+> + * @start: bit offset of the n-bit value
+> + * @nbits: size of value in bits, nonzero, up to BITS_PER_LONG
+> + *
+> + * Returns: value of @nbits bits located at the @start bit offset within=
+ the
+> + * @map memory region. For @nbits =3D 0 and @nbits > BITS_PER_LONG the r=
+eturn
+> + * value is undefined.
+> + */
+> +static inline unsigned long bitmap_read(const unsigned long *map,
+> +					unsigned long start,
+> +					unsigned long nbits)
 > +{
-> +	switch (reg) {
-> +	case SYS_XSPI_MAP_STAADD_CS0:
-> +	case SYS_XSPI_MAP_ENDADD_CS0:
-> +	case SYS_XSPI_MAP_STAADD_CS1:
-> +	case SYS_XSPI_MAP_ENDADD_CS1:
-> +	case SYS_GETH0_CFG:
-> +	case SYS_GETH1_CFG:
-> +	case SYS_PCIE_CFG:
-> +	case SYS_PCIE_MON:
-> +	case SYS_PCIE_ERR_MON:
-> +	case SYS_PCIE_PHY:
-> +	case SYS_I2C0_CFG:
-> +	case SYS_I2C1_CFG:
-> +	case SYS_I2C2_CFG:
-> +	case SYS_I2C3_CFG:
-> +	case SYS_I3C_CFG:
-> +	case SYS_USB_PWRRDY:
-> +	case SYS_PCIE_RST_RSM_B:
-> +		return true;
-> +	default:
-> +		return false;
-> +	}
-> +}
+> +	size_t index =3D BIT_WORD(start);
+> +	unsigned long offset =3D start % BITS_PER_LONG;
+> +	unsigned long space =3D BITS_PER_LONG - offset;
+> +	unsigned long value_low, value_high;
 > +
-> +static bool rzg3s_regmap_writeable_reg(struct device *dev, unsigned int =
-reg)
-> +{
-> +	switch (reg) {
-> +	case SYS_XSPI_MAP_STAADD_CS0:
-> +	case SYS_XSPI_MAP_ENDADD_CS0:
-> +	case SYS_XSPI_MAP_STAADD_CS1:
-> +	case SYS_XSPI_MAP_ENDADD_CS1:
-> +	case SYS_PCIE_CFG:
-> +	case SYS_PCIE_PHY:
-> +	case SYS_I2C0_CFG:
-> +	case SYS_I2C1_CFG:
-> +	case SYS_I2C2_CFG:
-> +	case SYS_I2C3_CFG:
-> +	case SYS_I3C_CFG:
-> +	case SYS_USB_PWRRDY:
-> +	case SYS_PCIE_RST_RSM_B:
-> +		return true;
-> +	default:
-> +		return false;
-> +	}
-> +}
+> +	if (unlikely(!nbits || nbits > BITS_PER_LONG))
+> +		return 0;
 
-I'd not mind refactoring these two so that code could be shared.
+If someone attempts to read more than bits_per_long, we silently give
+him 0. That sounds like recipe for hard-to-debug problem when the code
+designed for 64-bit system is ran on 32-bit.
+
+I'd expect WARN_ON here.
+
+> +static inline void bitmap_write(unsigned long *map, unsigned long value,
+> +				unsigned long start, unsigned long nbits)
+> +{
+> +	size_t index;
+> +	unsigned long offset;
+> +	unsigned long space;
+> +	unsigned long mask;
+> +	bool fit;
+> +
+> +	if (unlikely(!nbits || nbits > BITS_PER_LONG))
+> +		return;
+
+And similary here.
 
 Thanks and best regards,
 								Pavel
 
---HNadcxxI8i2M5z5l
+--gxDJfi9PqO74uCOa
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCacJYvQAKCRAw5/Bqldv6
-8i2xAJ9zezpomyC+svMUtBDX2QcZVUJtsgCgjd9wGwhSJYkfV9FbqGYHPwYHbFo=
-=IWbl
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCacJZgwAKCRAw5/Bqldv6
+8itIAJ0TEvMGfgi0UblR8JrIDIXVI+oarwCeLgFtCd0greKjs2A9F7TXaZeignU=
+=CNdi
 -----END PGP SIGNATURE-----
 
---HNadcxxI8i2M5z5l--
+--gxDJfi9PqO74uCOa--
 
