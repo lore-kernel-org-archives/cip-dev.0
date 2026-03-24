@@ -2,83 +2,138 @@ Return-Path: <pavel@nabladev.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B457E9A748
-	for <webhook@archiver.kernel.org>; Tue, 24 Mar 2026 09:22:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B31FE9A74A
+	for <webhook@archiver.kernel.org>; Tue, 24 Mar 2026 09:26:35 +0000 (UTC)
 Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.15591.1774344144959118404
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.15631.1774344385365221228
  for <cip-dev@lists.cip-project.org>;
- Tue, 24 Mar 2026 02:22:25 -0700
+ Tue, 24 Mar 2026 02:26:25 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=Pt4Odc+i;
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=gUMZ8SDm;
  spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 06888112121;
-	Tue, 24 Mar 2026 10:22:22 +0100 (CET)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0523510CC2D;
+	Tue, 24 Mar 2026 10:26:22 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1774344143;
+	s=dkim; t=1774344383;
 	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=HCYRxL614nhI+DHyy8gWOFl8Ty6gmTQd2ghZQLvuLxc=;
-	b=Pt4Odc+iGQu9z47m9BLYpPIT0yF8V3lQOZdloyftge89mVu2GZgH33ECc3SzYeGIwKrjvX
-	Dqp9oJwjWMNAG70IbnjdTM9ZMYYUTz/buzVBC/4Qf+jeBKSS32g+uiu0+4M7bJ/CrhK8F2
-	2ThdZ7z9I/z6j4nTpAW7ZTdcl5z8o2bpWyKFOI8y/IbW1csxXGVH2NXfaFESzXdmGQpc9D
-	ciiHn0G22KopXpxGt24+8LxteJ2welq9a5YrH3bOPU/Kr/hrfOx61wYRIQ/ioj+jEtQV3r
-	1HkxUOMxWc+qi+JHHX3aMnIsEZ6ljc7XjX0UMtVZIdzpYN4O0RBdAakjA09kiA==
-Date: Tue, 24 Mar 2026 10:22:21 +0100
+	 in-reply-to:references; bh=tXzODnvqRkMNnLoJ5MohlQESogY7eil9j3zTLWdSD74=;
+	b=gUMZ8SDmtOlAxE0Qmgeq/MBeEQkPyQkpU7pGy5mTmjSv7ydgVZn3hsq4igHWbCHF1r004T
+	HKyI8WMYA4HwII6PmKXWse0cKDQjKpHRlaDZYFJXki9boVSvVdq17EgFVxfltkGmwCA2qu
+	rzFSZuLUBiPNcWKtGlcK3XmJ4SvL2josuExLIG33NTnGYDv86r5V38+1iV3eI1UWdmOV+2
+	wBdZFKUJu4MedELCG9f0C/UgnDa/L0ytAmUfZtrW+I1p3DcLVVn2h660j8OMFFznht5w+t
+	SfhWcYmGk0EuIe03q5B4ku2FqRj+nEaKfPmri8P7zbKLzwL0Xw3afEuh8zyA/g==
+Date: Tue, 24 Mar 2026 10:26:21 +0100
 From: Pavel Machek <pavel@nabladev.com>
-To: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc: cip-dev@lists.cip-project.org,
-	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
-	Pavel Machek <pavel@nabladev.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>
-Subject: Re: [PATCH 6.12.y-cip 00/35] Add USB and Ethernet support to RZ/T2H
- and RZ/N2H SoC
-Message-ID: <acJXzZga4vox1MXo@duo.ucw.cz>
-References: <20260316145915.8580-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: nobuhiro.iwamatsu.x90@mail.toshiba, pavel@nabladev.com,
+	cip-dev@lists.cip-project.org
+Subject: Re: [PATCH 5.10.y-cip 05/28] soc: renesas: rz-sysc: Populate
+ readable_reg/writeable_reg in regmap config
+Message-ID: <acJYvRx1EYafqZD_@duo.ucw.cz>
+References: <20260311110357.1938200-1-claudiu.beznea.uj@bp.renesas.com>
+ <20260311110357.1938200-6-claudiu.beznea.uj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="x06jP6+GgdMPISNI"
+	protocol="application/pgp-signature"; boundary="HNadcxxI8i2M5z5l"
 Content-Disposition: inline
-In-Reply-To: <20260316145915.8580-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20260311110357.1938200-6-claudiu.beznea.uj@bp.renesas.com>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 24 Mar 2026 09:22:35 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22541
+ <cip-dev@lists.cip-project.org>; Tue, 24 Mar 2026 09:26:35 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22542
 
 
---x06jP6+GgdMPISNI
+--HNadcxxI8i2M5z5l
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi!
+Hi1
 
-> This patch series aims to add USB and Ethernet support to the RZ/T2H
-> and RZ/N2H SoCs and enable support for it on the EVKs respectively.
-> This also includes clock support for enabling these peripherals note
-> there is additional clock patch for SCI-SC5 which I have included as
-> part of this series which was supposed to be ideally sent during [0]
-> was sent out.
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>=20
+> commit c432180a7d95081353a96fd6d5bd75b0fc8a27c3 upstream.
+>=20
+> Not all system controller registers are accessible from Linux. Accessing
+> such registers generates synchronous external abort. Populate the
+> readable_reg and writeable_reg members of the regmap config to inform the
+> regmap core which registers can be accessed. The list will need to be
+> updated whenever new system controller functionality is exported through
+> regmap.
+>=20
 
-I had some minor comments here, but those should be fixed in mainline,
-first, so they should not block the merge.
+> +++ b/drivers/soc/renesas/r9a08g045-sysc.c
+> @@ -18,7 +37,57 @@ static const struct rz_sysc_soc_id_init_data rzg3s_sys=
+c_soc_id_init_data __initc
+>  	.specific_id_mask =3D GENMASK(27, 0),
+>  };
+> =20
+> +static bool rzg3s_regmap_readable_reg(struct device *dev, unsigned int r=
+eg)
+> +{
+> +	switch (reg) {
+> +	case SYS_XSPI_MAP_STAADD_CS0:
+> +	case SYS_XSPI_MAP_ENDADD_CS0:
+> +	case SYS_XSPI_MAP_STAADD_CS1:
+> +	case SYS_XSPI_MAP_ENDADD_CS1:
+> +	case SYS_GETH0_CFG:
+> +	case SYS_GETH1_CFG:
+> +	case SYS_PCIE_CFG:
+> +	case SYS_PCIE_MON:
+> +	case SYS_PCIE_ERR_MON:
+> +	case SYS_PCIE_PHY:
+> +	case SYS_I2C0_CFG:
+> +	case SYS_I2C1_CFG:
+> +	case SYS_I2C2_CFG:
+> +	case SYS_I2C3_CFG:
+> +	case SYS_I3C_CFG:
+> +	case SYS_USB_PWRRDY:
+> +	case SYS_PCIE_RST_RSM_B:
+> +		return true;
+> +	default:
+> +		return false;
+> +	}
+> +}
+> +
+> +static bool rzg3s_regmap_writeable_reg(struct device *dev, unsigned int =
+reg)
+> +{
+> +	switch (reg) {
+> +	case SYS_XSPI_MAP_STAADD_CS0:
+> +	case SYS_XSPI_MAP_ENDADD_CS0:
+> +	case SYS_XSPI_MAP_STAADD_CS1:
+> +	case SYS_XSPI_MAP_ENDADD_CS1:
+> +	case SYS_PCIE_CFG:
+> +	case SYS_PCIE_PHY:
+> +	case SYS_I2C0_CFG:
+> +	case SYS_I2C1_CFG:
+> +	case SYS_I2C2_CFG:
+> +	case SYS_I2C3_CFG:
+> +	case SYS_I3C_CFG:
+> +	case SYS_USB_PWRRDY:
+> +	case SYS_PCIE_RST_RSM_B:
+> +		return true;
+> +	default:
+> +		return false;
+> +	}
+> +}
 
-Reviewed-by: Pavel Machek <pavel@nabladev.com>
+I'd not mind refactoring these two so that code could be shared.
 
-I can apply the series if it passes testing and there are no other
-comments.
+Thanks and best regards,
+								Pavel
 
-Best regards,
-                                                                Pavel
-
---x06jP6+GgdMPISNI
+--HNadcxxI8i2M5z5l
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCacJXzQAKCRAw5/Bqldv6
-8pYcAJ4iNjanUQGD+O2BMe3mJaa47dH+cACfcjpV+gBWMzlJ0RUcVyVG45ksGks=
-=qiPm
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCacJYvQAKCRAw5/Bqldv6
+8i2xAJ9zezpomyC+svMUtBDX2QcZVUJtsgCgjd9wGwhSJYkfV9FbqGYHPwYHbFo=
+=IWbl
 -----END PGP SIGNATURE-----
 
---x06jP6+GgdMPISNI--
+--HNadcxxI8i2M5z5l--
 
