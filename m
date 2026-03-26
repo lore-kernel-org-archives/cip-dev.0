@@ -1,487 +1,1039 @@
-Return-Path: <nobuhiro.iwamatsu.x90@mail.toshiba>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E29AA10A1E7C
-	for <webhook@archiver.kernel.org>; Thu, 26 Mar 2026 11:14:11 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.152])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.45686.1774523640633762342
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9829210A3D85
+	for <webhook@archiver.kernel.org>; Thu, 26 Mar 2026 12:05:15 +0000 (UTC)
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (DB3PR0202CU003.outbound.protection.outlook.com [52.101.84.4])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.46585.1774526713436140388
  for <cip-dev@lists.cip-project.org>;
- Thu, 26 Mar 2026 04:14:01 -0700
+ Thu, 26 Mar 2026 05:05:14 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.s=key2.smx header.b=fO/kc8yK;
- spf=pass (domain: mail.toshiba, ip: 210.130.202.152, mailfrom: nobuhiro.iwamatsu.x90@mail.toshiba)
-DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=mail.toshiba;h=From:To:CC:
-	Subject:Date:Message-ID:Content-Type:Content-Transfer-Encoding:MIME-Version;
-	i=nobuhiro.iwamatsu.x90@mail.toshiba;s=key2.smx;t=1774523627;x=1775733227;bh=
-	z/RJPmHZrvTPLeKNyjfTxz/Hv3pZppKpiY/iMA2KWUs=;b=fO/kc8yKyMkgnhFTl01MbuwppCGzBb
-	zE+SFyNuN6I8c0pdTBUvaZGO4of0VH15JszxBrsDi5Lso+G16Q9fldmVpBIAXVGXU+8RhKrdCGmoH
-	wDYjd+lDCQlRhta9SdODcee5DD1d7fqPuOhcyfRUn/ujAXw0JBvL2CIzE/yLlGvZm0MTu4kyGskZR
-	QSYEgwVXOPOi6qK40V3oSQrZklytWkuY1pCUEUxmAUdUDpRvu1kyO1GCzHybPAOUjwMAVGXnuLnd+
-	erYNjUHmWL7GMDcVkLUoliYfDNQJfoC6z7auMbAa/gDvdhzlJv6S3rGlUAYEnv2fE125me0K6mRxx
-	Z6cg==;
-Received: by mo-csw.securemx.jp (mx-mo-csw1802) id 62QBDkaP2517735; Thu, 26 Mar 2026 20:13:46 +0900
-X-Iguazu-Qid: 2yAbMX92rcMX7KLGme
-X-Iguazu-QSIG: v=2; s=0; t=1774523626; q=2yAbMX92rcMX7KLGme; m=in14ML6/mBWLtU9zb2pDE4KjfhcvSrXKm0wPldTVBCY=
-Received: from imx12-a.toshiba.co.jp (unknown [38.106.60.135])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	 id 4fhLkK4KJmzyPQ; Thu, 26 Mar 2026 20:13:45 +0900 (JST)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=NBV1Jw5X;
+ spf=pass (domain: siemens.com, ip: 52.101.84.4, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AUhf7tQ3ipli+QKzSLLkqNyrBOwoeNPSsPrhwXzLfW95xNErlBqapiz9N0L9c9IV8rQh/V4sCIxnvt5niNrHrlfqJoORVpzA+Fit/O6IGaqBtKgqe/s7O7S2w7WsKbpE+fBjI7iXghRMQNQXW+lKxf8UZWboU3XSLCwzkAOiKyyG3f3q7a64nOJHmRTj/LMtGiugfeEwWyafvC3ZZt3G1qvVuZpaEwhekT6jfD3h4SA/Ea28eXmV6R0rj91LoUXGDegFE4ua1TIpFDnKHHZv+yuTQ3T9hDUjzJu6KVVtSgHJHURT4AA5+05cguwbPKgby9OH5iuC/V/e45qgnmla3Q==
+ b=jpnkXWjDL7R7pkCoj8xTVllbxt9qbgBmX+PNqJpeBMJoYwzmtdMuKBaUu4fWYs+Y3JqD+KDz8kCHCvKmH/7+rVeiLwPBB7/4KUjDKhCe8qQhKjjJKDh5TlR4v2l92Qshz4VICSA9x83V4fxMHm/9EuRzn1P3655TG1z1smvsWmYJjh2VmImeeDDPbdqBIGLqywclL3yPl1tlfk5Fc5CRCrptfwKhSgMzwk4W13E9ZiMNfpTAx08K1ZSQP49DyI3WuYZA4T6ItlNPLdasg6d6NyGfSVUrev7HOpnFUQk1WaXNcv3hFWCBDrHOqkgD2eJIZa+i9L+z/0hO+u/aHBpTSw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1Zi7O8U0Gc2oNyyEkcqcanZt2LlC/9swngFJ4hIyOkY=;
- b=bdJc97YzzZ2NpfAoILNLo2jnN9ExCTzWAc0lIRa0vuXStTDq5WvWGsxpcQHt2nouIcVlH+tqKm0UQgEYz1i2ZY9/KD6tsFkFPNkaMdT+YmeSuhip9M/tVSL3xdhLtg+oS9u8yAyfJT8aQh9JUnvxQghlNIpjCfCPAN2xjFfhxdhCBs63B2KW6pGxDFjMxOrl0M45GvvOlCEP2Y6DIBSZLRcUjTTxa/3+bgArZC/oWXxnMOn/ScTnLOgfNeMCvEBvbn7RHFEFfyFK5ck4Wwam7r9qXE/eYTt1m3FXNoISqMcTS5dlQtQ+wzIU/pvntuw8/OC1GcKwN82JS6apUINnww==
+ bh=5X3vaJk1qCwqrqOQmLEKWqeOZsqnnbjD7vyZqY72Ln0=;
+ b=w1JqOUIOUUk7Lxovt8ObgT/7rD+wKm+9TGczcdxqh6F3vPDxn8zuyzAPWfyDLRgnq8DpIs5lg4hmIsjQkRXK5k3GB8Qwk2RUu7Jebv4e8tnxtGQsLIh9NJCkvaP+YmEObCVaDNd9duQ9UBQ50tLT+rhGoyYpD6PT2E4/WZKZGH1fTO0NEvWr/5UJpNFyOkEJ00db+itrkclMxnMaVsnvHr9WZs2e2kp4Dz1UNLDLmOV1nNi7U+Klioh3k1JzFzVlOmzVzcCEI2mQkEfE8NDCSigcOAHhlhmvFKTlY2M4p+yHUi5m8sRUs4incUzcFntH4nIhftHDVRuK5FnypQSAzw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mail.toshiba; dmarc=pass action=none header.from=mail.toshiba;
- dkim=pass header.d=mail.toshiba; arc=none
-From: <nobuhiro.iwamatsu.x90@mail.toshiba>
-To: <cip-dev@lists.cip-project.org>
-CC: <pavel@nabladev.com>, <masami.ichikawa@cybertrust.co.jp>,
-        <jan.kiszka@siemens.com>, <uli@fpond.eu>,
-        <chris.paterson2@renesas.com>
-Subject: [ANNOUNCE] Release v6.12.78-cip19
-Thread-Topic: [ANNOUNCE] Release v6.12.78-cip19
-Thread-Index: Ady9ECn9qF4oCmlHTAu9owz8nXQu1g==
-Date: Thu, 26 Mar 2026 11:13:42 +0000
-X-TSB-HOP2: ON
-Message-ID: 
- <TY7PR01MB14818AB3C65FC4871116A464CCD56A@TY7PR01MB14818.jpnprd01.prod.outlook.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mail.toshiba;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY7PR01MB14818:EE_|OSRPR01MB11504:EE_
-x-ms-office365-filtering-correlation-id: a4b27d27-00af-4798-0168-08de8b28bda1
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|1800799024|366016|376014|38070700021|18002099003|56012099003;
-x-microsoft-antispam-message-info: 
- WXfp680gAQB54ezxsjl2mySDeC4/aLVN7nt4Wwhyt2Hvw9Os/mfUmSZJBpTcUR/GWAJnZakZg1GlTxDrOuqx4RGdKK67szqSPpAfb2hC5jMXA3DxyKlTR0jjt4k8HwaR6GTTpmGJWWXqHqgBsr1AakPsqwBwOpzWM5Trb15m1vGFbnWfO9gHe7Sq6gJx5qcUc7WbrPHPl3evIg7AzEX17KIuLCqGZOY4UdvRfsr3wGDQux1FNsxnwR1XRTUvROEbNAAQxHq3MggicTSxrYh1iEXd7q4yFHcOlcH0X5rSxOWdwqUHLVCFi+ZSQ1OajuFGepWWVchtH7Rg4YShlIhDOvpYSMteLTNttY9hFPvcQeXs0nJU+f/WHWg/Fzvov0hl3OUCA6pTxuwzTW5usLYnXHAl81tUKcB5tmy7FSPl9g5m/QCPn+qYI/0HItLxupQcbatP53XTugsI3DoSwwYRn5MbLTdQWc/JCHZYYc4h5Ip3damJM1FJ9xD3KpLzhfn1OXVcECXSTOkRg10pKMwXHZvPWY3gjh27iC7MKKUjbYfBhzZ3jLp/2WoFjb5yDIZ9++6O5fHP2RVrgHRypOatFxZU3TWLkQIwFSYkNN5aif3aYnTz2ifXWaahbhN1DSSs7nspfIZLG3fmcfnhPtOp51T6L/ZygDb3CnomJS8jxjpSNsO5fEH8TxWgy67LzqmMpDreTWNq+JfRGQIiloBEMDYF/mxvhNmusuYKzK5YV6ejbT0OuF0zu9XjTjWJjKXB+mU1mrmjwnVGvNHRfr3U3wiIBAUO6PcZbiA2nq7InyE=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7PR01MB14818.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700021)(18002099003)(56012099003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?Y2x4dUFIeVVMTlhKeWJBaENRN2tJalh1VHY4VkdBZkFjTVlka2FENjc5?=
- =?iso-2022-jp?B?M0RMRHpncG4zMEgrRTdjVFZzbGhHK1cwUlQySE53Vy9FdkpZNUFBNjFP?=
- =?iso-2022-jp?B?YWUwZm9UY3ZsSlhGWkJjdzdJSHQ5SXVuaWdYSE1aeHE2VVNKUytaUTZi?=
- =?iso-2022-jp?B?NnAzbCtqUmpCQVF3QjhQNi84WHBOTGI3SXpwWXpsdWszd1FhR3VURU0z?=
- =?iso-2022-jp?B?NmU1azhpSksvb2JFL1phWmFEUXRQQ1NOb3pCZ0kyVTFGelVjQU10aVRG?=
- =?iso-2022-jp?B?eXFsK21OaUtuZWZTYlhWckp0U2F3OHQrSjdjMXZ1NnhBU1huVHUxUHBT?=
- =?iso-2022-jp?B?T3dqU2VzQVk3VVNSdWV2NncrRi9LbjJMYSs2QTVhVHZmVlo1WkQrb1lR?=
- =?iso-2022-jp?B?MzI0MVhISWZBOGd1MDR6aU83SFBGMFF4MVM0VlUwVzZJZjdVNWkxOSs5?=
- =?iso-2022-jp?B?d2pxVUNqVGliT0RZRFE2VUhlYXo3b3hqZndRdUVCbURVN3Y3UnNJbGJO?=
- =?iso-2022-jp?B?V01rVkdzbTA1dW0vM1htcG1wSld2RWtzV1JjSDF1Yi9JVmUvZDh1Vjdy?=
- =?iso-2022-jp?B?ajM5K0JSanpuTmdWU3RIWnhlNFArZVRVVmh4bnJuZ0E0TmdHWTVmb2xP?=
- =?iso-2022-jp?B?R0EzcUQvMWMyNHh1WjR0Yjc3ZmRIc1hQVG5NNER3ZFk3OXozSk04RlRX?=
- =?iso-2022-jp?B?bWl1SThEdkFGZk1odVJmdEV2OGZmdzUxMHdpQlJWNzlWMEdGaW5hTkQ0?=
- =?iso-2022-jp?B?QkpENXhrT0xGUXZzSmp1NmhwbGJ2MGJGd2J4ampCVTdkcE44alNHZVYw?=
- =?iso-2022-jp?B?Tld2UTFRdlB4S0h4RnlkOVJGS2tKTGI0bHRsUFBoYm5wMWZMMDNjd3NL?=
- =?iso-2022-jp?B?d3BRNGdQNEs4OWhDVWpTNDZaTW5lZmtTQTl3N2tHOTE4cVJRUlpFVjNE?=
- =?iso-2022-jp?B?emQ5ZTNwT1NBOWxLOFNHV3JPK1ZqL0lZMFJwRVJWVzJGU29BWFo3aHJ3?=
- =?iso-2022-jp?B?Q216cDhsZC8wTTd4ZWJ5QkVSYzIrYk40SjBVa0FwSXFBRlRTWlY3THJw?=
- =?iso-2022-jp?B?TGNoSmNZekFTeDBkaU11R2IzWnVmbEpLVFpIZ09yNmlnWHdORW93OUp3?=
- =?iso-2022-jp?B?NHp3akV2R1BOYTJZb1ZuTHFsdW9IdG5tYlZwc00xWERIc3JxeENyeVEx?=
- =?iso-2022-jp?B?YmhVUXVId1VhK0diRU5MQ1YvTXRxTDQ5ditvbDFPRlVTZWQ1c2pjT2J3?=
- =?iso-2022-jp?B?VXJvODRzUU1tR0pQblAwOEJqUSs5Mk5Bd2Z5TXVDTzZvbXBWdEJkR0JE?=
- =?iso-2022-jp?B?TXdUUXJJQ0l5b2ZwRlhqUHU1dDVXdngzQjNhbkFTN0QyRWtVUElxdmtm?=
- =?iso-2022-jp?B?TUZZT3FDeEcxQ2VaTytmcEFUZE9uUFlrdk5wbmNVK2xoVEFOQVRvWnMy?=
- =?iso-2022-jp?B?U2JLUFY0Zkpza0pnVCtVL1NXVXB3Uk9CcVFWbENEbmpXMytSUCtsVTZ3?=
- =?iso-2022-jp?B?TmJTLzBuUy9lMFJMdTBxTEs3UmdFUUhTRkIxaDF2RlFuTTBVbXBTVWN5?=
- =?iso-2022-jp?B?V1VON0NKZWV4ZVJBb1J5WHRJK1dSYmdaNms1Z3JUMG94T1h0bXFqV29x?=
- =?iso-2022-jp?B?dGRVaHFWNjdzYU11aURDaHBHck1FWVNaZE9NWXRmWjQzVll2bEkrRXd1?=
- =?iso-2022-jp?B?OTJHQVMwY083ZXhhOTFWenBrd1FyM2grZklzQ3laanF6MDZ0b25IaVZq?=
- =?iso-2022-jp?B?QTBUWXdmNTFMZGVaM1JpNFdLZzBER0NHaTJEWFovRTAzbzBqWmFLRTVH?=
- =?iso-2022-jp?B?WTZleDdHZ2tEZ1hvYVNlalFzZUtFVzJHQTUyNnlVK0R1RlN1Q2w0VnAw?=
- =?iso-2022-jp?B?WVZ6MUpnZ2Q4b3dXam9jS2hLWFN3REtpZ0RtSGNHVm9WZnVITWVULzFS?=
- =?iso-2022-jp?B?Nkx1YldhSDBhUXlhWExsSW9BWnJmUXBUUGloWkN1N2M5R3F5TS9QR3BK?=
- =?iso-2022-jp?B?L3QzRHYyZDBSTmZQazc4cm1zNEtXbC94SzdUT3JHQndtQkN3bzlXYS9Y?=
- =?iso-2022-jp?B?eXd0ZSt2Tk9DQUV0VDFuOEFUTzlDd211YzA5dUI4MWQ3L0s2Nk0ySTFI?=
- =?iso-2022-jp?B?MXRTOEpBOXBIbk5sR3BvRXBYd3pOTTVjMDhRVSsyOHlqWnJsc2Y0c3FW?=
- =?iso-2022-jp?B?WUpkZTJKWis5Y2RRUWpVc3RDeHpPQXZEd0taVkFYbHZnL2ZONk5EYWha?=
- =?iso-2022-jp?B?UXVHZkx4MytFbGZFcGR1R2o5VWNIZWNRQUx6bHlHTG5IUDY3OW9kV1Bv?=
- =?iso-2022-jp?B?eGJwNmVTODFhVTFDMDJDUFZlTVdjWWFGbHZkUXdaQUNCNzhKUjNMRTFp?=
- =?iso-2022-jp?B?d2xUVjJxMGdUYnZQZENoNU50QlphRzFqdC9sZUNlOW9HbTREYUVvWXFv?=
- =?iso-2022-jp?B?cXVlVXBwMFZaMkxqZkhZYnFxdFV1eFladkUyN1hwZkZTd2d4Z2YvVlFT?=
- =?iso-2022-jp?B?S2JIUEtJQmJqSjc5cG1IaUxYRGJnVU9LME9uaEQrZnJiUUpWVDlJeG5v?=
- =?iso-2022-jp?B?a3U2ekNJYz0=?=
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5X3vaJk1qCwqrqOQmLEKWqeOZsqnnbjD7vyZqY72Ln0=;
+ b=NBV1Jw5X1/wEEJpaCkRlIR6xnFQuP4ufxTnZTqH23m/rYQTe31QDO+LvjiyB+SsG314apv9mNE2258E0I5Qdv9qeXMqlS/kAKkEPzH6BQ8uPfRI0dN1s9YP0yzH4dUdD1tN1M/R1JbklLHpfgyhR5OPo1ruAZMHcZUl4Yp6r/KaKQZKRUu9f68zqM2fP/+nAhW75WM5jxf8CDPDbqBw9vPnafgaabarQzwpXgkw7pFRCyFk1amz7aJBoWJcJayaiTDBtvtrNYm5sCQ3/NP5FMtd1TdxkzyRoD7nPcAZuNvPnGh179/5uNTtW2dXlRX9L7cr7ey3DAQudoB6BZEUxtQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by PAWPR10MB8240.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:388::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.20; Thu, 26 Mar
+ 2026 12:05:08 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::be9f:e8ca:ee9:83e1]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::be9f:e8ca:ee9:83e1%6]) with mapi id 15.20.9745.019; Thu, 26 Mar 2026
+ 12:05:08 +0000
+Message-ID: <cf8bf9cd-bb30-40eb-ac4d-2a3b27dc31d6@siemens.com>
+Date: Thu, 26 Mar 2026 13:05:06 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH isar-cip-core v2] *: Add SPDX-License-Identifier MIT
+ header
+From: Jan Kiszka <jan.kiszka@siemens.com>
+To: Kamlesh Gurudasani <kamlesh@ti.com>, dinesh.kumar@toshiba-tsip.com,
+ cip-dev@lists.cip-project.org, pavel@denx.de,
+ Quirin Gylstorff <quirin.gylstorff@siemens.com>
+References: <20260324-license-v2-1-1ca6dd83f0e8@ti.com>
+ <62e3e3c2-bd72-4d60-9ee9-d460371a0955@siemens.com>
+Content-Language: en-US
+Autocrypt: addr=jan.kiszka@siemens.com; keydata=
+ xsFNBGZY+hkBEACkdtFD81AUVtTVX+UEiUFs7ZQPQsdFpzVmr6R3D059f+lzr4Mlg6KKAcNZ
+ uNUqthIkgLGWzKugodvkcCK8Wbyw+1vxcl4Lw56WezLsOTfu7oi7Z0vp1XkrLcM0tofTbClW
+ xMA964mgUlBT2m/J/ybZd945D0wU57k/smGzDAxkpJgHBrYE/iJWcu46jkGZaLjK4xcMoBWB
+ I6hW9Njxx3Ek0fpLO3876bszc8KjcHOulKreK+ezyJ01Hvbx85s68XWN6N2ulLGtk7E/sXlb
+ 79hylHy5QuU9mZdsRjjRGJb0H9Buzfuz0XrcwOTMJq7e7fbN0QakjivAXsmXim+s5dlKlZjr
+ L3ILWte4ah7cGgqc06nFb5jOhnGnZwnKJlpuod3pc/BFaFGtVHvyoRgxJ9tmDZnjzMfu8YrA
+ +MVv6muwbHnEAeh/f8e9O+oeouqTBzgcaWTq81IyS56/UD6U5GHet9Pz1MB15nnzVcyZXIoC
+ roIhgCUkcl+5m2Z9G56bkiUcFq0IcACzjcRPWvwA09ZbRHXAK/ao/+vPAIMnU6OTx3ejsbHn
+ oh6VpHD3tucIt+xA4/l3LlkZMt5FZjFdkZUuAVU6kBAwElNBCYcrrLYZBRkSGPGDGYZmXAW/
+ VkNUVTJkRg6MGIeqZmpeoaV2xaIGHBSTDX8+b0c0hT/Bgzjv8QARAQABzSNKYW4gS2lzemth
+ IDxqYW4ua2lzemthQHNpZW1lbnMuY29tPsLBlAQTAQoAPhYhBABMZH11cs99cr20+2mdhQqf
+ QXvYBQJmWPvXAhsDBQkFo5qABQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEGmdhQqfQXvY
+ zPAP/jGiVJ2VgPcRWt2P8FbByfrJJAPCsos+SZpncRi7tl9yTEpS+t57h7myEKPdB3L+kxzg
+ K3dt1UhYp4FeIHA3jpJYaFvD7kNZJZ1cU55QXrJI3xu/xfB6VhCs+VAUlt7XhOsOmTQqCpH7
+ pRcZ5juxZCOxXG2fTQTQo0gfF5+PQwQYUp0NdTbVox5PTx5RK3KfPqmAJsBKdwEaIkuY9FbM
+ 9lGg8XBNzD2R/13cCd4hRrZDtyegrtocpBAruVqOZhsMb/h7Wd0TGoJ/zJr3w3WnDM08c+RA
+ 5LHMbiA29MXq1KxlnsYDfWB8ts3HIJ3ROBvagA20mbOm26ddeFjLdGcBTrzbHbzCReEtN++s
+ gZneKsYiueFDTxXjUOJgp8JDdVPM+++axSMo2js8TwVefTfCYt0oWMEqlQqSqgQwIuzpRO6I
+ ik7HAFq8fssy2cY8Imofbj77uKz0BNZC/1nGG1OI9cU2jHrqsn1i95KaS6fPu4EN6XP/Gi/O
+ 0DxND+HEyzVqhUJkvXUhTsOzgzWAvW9BlkKRiVizKM6PLsVm/XmeapGs4ir/U8OzKI+SM3R8
+ VMW8eovWgXNUQ9F2vS1dHO8eRn2UqDKBZSo+qCRWLRtsqNzmU4N0zuGqZSaDCvkMwF6kIRkD
+ ZkDjjYQtoftPGchLBTUzeUa2gfOr1T4xSQUHhPL8zsFNBGZY+hkBEADb5quW4M0eaWPIjqY6
+ aC/vHCmpELmS/HMa5zlA0dWlxCPEjkchN8W4PB+NMOXFEJuKLLFs6+s5/KlNok/kGKg4fITf
+ Vcd+BQd/YRks3qFifckU+kxoXpTc2bksTtLuiPkcyFmjBph/BGms35mvOA0OaEO6fQbauiHa
+ QnYrgUQM+YD4uFoQOLnWTPmBjccoPuiJDafzLxwj4r+JH4fA/4zzDa5OFbfVq3ieYGqiBrtj
+ tBFv5epVvGK1zoQ+Rc+h5+dCWPwC2i3cXTUVf0woepF8mUXFcNhY+Eh8vvh1lxfD35z2CJeY
+ txMcA44Lp06kArpWDjGJddd+OTmUkFWeYtAdaCpj/GItuJcQZkaaTeiHqPPrbvXM361rtvaw
+ XFUzUlvoW1Sb7/SeE/BtWoxkeZOgsqouXPTjlFLapvLu5g9MPNimjkYqukASq/+e8MMKP+EE
+ v3BAFVFGvNE3UlNRh+ppBqBUZiqkzg4q2hfeTjnivgChzXlvfTx9M6BJmuDnYAho4BA6vRh4
+ Dr7LYTLIwGjguIuuQcP2ENN+l32nidy154zCEp5/Rv4K8SYdVegrQ7rWiULgDz9VQWo2zAjo
+ TgFKg3AE3ujDy4V2VndtkMRYpwwuilCDQ+Bpb5ixfbFyZ4oVGs6F3jhtWN5Uu43FhHSCqUv8
+ FCzl44AyGulVYU7hTQARAQABwsF8BBgBCgAmFiEEAExkfXVyz31yvbT7aZ2FCp9Be9gFAmZY
+ +hkCGwwFCQWjmoAACgkQaZ2FCp9Be9hN3g/8CdNqlOfBZGCFNZ8Kf4tpRpeN3TGmekGRpohU
+ bBMvHYiWW8SvmCgEuBokS+Lx3pyPJQCYZDXLCq47gsLdnhVcQ2ZKNCrr9yhrj6kHxe1Sqv1S
+ MhxD8dBqW6CFe/mbiK9wEMDIqys7L0Xy/lgCFxZswlBW3eU2Zacdo0fDzLiJm9I0C9iPZzkJ
+ gITjoqsiIi/5c3eCY2s2OENL9VPXiH1GPQfHZ23ouiMf+ojVZ7kycLjz+nFr5A14w/B7uHjz
+ uL6tnA+AtGCredDne66LSK3HD0vC7569sZ/j8kGKjlUtC+zm0j03iPI6gi8YeCn9b4F8sLpB
+ lBdlqo9BB+uqoM6F8zMfIfDsqjB0r/q7WeJaI8NKfFwNOGPuo93N+WUyBi2yYCXMOgBUifm0
+ T6Hbf3SHQpbA56wcKPWJqAC2iFaxNDowcJij9LtEqOlToCMtDBekDwchRvqrWN1mDXLg+av8
+ qH4kDzsqKX8zzTzfAWFxrkXA/kFpR3JsMzNmvextkN2kOLCCHkym0zz5Y3vxaYtbXG2wTrqJ
+ 8WpkWIE8STUhQa9AkezgucXN7r6uSrzW8IQXxBInZwFIyBgM0f/fzyNqzThFT15QMrYUqhhW
+ ZffO4PeNJOUYfXdH13A6rbU0y6xE7Okuoa01EqNi9yqyLA8gPgg/DhOpGtK8KokCsdYsTbk=
+In-Reply-To: <62e3e3c2-bd72-4d60-9ee9-d460371a0955@siemens.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BE1P281CA0146.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:b10:7c::18) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
 MIME-Version: 1.0
-X-Exchange-RoutingPolicyChecked: 
-	iw8EWixcR8XaHIeemBtEsHYd1l66yf6rMBlQGjzNPhLJA3+ZZExxr2dutmtU/D/a1smRdDwr3BsMQDT7sRoAxfyqOyXTrCFS4D4+D337EKh2Fa0gubVWqnElEB65DOgZUmaoWiVrnrYMmmxGxUJlLinEz8Y92/fKUjomnX0tPjrKAZSuN10S54T/Vpk3+u+l9B7Plrn1jzz7V/8cF23GYZAMG66wd0BmCC43OaktalF6IQjP3/BCVjHfCWxsZLTYQ7uagYutbO9EecUaz+AdTsGeFozqT6zLYlVav9wnBf6alVhwSbN1UuG2XxzHft1V8I9oEZ6M1M0Ja+6OK5+qQA==
-X-OriginatorOrg: mail.toshiba
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|PAWPR10MB8240:EE_
+X-MS-Office365-Filtering-Correlation-Id: c1a6ed95-3f5f-406a-71d6-08de8b2fec45
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: 
+	BCL:0;ARA:13230040|366016|1800799024|376014|13003099007|18002099003|56012099003|22082099003|55112099003;
+X-Microsoft-Antispam-Message-Info: 
+	8f2jTf+/Y6WaVGMdnwuTLTwHi5lWd3ECMhzXCBBQoFIAzk4n4hejFc1qm4PnacNGD8+VZiZEWbwpJLJ2xfTYq5QpY6FMugbPYkGjrZor83fHTx4mZMgy8dFMlPodE56AVeEoPFIl5DNxDJHgwUyQ/01P7hsP1JVX9c7aYP0JFNR6U2QLnDl3uyX8KRF2Ip6KjO/wINOxbNAgx+25TxqsPyRFVDk4bjvfNkhzhK9sP3rJxZjX4xPmORCfM/W9Sc/NkDHb0xo4297afVVWikKO7+oqA6Sxkma/ijEPnkhwhKKvErY9uoJ4vAOGKOUuOUoNByWnlOB9JrXfce/I/OPKjALBw4KHbCwBdlFGtwvYCEiZQ2NmEWH7AcVhO8kAiwY6FrzuZV/lUYFO2Ci8snAMr749k1SeX3uY04zc+JTlClKMAtNBeqyM2H+XeyhUP2AjlIoS0nh2NExv9XE8X+Cen8FFkyF7bSRYvbPRsP2zAZlJRXaL1PfYhqz/SY+0atRNVduJx+iTVu3k/GRm0IPu9+39YCuC4SHR7DlE1OpObuXVdA8sqG7HwIaa/1Ep40u1jlu7zfuZQ23YiWjcr2PuAJt6fsVL14n08A2vWTmqSEIt+RNGEUi0YvDqe6rkrqP7oSjZV7cEYcSsMGNc8Tjs5B3jgpvkV4pSgMGAxiY1aNSxKRMFHQml6HnqGhaSpQVW
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(13003099007)(18002099003)(56012099003)(22082099003)(55112099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?RUllQVcrQjJielYvdTc5SWkzU1ZKck5rR3hiWCtOTHZKU29jcUJON09Pbjc2?=
+ =?utf-8?B?czFKTkRzcDd1Z0VHMHJDdWQ0UHgwTFpram9WYXkyOENodEJxNHhha0VEZEhV?=
+ =?utf-8?B?U2k4dlJsS2UydWV1QzNPZHdmaDNqQXZkZEMwSlJHRkhkZytFUjhBNlRYeFZW?=
+ =?utf-8?B?R25leURza0NDMzBMSHowYkd4d24zRU5mcFBzN1pEaEJjYWdWM0dEc3pnSnE1?=
+ =?utf-8?B?N0F0SGZqUVBoSUtjOEJLVDRJVGFGYlJQUFN0TmE5eW9QeGlHQ2gybTRzNFVJ?=
+ =?utf-8?B?UENvdDZBRVF5ZzBVV1gweVBNTUZzbjBvTmhvbkM2MWtFK2IwMG0wWXNySC9Q?=
+ =?utf-8?B?RkkrRjV4U1VzSDFnTzhqamRhMDE5TjhHODlFN1o0ZWJhcnNIOEpjS29wTmo5?=
+ =?utf-8?B?TFJ2SVdkZ2R5VDVMcnAzeS9LK3AxYVVpUi8vbE9iVWZzeDJuVjVxMzNSZm03?=
+ =?utf-8?B?UUE5OU1WZ0lnK3R4dXBkYlh6YnlSYitKc2MvdStrZm5mU3hCR3FJMjNCMW5D?=
+ =?utf-8?B?OVprbzYybkEzYWdvaDUvOGpPdGQzbUJ5OGlhby9wSWdjd2Y3bmVhbkNDYUIw?=
+ =?utf-8?B?V3NyVnFpN1BJMzZyY09uQ0RvR0JMZko4OTBJZzJBREVvK3ZlWldGb08yZlVZ?=
+ =?utf-8?B?RlRYWEFuSDhtenVWbC9qZDNFZHdUeGdEYUxIb3VFaTM0RnBKcU5TWUZxVjVG?=
+ =?utf-8?B?T05CQVo4VEdzZUpDMHR1dmozQUM5Z0ZsQmVteFdhSG5vTlByOWE0ZzJ4QXY0?=
+ =?utf-8?B?cFpCVDhGYjVQVjBObkp2SzNVSDU1T2lKT3VScFlNT2xIMDBXK3hoZy9rNS9i?=
+ =?utf-8?B?WlJQaVU1RFc4OGtBdisvMUFiOS9QRnZPM3NHMlY1VmFSd0cza2JUc2V6Rzdn?=
+ =?utf-8?B?UXRtSWRDd3NtSy9nR1k0RGVXd0pzSW9NMFo3MkJDTXN0OEpBcXBqbDFPS3RW?=
+ =?utf-8?B?Y3oyc0tTeWRyVEJzcG5KbnA4bzFGdHBGYm9wS0JGRDltc2ZuOXdxNlZIeElT?=
+ =?utf-8?B?RmJDc2dtOVRhZEc2NlcvVi9PcUNXbFFxNHU5bVZad1FlZzVMbEZrYWF6TUZa?=
+ =?utf-8?B?QTBaYjRKck9rZ2s2S1EycjRPME9pSnAwUlBhN1hTUG0rdnl3T1F0b0ZZVHYr?=
+ =?utf-8?B?dG1jQ3hhYUtyMEVmY2IyMytxN2RtSERCdEtWcEQ4TDhvQVRMVmttUHpLSFZW?=
+ =?utf-8?B?ZE9pY0ZwZXFIbmlkaVVubVlWdXlGZXVaMGQ1WFZaYmhoMStqQ3B5ckFmeEVr?=
+ =?utf-8?B?Tm54MTJoTGlPVERPSzN4RmFWdHkzTGVsRzRyQXl5MnE2VEt3NkNVVkYxMVNn?=
+ =?utf-8?B?dnBFTE5pTmQyOExnZDFVZjdQQ0JvcU82dDllUXhIMU90YjZBK2FBclc5WjBK?=
+ =?utf-8?B?MmhFVk1lUmlqOGNGZ0MrYklvcVRWK0N4aGdkQ3FLOWMvL3hVaUt4MG1OLzA5?=
+ =?utf-8?B?SzZVNEVZU0FiYVFWVzN2MU5XQ2xFaHhPa3YzL0J2aUh6bTZrdVNzZGVxcHdG?=
+ =?utf-8?B?MDZKazlnUU56cEpMZTB2Tm9GRGJOME5wZjMzQnVWZzUyZDNSOFdZc1NhejdO?=
+ =?utf-8?B?dlVnY2UxZXhhUko3cUVzMlpOR0xnZEo4SzhtMHRMdG15azJ0MGthMTltN1FX?=
+ =?utf-8?B?YzNyaWljbjNDWUZvM2psMzZ2NkxyUDJQN2N1WC9MSko5cUJpQ2k2RDZqRHZt?=
+ =?utf-8?B?cERXWWNyTFNsNnkxc1NwWFIyTUE0U3MrZmQ1ZHhTYU5QU0d6WTJKTjFoRFVY?=
+ =?utf-8?B?aWhVZkRuTTJqYzI3aUFja0Y0YUIzUGJxaXBDcGJMQVkrT3U0MUJ6VUFNN2hJ?=
+ =?utf-8?B?R1lyRmw2VjVqMnlRdHRoZWlMY3JQODN2U1NCaE1od1IrTGpYRVZFVEgyUGhk?=
+ =?utf-8?B?S01uWXoxa3N6WkJsVnd1dDdNamdyNjB2dTRNZ0daTmI2TkMweDM3WktBdzdw?=
+ =?utf-8?B?S1VjQXpjbXNZcUxjczRjcDc4ak1teU44R1BicHg4ekFJOEtGVWRnTzY5bU81?=
+ =?utf-8?B?cU9mb0dwaE1LTEpYSzcxT0htRXFSYkdYdTB3MmgvRjZoRVZWUlFUWHpaUkJD?=
+ =?utf-8?B?TWRINFY2WWViekRGamxLU3FKK0pSY2pKcVFzQWZBR2Z6cFN3SHJpVVZMQVI3?=
+ =?utf-8?B?OG9nSkZSL01WQUIrWUNIbHBleFBISmovbzFYbVdoZFdwVXlGQnVrQm8rYlpO?=
+ =?utf-8?B?L0JNVFl1Zkw4eGY5UHJldkRYOGhlMGVWUmE0ckJvSytoK3NZZGpTeVo0SDhs?=
+ =?utf-8?B?KzRZZHc1d21naFQwMUtxcGgxZk9rUUFsQnRKazdPeFBKYndTbFFFalkzQkNJ?=
+ =?utf-8?B?VEw5K1luMEhqcXhSWUtrTENZYVFoZ1MyZllwa3NPNTFCdk9rdWZlUT09?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c1a6ed95-3f5f-406a-71d6-08de8b2fec45
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY7PR01MB14818.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a4b27d27-00af-4798-0168-08de8b28bda1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Mar 2026 11:13:42.9364
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2026 12:05:08.0115
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: OZNdvNd027AS8OqAOCTN9sv300CWiPBPRf9YZ1pUo23Ob/+e75A1TGJ6AB9/USnXwVAQd66oeZp+cXsE0g/trrzYmU6VAKcAuf8ILi4e6riEYb3FAuajNZ9Mc6fpNWDc
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSRPR01MB11504
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Omdqhaq8rIdx/g08TifFSMsi0CBQ22QA2hpa3a/0R6EVeTTrpjHAsNcuJa867AHdtoJ9qoL+Zr4XZvxBZ3r2og==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR10MB8240
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 26 Mar 2026 11:14:11 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22581
+ <cip-dev@lists.cip-project.org>; Thu, 26 Mar 2026 12:05:15 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22582
 
-Hi all,
+On 24.03.26 15:39, Jan Kiszka wrote:
+> On 24.03.26 09:40, Kamlesh Gurudasani wrote:
+>> Add missing license headers to configuration, template, script,
+>> and wic partition layout files to make licensing consistent
+>> across the repository.
+>>
+>> Command Used:
+>> git ls-files | xargs grep -rL SPDX-License-Identifier
+>>
+>> Signed-off-by: Kamlesh Gurudasani <kamlesh@ti.com>
+>> ---
+>> Changes in v2:
+>> - added license to remaining files
+>> - Link to v1: https://lore.kernel.org/r/20260316-license-v1-1-5bb039f50c05@ti.com
+>> ---
+>>  conf/distro/debian-bullseye-backports.list                                       | 3 +++
+>>  conf/distro/debian-buster-backports.list                                         | 3 +++
+>>  conf/distro/preferences.ovmf-snakeoil.conf                                       | 3 +++
+>>  conf/distro/preferences.swupdate-bullseye-backports.conf                         | 3 +++
+>>  recipes-bsp/u-boot/files/ftpm-stmm.cfg                                           | 3 +++
+>>  recipes-bsp/u-boot/files/no-grub-workaround.cfg                                  | 3 +++
+>>  recipes-bsp/u-boot/files/qemu-extra.cfg                                          | 3 +++
+>>  recipes-bsp/u-boot/files/secure-boot.cfg                                         | 3 +++
+>>  recipes-bsp/u-boot/files/ti-extra.cfg                                            | 3 +++
+>>  recipes-core/customizations/files/99-silent-printk.conf                          | 3 +++
+>>  recipes-core/customizations/files/99-watchdog.conf                               | 3 +++
+>>  recipes-core/customizations/files/ssh-permit-root.conf                           | 3 +++
+>>  recipes-core/home-fs/files/home.mount                                            | 3 +++
+>>  recipes-core/home-fs/files/postinst                                              | 3 +++
+>>  recipes-core/immutable-rootfs/files/95-disable-package-updates.preset            | 3 +++
+>>  recipes-core/immutable-rootfs/files/immutable-rootfs.tmpfiles.tmpl               | 3 +++
+>>  recipes-core/immutable-rootfs/files/postinst                                     | 3 +++
+>>  recipes-core/journald-config/files/persistent-journal.conf                       | 3 +++
+>>  recipes-core/kernel-panic/files/sysrq-panic.service                              | 3 +++
+>>  recipes-core/ltp/files/debian/control.tmpl                                       | 3 +++
+>>  recipes-core/ltp/files/debian/rules                                              | 3 +++
+>>  recipes-core/move-homedir-var/files/move-homedir-var.tmpfiles.tmpl               | 3 +++
+>>  recipes-core/security-customizations/files/postinst                              | 2 ++
+>>  recipes-core/security-customizations/files/ssh-pam-remote.conf                   | 3 +++
+>>  recipes-core/security-customizations/files/ssh-remote-session-term.conf          | 3 +++
+>>  recipes-core/swupdate-config-wfx/files/suricatta_wfx.conf.tmpl                   | 3 +++
+>>  recipes-core/swupdate-config/files/hwrevision.tmpl                               | 3 +++
+>>  recipes-core/swupdate-config/files/swupdate.cfg                                  | 3 +++
+>>  recipes-core/swupdate-handler-roundrobin/files/swupdate.handler.efibootguard.ini | 3 +++
+>>  recipes-core/tmp-fs/files/postinst                                               | 3 +++
+>>  recipes-devtools/swupdate-signer/files/sign-swu-cms                              | 3 +++
+>>  recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.env.tmpl          | 3 +++
+>>  recipes-initramfs/initramfs-crypt-hook/files/pwquality.conf                      | 3 +++
+>>  recipes-initramfs/initramfs-factory-reset-hook/files/factory-reset-script.tmpl   | 2 ++
+>>  recipes-initramfs/initramfs-factory-reset-hook/files/reset-env.tmpl              | 3 +++
+>>  recipes-initramfs/initramfs-overlay-hook/files/local-bottom.tmpl                 | 2 ++
+>>  recipes-initramfs/initramfs-overlay-hook/files/overlay_recovery_action.script    | 2 ++
+>>  recipes-kernel/linux/files/no-module-signing.cfg                                 | 3 +++
+>>  recipes-kernel/linux/files/no-tpm-hwrng.cfg                                      | 3 +++
+>>  recipes-kernel/linux/files/preempt-rt.cfg                                        | 3 +++
+>>  recipes-security/fail2ban-config/files/systemd-defaults.conf                     | 3 +++
+>>  scripts/deploy-cip-core.sh                                                       | 3 +++
+>>  scripts/generate-sb-db-from-existing-certificate.sh                              | 3 +++
+>>  scripts/generate_secure_boot_keys.sh                                             | 3 +++
+>>  scripts/start-efishell.sh                                                        | 3 +++
+>>  scripts/submit_lava.sh                                                           | 3 +++
+>>  scripts/update-linux-cip.sh                                                      | 3 +++
+>>  scripts/update-ltp.sh                                                            | 3 +++
+>>  tests/templates/IEC_template.yml                                                 | 3 +++
+>>  tests/templates/secureboot_corrupt_rootfs_steps.yml                              | 3 +++
+>>  tests/templates/secureboot_negative_test.yml                                     | 3 +++
+>>  tests/templates/secureboot_template.yml                                          | 3 +++
+>>  tests/templates/secureboot_unsigned_bootloader_steps.yml                         | 3 +++
+>>  tests/templates/secureboot_unsigned_kernel_steps.yml                             | 3 +++
+>>  tests/templates/swupdate-test-action-M-COM.yml                                   | 3 +++
+>>  tests/templates/swupdate_corrupt_swu_artifact_steps.yml                          | 3 +++
+>>  tests/templates/swupdate_corrupt_swu_steps.yml                                   | 3 +++
+>>  tests/templates/swupdate_negative_test.yml                                       | 3 +++
+>>  tests/templates/swupdate_reboot_without_confirm.yml                              | 3 +++
+>>  tests/templates/swupdate_same_uuid_steps.yml                                     | 3 +++
+>>  tests/templates/swupdate_template.yml                                            | 3 +++
+>>  wic/ebg-signed-sysparts.inc                                                      | 3 +++
+>>  wic/ebg-sysparts.inc                                                             | 3 +++
+>>  wic/hihope-rzg2m-efibootguard.wks.in                                             | 3 +++
+>>  wic/qemu-arm64-efibootguard-secureboot.wks.in                                    | 3 +++
+>>  wic/qemu-arm64-efibootguard.wks.in                                               | 3 +++
+>>  wic/qemu-riscv64-efibootguard.wks.in                                             | 3 +++
+>>  wic/x86-uefi-efibootguard-secureboot.wks.in                                      | 3 +++
+>>  wic/x86-uefi-efibootguard.wks.in                                                 | 3 +++
+>>  69 files changed, 203 insertions(+)
+>>
+>> diff --git a/conf/distro/debian-bullseye-backports.list b/conf/distro/debian-bullseye-backports.list
+>> index 1594907..6107928 100644
+>> --- a/conf/distro/debian-bullseye-backports.list
+>> +++ b/conf/distro/debian-bullseye-backports.list
+>> @@ -1 +1,4 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  deb http://archive.debian.org/debian bullseye-backports main contrib non-free
+>> diff --git a/conf/distro/debian-buster-backports.list b/conf/distro/debian-buster-backports.list
+>> index 7134a35..842019e 100644
+>> --- a/conf/distro/debian-buster-backports.list
+>> +++ b/conf/distro/debian-buster-backports.list
+>> @@ -1 +1,4 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  deb http://archive.debian.org/debian buster-backports main contrib non-free
+>> diff --git a/conf/distro/preferences.ovmf-snakeoil.conf b/conf/distro/preferences.ovmf-snakeoil.conf
+>> index b51d1d4..25b7da4 100644
+>> --- a/conf/distro/preferences.ovmf-snakeoil.conf
+>> +++ b/conf/distro/preferences.ovmf-snakeoil.conf
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  Package: ovmf
+>>  Pin: release n=buster-backports
+>>  Pin-Priority: 801
+>> diff --git a/conf/distro/preferences.swupdate-bullseye-backports.conf b/conf/distro/preferences.swupdate-bullseye-backports.conf
+>> index c5f6685..da307cd 100644
+>> --- a/conf/distro/preferences.swupdate-bullseye-backports.conf
+>> +++ b/conf/distro/preferences.swupdate-bullseye-backports.conf
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  Package: dh-nodejs
+>>  Pin: release n=bullseye-backports
+>>  Pin-Priority: 801
+>> diff --git a/recipes-bsp/u-boot/files/ftpm-stmm.cfg b/recipes-bsp/u-boot/files/ftpm-stmm.cfg
+>> index af5da93..a6fe2a3 100644
+>> --- a/recipes-bsp/u-boot/files/ftpm-stmm.cfg
+>> +++ b/recipes-bsp/u-boot/files/ftpm-stmm.cfg
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  ### Enable OPTEE, fTPM and StMM
+>>  CONFIG_TEE=y
+>>  CONFIG_OPTEE=y
+>> diff --git a/recipes-bsp/u-boot/files/no-grub-workaround.cfg b/recipes-bsp/u-boot/files/no-grub-workaround.cfg
+>> index dc09edd..8a01ff6 100644
+>> --- a/recipes-bsp/u-boot/files/no-grub-workaround.cfg
+>> +++ b/recipes-bsp/u-boot/files/no-grub-workaround.cfg
+>> @@ -1,2 +1,5 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  ### Disable grub workaround
+>>  # CONFIG_EFI_GRUB_ARM32_WORKAROUND is not set
+>> diff --git a/recipes-bsp/u-boot/files/qemu-extra.cfg b/recipes-bsp/u-boot/files/qemu-extra.cfg
+>> index e643db7..5380ad8 100644
+>> --- a/recipes-bsp/u-boot/files/qemu-extra.cfg
+>> +++ b/recipes-bsp/u-boot/files/qemu-extra.cfg
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  ### QEMU extra config
+>>  CONFIG_MMC=y
+>>  CONFIG_SUPPORT_EMMC_RPMB=y
+>> diff --git a/recipes-bsp/u-boot/files/secure-boot.cfg b/recipes-bsp/u-boot/files/secure-boot.cfg
+>> index 694356f..7b09a53 100644
+>> --- a/recipes-bsp/u-boot/files/secure-boot.cfg
+>> +++ b/recipes-bsp/u-boot/files/secure-boot.cfg
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  ### Secure boot config
+>>  # CONFIG_BOOTSTD_DEFAULTS is not set
+>>  # CONFIG_BOOTMETH_CROS is not set
+>> diff --git a/recipes-bsp/u-boot/files/ti-extra.cfg b/recipes-bsp/u-boot/files/ti-extra.cfg
+>> index c10d046..9500055 100644
+>> --- a/recipes-bsp/u-boot/files/ti-extra.cfg
+>> +++ b/recipes-bsp/u-boot/files/ti-extra.cfg
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  ### FTPM + RPMB + StandaloneMM setup
+>>  CONFIG_OPTEE_SERVICE_DISCOVERY=y
+>>  CONFIG_TPM=y
+>> diff --git a/recipes-core/customizations/files/99-silent-printk.conf b/recipes-core/customizations/files/99-silent-printk.conf
+>> index ad24d3a..c5b3799 100644
+>> --- a/recipes-core/customizations/files/99-silent-printk.conf
+>> +++ b/recipes-core/customizations/files/99-silent-printk.conf
+>> @@ -1 +1,4 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  kernel.printk = 3 4 1 3
+>> diff --git a/recipes-core/customizations/files/99-watchdog.conf b/recipes-core/customizations/files/99-watchdog.conf
+>> index c02756d..1f38c55 100644
+>> --- a/recipes-core/customizations/files/99-watchdog.conf
+>> +++ b/recipes-core/customizations/files/99-watchdog.conf
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  [Manager]
+>>  RuntimeWatchdogSec=60s
+>>  ShutdownWatchdogSec=60s
+>> diff --git a/recipes-core/customizations/files/ssh-permit-root.conf b/recipes-core/customizations/files/ssh-permit-root.conf
+>> index 1073982..ab26ab5 100644
+>> --- a/recipes-core/customizations/files/ssh-permit-root.conf
+>> +++ b/recipes-core/customizations/files/ssh-permit-root.conf
+>> @@ -1 +1,4 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  PermitRootLogin yes
+>> diff --git a/recipes-core/home-fs/files/home.mount b/recipes-core/home-fs/files/home.mount
+>> index 062517a..653495c 100644
+>> --- a/recipes-core/home-fs/files/home.mount
+>> +++ b/recipes-core/home-fs/files/home.mount
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  [Unit]
+>>  Description=Mount /home partition
+>>  Before=local-fs.target
+>> diff --git a/recipes-core/home-fs/files/postinst b/recipes-core/home-fs/files/postinst
+>> index ab0db84..904aa73 100755
+>> --- a/recipes-core/home-fs/files/postinst
+>> +++ b/recipes-core/home-fs/files/postinst
+>> @@ -1,4 +1,7 @@
+>>  #!/bin/sh
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  
+>>  set -e
+>>  
+>> diff --git a/recipes-core/immutable-rootfs/files/95-disable-package-updates.preset b/recipes-core/immutable-rootfs/files/95-disable-package-updates.preset
+>> index 7e6e9ef..b3b52ce 100644
+>> --- a/recipes-core/immutable-rootfs/files/95-disable-package-updates.preset
+>> +++ b/recipes-core/immutable-rootfs/files/95-disable-package-updates.preset
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  disable apt-daily.timer
+>>  disable apt-daily-upgrade.timer
+>>  disable dpkg-db-backup.timer
+>> diff --git a/recipes-core/immutable-rootfs/files/immutable-rootfs.tmpfiles.tmpl b/recipes-core/immutable-rootfs/files/immutable-rootfs.tmpfiles.tmpl
+>> index e6d25d2..4cdfc6f 100644
+>> --- a/recipes-core/immutable-rootfs/files/immutable-rootfs.tmpfiles.tmpl
+>> +++ b/recipes-core/immutable-rootfs/files/immutable-rootfs.tmpfiles.tmpl
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  L /var/lib/dpkg - - - - ${IMMUTABLE_DATA_DIR}/var/lib/dpkg
+>>  d /var/log/audit 0700 root adm -
+>>  d /var/lib/apt 0755 root root -
+>> diff --git a/recipes-core/immutable-rootfs/files/postinst b/recipes-core/immutable-rootfs/files/postinst
+>> index a6e1962..3b8071e 100644
+>> --- a/recipes-core/immutable-rootfs/files/postinst
+>> +++ b/recipes-core/immutable-rootfs/files/postinst
+>> @@ -1,4 +1,7 @@
+>>  #!/bin/sh
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  
+>>  set -e
+>>  
+>> diff --git a/recipes-core/journald-config/files/persistent-journal.conf b/recipes-core/journald-config/files/persistent-journal.conf
+>> index 21dfde0..3e3419f 100644
+>> --- a/recipes-core/journald-config/files/persistent-journal.conf
+>> +++ b/recipes-core/journald-config/files/persistent-journal.conf
+>> @@ -1,2 +1,5 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  [Journal]
+>>  Storage=persistent
+>> diff --git a/recipes-core/kernel-panic/files/sysrq-panic.service b/recipes-core/kernel-panic/files/sysrq-panic.service
+>> index 4f199fe..e892165 100644
+>> --- a/recipes-core/kernel-panic/files/sysrq-panic.service
+>> +++ b/recipes-core/kernel-panic/files/sysrq-panic.service
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  [Unit]
+>>  Description=sysrq panic
+>>  
+>> diff --git a/recipes-core/ltp/files/debian/control.tmpl b/recipes-core/ltp/files/debian/control.tmpl
+>> index 0bfc0c2..a7d0087 100644
+>> --- a/recipes-core/ltp/files/debian/control.tmpl
+>> +++ b/recipes-core/ltp/files/debian/control.tmpl
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  Source: ltp-full
+>>  Section: embedded
+>>  Priority: optional
+>> diff --git a/recipes-core/ltp/files/debian/rules b/recipes-core/ltp/files/debian/rules
+>> index 4e1747c..32d3c29 100755
+>> --- a/recipes-core/ltp/files/debian/rules
+>> +++ b/recipes-core/ltp/files/debian/rules
+>> @@ -1,4 +1,7 @@
+>>  #!/usr/bin/make -f
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  export DEB_CFLAGS_MAINT_APPEND  = -Wall  -Wno-format-security
+>>  export DEB_BUILD_MAINT_OPTIONS=hardening=-branch
+>>  
+>> diff --git a/recipes-core/move-homedir-var/files/move-homedir-var.tmpfiles.tmpl b/recipes-core/move-homedir-var/files/move-homedir-var.tmpfiles.tmpl
+>> index 92e4a30..1821f92 100644
+>> --- a/recipes-core/move-homedir-var/files/move-homedir-var.tmpfiles.tmpl
+>> +++ b/recipes-core/move-homedir-var/files/move-homedir-var.tmpfiles.tmpl
+>> @@ -1,2 +1,5 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  L /home - - - - /var/home
+>>  C /var/home - - - - ${IMMUTABLE_DATA_DIR}/home
+>> diff --git a/recipes-core/security-customizations/files/postinst b/recipes-core/security-customizations/files/postinst
+>> index f8ebf9e..788e225 100755
+>> --- a/recipes-core/security-customizations/files/postinst
+>> +++ b/recipes-core/security-customizations/files/postinst
+>> @@ -3,6 +3,8 @@
+>>  # CIP Security, generic profile
+>>  # Security Package configurations
+>>  #
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  
+>>  set -e
+>>  
+>> diff --git a/recipes-core/security-customizations/files/ssh-pam-remote.conf b/recipes-core/security-customizations/files/ssh-pam-remote.conf
+>> index d460b0c..ea120b2 100644
+>> --- a/recipes-core/security-customizations/files/ssh-pam-remote.conf
+>> +++ b/recipes-core/security-customizations/files/ssh-pam-remote.conf
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  # Enable PAM configuration for Remote Session
+>>  ChallengeResponseAuthentication yes
+>>  KbdInteractiveAuthentication yes
+>> diff --git a/recipes-core/security-customizations/files/ssh-remote-session-term.conf b/recipes-core/security-customizations/files/ssh-remote-session-term.conf
+>> index d11b92e..171ea9b 100644
+>> --- a/recipes-core/security-customizations/files/ssh-remote-session-term.conf
+>> +++ b/recipes-core/security-customizations/files/ssh-remote-session-term.conf
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  # CR2.6: Remote session termination
+>>  # Terminate remote session after inactive time period
+>>  
+>> diff --git a/recipes-core/swupdate-config-wfx/files/suricatta_wfx.conf.tmpl b/recipes-core/swupdate-config-wfx/files/suricatta_wfx.conf.tmpl
+>> index 744b426..f750f3d 100644
+>> --- a/recipes-core/swupdate-config-wfx/files/suricatta_wfx.conf.tmpl
+>> +++ b/recipes-core/swupdate-config-wfx/files/suricatta_wfx.conf.tmpl
+>> @@ -1 +1,4 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  SWUPDATE_SURICATTA_ARGS="--server lua -u ${WFX_URL} -i $(cat /etc/machine-id)"
+>> diff --git a/recipes-core/swupdate-config/files/hwrevision.tmpl b/recipes-core/swupdate-config/files/hwrevision.tmpl
+>> index 1eb0996..b937200 100644
+>> --- a/recipes-core/swupdate-config/files/hwrevision.tmpl
+>> +++ b/recipes-core/swupdate-config/files/hwrevision.tmpl
+>> @@ -1 +1,4 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  cip-${MACHINE} ${MACHINE_HW_VERSION}
+>> diff --git a/recipes-core/swupdate-config/files/swupdate.cfg b/recipes-core/swupdate-config/files/swupdate.cfg
+>> index 3e2b45c..5c05fbe 100644
+>> --- a/recipes-core/swupdate-config/files/swupdate.cfg
+>> +++ b/recipes-core/swupdate-config/files/swupdate.cfg
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  globals :
+>>  {
+>>      bootloader = "ebg";
+>> diff --git a/recipes-core/swupdate-handler-roundrobin/files/swupdate.handler.efibootguard.ini b/recipes-core/swupdate-handler-roundrobin/files/swupdate.handler.efibootguard.ini
+>> index 58271da..8f93cc9 100644
+>> --- a/recipes-core/swupdate-handler-roundrobin/files/swupdate.handler.efibootguard.ini
+>> +++ b/recipes-core/swupdate-handler-roundrobin/files/swupdate.handler.efibootguard.ini
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  [image]
+>>  chainhandler=raw
+>>  
+>> diff --git a/recipes-core/tmp-fs/files/postinst b/recipes-core/tmp-fs/files/postinst
+>> index 39067f1..ae0f74a 100755
+>> --- a/recipes-core/tmp-fs/files/postinst
+>> +++ b/recipes-core/tmp-fs/files/postinst
+>> @@ -1,4 +1,7 @@
+>>  #!/bin/sh
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  
+>>  set -e
+>>  
+>> diff --git a/recipes-devtools/swupdate-signer/files/sign-swu-cms b/recipes-devtools/swupdate-signer/files/sign-swu-cms
+>> index cb0cd4a..bc1ec13 100644
+>> --- a/recipes-devtools/swupdate-signer/files/sign-swu-cms
+>> +++ b/recipes-devtools/swupdate-signer/files/sign-swu-cms
+>> @@ -1,4 +1,7 @@
+>>  #!/bin/sh
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  in_file=$1
+>>  out_file=$2
+>>  inkey="/usr/share/swupdate-signing/swupdate-sign.key"
+>> diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.env.tmpl b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.env.tmpl
+>> index bb93361..452714d 100644
+>> --- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.env.tmpl
+>> +++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.env.tmpl
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  PARTITIONS="${CRYPT_PARTITIONS}"
+>>  CREATE_FILE_SYSTEM_CMD="${CRYPT_CREATE_FILE_SYSTEM_CMD}"
+>>  SETUP_TIMEOUT="${CRYPT_SETUP_TIMEOUT}"
+>> diff --git a/recipes-initramfs/initramfs-crypt-hook/files/pwquality.conf b/recipes-initramfs/initramfs-crypt-hook/files/pwquality.conf
+>> index d4c8981..8e087f2 100644
+>> --- a/recipes-initramfs/initramfs-crypt-hook/files/pwquality.conf
+>> +++ b/recipes-initramfs/initramfs-crypt-hook/files/pwquality.conf
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  # we don't have a dictionary in the initramfs
+>>  # this solves the error "Password generation failed - required entropy too low for settings"
+>>  dictcheck = 0
+>> diff --git a/recipes-initramfs/initramfs-factory-reset-hook/files/factory-reset-script.tmpl b/recipes-initramfs/initramfs-factory-reset-hook/files/factory-reset-script.tmpl
+>> index f0ad40c..94b5f8b 100644
+>> --- a/recipes-initramfs/initramfs-factory-reset-hook/files/factory-reset-script.tmpl
+>> +++ b/recipes-initramfs/initramfs-factory-reset-hook/files/factory-reset-script.tmpl
+>> @@ -7,6 +7,8 @@
+>>  # Authors:
+>>  #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>>  #
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  . /usr/share/factory-reset/reset-env
+>>  
+>>  . /scripts/cip-initramfs-functions
+>> diff --git a/recipes-initramfs/initramfs-factory-reset-hook/files/reset-env.tmpl b/recipes-initramfs/initramfs-factory-reset-hook/files/reset-env.tmpl
+>> index d3e18a2..07e2376 100644
+>> --- a/recipes-initramfs/initramfs-factory-reset-hook/files/reset-env.tmpl
+>> +++ b/recipes-initramfs/initramfs-factory-reset-hook/files/reset-env.tmpl
+>> @@ -1,3 +1,6 @@
+>>  #!/bin/sh
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  INITRAMFS_FACTORY_RESET_DEVICES="${INITRAMFS_FACTORY_RESET_DEVICES}"
+>>  INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE="${INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE}"
+>> diff --git a/recipes-initramfs/initramfs-overlay-hook/files/local-bottom.tmpl b/recipes-initramfs/initramfs-overlay-hook/files/local-bottom.tmpl
+>> index bce588c..8a697f8 100644
+>> --- a/recipes-initramfs/initramfs-overlay-hook/files/local-bottom.tmpl
+>> +++ b/recipes-initramfs/initramfs-overlay-hook/files/local-bottom.tmpl
+>> @@ -7,6 +7,8 @@
+>>  #  Jan Kiszka <jan.kiszka@siemens.com>
+>>  #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>>  #
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  
+>>  ovl_storage_path="${INITRAMFS_OVERLAY_STORAGE_PATH}"
+>>  ovl_lower_dirs="${INITRAMFS_OVERLAY_PATHS}"
+>> diff --git a/recipes-initramfs/initramfs-overlay-hook/files/overlay_recovery_action.script b/recipes-initramfs/initramfs-overlay-hook/files/overlay_recovery_action.script
+>> index 0cd084b..11ca731 100644
+>> --- a/recipes-initramfs/initramfs-overlay-hook/files/overlay_recovery_action.script
+>> +++ b/recipes-initramfs/initramfs-overlay-hook/files/overlay_recovery_action.script
+>> @@ -7,6 +7,8 @@
+>>  # Authors:
+>>  #  Clara Kowalsky <clara.kowalsky@siemens.com>
+>>  #
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  
+>>  partition_fstype="$1"
+>>  ovl_partition_device="$2"
+>> diff --git a/recipes-kernel/linux/files/no-module-signing.cfg b/recipes-kernel/linux/files/no-module-signing.cfg
+>> index ab54f68..064ef9c 100644
+>> --- a/recipes-kernel/linux/files/no-module-signing.cfg
+>> +++ b/recipes-kernel/linux/files/no-module-signing.cfg
+>> @@ -1,2 +1,5 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  # CONFIG_SECURITY_LOCKDOWN_LSM is not set
+>>  # CONFIG_MODULE_SIG is not set
+>> diff --git a/recipes-kernel/linux/files/no-tpm-hwrng.cfg b/recipes-kernel/linux/files/no-tpm-hwrng.cfg
+>> index ab46cd8..08e98ff 100644
+>> --- a/recipes-kernel/linux/files/no-tpm-hwrng.cfg
+>> +++ b/recipes-kernel/linux/files/no-tpm-hwrng.cfg
+>> @@ -1,2 +1,5 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  # see https://lore.kernel.org/lkml/bbc41534-a2d9-42dc-ac8a-ff8a0b4fd41f@siemens.com/
+>>  # CONFIG_HW_RANDOM_TPM is not set
+>> diff --git a/recipes-kernel/linux/files/preempt-rt.cfg b/recipes-kernel/linux/files/preempt-rt.cfg
+>> index afbf53d..f558365 100644
+>> --- a/recipes-kernel/linux/files/preempt-rt.cfg
+>> +++ b/recipes-kernel/linux/files/preempt-rt.cfg
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  # >= 5.10
+>>  CONFIG_EXPERT=y
+>>  CONFIG_PREEMPT_RT=y
+>> diff --git a/recipes-security/fail2ban-config/files/systemd-defaults.conf b/recipes-security/fail2ban-config/files/systemd-defaults.conf
+>> index 16e0d5e..32a8e48 100644
+>> --- a/recipes-security/fail2ban-config/files/systemd-defaults.conf
+>> +++ b/recipes-security/fail2ban-config/files/systemd-defaults.conf
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  [DEFAULT]
+>>  
+>>  syslog_backend = systemd
+>> diff --git a/scripts/deploy-cip-core.sh b/scripts/deploy-cip-core.sh
+>> index 623c216..1e08e47 100755
+>> --- a/scripts/deploy-cip-core.sh
+>> +++ b/scripts/deploy-cip-core.sh
+>> @@ -1,4 +1,7 @@
+>>  #!/bin/sh
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  
+>>  set -e
+>>  
+>> diff --git a/scripts/generate-sb-db-from-existing-certificate.sh b/scripts/generate-sb-db-from-existing-certificate.sh
+>> index dddd9b5..42d09dd 100755
+>> --- a/scripts/generate-sb-db-from-existing-certificate.sh
+>> +++ b/scripts/generate-sb-db-from-existing-certificate.sh
+>> @@ -1,4 +1,7 @@
+>>  #!/bin/sh
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  
+>>  set -e
+>>  
+>> diff --git a/scripts/generate_secure_boot_keys.sh b/scripts/generate_secure_boot_keys.sh
+>> index 8be0569..28ae34c 100755
+>> --- a/scripts/generate_secure_boot_keys.sh
+>> +++ b/scripts/generate_secure_boot_keys.sh
+>> @@ -1,4 +1,7 @@
+>>  #!/bin/sh
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  
+>>  set -e
+>>  
+>> diff --git a/scripts/start-efishell.sh b/scripts/start-efishell.sh
+>> index fff8a6a..86e2ddd 100755
+>> --- a/scripts/start-efishell.sh
+>> +++ b/scripts/start-efishell.sh
+>> @@ -1,4 +1,7 @@
+>>  #!/bin/sh
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  
+>>  set -e
+>>  
+>> diff --git a/scripts/submit_lava.sh b/scripts/submit_lava.sh
+>> index b3180a1..a4d20ec 100755
+>> --- a/scripts/submit_lava.sh
+>> +++ b/scripts/submit_lava.sh
+>> @@ -1,4 +1,7 @@
+>>  #!/bin/bash
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  # Copyright (C) 2024, Renesas Electronics Europe GmbH
+>>  # Chris Paterson <chris.paterson2@renesas.com>
+>>  # Sai Ashrith <sai.sathujoda@toshiba-tsip.com>
+>> diff --git a/scripts/update-linux-cip.sh b/scripts/update-linux-cip.sh
+>> index 5fbfa57..df306b2 100755
+>> --- a/scripts/update-linux-cip.sh
+>> +++ b/scripts/update-linux-cip.sh
+>> @@ -1,4 +1,7 @@
+>>  #!/bin/bash
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  REPO_ROOT=$(git rev-parse --show-toplevel)
+>>  pushd "${REPO_ROOT}"/recipes-kernel/linux >/dev/null || exit 1
+>>  
+>> diff --git a/scripts/update-ltp.sh b/scripts/update-ltp.sh
+>> index dc8b947..321cc3c 100755
+>> --- a/scripts/update-ltp.sh
+>> +++ b/scripts/update-ltp.sh
+>> @@ -1,4 +1,7 @@
+>>  #!/bin/bash
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  
+>>  REPO_ROOT=$(git rev-parse --show-toplevel)
+>>  pushd "${REPO_ROOT}"/recipes-core/ltp > /dev/null || exit
+>> diff --git a/tests/templates/IEC_template.yml b/tests/templates/IEC_template.yml
+>> index f8558cd..148f07e 100644
+>> --- a/tests/templates/IEC_template.yml
+>> +++ b/tests/templates/IEC_template.yml
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  device_type: qemu
+>>  job_name: #architecture# IEC layer testing
+>>  timeouts:
+>> diff --git a/tests/templates/secureboot_corrupt_rootfs_steps.yml b/tests/templates/secureboot_corrupt_rootfs_steps.yml
+>> index b6f6628..5c47b30 100644
+>> --- a/tests/templates/secureboot_corrupt_rootfs_steps.yml
+>> +++ b/tests/templates/secureboot_corrupt_rootfs_steps.yml
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>            - "apt-get update"
+>>            - "apt install -y fdisk"
+>>            - "rootfs_start_sector=$(fdisk -l -o Name,Start cip-core-image-security-cip-core-#distribution#-#architecture#.wic | awk -v name=systema '$0 ~ name {print $2}')"
+>> diff --git a/tests/templates/secureboot_negative_test.yml b/tests/templates/secureboot_negative_test.yml
+>> index 2fcdbfa..a8e4226 100644
+>> --- a/tests/templates/secureboot_negative_test.yml
+>> +++ b/tests/templates/secureboot_negative_test.yml
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  device_type: qemu
+>>  job_name: #architecture# secure boot testing
+>>  timeouts:
+>> diff --git a/tests/templates/secureboot_template.yml b/tests/templates/secureboot_template.yml
+>> index e29b64a..0a075e2 100644
+>> --- a/tests/templates/secureboot_template.yml
+>> +++ b/tests/templates/secureboot_template.yml
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  device_type: qemu
+>>  job_name: #architecture# secure boot testing
+>>  timeouts:
+>> diff --git a/tests/templates/secureboot_unsigned_bootloader_steps.yml b/tests/templates/secureboot_unsigned_bootloader_steps.yml
+>> index 8d64b05..f4f4043 100644
+>> --- a/tests/templates/secureboot_unsigned_bootloader_steps.yml
+>> +++ b/tests/templates/secureboot_unsigned_bootloader_steps.yml
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>            - "apt-get update"
+>>            - "apt install --yes guestfish sbsigntool"
+>>            - "guestfish add cip-core-image-security-cip-core-#distribution#-#architecture#.wic : run : mount /dev/sda1 / : copy-out /EFI/BOOT/bootx64.efi ."
+>> diff --git a/tests/templates/secureboot_unsigned_kernel_steps.yml b/tests/templates/secureboot_unsigned_kernel_steps.yml
+>> index f097ed6..6ab334a 100644
+>> --- a/tests/templates/secureboot_unsigned_kernel_steps.yml
+>> +++ b/tests/templates/secureboot_unsigned_kernel_steps.yml
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>            - "apt-get update"
+>>            - "apt install --yes guestfish sbsigntool"
+>>            - "guestfish add cip-core-image-security-cip-core-#distribution#-#architecture#.wic : run : mount /dev/sda2 / : copy-out /linux.efi ."
+>> diff --git a/tests/templates/swupdate-test-action-M-COM.yml b/tests/templates/swupdate-test-action-M-COM.yml
+>> index 56ff106..69c9cb7 100644
+>> --- a/tests/templates/swupdate-test-action-M-COM.yml
+>> +++ b/tests/templates/swupdate-test-action-M-COM.yml
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  # TEST BLOCK 1
+>>  # Fail the job if software update application failed
+>>  - test:
+>> diff --git a/tests/templates/swupdate_corrupt_swu_artifact_steps.yml b/tests/templates/swupdate_corrupt_swu_artifact_steps.yml
+>> index 2fad3fd..043867e 100644
+>> --- a/tests/templates/swupdate_corrupt_swu_artifact_steps.yml
+>> +++ b/tests/templates/swupdate_corrupt_swu_artifact_steps.yml
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>              - curl -v --trace-time http://$LAVA_DISPATCHER_IP/tmp/$LAVA_JOB_ID/downloads/common/cip-core-image-security-cip-core-#distribution#-#architecture#.swu --output /root/cip-core-image-security-cip-core-#distribution#-#architecture#.swu
+>>              - mkdir -p swu
+>>              - cpio -ivd --directory=/root/swu < /root/cip-core-image-security-cip-core-#distribution#-#architecture#.swu
+>> diff --git a/tests/templates/swupdate_corrupt_swu_steps.yml b/tests/templates/swupdate_corrupt_swu_steps.yml
+>> index 74c9217..3cdb793 100644
+>> --- a/tests/templates/swupdate_corrupt_swu_steps.yml
+>> +++ b/tests/templates/swupdate_corrupt_swu_steps.yml
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>              - curl -v --trace-time http://$LAVA_DISPATCHER_IP/tmp/$LAVA_JOB_ID/downloads/common/cip-core-image-security-cip-core-#distribution#-#architecture#.swu --output /root/cip-core-image-security-cip-core-#distribution#-#architecture#.swu
+>>              - mkdir -p swu
+>>              - dd if=/dev/zero of=/root/cip-core-image-security-cip-core-#distribution#-#architecture#.swu bs=1M count=5
+>> diff --git a/tests/templates/swupdate_negative_test.yml b/tests/templates/swupdate_negative_test.yml
+>> index bb79b07..250eaa8 100644
+>> --- a/tests/templates/swupdate_negative_test.yml
+>> +++ b/tests/templates/swupdate_negative_test.yml
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  device_type: qemu
+>>  job_name: #architecture# software update testing
+>>  timeouts:
+>> diff --git a/tests/templates/swupdate_reboot_without_confirm.yml b/tests/templates/swupdate_reboot_without_confirm.yml
+>> index bfad106..074eb1a 100644
+>> --- a/tests/templates/swupdate_reboot_without_confirm.yml
+>> +++ b/tests/templates/swupdate_reboot_without_confirm.yml
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  # qemu-swtpm.sock will be gone after soft reboot.
+>>  # So the swtpm socket need to be started again for proper reboot
+>>  # To start the swtpm daemon, first the existing one should be killed
+>> diff --git a/tests/templates/swupdate_same_uuid_steps.yml b/tests/templates/swupdate_same_uuid_steps.yml
+>> index 3ff2e02..8329055 100644
+>> --- a/tests/templates/swupdate_same_uuid_steps.yml
+>> +++ b/tests/templates/swupdate_same_uuid_steps.yml
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>              - curl -v --trace-time http://$LAVA_DISPATCHER_IP/tmp/$LAVA_JOB_ID/downloads/common/cip-core-image-security-cip-core-#distribution#-#architecture#.swu --output /root/cip-core-image-security-cip-core-#distribution#-#architecture#.swu
+>>              - mkdir -p swu
+>>              - cpio -ivd --directory=/root/swu < /root/cip-core-image-security-cip-core-#distribution#-#architecture#.swu
+>> diff --git a/tests/templates/swupdate_template.yml b/tests/templates/swupdate_template.yml
+>> index e1f71a9..9a3366b 100644
+>> --- a/tests/templates/swupdate_template.yml
+>> +++ b/tests/templates/swupdate_template.yml
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  device_type: qemu
+>>  job_name: #architecture# software update testing
+>>  timeouts:
+>> diff --git a/wic/ebg-signed-sysparts.inc b/wic/ebg-signed-sysparts.inc
+>> index c35878f..8210598 100644
+>> --- a/wic/ebg-signed-sysparts.inc
+>> +++ b/wic/ebg-signed-sysparts.inc
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  # default partition layout EFI Boot Guard usage, signed version
+>>  
+>>  # EFI partition containing efibootguard bootloader binary
+>> diff --git a/wic/ebg-sysparts.inc b/wic/ebg-sysparts.inc
+>> index 0290024..b7f1afa 100644
+>> --- a/wic/ebg-sysparts.inc
+>> +++ b/wic/ebg-sysparts.inc
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  # default partition layout EFI Boot Guard usage
+>>  
+>>  # EFI partition containing efibootguard bootloader binary
+>> diff --git a/wic/hihope-rzg2m-efibootguard.wks.in b/wic/hihope-rzg2m-efibootguard.wks.in
+>> index fdbad14..99c8d10 100644
+>> --- a/wic/hihope-rzg2m-efibootguard.wks.in
+>> +++ b/wic/hihope-rzg2m-efibootguard.wks.in
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  # short-description: RZ/G2M image with EFI Boot Guard and SWUpdate
+>>  # long-description: Disk image for HiHope RZ/G2M board with EFI Boot Guard and SWUpdate
+>>  
+>> diff --git a/wic/qemu-arm64-efibootguard-secureboot.wks.in b/wic/qemu-arm64-efibootguard-secureboot.wks.in
+>> index 941a552..88eb91c 100644
+>> --- a/wic/qemu-arm64-efibootguard-secureboot.wks.in
+>> +++ b/wic/qemu-arm64-efibootguard-secureboot.wks.in
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  include ebg-signed-sysparts.inc
+>>  
+>>  part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
+>> diff --git a/wic/qemu-arm64-efibootguard.wks.in b/wic/qemu-arm64-efibootguard.wks.in
+>> index 21c0b24..117c47c 100644
+>> --- a/wic/qemu-arm64-efibootguard.wks.in
+>> +++ b/wic/qemu-arm64-efibootguard.wks.in
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  # short-description: arm64 with EFI Boot Guard and SWUpdate
+>>  # long-description: Disk image for arm64 machines with EFI Boot Guard and SWUpdate
+>>  
+>> diff --git a/wic/qemu-riscv64-efibootguard.wks.in b/wic/qemu-riscv64-efibootguard.wks.in
+>> index 948c67d..a5dd09b 100644
+>> --- a/wic/qemu-riscv64-efibootguard.wks.in
+>> +++ b/wic/qemu-riscv64-efibootguard.wks.in
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  # short-description: riscv64 with EFI Boot Guard and SWUpdate
+>>  # long-description: Disk image for riscv64 machines with EFI Boot Guard and SWUpdate
+>>  
+>> diff --git a/wic/x86-uefi-efibootguard-secureboot.wks.in b/wic/x86-uefi-efibootguard-secureboot.wks.in
+>> index 2af3e58..f15f9e0 100644
+>> --- a/wic/x86-uefi-efibootguard-secureboot.wks.in
+>> +++ b/wic/x86-uefi-efibootguard-secureboot.wks.in
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  include ebg-signed-sysparts.inc
+>>  
+>>  part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
+>> diff --git a/wic/x86-uefi-efibootguard.wks.in b/wic/x86-uefi-efibootguard.wks.in
+>> index 3640ecf..982a87a 100644
+>> --- a/wic/x86-uefi-efibootguard.wks.in
+>> +++ b/wic/x86-uefi-efibootguard.wks.in
+>> @@ -1,3 +1,6 @@
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>>  # short-description: x86 with EFI Boot Guard and SWUpdate
+>>  # long-description: Disk image for x86 machines with EFI Boot Guard and SWUpdate
+>>  
+>>
+>> ---
+>> base-commit: e3158569eee297f1837a6d3fd7e0f1a0534c2b8b
+>> change-id: 20260316-license-c5fcde3618d2
+>>
+>> Best regards,
+> 
+> Thanks, applied. Will follow up with fixing two more spots so that we
+> are only left with files that cannot receive headers.
+> 
 
-CIP kernel team has released Linux kernel v6.12.78-cip19.
-The linux-6.12.y-cip tree has been updated base version from v6.12.76 to v6=
-.12.78.
-This release also includes device drivers and fixes for the Renesas
-ARM64 SoCs RZ/G3E, RZ/V2N, and RZ/N2H.
+Quirin spotted that modifying hwrevision.tmpl is causing our red
+pipeline rigth now. I've dropped that changed and force-pushed the update.
 
-Information about this release is as follows:
+Jan
 
-  v6.12.78-cip19:
-    repository:
-      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-    branch:
-      linux-6.12.y-cip
-    commit hash:
-      8aea24234867d37d60eef668e5a950942cd95dd4
-    fixed CVEs:
-      CVE-2024-14027: xattr: switch to CLASS(fd)
-      CVE-2025-40119: ext4: fix potential null deref in ext4_mb_init()
-      CVE-2026-23226: ksmbd: add chann_lock to protect ksmbd_chann_list xar=
-ray
-      CVE-2026-23227: drm/exynos: vidi: use ctx->lock to protect struct vid=
-i_context member variables related to memory alloc/free
-      CVE-2026-23244: nvme: fix memory allocation in nvme_pr_read_keys()
-      CVE-2026-23246: wifi: mac80211: bounds-check link_id in ieee80211_ml_=
-reconfiguration
-      CVE-2026-23253: media: dvb-core: fix wrong reinitialization of ringbu=
-ffer on reopen
-      CVE-2026-23268: apparmor: fix unprivileged local user can do privileg=
-ed policy management
-      CVE-2026-23269: apparmor: validate DFA start states are in bounds in =
-unpack_pdb
-      CVE-2026-23270: net/sched: Only allow act_ct to bind to clsact/ingres=
-s qdiscs and shared blocks
-      CVE-2026-23271: perf: Fix __perf_event_overflow() vs perf_remove_from=
-_context() race
-      CVE-2026-23279: wifi: mac80211: fix NULL pointer dereference in mesh_=
-rx_csa_frame()
-      CVE-2026-23284: net: ethernet: mtk_eth_soc: Reset prog ptr to old_pro=
-g in case of error in mtk_xdp_setup()
-      CVE-2026-23285: drbd: fix null-pointer dereference on local read erro=
-r
-      CVE-2026-23286: atm: lec: fix null-ptr-deref in lec_arp_clear_vccs
-      CVE-2026-23287: irqchip/sifive-plic: Fix frozen interrupt due to affi=
-nity setting
-      CVE-2026-23289: IB/mthca: Add missed mthca_unmap_user_db() for mthca_=
-create_srq()
-      CVE-2026-23290: net: usb: pegasus: validate USB endpoints
-      CVE-2026-23291: nfc: pn533: properly drop the usb interface reference=
- on disconnect
-      CVE-2026-23292: scsi: target: Fix recursive locking in __configfs_ope=
-n_file()
-      CVE-2026-23293: net: vxlan: fix nd_tbl NULL dereference when IPv6 is =
-disabled
-      CVE-2026-23296: scsi: core: Fix refcount leak for tagset_refcnt
-      CVE-2026-23297: nfsd: Fix cred ref leak in nfsd_nl_threads_set_doit()=
-.
-      CVE-2026-23298: can: ucan: Fix infinite loop from zero-length message=
-s
-      CVE-2026-23300: net: ipv6: fix panic when IPv4 route references loopb=
-ack IPv6 nexthop
-      CVE-2026-23303: smb: client: Don't log plaintext credentials in cifs_=
-set_cifscreds
-      CVE-2026-23304: ipv6: fix NULL pointer deref in ip6_rt_get_dev_rcu()
-      CVE-2026-23306: scsi: pm8001: Fix use-after-free in pm8001_queue_comm=
-and()
-      CVE-2026-23307: can: ems_usb: ems_usb_read_bulk_callback(): check the=
- proper length of a message
-      CVE-2026-23308: pinctrl: equilibrium: fix warning trace on load
-      CVE-2026-23309: tracing: Add NULL pointer check to trigger_data_free(=
-)
-      CVE-2026-23310: bpf/bonding: reject vlan+srcmac xmit_hash_policy chan=
-ge when XDP is loaded
-      CVE-2026-23312: net: usb: kaweth: validate USB endpoints
-      CVE-2026-23313: i40e: Fix preempt count leak in napi poll tracepoint
-      CVE-2026-23315: wifi: mt76: Fix possible oob access in mt76_connac2_m=
-ac_write_txwi_80211()
-      CVE-2026-23316: net: ipv4: fix ARM64 alignment fault in multipath has=
-h seed
-      CVE-2026-23317: drm/vmwgfx: Return the correct value in vmw_translate=
-_ptr functions
-      CVE-2026-23318: ALSA: usb-audio: Use correct version for UAC3 header =
-validation
-      CVE-2026-23319: bpf: Fix a UAF issue in bpf_trampoline_link_cgroup_sh=
-im
-      CVE-2026-23324: can: usb: etas_es58x: correctly anchor the urb in the=
- read bulk callback
-      CVE-2026-23325: wifi: mt76: mt7996: Fix possible oob access in mt7996=
-_mac_write_txwi_80211()
-      CVE-2026-23326: xsk: Fix fragment node deletion to prevent buffer lea=
-k
-      CVE-2026-23334: can: usb: f81604: handle short interrupt urb messages=
- properly
-      CVE-2026-23335: RDMA/irdma: Fix kernel stack leak in irdma_create_use=
-r_ah()
-      CVE-2026-23336: wifi: cfg80211: cancel rfkill_block work in wiphy_unr=
-egister()
-      CVE-2026-23339: nfc: nci: free skb on nci_transceive early error path=
-s
-      CVE-2026-23340: net: sched: avoid qdisc_reset_all_tx_gt() vs dequeue =
-race for lockless qdiscs
-      CVE-2026-23343: xdp: produce a warning when calculated tailroom is ne=
-gative
-      CVE-2026-23344: crypto: ccp - Fix use-after-free on error path
-      CVE-2026-23347: can: usb: f81604: correctly anchor the urb in the rea=
-d bulk callback
-      CVE-2026-23351: netfilter: nft_set_pipapo: split gc into unlink and r=
-eclaim phase
-      CVE-2026-23352: x86/efi: defer freeing of boot services memory
-      CVE-2026-23354: x86/fred: Correct speculative safety in fred_extint()
-      CVE-2026-23355: ata: libata: cancel pending work after clearing defer=
-red_qc
-      CVE-2026-23356: drbd: fix "LOGIC BUG" in drbd_al_begin_io_nonblock()
-      CVE-2026-23357: can: mcp251x: fix deadlock in error path of mcp251x_o=
-pen
-      CVE-2026-23359: bpf: Fix stack-out-of-bounds write in devmap
-      CVE-2026-23360: nvme: fix admin queue leak on controller reset
-      CVE-2026-23361: PCI: dwc: ep: Flush MSI-X write before unmapping its =
-ATU entry
-      CVE-2026-23362: can: bcm: fix locking for bcm_op runtime updates
-      CVE-2026-23363: wifi: mt76: mt7925: Fix possible oob access in mt7925=
-_mac_write_txwi_80211()
-      CVE-2026-23365: net: usb: kalmia: validate USB endpoints
-      CVE-2026-23367: wifi: radiotap: reject radiotap with unknown bits
-      CVE-2026-23369: i2c: i801: Revert "i2c: i801: replace acpi_lock with =
-I2C bus lock"
-      CVE-2026-23370: platform/x86: dell-wmi-sysman: Don't hex dump plainte=
-xt password data
-      CVE-2026-23372: nfc: rawsock: cancel tx_work before socket teardown
-      CVE-2026-23373: wifi: rsi: Don't default to -EOPNOTSUPP in rsi_mac802=
-11_config
-      CVE-2026-23378: net/sched: act_ife: Fix metalist update behavior
-      CVE-2026-23379: net/sched: ets: fix divide by zero in the offload pat=
-h
-      CVE-2026-23380: tracing: Fix WARN_ON in tracing_buffers_mmap_close
-      CVE-2026-23381: net: bridge: fix nd_tbl NULL dereference when IPv6 is=
- disabled
-      CVE-2026-23382: HID: Add HID_CLAIMED_INPUT guards in raw_event callba=
-cks missing them
-      CVE-2026-23383: bpf, arm64: Force 8-byte alignment for JIT buffer to =
-prevent atomic tearing
-      CVE-2026-23387: pinctrl: cirrus: cs42l43: Fix double-put in cs42l43_p=
-in_probe()
-      CVE-2026-23388: Squashfs: check metadata block offset is within range
-      CVE-2025-38426: drm/amdgpu: Add basic validation for RAS header
-      CVE-2025-38627: f2fs: compress: fix UAF of f2fs_inode_info in f2fs_fr=
-ee_dic
-      CVE-2025-39764: netfilter: ctnetlink: remove refcounting in expectati=
-on dumpers
-      CVE-2025-40005: spi: cadence-quadspi: Implement refcount to handle un=
-bind during busy
-      CVE-2025-40135: ipv6: use RCU in ip6_xmit()
-      CVE-2025-40147: blk-throttle: fix access race during throttle policy =
-activation
-      CVE-2025-40150: f2fs: fix to avoid migrating empty section
-      CVE-2025-68239: binfmt_misc: restore write access before closing file=
-s opened by open_exec()
-      CVE-2025-68334: platform/x86/amd/pmc: Add support for Van Gogh SoC
-      CVE-2025-71152: net: dsa: properly keep track of conduit reference
-      CVE-2025-71161: dm-verity: disable recursive forward error correction
-      CVE-2025-71221: dmaengine: mmp_pdma: Fix race condition in mmp_pdma_r=
-esidue()
-      CVE-2026-23004: dst: fix races in rt6_uncached_list_del() and rt_del_=
-uncached_list()
-      CVE-2026-23066: rxrpc: Fix recvmsg() unconditional requeue
-      CVE-2026-23070: Octeontx2-af: Add proper checks for fwdata
-      CVE-2026-23104: ice: fix devlink reload call trace
-      CVE-2026-23138: tracing: Add recursion protection in kernel stack tra=
-ce recording
-      CVE-2026-23157: btrfs: do not strictly require dirty metadata thresho=
-ld for metadata writepages
-      CVE-2026-23245: net/sched: act_gate: snapshot parameters with RCU on =
-replace
-      CVE-2026-23252: xfs: get rid of the xchk_xfile_*_descr calls
-      CVE-2026-23274: netfilter: xt_IDLETIMER: reject rev0 reuse of ALARM t=
-imer labels
-      CVE-2026-23276: net: add xmit recursion limit to tunnel xmit function=
-s
-      CVE-2026-23277: net/sched: teql: fix NULL pointer dereference in iptu=
-nnel_xmit on TEQL slave xmit
-      CVE-2026-23278: netfilter: nf_tables: always walk all pending catchal=
-l elements
-      CVE-2026-23281: wifi: libertas: fix use-after-free in lbs_free_adapte=
-r()
-      CVE-2026-23321: mptcp: pm: in-kernel: always mark signal+subflow endp=
- as used
-      CVE-2026-23364: ksmbd: Compare MACs in constant time
-      CVE-2026-23368: net: phy: register phy led_triggers during probe to a=
-void AB-BA deadlock
-      CVE-2026-23375: mm: thp: deny THP for files on anonymous inodes
-      CVE-2026-23386: gve: fix incorrect buffer cleanup in gve_tx_clean_pen=
-ding_packets for QPL
-      CVE-2026-23391: netfilter: xt_CT: drop pending enqueued packets on te=
-mplate removal
-      CVE-2026-23392: netfilter: nf_tables: release flowtable after rcu gra=
-ce period on error
-      CVE-2026-23393: bridge: cfm: Fix race condition in peer_mep deletion
-      CVE-2026-23395: Bluetooth: L2CAP: Fix accepting multiple L2CAP_ECRED_=
-CONN_REQ
-      CVE-2026-31788: In the Linux kernel, the following vulnerability has =
-been resolved: xen/privcmd: ...
-    added commits:
-      CIP: Bump version suffix to -cip19 after merge from stable
-      Revert "arm64: dts: renesas: r9a09g057: Add RTC node"
-      arm64: dts: renesas: rzt2h-n2h-evk: Enable Ethernet support
-      arm64: dts: renesas: r9a09g087: Add GMAC nodes
-      arm64: dts: renesas: r9a09g077: Add GMAC nodes
-      arm64: dts: renesas: r9a09g087: Add ETHSS node
-      arm64: dts: renesas: r9a09g077: Add ETHSS node
-      net: pcs: Kconfig: Fix unmet dependency warning
-      net: pcs: rzn1-miic: Add RZ/T2H MIIC support
-      net: pcs: rzn1-miic: Add per-SoC control for MIIC register unlock/loc=
-k
-      net: pcs: rzn1-miic: Add support to handle resets
-      net: pcs: rzn1-miic: Make switch mode mask SoC-specific
-      net: pcs: rzn1-miic: move port range handling into SoC data
-      net: pcs: rzn1-miic: Move configuration data to SoC-specific struct
-      net: pcs: rzn1-miic: Add missing include files
-      net: pcs: rzn1-miic: Drop trailing comma from of_device_id table
-      net: pcs: rzn1-miic: Convert to for_each_available_child_of_node() he=
-lper
-      dt-bindings: net: pcs: renesas,rzn1-miic: Add RZ/T2H and RZ/N2H suppo=
-rt
-      net: stmmac: dwmac-renesas-gbeth: Add support for RZ/T2H SoC
-      net: stmmac: dwmac-renesas-gbeth: Use OF data for configuration
-      dt-bindings: net: renesas,rzv2h-gbeth: Document Renesas RZ/T2H and RZ=
-/N2H SoCs
-      arm64: dts: renesas: rzt2h-n2h-evk: Enable USB2.0 support
-      arm64: dts: renesas: r9a09g087: Add USB2.0 support
-      arm64: dts: renesas: r9a09g077: Add USB2.0 support
-      usb: renesas_usbhs: Add support for RZ/T2H SoC
-      dt-bindings: usb: renesas,usbhs: Add RZ/T2H and RZ/N2H support
-      phy: renesas: rcar-gen3-usb2: Fix ID check logic with VBUS valid
-      phy: renesas: rcar-gen3-usb2: Move debug print after register value i=
-s updated
-      phy: renesas: rcar-gen3-usb2: Add support for RZ/T2H SoC
-      phy: renesas: rcar-gen3-usb2: Allow SoC-specific OBINT bits via phy_d=
-ata
-      phy: renesas: rcar-gen3-usb2: store drvdata pointer in channel
-      dt-bindings: phy: renesas,usb2-phy: Add RZ/T2H and RZ/N2H support
-      clk: renesas: r9a09g077: Add Ethernet Subsystem core and module clock=
-s
-      dt-bindings: clock: renesas,r9a09g077/87: Add Ethernet clock IDs
-      clk: renesas: r9a09g077: Add module clocks for SCI1-SCI5
-      clk: renesas: r9a09g077: Add USB core and module clocks
-      dt-bindings: clock: renesas,r9a09g077/87: Add USB_CLK clock ID
-      arm64: dts: renesas: r9a09g087: Add DT nodes for SCI channels 1-5
-      arm64: dts: renesas: r9a09g077: Add DT nodes for SCI channels 1-5
-      arm64: defconfig: Enable RZ/G3E USB3 PHY driver
-      arm64: dts: renesas: r9a09g047e57-smarc: Enable USB3HOST
-      arm64: dts: renesas: r9a09g047: Add USB3 PHY/Host nodes
-      phy: renesas: Add Renesas RZ/G3E USB3.0 PHY driver
-      dt-bindings: phy: renesas: Document Renesas RZ/G3E USB3.0 PHY
-      usb: host: xhci-rcar: Add Renesas RZ/G3E USB3 Host driver support
-      usb: host: xhci-plat: Add .post_resume_quirk for struct xhci_plat_pri=
-v
-      usb: host: xhci-rcar: Move R-Car reg definitions
-      dt-bindings: usb: Document Renesas RZ/G3E USB3HOST
-      clk: renesas: r9a09g047: Add USB3.0 clocks/resets
-      dt-bindings: clock: renesas,r9a09g047-cpg: Add USB3.0 core clocks
-      arm64: dts: renesas: r9a09g056: Add DMAC nodes
-      clk: renesas: r9a09g056: Add entries for the DMACs
-      dt-bindings: dma: rz-dmac: Document RZ/V2N SoC support
-      arm64: dts: renesas: r9a09g047e57-smarc: Enable rsci{2,4,9} nodes
-      arm64: dts: renesas: renesas-smarc2: Move aliases to board DTS
-      arm64: dts: renesas: r9a09g047: Add RSCI nodes
-      serial: sh-sci: Add support for RZ/G3E RSCI
-      serial: rsci: Rename early_console data, port_params and callback() n=
-ames
-      serial: sh-sci: Add finish_console_write() callback
-      serial: sh-sci: Make sci_scbrr_calc() public
-      serial: sh-sci: Add support for RZ/G3E RSCI clks
-      serial: sh-sci: Add RSCI_PORT_SCIF32 port ID
-      serial: sh-sci: Rename port SCI_PORT_RSCI->RSCI_PORT_SCIF16
-      serial: sh-sci: Add sci_is_rsci_type()
-      serial: sh-sci: Use devm_reset_control_array_get_exclusive()
-      serial: rsci: Drop unused TDR register
-      serial: rsci: Drop unused macro DCR
-      serial: sh-sci: Drop extra lines
-      serial: rsci: Drop rsci_clear_SCxSR()
-      serial: sh-sci: Drop checking port type for device file{create, remov=
-e}
-      serial: rsci: Add set_rtrg() callback
-      serial: sh-sci: Update rx_trigger size for RZ/T2H RSCI
-      serial: sh-sci: Fix deadlock during RSCI FIFO overrun error
-      serial: sh-sci: Merge sh-sci.h into sh-sci.c
-      serial: sh-sci: Sort include files alphabetically
-      tty: serial: sh-sci: fix RSCI FIFO overrun handling
-      serial: sh-sci: Convert to DEFINE_SIMPLE_DEV_PM_OPS()
-      clk: renesas: r9a09g047: Add RSCI clocks/resets
-      dt-bindings: serial: renesas,rsci: Document RZ/G3E support
-      dt-bindings: serial: rsci: Drop "uart-has-rtscts: false"
-      arm64: dts: renesas: r9a09g056n48-rzv2n-evk: Add NMI wakeup button su=
-pport
-      arm64: dts: renesas: r9a09g056: Add ICU node
-      irqchip/renesas-rzv2h: Add support for RZ/V2N SoC
-      clk: renesas: r9a09g056: Add entries for ICU
-      dt-bindings: interrupt-controller: renesas,rzv2h-icu: Document RZ/V2N=
- SoC
-      arm64: dts: renesas: r9a09g087: Add SPI nodes
-      arm64: dts: renesas: r9a09g077: Add SPI nodes
-      spi: dt-bindings: renesas,rzv2h-rspi: document RZ/T2H and RZ/N2H
-      spi: rzv2h-rspi: add support for RZ/T2H and RZ/N2H
-      spi: rzv2h-rspi: add support for loopback mode
-      spi: rzv2h-rspi: add support for variable transfer clock
-      spi: rzv2h-rspi: add support for using PCLK for transfer clock
-      spi: rzv2h-rspi: make transfer clock rate finding chip-specific
-      spi: rzv2h-rspi: avoid recomputing transfer frequency
-      spi: rzv2h-rspi: move register writes out of rzv2h_rspi_setup_clock()
-      spi: rzv2h-rspi: make clocks chip-specific
-      spi: rzv2h-rspi: make FIFO size chip-specific
-      spi: rzv2h-rspi: make resets optional
-      clk: renesas: r9a09g077: Add SPI module clocks
-      arm64: defconfig: Enable the RZ/V2H(P) RSPI driver
-      spi: Add driver for the RZ/V2H(P) RSPI IP
-      spi: dt-bindings: Document the RZ/V2H(P) RSPI
-      can: rcar_canfd: Add support for FD-Only mode
-      dt-bindings: can: renesas,rcar-canfd: Specify reset-names
-      dt-bindings: can: renesas,rcar-canfd: Document renesas,fd-only proper=
-ty
-      irqchip/renesas-rzv2h: Add suspend/resume support
-      irqchip/renesas-rzv2h: Remove unneeded includes
-      irqchip/renesas-rzv2h: Prevent TINT spurious interrupt during resume
-      arm64: dts: renesas: r9a09g056n48-rzv2n-evk: Enable DU and DSI
-      arm64: dts: renesas: r9a09g056: Add DU and DSI nodes
-      arm64: dts: renesas: r9a09g056: Add FCPV and VSPD nodes
-      clk: renesas: r9a09g056: Add clocks and resets for DSI and LCDC modul=
-es
-      dt-bindings: display: renesas,rzg2l-du: Add support for RZ/V2N SoC
-      media: dt-bindings: media: renesas,vsp1: Document RZ/V2N SoC
-      media: dt-bindings: media: renesas,fcp: Allow three clocks for RZ/V2N=
- SoC
-      media: dt-bindings: media: renesas,fcp: Document RZ/V2N SoC
-      arm64: defconfig: Enable RZ/T2H / RZ/N2H ADC driver
-      arm64: dts: renesas: rzt2h-rzn2h-evk: Reorder ADC nodes
-      arm64: dts: renesas: rzt2h/rzn2h-evk: Enable ADCs
-      arm64: dts: renesas: r9a09g087: Add ADCs support
-      arm64: dts: renesas: r9a09g077: Add ADCs support
-      iio: adc: add RZ/T2H / RZ/N2H ADC driver
-      bitfield: Add FIELD_MODIFY() helper
-      iio: adc: add helpers for parsing ADC nodes
-      property: Add functions to iterate named child
-      dt-bindings: iio: adc: document RZ/T2H and RZ/N2H ADC
-      clk: renesas: r9a09g077: Add ADC module clocks
-
-Best regards,
-  Nobuhiro
-
-
+-- 
+Siemens AG, Foundational Technologies
+Linux Expert Center
 
