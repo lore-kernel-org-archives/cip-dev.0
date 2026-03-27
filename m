@@ -1,633 +1,292 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <nobuhiro.iwamatsu.x90@mail.toshiba>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 765C510BA42F
-	for <webhook@archiver.kernel.org>; Fri, 27 Mar 2026 06:00:50 +0000 (UTC)
-Received: from AM0PR83CU005.outbound.protection.outlook.com (AM0PR83CU005.outbound.protection.outlook.com [52.101.69.10])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.66062.1774591243955217749
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D25D10BA431
+	for <webhook@archiver.kernel.org>; Fri, 27 Mar 2026 06:19:20 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.67212.1774592354393867550
  for <cip-dev@lists.cip-project.org>;
- Thu, 26 Mar 2026 23:00:44 -0700
+ Thu, 26 Mar 2026 23:19:15 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=tIRWvYQU;
- spf=pass (domain: siemens.com, ip: 52.101.69.10, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.s=key2.smx header.b=b9FHI5On;
+ spf=pass (domain: mail.toshiba, ip: 210.130.202.158, mailfrom: nobuhiro.iwamatsu.x90@mail.toshiba)
+DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=mail.toshiba;h=From:To:CC:
+	Subject:Date:Message-ID:References:In-Reply-To:Content-Type:
+	Content-Transfer-Encoding:MIME-Version;i=nobuhiro.iwamatsu.x90@mail.toshiba;
+	s=key2.smx;t=1774592349;x=1775801949;bh=3ms01bnDX5l36ujCsZsGcq8y0KgOBU3C3u0Vf
+	paB8oI=;b=b9FHI5OnWz9/eznnrp2lUNE/BOSbVs4XwGXLBuipvl6mfguUSVA50odceAAYz6xEK2i
+	UReKKfrWw3oXFu/0pTTSkOuXeMV8THY0Hl48lBrv2ShjYQ+Nztb337ajEw3oSP/S51SsW4hDgKhoF
+	VHAlX60SEn21/eEuZcaOKzlcjin9gWkD00rMv8Lk6/5CKw0s06SsXtFneC3hijDLwFk8LQZzdZqwZ
+	pn/BKPmhLoVhTPE4ckgjt61RU0QtZW/sO0u69womMwjJmel/pfM+qH3SuTHtgpmQ0XmkZW1gC3AEe
+	aXzpsxVTT4tZCYFGr2FuREu4K6OEeh5WMy7ztoV3JdVA==;
+Received: by mo-csw.securemx.jp (mx-mo-csw1122) id 62R6J9KB4125080; Fri, 27 Mar 2026 15:19:09 +0900
+X-Iguazu-Qid: 2rWhfSiM6vPvzKHURd
+X-Iguazu-QSIG: v=2; s=0; t=1774592349; q=2rWhfSiM6vPvzKHURd; m=YjEMcoptI04yuxEdJxlcPEXyweO+yh3s3yEs9KDxPbI=
+Received: from imx12-a.toshiba.co.jp (unknown [38.106.60.135])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	 id 4fhr7w2zbDz1xnj; Fri, 27 Mar 2026 15:19:08 +0900 (JST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nSOqCi+norNTZf8rFT4biI79J5XIqSmxT+d2FGMZT6dB8mzi5LNzgOht8o33j7/41AnnPpFt28VdpdX5MwPHs0XJ5BFirWM+YyqfDRELhqywSSuXl6BnbtMtVpXBh4+lT12My/ocssq72TbDzNU75SOOt3H7mBGKapqom8EQp6eHoEGEakh1cdbY1fb5QrZSwHSbQO7A1xMcLadedunK+9iFE5E2e9nqWRsdimjCxRNWnP3I1x7EudPn2XaAlIyMUFeonDIjJU7nIKcKeikiBIxWICRKPJ45LdN1mpCD14K1nEft5vL4xHONUTtBagZZwp2VDt5pQBK6F9PzKejfHg==
+ b=VvbBQp/iT5rpFzE7ApXr9TN+yiWP6idZmdteWsqyESVnLBxxOJBKQILyTAq0Mn0LoTweXis2Je/2GC1bXvOIHCho+oIl6a4y0kEk9sXRpVa/6XKn0nS9s3iISWu5rhBJ5pWNKSyvUDFytoA3a5URCAKg+1Nw/VU3HDNk41uL4qVTn4s4Ok/bX4DZhUzQRXpLa8zTCeV2mRRHJByKm8IzpO5B8V41jxQ6/aZKeN8zjioVemr8VuqrVHP0SSZ0St/gT0HRAUvwZLJU6UqnXZyA+g5/k55KceAcs0wNnRxEKtx1+4IX2EiMU80B/Ug9tGwTBjwdxkNq4AHbWm8EMHKPYQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sZd5laqmomEfacnxUyA9dolMvPpQ0yV9UHfRr4nziC8=;
- b=tj1tykMhgUjkiedZx5DrVu1/EHHHxkhG5rOugK//j2DNynUjHuVdybW2Fi+8csN9Mg1/q/kvajqxYmjrCYr3u01T4OGyfmMMp+VQ/hyVz1fzzTuvJHHgBWI7gmvYfoe2h3+Ins32+7Vhy/y1ofU5iq0LkcY0Cs4PEbiFqnQn5Nd1UWHUaRgYJ388TV1c5wfg2kaxddth0zY67mZ5PeXhFpmGDZ8rufORtArwxtMpVp+J5Ta0wD3fKzlMPSfnJq8gZUWgvXOp6l8Xtx1SCCguMng15FUmjx7D4aWjZEcYcKV0KsDZfy0Ag5O7TzL8KZm3cv0N0b4QcOha0RH13rpm+g==
+ bh=c+V6iV41uVkGXY5cO8owd2rIRHFC56M+bHT0pU3cgsc=;
+ b=dNUat1wb9Gtvl3UrogLvSLOehK5sLpt4oscngC6UYyD1GvQl22IDvFwDki7DkhcX6eP2lbhJ9NkDKtmD2JA7enbD6F19kea7hbt46oI/wyF3DuwTvBCT/cOIhbE/yhZBWVaeD+i1nacS97K1DFw5+kuAlFOWJdy2iCeYLo9FwsuuwdI+K3UYde2BHO26enua10pxtmhlKOEMaLAmBJ4B1YGaiWYjENj0+Sg8eKKu96dZvpum6L/nap732gjQZDBFhJJQ8yxvVdnvcd8jBVA+pqsp/SRp5MmzHpVDsPyoCPZNCpr/9Yux1MEwYeM1fPxJDnxlnjhJ7AbTqUxcaXBrSg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sZd5laqmomEfacnxUyA9dolMvPpQ0yV9UHfRr4nziC8=;
- b=tIRWvYQU6KmKgyxZjGbbnwaGE79zZuVz5UokNWmpV53KObcpTm+cKjMcmwLTz+YeDD50PxZH7z8RC8wfVq3Ij5GgYg33PeLSv6chPZEcdbjUeiaFOFxyHanpuL5lcnCYhQa5WNPnkKtRg7b2EvmwUkSVoleu7H7h3oK0MR6g3tLD0gD5DY7b+U5U0MVzCqOEIHAwn2/msmiWTjsP2fl0U49zAoSS5mJzJ5OAw3XW8ssV4annsCJWX5zc41vKcUeKk8Ycfcj3uX2FGTCe98DJkt/2Hr/8v61QmPv1xtbej3NqECZb7zJHdtl93hgDAUrMnT2gqrXuJzVauxsSfyFY2w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by DU4PR10MB9000.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:55c::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.22; Fri, 27 Mar
- 2026 06:00:38 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::be9f:e8ca:ee9:83e1]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::be9f:e8ca:ee9:83e1%6]) with mapi id 15.20.9745.023; Fri, 27 Mar 2026
- 06:00:38 +0000
-Message-ID: <aaebd634-d7f1-48e0-9e15-8ce38131166a@siemens.com>
-Date: Fri, 27 Mar 2026 07:00:37 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [cip-dev][isar-cip-core][PATCH] chore: Add a description to all
- packages
-To: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>,
- cip-dev@lists.cip-project.org
-References: <20260326094759.27940-1-Quirin.Gylstorff@siemens.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Content-Language: en-US
-Autocrypt: addr=jan.kiszka@siemens.com; keydata=
- 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
-In-Reply-To: <20260326094759.27940-1-Quirin.Gylstorff@siemens.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P265CA0161.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2c7::8) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+ smtp.mailfrom=mail.toshiba; dmarc=pass action=none header.from=mail.toshiba;
+ dkim=pass header.d=mail.toshiba; arc=none
+From: <nobuhiro.iwamatsu.x90@mail.toshiba>
+To: <biju.das.jz@bp.renesas.com>, <biju.das.au@gmail.com>,
+        <cip-dev@lists.cip-project.org>, <pavel@nabladev.com>
+CC: <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: RE: [PATCH 6.1.y-cip 00/39] Add Renesas RZ/G3E RSCI support
+Thread-Topic: [PATCH 6.1.y-cip 00/39] Add Renesas RZ/G3E RSCI support
+Thread-Index: AQHctf+lrnEHyGO3j0CCOOYHZ0oUSLXAbC2AgAGJKOA=
+Date: Fri, 27 Mar 2026 06:19:05 +0000
+X-TSB-HOP2: ON
+Message-ID: 
+ <TY7PR01MB14818BBBAE28FD1EBB546EE7FCD57A@TY7PR01MB14818.jpnprd01.prod.outlook.com>
+References: <20260317111718.281633-1-biju.das.jz@bp.renesas.com>
+ <TY3PR01MB1134618D8A4896B5FB8A8D3AE8656A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+In-Reply-To: 
+ <TY3PR01MB1134618D8A4896B5FB8A8D3AE8656A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mail.toshiba;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY7PR01MB14818:EE_|TY4PR01MB15849:EE_
+x-ms-office365-filtering-correlation-id: 16abbbe2-3283-4e35-6668-08de8bc8bf6b
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|1800799024|376014|366016|38070700021|22082099003|18002099003|56012099003;
+x-microsoft-antispam-message-info: 
+ 6md0JbSh5TNBqzl+g3ojOCdiA8FNDIRB71Uq8bnN/3T/8ysK71lb8VgEJek81sUbNOAkgmd8OKQsT12Svgr/FF/6MuxiTHWlu7BTm2romjyAsuUFF/5K3XuOfKCwj+MH0xpzemFeBnJyvln3DWKsCuh1mIFe08P2ZIqa5xiJJ9KXmvRS/Uc7QqK7iNS5SfzsIdstoRGhrw5A6DpaXZPnetgwAHFDvqJj8PzbGsL0xCntX2OFONLgBYDV7km1oVelRVvoBDXwOpST4S2j2dQhRRye9Kc9RWaQVXmWGdkhdIOgfhi3bG0aowGiFql3vo6JBz/eDNvLDS82+bkUeA1a6QCy/orV7VEmSxfDQdlB+ivRq70JKHrYBy61B+hhQl5ReQdJ88/oq3RxCOcT1GhmsoDlLS//BLwoR7EbJHcTm5jNfMr9z6WSRgMRhpXBZVO30mF2xDoIEe+/8CDAofkd6wWyJDavRgKmnnCIMQNRJwzQezYpiPHJxUW4hvvNFNbL1HOm0xK3Phs1N4dQ1tqIOYtxeuuyyKS5Sl/7CWz6tFnxuoonBbnsp8qM76jMqf1Nfve2kAIuoUaNIhuWMmHXYpLCyHmEQWD0oBbrx5xarBhFKqOqlipK3+R5tSTaIhdsZ3Sf53Y2WIG76KezwauLt9XIbHQxm1NqwegSy4DSHF1PuAN3E23TZ8IeiSKQCiztE9fAO2c/C6bwnjgF90MmCs610o0LKq7EYEBvCANDO1VkSuYGPiue7wObDPN5pSx7DO1LGhqE3tkOG3DQ6861barBczHQWBB87UhjHONTu/o=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7PR01MB14818.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700021)(22082099003)(18002099003)(56012099003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?UWgzNzdjL1hCbm0wYXVMQU8weURYdDFKREt6alRvU1dmeS82a2VjRWpw?=
+ =?iso-2022-jp?B?OE9CNWNhTjVkQWdLbG5MN3NBSEtaMURzTFFVS0FHN21hYTVOSmhpTTl5?=
+ =?iso-2022-jp?B?NklDTUlrSjFmQ1p6bEtFcWlDSmxKcUF0cVdBT1hpdGRxUE05ZS9Tblhm?=
+ =?iso-2022-jp?B?NlljZ09tY1JTYVg0Qzlaclc5UTAzaWdIK0NIZnVIRTdQNitHVVdOQ01p?=
+ =?iso-2022-jp?B?YXdMcHVPSE1Vd29RY3RvYzIzV3ZqRmJwOXhpT255dlljZTRSNTNaNFp1?=
+ =?iso-2022-jp?B?TU9rMzFTRVBnWjF6MTRGN1VtdzdsUDU4WVhaYmxBYThtNWpwZkxKWk9Q?=
+ =?iso-2022-jp?B?NHdIbTFtVnNFMnBtaUhKOTEyM25KbzREL1Z3TDZNSEt5WG9RdWJLc2JF?=
+ =?iso-2022-jp?B?UGgzcDBHQXNjZlhxUGFWVURBQTRBMFZ6YWRLd0Q3ajNudkt0V1ZJQ2tB?=
+ =?iso-2022-jp?B?QVQxd3FIcnJxdUVnNnN6dytnT0puQnU1RnErT2dnWHJFc01hb2FlVkJu?=
+ =?iso-2022-jp?B?MU5FbkFHaitlQ1dLcUdyN1ZXZFdhMSsyT2Z4dmNRTXRvNHBObENiNEJW?=
+ =?iso-2022-jp?B?SDBoMnlOcFdRWXN3SkpqRkRUU3lrVlMxbjkxdVo1ZUFLSHlXaEJ4ZVpo?=
+ =?iso-2022-jp?B?eTZzSjBIUW1IVkhnYWt3VVNnUHNuczFsd0tiUkl4NnRwUTNLRmpWc2l0?=
+ =?iso-2022-jp?B?NnJuZm1NbVZ4NGdLNkc2aS9yMFYwZ2g1K0tSM1l5NVRjdy9lSnN2OFZV?=
+ =?iso-2022-jp?B?aU94eVZPeTFuSnVzZFJXc29vSkdHc0VyQWlPTHJXaTVod1NRdE1mWjdU?=
+ =?iso-2022-jp?B?eCtVOUU0WGZ6SVp3Ni9jN2lQMmwvYnN3V1d5MCthRDhsUnZDTGdtLzZC?=
+ =?iso-2022-jp?B?bmlsUzA0WHBSQlR3UEJ2bERqajkrYzdVV3l3ZGhraGlBbFpHNWdKQWUy?=
+ =?iso-2022-jp?B?aTFETGNZZFJTTjFSdEJxRzdsYmdMUGk2YlY4dmxOaWdaOE1ZU3JOc3ZH?=
+ =?iso-2022-jp?B?Wk5ld1hWZFpXdlZmaGFjangwd2tHV3hFSm5ieEpUeHY2ZUhON2xwU0du?=
+ =?iso-2022-jp?B?U25GVjcxZkdoS2tWZUUvM2N2SVR3OExMWGs0K2srZHBjWGYyZTAwUk5G?=
+ =?iso-2022-jp?B?V2I2RGpiQzhhczNsalIvRXY5bVJXbG9PSTJLelNQVmJObUJ3MC9tSjNG?=
+ =?iso-2022-jp?B?ZXZOZ3l4ZWUxUGVmbFlvYnN0aDk0KzduRmduUW0xWWFBTFBQU3NpR09Q?=
+ =?iso-2022-jp?B?aWdQaUwxUzNOMjlBNWFGa1RrZHkvQTM4V3RGTG5sNUxsNkpPUHQ3R1g4?=
+ =?iso-2022-jp?B?WTR3bCtUWDVhN091TXhKQ1ZHTlRGd1RxbEF1Tk9XVWROeTNtTUNDZE9W?=
+ =?iso-2022-jp?B?aFIxZlNSOFZsYjhocWZZNXl3VWJSQm5qNU55ZU83SFFBN3Q0WEVDaUVi?=
+ =?iso-2022-jp?B?ZEl4N0dOdUNrTW1GRFNaZm53THFXdXFXT3FOdVM0enF3bndjbkNHekFx?=
+ =?iso-2022-jp?B?TkZVRVRIVzNwaVQ2eHFEUHpBakJjZE1pYmNhcHZhUWc5WElLSkhFVnZR?=
+ =?iso-2022-jp?B?TmpONDhhQ2Qxd3M2cmxWVVJ1UGMwa2VKRGFBVmxaa3N6RzQ2eDkyNisx?=
+ =?iso-2022-jp?B?VlZjd3pRRWc2VUt3T0xrU2VTWnRFRXMvRGZhelYzU0YxY05VNzBZUFVS?=
+ =?iso-2022-jp?B?Nzg4UE1rejRmRnl0VTFtOUk4N3R1eVRPTUlpTTFUVWFKeWJOZXRLMCt3?=
+ =?iso-2022-jp?B?ZWp5UjRnSUJOTk1qMDZ5a3VKOEdMN28vdzVGaXRRdVIyNXFMU1pCSGpL?=
+ =?iso-2022-jp?B?SmxJb1pIN1R6MGlDSklmYkxHSmhiejJYRm0ybmMzdW1CeDg1SCtET29x?=
+ =?iso-2022-jp?B?RHJ0T0hrK25La0ZsMk5NZzZWb29VK2lIRDI5bHBhbEVBTDZkdFdYdmZ2?=
+ =?iso-2022-jp?B?ZzExc0FHRGFMdVlySGlLbFlIVWJJU2JmbnZjeGlYSml5TDNoVUg2S3JP?=
+ =?iso-2022-jp?B?MGZzcTdKL1RrckZzL0VtRjNpa0tnYXNNVndESkhJb0JXYXN6R0xXUjJO?=
+ =?iso-2022-jp?B?eGR6YllVOVFxWUU2UzM3UkRNdmZlUFBKallHUEovbVo0cEMyQWEwQ2xZ?=
+ =?iso-2022-jp?B?QmRWUVBhWWI0UWhzZWdVamhkejhWQVRZVjZFUU55M015QlFtREUrUUNw?=
+ =?iso-2022-jp?B?dFJUaXJ1ZWRuNnBjRGloNHVQdkFzYkVDb0ZPRmNTVXM2SDFWUWpEYjh5?=
+ =?iso-2022-jp?B?NmplRmc2ZjQxNkt0YnJvMTV1Q1cvbWwrV294TEdKZ2NHVGJGVDR2RktW?=
+ =?iso-2022-jp?B?Q2dIVTdmMFNvN3VYYTQrWWxqZnNlaGx4TVNrWUJ2T3NiRFA1MGVSdE1O?=
+ =?iso-2022-jp?B?dDRuVEFWa2EvZjJhRkM4cWVpVnpTeC9PVXJ5WUlJR0dxSWhRQk12Rzdj?=
+ =?iso-2022-jp?B?T0RIWHhhbUVma1dEc0g0Q2VNYXNrKytlcnNOMFZyYWowTnB6TUVSQlQx?=
+ =?iso-2022-jp?B?aFNwMG1DVitWWkxrK00xQTNSWEljc0Zzd0hWcXIzWHR2MnNCUHFtQk9P?=
+ =?iso-2022-jp?B?anRHa0FUND0=?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DU4PR10MB9000:EE_
-X-MS-Office365-Filtering-Correlation-Id: d19dc3cf-fc47-40a2-ab6d-08de8bc62b9e
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|366016|1800799024|376014|55112099003|13003099007|56012099003|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info: 
-	uabGnqd0ux/OV2Z6Bmj/gjeFSSyMECXYOHFFN5cLUOipibafYuem/ECdfYKEYNOSNOAQm9Qnx+cFoZSnKwD5/IHK4IfcuOPBDvGdI31VonLpX0rJ+5Bm+ehFaFKNc5VTKWhl+zgas/iGqCUSfrog3ORHrqabW4lpq28ANBlI39YwXWeBc0a9qZBUnnfIri8HtGmyxMcgOdTH0gAMugsFWIuGOVCAsQQbLojZ7C/xmSrMwzLqaSTOAy099yZyeVnznaisf20Pnesq7+eTivC2wi+4MMHpgXuEoyOSySkNfDTypShc3z5JVKQW9gI5MN3X+XTdSclDzVN9cIsR1CvE/EFxHUaOmUxQK0X9i1rIy0CcT7VJZCQWMFL4dnW3A+M10f07W1TKSvqaGuz9fOoXL7RoZluwjTcT8bWiJ46mCJlwrG3ZloJSkbQTtQnWccvnk5dKXxYEf6W6tZh4TGFFKVjbmSkmBRBzvlSRJn70y9jOrS1vQvXoyQc9svqnaEwbeogKwN10XHOiHhzYs2nSLruIAa/4AHhM9Mq+d8vYHokSMZ5D3B6cOeoRssT969snsh4se5Czko2Kmv17SHLBOVzh3C6S+gSAwWow7mAeA+sgY35FlFAzncE6oXk6w8SYGXcsBO8q+wd3hKb7wF1SHXVxZjLKb/0zc7CkwsXgvEDYhHPHx/gwpY6+IkgNaLoZ6bbw0JQY1pnH3mxms8BcOA==
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(55112099003)(13003099007)(56012099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?RVYzOS9MMXUvaEFWcjdtYzBrMnluZWVSWUVmcWh1ZkZ2Yld3eDY2UVBXaER2?=
- =?utf-8?B?TmFVeFdJSmtFWjM5cFVEdzhDaWErNzZZNFhNN0FDeTN1ODdCSUM2ZEhWYlJ4?=
- =?utf-8?B?S3BMTGl5Tm5Dd3BwdUV6VWZGVUNJRmxxM2pUdkJDdVlPNW5MSmhrUkhta2c2?=
- =?utf-8?B?RkVVZkRCeGpMZVlLdEp6TzZJUHFFM2lpTFM0RytXYXRiSGp2WFM1Zk5qcGI1?=
- =?utf-8?B?bTE1Tk0wOHZncFpDNFB0YWg1NFZCQzgzZ3lUcFczdDl2QTVYK25ZZ0NOQ1lq?=
- =?utf-8?B?clA1NGpkcit2ZG9GQkVoQ2h6S1FLTG5YYVEra21RNE54R3k3Z1NnZERJWEh1?=
- =?utf-8?B?dXppdEphUG9EZG9meFZaWDRTYWNQbjc3WDFGSkNONndDQ0x0bmltSExTU1Nk?=
- =?utf-8?B?L2FHWjVEdllIbEVsVHhoVWJVbTBINzBoQ00rVzV0ODJsSHpyZzgwUmYwcGlO?=
- =?utf-8?B?NmR3K0F1aGxERkIzR2Nrb0J4VGhVZURNdXFVeFVwZlFSdjJhVjJuVDd4VG9i?=
- =?utf-8?B?UDZZSEdkVWd5SmF3WlZRSFpTTGgvTE8yWlFsczJnQ3hwckk0SUgrYVVla2Nn?=
- =?utf-8?B?T2tDc05YRkp4c2NBQWpwR1ZiZWZTUW44TFBDbVVRZVF4Wlltc1JqSFlScFhY?=
- =?utf-8?B?aUk0ZTVDdzlLOWMxVE9BUzdCOHpTWlE5dDBhWDBBTktLRU5ENE43WUhPUmU4?=
- =?utf-8?B?eHdVYmlSY1NzYjVHN3FEeC94M2RNWGJNZFRrelkxQld4eFVmOFJvVGhSVExS?=
- =?utf-8?B?RTlHcE5xa3NEL2d6Q3FyZm40UUpZSjZlRUpqVWo0ZlY2MUIwWXlackV1ODJj?=
- =?utf-8?B?THV3RlJiNHFTMzJna29sYVZPTU4yWFFRdndGSDlWWkk1RDBQL3Bkajk5MXlw?=
- =?utf-8?B?ak81WklJSUNhbUl6N25nTHFTVGZyYjRDU3oyT2NabnhPYkR6aGZ3VjBGS0F3?=
- =?utf-8?B?b21vRy9sSHVzTS96cEZrYjl5dUR0UjRUcmRXbFlSSkdGcy8xQUx3V3dsSnpz?=
- =?utf-8?B?SGxjL0YwaFU0V2pobFIyWXU4dEx3M2pEcjVIcFhXdmxWUnEzTVRHTGxmakcy?=
- =?utf-8?B?dWROVCtQVHZhYVBJbFo4RHBNeWdLUFpjRlV6ZC96ekZ1N3kvZDBjTUt6RGFx?=
- =?utf-8?B?VUdpN0IrcmtTd3VTeUxYOUR0bVBMZXdDTHl6RWJPSHFQekxremVLZU1BU0E0?=
- =?utf-8?B?SnI3WDF2NmNpSjhxV1BKMUx0QWQvQ1FDQ2ZzUzVTRTZOMnFXUVREVmlPMlgr?=
- =?utf-8?B?Yzk3dHpaa01CV1BPa1JOeXUvbjZ4Z1R1ZEtZa0FsWkRtTUI4eWYyYVdWcm5L?=
- =?utf-8?B?UlI4azE1R2dXZnpjY0RSYTR3MlJld2EzaFJiQnowMVN1OUFQNVlwOTBLOWlt?=
- =?utf-8?B?ZDlOWTNGRDJoNE9YZVIycDNzcnZQQUYzOVFGNTdNbk83c01sa0RUWkg0OHBv?=
- =?utf-8?B?WXdVajZYcE9DVDZRMWJ4YmMzY1ZhY2FZcnpYYlJITVU0ZnV5Nk1RUEhQNTV5?=
- =?utf-8?B?NzkxWXNkMG8xcWZHc1VYV2p4bGJDelFZVzIvNXhxTjJQMXZmRThkcElGZGVY?=
- =?utf-8?B?OXFvSU0wSDJxN3c5Z2RDKzFnWDhGVXQrWWlCUnI5VnRuRlFNUklpZmR1S29l?=
- =?utf-8?B?a29ybWYyZERXOTEyL2J3V2Z5SUJHOWo3UmVzMGUvQUJQQ1lxOUw3MGR2NVk4?=
- =?utf-8?B?b1dwZHlDV1ZRU1BRSVJET3I5VTAxN2Z0OFBweVV6cEdzaDhVeXlLMHN1N1k5?=
- =?utf-8?B?cjNKV2NSblFyR1h4U2dreW42U2tyN244UmdCVmJIS0pObnBDZlhGNFZGUm44?=
- =?utf-8?B?RFVtSUM2MWhXUVYwMmZpU0kvV0xnS2J2SldDdjdDMlRKZ2RQa1pVTklYY1Jo?=
- =?utf-8?B?TzBFdVpsZENuZE5TRWtWUGRVeitlbE1PU3Z1YnUvR0lKSno2Q1p0WXRpMG9i?=
- =?utf-8?B?cGtmc3NtTUhTcW1ORU9OYm00TXVhZ2tEcWpQZWg2dGVIdFNjd1hza05FNVpT?=
- =?utf-8?B?NFA2UEp6Nm9KLy9hT0VmRVRxaFRycVRNNzJ6c1hEWDFlZEVkOTgxaHFJVkFJ?=
- =?utf-8?B?K3YrbGp4MjQrUzd3MHAwWElTL0I1UHdQbFhHK3hoMHhJSnNVclliT1dGMURF?=
- =?utf-8?B?dWFPa212RGIwTE9mOUhpck1nWHJDTVpZM3ovVVhhYUdtSG5XOXFWbXVHTjRE?=
- =?utf-8?B?cm1YVGh0OElLalRtOGNRUDJjSU81ZDJJOTNUdEVaeGxwdXJZNHF0UUxLT21j?=
- =?utf-8?B?Tyt4ZXEyaUJ4VmhwTFdESXZpdDI0UnBFMitkTktMakQrUDFiWmUyZVd0V1do?=
- =?utf-8?B?bFdYbGdPUDVuWjUyWlFmSXJiYXZMQnVTSXBwOGdRUFFlV21UV09rZz09?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d19dc3cf-fc47-40a2-ab6d-08de8bc62b9e
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-Exchange-RoutingPolicyChecked: 
+	cGX3FZlUKvcI/xD8hHmnw3KQCGlbDzqGqH4gv3aBmWpnUfAhjmHtyD+Gj56Oqj4U5tNQlmeoSotZQOrYUUA8tlTzTTOxFLANT7o2kUa20CyzTWYmmEhdzsx0wYAJBhyMnmSPimmrqqxh032AeFlTQhToHpq6p6P11fS+kCuTqZ8DSfXR49vp2zyioRZ7q9VMtZr7CxryCCHUWCpdkx9OCx12DO1i7YJ4i32eOo9SeEe1wnV9815JUUsw8A27LiRJq0OtFv/rTRsISo7cLG0Zf1+XQdpTZzna4B9AlNrPYcsOIGNdVuI1WbVLY5mHZGKTAmqmMwvC2F6AP4naw9+1kA==
+X-OriginatorOrg: mail.toshiba
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Mar 2026 06:00:38.6883
+X-MS-Exchange-CrossTenant-AuthSource: TY7PR01MB14818.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 16abbbe2-3283-4e35-6668-08de8bc8bf6b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Mar 2026 06:19:05.4042
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 12TFhWmvbTrWSEx8Hz9MFYaXcv9jAfjTwqKpa74hsTZPe3nSoELXdckaRC5+2Xjk53apmdFtoZTklLqy2lsMWQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR10MB9000
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: gkZKj1fgh71g4QHT+O6lP/YULSUpfwIeepXp+BFoBeMY401W0kgVeYal2AKoUD0N46FRN6RJ+DC8XBAiyvyqaaIGhJcwSGZ+Mcaf5sYPD3kY1k7NP24TFEuAXKtjtvKn
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB15849
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 27 Mar 2026 06:00:50 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22587
+ <cip-dev@lists.cip-project.org>; Fri, 27 Mar 2026 06:19:20 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22588
 
-On 26.03.26 10:47, Quirin Gylstorff wrote:
-> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> 
-> The description field is mandatory according to Debian policies and
-> `deb_debianize` set it to "must not be empty"
-> (https://github.com/ilbers/isar/blob/34c3cda51b46a2a2a405e472a3c4b88c820c765e/meta/classes-recipe/debianize.bbclass#L23).
-> 
-> As this description will be part of a sbom generated by `debsbom` it
-> should contain valid information.
-> 
-> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> ---
->  .../hss-payload-generator/hss-payload-generator_2025.07.bb      | 1 +
->  recipes-bsp/opensbi/opensbi_1.7.inc                             | 2 ++
->  .../optee-ftpm/optee-ftpm-qemu-arm64_4.8+v1.62r1-48-ge9fc7b8.bb | 2 ++
->  .../optee-ftpm/optee-ftpm-ti-k3_4.8+v1.62r1-48-ge9fc7b8.bb      | 2 ++
->  recipes-bsp/optee-os/optee-os-qemu.inc                          | 2 ++
->  recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.inc                   | 2 ++
->  .../trusted-firmware-a/trusted-firmware-a-qemu-arm64_2.13.0.bb  | 2 ++
->  recipes-bsp/trusted-firmware-a/trusted-firmware-a-ti-k3_2.13.bb | 2 ++
->  recipes-bsp/u-boot/u-boot-common-2026.01.inc                    | 2 ++
->  recipes-core/home-fs/home-fs_0.1.bb                             | 1 +
->  recipes-core/journald-config/journald-config_0.1.bb             | 1 +
->  recipes-core/move-homedir-var/move-homedir-var_0.1.bb           | 1 +
->  recipes-core/swupdate-config-wfx/swupdate-config-wfx_0.1.bb     | 1 +
->  recipes-core/swupdate-config/swupdate-config_0.2.bb             | 1 +
->  .../swupdate-handler-roundrobin_0.1.bb                          | 1 +
->  recipes-core/tmp-fs/tmp-fs_0.2.bb                               | 1 +
->  recipes-devtools/dosfstools/dosfstools_latest.bb                | 1 +
->  recipes-devtools/secure-boot-secrets/secure-boot-secrets.inc    | 1 +
->  .../swupdate-certificates/swupdate-certificates-key.inc         | 1 +
->  .../swupdate-certificates/swupdate-certificates.inc             | 1 +
->  recipes-devtools/swupdate-signer/swupdate-signer-cms_0.1.bb     | 1 +
->  recipes-devtools/swupdate-signer/swupdate-signer-empty.bb       | 1 +
->  recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb      | 2 ++
->  .../initramfs-abrootfs-hook/initramfs-abrootfs-hook_0.3.bb      | 1 +
->  .../initramfs-crypt-hook/initramfs-crypt-hook_0.10.bb           | 1 +
->  .../initramfs-erofs-hook/initramfs-erofs-hook_0.2.bb            | 1 +
->  .../initramfs-overlay-hook/initramfs-overlay-hook_0.4.bb        | 1 +
->  .../initramfs-squashfs-hook/initramfs-squashfs-hook_0.2.bb      | 1 +
->  .../initramfs-verity-hook/initramfs-verity-hook_0.3.bb          | 1 +
->  recipes-kernel/linux/linux-cip-common.inc                       | 2 ++
->  30 files changed, 40 insertions(+)
-> 
-> diff --git a/recipes-bsp/hss-payload-generator/hss-payload-generator_2025.07.bb b/recipes-bsp/hss-payload-generator/hss-payload-generator_2025.07.bb
-> index cfb821f..a0ca054 100644
-> --- a/recipes-bsp/hss-payload-generator/hss-payload-generator_2025.07.bb
-> +++ b/recipes-bsp/hss-payload-generator/hss-payload-generator_2025.07.bb
-> @@ -11,6 +11,7 @@
->  
->  inherit dpkg
->  
-> +DESCRIPTION = "Tool to generate HSS payload images for PolarFire SoC"
->  MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
->  
->  SRC_URI = " \
-> diff --git a/recipes-bsp/opensbi/opensbi_1.7.inc b/recipes-bsp/opensbi/opensbi_1.7.inc
-> index 885401d..f9760fd 100644
-> --- a/recipes-bsp/opensbi/opensbi_1.7.inc
-> +++ b/recipes-bsp/opensbi/opensbi_1.7.inc
-> @@ -7,6 +7,8 @@ inherit opensbi
->  
->  MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
->  
-> +DESCRIPTION = "RISC-V OpenSBI firmware"
-> +
+Hi Buju,
 
-No added value over the prefilled text of opensbi.bbclass.
+> -----Original Message-----
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+> Sent: Thursday, March 26, 2026 3:45 PM
+> To: biju.das.au <biju.das.au@gmail.com>; cip-dev@lists.cip-project.org; i=
+wamatsu nobuhiro(=1B$B4d>>=1B(B =1B$B?.MN=1B(B =1B$B""#D#I#T#C!{#C=1B(B
+> =1B$B#P#T=1B(B) <nobuhiro.iwamatsu.x90@mail.toshiba>; Pavel Machek <pavel=
+@nabladev.com>
+> Cc: Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Subject: RE: [PATCH 6.1.y-cip 00/39] Add Renesas RZ/G3E RSCI support
+>=20
+> Hi all,
+>=20
+> Gentle ping.
 
->  SRC_URI += "https://github.com/riscv/opensbi/archive/v${PV}.tar.gz;downloadfilename=opensbi-${PV}.tar.gz;name=opensbi"
->  SRC_URI[opensbi.sha256sum] = "2cf856a4e5e2e052948ddb54ba48232b1f698b7f52e0374fc7d17d51e8c8f7ce"
->  
-> diff --git a/recipes-bsp/optee-ftpm/optee-ftpm-qemu-arm64_4.8+v1.62r1-48-ge9fc7b8.bb b/recipes-bsp/optee-ftpm/optee-ftpm-qemu-arm64_4.8+v1.62r1-48-ge9fc7b8.bb
-> index 0dacd50..673aa00 100644
-> --- a/recipes-bsp/optee-ftpm/optee-ftpm-qemu-arm64_4.8+v1.62r1-48-ge9fc7b8.bb
-> +++ b/recipes-bsp/optee-ftpm/optee-ftpm-qemu-arm64_4.8+v1.62r1-48-ge9fc7b8.bb
-> @@ -13,6 +13,8 @@ inherit optee-ftpm
->  
->  MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
->  
-> +DESCRIPTION = "OP-TEE fTPM Trusted Application for QEMU arm64"
-> +
->  SRC_URI += " \
->      https://github.com/OP-TEE/optee_ftpm/archive/${SRCREV}.tar.gz;downloadfilename=optee_ftpm-${SRCREV}.tar.gz \
->      https://github.com/microsoft/ms-tpm-20-ref/archive/${SRCREV_ms-tpm}.tar.gz;name=ms-tpm;downloadfilename=ms-tpm-20-ref-${SRCREV_ms-tpm}.tar.gz \
-> diff --git a/recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_4.8+v1.62r1-48-ge9fc7b8.bb b/recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_4.8+v1.62r1-48-ge9fc7b8.bb
-> index b28ea77..706d9e9 100644
-> --- a/recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_4.8+v1.62r1-48-ge9fc7b8.bb
-> +++ b/recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_4.8+v1.62r1-48-ge9fc7b8.bb
-> @@ -11,6 +11,8 @@ inherit optee-ftpm
->  
->  MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
->  
-> +DESCRIPTION = "OP-TEE fTPM Trusted Application for TI K3"
-> +
+Sorry, reply was late.
+I reviewed this series, there are no major issues.
+If test is OK and there are no other commnet, I will apply this series.
+  https://gitlab.com/cip-project/cip-kernel/linux-cip/-/pipelines/241013594=
+6
 
-Upstream has more information, just lacks the target platform (OPTEE_NAME).
+Reviewed-by: Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
 
->  SRC_URI += " \
->      https://github.com/OP-TEE/optee_ftpm/archive/${SRCREV}.tar.gz;downloadfilename=optee_ftpm-${SRCREV}.tar.gz \
->      https://github.com/microsoft/ms-tpm-20-ref/archive/${SRCREV_ms-tpm}.tar.gz;name=ms-tpm;downloadfilename=ms-tpm-20-ref-${SRCREV_ms-tpm}.tar.gz \
-> diff --git a/recipes-bsp/optee-os/optee-os-qemu.inc b/recipes-bsp/optee-os/optee-os-qemu.inc
-> index 3538d36..90067d1 100644
-> --- a/recipes-bsp/optee-os/optee-os-qemu.inc
-> +++ b/recipes-bsp/optee-os/optee-os-qemu.inc
-> @@ -11,6 +11,8 @@
->  
->  MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
->  
-> +DESCRIPTION = "OP-TEE OS for QEMU target ${MACHINE}"
-> +
+>=20
+> Cheers,
+> Biju
+>
 
-Close but not fully acurate: This is both used for the OT-TEE OS itself
-as well as the TA devkit.
+Best regards,
+  Nobuhiro
+=20
+> > -----Original Message-----
+> > From: Biju <biju.das.au@gmail.com>
+> > Sent: 17 March 2026 11:16
+> > To: cip-dev@lists.cip-project.org; Nobuhiro Iwamatsu
+> > <nobuhiro.iwamatsu.x90@mail.toshiba>; Pavel Machek
+> > <pavel@nabladev.com>
+> > Cc: Biju Das <biju.das.jz@bp.renesas.com>; Prabhakar Mahadev Lad
+> > <prabhakar.mahadev- lad.rj@bp.renesas.com>
+> > Subject: [PATCH 6.1.y-cip 00/39] Add Renesas RZ/G3E RSCI support
+> >
+> > From: Biju Das <biju.das.jz@bp.renesas.com>
+> >
+> > Hi All,
+> >
+> > Add RZ/G3E RSCI support for FIFO and non-FIFO mode. RSCI IP found on
+> > RZ/G3E SoC is similar to one on RZ/T2H, but has 32-stage fifo. RZ/G3E
+> > has
+> > 6 clocks (5 module clocks + 1 external clock) compared to 3 clocks
+> > (2 module clocks + 1 external clock) on RZ/T2H, and it has multiple
+> > resets. It has 6 irqs compared to
+> > 4 on RZ/T2H. Add support for the hardware flow control.
+> >
+> > The device RZ/T2H is not present in 6.1, so squashed all the binding
+> > patches into single commit that document RZ/G3E RSCI.
+> >
+> > The set_rtrg() uses field_prep() and later replaced by PREP_MODIFY But
+> > field_prep() not present in 6.1. So squashed the commit.
+> >
+> > Replaced kfifo_*()->uart_circ_*() in rsci_transmit_chars() to make
+> > similar implementation with
+> > sci_transmit_chars() for fixing tx issue with 6.1 kernel.
+> >
+> >
+> > Biju Das (21):
+> >   clk: renesas: r9a09g047: Add RSCI clocks/resets
+> >   serial: sh-sci: Fix deadlock during RSCI FIFO overrun error
+> >   serial: sh-sci: Update rx_trigger size for RZ/T2H RSCI
+> >   serial: rsci: Add set_rtrg() callback
+> >   serial: sh-sci: Drop checking port type for device file{create,
+> >     remove}
+> >   serial: rsci: Drop rsci_clear_SCxSR()
+> >   serial: sh-sci: Drop extra lines
+> >   serial: rsci: Drop unused macro DCR
+> >   serial: rsci: Drop unused TDR register
+> >   serial: sh-sci: Use devm_reset_control_array_get_exclusive()
+> >   serial: sh-sci: Add sci_is_rsci_type()
+> >   serial: sh-sci: Rename port SCI_PORT_RSCI->RSCI_PORT_SCIF16
+> >   serial: sh-sci: Add RSCI_PORT_SCIF32 port ID
+> >   serial: sh-sci: Add support for RZ/G3E RSCI clks
+> >   serial: sh-sci: Make sci_scbrr_calc() public
+> >   serial: sh-sci: Add finish_console_write() callback
+> >   serial: rsci: Rename early_console data, port_params and callback()
+> >     names
+> >   serial: sh-sci: Add support for RZ/G3E RSCI
+> >   arm64: dts: renesas: r9a09g047: Add RSCI nodes
+> >   arm64: dts: renesas: renesas-smarc2: Move aliases to board DTS
+> >   arm64: dts: renesas: r9a09g047e57-smarc: Enable rsci{2,4,9} nodes
+> >
+> > Cosmin Tanislav (1):
+> >   tty: serial: sh-sci: fix RSCI FIFO overrun handling
+> >
+> > Geert Uytterhoeven (2):
+> >   serial: sh-sci: Call sci_serial_{in,out}() directly
+> >   serial: sh-sci: Convert to DEFINE_SIMPLE_DEV_PM_OPS()
+> >
+> > Krzysztof Kozlowski (1):
+> >   serial: sh-sci: mark OF related data as maybe unused
+> >
+> > Lad Prabhakar (3):
+> >   serial: sh-sci: Replace direct stop_rx/stop_tx calls with port ops in
+> >     sci_shutdown()
+> >   serial: sh-sci: Sort include files alphabetically
+> >   serial: sh-sci: Merge sh-sci.h into sh-sci.c
+> >
+> > Luo Jie (1):
+> >   bitfield: Add FIELD_MODIFY() helper
+> >
+> > Max Filippov (1):
+> >   serial: add PORT_GENERIC definition
+> >
+> > Thierry Bultel (7):
+> >   dt-bindings: serial: renesas,rsci: Document RZ/G3E support
+> >   serial: sh-sci: Fix a comment about SCIFA
+> >   serial: sh-sci: Introduced function pointers
+> >   serial: sh-sci: Introduced sci_of_data
+> >   serial: sh-sci: Use private port ID
+> >   serial: sh-sci: Add support for RZ/T2H SCI
+> >   arm64: defconfig: Enable Renesas RZ/T2H serial SCI
+> >
+> > Wolfram Sang (2):
+> >   serial: sh-sci: let timeout timer only run when DMA is scheduled
+> >   serial: sh-sci: simplify locking when re-issuing RXDMA fails
+> >
+> >  .../bindings/serial/renesas,rsci.yaml         |  160 ++
+> >  arch/arm64/boot/dts/renesas/r9a09g047.dtsi    |  220 +++
+> >  .../boot/dts/renesas/r9a09g047e57-smarc.dts   |   64 +
+> >  .../boot/dts/renesas/renesas-smarc2.dtsi      |   13 +-
+> >  .../boot/dts/renesas/rzg3e-smarc-som.dtsi     |    4 +
+> >  arch/arm64/configs/defconfig                  |    1 +
+> >  drivers/clk/renesas/r9a09g047-cpg.c           |  126 ++
+> >  drivers/tty/serial/Kconfig                    |    7 +
+> >  drivers/tty/serial/Makefile                   |    1 +
+> >  drivers/tty/serial/rsci.c                     |  728 +++++++++
+> >  drivers/tty/serial/rsci.h                     |   11 +
+> >  drivers/tty/serial/sh-sci-common.h            |  183 +++
+> >  drivers/tty/serial/sh-sci.c                   | 1296 +++++++++++------
+> >  drivers/tty/serial/sh-sci.h                   |  180 ---
+> >  include/linux/bitfield.h                      |   21 +-
+> >  include/uapi/linux/serial_core.h              |    3 +
+> >  16 files changed, 2348 insertions(+), 670 deletions(-)  create mode
+> > 100644 Documentation/devicetree/bindings/serial/renesas,rsci.yaml
+> >  create mode 100644 drivers/tty/serial/rsci.c  create mode 100644
+> > drivers/tty/serial/rsci.h  create mode 100644
+> > drivers/tty/serial/sh-sci-common.h
+> >  delete mode 100644 drivers/tty/serial/sh-sci.h
+> >
+> > --
+> > 2.43.0
 
-Please check for all recipe types that pull in some high-level class if
-they aren't getting some description already. If that is improvable, go
-to upstream.
 
->  SRC_URI += " \
->      https://github.com/OP-TEE/optee_os/archive/${PV}.tar.gz;downloadfilename=optee-os-${PV}.tar.gz \
->      "
-> diff --git a/recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.inc b/recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.inc
-> index 4e99949..f90f189 100644
-> --- a/recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.inc
-> +++ b/recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.inc
-> @@ -9,6 +9,8 @@
->  
->  MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
->  
-> +DESCRIPTION = "OP-TEE OS configuration for TI K3"
-> +
->  SRC_URI += " \
->      https://github.com/OP-TEE/optee_os/archive/${PV}.tar.gz;downloadfilename=optee-os-${PV}.tar.gz \
->      "
-> diff --git a/recipes-bsp/trusted-firmware-a/trusted-firmware-a-qemu-arm64_2.13.0.bb b/recipes-bsp/trusted-firmware-a/trusted-firmware-a-qemu-arm64_2.13.0.bb
-> index 4786f34..30a4f63 100644
-> --- a/recipes-bsp/trusted-firmware-a/trusted-firmware-a-qemu-arm64_2.13.0.bb
-> +++ b/recipes-bsp/trusted-firmware-a/trusted-firmware-a-qemu-arm64_2.13.0.bb
-> @@ -14,6 +14,8 @@ inherit trusted-firmware-a
->  
->  MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
->  
-> +DESCRIPTION = "Trusted Firmware-A BL1 and FIP image for QEMU arm64"
-> +
-
-Another example: Can't we enrich the automatic description in a way that
-such lines are obsolete?
-
->  SRC_URI += "https://github.com/TrustedFirmware-A/trusted-firmware-a/archive/refs/tags/v${PV}.tar.gz;downloadfilename=trusted-firmware-a-v${PV}.tar.gz"
->  SRC_URI[sha256sum] = "28bc15daeeed000ecd30819ecc4851bf9ffc2d33e1d4553a71985c17f47a999e"
->  
-> diff --git a/recipes-bsp/trusted-firmware-a/trusted-firmware-a-ti-k3_2.13.bb b/recipes-bsp/trusted-firmware-a/trusted-firmware-a-ti-k3_2.13.bb
-> index 25b8889..a5aeab5 100644
-> --- a/recipes-bsp/trusted-firmware-a/trusted-firmware-a-ti-k3_2.13.bb
-> +++ b/recipes-bsp/trusted-firmware-a/trusted-firmware-a-ti-k3_2.13.bb
-> @@ -11,6 +11,8 @@ inherit trusted-firmware-a
->  
->  MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
->  
-> +DESCRIPTION = "Trusted Firmware-A BL31 for TI K3"
-> +
->  SRC_URI += "https://github.com/ARM-software/arm-trusted-firmware/archive/v${PV}.tar.gz;downloadfilename=arm-trusted-firmware-${PV}.tar.gz"
->  SRC_URI[sha256sum] = "68333c8be57830e7430d7dd39064826729923d86d6bb7af38d713d4e9d15dcf9"
->  
-> diff --git a/recipes-bsp/u-boot/u-boot-common-2026.01.inc b/recipes-bsp/u-boot/u-boot-common-2026.01.inc
-> index 850847f..0633997 100644
-> --- a/recipes-bsp/u-boot/u-boot-common-2026.01.inc
-> +++ b/recipes-bsp/u-boot/u-boot-common-2026.01.inc
-> @@ -13,6 +13,8 @@ inherit u-boot
->  
->  MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
->  
-> +DESCRIPTION = "U-Boot bootloader for ${MACHINE}"
-> +
-
-Same for U-Boot.
-
->  FILESPATH:append := ":${FILE_DIRNAME}/files"
->  
->  SRC_URI += " \
-> diff --git a/recipes-core/home-fs/home-fs_0.1.bb b/recipes-core/home-fs/home-fs_0.1.bb
-> index fd88f21..fef673c 100644
-> --- a/recipes-core/home-fs/home-fs_0.1.bb
-> +++ b/recipes-core/home-fs/home-fs_0.1.bb
-> @@ -10,6 +10,7 @@
->  
->  inherit dpkg-raw
->  
-> +DESCRIPTION = "Systemd mount unit for a dedicated /home partition"
->  MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
->  
->  SRC_URI = "file://postinst \
-> diff --git a/recipes-core/journald-config/journald-config_0.1.bb b/recipes-core/journald-config/journald-config_0.1.bb
-> index 62fc0c7..6152cdb 100644
-> --- a/recipes-core/journald-config/journald-config_0.1.bb
-> +++ b/recipes-core/journald-config/journald-config_0.1.bb
-> @@ -10,6 +10,7 @@
->  
->  inherit dpkg-raw
->  
-> +DESCRIPTION = "Systemd journald config to enable persistent journal storage"
->  MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
->  
->  SRC_URI = "file://persistent-journal.conf"
-> diff --git a/recipes-core/move-homedir-var/move-homedir-var_0.1.bb b/recipes-core/move-homedir-var/move-homedir-var_0.1.bb
-> index 54e807a..ec4b19b 100644
-> --- a/recipes-core/move-homedir-var/move-homedir-var_0.1.bb
-> +++ b/recipes-core/move-homedir-var/move-homedir-var_0.1.bb
-> @@ -10,6 +10,7 @@
->  
->  inherit dpkg-raw
->  
-> +DESCRIPTION = "Redirect /home to /var via tmpfiles for overlay setups"
->  MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
->  
->  DEBIAN_CONFLICTS = "home-fs"
-> diff --git a/recipes-core/swupdate-config-wfx/swupdate-config-wfx_0.1.bb b/recipes-core/swupdate-config-wfx/swupdate-config-wfx_0.1.bb
-> index c800c84..1b722b2 100644
-> --- a/recipes-core/swupdate-config-wfx/swupdate-config-wfx_0.1.bb
-> +++ b/recipes-core/swupdate-config-wfx/swupdate-config-wfx_0.1.bb
-> @@ -11,6 +11,7 @@
->  
->  inherit dpkg-raw
->  
-> +DESCRIPTION = "SWUpdate suricatta WFX server configuration"
->  MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
->  
->  PROVIDES := "${PN}"
-> diff --git a/recipes-core/swupdate-config/swupdate-config_0.2.bb b/recipes-core/swupdate-config/swupdate-config_0.2.bb
-> index cdfd8b9..6c09952 100644
-> --- a/recipes-core/swupdate-config/swupdate-config_0.2.bb
-> +++ b/recipes-core/swupdate-config/swupdate-config_0.2.bb
-> @@ -11,6 +11,7 @@
->  
->  inherit dpkg-raw
->  
-> +DESCRIPTION = "Machine-specific SWUpdate configuration and hardware revision"
->  MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
->  
->  PROVIDES := "${PN}"
-> diff --git a/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb b/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb
-> index 2ba192c..e3f1144 100644
-> --- a/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb
-> +++ b/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb
-> @@ -10,6 +10,7 @@
->  
->  inherit dpkg-raw
->  
-> +DESCRIPTION = "SWUpdate Lua handler for A/B round-robin partition updates"
->  MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
->  
->  PROVIDES = "swupdate-handlers"
-> diff --git a/recipes-core/tmp-fs/tmp-fs_0.2.bb b/recipes-core/tmp-fs/tmp-fs_0.2.bb
-> index f2b7976..b8e4958 100644
-> --- a/recipes-core/tmp-fs/tmp-fs_0.2.bb
-> +++ b/recipes-core/tmp-fs/tmp-fs_0.2.bb
-> @@ -10,6 +10,7 @@
->  
->  inherit dpkg-raw
->  
-> +DESCRIPTION = "Configure /tmp as a tmpfs mount on the target"
->  MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
->  
->  SRC_URI = "file://postinst"
-> diff --git a/recipes-devtools/dosfstools/dosfstools_latest.bb b/recipes-devtools/dosfstools/dosfstools_latest.bb
-> index d0ac128..810ebdc 100644
-> --- a/recipes-devtools/dosfstools/dosfstools_latest.bb
-> +++ b/recipes-devtools/dosfstools/dosfstools_latest.bb
-> @@ -11,6 +11,7 @@
->  
->  inherit dpkg
->  
-> +DESCRIPTION = "FAT filesystem utilities rebuilt with reproducible-build fix"
->  MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
->  
->  CHANGELOG_V="<orig-version>+cip"
-> diff --git a/recipes-devtools/secure-boot-secrets/secure-boot-secrets.inc b/recipes-devtools/secure-boot-secrets/secure-boot-secrets.inc
-> index 38b57ee..850d421 100644
-> --- a/recipes-devtools/secure-boot-secrets/secure-boot-secrets.inc
-> +++ b/recipes-devtools/secure-boot-secrets/secure-boot-secrets.inc
-> @@ -11,6 +11,7 @@
->  
->  inherit dpkg-raw
->  
-> +DESCRIPTION = "Base include for Secure Boot key and certificate delivery"
-
-The term "include" is wrong for the package built from this include.
-
->  MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
->  
->  PROVIDES += "secure-boot-secrets"
-> diff --git a/recipes-devtools/swupdate-certificates/swupdate-certificates-key.inc b/recipes-devtools/swupdate-certificates/swupdate-certificates-key.inc
-> index 4124b31..74dbacc 100644
-> --- a/recipes-devtools/swupdate-certificates/swupdate-certificates-key.inc
-> +++ b/recipes-devtools/swupdate-certificates/swupdate-certificates-key.inc
-> @@ -11,6 +11,7 @@
->  
->  inherit dpkg-raw
->  
-> +DESCRIPTION = "Base include for SWUpdate signing private key delivery"
-
-Same here.
-
->  MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
->  
->  FILESEXTRAPATHS:prepend := "${FILE_DIRNAME}/files:"
-> diff --git a/recipes-devtools/swupdate-certificates/swupdate-certificates.inc b/recipes-devtools/swupdate-certificates/swupdate-certificates.inc
-> index 3c59887..0b34d18 100644
-> --- a/recipes-devtools/swupdate-certificates/swupdate-certificates.inc
-> +++ b/recipes-devtools/swupdate-certificates/swupdate-certificates.inc
-> @@ -11,6 +11,7 @@
->  
->  inherit dpkg-raw
->  
-> +DESCRIPTION = "Base include for SWUpdate signing certificate delivery"
-
-And here.
-
->  MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
->  
->  FILESEXTRAPATHS:prepend := "${FILE_DIRNAME}/files:"
-> diff --git a/recipes-devtools/swupdate-signer/swupdate-signer-cms_0.1.bb b/recipes-devtools/swupdate-signer/swupdate-signer-cms_0.1.bb
-> index ee8d172..94361f8 100644
-> --- a/recipes-devtools/swupdate-signer/swupdate-signer-cms_0.1.bb
-> +++ b/recipes-devtools/swupdate-signer/swupdate-signer-cms_0.1.bb
-> @@ -10,6 +10,7 @@
->  
->  inherit dpkg-raw
->  
-> +DESCRIPTION = "SWUpdate image signer using OpenSSL CMS"
->  MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
->  
->  PROVIDES = "swupdate-signer"
-> diff --git a/recipes-devtools/swupdate-signer/swupdate-signer-empty.bb b/recipes-devtools/swupdate-signer/swupdate-signer-empty.bb
-> index af9de76..baed2b7 100644
-> --- a/recipes-devtools/swupdate-signer/swupdate-signer-empty.bb
-> +++ b/recipes-devtools/swupdate-signer/swupdate-signer-empty.bb
-> @@ -10,6 +10,7 @@
->  
->  inherit dpkg-raw
->  
-> +DESCRIPTION = "No-op SWUpdate signer stub for unsigned builds"
->  MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
->  
->  PROVIDES = "swupdate-signer"
-> diff --git a/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
-> index b686185..bf3741a 100644
-> --- a/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
-> +++ b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
-> @@ -11,6 +11,8 @@
->  
->  inherit initramfs
->  
-> +DESCRIPTION = "CIP Core initramfs assembling selected boot hooks"
-> +
->  RO_ROOTFS_TYPE ??= "squashfs"
->  
->  INITRAMFS_INSTALL += " \
-> diff --git a/recipes-initramfs/initramfs-abrootfs-hook/initramfs-abrootfs-hook_0.3.bb b/recipes-initramfs/initramfs-abrootfs-hook/initramfs-abrootfs-hook_0.3.bb
-> index 48f6458..f3a7b52 100644
-> --- a/recipes-initramfs/initramfs-abrootfs-hook/initramfs-abrootfs-hook_0.3.bb
-> +++ b/recipes-initramfs/initramfs-abrootfs-hook/initramfs-abrootfs-hook_0.3.bb
-> @@ -11,6 +11,7 @@
->  
->  inherit initramfs-hook
->  
-> +DESCRIPTION = "Initramfs hook for A/B root filesystem switching"
-
-for unprotected root filesystems
-
->  MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
->  
->  RDEPENDS += "initramfs-cip-functions"
-> diff --git a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.10.bb b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.10.bb
-> index 18a10a8..6ad5204 100644
-> --- a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.10.bb
-> +++ b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.10.bb
-> @@ -11,6 +11,7 @@
->  
->  inherit initramfs-hook
->  
-> +DESCRIPTION = "Initramfs hook for TPM2-backed LUKS partition encryption"
->  MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
->  
->  RDEPENDS += "initramfs-cip-functions"
-> diff --git a/recipes-initramfs/initramfs-erofs-hook/initramfs-erofs-hook_0.2.bb b/recipes-initramfs/initramfs-erofs-hook/initramfs-erofs-hook_0.2.bb
-> index 2015503..2d8bec4 100644
-> --- a/recipes-initramfs/initramfs-erofs-hook/initramfs-erofs-hook_0.2.bb
-> +++ b/recipes-initramfs/initramfs-erofs-hook/initramfs-erofs-hook_0.2.bb
-> @@ -11,6 +11,7 @@
->  
->  inherit initramfs-hook
->  
-> +DESCRIPTION = "Initramfs hook to include the erofs filesystem module"
->  MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
->  
->  HOOK_ADD_MODULES = "erofs"
-> diff --git a/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.4.bb b/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.4.bb
-> index 57b26ec..b6a8d24 100644
-> --- a/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.4.bb
-> +++ b/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.4.bb
-> @@ -12,6 +12,7 @@
->  
->  inherit initramfs-hook
->  
-> +DESCRIPTION = "Initramfs hook to mount an overlayfs over read-only paths"
->  MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
->  
->  INITRAMFS_OVERLAY_RECOVERY_SCRIPT ??= "overlay_recovery_action.script"
-> diff --git a/recipes-initramfs/initramfs-squashfs-hook/initramfs-squashfs-hook_0.2.bb b/recipes-initramfs/initramfs-squashfs-hook/initramfs-squashfs-hook_0.2.bb
-> index 9ff4cbf..b2516fb 100644
-> --- a/recipes-initramfs/initramfs-squashfs-hook/initramfs-squashfs-hook_0.2.bb
-> +++ b/recipes-initramfs/initramfs-squashfs-hook/initramfs-squashfs-hook_0.2.bb
-> @@ -11,6 +11,7 @@
->  
->  inherit initramfs-hook
->  
-> +DESCRIPTION = "Initramfs hook to include the squashfs filesystem module"
->  MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
->  
->  HOOK_ADD_MODULES = "squashfs"
-> diff --git a/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.3.bb b/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.3.bb
-> index b2fb704..339e831 100644
-> --- a/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.3.bb
-> +++ b/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.3.bb
-> @@ -11,6 +11,7 @@
->  
->  inherit initramfs-hook
->  
-> +DESCRIPTION = "Initramfs hook for dm-verity root filesystem integrity"
-
-This is also an A/B switcher as it matches the given hash against
-multiple verity partitions.
-
->  MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
->  
->  SRC_URI += " \
-> diff --git a/recipes-kernel/linux/linux-cip-common.inc b/recipes-kernel/linux/linux-cip-common.inc
-> index 4569b89..961093b 100644
-> --- a/recipes-kernel/linux/linux-cip-common.inc
-> +++ b/recipes-kernel/linux/linux-cip-common.inc
-> @@ -11,6 +11,8 @@
->  
->  FILESEXTRAPATHS:prepend := "${FILE_DIRNAME}/files:"
->  
-> +DESCRIPTION = "Linux CIP kernel"
-> +
-
-This override fits.
-
->  inherit linux-kernel
->  
->  MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-
-As this is not really critical and could also benefit from Isar
-improvements, let's postpone it after the release.
-
-Jan
-
--- 
-Siemens AG, Foundational Technologies
-Linux Expert Center
 
