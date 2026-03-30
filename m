@@ -2,85 +2,96 @@ Return-Path: <pavel@nabladev.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7C73FB3D02
-	for <webhook@archiver.kernel.org>; Mon, 30 Mar 2026 10:28:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A687610D14A3
+	for <webhook@archiver.kernel.org>; Mon, 30 Mar 2026 11:18:43 +0000 (UTC)
 Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.47810.1774866528326672172
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.48955.1774869521110296015
  for <cip-dev@lists.cip-project.org>;
- Mon, 30 Mar 2026 03:28:48 -0700
+ Mon, 30 Mar 2026 04:18:41 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=Fo7VVgbB;
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=EunhaRKe;
  spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2C459111D7C;
-	Mon, 30 Mar 2026 12:28:46 +0200 (CEST)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6898410B9D7;
+	Mon, 30 Mar 2026 13:18:36 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1774866526;
+	s=dkim; t=1774869518;
 	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=zGC5f118XBcq7Pmzk4Q9n68ToqglIg2hO32s5n3wP7U=;
-	b=Fo7VVgbB4gGq9yZXz5rXYn5GJYcWcPvekPk/cVEl/FlXcqtODE98ARkCiND8t2lVvmz2ya
-	Jite3op6A2druWKLFEjeuALTy4VH+l6NmEiryjDDxxnutqu3PAItUp33NjZj67HFSxCVFa
-	rmB3hVsW17kN0L/6cc8auCMu5fvGfuxREmc4soeRHXB/H/nHf+UPYiNkGbFDot1Xr2mX+L
-	nyspMM4rVQiQn8+E7nitHP41+8FCgm4EPSCj8ycvysctJQtjRD2RxlFFwGGN5wIVoeT2EK
-	soZ5nDchkwRPvaCE+tpLLLghhYEhil3mVxI9RejLvhYGdS+KN2X/zYwa3NrCyg==
-Date: Mon, 30 Mar 2026 12:28:44 +0200
+	 in-reply-to:references; bh=ZT4Q5CxHYLXzgwK1Y+7Xpjjd6aTSfzkLu8ADKz3cs4Y=;
+	b=EunhaRKeg81ClZLZcTJGE5bOxk6vjlMLdUlIe8bGY7Wyxhrogc+s2smv7qawnnKRuvkZRk
+	CnT12vYad6cbMIl7CiiUJu+nDTHwwV+rBN1WQ+7F8O7q+YHdb2hiWTGnvw5gg30imYGsWA
+	eLjaMboJUGoS3g8DdX5dwxyBaOtsgqY91t3DHNoMWy69v4FYsS609omKF7nNrXDT2ai91+
+	05wpiikOkYAQu1uGufW8JyTeaxiivH00yDKGR4bUQYY9Vzzy2/lvmQ9sBUboQ646/ccbyh
+	xLCvosluNCxh9s8PmWkvViVQybsXm+mdgiaex2gTi4l8Z+Cnfl9Ou8ItzRXnvA==
+Date: Mon, 30 Mar 2026 13:18:34 +0200
 From: Pavel Machek <pavel@nabladev.com>
-To: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Biju <biju.das.au@gmail.com>
 Cc: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
 	Pavel Machek <pavel@nabladev.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>
-Subject: Re: [PATCH 6.1.y-cip 0/5] Add CANFD support to RZ/{V2H,V2N} SoCs
-Message-ID: <acpQXIzit4oEPTT8@duo.ucw.cz>
-References: <20260327095327.36412-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 6.1.y-cip 00/39] Add Renesas RZ/G3E RSCI support
+Message-ID: <acpcChgY6z5s-Z2A@duo.ucw.cz>
+References: <20260317111718.281633-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="7K9FOhHT70IKuLZh"
+	protocol="application/pgp-signature"; boundary="mpl+OPUacaLu99qe"
 Content-Disposition: inline
-In-Reply-To: <20260327095327.36412-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20260317111718.281633-1-biju.das.jz@bp.renesas.com>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 30 Mar 2026 10:28:59 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22605
+ <cip-dev@lists.cip-project.org>; Mon, 30 Mar 2026 11:18:43 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22606
 
 
---7K9FOhHT70IKuLZh
+--mpl+OPUacaLu99qe
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> This patch series aims to add CANFD support on the Renesas
-> RZ/V2H and RZ/V2N SoCs. CANFD has been tested with external
-> CAN PHY transceiver as the EVK isn't fitted with one.
+> From: Biju Das <biju.das.jz@bp.renesas.com>
 >=20
-> Note,
-> - All the patches have been cherry-picked from upstream
->   kernel.
-> - Patches apply cleanly on top of commit-id 1ea90e3298a62
->   of linux-6.1.y-cip branch
+> Hi All,
+>=20
+> Add RZ/G3E RSCI support for FIFO and non-FIFO mode. RSCI IP found on
+> RZ/G3E SoC is similar to one on RZ/T2H, but has 32-stage fifo. RZ/G3E has
+> 6 clocks (5 module clocks + 1 external clock) compared to 3 clocks
+> (2 module clocks + 1 external clock) on RZ/T2H, and it has multiple
+> resets. It has 6 irqs compared to 4 on RZ/T2H. Add support for the hardwa=
+re
+> flow control.
+>=20
+> The device RZ/T2H is not present in 6.1, so squashed all the binding
+> patches into single commit that document RZ/G3E RSCI.
+>=20
+> The set_rtrg() uses field_prep() and later replaced by PREP_MODIFY
+> But field_prep() not present in 6.1. So squashed the commit.
+>=20
+> Replaced kfifo_*()->uart_circ_*() in rsci_transmit_chars() to make
+> similar implementation with sci_transmit_chars() for fixing tx issue
+> with 6.1 kernel.
 
-This looks okay to me.
+I will have some minor comments here, but those should be fixed in
+mainline, first, so they should not block the merge.
 
 Reviewed-by: Pavel Machek <pavel@nabladev.com>
-
-I can apply the series if it passes testing and there are no other
-comments.
 
 Best regards,
                                                                 Pavel
 
---7K9FOhHT70IKuLZh
+--mpl+OPUacaLu99qe
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCacpQXAAKCRAw5/Bqldv6
-8iI4AJ0cif8U8asV78idudIVN6Szuey5gACgoI9natXRVj9PnKLrNMPerDvcYOM=
-=o+DZ
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCacpcCgAKCRAw5/Bqldv6
+8inUAKCMG1P2rpCZvUtCdqmKkYDRQG3vTACfXrDy1hbZd7fiN3LvcMoIBMRFfTg=
+=uyHp
 -----END PGP SIGNATURE-----
 
---7K9FOhHT70IKuLZh--
+--mpl+OPUacaLu99qe--
 
