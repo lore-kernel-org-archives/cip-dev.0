@@ -1,179 +1,105 @@
-Return-Path: <nobuhiro.iwamatsu.x90@mail.toshiba>
+Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0291710F9316
-	for <webhook@archiver.kernel.org>; Wed,  1 Apr 2026 01:30:51 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.132])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.3259.1775007045730992110
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF0EA109B487
+	for <webhook@archiver.kernel.org>; Wed,  1 Apr 2026 04:14:41 +0000 (UTC)
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.5357.1775016872426143797
  for <cip-dev@lists.cip-project.org>;
- Tue, 31 Mar 2026 18:30:46 -0700
+ Tue, 31 Mar 2026 21:14:33 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.s=key2.smx header.b=QppzAPbv;
- spf=pass (domain: mail.toshiba, ip: 210.130.202.132, mailfrom: nobuhiro.iwamatsu.x90@mail.toshiba)
-DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=mail.toshiba;h=From:To:CC:
-	Subject:Date:Message-ID:References:In-Reply-To:Content-Type:
-	Content-Transfer-Encoding:MIME-Version;i=nobuhiro.iwamatsu.x90@mail.toshiba;
-	s=key2.smx;t=1775007042;x=1776216642;bh=UfUFEvQqm2x0AVgimA7h2Cj54f0h758YDy5na
-	MmPINI=;b=QppzAPbvVDdZ8+RkXpHmj7PF3VdueU7C+KDoT6Ds+nwH7lWck53if+qihuJxf3AF9l1
-	O9woHnfg5gCG9FoRVFm4PGjNXZyTEn3Ozn5ql6eOVr7ku5qRKhnc8xhUwMYwR7DK1ryvP977RXf2c
-	iPMVWUGaw5piGFF6K1wC+k88Ov4jfnMX2DcQi3w0xCe0Il2xSaETuLnkoOTpvy2KOui1YkOD64Nhg
-	QhQBqWMd2mzSzSEEvJzlw2oAAKhGEy9ICve38ROlFBYB+xDNjeBOdpNFTSmsFp6JoONH3g97eQ1Zf
-	kq9rnNQZjO8Lv8dDVPGNum/e1Dhd7vYdl5lwaK23H2Mg==;
-Received: by mo-csw.securemx.jp (mx-mo-csw1121) id 6311Ug0E2333521; Wed, 1 Apr 2026 10:30:42 +0900
-X-Iguazu-Qid: 2rWhfSiM73Zh7vwy83
-X-Iguazu-QSIG: v=2; s=0; t=1775007042; q=2rWhfSiM73Zh7vwy83; m=OQcABvFGXHwg2p58dsHNRQDUweRXc9VVoCt/La49Lvg=
-Received: from imx12-a.toshiba.co.jp (unknown [38.106.60.135])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	 id 4flnVp018rz1xnm; Wed,  1 Apr 2026 10:30:41 +0900 (JST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=r3H7MWHAgDQXFHXKWl6oA5z4hQcDDnYxMjCsvriGKhJWgDhRWybRY4eFGxMGko8o/vXY+prwf6FSl91CwXmWsFdfPvko6pzL4TrYyAr0kQ3wg1Ebbl7FRPNRltHPE3zVaTQwI270WH47ocg+KEX6efcb1K5N3k3TUov7tZ9PWKMrAajiuWeLek3PWFHwEPixWoBYMZQXUy2pcQp+QT8Lmu30JOvCNFXmws5QHmY/brCcNn9mCdUV/wwiFfpu/E6EPnfzzWSGhcd3FuoM4xB38HVpRN2RE7HrQOOSrH/LifNKWLUPljDoVr7nbbZWOvN8L/4gjs9PHQTGjk0m9zJiHg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ptKmJPxdV/8LCt8R7JppHTR+4VwCEJekWyaS+ZFomgY=;
- b=CWZlUL4bUSgMCBDjwhvat/lLPN627JUkw04TCoadIINQIIvXa6+G1Iy45KiDkKVfg6cuWAG//pVkF4k2YddOUuplGe1k5HsTNVZ234Z1DxT1WA8fQ8+8xkr+SgfLq9higpgHTflLH9FWINSr0YxMEbS/4DhST/tur9AZjEEAjuHzDZhFRCAwa0h4V81g2E9hQoWijxtCjzVDscA6RJwQyBqsXgtluaULhJXHFcErWiLEfK/hsJV2urpz+2kltxo/z7KjixONZZw1nM8el4EE9A1edBCB32g4FpdHkiztghaHKjmgIl6od6eN6fz6WOsFiTuEzi980H13tpF7uf9G2g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mail.toshiba; dmarc=pass action=none header.from=mail.toshiba;
- dkim=pass header.d=mail.toshiba; arc=none
-From: <nobuhiro.iwamatsu.x90@mail.toshiba>
-To: <pavel@nabladev.com>, <prabhakar.mahadev-lad.rj@bp.renesas.com>
-CC: <cip-dev@lists.cip-project.org>, <biju.das.jz@bp.renesas.com>
-Subject: RE: [PATCH 6.12.y-cip 0/5] Add CANFD support to RZ/{V2H,V2N} SoCs
-Thread-Topic: [PATCH 6.12.y-cip 0/5] Add CANFD support to RZ/{V2H,V2N} SoCs
-Thread-Index: AQHcvc4R6PWdtoFjOkqh7lmILBPjbbXG5DeAgAKOUHA=
-Date: Wed, 1 Apr 2026 01:30:39 +0000
-X-TSB-HOP2: ON
-Message-ID: 
- <TY7PR01MB148180DEDB0182EAACBA332A7CD50A@TY7PR01MB14818.jpnprd01.prod.outlook.com>
-References: <20260327094231.34974-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <acpQPSbwftumR6Ez@duo.ucw.cz>
-In-Reply-To: <acpQPSbwftumR6Ez@duo.ucw.cz>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mail.toshiba;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY7PR01MB14818:EE_|OSZPR01MB6923:EE_
-x-ms-office365-filtering-correlation-id: 3d506fee-b9fe-4894-9bab-08de8f8e486f
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|366016|1800799024|376014|22082099003|56012099003|18002099003|38070700021;
-x-microsoft-antispam-message-info: 
- jU1xzHZYLZHnbQ2ysxogjaf9sYF0ZKObmo6S0dK07uoJzDU8JbQKtgZC5W35dReZ0ijlR5OUXHyVM5wDrorRHIgZXWpjJQkdkOTnD4Enorkv5O4AMY5g98HczisMCrrLG7esehQSYoyaTbehajg8LBlONfyQ4k6TzcNF45uhmrsMStHd4ZXCvnIoJX1iotyPkXet+Tg2uL+NuMehsFdT8WWYuZWR7Sij+lgH50QeA4niyO7BIVFSb6UsMPxiP68wkrZJ0oLRJQXawJIOKERdez6PzM6iL9QvIWznlWTOg/8JGqxxqzHQzY1FOvqhL0pe2DUjTOfQ3Xcka3rOunPYYftGPs9hN1+G0jsX+FjwokkKcvvDIq8rlBP3XqOBikPdRIQPEOwJ0dyKcD7FLjNfaaI5WKlHItqcVD3gZUdpT/qdBf1xm1Gu330chZ4h08S2atzAB22xoslQNycYtYSILvILR8+o7uogNIGAznQDEAxdIlRS5Pw3XGj5bM6O+JUePY22DG+2DzVbM6gq2GoiV30ugdparXalV0+dkvALIX0OyVsGKYhR8/n25aIAP0WZn4Z97LH1LvdJf8hLL4hCc3MIccP5tAlF8cslER3g7YoKDLYkLh5RB3aa5AEysvqXIAVcZITIKw9la3OFc1ftz0fwuWsWyDS9IenCEMkG76zsUph4w8NuOHmzX9k/CSGfvuTV6CAulT6Pat869XHEvvXAbFGP/yiQu2eAsO+tMCeROc2GTU16UkKu54uOQJbHKjP9WpC+50Tj/kCzcxdxUfC134PDBv2R+qeQOb8Bhlg=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7PR01MB14818.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(22082099003)(56012099003)(18002099003)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?T0NrektSNkNLR0IvdlF0REFsNGlmVTlrSjhPTmFhM1BkSE1VSmhVcExi?=
- =?iso-2022-jp?B?ZmVQa01ISU50WUFzbER4NVkrY3BxYW5LZzFtbE9jUVg0d3VpQkYwL1VQ?=
- =?iso-2022-jp?B?bzVlWDBNVWMyUTRWYlY1eVZvcHNyY2VNNlhtTDFDdG9FT216ZXFXTW9o?=
- =?iso-2022-jp?B?cm1IT1l6OFUybHE4aVpNaDJPREVScDdPQU03VTlybXZhT01EYWUrejJP?=
- =?iso-2022-jp?B?R2toL2p3UVphdWFaQkcyVHpscGhidzgrQmd4clp0TTc5VE1lTUdXcG5C?=
- =?iso-2022-jp?B?Sk1pb2hscVVUKzFjY3ZPZnE2ZmVnK1U0N2Job0RYTGk0NmhZbnUvZWtm?=
- =?iso-2022-jp?B?Y1NSWDNxZW5JdUxubGRzUktKNUhuUEpBRmpNSXBlSDRPSFdHV0dVVVp0?=
- =?iso-2022-jp?B?ajNYVGV5b3hTOXN0c0NyT0RZbmhVbC9zMWNyb3FKQ2VCTHRtSXdvUzB0?=
- =?iso-2022-jp?B?bzFOS3RUTlE2R0NqbFBJZHFBbkkyTFVocnI1dkJBNENvdXdZeGEwellx?=
- =?iso-2022-jp?B?amE5bThqQzJlb0tjNjVnM1I1TWpHbkVSSkh6Z0piaTlLVE9GOFNCelU5?=
- =?iso-2022-jp?B?bXBQcjgxdjdrTHZIbloxS3R0K3FtWkVtTTZvSVMwMU8vYmNUeXFFZkVY?=
- =?iso-2022-jp?B?WlpuYkJ6cUdJK1hlVUkySHBJNkpqcnVuNEJZbkc4Y3ZmbDNVeE1YT2kx?=
- =?iso-2022-jp?B?M0VjRVQ1c3pYaVJBZC9tWmh2akY1VUIvQzZ4YjhPK25DWnNxQm42STRu?=
- =?iso-2022-jp?B?U01qdkRLN1FESmNiUWRCdC94VVkycElpVndmQVpwdEFwdVE0QXErbVUv?=
- =?iso-2022-jp?B?a1BCSE1KRjNTb0VIcGdheGZxYmxmeVI2eVM5TUtBVVpUMmx3Y1ltNzNI?=
- =?iso-2022-jp?B?MGh4MjluejZtZE9EWGRxY2VNNXlEelF4VSs0VFlpbE9iR0V4MFgxVkhC?=
- =?iso-2022-jp?B?bklDS1RScTI0S01ieWJ4eTdFSDRWdzZrb1dkb3I1enp5Z1pTdmd6SDRk?=
- =?iso-2022-jp?B?blhzSW96WWZZZ2kvZitDamRVZ3B3b05oZkcrRWFISlR0VFYzRG1pZVZ6?=
- =?iso-2022-jp?B?RzFXWUltc2w2TURVUEpjSmdnUzBoNkUycGdNMkRaK2g2WDhwUWl3MjNr?=
- =?iso-2022-jp?B?VVFpbzd3eGdXOUJEM1FQbEhFUjQxVWhaNUNxM055dkZ1YmM2WUJEVjh1?=
- =?iso-2022-jp?B?T3huOUdHaEYzQXk3Zis2NHF2bEF1aElMZENjYUd0d01FKzhsUEhrTC8v?=
- =?iso-2022-jp?B?K05rM21HRHdFTnVOeU82NFhlTk9PbGpRQXVTdE5NNGVBVVRsVENjdFgz?=
- =?iso-2022-jp?B?eFlZeVlFWWZ1VU1palR2VG5QeXZoVlJyd0xYR3VLVkwzR05XNGdGK3pJ?=
- =?iso-2022-jp?B?empVcU5vTVlHRXBEMVJ0Sks0ejlxdVpkL1JrSk5NNlcwUTZyRkQ2UEpP?=
- =?iso-2022-jp?B?SHo3cnhtWm1mc1NTRUVRb0p0WWQvT3MraHl6UDFvWVlLSWMzc2FBRm96?=
- =?iso-2022-jp?B?QjZvZy9RMlM0ako4RVRaZHBBdmNIUElvdFY3dkpRNlZqeXFQREtlekdM?=
- =?iso-2022-jp?B?c3ZmVjlHcGQxc2tpOUIzVEhTOCtvRE9kRTAvWEk2UytjUUp4ZVdtMmRy?=
- =?iso-2022-jp?B?cU1ENXAyUm1rYmVudlpiR1ZYcEsyZHdBRnpiZnBGbHVmQzIrMzVWY2hJ?=
- =?iso-2022-jp?B?dTdFUUpscWxicHgrcDJoRC9uemRHVEM5d000dzBGVkFkRlN6TnVTME03?=
- =?iso-2022-jp?B?MjZVMEpidmk3dGdiUUNZRFdOM2cwRmt1ajNDSi9zbXJzOEtiaHRnbFVu?=
- =?iso-2022-jp?B?ZVRVZTV2QVRxejN6TXBnMlZ5Mk11dmpQVDJzWkhXbmsrWUhFSG1tUjE2?=
- =?iso-2022-jp?B?Vklsc0Fmcnl6UVhHTnRkMzk1RjZnTW9IeE5TaHpDYkt6dldmVG9TZDkx?=
- =?iso-2022-jp?B?YmdiQUZ4RzMxcEhwL1FiTzNNTUR4MytkZ1dpeTJ4MUQwQWV4QTVDRDZO?=
- =?iso-2022-jp?B?bUloeWxOMFZpb0ZsY3pmZlFza1I4TnhERG5xWVg0WHlIZnE5bDR6L3V2?=
- =?iso-2022-jp?B?SE5icWVrNndVYXc3TkVjZkppam1uRXFLRjU4dzlDQnZVVkhHeUpmMk1x?=
- =?iso-2022-jp?B?VTRKODYxTWJhUS9LQzBFK3dLNmRjZlN1OUZUcHNNZXA0MkoyV2c3TEZN?=
- =?iso-2022-jp?B?R0pyU010alRPZG5xY0ZMNWk1dXl5TVlwTlR6K29OamIwcWtiVWlKWStH?=
- =?iso-2022-jp?B?SXVsUk5MVGhBV1NVc1ZLNTZoTlIvcEFZSk84ZUpDNG02TUZybDlCaWhD?=
- =?iso-2022-jp?B?T1lpc2FJc0RaMnVZWTRCbVUzdFFpcSsrWEV1SzgreHAyajhhVFpwSzZt?=
- =?iso-2022-jp?B?cnlhVHlUOHhTYTJQelp4dHBCSzAzZjUyZ1I0eTlmNlIwV0FmMVl0c2Fl?=
- =?iso-2022-jp?B?WDUrOGN1VmtzZXBYRVpzSGtYK0Q3S3NFNWlnU0FXREN2OTdqSjRscnpG?=
- =?iso-2022-jp?B?bmxCR0plOFRzaFU1dE4yQk8yMTA0UStzaEo2MjM0UlQ2MktTVUNieTZU?=
- =?iso-2022-jp?B?ekx6NjVuUT0=?=
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=XdX8xP3x;
+ spf=pass (domain: tuxon.dev, ip: 209.85.128.54, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4853e1ce427so78646495e9.3
+        for <cip-dev@lists.cip-project.org>; Tue, 31 Mar 2026 21:14:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1775016870; x=1775621670; darn=lists.cip-project.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dFWG5lUnarvJk09CnmE8xctlZdbyzxvEA71Iio+ZxR4=;
+        b=XdX8xP3xVFyHbccmJtb0Tvnd8kzpBsPHoSFGz4v6yHPXEuXBJ8NfE8IbFAubctIVEn
+         dg9+NZqezgS7/b9RPb74YvxTK/njY4THkkIWR9ZPdgsi4LEJMKMDOsrO9EXCpxO6/LNS
+         4+iBeN5AI/2SD3cjJIfEBf93kmkAQj4+U6H+/ACK+xLLxfOhfgRcuj7Bm/KnWnLXye7E
+         NyIkB0wIb7nASMoZPdJijkDrw/IMr5bL6ZeQvcLe3GAWWLiecyc4nixV2Me1m+7JYcvN
+         J49wuMPfsNSo+gQCmAyCcu4flCA0R9vyWyKoJ7FeCjnDt4+l7xK+3b+4PwFfyheJuAG4
+         VUEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1775016870; x=1775621670;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dFWG5lUnarvJk09CnmE8xctlZdbyzxvEA71Iio+ZxR4=;
+        b=kVDqghmgvk3ZU7tWevRukznD4gmD+FhkG6F7uvSE84uDNA96CWaTWuEm1BVSFeC927
+         STv0+VW6kGXRW4gyDZOoL9vQ7Jd+yIL7EfO06kISuSxhzTxOQ6OmsmeEzBUyp6Jye+6p
+         +pNWMS1mrla21+3gsxolyt3RWG/ruF16ovJ7tP4r2wb5qSFG87bS7ddIJJ6bvHSaLhGx
+         1HTi9dFOksyUEt5Euz48D5gf6fr9QtUfh9w2VTb4oqNFscy2TbinjRLM99N4kkSdG33N
+         IJ49k8/kX9+fB3qX5WQodE5Vts+hxagFH4BMovSw2DlBIqZYFkIvarMJAKx948GkAdML
+         oK2w==
+X-Gm-Message-State: AOJu0YwPcT1knEhpbGafCwVRiMZwlo0h52uDJHQw960+kx7F5v+81tqr
+	kRyGHasNtu90rkc+qBp1BlcCytahKQZqXWMELgFpgR1JUVBJjgky4JYev7yAsTm18x0=
+X-Gm-Gg: ATEYQzyT9gBFMgSr3Yk8h5kh5YLCR7pCS9+fm0y6yEZkdjpBgHyEcZptddGMeoXRkus
+	eAYJu1CR0gesrX8ipPzUdHDgehtvrudtefkLz431wAq5UjzkB+kxSXbj7wovOIJ+749Scf8r+/J
+	elWjQ7hYF4nU3xRRaKaxXDNNEYsQLOcYGj/kpHBOvf6C3+z5zsdOhbdgHyFL9aRrlHI4UC0w8u+
+	rimIpbQ59erayO4To0qfbC2Pc+ksavHflxqL3qP6q/XPhe+7U79BDMySMDFmonnels0/4tuofHk
+	UVHizm7LoagPcDcxxy3Wd/MALUfoUoJyH2Bo0vuF3gu3/sJYTU/3qY0pN3NsW3/IfyUK7POa+y2
+	4HIOWKQBGCb8gt7PGEEgYirG8Uh6C6I/gOdJLRTFssnr8Yer4GrcizHgBM6iK8dMhAgS8nQq6wR
+	p8CcgMxZfqELri6CtUDIsIOl/XWA3C3uhgV5OH1r/jHQ==
+X-Received: by 2002:a05:600c:8b4b:b0:485:3fa9:358c with SMTP id 5b1f17b1804b1-4888358c814mr26689145e9.17.1775016870365;
+        Tue, 31 Mar 2026 21:14:30 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.248])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4887e80a616sm141500425e9.2.2026.03.31.21.14.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 31 Mar 2026 21:14:29 -0700 (PDT)
+Message-ID: <fc9fce75-6f6c-4753-8bc7-c14bd03d2731@tuxon.dev>
+Date: Wed, 1 Apr 2026 07:14:28 +0300
 MIME-Version: 1.0
-X-Exchange-RoutingPolicyChecked: 
-	Rov9eVlzDH1th8qbvXKxDDPpxPlYU0h6Wd3NFalxLGD0TguV/Df8kP0gBLplPbG2XFQlrwsQWOLGHylpClZgXM8I0fnQejpTZDMmrVnBGTpVSeHRzhe2C62pL7hRW6MfI8YeO4ktmO4Qhynk3hiEJlKI5FBtlwRsC6UgucJOsjq/skpgh6ve/xUey/EtyEIYMTibWvihNb2wkYo3pGTINY+fnCcxKdASznbUFTRKL78PQ9M7cOo6ic2trXm4nXPXSxqeqFhEqJFk4XMYnfDNaDKTzGHNRQbj/4oJXydQmaPwyBhCCmkqQTmClHsg20ek4AndZxRa/J39OxbbZ0q5Qw==
-X-OriginatorOrg: mail.toshiba
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY7PR01MB14818.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3d506fee-b9fe-4894-9bab-08de8f8e486f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Apr 2026 01:30:39.6031
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: rmo1CKU/h7CZdIXq1s6dilD+4fCFtnEh3QuCKVdsutd9t6zvvYcW384Er+YT5qKiWP0OMtTKr8J3r+avV3WP+Q69Q8LJbaecFmIlliSudcUgggvF7ZKuNqNfaD9AnbM1
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZPR01MB6923
+User-Agent: Mozilla Thunderbird
+Subject: Re: [cip-dev] [PATCH 6.1.y-cip 00/17] Add RZ/G3S PCIe support
+To: nobuhiro.iwamatsu.x90@mail.toshiba, pavel@nabladev.com
+Cc: cip-dev@lists.cip-project.org
+References: <189BC4ACC53FCB81.1328210@lists.cip-project.org>
+ <69b5da97-4fa2-4ce6-a1f7-74b9bce6712f@tuxon.dev>
+ <TY7PR01MB14818E4EF12163C4F09CDE5AECD48A@TY7PR01MB14818.jpnprd01.prod.outlook.com>
+Content-Language: en-US
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <TY7PR01MB14818E4EF12163C4F09CDE5AECD48A@TY7PR01MB14818.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 01 Apr 2026 01:30:51 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22610
+ <cip-dev@lists.cip-project.org>; Wed, 01 Apr 2026 04:14:41 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22611
 
-Hi,
+Hi, CIP maintainers,
 
-> -----Original Message-----
-> From: Pavel Machek <pavel@nabladev.com>
-> Sent: Monday, March 30, 2026 7:28 PM
-> To: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Cc: cip-dev@lists.cip-project.org; iwamatsu nobuhiro(=1B$B4d>>=1B(B =1B$B=
-?.MN=1B(B =1B$B""#D#I#T#C!{#C#P#T=1B(B)
-> <nobuhiro.iwamatsu.x90@mail.toshiba>; Pavel Machek <pavel@nabladev.com>; =
-Biju Das
-> <biju.das.jz@bp.renesas.com>
-> Subject: Re: [PATCH 6.12.y-cip 0/5] Add CANFD support to RZ/{V2H,V2N} SoC=
-s
->=20
-> Hi!
->=20
-> > This patch series aims to add CANFD support on the Renesas RZ/V2H and
-> > RZ/V2N SoCs. CANFD has been tested with external CAN PHY transceiver
-> > as the EVK isn't fitted with one.
-> >
-> > Note,
-> > - All the patches have been cherry-picked from upstream kernel.
-> > - Patches apply cleanly on top of v6.12.78-cip19
->=20
-> This looks okay to me.
->=20
-> Reviewed-by: Pavel Machek <pavel@nabladev.com>
->=20
-> I can apply the series if it passes testing and there are no other commen=
-ts.
 
-Looks good to me too.
-I will apply this with Pavel's reviewed-by tag.
+On 3/24/26 11:10, Nobuhiro Iwamatsu via lists.cip-project.org wrote:
+> Hi Claudiu,
+> 
+>> -----Original Message-----
+>> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+>> Sent: Monday, March 23, 2026 8:06 PM
+>> To: iwamatsu nobuhiro(岩松 信洋 □ＤＩＴＣ○ＣＰＴ) <nobuhiro.iwamatsu.x90@mail.toshiba>; pavel@nabladev.com
+>> Cc: cip-dev@lists.cip-project.org
+>> Subject: Re: [cip-dev] [PATCH 6.1.y-cip 00/17] Add RZ/G3S PCIe support
+>>
+>> Hi, CIP maintainers,
+>>
+>> Gentle ping on this series and the v6.1, v6.12 backports.
+> 
+> Sorry for the delay in my review.
+> I checked each version, and everything seems to be fine.
+> If tests are OK and there is no comment, I can apply.
+> 
+> Reviewed-by: Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
+> 
+Would you please let me know if there's anything I should be doing for this 
+series (and the v5.10, v6.12 variants) to get merged?
 
->=20
-> Best regards,
->                                                                 Pavel
-
-Best regards,
-  Nobuhiro
-
+Thank you,
+Claudiu
 
