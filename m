@@ -2,63 +2,63 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF5C3D6AAEA
-	for <webhook@archiver.kernel.org>; Thu,  2 Apr 2026 16:09:17 +0000 (UTC)
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.32.1775146155916380482
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF267D6AAEB
+	for <webhook@archiver.kernel.org>; Thu,  2 Apr 2026 16:09:47 +0000 (UTC)
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.31.1775146180636943352
  for <cip-dev@lists.cip-project.org>;
- Thu, 02 Apr 2026 09:09:16 -0700
+ Thu, 02 Apr 2026 09:09:41 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=lieD3gvQ;
- spf=pass (domain: tuxon.dev, ip: 209.85.221.44, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-43cf5ad500fso951630f8f.0
-        for <cip-dev@lists.cip-project.org>; Thu, 02 Apr 2026 09:09:15 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=lOjznt5S;
+ spf=pass (domain: tuxon.dev, ip: 209.85.221.52, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-43d02a71526so691756f8f.3
+        for <cip-dev@lists.cip-project.org>; Thu, 02 Apr 2026 09:09:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1775146154; x=1775750954; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1775146179; x=1775750979; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
         bh=H4L937lJiYX0ahsMrZzRqCDsHuS7oJAX3oCQ8XZ/KsM=;
-        b=lieD3gvQNyZbHl+cCtbI+6Qn/onCrF6nHlpejD7fAPDifXZ66Xw+9mT+bDMg8LRhBO
-         M4IhkSrShblo84vyMu2u5Osai8nOuDssnmBN20b8HoPyYgoblmY4cvsdmrI6UTS3P405
-         TD24/1HJaqJlabP2Guc6iV67QumkEGAWBsxERW+CvbEmZru4anNMGbDZtTLuZqoWO84A
-         tFep364MEEkFb/UO0UITnrjUAYOqlUshjETlXfOAB7CdtBLgMVsRekUL/uy5qKekuizD
-         1AdwtJO14aQtyJHQKKhn56xk2do81OKadV0GoiE5J6F9+SnIFAQOuyIZ7vfll/xPL98h
-         6Qcw==
+        b=lOjznt5S0ILl4FLKRhJQ6NU7zZ6ZcjLSikPjbvJnZ2eDM76BTZDp2oIC70GI6ThOU4
+         HQhydfeIQIQloUEISuHs30/ttCQEcmwq8HdtUmgOSPUN2D5/eoLLOgot/dZNgG/MHPNa
+         V87Wo/v7oA87LtL2UCo6qPH2jlEBw3L82G8QAkNJvhYIaP2BBWT//ovGNUgz1rPI0PO6
+         +aNBfv4WSdWXu1dyxTGWX0vKyH/EoJzW+/mXQU8GrU1wxyUFrdPcEyIbQj4RowMbF4bE
+         L6iigsMRb+PqP9ob6TF44frJd1sMHfz1PAdpwSYaK6PxkSVAlCcCofNIYXnMUQFHRYCb
+         JMzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775146154; x=1775750954;
+        d=1e100.net; s=20251104; t=1775146179; x=1775750979;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
         bh=H4L937lJiYX0ahsMrZzRqCDsHuS7oJAX3oCQ8XZ/KsM=;
-        b=dDDAwVBZ+siDHeWYXTb9uYnTR752gs+ujO7joie2vwetthzjfZ3YZVr/yuEiXstUAo
-         yr6ojsu4Xb5PUBijys3VWtZGwK2TYrkoTttXJs24YoHFkI2MPJ3mSGM8fwS6XE0k0daa
-         vbMpTRNb4SBOoMV7QLnBlMxBCETQJksFkRkAL/gK8LopwJLHrvEXxNEzoSE2jaZ07BaT
-         hW1gYrXVR8qqgpA3Xp+99u1lKUfvMG6sJAw3zVvOnRRD9mfv7KX8nxoWXNKLMSuoCg/M
-         hV6l3Y1MVQ4qsWvehDY24zOquRQAIUPifAJ1AkpCPJ3MIFQPXegv9jJxpD0Ou+Y7UfZP
-         Bmgw==
-X-Gm-Message-State: AOJu0YygcDpp8JdLiSijHfg+xIxKtz0FDCifbiY3xV1euxUwjb7klUCm
-	Z9+/Vrdd1vLx0/Yl/lV9PtxxeVqkLPyIFXxKhvFyXQJ+4w1piSx/Bs6xA1CNlQy6omg=
-X-Gm-Gg: AeBDiev7JRvqM1WYxKuN5jxYs6yK1uS1Bn8hkcj4QS8BNdRnaAJG9TLyVprn9n4smv/
-	oWQbzUrxnoSqvWXBlQbSFGiI73T84fchnVuR6A05S1+iju44tOk0MgJ2/TNAGgGYImwC3XFI/Vm
-	4sE2PVKLIAQjDTR6uD1H23JEadHctDg+ZY7YAJRagrSsiwJiGSaUkUsPjJaJ1Ke8G1DX12b5X4K
-	I7hW2dDC9Oa5HkgIYrxlL7A8/P6I5XYfstxqLFBUfj7JI8PTGzdM4fY44aH60YnnG/GdNjoHTAG
-	XAUUbOSSB1iVpNn31Da4cHxJZfsV6Q5p9vDMC59tT7HFKV3HdF4Cz1IkBl7HfPQRUgoAd3ckYNM
-	koHiiVpGKab8yCDv89SP0VZgkHJl5O9mEhtv0cyqJcXAHmlxvIsyFvat/olH5faIJDXaCT3buo3
-	QX+XRgRPR1MruC/ntOlsWRVcq1ZAd+i07VTx7bgkIebd0wSxdnFyp6
-X-Received: by 2002:adf:ec0e:0:b0:43d:259f:d3b9 with SMTP id ffacd0b85a97d-43d259fd403mr2011250f8f.5.1775146153962;
-        Thu, 02 Apr 2026 09:09:13 -0700 (PDT)
+        b=HEPbjdpTNJjB5PA081+I+EJPXWa6Mm063TtEKKc9qgATxM9wkIElJHJNstlLCCqeRP
+         +fZdi+CGMKvL6HZUpZqPLsZqVXnQnBL25tF8hYKtfgAVhSvjb9zHdu30JTgTlshzWpKG
+         9MMWzNHkMlHqKNW43OTQfEFAnb0o37up+dlHQbFSTB2VjbYLFhYKJuc8VN3wZAay4hGg
+         0spue23kLizbGEl2kRCGTQyw/FMPfgiVuJz6s5iEUgLiFJuCSJE7JOuvYbPCuvt2MjQM
+         eJMGbTjkUohjyaklZrSnLqirzgslmEMptOGHholiJf4SG5mK0ZovWNgFRKd+N82E6UTi
+         uftg==
+X-Gm-Message-State: AOJu0YxK3r1cXguxtuOYlc7KeXyTM+WLntGa7tApBH0rVguxrA+V2vED
+	YYhYoQ6ZFVZH+LK9WT/wEv8O/zo5Q3uPKI0cNvXunVQRab5ywAbPnsUG6RdjpL7ip0E=
+X-Gm-Gg: AeBDies8cH4V9/Ja3a4Iyx5W5U9haVu+rK+Dkkl4TS1HIUu5zc8lwGS0RZ2KrUsh6CR
+	uTRVI0xM8xTkEJU7gsdR1AO+G7jrZr+Oj4AlautmfaM5hIYJkJZvlJbG6Ky2stG2GjAklu5kutu
+	279rIiKt12PEI/xOEnMBT8jBMf/kQecJbdyCc8WLBDCpSCfQbwF8k3U2yXgJKDCad1mnJohrmd6
+	vGE4pVYm4QOKrs3sG4SjNxOfQjynlKX9AenkRQZDsg4rQkzrTDn+lozcxvpRiGiKNepQEX+RvSZ
+	slw+3QrcPoaIhFULkju25m1VhOJfi/EBDpcYIn2J2Kdaxjmqbsa6+u8q387NxbGmvupnHveFqGV
+	zNjM4emVduko6ql9eX7Z2aVb+OpHaCBxM7X6RL/hDFlARN3nG4fur2bFD2HlqlEz+dKpY6Ym7+Z
+	TnU30fXvzfYzj6srDyiHecw8bwLSOp+hyGKvAvsIXfL5DdoydhWulE
+X-Received: by 2002:a05:6000:1ac6:b0:43c:f719:a7f0 with SMTP id ffacd0b85a97d-43d15066951mr15110658f8f.12.1775146178741;
+        Thu, 02 Apr 2026 09:09:38 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.248])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d1e4f843dsm8535881f8f.37.2026.04.02.09.09.13
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d1e4f52easm9438965f8f.36.2026.04.02.09.09.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Apr 2026 09:09:13 -0700 (PDT)
+        Thu, 02 Apr 2026 09:09:38 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 1/1] arm64: dts: renesas: rzg3s-smarc-som: Set bypass for Versa3 PLL2
-Date: Thu,  2 Apr 2026 19:09:12 +0300
-Message-ID: <20260402160912.2002334-1-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 1/1] arm64: dts: renesas: rzg3s-smarc-som: Set bypass for Versa3 PLL2
+Date: Thu,  2 Apr 2026 19:09:37 +0300
+Message-ID: <20260402160937.2002534-1-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -66,8 +66,8 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 02 Apr 2026 16:09:17 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22616
+ <cip-dev@lists.cip-project.org>; Thu, 02 Apr 2026 16:09:47 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22617
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
