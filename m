@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68C3EEDB7FC
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E9CF3D5E1
 	for <webhook@archiver.kernel.org>; Tue,  7 Apr 2026 10:58:35 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.msgproc02-g2.78638.1775559492699210337
  for <cip-dev@lists.cip-project.org>;
- Tue, 07 Apr 2026 03:58:25 -0700
+ Tue, 07 Apr 2026 03:58:28 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-CSE-ConnectionGUID: mzxD1DEjTcGJJCtaQ6hCIA==
-X-CSE-MsgGUID: 7+yCZsHGSQae9ttgKaRoAQ==
+X-CSE-ConnectionGUID: etKPjMxSTOSFY8wP96j0rw==
+X-CSE-MsgGUID: KmMgIkCaTMieZcOIFECKgg==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 07 Apr 2026 19:58:24 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 07 Apr 2026 19:58:28 +0900
 Received: from Ubuntu-22.. (unknown [10.24.0.188])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id A0E99400754E;
-	Tue,  7 Apr 2026 19:58:23 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 333A44007F40;
+	Tue,  7 Apr 2026 19:58:26 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 08/10] arm64: dts: renesas: r9a09g087: Add CANFD node
-Date: Tue,  7 Apr 2026 11:58:06 +0100
-Message-ID: <20260407105808.15196-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 10/10] arm64: dts: renesas: r9a09g087m44-rzn2h-evk: Enable CANFD
+Date: Tue,  7 Apr 2026 11:58:08 +0100
+Message-ID: <20260407105808.15196-11-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260407105808.15196-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20260407105808.15196-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -34,63 +34,76 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 07 Apr 2026 10:58:35 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22629
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22631
 
-commit 3fcf1e255e0d97b42e7d003596ae987fb193bcf0 upstream.
+commit 3e6c313f4f996ce73b80873b8172610003e90f35 upstream.
 
-Add support for the CANFD controller on the Renesas RZ/N2H Soc.
+Enable CANFD channel 1, which is available on the CN35 connector.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20251224175204.3400062-3-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://patch.msgid.link/20251224175204.3400062-5-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[PL: fixed merge conflict]
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a09g087.dtsi | 31 ++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+ .../dts/renesas/r9a09g087m44-rzn2h-evk.dts    | 29 +++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-index 3708700768c76..15fb09d963476 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-@@ -232,6 +232,37 @@ rspi3: spi@81007000 {
- 			status = "disabled";
- 		};
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
+index 4d709419d1961..06f1c14560da9 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
++++ b/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
+@@ -27,6 +27,13 @@
+ #define SD0_EMMC       1
+ #define SD0_SD		(!SD0_EMMC)
  
-+		canfd: can@80040000 {
-+			compatible = "renesas,r9a09g087-canfd", "renesas,r9a09g077-canfd";
-+			reg = <0 0x80040000 0 0x20000>;
-+			interrupts = <GIC_SPI 633 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 632 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 627 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 628 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 626 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 630 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 631 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 629 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "g_err", "g_recc",
-+					  "ch0_err", "ch0_rec", "ch0_trx",
-+					  "ch1_err", "ch1_rec", "ch1_trx";
-+			clocks = <&cpg CPG_MOD 310>,
-+				 <&cpg CPG_CORE R9A09G087_CLK_PCLKH>,
-+				 <&cpg CPG_CORE R9A09G087_PCLKCAN>;
-+			clock-names = "fck", "ram_clk", "can_clk";
-+			assigned-clocks = <&cpg CPG_CORE R9A09G087_PCLKCAN>;
-+			assigned-clock-rates = <80000000>;
-+			power-domains = <&cpg>;
-+			status = "disabled";
++/*
++ * To enable CANFD interface disable both eMMC and SD card on SDHI0 by
++ * setting SD0_EMMC and SD0_SD macros to 0 as pins P12_0 and P12_1
++ * will be used for CANFD interface.
++ */
++#define CANFD_ENABLE	(!SD0_EMMC && !SD0_SD)
 +
-+			channel0 {
-+				status = "disabled";
-+			};
-+			channel1 {
-+				status = "disabled";
-+			};
-+		};
+ /*
+  * P17_4 = SD1_CD; DSW5[3] = ON; DSW19[1] = OFF; DSW19[2] = ON
+  * P08_6 = SD1_IOVS; DSW5[3] = ON
+@@ -234,6 +241,18 @@ channel@e {
+ 	};
+ };
+ 
++#if CANFD_ENABLE
++&canfd {
++	pinctrl-0 = <&can1_pins>;
++	pinctrl-names = "default";
++	status = "okay";
 +
- 		wdt0: watchdog@80082000 {
- 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
- 			reg = <0 0x80082000 0 0x400>,
++	channel1 {
++		status = "okay";
++	};
++};
++#endif
++
+ #if I2C0
+ &i2c0 {
+ 	pinctrl-0 = <&i2c0_pins>;
+@@ -270,6 +289,16 @@ &mdio2_phy {
+ };
+ 
+ &pinctrl {
++	/*
++	 * CAN1 Pin Configuration:
++	 *
++	 * DSW5[1] ON; DSW5[2] OFF - Use P12_0 and P12_1 for CAN1 interface.
++	 */
++	can1_pins: can1-pins {
++		pinmux = <RZT2H_PORT_PINMUX(12, 0, 0x19)>, /* CANRX1 */
++			 <RZT2H_PORT_PINMUX(12, 1, 0x19)>; /* CANTX1 */
++	};
++
+ 	/*
+ 	 * GMAC2 Pin Configuration:
+ 	 *
 -- 
 2.43.0
 
