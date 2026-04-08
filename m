@@ -2,28 +2,28 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2BBE105D9B5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF659105D9B4
 	for <webhook@archiver.kernel.org>; Wed,  8 Apr 2026 09:40:12 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.102550.1775641196244975563
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.102272.1775641206660225690
  for <cip-dev@lists.cip-project.org>;
- Wed, 08 Apr 2026 02:40:04 -0700
+ Wed, 08 Apr 2026 02:40:06 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: EXHmOtKXSCapSTSHYCVSwg==
-X-CSE-MsgGUID: 52FPp2HaQ/ad+ESk2JtqlA==
+ dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
+X-CSE-ConnectionGUID: pEZY66AxTWCaTzgzSq3zJw==
+X-CSE-MsgGUID: Ki/xQ8q6SEiVkb1JwRzEQQ==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 08 Apr 2026 18:40:03 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 08 Apr 2026 18:40:05 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.92.8])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id C00A340116D0;
-	Wed,  8 Apr 2026 18:40:02 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 751EE401FE21;
+	Wed,  8 Apr 2026 18:40:04 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.1.y-cip 6/7] arm64: dts: renesas: r9a09g056: Use syscon compatible for the system controller
-Date: Wed,  8 Apr 2026 09:39:49 +0000
-Message-ID: <20260408093951.66884-7-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.1.y-cip 7/7] arm64: dts: renesas: r9a09g056: Add TSU nodes
+Date: Wed,  8 Apr 2026 09:39:50 +0000
+Message-ID: <20260408093951.66884-8-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260408093951.66884-1-ovidiu.panait.rb@renesas.com>
 References: <20260408093951.66884-1-ovidiu.panait.rb@renesas.com>
@@ -33,34 +33,154 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 08 Apr 2026 09:40:12 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22642
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22643
 
-The Renesas RZ/V2N TSU driver needs the system controller syscon
-to be able to retrieve calibration data. For this, it uses
-syscon_regmap_lookup_by_phandle_args(). But, in v6.1 CIP,
-syscon_regmap_lookup_by_phandle_args() returns ERR_PTR(-EINVAL) if
-the node for which it is called doesn't have the syscon compatible.
+commit f3d22e5f6392d05d61438455bce40bfb766bf2b4 upstream.
 
-Therefore, add syscon compatible for the system controller.
+The Renesas RZ/V2N SoC includes a Thermal Sensor Unit (TSU) block designed
+to measure the junction temperature. The device provides real-time
+temperature measurements for thermal management, utilizing two dedicated
+channels for temperature sensing:
+- TSU0, which is located near the DRP-AI block
+- TSU1, which is located near the CPU and DRP-AI block
+
+Since TSU1 is physically closer the CPU and the highest temperature
+spot, it is used for CPU throttling through a passive trip and cooling
+map. TSU0 is configured only with a critical trip.
+
+Add TSU nodes along with thermal zones and keep them enabled in the SoC
+DTSI.
 
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://patch.msgid.link/20251209091115.8541-4-ovidiu.panait.rb@renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a09g056.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/r9a09g056.dtsi | 75 ++++++++++++++++++++++
+ 1 file changed, 75 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r9a09g056.dtsi b/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
-index a08d10950651..0d60d4cdb257 100644
+index 0d60d4cdb257..d69b3d3d1835 100644
 --- a/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
-@@ -292,7 +292,7 @@ cpg: clock-controller@10420000 {
+@@ -83,6 +83,7 @@ cpu0: cpu@0 {
+ 			next-level-cache = <&L3_CA55>;
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R9A09G056_CA55_0_CORE_CLK0>;
++			#cooling-cells = <2>;
+ 			operating-points-v2 = <&cluster0_opp>;
  		};
  
- 		sys: system-controller@10430000 {
--			compatible = "renesas,r9a09g056-sys";
-+			compatible = "renesas,r9a09g056-sys", "syscon";
- 			reg = <0 0x10430000 0 0x10000>;
- 			clocks = <&cpg CPG_CORE R9A09G056_SYS_0_PCLK>;
+@@ -93,6 +94,7 @@ cpu1: cpu@100 {
+ 			next-level-cache = <&L3_CA55>;
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R9A09G056_CA55_0_CORE_CLK1>;
++			#cooling-cells = <2>;
+ 			operating-points-v2 = <&cluster0_opp>;
+ 		};
+ 
+@@ -103,6 +105,7 @@ cpu2: cpu@200 {
+ 			next-level-cache = <&L3_CA55>;
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R9A09G056_CA55_0_CORE_CLK2>;
++			#cooling-cells = <2>;
+ 			operating-points-v2 = <&cluster0_opp>;
+ 		};
+ 
+@@ -113,6 +116,7 @@ cpu3: cpu@300 {
+ 			next-level-cache = <&L3_CA55>;
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R9A09G056_CA55_0_CORE_CLK3>;
++			#cooling-cells = <2>;
+ 			operating-points-v2 = <&cluster0_opp>;
+ 		};
+ 
+@@ -298,6 +302,32 @@ sys: system-controller@10430000 {
  			resets = <&cpg 0x30>;
+ 		};
+ 
++		tsu0: thermal@11000000 {
++			compatible = "renesas,r9a09g056-tsu", "renesas,r9a09g047-tsu";
++			reg = <0 0x11000000 0 0x1000>;
++			interrupts = <GIC_SPI 248 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 249 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "adi", "adcmpi";
++			clocks = <&cpg CPG_MOD 0x109>;
++			resets = <&cpg 0xf7>;
++			power-domains = <&cpg>;
++			#thermal-sensor-cells = <0>;
++			renesas,tsu-trim = <&sys 0x320>;
++		};
++
++		tsu1: thermal@14002000 {
++			compatible = "renesas,r9a09g056-tsu", "renesas,r9a09g047-tsu";
++			reg = <0 0x14002000 0 0x1000>;
++			interrupts = <GIC_SPI 250 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 251 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "adi", "adcmpi";
++			clocks = <&cpg CPG_MOD 0x10a>;
++			resets = <&cpg 0xf8>;
++			power-domains = <&cpg>;
++			#thermal-sensor-cells = <0>;
++			renesas,tsu-trim = <&sys 0x330>;
++		};
++
+ 		xspi: spi@11030000 {
+ 			compatible = "renesas,r9a09g056-xspi", "renesas,r9a09g047-xspi";
+ 			reg = <0 0x11030000 0 0x10000>,
+@@ -1332,6 +1362,51 @@ stmmac_axi_setup: stmmac-axi-config {
+ 		snps,blen = <16 8 4 0 0 0 0>;
+ 	};
+ 
++	thermal-zones {
++		sensor1_thermal: sensor1-thermal {
++			polling-delay = <1000>;
++			polling-delay-passive = <250>;
++			thermal-sensors = <&tsu0>;
++
++			trips {
++				sensor1_crit: sensor1-crit {
++					temperature = <120000>;
++					hysteresis = <1000>;
++					type = "critical";
++				};
++			};
++		};
++
++		sensor2_thermal: sensor2-thermal {
++			polling-delay = <1000>;
++			polling-delay-passive = <250>;
++			thermal-sensors = <&tsu1>;
++
++			cooling-maps {
++				map0 {
++					trip = <&sensor2_target>;
++					cooling-device = <&cpu0 0 3>, <&cpu1 0 3>,
++							 <&cpu2 0 3>, <&cpu3 0 3>;
++					contribution = <1024>;
++				};
++			};
++
++			trips {
++				sensor2_target: trip-point {
++					temperature = <95000>;
++					hysteresis = <1000>;
++					type = "passive";
++				};
++
++				sensor2_crit: sensor2-crit {
++					temperature = <120000>;
++					hysteresis = <1000>;
++					type = "critical";
++				};
++			};
++		};
++	};
++
+ 	timer {
+ 		compatible = "arm,armv8-timer";
+ 		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
 -- 
 2.51.0
 
