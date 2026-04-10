@@ -2,28 +2,28 @@ Return-Path: <cosmin-gabriel.tanislav.xa@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22945F459FF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16776F459FC
 	for <webhook@archiver.kernel.org>; Fri, 10 Apr 2026 17:03:18 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.msgproc02-g2.161292.1775840586520620468
  for <cip-dev@lists.cip-project.org>;
- Fri, 10 Apr 2026 10:03:16 -0700
+ Fri, 10 Apr 2026 10:03:08 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: cosmin-gabriel.tanislav.xa@renesas.com)
-X-CSE-ConnectionGUID: obBuf713RduXfgp/sCuwHw==
-X-CSE-MsgGUID: pWdteqf2T1m2gixH/RmROQ==
+X-CSE-ConnectionGUID: 7xgwS5ykTL+yW1Zj8P93Tw==
+X-CSE-MsgGUID: x0jIt2TeRYmCh2dA7qLvTg==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 11 Apr 2026 02:03:16 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 11 Apr 2026 02:03:07 +0900
 Received: from demon-pc.localdomain (unknown [10.226.93.85])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 007AF402F558;
-	Sat, 11 Apr 2026 02:03:14 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 848B6402F558;
+	Sat, 11 Apr 2026 02:03:06 +0900 (JST)
 From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.12.y-cip 08/11] arm64: dts: renesas: r9a09g077: Add OPP table
-Date: Fri, 10 Apr 2026 20:02:12 +0300
-Message-ID: <20260410170215.393698-9-cosmin-gabriel.tanislav.xa@renesas.com>
+Subject: [PATCH 6.12.y-cip 03/11] thermal: renesas: rzg3e: make min and max temperature per-chip
+Date: Fri, 10 Apr 2026 20:02:07 +0300
+Message-ID: <20260410170215.393698-4-cosmin-gabriel.tanislav.xa@renesas.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260410170215.393698-1-cosmin-gabriel.tanislav.xa@renesas.com>
 References: <20260410170215.393698-1-cosmin-gabriel.tanislav.xa@renesas.com>
@@ -33,79 +33,132 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 10 Apr 2026 17:03:18 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22671
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22666
 
-commit 98aa86525051bbb974818cd27f9a6fbaf255975b upstream.
+commit 6c7f87f517d3704a3fcc3b1c7f4220c2fcf75322 upstream.
 
-Add OPP table for RZ/T2H SoC.
+The Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs have
+different minimum and maximum temperatures compared to the already
+supported RZ/G3E.
 
-Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Prepare for them by moving these into a chip-specific struct.
+
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20251126130356.2768625-7-cosmin-gabriel.tanislav.xa@renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: John Madieu <john.madieu.xa@bp.renesas.com>
+Tested-by: John Madieu <john.madieu.xa@bp.renesas.com>
+Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Link: https://patch.msgid.link/20260108195223.193531-3-cosmin-gabriel.tanislav.xa@renesas.com
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a09g077.dtsi | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ drivers/thermal/renesas/rzg3e_thermal.c | 35 ++++++++++++++++---------
+ 1 file changed, 23 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g077.dtsi b/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
-index cb85b745b2cfd..61b6cfaac5553 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
-@@ -13,6 +13,17 @@ / {
- 	#address-cells = <2>;
- 	#size-cells = <2>;
+diff --git a/drivers/thermal/renesas/rzg3e_thermal.c b/drivers/thermal/renesas/rzg3e_thermal.c
+index 86c10810e5bf5..3c9ff5e43d7eb 100644
+--- a/drivers/thermal/renesas/rzg3e_thermal.c
++++ b/drivers/thermal/renesas/rzg3e_thermal.c
+@@ -62,8 +62,6 @@
+ #define TSU_SICR_CMPCLR	BIT(1)
  
-+	cluster0_opp: opp-table-0 {
-+		compatible = "operating-points-v2";
+ /* Temperature calculation constants from datasheet */
+-#define TSU_TEMP_D		(-41)
+-#define TSU_TEMP_E		126
+ #define TSU_CODE_MAX		0xFFF
+ 
+ /* Timing specifications from datasheet */
+@@ -72,6 +70,11 @@
+ #define TSU_POLL_DELAY_US	10	/* Polling interval */
+ #define TSU_MIN_CLOCK_RATE	24000000  /* TSU_PCLK minimum 24MHz */
+ 
++struct rzg3e_thermal_info {
++	int temp_d_mc;
++	int temp_e_mc;
++};
 +
-+		opp-600000000 {
-+			opp-hz = /bits/ 64 <600000000>;
-+		};
-+		opp-1200000000 {
-+			opp-hz = /bits/ 64 <1200000000>;
-+		};
-+	};
+ /**
+  * struct rzg3e_thermal_priv - RZ/G3E TSU private data
+  * @base: TSU register base
+@@ -79,6 +82,7 @@
+  * @syscon: regmap for calibration values
+  * @zone: thermal zone device
+  * @rstc: reset control
++ * @info: chip type specific information
+  * @trmval0: calibration value 0 (b)
+  * @trmval1: calibration value 1 (c)
+  * @trim_offset: offset for trim registers in syscon
+@@ -90,6 +94,7 @@ struct rzg3e_thermal_priv {
+ 	struct regmap *syscon;
+ 	struct thermal_zone_device *zone;
+ 	struct reset_control *rstc;
++	const struct rzg3e_thermal_info *info;
+ 	u16 trmval0;
+ 	u16 trmval1;
+ 	u32 trim_offset;
+@@ -161,17 +166,17 @@ static void rzg3e_thermal_power_off(struct rzg3e_thermal_priv *priv)
+  */
+ static int rzg3e_thermal_code_to_temp(struct rzg3e_thermal_priv *priv, u16 code)
+ {
+-	int temp_e_mc = TSU_TEMP_E * MILLIDEGREE_PER_DEGREE;
+-	int temp_d_mc = TSU_TEMP_D * MILLIDEGREE_PER_DEGREE;
++	const struct rzg3e_thermal_info *info = priv->info;
+ 	s64 numerator, denominator;
+ 	int temp_mc;
+ 
+-	numerator = (temp_e_mc - temp_d_mc) * (s64)(code - priv->trmval0);
++	numerator = (info->temp_e_mc - info->temp_d_mc) *
++		    (s64)(code - priv->trmval0);
+ 	denominator = priv->trmval1 - priv->trmval0;
+ 
+-	temp_mc = div64_s64(numerator, denominator) + temp_d_mc;
++	temp_mc = div64_s64(numerator, denominator) + info->temp_d_mc;
+ 
+-	return clamp(temp_mc, temp_d_mc, temp_e_mc);
++	return clamp(temp_mc, info->temp_d_mc, info->temp_e_mc);
+ }
+ 
+ /*
+@@ -180,13 +185,12 @@ static int rzg3e_thermal_code_to_temp(struct rzg3e_thermal_priv *priv, u16 code)
+  */
+ static u16 rzg3e_thermal_temp_to_code(struct rzg3e_thermal_priv *priv, int temp_mc)
+ {
+-	int temp_e_mc = TSU_TEMP_E * MILLIDEGREE_PER_DEGREE;
+-	int temp_d_mc = TSU_TEMP_D * MILLIDEGREE_PER_DEGREE;
++	const struct rzg3e_thermal_info *info = priv->info;
+ 	s64 numerator, denominator;
+ 	s64 code;
+ 
+-	numerator = (temp_mc - temp_d_mc) * (priv->trmval1 - priv->trmval0);
+-	denominator = temp_e_mc - temp_d_mc;
++	numerator = (temp_mc - info->temp_d_mc) * (priv->trmval1 - priv->trmval0);
++	denominator = info->temp_e_mc - info->temp_d_mc;
+ 
+ 	code = div64_s64(numerator, denominator) + priv->trmval0;
+ 
+@@ -392,6 +396,8 @@ static int rzg3e_thermal_probe(struct platform_device *pdev)
+ 		return ret;
+ 	platform_set_drvdata(pdev, priv);
+ 
++	priv->info = device_get_match_data(dev);
 +
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -23,6 +34,8 @@ cpu0: cpu@0 {
- 			device_type = "cpu";
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
-+			clocks = <&cpg CPG_CORE R9A09G077_CLK_CA55C0>;
-+			operating-points-v2 = <&cluster0_opp>;
- 		};
+ 	priv->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(priv->base))
+ 		return PTR_ERR(priv->base);
+@@ -526,8 +532,13 @@ static const struct dev_pm_ops rzg3e_thermal_pm_ops = {
+ 	SYSTEM_SLEEP_PM_OPS(rzg3e_thermal_suspend, rzg3e_thermal_resume)
+ };
  
- 		cpu1: cpu@100 {
-@@ -31,6 +44,8 @@ cpu1: cpu@100 {
- 			device_type = "cpu";
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
-+			clocks = <&cpg CPG_CORE R9A09G077_CLK_CA55C1>;
-+			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
- 		cpu2: cpu@200 {
-@@ -39,6 +54,8 @@ cpu2: cpu@200 {
- 			device_type = "cpu";
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
-+			clocks = <&cpg CPG_CORE R9A09G077_CLK_CA55C2>;
-+			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
- 		cpu3: cpu@300 {
-@@ -47,6 +64,8 @@ cpu3: cpu@300 {
- 			device_type = "cpu";
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
-+			clocks = <&cpg CPG_CORE R9A09G077_CLK_CA55C3>;
-+			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
- 		L3_CA55: cache-controller-0 {
++static const struct rzg3e_thermal_info rzg3e_thermal_info = {
++	.temp_d_mc = -41000,
++	.temp_e_mc = 126000,
++};
++
+ static const struct of_device_id rzg3e_thermal_dt_ids[] = {
+-	{ .compatible = "renesas,r9a09g047-tsu" },
++	{ .compatible = "renesas,r9a09g047-tsu", .data = &rzg3e_thermal_info },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, rzg3e_thermal_dt_ids);
 -- 
 2.53.0
 
