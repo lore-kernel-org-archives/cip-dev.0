@@ -2,28 +2,28 @@ Return-Path: <cosmin-gabriel.tanislav.xa@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DBDDF45A09
-	for <webhook@archiver.kernel.org>; Fri, 10 Apr 2026 17:03:18 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.161292.1775840586520620468
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95C08F459FC
+	for <webhook@archiver.kernel.org>; Fri, 10 Apr 2026 17:03:28 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.161295.1775840591878637041
  for <cip-dev@lists.cip-project.org>;
- Fri, 10 Apr 2026 10:03:18 -0700
+ Fri, 10 Apr 2026 10:03:21 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: cosmin-gabriel.tanislav.xa@renesas.com)
-X-CSE-ConnectionGUID: 2zJDaRrqQ/aM2p+V8jfvNQ==
-X-CSE-MsgGUID: njBCdrj+T16eXvSeEgBT9g==
+ dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: cosmin-gabriel.tanislav.xa@renesas.com)
+X-CSE-ConnectionGUID: KwrdNrcfSFOakv13ZuiLZA==
+X-CSE-MsgGUID: AYj3W4xwQCGcC3RCWsnARQ==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 11 Apr 2026 02:03:17 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 11 Apr 2026 02:03:21 +0900
 Received: from demon-pc.localdomain (unknown [10.226.93.85])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id A5D41402F558;
-	Sat, 11 Apr 2026 02:03:16 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 09747402F526;
+	Sat, 11 Apr 2026 02:03:19 +0900 (JST)
 From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.12.y-cip 09/11] arm64: dts: renesas: r9a09g077: Add TSU and thermal zones support
-Date: Fri, 10 Apr 2026 20:02:13 +0300
-Message-ID: <20260410170215.393698-10-cosmin-gabriel.tanislav.xa@renesas.com>
+Subject: [PATCH 6.12.y-cip 11/11] arm64: dts: renesas: r9a09g087: Add TSU and thermal zones support
+Date: Fri, 10 Apr 2026 20:02:15 +0300
+Message-ID: <20260410170215.393698-12-cosmin-gabriel.tanislav.xa@renesas.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260410170215.393698-1-cosmin-gabriel.tanislav.xa@renesas.com>
 References: <20260410170215.393698-1-cosmin-gabriel.tanislav.xa@renesas.com>
@@ -32,12 +32,12 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 10 Apr 2026 17:03:18 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22672
+ <cip-dev@lists.cip-project.org>; Fri, 10 Apr 2026 17:03:28 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22674
 
-commit aea73cb10ec5bf8e24ff688eba8aeb9c7d1b4cd0 upstream.
+commit 5c4c34ea8dc02350fad11bc5423ca065595bbd54 upstream.
 
-The Renesas RZ/T2H (R9A09G077) SoC includes a Temperature Sensor Unit
+The Renesas RZ/N2H (R9A09G087) SoC includes a Temperature Sensor Unit
 (TSU). The device provides real-time temperature measurements for
 thermal management, utilizing a single dedicated channel for temperature
 sensing.
@@ -46,21 +46,21 @@ The TSU loads calibration data via SMC SIP.
 
 Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20251126130356.2768625-9-cosmin-gabriel.tanislav.xa@renesas.com
+Link: https://patch.msgid.link/20251126130356.2768625-10-cosmin-gabriel.tanislav.xa@renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a09g077.dtsi | 46 ++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r9a09g087.dtsi | 46 ++++++++++++++++++++++
  1 file changed, 46 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g077.dtsi b/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
-index 61b6cfaac5553..3c6e6969026df 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
+index de9e23becb12c..b1f6b997376f5 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
 @@ -35,6 +35,7 @@ cpu0: cpu@0 {
  			next-level-cache = <&L3_CA55>;
  			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G077_CLK_CA55C0>;
+ 			clocks = <&cpg CPG_CORE R9A09G087_CLK_CA55C0>;
 +			#cooling-cells = <2>;
  			operating-points-v2 = <&cluster0_opp>;
  		};
@@ -68,7 +68,7 @@ index 61b6cfaac5553..3c6e6969026df 100644
 @@ -45,6 +46,7 @@ cpu1: cpu@100 {
  			next-level-cache = <&L3_CA55>;
  			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G077_CLK_CA55C1>;
+ 			clocks = <&cpg CPG_CORE R9A09G087_CLK_CA55C1>;
 +			#cooling-cells = <2>;
  			operating-points-v2 = <&cluster0_opp>;
  		};
@@ -76,7 +76,7 @@ index 61b6cfaac5553..3c6e6969026df 100644
 @@ -55,6 +57,7 @@ cpu2: cpu@200 {
  			next-level-cache = <&L3_CA55>;
  			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G077_CLK_CA55C2>;
+ 			clocks = <&cpg CPG_CORE R9A09G087_CLK_CA55C2>;
 +			#cooling-cells = <2>;
  			operating-points-v2 = <&cluster0_opp>;
  		};
@@ -84,7 +84,7 @@ index 61b6cfaac5553..3c6e6969026df 100644
 @@ -65,6 +68,7 @@ cpu3: cpu@300 {
  			next-level-cache = <&L3_CA55>;
  			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G077_CLK_CA55C3>;
+ 			clocks = <&cpg CPG_CORE R9A09G087_CLK_CA55C3>;
 +			#cooling-cells = <2>;
  			operating-points-v2 = <&cluster0_opp>;
  		};
@@ -94,7 +94,7 @@ index 61b6cfaac5553..3c6e6969026df 100644
  		};
  
 +		tsu: thermal@80086000 {
-+			compatible = "renesas,r9a09g077-tsu";
++			compatible = "renesas,r9a09g087-tsu", "renesas,r9a09g077-tsu";
 +			reg = <0 0x80086000 0 0x1000>;
 +			interrupts = <GIC_SPI 713 IRQ_TYPE_EDGE_RISING>,
 +				     <GIC_SPI 714 IRQ_TYPE_LEVEL_HIGH>;
@@ -105,9 +105,9 @@ index 61b6cfaac5553..3c6e6969026df 100644
 +		};
 +
  		i2c0: i2c@80088000 {
- 			compatible = "renesas,riic-r9a09g077";
+ 			compatible = "renesas,riic-r9a09g087", "renesas,riic-r9a09g077";
  			reg = <0 0x80088000 0 0x400>;
-@@ -1057,6 +1072,37 @@ stmmac_axi_setup: stmmac-axi-config {
+@@ -1060,6 +1075,37 @@ stmmac_axi_setup: stmmac-axi-config {
  		snps,blen = <16 8 4 0 0 0 0>;
  	};
  
