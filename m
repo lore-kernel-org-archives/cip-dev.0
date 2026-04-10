@@ -2,28 +2,28 @@ Return-Path: <cosmin-gabriel.tanislav.xa@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 379EFF45A01
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DBDDF45A09
 	for <webhook@archiver.kernel.org>; Fri, 10 Apr 2026 17:03:18 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.msgproc02-g2.161292.1775840586520620468
  for <cip-dev@lists.cip-project.org>;
- Fri, 10 Apr 2026 10:03:09 -0700
+ Fri, 10 Apr 2026 10:03:18 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: cosmin-gabriel.tanislav.xa@renesas.com)
-X-CSE-ConnectionGUID: CLK4ZkK4TMiPUFBAP4FDRA==
-X-CSE-MsgGUID: 0B5tl9PfSqqmpgXiWzgpDA==
+X-CSE-ConnectionGUID: 2zJDaRrqQ/aM2p+V8jfvNQ==
+X-CSE-MsgGUID: njBCdrj+T16eXvSeEgBT9g==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 11 Apr 2026 02:03:09 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 11 Apr 2026 02:03:17 +0900
 Received: from demon-pc.localdomain (unknown [10.226.93.85])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3F8D7402F558;
-	Sat, 11 Apr 2026 02:03:07 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id A5D41402F558;
+	Sat, 11 Apr 2026 02:03:16 +0900 (JST)
 From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.12.y-cip 04/11] thermal: renesas: rzg3e: make calibration value retrieval per-chip
-Date: Fri, 10 Apr 2026 20:02:08 +0300
-Message-ID: <20260410170215.393698-5-cosmin-gabriel.tanislav.xa@renesas.com>
+Subject: [PATCH 6.12.y-cip 09/11] arm64: dts: renesas: r9a09g077: Add TSU and thermal zones support
+Date: Fri, 10 Apr 2026 20:02:13 +0300
+Message-ID: <20260410170215.393698-10-cosmin-gabriel.tanislav.xa@renesas.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260410170215.393698-1-cosmin-gabriel.tanislav.xa@renesas.com>
 References: <20260410170215.393698-1-cosmin-gabriel.tanislav.xa@renesas.com>
@@ -33,184 +33,118 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 10 Apr 2026 17:03:18 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22667
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22672
 
-commit c33edd8f936ccf2e47eb1883f6b6944643d325c7 upstream.
+commit aea73cb10ec5bf8e24ff688eba8aeb9c7d1b4cd0 upstream.
 
-The Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs expose the
-temperature calibration data via SMC SIP calls.
+The Renesas RZ/T2H (R9A09G077) SoC includes a Temperature Sensor Unit
+(TSU). The device provides real-time temperature measurements for
+thermal management, utilizing a single dedicated channel for temperature
+sensing.
 
-To prepare for supporting these SoCs, do the following changes.
+The TSU loads calibration data via SMC SIP.
 
-Rename rzg3e_thermal_parse_dt() to rzg3e_thermal_get_syscon_trim().
-
-Move the syscon usage out of rzg3e_thermal_get_calibration() and into
-rzg3e_thermal_get_syscon_trim() and remove single-use variables from the
-private state.
-
-Place a pointer to rzg3e_thermal_get_syscon_trim() into the
-chip-specific struct, and use it in the probe function to retrieve the
-calibration values.
-
-Now that syscon usage has been moved out of
-rzg3e_thermal_get_calibration(), remove it and inline the calibration
-validation into the probe function.
-
-Also, reuse the TSU_CODE_MAX macro to mask the calibration values, as
-GEMASK(11, 0) and 0xFFF are equivalent, and replace the hardcoded 0xFFF
-with TSU_CODE_MAX in the calibration validation.
-
-Reviewed-by: John Madieu <john.madieu.xa@bp.renesas.com>
-Tested-by: John Madieu <john.madieu.xa@bp.renesas.com>
 Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20260108195223.193531-4-cosmin-gabriel.tanislav.xa@renesas.com
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Link: https://patch.msgid.link/20251126130356.2768625-9-cosmin-gabriel.tanislav.xa@renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 ---
- drivers/thermal/renesas/rzg3e_thermal.c | 79 +++++++++++--------------
- 1 file changed, 33 insertions(+), 46 deletions(-)
+ arch/arm64/boot/dts/renesas/r9a09g077.dtsi | 46 ++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
-diff --git a/drivers/thermal/renesas/rzg3e_thermal.c b/drivers/thermal/renesas/rzg3e_thermal.c
-index 3c9ff5e43d7eb..97c4053303e03 100644
---- a/drivers/thermal/renesas/rzg3e_thermal.c
-+++ b/drivers/thermal/renesas/rzg3e_thermal.c
-@@ -70,7 +70,10 @@
- #define TSU_POLL_DELAY_US	10	/* Polling interval */
- #define TSU_MIN_CLOCK_RATE	24000000  /* TSU_PCLK minimum 24MHz */
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g077.dtsi b/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
+index 61b6cfaac5553..3c6e6969026df 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
+@@ -35,6 +35,7 @@ cpu0: cpu@0 {
+ 			next-level-cache = <&L3_CA55>;
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R9A09G077_CLK_CA55C0>;
++			#cooling-cells = <2>;
+ 			operating-points-v2 = <&cluster0_opp>;
+ 		};
  
-+struct rzg3e_thermal_priv;
+@@ -45,6 +46,7 @@ cpu1: cpu@100 {
+ 			next-level-cache = <&L3_CA55>;
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R9A09G077_CLK_CA55C1>;
++			#cooling-cells = <2>;
+ 			operating-points-v2 = <&cluster0_opp>;
+ 		};
+ 
+@@ -55,6 +57,7 @@ cpu2: cpu@200 {
+ 			next-level-cache = <&L3_CA55>;
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R9A09G077_CLK_CA55C2>;
++			#cooling-cells = <2>;
+ 			operating-points-v2 = <&cluster0_opp>;
+ 		};
+ 
+@@ -65,6 +68,7 @@ cpu3: cpu@300 {
+ 			next-level-cache = <&L3_CA55>;
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R9A09G077_CLK_CA55C3>;
++			#cooling-cells = <2>;
+ 			operating-points-v2 = <&cluster0_opp>;
+ 		};
+ 
+@@ -342,6 +346,17 @@ wdt5: watchdog@80083400 {
+ 			status = "disabled";
+ 		};
+ 
++		tsu: thermal@80086000 {
++			compatible = "renesas,r9a09g077-tsu";
++			reg = <0 0x80086000 0 0x1000>;
++			interrupts = <GIC_SPI 713 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 714 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "adi", "adcmpi";
++			clocks = <&cpg CPG_MOD 307>;
++			power-domains = <&cpg>;
++			#thermal-sensor-cells = <0>;
++		};
 +
- struct rzg3e_thermal_info {
-+	int (*get_trim)(struct rzg3e_thermal_priv *priv);
- 	int temp_d_mc;
- 	int temp_e_mc;
- };
-@@ -91,13 +94,11 @@ struct rzg3e_thermal_info {
- struct rzg3e_thermal_priv {
- 	void __iomem *base;
- 	struct device *dev;
--	struct regmap *syscon;
- 	struct thermal_zone_device *zone;
- 	struct reset_control *rstc;
- 	const struct rzg3e_thermal_info *info;
- 	u16 trmval0;
- 	u16 trmval1;
--	u32 trim_offset;
- 	struct mutex lock;
- };
+ 		i2c0: i2c@80088000 {
+ 			compatible = "renesas,riic-r9a09g077";
+ 			reg = <0 0x80088000 0 0x400>;
+@@ -1057,6 +1072,37 @@ stmmac_axi_setup: stmmac-axi-config {
+ 		snps,blen = <16 8 4 0 0 0 0>;
+ 	};
  
-@@ -334,48 +335,30 @@ static const struct thermal_zone_device_ops rzg3e_tz_ops = {
- 	.set_trips = rzg3e_thermal_set_trips,
- };
- 
--static int rzg3e_thermal_get_calibration(struct rzg3e_thermal_priv *priv)
--{
--	u32 val;
--	int ret;
--
--	/* Read calibration values from syscon */
--	ret = regmap_read(priv->syscon, priv->trim_offset, &val);
--	if (ret)
--		return ret;
--	priv->trmval0 = val & GENMASK(11, 0);
--
--	ret = regmap_read(priv->syscon, priv->trim_offset + 4, &val);
--	if (ret)
--		return ret;
--	priv->trmval1 = val & GENMASK(11, 0);
--
--	/* Validate calibration data */
--	if (!priv->trmval0 || !priv->trmval1 ||
--	    priv->trmval0 == priv->trmval1 ||
--	    priv->trmval0 == 0xFFF || priv->trmval1 == 0xFFF) {
--		dev_err(priv->dev, "Invalid calibration: b=0x%03x, c=0x%03x\n",
--			priv->trmval0, priv->trmval1);
--		return -EINVAL;
--	}
--
--	dev_dbg(priv->dev, "Calibration: b=0x%03x (%u), c=0x%03x (%u)\n",
--		priv->trmval0, priv->trmval0, priv->trmval1, priv->trmval1);
--
--	return 0;
--}
--
--static int rzg3e_thermal_parse_dt(struct rzg3e_thermal_priv *priv)
-+static int rzg3e_thermal_get_syscon_trim(struct rzg3e_thermal_priv *priv)
- {
- 	struct device_node *np = priv->dev->of_node;
-+	struct regmap *syscon;
- 	u32 offset;
-+	int ret;
-+	u32 val;
- 
--	priv->syscon = syscon_regmap_lookup_by_phandle_args(np, "renesas,tsu-trim", 1, &offset);
--	if (IS_ERR(priv->syscon))
--		return dev_err_probe(priv->dev, PTR_ERR(priv->syscon),
-+	syscon = syscon_regmap_lookup_by_phandle_args(np, "renesas,tsu-trim", 1, &offset);
-+	if (IS_ERR(syscon))
-+		return dev_err_probe(priv->dev, PTR_ERR(syscon),
- 				     "Failed to parse renesas,tsu-trim\n");
- 
--	priv->trim_offset = offset;
-+	/* Read calibration values from syscon */
-+	ret = regmap_read(syscon, offset, &val);
-+	if (ret)
-+		return ret;
-+	priv->trmval0 = val & TSU_CODE_MAX;
++	thermal-zones {
++		cpu-thermal {
++			polling-delay = <1000>;
++			polling-delay-passive = <250>;
++			thermal-sensors = <&tsu>;
 +
-+	ret = regmap_read(syscon, offset + 4, &val);
-+	if (ret)
-+		return ret;
-+	priv->trmval1 = val & TSU_CODE_MAX;
++			cooling-maps {
++				map0 {
++					trip = <&target>;
++					cooling-device = <&cpu0 0 1>, <&cpu1 0 1>,
++							 <&cpu2 0 1>, <&cpu3 0 1>;
++					contribution = <1024>;
++				};
++			};
 +
- 	return 0;
- }
- 
-@@ -402,11 +385,20 @@ static int rzg3e_thermal_probe(struct platform_device *pdev)
- 	if (IS_ERR(priv->base))
- 		return PTR_ERR(priv->base);
- 
--	/* Parse device tree for trim register info */
--	ret = rzg3e_thermal_parse_dt(priv);
-+	ret = priv->info->get_trim(priv);
- 	if (ret)
- 		return ret;
- 
-+	if (!priv->trmval0 || !priv->trmval1 ||
-+	    priv->trmval0 == priv->trmval1 ||
-+	    priv->trmval0 == TSU_CODE_MAX || priv->trmval1 == TSU_CODE_MAX)
-+		return dev_err_probe(priv->dev, -EINVAL,
-+				     "Invalid calibration: b=0x%03x, c=0x%03x\n",
-+				     priv->trmval0, priv->trmval1);
++			trips {
++				target: trip-point {
++					temperature = <95000>;
++					hysteresis = <1000>;
++					type = "passive";
++				};
 +
-+	dev_dbg(priv->dev, "Calibration: b=0x%03x (%u), c=0x%03x (%u)\n",
-+		priv->trmval0, priv->trmval0, priv->trmval1, priv->trmval1);
++				sensor_crit: sensor-crit {
++					temperature = <120000>;
++					hysteresis = <1000>;
++					type = "critical";
++				};
++			};
++		};
++	};
 +
- 	/* Get clock to verify frequency - clock is managed by power domain */
- 	clk = devm_clk_get(dev, NULL);
- 	if (IS_ERR(clk))
-@@ -423,12 +415,6 @@ static int rzg3e_thermal_probe(struct platform_device *pdev)
- 		return dev_err_probe(dev, PTR_ERR(priv->rstc),
- 				     "Failed to get/deassert reset control\n");
- 
--	/* Get calibration data */
--	ret = rzg3e_thermal_get_calibration(priv);
--	if (ret)
--		return dev_err_probe(dev, ret,
--				     "Failed to get valid calibration data\n");
--
- 	/* Get comparison interrupt */
- 	irq = platform_get_irq_byname(pdev, "adcmpi");
- 	if (irq < 0)
-@@ -533,6 +519,7 @@ static const struct dev_pm_ops rzg3e_thermal_pm_ops = {
- };
- 
- static const struct rzg3e_thermal_info rzg3e_thermal_info = {
-+	.get_trim = rzg3e_thermal_get_syscon_trim,
- 	.temp_d_mc = -41000,
- 	.temp_e_mc = 126000,
- };
+ 	timer {
+ 		compatible = "arm,armv8-timer";
+ 		interrupts-extended = <&gic GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
 -- 
 2.53.0
 
