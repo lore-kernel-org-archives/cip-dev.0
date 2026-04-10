@@ -2,28 +2,28 @@ Return-Path: <cosmin-gabriel.tanislav.xa@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95C08F459FC
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8890CF45A01
 	for <webhook@archiver.kernel.org>; Fri, 10 Apr 2026 17:03:28 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.msgproc02-g2.161295.1775840591878637041
  for <cip-dev@lists.cip-project.org>;
- Fri, 10 Apr 2026 10:03:21 -0700
+ Fri, 10 Apr 2026 10:03:19 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: cosmin-gabriel.tanislav.xa@renesas.com)
-X-CSE-ConnectionGUID: KwrdNrcfSFOakv13ZuiLZA==
-X-CSE-MsgGUID: AYj3W4xwQCGcC3RCWsnARQ==
+X-CSE-ConnectionGUID: rdJte12CTRShBLR+aIYR/Q==
+X-CSE-MsgGUID: A+QYw8cIROeIcdj4V/DfzQ==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 11 Apr 2026 02:03:21 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 11 Apr 2026 02:03:19 +0900
 Received: from demon-pc.localdomain (unknown [10.226.93.85])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 09747402F526;
-	Sat, 11 Apr 2026 02:03:19 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 57321402F558;
+	Sat, 11 Apr 2026 02:03:18 +0900 (JST)
 From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.12.y-cip 11/11] arm64: dts: renesas: r9a09g087: Add TSU and thermal zones support
-Date: Fri, 10 Apr 2026 20:02:15 +0300
-Message-ID: <20260410170215.393698-12-cosmin-gabriel.tanislav.xa@renesas.com>
+Subject: [PATCH 6.12.y-cip 10/11] arm64: dts: renesas: r9a09g087: Add OPP table
+Date: Fri, 10 Apr 2026 20:02:14 +0300
+Message-ID: <20260410170215.393698-11-cosmin-gabriel.tanislav.xa@renesas.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260410170215.393698-1-cosmin-gabriel.tanislav.xa@renesas.com>
 References: <20260410170215.393698-1-cosmin-gabriel.tanislav.xa@renesas.com>
@@ -33,118 +33,79 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 10 Apr 2026 17:03:28 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22674
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22673
 
-commit 5c4c34ea8dc02350fad11bc5423ca065595bbd54 upstream.
+commit ffcc240e3680e77d36c99026f5da81553d559246 upstream.
 
-The Renesas RZ/N2H (R9A09G087) SoC includes a Temperature Sensor Unit
-(TSU). The device provides real-time temperature measurements for
-thermal management, utilizing a single dedicated channel for temperature
-sensing.
-
-The TSU loads calibration data via SMC SIP.
+Add OPP table for RZ/N2H SoC.
 
 Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20251126130356.2768625-10-cosmin-gabriel.tanislav.xa@renesas.com
+Link: https://patch.msgid.link/20251126130356.2768625-8-cosmin-gabriel.tanislav.xa@renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a09g087.dtsi | 46 ++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+ arch/arm64/boot/dts/renesas/r9a09g087.dtsi | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-index de9e23becb12c..b1f6b997376f5 100644
+index 15fb09d963476..de9e23becb12c 100644
 --- a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-@@ -35,6 +35,7 @@ cpu0: cpu@0 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_CA55C0>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
+@@ -13,6 +13,17 @@ / {
+ 	#address-cells = <2>;
+ 	#size-cells = <2>;
  
-@@ -45,6 +46,7 @@ cpu1: cpu@100 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_CA55C1>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -55,6 +57,7 @@ cpu2: cpu@200 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_CA55C2>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -65,6 +68,7 @@ cpu3: cpu@300 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_CA55C3>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -342,6 +346,17 @@ wdt5: watchdog@80083400 {
- 			status = "disabled";
- 		};
- 
-+		tsu: thermal@80086000 {
-+			compatible = "renesas,r9a09g087-tsu", "renesas,r9a09g077-tsu";
-+			reg = <0 0x80086000 0 0x1000>;
-+			interrupts = <GIC_SPI 713 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 714 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "adi", "adcmpi";
-+			clocks = <&cpg CPG_MOD 307>;
-+			power-domains = <&cpg>;
-+			#thermal-sensor-cells = <0>;
++	cluster0_opp: opp-table-0 {
++		compatible = "operating-points-v2";
++
++		opp-600000000 {
++			opp-hz = /bits/ 64 <600000000>;
 +		};
-+
- 		i2c0: i2c@80088000 {
- 			compatible = "renesas,riic-r9a09g087", "renesas,riic-r9a09g077";
- 			reg = <0 0x80088000 0 0x400>;
-@@ -1060,6 +1075,37 @@ stmmac_axi_setup: stmmac-axi-config {
- 		snps,blen = <16 8 4 0 0 0 0>;
- 	};
- 
-+	thermal-zones {
-+		cpu-thermal {
-+			polling-delay = <1000>;
-+			polling-delay-passive = <250>;
-+			thermal-sensors = <&tsu>;
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&target>;
-+					cooling-device = <&cpu0 0 1>, <&cpu1 0 1>,
-+							 <&cpu2 0 1>, <&cpu3 0 1>;
-+					contribution = <1024>;
-+				};
-+			};
-+
-+			trips {
-+				target: trip-point {
-+					temperature = <95000>;
-+					hysteresis = <1000>;
-+					type = "passive";
-+				};
-+
-+				sensor_crit: sensor-crit {
-+					temperature = <120000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
++		opp-1200000000 {
++			opp-hz = /bits/ 64 <1200000000>;
 +		};
 +	};
 +
- 	timer {
- 		compatible = "arm,armv8-timer";
- 		interrupts-extended = <&gic GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -23,6 +34,8 @@ cpu0: cpu@0 {
+ 			device_type = "cpu";
+ 			next-level-cache = <&L3_CA55>;
+ 			enable-method = "psci";
++			clocks = <&cpg CPG_CORE R9A09G087_CLK_CA55C0>;
++			operating-points-v2 = <&cluster0_opp>;
+ 		};
+ 
+ 		cpu1: cpu@100 {
+@@ -31,6 +44,8 @@ cpu1: cpu@100 {
+ 			device_type = "cpu";
+ 			next-level-cache = <&L3_CA55>;
+ 			enable-method = "psci";
++			clocks = <&cpg CPG_CORE R9A09G087_CLK_CA55C1>;
++			operating-points-v2 = <&cluster0_opp>;
+ 		};
+ 
+ 		cpu2: cpu@200 {
+@@ -39,6 +54,8 @@ cpu2: cpu@200 {
+ 			device_type = "cpu";
+ 			next-level-cache = <&L3_CA55>;
+ 			enable-method = "psci";
++			clocks = <&cpg CPG_CORE R9A09G087_CLK_CA55C2>;
++			operating-points-v2 = <&cluster0_opp>;
+ 		};
+ 
+ 		cpu3: cpu@300 {
+@@ -47,6 +64,8 @@ cpu3: cpu@300 {
+ 			device_type = "cpu";
+ 			next-level-cache = <&L3_CA55>;
+ 			enable-method = "psci";
++			clocks = <&cpg CPG_CORE R9A09G087_CLK_CA55C3>;
++			operating-points-v2 = <&cluster0_opp>;
+ 		};
+ 
+ 		L3_CA55: cache-controller-0 {
 -- 
 2.53.0
 
