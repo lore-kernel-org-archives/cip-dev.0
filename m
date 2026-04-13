@@ -2,28 +2,28 @@ Return-Path: <Chris.Brandt@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6673F34C79
-	for <webhook@archiver.kernel.org>; Mon, 13 Apr 2026 17:18:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02558F34C7D
+	for <webhook@archiver.kernel.org>; Mon, 13 Apr 2026 17:18:44 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.msgproc02-g2.278275.1776100714896898936
  for <cip-dev@lists.cip-project.org>;
- Mon, 13 Apr 2026 10:18:43 -0700
+ Mon, 13 Apr 2026 10:18:38 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: chris.brandt@renesas.com)
-X-CSE-ConnectionGUID: twyaU8kBSua7BTFutNgIJg==
-X-CSE-MsgGUID: uGbRlArdRBWkEnI/inzjcQ==
+X-CSE-ConnectionGUID: Z3u1f9v6RIS3Ktt7nJA9Fg==
+X-CSE-MsgGUID: hFcwFknsQ4e8hTxIJPCL9A==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 14 Apr 2026 02:18:42 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 14 Apr 2026 02:18:38 +0900
 Received: from lenovo-p330 (unknown [132.158.152.97])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 96E334037DB0;
-	Tue, 14 Apr 2026 02:18:41 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 4755E4037DB0;
+	Tue, 14 Apr 2026 02:18:37 +0900 (JST)
 From: Chris Brandt <chris.brandt@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
 	Pavel Machek <pavel@nabladev.com>
-Subject: [PATCH 6.1.y-cip 7/7] clk: renesas: Add missing log message terminators
-Date: Mon, 13 Apr 2026 13:18:31 -0400
-Message-ID: <20260413171831.3091144-7-chris.brandt@renesas.com>
+Subject: [PATCH 6.1.y-cip 4/7] drm: renesas: rz-du: mipi_dsi: Set DSI divider
+Date: Mon, 13 Apr 2026 13:18:28 -0400
+Message-ID: <20260413171831.3091144-4-chris.brandt@renesas.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260413171831.3091144-1-chris.brandt@renesas.com>
 References: <20260413171831.3091144-1-chris.brandt@renesas.com>
@@ -32,119 +32,66 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 13 Apr 2026 17:18:43 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22695
+ <cip-dev@lists.cip-project.org>; Mon, 13 Apr 2026 17:18:44 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22692
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+commit fb797a70108f3fda83fde6dea30bee4be7d5df8b upstream.
 
-commit 4fef3fd633be4a1a18c490a63f4131284f6ee0f4 upstream.
+Before the MIPI DSI clock source can be configured, the target divide
+ratio needs to be set.
 
-Complete printed messages should be terminated by newline characters.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Brian Masney <bmasney@redhat.com>
-Link: https://patch.msgid.link/cd0b3624066b80ed0bb00d489c99e2c1a06d755f.1768480559.git.geert+renesas@glider.be
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+Tested-by: Biju Das <biju.das.jz@bp.renesas.com>
+Fixes: 5a4326f2e3b1 ("clk: renesas: rzg2l: Remove DSI clock rate restrictions")
+Link: https://patch.msgid.link/20260227015216.2721504-1-chris.brandt@renesas.com
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 ---
- drivers/clk/renesas/clk-vbattb.c       | 4 ++--
- drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
- drivers/clk/renesas/rzg2l-cpg.c        | 6 +++---
- drivers/clk/renesas/rzv2h-cpg.c        | 6 +++---
- 4 files changed, 9 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/renesas/clk-vbattb.c b/drivers/clk/renesas/clk-vbattb.c
-index ff9d1ead455c..2a961775b1d8 100644
---- a/drivers/clk/renesas/clk-vbattb.c
-+++ b/drivers/clk/renesas/clk-vbattb.c
-@@ -69,11 +69,11 @@ static void vbattb_clk_action(void *data)
+diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+index d3aae2501b9e..bb56548fafa1 100644
+--- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
++++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+@@ -1123,6 +1123,7 @@ static int rzg2l_mipi_dsi_host_attach(struct mipi_dsi_host *host,
+ 				      struct mipi_dsi_device *device)
+ {
+ 	struct rzg2l_mipi_dsi *dsi = host_to_rzg2l_mipi_dsi(host);
++	int bpp;
+ 	int ret;
 
- 	ret = reset_control_assert(rstc);
- 	if (ret)
--		dev_err(dev, "Failed to de-assert reset!");
-+		dev_err(dev, "Failed to de-assert reset!\n");
+ 	if (device->lanes > dsi->num_data_lanes) {
+@@ -1132,7 +1133,8 @@ static int rzg2l_mipi_dsi_host_attach(struct mipi_dsi_host *host,
+ 		return -EINVAL;
+ 	}
 
- 	ret = pm_runtime_put_sync(dev);
- 	if (ret < 0)
--		dev_err(dev, "Failed to runtime suspend!");
-+		dev_err(dev, "Failed to runtime suspend!\n");
+-	switch (mipi_dsi_pixel_format_to_bpp(device->format)) {
++	bpp = mipi_dsi_pixel_format_to_bpp(device->format);
++	switch (bpp) {
+ 	case 24:
+ 		break;
+ 	case 18:
+@@ -1163,6 +1165,18 @@ static int rzg2l_mipi_dsi_host_attach(struct mipi_dsi_host *host,
 
- 	of_clk_del_provider(dev->of_node);
+ 	drm_bridge_add(&dsi->bridge);
+
++	/*
++	 * Report the required division ratio setting for the MIPI clock dividers.
++	 *
++	 * vclk * bpp = hsclk * 8 * num_lanes
++	 *
++	 * vclk * DSI_AB_divider = hsclk * 16
++	 *
++	 *   which simplifies to...
++	 * DSI_AB_divider = bpp * 2 / num_lanes
++	 */
++	rzg2l_cpg_dsi_div_set_divider(bpp * 2 / dsi->lanes, PLL5_TARGET_DSI);
++
+ 	return 0;
  }
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 80bfc225b31b..ec1877d7e44d 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -320,7 +320,7 @@ struct clk *cpg_mssr_clk_src_twocell_get(struct of_phandle_args *clkspec,
- 	}
 
- 	if (IS_ERR(clk))
--		dev_err(dev, "Cannot get %s clock %u: %ld", type, clkidx,
-+		dev_err(dev, "Cannot get %s clock %u: %ld\n", type, clkidx,
- 		       PTR_ERR(clk));
- 	else
- 		dev_dbg(dev, "clock (%u, %u) is %pC at %lu Hz\n",
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index 8a9e55d0974d..e8ea65446890 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -986,7 +986,7 @@ static int rzg2l_cpg_sipll5_set_rate(struct clk_hw *hw,
- 	ret = readl_poll_timeout(priv->base + CPG_SIPLL5_MON, val,
- 				 !(val & CPG_SIPLL5_MON_PLL5_LOCK), 100, 250000);
- 	if (ret) {
--		dev_err(priv->dev, "failed to release pll5 lock");
-+		dev_err(priv->dev, "failed to release pll5 lock\n");
- 		return ret;
- 	}
-
-@@ -1013,7 +1013,7 @@ static int rzg2l_cpg_sipll5_set_rate(struct clk_hw *hw,
- 	ret = readl_poll_timeout(priv->base + CPG_SIPLL5_MON, val,
- 				 (val & CPG_SIPLL5_MON_PLL5_LOCK), 100, 250000);
- 	if (ret) {
--		dev_err(priv->dev, "failed to lock pll5");
-+		dev_err(priv->dev, "failed to lock pll5\n");
- 		return ret;
- 	}
-
-@@ -1219,7 +1219,7 @@ static struct clk
- 	}
-
- 	if (IS_ERR(clk))
--		dev_err(dev, "Cannot get %s clock %u: %ld", type, clkidx,
-+		dev_err(dev, "Cannot get %s clock %u: %ld\n", type, clkidx,
- 			PTR_ERR(clk));
- 	else
- 		dev_dbg(dev, "clock (%u, %u) is %pC at %lu Hz\n",
-diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-cpg.c
-index 2e11c0c9591a..903000459160 100644
---- a/drivers/clk/renesas/rzv2h-cpg.c
-+++ b/drivers/clk/renesas/rzv2h-cpg.c
-@@ -602,7 +602,7 @@ static int rzv2h_cpg_pll_set_rate(struct pll_clk *pll_clk,
- 					val, !(val & CPG_PLL_MON_LOCK),
- 					100, 2000);
- 	if (ret) {
--		dev_err(priv->dev, "Failed to put PLLDSI into standby mode");
-+		dev_err(priv->dev, "Failed to put PLLDSI into standby mode\n");
- 		return ret;
- 	}
-
-@@ -630,7 +630,7 @@ static int rzv2h_cpg_pll_set_rate(struct pll_clk *pll_clk,
- 					val, (val & CPG_PLL_MON_LOCK),
- 					100, 2000);
- 	if (ret) {
--		dev_err(priv->dev, "Failed to put PLLDSI into normal mode");
-+		dev_err(priv->dev, "Failed to put PLLDSI into normal mode\n");
- 		return ret;
- 	}
-
-@@ -1023,7 +1023,7 @@ static struct clk
- 	}
-
- 	if (IS_ERR(clk))
--		dev_err(dev, "Cannot get %s clock %u: %ld", type, clkidx,
-+		dev_err(dev, "Cannot get %s clock %u: %ld\n", type, clkidx,
- 			PTR_ERR(clk));
- 	else
- 		dev_dbg(dev, "clock (%u, %u) is %pC at %lu Hz\n",
 --
 2.52.0
 
