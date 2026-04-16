@@ -2,82 +2,100 @@ Return-Path: <pavel@nabladev.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAD10F8D77F
-	for <webhook@archiver.kernel.org>; Thu, 16 Apr 2026 20:57:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3597DF433C8
+	for <webhook@archiver.kernel.org>; Thu, 16 Apr 2026 20:59:26 +0000 (UTC)
 Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.26330.1776373062522918564
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.26402.1776373162768588108
  for <cip-dev@lists.cip-project.org>;
- Thu, 16 Apr 2026 13:57:42 -0700
+ Thu, 16 Apr 2026 13:59:23 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=imakgMKN;
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=Fq8eAbzu;
  spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7129B11411C;
-	Thu, 16 Apr 2026 22:57:40 +0200 (CEST)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B71B611411D;
+	Thu, 16 Apr 2026 22:59:20 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1776373060;
+	s=dkim; t=1776373161;
 	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=m0qqMzui6TOwHlsv5hRY/QpbCNjbXHTGpHjpqQAX5ZE=;
-	b=imakgMKNqYA7Hd/CAiJu1a9vIzQCd1Qn8JkEzG8OHn82dAQ/Mya4k8H2qmiD5Mb8qzXJV0
-	twzJ0T9jCXJB5mvMTvrANJyYWWDb40LsDZtftuSbgNYNRksHcVqNky5RFnk4H86wPxnU5g
-	32Gm+F5ldtYJQrx4IM+J2JaeSSnfrxLfOJp0e59cpiCR+r3CLM9AXiXBlzroX1bDo4k7XG
-	wPq1ZGfV1qDFgMVMG9wjiLz6vsJb/G/HMHXmMDL8tveB2pqQ3KdvJ8k8xpMT4TL2pvGKBZ
-	rhpEmOaJT0jDct/y+fj9RC+2inSfu3cOkhdB2MZvHF1o9koOu0mpw0j9cMYOJw==
-Date: Thu, 16 Apr 2026 22:57:39 +0200
+	 in-reply-to:references; bh=IDU6hRmtshAjDPc8dtGhdyMG9sOgNDQrpJHwmwNenl8=;
+	b=Fq8eAbzuopXJ2+P9ZpcP89EKOyoIAodCOtxXSiiosPqMzjcNYDITntools2KPDhl3eYR4a
+	8cYl4/ffUWO3+85x4FQhLiirdoqKQiPywZD+0OMwd88qjhHmlimG5fP6biEbvwYpp0mT3Z
+	jZjbeeA6Hsn3BC6WBNlDsu9MKodqas0J2XMjX5YpRpCBWm0RWSeN3OjuIRlahjpDAndMeS
+	fQqrGtcn7T9pE2Jt7QMoKgxF5mtTlKYmccgeO/c2BXzcXr2KVgeHWiDJq0ZRR8PrAR2rBC
+	Lf3eDKHYcRf/WgdL+UZCgOW+Ml98PrcKN7Hi6Y7UzNzJfTBK8E0beSC/EoUCGQ==
+Date: Thu, 16 Apr 2026 22:59:19 +0200
 From: Pavel Machek <pavel@nabladev.com>
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: cip-dev@lists.cip-project.org,
-	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
-	Pavel Machek <pavel@nabladev.com>
-Subject: Re: [PATCH 6.1.y-cip 1/7] drm: renesas: rz-du: Add atomic_pre_enable
-Message-ID: <aeFNQ-qnm-GNv7jW@duo.ucw.cz>
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Pavel Machek <pavel@nabladev.com>,
+	"cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
+Subject: Re: [PATCH 6.1.y-cip 2/7] drm: renesas: rz-du: Implement MIPI DSI
+ host transfers
+Message-ID: <aeFNp1ow-aKSZWx0@duo.ucw.cz>
 References: <20260413171831.3091144-1-chris.brandt@renesas.com>
+ <20260413171831.3091144-2-chris.brandt@renesas.com>
+ <ad4JUH9p71MPyIlK@duo.ucw.cz>
+ <OS3PR01MB8319E1A2764C46EC3D8C326E8A252@OS3PR01MB8319.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="V9nn7fHxM8RWfFAm"
+	protocol="application/pgp-signature"; boundary="er2JjA4OyOf7+aMp"
 Content-Disposition: inline
-In-Reply-To: <20260413171831.3091144-1-chris.brandt@renesas.com>
+In-Reply-To: <OS3PR01MB8319E1A2764C46EC3D8C326E8A252@OS3PR01MB8319.jpnprd01.prod.outlook.com>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 16 Apr 2026 20:57:43 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22754
+ <cip-dev@lists.cip-project.org>; Thu, 16 Apr 2026 20:59:26 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22755
 
 
---V9nn7fHxM8RWfFAm
+--er2JjA4OyOf7+aMp
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> commit 5ce16c169a4cb8ffceabfd48853d0bf605ce785a upstream.
+> These patches are direct backports from mainline.
+> I am trying to keep the CIP version as close to the mainline version as p=
+ossible.
+
+Understood. You don't have to change these in -CIP, but consider
+fixing them in mainline.
+
+> > > +	dsi->dcs_buf_virt =3D dma_alloc_coherent(dsi->host.dev, RZG2L_DCS_B=
+UF_SIZE,
+> > > +					       &dsi->dcs_buf_phys, GFP_KERNEL);
+> > > +	if (!dsi->dcs_buf_virt)
+> > > +		return -ENOMEM;
+> > > +
+> > >  	return 0;
+> > >
+> >
+> > This probably should be { err =3D -ENOMEM; goto err_pm_disable; }
 >=20
-> When drm_panel.prepare_prev_first is set to true in a panel driver, the
-> panel expects the MIPI DSI hardware to be already configured before the
-> panel's prepare function is called because it might need to send DCS
-> commands.
+> That is a good point.
+> I wrote that part of the driver for an older version of the kernel a coup=
+le years ago before they had those return options.
+> Then, someone else ported it to the mainline version of the driver and su=
+bmitted it.
+> When I reviewed the mainline version, I didn't catch that.
+> I might push a fix to mainline with CC:stable.
+>=20
 
-For whole series: I had some minor comments here, but those should be
-fixed in mainline, first, so they should not block the merge.
-
-Reviewed-by: Pavel Machek <pavel@nabladev.com>
-
-I can apply the series if it passes testing and there are no other
-comments.
+Yes, please.
 
 Best regards,
-                                                                Pavel
+									Pavel
 
---V9nn7fHxM8RWfFAm
+--er2JjA4OyOf7+aMp
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaeFNQwAKCRAw5/Bqldv6
-8plyAJ9fA/0A9P7FIv8xCeX84Fy2IagkGwCgugokjCQ4cqPRES5kDIjpPi60H9g=
-=IFMI
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaeFNpwAKCRAw5/Bqldv6
+8gYwAKCT0ibvBx0gYG+nrcmGcs9DlCvQswCePGsb6/Wu7ON3/ShTG8b9jB/D9Yg=
+=p9Wt
 -----END PGP SIGNATURE-----
 
---V9nn7fHxM8RWfFAm--
+--er2JjA4OyOf7+aMp--
 
