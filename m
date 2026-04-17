@@ -2,34 +2,36 @@ Return-Path: <yoshitake.kobayashi.x25@mail.toshiba>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DAD6EA71AF
-	for <webhook@archiver.kernel.org>; Sun, 19 Apr 2026 23:59:21 +0000 (UTC)
-Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.42964.1776426435936954557
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 660ADEA71B1
+	for <webhook@archiver.kernel.org>; Sun, 19 Apr 2026 23:59:31 +0000 (UTC)
+Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.42970.1776426450947161940
  for <cip-dev@lists.cip-project.org>;
- Fri, 17 Apr 2026 04:47:17 -0700
+ Fri, 17 Apr 2026 04:47:31 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=gouravsingh@siemens.com header.s=fm2 header.b=mIRY8vkB;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227, mailfrom: fm-1333022-20260417113709c4a4710b6000020761-teilnf@rts-flowmailer.siemens.com)
-Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20260417113709c4a4710b6000020761
+ dkim=pass header.i=gouravsingh@siemens.com header.s=fm2 header.b=gchFkqcm;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-1333022-2026041711372593f2c8d335000207ea-b8nihr@rts-flowmailer.siemens.com)
+Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 2026041711372593f2c8d335000207ea
         for <cip-dev@lists.cip-project.org>;
-        Fri, 17 Apr 2026 13:37:09 +0200
+        Fri, 17 Apr 2026 13:37:25 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
  d=siemens.com; i=gouravsingh@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=fJZWPb96XYCNM2zQTJfwJQtKJR+IB2gU8HPYwpU60iI=;
- b=mIRY8vkB9AJm0pSzX64mrNVV6hDPyWOXYtH3cFAPJdua1H9ESEeni4ETrGG9cR1NrQnj3U
- lleS9CXfD2ibT2GT0R1FJNu2+4tWMusbTAVHYWpIHPl5GTacH5H0NiTk9RrYc1yTlFvao/kL
- PPis+d7/EvE4AxuMNH++VOpBheBlVKCiJyeNzgdkuYwR51LfTD58LzWNvzhZXR3BhDr48JsS
- 0/c10x/s8E7dah8yho5b42V+Q742IHAO7SNa561FjFWntTaVAnuPQhv15wcf8F04ETuTj1kx
- 2JXoCB04pUWk3ueyGHmp13aqpoxwQEjej/VOdGmjbW3DvRFX1xsxLOwA==;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
+ bh=vzk3SNWLfymF0F9rJyklhM5AovqUOSLM1XlABXrcYTY=;
+ b=gchFkqcmui+YWbSz7MFCKufAJPDWxyKJ3QYJmadrGed3S1pP3pywx91V7SJLpMr8092wQO
+ fylWUcc0k+KCQF8SXYUGdwqZo2EaWJuPw3prOx8hDEMQUnS1oDduRZqMbMeZM6PtCtnK56Xg
+ qw330cc5mS9mvcrjvKzu9S6naaAbu6Z0WWgJ+W4kHmZxKN5dL9wGBM43PHQgWnlZKkKWpxqJ
+ 1bceEhdaaSWJ7H2L6Y//p+qSO2pgXPETjhvCSW+zRHqlvYUEzfMF2NFA8/jf8JGqCpBxR/6b
+ 5ooY5hGORohv1pHLI59Dt1oGv+bZynv8Gv/pSwgFGBvkkyJGX/fjMamA==;
 From: Gourav Singh <gouravsingh@siemens.com>
 To: cip-dev@lists.cip-project.org
 Cc: jan.kiszka@siemens.com,
 	Gourav Singh <gouravsingh@siemens.com>
-Subject: [isar-cip-core][PATCH 1/2] initramfs-crypt-hook: add configurable mount options for encrypted partitions
-Date: Fri, 17 Apr 2026 17:06:50 +0530
-Message-Id: <20260417113651.3923307-1-gouravsingh@siemens.com>
+Subject: [isar-cip-core][PATCH 2/2] tests: remount /var with exec after login for LAVA test jobs
+Date: Fri, 17 Apr 2026 17:06:51 +0530
+Message-Id: <20260417113651.3923307-2-gouravsingh@siemens.com>
+In-Reply-To: <20260417113651.3923307-1-gouravsingh@siemens.com>
+References: <20260417113651.3923307-1-gouravsingh@siemens.com>
 MIME-Version: 1.0
 X-Flowmailer-Platform: Siemens
 Feedback-ID: 519:519-1333022:519-21489:flowmailer
@@ -37,83 +39,125 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Sun, 19 Apr 2026 23:59:21 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22763
+ <cip-dev@lists.cip-project.org>; Sun, 19 Apr 2026 23:59:31 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22764
 
-Introduce INITRAMFS_CRYPT_MOUNT_OPTIONS BitBake variable to allow
-configuring mount options for encrypted partitions at build time,
-following the same pattern as other INITRAMFS_* variables.
+The crypt hook now mounts /var with noexec by default for security
+reasons. LAVA places and runs its test binaries under /home, which is
+a symlink to /var/home, so any binary execution by lava binaries
+fails with "Permission denied" due to the noexec flag on /var.
 
-The overlay hook already sets nodev, nosuid and noexec mount options
-for the overlay storage device. However, the crypt hook was mounting
-encrypted partitions without explicit mount options, relying on
-kernel/mount defaults, leaving the same security properties unenforced
-for encrypted partitions.
+Add a login_commands step to all affected LAVA job templates to
+remount /var with exec after login. This remount is temporary and
+only applies to the running test session, it does not persist across
+reboots and does not relax the default mount security options at the
+image level.
 
-Changes:
-- Add INITRAMFS_CRYPT_MOUNT_OPTIONS BitBake variable with a safe
-  default of "defaults,nodev,nosuid,noexec"
-- Expose it via encrypt_partition.env.tmpl as MOUNT_OPTIONS
-- Pass MOUNT_OPTIONS to mount_partition() via mount -o in
-  local-bottom-complete
-- Add INITRAMFS_CRYPT_MOUNT_OPTIONS to TEMPLATE_VARS so it is
-  expanded into the env template at build time
+Affected templates:
+- IEC_template.yml
+- M-COM-x86.yml
+- secureboot_template.yml
+- swupdate_negative_test.yml
+- swupdate_reboot_without_confirm.yml
+- swupdate_template.yml
 
 Signed-off-by: Gourav Singh <gouravsingh@siemens.com>
 ---
- .../initramfs-crypt-hook/files/encrypt_partition.env.tmpl     | 1 +
- .../initramfs-crypt-hook/files/local-bottom-complete          | 4 +++-
- .../initramfs-crypt-hook/initramfs-crypt-hook_0.10.bb         | 4 +++-
- 3 files changed, 7 insertions(+), 2 deletions(-)
+ tests/templates/IEC_template.yml                    | 2 ++
+ tests/templates/M-COM-x86.yml                       | 2 ++
+ tests/templates/secureboot_template.yml             | 2 ++
+ tests/templates/swupdate_negative_test.yml          | 2 ++
+ tests/templates/swupdate_reboot_without_confirm.yml | 2 ++
+ tests/templates/swupdate_template.yml               | 4 ++++
+ 6 files changed, 14 insertions(+)
 
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.env.tmpl b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.env.tmpl
-index 452714d..787172f 100644
---- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.env.tmpl
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.env.tmpl
-@@ -8,3 +8,4 @@ WATCHDOG_DEV="${INITRAMFS_WATCHDOG_DEVICE}"
- HASH_TYPE="${CRYPT_HASH_TYPE}"
- KEY_ALGORITHM="${CRYPT_KEY_ALGORITHM}"
- ENCRYPTION_IS_OPTIONAL="${CRYPT_ENCRYPTION_OPTIONAL}"
-+MOUNT_OPTIONS="${INITRAMFS_CRYPT_MOUNT_OPTIONS}"
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-complete b/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-complete
-index 064e41c..d8516bc 100644
---- a/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-complete
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-complete
-@@ -36,13 +36,15 @@ esac
- # get configuration variables
- . /usr/share/encrypt_partition/encrypt_partition.env
+diff --git a/tests/templates/IEC_template.yml b/tests/templates/IEC_template.yml
+index 148f07e..0c4ece5 100644
+--- a/tests/templates/IEC_template.yml
++++ b/tests/templates/IEC_template.yml
+@@ -59,6 +59,8 @@ actions:
+       username: "root"
+       password_prompt: "Password:"
+       password: "CIPsecurity@123"
++      login_commands:
++        - mount -o remount,exec /var
 
-+mount_options="$MOUNT_OPTIONS"
- mount_partition() {
- 	partition_dev_path=$1
- 	partition_mountpoint=$2
- 	[ "$debug" = "y" ] && echo "mount device: '$partition_dev_path' to '$partition_mountpoint'"
- 	if ! mountpoint -q "${partition_mountpoint}"; then
- 		mkdir -p "${partition_mountpoint}"
--		if ! mount -t "$(get_fstype "${partition_dev_path}")" "${partition_dev_path}" \
-+		if ! mount -o "${mount_options}" \
-+             -t "$(get_fstype "${partition_dev_path}")" "${partition_dev_path}" \
- 			 "${partition_mountpoint}"; then
- 			panic "Can't mount partition '${partition_dev_path}'!"
- 		fi
-diff --git a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.10.bb b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.10.bb
-index 18a10a8..c0572f2 100644
---- a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.10.bb
-+++ b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.10.bb
-@@ -95,10 +95,12 @@ CRYPT_KEY_ALGORITHM ??= "ecc"
- CRYPT_ENCRYPTION_OPTIONAL ??= "false"
- # add support for btrfs encryption
- CRYPT_BTRFS_SUPPORT ??= "0"
-+# mount options for encrypted partitions
-+INITRAMFS_CRYPT_MOUNT_OPTIONS ??= "defaults,nodev,nosuid,noexec"
+ # TEST_BLOCK
+ - test:
+diff --git a/tests/templates/M-COM-x86.yml b/tests/templates/M-COM-x86.yml
+index 7cb6cc2..b286656 100644
+--- a/tests/templates/M-COM-x86.yml
++++ b/tests/templates/M-COM-x86.yml
+@@ -46,6 +46,8 @@ actions:
+       username: "root"
+       password_prompt: "Password:"
+       password: "CIPsecurity@123"
++      login_commands:
++        - mount -o remount,exec /var
+     transfer_overlay:
+       transfer_method: http
+       download_command: "curl -H 'Connection: close' -v --trace-time --output overlay-1.1.1.4.tar.gz"
+diff --git a/tests/templates/secureboot_template.yml b/tests/templates/secureboot_template.yml
+index 0a075e2..89c2dc1 100644
+--- a/tests/templates/secureboot_template.yml
++++ b/tests/templates/secureboot_template.yml
+@@ -59,6 +59,8 @@ actions:
+       username: "root"
+       password_prompt: "Password:"
+       password: "CIPsecurity@123"
++      login_commands:
++        - mount -o remount,exec /var
+     parameters:
+       kernel-start-message: "EFI stub: UEFI Secure Boot is enabled."
 
- TEMPLATE_VARS += "CRYPT_PARTITIONS CRYPT_CREATE_FILE_SYSTEM_CMD \
-     CRYPT_SETUP_TIMEOUT INITRAMFS_WATCHDOG_DEVICE CRYPT_HASH_TYPE \
--    CRYPT_KEY_ALGORITHM CRYPT_ENCRYPTION_OPTIONAL"
-+    CRYPT_KEY_ALGORITHM CRYPT_ENCRYPTION_OPTIONAL INITRAMFS_CRYPT_MOUNT_OPTIONS"
- TEMPLATE_FILES += "encrypt_partition.env.tmpl"
+diff --git a/tests/templates/swupdate_negative_test.yml b/tests/templates/swupdate_negative_test.yml
+index 250eaa8..49c6f2e 100644
+--- a/tests/templates/swupdate_negative_test.yml
++++ b/tests/templates/swupdate_negative_test.yml
+@@ -67,6 +67,8 @@ actions:
+       username: "root"
+       password_prompt: "Password:"
+       password: "CIPsecurity@123"
++      login_commands:
++        - mount -o remount,exec /var
 
- OVERRIDES .= "${@':expand-on-crypt' if ':expand' in d.getVar('CRYPT_PARTITIONS') else ''}"
+ # TEST_BLOCK
+ # Fail the job if software update application error is not as expected
+diff --git a/tests/templates/swupdate_reboot_without_confirm.yml b/tests/templates/swupdate_reboot_without_confirm.yml
+index 074eb1a..58014d8 100644
+--- a/tests/templates/swupdate_reboot_without_confirm.yml
++++ b/tests/templates/swupdate_reboot_without_confirm.yml
+@@ -25,6 +25,8 @@
+       username: "root"
+       password_prompt: "Password:"
+       password: "CIPsecurity@123"
++      login_commands:
++        - mount -o remount,exec /var
+     parameters:
+        kernel-start-message: "kernel: C:BOOT0:linux.efi"
+
+diff --git a/tests/templates/swupdate_template.yml b/tests/templates/swupdate_template.yml
+index d62d312..234298e 100644
+--- a/tests/templates/swupdate_template.yml
++++ b/tests/templates/swupdate_template.yml
+@@ -59,6 +59,8 @@ actions:
+       username: "root"
+       password_prompt: "Password:"
+       password: "CIPsecurity@123"
++      login_commands:
++        - mount -o remount,exec /var
+
+ # TEST_BLOCK 1
+ # Fail the job if software update application failed
+@@ -102,6 +104,8 @@ actions:
+       username: "root"
+       password_prompt: "Password:"
+       password: "CIPsecurity@123"
++      login_commands:
++        - mount -o remount,exec /var
+     parameters:
+        kernel-start-message: "kernel: C:BOOT1:linux.efi"
+
 --
 2.39.5
 
