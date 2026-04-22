@@ -2,51 +2,53 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73988F94CB1
-	for <webhook@archiver.kernel.org>; Tue, 21 Apr 2026 20:47:22 +0000 (UTC)
-Received: from OSPPR02CU001.outbound.protection.outlook.com (OSPPR02CU001.outbound.protection.outlook.com [40.107.159.60])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.49755.1776804439312691952
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D20BF94CC7
+	for <webhook@archiver.kernel.org>; Wed, 22 Apr 2026 05:43:10 +0000 (UTC)
+Received: from DU2PR03CU002.outbound.protection.outlook.com (DU2PR03CU002.outbound.protection.outlook.com [52.101.65.39])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.70376.1776836581560587841
  for <cip-dev@lists.cip-project.org>;
- Tue, 21 Apr 2026 13:47:19 -0700
+ Tue, 21 Apr 2026 22:43:02 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=CgZ+hvJQ;
- spf=pass (domain: siemens.com, ip: 40.107.159.60, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=x4nShEyq;
+ spf=pass (domain: siemens.com, ip: 52.101.65.39, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TGRQkbilBYqgGbbeUOEA86ADvCdSEdflAaD3lYxBuCUk3IG7yDplZaFDOzYPg25Vuyk0O9Flpj3MDFt3CfCh3yCpxLEj66tmCCqqxS+lQrPNc+YdjOs7ndfqZ+qKiZig/v0lYaMQxULcXbPAlRAcekesYSyYkQDpJNkHR0Ux2BJlU6LK5I6zruQy9M1GmvFmCchsyRK324O6w/M4Z4dVu67LhFUIO0OgddewY1r4s25uwva7QsnqMYQlXN4/hv+kdFC3N8/hCNGTfebmJYEEb3ArNpZxVNrwFoyh24itCEybFWBVCkgXRPPDVaXYT5c4ODzvGtjbz33IyaSsVZt8OQ==
+ b=gVdSMmoJM+C0Lut17ol/tShuYFNtrA6FukAtuVWLs8jUCM4pYk9jUBCmNRGUNO6HVIb8piw/bA5B3laHO+3fDJ5Y60VQw++fis4ikMNONKtZk5nE6LgH22Tr2JUY3IklwKc3ZoS3JHuI9OEgWgq5X2PdrK+NC6jfyYOpAlYl3oQoNDNptgaz4V0mrzi+lZT28TEr6px5NDydMFFNmfowtwz8O1GJfldjvykqanIk0mTxqrGVKYtIq2wLXOWFblCckXnTF2BuzvVg71CZ7yhFnpoKk4BjykF3xOQtd13qo4a3EReE7stxsXgOFasonbNycFjBCI/oggzxfpaUODw/SQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AgLc0+eeNhul7yIfWvX7MqbZvF+xcjib+VeCziVbek8=;
- b=Ht/Ps6NASvpQZ3PCOZ/K/mn45ZuQuPAiH703sEY8aszBOt6LOiNVTDuNJ5y8W4O3+cGfBu18C9Dbk9w+QqWoobumlto1xc+12OMURTdWAhIP3PjiPTyMSZs0lHR64cmCblU/yNoNRFTS0YJbB0Wo7SgP7q4qNTrrQqCGEgTc3vC8sV2yUJqEu5MZJ2VNYDlpZ6NPA7J8EE4FqOhE7sckaTyoWLhteA1p/9fJjG3H50yEtPBC4rlxLOHOJyhke31yJmqGuyzwh3PdkTTts042gPTf/j32GZswzwSwbVdLKTJZ5cZ0pYPHK8a5ECUQbRQWG5GqkSfSpAonqfflmzb4ng==
+ bh=IHp5HOX7caWe59Q5ZLaDzoJq6SbkHFrb+WJC4JPFvHw=;
+ b=hPLr3qLtRYABgsV5fDANQh6vfiJr+HeT0mnjGPQOnYPdIEURVGb5j08nWo7S9iUPL7nOEKfSSBbTDHPsVlCFOdif3dx+wVBSutBPXnsuRWG9GxLI62y8MNq7BEeNJZAt3kFRFUL6W50w8Gj46fv/GvHGHmhbPrEGYVvsMSK/DBHIDge57gt8zGR0dJzv/pxeZMeRZk1X+C0Ictvm+2N29u6DDC95gqDHs4aj/ZoG7jAcpMMIriE692Cy8/FtrkfGhJc1SJYquwHtXMMbVPvhFnK0mxXqETVF92qCdbt3JlhbB0IlsQPhj9ALizyiB4/oGN9zAguyjJQ07M57abdhrQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AgLc0+eeNhul7yIfWvX7MqbZvF+xcjib+VeCziVbek8=;
- b=CgZ+hvJQcdzOMdYBQ9i+hLXtKl4coG3sYN0OGEvY3j5WpcC8Llqo8YwWWF3Ckf9aqWIQxxzdKyYuDa/yVE9KFNR1EUoNcWmESjzlMRjSfIRRYsctOZsqiZ9Kvdrsl3IlchEzB5PzJDvFTaqHrALZimmcKvyg3ikR+3/yzwHUPoUKq2MO5IUEfUhXSHLMB8BC7Iich9H9px8eu9JqwdCQ1TTy8UwX3KT2vQWVe/MctkQsu7ScpTpPm3Jlcy8/rbD/h7sk7kveaQmUeE21TokJs2BD6fAeHDGsSzXWIIu/5tQTD8NlHpYbWoqTtAYZygBC+8toBw3Rxqc9WQJmedduNA==
+ bh=IHp5HOX7caWe59Q5ZLaDzoJq6SbkHFrb+WJC4JPFvHw=;
+ b=x4nShEyqjYCUdQ0tFrOloVmEU4fYRbfKo8GRQahTe6L6RRhwtKQP8d6oaI8Ykxz5qOMGKvJgLZLBSUIFheusW0oxbduROhp23Euc3BEfH/bEFHlEE5Z5X11/WjH/Dkv+bmRBcQ9dm9rOYY0Ikn3jDrqIDtJmHPa0aDfkFWcWCdGiCH4zPOjUSBJNh5r6CG1gx+8A9s+71dnRm34LAJXLF3ahy+HSNwMAW6Hzgvy9BtSxPoRUqXF6dEaPikODxJ5cHaLJq1ESixB2wPdRkijhMAXAI5QHk8EpV295nzALCwMBlcVa2XvmBzblFI8zTixFp49km7UsweFr05gNY/nWWQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by DU2PR10MB7728.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:46c::5) with
+ by GVXPR10MB9184.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:1df::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9818.32; Tue, 21 Apr
- 2026 20:47:15 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9846.19; Wed, 22 Apr
+ 2026 05:42:57 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::be9f:e8ca:ee9:83e1]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::be9f:e8ca:ee9:83e1%3]) with mapi id 15.20.9846.017; Tue, 21 Apr 2026
- 20:47:15 +0000
-Message-ID: <e7a6f934-5d86-44f3-ae0d-1a6d9b4f4d4a@siemens.com>
-Date: Tue, 21 Apr 2026 22:47:13 +0200
+ ([fe80::be9f:e8ca:ee9:83e1%3]) with mapi id 15.20.9846.017; Wed, 22 Apr 2026
+ 05:42:57 +0000
+Message-ID: <ab716af5-6dfb-487e-9ba9-b2d1a7783afa@siemens.com>
+Date: Wed, 22 Apr 2026 07:42:56 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [isar-cip-core][PATCH 1/2] initramfs-crypt-hook: add configurable
- mount options for encrypted partitions
-From: Jan Kiszka <jan.kiszka@siemens.com>
+Subject: [isar-cip-core][PATCH v2 2/2] tests: remount /var with exec after
+ login for LAVA test jobs
 To: Gourav Singh <gouravsingh@siemens.com>, cip-dev@lists.cip-project.org
 References: <20260417113651.3923307-1-gouravsingh@siemens.com>
- <9acbeb77-8539-43de-88e9-405185cbd7e0@siemens.com>
+ <20260417113651.3923307-2-gouravsingh@siemens.com>
 Content-Language: en-US
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Benedikt Niedermayr <benedikt.niedermayr@siemens.com>,
+ Quirin Gylstorff <quirin.gylstorff@siemens.com>
 Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  xsFNBGZY+hkBEACkdtFD81AUVtTVX+UEiUFs7ZQPQsdFpzVmr6R3D059f+lzr4Mlg6KKAcNZ
  uNUqthIkgLGWzKugodvkcCK8Wbyw+1vxcl4Lw56WezLsOTfu7oi7Z0vp1XkrLcM0tofTbClW
@@ -90,179 +92,223 @@ Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  qH4kDzsqKX8zzTzfAWFxrkXA/kFpR3JsMzNmvextkN2kOLCCHkym0zz5Y3vxaYtbXG2wTrqJ
  8WpkWIE8STUhQa9AkezgucXN7r6uSrzW8IQXxBInZwFIyBgM0f/fzyNqzThFT15QMrYUqhhW
  ZffO4PeNJOUYfXdH13A6rbU0y6xE7Okuoa01EqNi9yqyLA8gPgg/DhOpGtK8KokCsdYsTbk=
-In-Reply-To: <9acbeb77-8539-43de-88e9-405185cbd7e0@siemens.com>
+In-Reply-To: <20260417113651.3923307-2-gouravsingh@siemens.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0434.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:d1::7) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+X-ClientProxiedBy: FRYP281CA0008.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10::18)
+ To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DU2PR10MB7728:EE_
-X-MS-Office365-Filtering-Correlation-Id: c51d95bf-0107-4601-e569-08de9fe72b73
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|GVXPR10MB9184:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6370e858-1aba-4e47-5c54-08dea03201da
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|376014|366016|1800799024|55112099003|18002099003|56012099003|22082099003;
+	BCL:0;ARA:13230040|376014|1800799024|366016|18002099003|22082099003|56012099003|55112099003;
 X-Microsoft-Antispam-Message-Info: 
-	fiX1wo0qu04dHCsAYLalN7RdjpaoZPyI8Lu/58Ay0swBXuRQbaxhchVq/e06Mt5YNvzbfOkTaGChqukBUyugiRqDME2o4AQ1QWw0eYYuCL1K94LXVodB8TOTKAhu+Kv+RIEjQDZEpd3Q/nJOMjtEMNPPZMNz12Dn5bFOskwGOKnCaB3z1pPFrtoleDjiTG/d4clmF+E9BlBKtyajiUy4HI0C8ILPwOeufGdLyoUam/D6nNEFbPLZxE5YDIJLzYYW7bxx1xt3/b+A693hdwFBVe17HieRksvtEQiniVrtt9kTBTrT4/Mva6pY+DB0oiGDiGs4N9cXEmgHlQQzcqyrNf2ZwrOrCfwHn1c5QxQvI0cTVVggFZ2qqPcjsP0sjkdHy8wrg7DPa+PPV6YNxz4jlMN5PWF9w0uZ5tuPSbYEHicceKb7sfiFXaDsTb0oIt/tldIXRE1oeL4n1VLKwUVBAesbxCgd8SZHs3wdBZCfBY4eZSZNv2X5D5tt8tB/SVlS90vs58J7Bey8omuj5SYkyhLlw5b3z5zxGNUpkoUpDHzs7ASBXY3FxQda48ZnctgCHBKsWxvjVIvnb2VANh1Hmvg6xZWaoyFx42qYOAEt5zPZwcMDozp2jaIvYoYRL4GkpWjVHq557FtYkv0kHCibzccD39uSniS3L5e/T/dityLFON336sXk6BIQstoMXY5YpTEkg1JnWMGViVOxZ6dJd3FtDg3QY/HEZRha5VE5yEM=
+	oL2YarEkliQx7XYBrlBAmi6Kqs3B9x5j0VEp+bU7p0i8jT1D3gvKpuijcv5y3KAbnFsmGz/UJCGbKRhhmAMZuZSA91ochH1rgQFygJZe8YuwKF45OFL5mmm2WxnqB2wj2IU4yu65DyOcY5bjMEnttIf35NTKeT6SPkxXv2xXEAill0y0v4xELvkchEBKLthubzRc7GmspYV3R3OeTlRMt0Si3r0nksb1SswMtMH9WJpPK6K+nI/FmVetoRe1sBjWORQBMDL+ub7hJjtym2Q4RmylrSOeQytIOKXAR2sW6Hj/2rHtAgWgNBAvUkF5BDpGHjSMgN/AKmmwTeVU1JUIAaSKUZw+w1p7zXqpQHpIDEUS/N0XDoWXIvHtTSgfgXChU5aRz8d/RXHBVeTc1ftYXyvPsz/T8GPdX6ZCbs9/z3xLqmz2S4avkziK/cT1drawP/ee1sP0qh0QzEIuRWTgtfA9//mG0aujDJHoxcBz3PM/yjekioJso6DRvwVYbegKwApETd3+wfvzAdhfl+dE/rOpwnoomOY60lL/+Z2QletS4QYqcr5RAALfCcFHtosC+RcR+MXWRp52qZASd2QlFMmytIr+bvVY1Wxhf9PkL8b9obGgBxiui26q8xBjJ1PBoaNc/3JyeP55fVmqk3OXrLwdjtjViPakCc1odWiyJHSlWV0Fsp8iXEA8cZLsW/fuCUzJ7QiLdtmmF16/qPT5UiR6QbDjpzendRRaogRKFq8=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(55112099003)(18002099003)(56012099003)(22082099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(18002099003)(22082099003)(56012099003)(55112099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?MXB5NTJhTEV0NzcyQjg4L3lNUTl6Vi9zTWVCZkd0NjlrVktycWlRZFBJZ2Vj?=
- =?utf-8?B?NHZsZ3A0T1pDaU5DelIzWU1RNVg0LzlnaFRkelhJZW1RTVU4SFlxc3MzeW5N?=
- =?utf-8?B?S1VXS01mcWVEazhVdlZhTE44aTA3ZjlHUlJrLy8yQS8zVWJBa25Cem1VZ0hz?=
- =?utf-8?B?dllpS3o5RmxJTmMwcnovVTI3eCtvNXpUNTFXOVNaTzJzZ3BQS2RDMXlHeFNu?=
- =?utf-8?B?NTkvUEdIdFRJQVZQMnlwOTU3WHYvTlRlakhtRUsvUGtOVGlLOTJ2Z0RhcEFJ?=
- =?utf-8?B?bExuNktIYzZHRktwVllXTEcvZzE0cHJDbEdTY1lNdDU3THpTRmVielp5OU9m?=
- =?utf-8?B?dzlvZVVZaWI0QnRSK0JQNVlqdURYQU1YNGY4UHNoc3FBcUlxRWNhZTZJUWlt?=
- =?utf-8?B?anZFRDJwMWJQN3BGK0RpWWJKU3JLMWExbnkrTE9selMyTmlDUVc3ektuWWNB?=
- =?utf-8?B?THdnU0xiazZoU1AvVHBVTnhpUk02TWR2NXdGbFVDVmp6bHV0K3dmZS92cWlN?=
- =?utf-8?B?NkU2V3RGYVFrNHFNa2k3cDR3WGlGL3lsTWhrQ2o4ckgrVjdHVmVkelcwZEp3?=
- =?utf-8?B?TCtYMXkxWFo4OG1ncmtNNWRMVmo0cTRkd1pXbHlBa01vK3dzWVluanZPZEdt?=
- =?utf-8?B?MkprUG9BWEpRUGRMUEZOdmphQjk2M1ozcmttZGFHbUVqNzR4SU43eE8rT0lx?=
- =?utf-8?B?Rm1Wc1N4OEdzNkdKSnRYRDdLRFJDaU9vY2FnNmJJczRGQ280aWJ4UEI3d2dH?=
- =?utf-8?B?bERZaTZwMjVieUFMaGRZYmUxRkVKWEJldnBDc0g5czNIeVp6UDYvNm1pOGFE?=
- =?utf-8?B?MC9nQWxpTjFvUjIrejNLdWhxV0JWaEV5S2VMaDNFUHdCbzJkOXZRNTZVbU1p?=
- =?utf-8?B?QVU2NjlFcVpYRHVyVy9TdEdSaGpVKzFvaGw5ZVdhOHBtQmpDZktlUEs5ZktN?=
- =?utf-8?B?WTVsa0FuTkU3SGNkRlpEd2xrOU1UcEZBK2J3TWw5SUE1cnJua0VwSmxoOEls?=
- =?utf-8?B?N0lvM2p3MWM0enpxSERPa3BtbW1UM0pIVU5QVUFhRXc3aVBrZEVvMnp3Tnpa?=
- =?utf-8?B?RWlkQ3J1UHFJSWQ3UDVCS3BUL0hVbTdHQUxYUzlabEJFYkZJTTFIVGUxVjNM?=
- =?utf-8?B?WmkrSmdQZmJjTHI4TTFMM3NGMXhtNGxWaXNHTVlhdE1sMWU0b0tvd1ZuTXM4?=
- =?utf-8?B?bVlvb3c5Sm85QzdnUDByc25oZUVhSzRxVy9TNHpPVjBHL3EvdGszcXUyOVBj?=
- =?utf-8?B?UmF5Sy85MkROYjBVdHRTT1FPaTBvK3JYZFpvWkZ3SmNlT1VYdGtWQ2RoeklJ?=
- =?utf-8?B?cWNJaGU4Q05lekl6a2lwUW9tVlcrdkoraGQxS0VmZi9JbHBUZm9BUlNkTXl2?=
- =?utf-8?B?V1A1Rk42a1BZaHZEb3ZZY09EQ0JRbTcvQUkvNzE2MFpwM3lxSzN6bjFpWkVu?=
- =?utf-8?B?d2xnSkRSZG1rZlpyU1IreWI0Zk84aWJaclpObjF5aEVzODNCTTk5RGhxNjlU?=
- =?utf-8?B?R2h2VzJKQTZ5cGpRM0hiY3hEZDZoMUJDRDFqZlpuZi80SGo3cW1uM1FZeWQw?=
- =?utf-8?B?dHA0TUJydk1xVGJWQjU4NTZxOVFKNlN3bE5Jd0JwRm5IL0o0WkxBZkJNMUZC?=
- =?utf-8?B?WjNEZTVSbGlzWkkwb1h4QklVUWE0MlNVU2h1WkRBcjczY1NVNmtibmlVeHBo?=
- =?utf-8?B?YkxOaHR6bVUxRnZxemJqb2pSaXVOYTkyeFhBYmhPZkdXOVRjTURMaENyUG5Y?=
- =?utf-8?B?eHY4RWVucWJuVVZXTVVpaWFjNmtjR1p2bVRua2JLd0owcktTNFJJdTlGOWYx?=
- =?utf-8?B?MkczOTdsNjlic3VHUm05ZlZXcldtMXVtSy9aeU5HU2djK3VtdW5QQ2JiNnlR?=
- =?utf-8?B?NEVncnc5RlZsUG55em9CK0xHSG1RK2xRbkgyQTlrbnFDcTdPRk5jQkpXeFgw?=
- =?utf-8?B?K0l1UEFrU2VQSWpZUHFINU9qZkRUZ2JhVUw2YVhwWS9pcm9rc21BVWVKUVV4?=
- =?utf-8?B?akcvM1VnZ0E2THJMQlBJMmluQ0x3VHBGV291TGtwREQydkpRMmczNTd6T212?=
- =?utf-8?B?RHVvZWFubmZxN2VoY0tQaU5nZThxSHI5bHNyTHpXMmxqYnpsR3hrVndsSFEw?=
- =?utf-8?B?Nm9VY0RQY0FrUzYzbDRac0IvSnNtT21RZjJMc3hjOWJDV1Y0dVBZK3dmQks0?=
- =?utf-8?B?Vm9YU0dPM0w3dVBkdUd2a1dBTlZLbXdVdVlvcDFiRWR5ZFNXcTl2VWF0MHVO?=
- =?utf-8?B?c3crYS8wREJBVE1jQXpkL0RtU0U4dXpaOEdDZlJpY2NTQ3h2UTlGeHJ0QXp5?=
- =?utf-8?B?RnVqZ201SXl3cjlidEJUcktzVXRDdFNRZjVNM3BMNTd4RWcxSkRPQT09?=
+	=?utf-8?B?cnVvdjNObUtZcVZ2SjRrUGdkU0RHOXV5cDdTRDRNTXlRSUs2M09uQVJQcnZ1?=
+ =?utf-8?B?SG0xN3N1eWd1OVlENzJhaEFFc0Q2Ukp4a3NvQk5xN3lPblJaZ09zUUt2Q2lv?=
+ =?utf-8?B?TVA4ckZYeU9jMkdzdkViajBZOFQxVU1LRWwxVndCS09FaXl0ZGlwTlNtU1N6?=
+ =?utf-8?B?dG9SRlQ5YUJYcE51cG9RN2hIa010QTlTZ0VDaG85UGVYd2M0eWtLM1R1TGNP?=
+ =?utf-8?B?QTBlbjdLaWJqWHQxZ204QlJTcjlZbitwSlhBZUFCamtqVlNIUUNrclZMUzlD?=
+ =?utf-8?B?MHYwUVMvYW5oRXkyMGIvdk1ObHNGY0pndkF5QTNlNDlUb1Q3MWMzTnM0MGd1?=
+ =?utf-8?B?R0ZhMExRMzdYQXB2dEJXZlNBZEgxbFVXR3BIaTVvd3VZTE9PdmN0V0pGS2Fa?=
+ =?utf-8?B?VTZyVWl5UUpSR1RBZXFlV1BhQzJMOHBkZXd4cFlWUHlpbFcvNjNUZkJNV3pC?=
+ =?utf-8?B?ZjluZjFEMnVFYU0vWnB2L2thU1JtZlp3MStvK084RXdtUEU2VnFqekxzamUz?=
+ =?utf-8?B?WmFNc3R4YVo4WjhDZ21aYVY1Z1ZMVEFMbFE4WDRwOWFhaG5jU2FqOVZlN0l0?=
+ =?utf-8?B?dG5WMzdRNmRJSHlEOGxoWjY3UG5EeHZjTXc0TjUrOXBXVkRpMWtGY3luNkF5?=
+ =?utf-8?B?WFVGM3gvUFJDbzNHblZiZUhYMDdQeWVTOVU0TzFwTmRFNVNnRnV6Zk1CRndY?=
+ =?utf-8?B?MFJld2lCanVsbnNPWlg2OGJoR1NjZmVZU3JaODkySndtNFpQc1hQNTNaTFVC?=
+ =?utf-8?B?YzVDeWdTVVZUS1ZFWjR0MEVMcXpVdkFZUFM2alM2bGIvRysrcURlUDVxdHI3?=
+ =?utf-8?B?WE01MUdOTGZTbW9nalJYUzVRenZmMkIrRklZWHRpL1VuVGFNbjdaTi95S0tG?=
+ =?utf-8?B?Q3BEK2I4dlYvKzNnR0FCZWFHS2NBaGdKYkFxTjM0bUo4eWxIZVhxNEIwV1hh?=
+ =?utf-8?B?eXcreWUwblljek11Z3RQbkxjWGlNRGFOL1RGckpQRU5lWC8vM0R2RW1NQTdv?=
+ =?utf-8?B?YldvUDl6Y2xGZHpISi9vS1FNNnN6MTlmRERBWTk0YXozekRqTmpJWDU0MENF?=
+ =?utf-8?B?TXBvV3cwd0RRUjR6NnBlMkUvVWE5eEhib2Y4aDg1b0M5NXV1UUd4ei9BdmtB?=
+ =?utf-8?B?Z0xIZitsb1h5MDNrK3oxbWFTYkYwcUZHaUlnWFVGbVdmYXRCeFpxV0g2M3lD?=
+ =?utf-8?B?bGtMc0RGMEF6ZG92bEVRQldHZzNvb1ZyVkNyaEEvZlB3T0t5R0dOWmlHaXQx?=
+ =?utf-8?B?RE8wMUpIQ0FJd25RQWtDZWljMGc1Y1lmdFd2cnZzUjNTZzBYM1diRll6ZW9B?=
+ =?utf-8?B?akM2WWhQd1ZERWZaMEVFMWhKUll4SDRpK0pnR2xaZHd4REpoMy9oL2tFWmNO?=
+ =?utf-8?B?a1hkSjd3b2tQNCtCck9GSldJYUtZZ05wQVFPZm5VMGd3bnhGSzNwSUdoN1cz?=
+ =?utf-8?B?eXI5RG9DTmtIQ0ltV2x5VHo3YVlZWjA0S0psOTJ6Y1B4bVFUM1ZhQStiTnpK?=
+ =?utf-8?B?dU1hZzYyd0VYNlBpYUFmdjVwM0M5Yi83M0U2dE14RnJwRE9zZHRzSnRKSUFl?=
+ =?utf-8?B?eDltRGZGQmV1Ny9IYzRuc3BnamI3K3VlQ1RjdlBBZ0YvSnI5citMeU1DSzRq?=
+ =?utf-8?B?Q3VkU0xjSkZ2Wno0ZUZsUHJLdkZQbllLSEl2RmROZzB3cUQ3bzhMNGUvbE1l?=
+ =?utf-8?B?ODdCd0tNNE03czVmdVZWbFpiaUZpdmozcHVxazQ1Y0Fta3FFVTZIUzh5OUVR?=
+ =?utf-8?B?QStPVzI2MjU1dktsazFZaitySzF2MFkxdlEwaXdZR2pRM20zWnI3M2RvNU5G?=
+ =?utf-8?B?clZSSzhBY3Fqbk1ENXBGL0cxa0ZPR21zelZrTHFveEh1SVQ5SXhMRzBiaW80?=
+ =?utf-8?B?YmMvTnlHMjZ4OURlWWpBNjlYbGxTdmoyRFNrakRuUm9GT3RaVzUvL3lNd0JY?=
+ =?utf-8?B?Rnp6Y29OY3gwUDE5dmR6THUxblZpN1FZcXdWTGtIL0QzemZ6cUluc1Z4SzFr?=
+ =?utf-8?B?VC9KRzNjbmRBa2NKUWZKUHBqdWZENUhPeVVGN1I1K3pNUEZQclZvZGoxVmg0?=
+ =?utf-8?B?bmhEL25iUDFOcm93WStaZTRXdkwrUmd4RGNIZ2VkT3NHZGdaYVFYVmVaelRR?=
+ =?utf-8?B?M3A2Ym5tajcvYktZUSt0YnNVUFhMOGhOMEF2YVpXQzFQNzg1K2QrWFRtS0JJ?=
+ =?utf-8?B?ODY5RTY4aTV5MG9QWHNOK3lKRmwxY29ISGVxbHZLRzREQWJZNW8zbWRrZGRN?=
+ =?utf-8?B?aUZjcFZCZXA1ODBRNitFQVRpbFg0YXFyOUZVYWFSN0ZGc1BHU0tPNlp0UEF5?=
+ =?utf-8?B?QnFITEZwTGdFeEg3cVZFSFhoL3p5T2xIQUI2MUl6MGlXZTJQNGkxZz09?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c51d95bf-0107-4601-e569-08de9fe72b73
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6370e858-1aba-4e47-5c54-08dea03201da
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Apr 2026 20:47:15.0217
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2026 05:42:57.5342
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ukafiptMI2y/CNkf08j92toGiRp7Tu5Zb2Wx+cbUxDiojsJNXUskjEZU6V0rW8xqbT1nB6g03/zjqOXj5cy6fg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR10MB7728
+X-MS-Exchange-CrossTenant-UserPrincipalName: lBjq2EICPLyxLYP3CW0z96CeH8Jc7PnD0Twn1ktC6zhDfiOjyw94TNQabu33HEskSWr1in64Z3JHHA4d6f2qAQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR10MB9184
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 21 Apr 2026 20:47:22 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22779
+ <cip-dev@lists.cip-project.org>; Wed, 22 Apr 2026 05:43:10 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22780
 
-On 21.04.26 16:10, Jan Kiszka wrote:
-> On 17.04.26 13:36, Gourav Singh wrote:
->> Introduce INITRAMFS_CRYPT_MOUNT_OPTIONS BitBake variable to allow
->> configuring mount options for encrypted partitions at build time,
->> following the same pattern as other INITRAMFS_* variables.
->>
->> The overlay hook already sets nodev, nosuid and noexec mount options
->> for the overlay storage device. However, the crypt hook was mounting
->> encrypted partitions without explicit mount options, relying on
->> kernel/mount defaults, leaving the same security properties unenforced
->> for encrypted partitions.
->>
->> Changes:
->> - Add INITRAMFS_CRYPT_MOUNT_OPTIONS BitBake variable with a safe
->>   default of "defaults,nodev,nosuid,noexec"
->> - Expose it via encrypt_partition.env.tmpl as MOUNT_OPTIONS
->> - Pass MOUNT_OPTIONS to mount_partition() via mount -o in
->>   local-bottom-complete
->> - Add INITRAMFS_CRYPT_MOUNT_OPTIONS to TEMPLATE_VARS so it is
->>   expanded into the env template at build time
->>
->> Signed-off-by: Gourav Singh <gouravsingh@siemens.com>
->> ---
->>  .../initramfs-crypt-hook/files/encrypt_partition.env.tmpl     | 1 +
->>  .../initramfs-crypt-hook/files/local-bottom-complete          | 4 +++-
->>  .../initramfs-crypt-hook/initramfs-crypt-hook_0.10.bb         | 4 +++-
->>  3 files changed, 7 insertions(+), 2 deletions(-)
->>
->> diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.env.tmpl b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.env.tmpl
->> index 452714d..787172f 100644
->> --- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.env.tmpl
->> +++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.env.tmpl
->> @@ -8,3 +8,4 @@ WATCHDOG_DEV="${INITRAMFS_WATCHDOG_DEVICE}"
->>  HASH_TYPE="${CRYPT_HASH_TYPE}"
->>  KEY_ALGORITHM="${CRYPT_KEY_ALGORITHM}"
->>  ENCRYPTION_IS_OPTIONAL="${CRYPT_ENCRYPTION_OPTIONAL}"
->> +MOUNT_OPTIONS="${INITRAMFS_CRYPT_MOUNT_OPTIONS}"
->> diff --git a/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-complete b/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-complete
->> index 064e41c..d8516bc 100644
->> --- a/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-complete
->> +++ b/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-complete
->> @@ -36,13 +36,15 @@ esac
->>  # get configuration variables
->>  . /usr/share/encrypt_partition/encrypt_partition.env
->>
->> +mount_options="$MOUNT_OPTIONS"
->>  mount_partition() {
->>  	partition_dev_path=$1
->>  	partition_mountpoint=$2
->>  	[ "$debug" = "y" ] && echo "mount device: '$partition_dev_path' to '$partition_mountpoint'"
->>  	if ! mountpoint -q "${partition_mountpoint}"; then
->>  		mkdir -p "${partition_mountpoint}"
->> -		if ! mount -t "$(get_fstype "${partition_dev_path}")" "${partition_dev_path}" \
->> +		if ! mount -o "${mount_options}" \
->> +             -t "$(get_fstype "${partition_dev_path}")" "${partition_dev_path}" \
-> 
-> I re-indented this part during merge.
-> 
->>  			 "${partition_mountpoint}"; then
->>  			panic "Can't mount partition '${partition_dev_path}'!"
->>  		fi
->> diff --git a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.10.bb b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.10.bb
->> index 18a10a8..c0572f2 100644
->> --- a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.10.bb
->> +++ b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.10.bb
->> @@ -95,10 +95,12 @@ CRYPT_KEY_ALGORITHM ??= "ecc"
->>  CRYPT_ENCRYPTION_OPTIONAL ??= "false"
->>  # add support for btrfs encryption
->>  CRYPT_BTRFS_SUPPORT ??= "0"
->> +# mount options for encrypted partitions
->> +INITRAMFS_CRYPT_MOUNT_OPTIONS ??= "defaults,nodev,nosuid,noexec"
->>
->>  TEMPLATE_VARS += "CRYPT_PARTITIONS CRYPT_CREATE_FILE_SYSTEM_CMD \
->>      CRYPT_SETUP_TIMEOUT INITRAMFS_WATCHDOG_DEVICE CRYPT_HASH_TYPE \
->> -    CRYPT_KEY_ALGORITHM CRYPT_ENCRYPTION_OPTIONAL"
->> +    CRYPT_KEY_ALGORITHM CRYPT_ENCRYPTION_OPTIONAL INITRAMFS_CRYPT_MOUNT_OPTIONS"
->>  TEMPLATE_FILES += "encrypt_partition.env.tmpl"
->>
->>  OVERRIDES .= "${@':expand-on-crypt' if ':expand' in d.getVar('CRYPT_PARTITIONS') else ''}"
->> --
->> 2.39.5
->>
->>
-> 
-> Thanks, both applied. Special thanks for proving a testcase along this!
-> 
+From: Gourav Singh <gouravsingh@siemens.com>
 
-OK, patch 2 was not a testcase but an attempt to update the existing 
-test cases. Unfortunately, it failed. I'm using now this login command 
-(fixed up commit):
+The crypt hook now mounts /var with noexec by default for security
+reasons. LAVA places and runs its test binaries under /home, which is
+a symlink to /var/home, so any binary execution by lava binaries
+fails with "Permission denied" due to the noexec flag on /var.
 
- - if mountpoint /home; then mount -o remount,exec /home; else mount -o remount,exec /var; fi
+Add a login_commands step to all affected LAVA job templates to
+remount /var with exec after login. This remount is temporary and
+only applies to the running test session, it does not persist across
+reboots and does not relax the default mount security options at the
+image level.
 
-Jan
+Affected templates:
+- IEC_template.yml
+- M-COM-x86.yml
+- secureboot_template.yml
+- swupdate_negative_test.yml
+- swupdate_reboot_without_confirm.yml
+- swupdate_template.yml
 
+Signed-off-by: Gourav Singh <gouravsingh@siemens.com>
+[Jan: account for separate home partition, account for "templating" via script]
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+---
+
+OK, I feel like I have to resubmit this version which is now hopefully 
+passing because it highlights "nicely" that we urgently need to rework 
+our barely maintainable test definitions. I still wonder how I was able 
+to find the second trap without having had much coffee this morning...
+
+ scripts/submit_lava.sh                              | 2 +-
+ tests/templates/IEC_template.yml                    | 2 ++
+ tests/templates/M-COM-x86.yml                       | 2 ++
+ tests/templates/secureboot_template.yml             | 2 ++
+ tests/templates/swupdate_negative_test.yml          | 2 ++
+ tests/templates/swupdate_reboot_without_confirm.yml | 2 ++
+ tests/templates/swupdate_template.yml               | 4 ++++
+ 7 files changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/scripts/submit_lava.sh b/scripts/submit_lava.sh
+index a4d20ec2..96454559 100755
+--- a/scripts/submit_lava.sh
++++ b/scripts/submit_lava.sh
+@@ -224,7 +224,7 @@ create_job_mcom () {
+ 
+ 		# swupdate test action on M-COM is different from the test block used in QEMU
+ 		cat $LAVA_TEMPLATES/swupdate-test-action-M-COM.yml | tee -a "${job_dir}/${1}_${2}.yml" > /dev/null
+-		grep -A 12 "# BOOT BLOCK" "$LAVA_TEMPLATES/M-COM-x86.yml" >> "${job_dir}/${1}_${2}.yml"
++		grep -A 14 "# BOOT BLOCK" "$LAVA_TEMPLATES/M-COM-x86.yml" >> "${job_dir}/${1}_${2}.yml"
+ 		grep -A 16 "# TEST BLOCK 2" "$LAVA_TEMPLATES/$1_template.yml" >> "${job_dir}/${1}_${2}.yml"
+ 		sed -i -e "s@#updatestate#@2@g" -e "s@overlay-1.1.1.4@overlay-2.1.1.4@g" "${job_dir}/${1}_${2}.yml"
+ 	fi
+diff --git a/tests/templates/IEC_template.yml b/tests/templates/IEC_template.yml
+index 148f07ee..dd02bb75 100644
+--- a/tests/templates/IEC_template.yml
++++ b/tests/templates/IEC_template.yml
+@@ -59,6 +59,8 @@ actions:
+       username: "root"
+       password_prompt: "Password:"
+       password: "CIPsecurity@123"
++      login_commands:
++        - if mountpoint /home; then mount -o remount,exec /home; else mount -o remount,exec /var; fi
+ 
+ # TEST_BLOCK
+ - test:
+diff --git a/tests/templates/M-COM-x86.yml b/tests/templates/M-COM-x86.yml
+index 7cb6cc2d..107243d0 100644
+--- a/tests/templates/M-COM-x86.yml
++++ b/tests/templates/M-COM-x86.yml
+@@ -46,6 +46,8 @@ actions:
+       username: "root"
+       password_prompt: "Password:"
+       password: "CIPsecurity@123"
++      login_commands:
++        - if mountpoint /home; then mount -o remount,exec /home; else mount -o remount,exec /var; fi
+     transfer_overlay:
+       transfer_method: http
+       download_command: "curl -H 'Connection: close' -v --trace-time --output overlay-1.1.1.4.tar.gz"
+diff --git a/tests/templates/secureboot_template.yml b/tests/templates/secureboot_template.yml
+index 0a075e2e..723adb34 100644
+--- a/tests/templates/secureboot_template.yml
++++ b/tests/templates/secureboot_template.yml
+@@ -59,6 +59,8 @@ actions:
+       username: "root"
+       password_prompt: "Password:"
+       password: "CIPsecurity@123"
++      login_commands:
++        - if mountpoint /home; then mount -o remount,exec /home; else mount -o remount,exec /var; fi
+     parameters:
+       kernel-start-message: "EFI stub: UEFI Secure Boot is enabled."
+ 
+diff --git a/tests/templates/swupdate_negative_test.yml b/tests/templates/swupdate_negative_test.yml
+index 250eaa89..70d4d770 100644
+--- a/tests/templates/swupdate_negative_test.yml
++++ b/tests/templates/swupdate_negative_test.yml
+@@ -67,6 +67,8 @@ actions:
+       username: "root"
+       password_prompt: "Password:"
+       password: "CIPsecurity@123"
++      login_commands:
++        - if mountpoint /home; then mount -o remount,exec /home; else mount -o remount,exec /var; fi
+ 
+ # TEST_BLOCK
+ # Fail the job if software update application error is not as expected
+diff --git a/tests/templates/swupdate_reboot_without_confirm.yml b/tests/templates/swupdate_reboot_without_confirm.yml
+index 074eb1a6..d63e8833 100644
+--- a/tests/templates/swupdate_reboot_without_confirm.yml
++++ b/tests/templates/swupdate_reboot_without_confirm.yml
+@@ -25,6 +25,8 @@
+       username: "root"
+       password_prompt: "Password:"
+       password: "CIPsecurity@123"
++      login_commands:
++        - if mountpoint /home; then mount -o remount,exec /home; else mount -o remount,exec /var; fi
+     parameters:
+        kernel-start-message: "kernel: C:BOOT0:linux.efi"
+ 
+diff --git a/tests/templates/swupdate_template.yml b/tests/templates/swupdate_template.yml
+index d62d3121..63b3b10c 100644
+--- a/tests/templates/swupdate_template.yml
++++ b/tests/templates/swupdate_template.yml
+@@ -59,6 +59,8 @@ actions:
+       username: "root"
+       password_prompt: "Password:"
+       password: "CIPsecurity@123"
++      login_commands:
++        - if mountpoint /home; then mount -o remount,exec /home; else mount -o remount,exec /var; fi
+ 
+ # TEST_BLOCK 1
+ # Fail the job if software update application failed
+@@ -102,6 +104,8 @@ actions:
+       username: "root"
+       password_prompt: "Password:"
+       password: "CIPsecurity@123"
++      login_commands:
++        - if mountpoint /home; then mount -o remount,exec /home; else mount -o remount,exec /var; fi
+     parameters:
+        kernel-start-message: "kernel: C:BOOT1:linux.efi"
+ 
 -- 
-Siemens AG, Foundational Technologies
-Linux Expert Center
+2.47.3
+
 
