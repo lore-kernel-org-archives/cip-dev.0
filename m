@@ -1,419 +1,230 @@
-Return-Path: <Chris.Brandt@renesas.com>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FAC3FAD3EB
-	for <webhook@archiver.kernel.org>; Thu, 23 Apr 2026 01:48:08 +0000 (UTC)
-Received: from OS0P286CU010.outbound.protection.outlook.com (OS0P286CU010.outbound.protection.outlook.com [40.107.74.41])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.3500.1776908882061550622
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4B2AF94CBF
+	for <webhook@archiver.kernel.org>; Thu, 23 Apr 2026 06:44:48 +0000 (UTC)
+Received: from GVXPR05CU001.outbound.protection.outlook.com (GVXPR05CU001.outbound.protection.outlook.com [52.101.83.30])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.13945.1776926679001317974
  for <cip-dev@lists.cip-project.org>;
- Wed, 22 Apr 2026 18:48:02 -0700
+ Wed, 22 Apr 2026 23:44:39 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@renesas.com header.s=selector1 header.b=G8/KaWXS;
- spf=pass (domain: renesas.com, ip: 40.107.74.41, mailfrom: chris.brandt@renesas.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=Mb1suLVg;
+ spf=pass (domain: siemens.com, ip: 52.101.83.30, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nm2gD4u4JME6emR7va5byyvaLZG6McMsBYbBfgSSf28wG1UKZzkdZ1pjwF4qlFAIPG7S6Rp1SVUUnERifIA1dERx1ug7nRtq7gemGhP7pkkgOur67VdAOElSA7NzY4VGLfPaJrveQK8kQeJ8VUx4fGNEl882wnhNALmAXa4R4GmSlAMshnZVUZHuavRwBOM6cyssJ1BmBEBiRtDYCxTpCrICLemudYL1pN1IqK+ZgHV0Jd2/YgHOSyLJpifsTE139K82H1IacMxlFzBb6cxaFNz6Dl44dBXrM7MBmg39feGlLUtjNsw0jhcY49g2in1U7p/c0lWCFn8RJiIMCnELAQ==
+ b=gNPbNIpGC717iUDEfItbiShnNGyrJaP4gW7gFZQQCA38jZC3Frhin3k024gIc/WOmdGSXDLWzPR1Dv2K13ov3CK77vhAFiJaM7oU7nQdgrtTyzAmzK61YBrSHjpRPZe8wnbMI5f1BOkjvn2dcgUmQNxEzZr/IP2/HeI2eZnokfK6/CYRIgoZtqi7grXGhAQAoUNfwsiXIe6KQK1QT9wV8R/5KLSa0sJVmEZQmt8aaFRDYFnIJ8DWIuK9qLMnsiAgmudvLl7VaXHdTE0QkjwB3fYGtg/OkDRJSyi3YJf1NEVNfKW0HFUhoru2kIneodqJ7iYUbVoz1hJi6hxxulWgCQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=O5NRAS0WpOvA71IEyevb904ook95GsYjzDna6aYdhTc=;
- b=D6OcHUzhSSn88Djz6UdRDE5zwtj8PZ96s7yQaIjRem+50AyTVoqgFUbNoFSKwreY+iEhznAIz3fzLAkaC2DThL9+o0keIq0XV3CQY/VptSfd4ZDGt2lChstyyThMOiCQqK7DpS1tPfNfqE0blJiNtodkkYYgZoji9/AY7UCBWT5TMMgULHw17zLycLZ54KLHfY9jMgW4kA9p65YtDEGayIkXA1yyLiYu4/3k8yUB97NOKxdLhn0+8NmSBJKc9BmqXxZHpwthpCKoyHwWHFCx/vfkTHvZsJGp7Eq23XZK9hJHMfezTieEz/0nnooFYXYMR9KqFIMVE4vDdF5Xmz8TMg==
+ bh=igkoM7Dzh6VSx5L4jlvNBA4SHMgFLtIEtBPAPnkJmDU=;
+ b=Bbv0bACzb0g5jvOaXcy6js25Q4WcO1Hh3b2S1QrOrEL9AWPMZxTWMwkwZ+E83Nx8huWSK1evp3k3FvvnP2Sb5N5/1nJXVmu7cKdyc9mIQ6r4g/WK7l96sxqa9O10krmtPT+nomU2ElA4DaeaXU8GLM2VuazK9XtTlkMXiAXI2Awr+s3KU0Bi7msgCIrTNcUMtjdbV1Vj7M4g7c1ZSFi2/ZMwvxaGrTQDUAELCsNZY82XVKgTeWiTxDpjkvlmzXHT38WcVQ3JuBUYja1WRRBskDHnovTEN154hirxn+9PClCdMVf+B92sYA8bbY2j0RpNI8mvgve49d7tExdvbWglBA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O5NRAS0WpOvA71IEyevb904ook95GsYjzDna6aYdhTc=;
- b=G8/KaWXSpm8wPyySqivmcXMLBpLyaFW/cgU+smU+TpHpgcgCQrykNMan1hy9kCkiHaYMdUMqjEqtQu3xVjklRzl4uQwkTLkqesdrGtO4QNhQI3JhbbCeQWuGbepKrm7tudrrYF2M3gj5O5cnC7mvgkZ4P/IOuQGOOn+GLUDVwBI=
-Received: from OS3PR01MB8319.jpnprd01.prod.outlook.com (2603:1096:604:1a2::11)
- by TYWPR01MB9936.jpnprd01.prod.outlook.com (2603:1096:400:236::7) with
+ bh=igkoM7Dzh6VSx5L4jlvNBA4SHMgFLtIEtBPAPnkJmDU=;
+ b=Mb1suLVgmjiFPAi5+new31ANPQ61HfyoT3u7bKnx/e5hDkHNfRerQk0BUh6pnJDNp54Y8DAA/0ZZnISuUBypk17UibOKv9JuswJ/NY/JfYh/5m8XNaiT63V9npvl+22QI1Sxf5iXpsCWbfJeN+0jkOESOmVYhWpAqD3eHALF0SpdP732Yk35dFDczfgs9cJAmrhH10vm+jwsPI+43DrNScFZXJ1ub79CjL9J0WmTGScmYIXEfH8Phwhiv9gQ4CIaojWjK2Or/mUpIPbCBpi/tnUgfUY8x54tsutEIDcVkI5qHDTZwb+BKrE1tMC1b39ZkxLbmO2LkVIc5ursFmdRsw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by AS2PR10MB7852.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:642::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9846.21; Thu, 23 Apr
- 2026 01:47:54 +0000
-Received: from OS3PR01MB8319.jpnprd01.prod.outlook.com
- ([fe80::6473:1660:bdc2:c983]) by OS3PR01MB8319.jpnprd01.prod.outlook.com
- ([fe80::6473:1660:bdc2:c983%4]) with mapi id 15.20.9846.021; Thu, 23 Apr 2026
- 01:47:54 +0000
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	"pavel@nabladev.com" <pavel@nabladev.com>,
-	"nobuhiro.iwamatsu.x90@mail.toshiba" <nobuhiro.iwamatsu.x90@mail.toshiba>
-Subject: Re: [cip-dev] [PATCH 5.10.y-cip 06/10] clk: renesas: rzg2l: Fix intin
- variable size
-Thread-Topic: [cip-dev] [PATCH 5.10.y-cip 06/10] clk: renesas: rzg2l: Fix
- intin variable size
-Thread-Index: AQHc0qDrSinnKLPep0mZrIfCwV0oP7Xr37oL
-Date: Thu, 23 Apr 2026 01:47:53 +0000
-Message-ID: 
- <OS3PR01MB8319CE5D43B757DE104545318A2A2@OS3PR01MB8319.jpnprd01.prod.outlook.com>
-References: <20260415181810.4073807-1-chris.brandt@renesas.com>
- <20260415181810.4073807-7-chris.brandt@renesas.com>
- <TY7PR01MB148187DC9C6369DD3CFCEFD29CD2D2@TY7PR01MB14818.jpnprd01.prod.outlook.com>
-In-Reply-To: 
- <TY7PR01MB148187DC9C6369DD3CFCEFD29CD2D2@TY7PR01MB14818.jpnprd01.prod.outlook.com>
-Accept-Language: en-US
+ 2026 06:44:34 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::be9f:e8ca:ee9:83e1]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::be9f:e8ca:ee9:83e1%3]) with mapi id 15.20.9846.021; Thu, 23 Apr 2026
+ 06:44:33 +0000
+Message-ID: <82723b47-dc6c-4fcf-94cd-75c430a09450@siemens.com>
+Date: Thu, 23 Apr 2026 08:44:32 +0200
+User-Agent: Mozilla Thunderbird
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Subject: CIP IRC weekly meeting today on libera.chat
+To: cip-dev <cip-dev@lists.cip-project.org>
 Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS3PR01MB8319:EE_|TYWPR01MB9936:EE_
-x-ms-office365-filtering-correlation-id: 4cf58562-e54e-44d7-de21-08dea0da55fa
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|366016|1800799024|376014|8096899003|13003099007|38070700021|22082099003|56012099003|18002099003;
-x-microsoft-antispam-message-info: 
- WEln5ARRlC9BPu2hh/znu30vBzR8n257pU3AU63oQfjVAowCH/7f0SOeqdGvafO83HXz2E3ALFA77fOs3OGo5Ww13HfaJwWIXnqhrERw45sGRiFhpq/Sy/7hnEb1z/P1N6o56XItQaylinZvg/HX0AiHjZ3XjQx6EFxzGgKecOdwGSC64GRl9gkNbIXFHzcSL6LM/1vMrMkrFcimz3MbdfRHTMYoMuzxYFV5VUSKHp50loG0CgqBk0q01AV+kicHWG8s/3bgXuGYNkj6NjVDI9q3sytxYWTW2i5jVzP2fMf+82sE+zgi1z+7s1U76KS2u3NUT19D4iUSdOjHt3R7LEV0glRW8/2qRvH1QF9DWn5dlv9ee9cZkuHHXlrsFF4zQe3vyn+6Il0pmmvDT6PuQXx/2jNIT3DS1bBcIuL1q8p5LuFOKD5nqbAhwhBEfqLqy/oCfQQ+xU8dGOCWEbDjDmzHCXsE1jbKujtob6g2RM+arl2fPwLd3wYvd2TIwyhwd0XJ6rR2AWBo4qgiMyUWLJNG65m3CJFR2/XR8Gx5deZGsyBZTRT8BtFq/yNd5g06z1LaHmHQ/qw0JkoKsX1HnlVaIDeJCc/l9gYhkZtO/nzSeamb9998RtzMqdfgAc5Xnv9PJzfCnUnWbH058gk+WZP1y6MXNzLBrby0TXrfd049OFE+mwVtK3Cg0lJ1KZEsT+fVdphw3SQcUU3Oj0Rm+YbMu4UDwnCrssAeQ77snw9dr3XAV3jxOiS3Gev0Oa6D
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3PR01MB8319.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(8096899003)(13003099007)(38070700021)(22082099003)(56012099003)(18002099003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?QXdzemlyd0o3WVZraFE2YmpFL2o4UGc4U1ZNRU1vR0VRSUJDc1VwSGc4?=
- =?iso-2022-jp?B?NkhEYkRjbmJWRFlxVFVUTXRIenhIakZqKzl0SGlRSSs5SWVta201UXJq?=
- =?iso-2022-jp?B?ZktBOVZMR282YUQrZjVHRndhYVBicUFEcWJNRHZZU3JncDhLK2ZJTFFU?=
- =?iso-2022-jp?B?Z0U5VjNtT3R3OVJJaE1QSVlxNVRVUkswbWUvTkhKcUMxUmRzMEZxY3Nx?=
- =?iso-2022-jp?B?ekZUYUNkMzYvVUhnY1Y0cmFZbE5JRzM5aStJVFV6eFRTSUsrSEdjL1Yw?=
- =?iso-2022-jp?B?aUZMY295cndNSHBIYVY1N1BNSjZMTEYxdlBKSkwvQ3pCNzlxYk4rSDlK?=
- =?iso-2022-jp?B?VExaL2JhRWdSWHdCRmY0UFd5QlRjbmMrNjM3VFYwVlFPSkdTRkRVVVlZ?=
- =?iso-2022-jp?B?a3UrR2JMZ0J5Yy91QU5sUUFqREVSSDdadzQ0YzFoMXVZd3JJQW82b3pI?=
- =?iso-2022-jp?B?TGtJZ2M1TkR2Nk1GN3BNcnBPT1hrVWMvZm9MM0FuM3J4Tk9VMms0Nmt5?=
- =?iso-2022-jp?B?UlY3a0RlT0hwbnJqNFBMeVZNQXM3Sk9CU0JlRHJNcVpSTk5OQ3ZNSkY1?=
- =?iso-2022-jp?B?VTNzcTRCcGtuOUF5ZUkwME1TUTdvL3pTRlptQjRVT2RSa3ptVzJteXdX?=
- =?iso-2022-jp?B?ZzVyZ3Q3RmgyY0wrOTRJd1RuTTYyalBxNytJRzBJQU9JLzU4Z2hzWHBk?=
- =?iso-2022-jp?B?QTYyYzY4ZDFIRU4vQkZQQm5nNFhZV2lmUkN4eXFuN0RERmwycHkydjd0?=
- =?iso-2022-jp?B?ZGxuZXpacnE2YkxYT21XTHFlL21LaGhTZzQyN2ZQRmY4K210aHVFUkZa?=
- =?iso-2022-jp?B?V2hWNDlmYnlOb3lBUXdUYWVDL0MzNGdNNjVsZWdYTlVXZkR4OWxuNEFu?=
- =?iso-2022-jp?B?MUVpemN6Y2NNVVBYMmhONzI1UTR3ODRVTFhEbnFjSjgwRVRxcEJUekt0?=
- =?iso-2022-jp?B?Uk1zMVFGcUY4TGVxSWRxTEpOalRRRjRvZUx4TTMyUHg5djdHTkJZazhz?=
- =?iso-2022-jp?B?L1Q1Wi9Wa1FVallWSGpiYk1helowRXlEeGVIRU5lQXZ6S0xnaU93dFha?=
- =?iso-2022-jp?B?WnBsWG1ldTNQeEFnZldWRDlCVWMxQi9sWVNGR1ozSHU3bStLZG1OQzdx?=
- =?iso-2022-jp?B?Z21oUEt4cUxmOHVTT2JCRG02ZG9Qem4vVm1jODFzQW9mbXFrdldNOXdO?=
- =?iso-2022-jp?B?c2UvL0R5V0dMTmhEMU03dFJDWjh4T3BaVTV5QlJvb1VEaFhmVjBOQXZR?=
- =?iso-2022-jp?B?MHBxbndnVGJPV0tvcTE2akFZQXJmZStkQk1UR3RaRlFyazhoSjJQVFEy?=
- =?iso-2022-jp?B?eHJzT3B2aWt2cUg1dDVpK1RPRUhHcDF0Z3RjWkVKb3JHSnFReklxNnEy?=
- =?iso-2022-jp?B?YXBYTnRjMkNSZUVsZ2U0Mjc0Z0thR2VEVFpNR0JhYWJBcnF4WEdZTkY0?=
- =?iso-2022-jp?B?SlpvMXE2ejJ3N2dqWWNOVEczZWNzNm5vSHFqNlpxQ1dSVjZoaUNnclNx?=
- =?iso-2022-jp?B?eS9sQ0pBRUR2YVFKN1VqYkEvckUxUUd4am9nczVCSnNLTVd6VXA3SlNF?=
- =?iso-2022-jp?B?NW5PVXRXZ0xkbS8yNjQvRHV0a0U0RndtRHlEQnNXUnhvbXN2c0c2QlBt?=
- =?iso-2022-jp?B?NjJFK2xWaXlreW5VK1VyT0wzUzJTaElCSjA1bUtpN3B3blNTM3hDU2xS?=
- =?iso-2022-jp?B?NmxOMUU1MDJDZWJCcmJRck50WUFkaTlaZGpYdWI1U1Q5TDlLMDcxbWtR?=
- =?iso-2022-jp?B?Mlk5RjBqQ2VaalVtd3MzT0xNYzNaRzZ5YmlqZm5RK3hRbnFya3Y5UDhT?=
- =?iso-2022-jp?B?bHlONWJ0MVYxZE40blZtMTdpem42bGtMYjZ4dFBtbnJhU3VmRGdPNitl?=
- =?iso-2022-jp?B?eGE2ZjYwMmR3N3YvdnlSSTFUSzZJREZKNEY4SGZDclRxaHhRK2syblZ2?=
- =?iso-2022-jp?B?bTUyNXllR1hDbG5pd3I2TUp5SVNKamM0Y1Y0T2pMUVJGbzV5V1JOK3pN?=
- =?iso-2022-jp?B?aE5Yem9sQ1FsYVBIVnBJTGh2UlQ4aDJvMHpWdjB6ZjFZaGJEMWVLUkI2?=
- =?iso-2022-jp?B?SHpUVmY1NUVIdzIyZzI2SUFkdkltaFZYT3pCQU1CSTJEQ2ZNK3pFNDVF?=
- =?iso-2022-jp?B?aWNxOUYwRHJwNW1MUGNKaHBxaXFYYXZ6amVNNW1kdUxDRGxlY242MDlG?=
- =?iso-2022-jp?B?amtRNitoeVNZNUdyUTNpQzBDR3FvNGJ5K2J1d0pNeGY5QXI4b0o5VzRH?=
- =?iso-2022-jp?B?alp1ODRGemd5akQxbmlMck1vaGxHU1VsQzI4dW10QWg3TnJlTlJDNGp4?=
- =?iso-2022-jp?B?Z2NpbFJXL0s4N1pXMzhwR0hQTUJmdmNmbXlDN1RHclErSjA5ZHh2WmZm?=
- =?iso-2022-jp?B?Zmk4MUFRek5OQmJDd1JOelNsTFF3b3kwQ2VzWlY4TUxmdHkxMVc4QTNQ?=
- =?iso-2022-jp?B?ejFzTmRaaTBjSFA0c2lkWkppbFF1N1JST2hkRzE4cnN3NDhxTWlBRm12?=
- =?iso-2022-jp?B?Rmp1SVV1alpWeXlFM3lJN2F2RXA5aU0wRExJdz09?=
-Content-Type: multipart/alternative;
-	boundary="_000_OS3PR01MB8319CE5D43B757DE104545318A2A2OS3PR01MB8319jpnp_"
+Autocrypt: addr=jan.kiszka@siemens.com; keydata=
+ xsFNBGZY+hkBEACkdtFD81AUVtTVX+UEiUFs7ZQPQsdFpzVmr6R3D059f+lzr4Mlg6KKAcNZ
+ uNUqthIkgLGWzKugodvkcCK8Wbyw+1vxcl4Lw56WezLsOTfu7oi7Z0vp1XkrLcM0tofTbClW
+ xMA964mgUlBT2m/J/ybZd945D0wU57k/smGzDAxkpJgHBrYE/iJWcu46jkGZaLjK4xcMoBWB
+ I6hW9Njxx3Ek0fpLO3876bszc8KjcHOulKreK+ezyJ01Hvbx85s68XWN6N2ulLGtk7E/sXlb
+ 79hylHy5QuU9mZdsRjjRGJb0H9Buzfuz0XrcwOTMJq7e7fbN0QakjivAXsmXim+s5dlKlZjr
+ L3ILWte4ah7cGgqc06nFb5jOhnGnZwnKJlpuod3pc/BFaFGtVHvyoRgxJ9tmDZnjzMfu8YrA
+ +MVv6muwbHnEAeh/f8e9O+oeouqTBzgcaWTq81IyS56/UD6U5GHet9Pz1MB15nnzVcyZXIoC
+ roIhgCUkcl+5m2Z9G56bkiUcFq0IcACzjcRPWvwA09ZbRHXAK/ao/+vPAIMnU6OTx3ejsbHn
+ oh6VpHD3tucIt+xA4/l3LlkZMt5FZjFdkZUuAVU6kBAwElNBCYcrrLYZBRkSGPGDGYZmXAW/
+ VkNUVTJkRg6MGIeqZmpeoaV2xaIGHBSTDX8+b0c0hT/Bgzjv8QARAQABzSNKYW4gS2lzemth
+ IDxqYW4ua2lzemthQHNpZW1lbnMuY29tPsLBlAQTAQoAPhYhBABMZH11cs99cr20+2mdhQqf
+ QXvYBQJmWPvXAhsDBQkFo5qABQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEGmdhQqfQXvY
+ zPAP/jGiVJ2VgPcRWt2P8FbByfrJJAPCsos+SZpncRi7tl9yTEpS+t57h7myEKPdB3L+kxzg
+ K3dt1UhYp4FeIHA3jpJYaFvD7kNZJZ1cU55QXrJI3xu/xfB6VhCs+VAUlt7XhOsOmTQqCpH7
+ pRcZ5juxZCOxXG2fTQTQo0gfF5+PQwQYUp0NdTbVox5PTx5RK3KfPqmAJsBKdwEaIkuY9FbM
+ 9lGg8XBNzD2R/13cCd4hRrZDtyegrtocpBAruVqOZhsMb/h7Wd0TGoJ/zJr3w3WnDM08c+RA
+ 5LHMbiA29MXq1KxlnsYDfWB8ts3HIJ3ROBvagA20mbOm26ddeFjLdGcBTrzbHbzCReEtN++s
+ gZneKsYiueFDTxXjUOJgp8JDdVPM+++axSMo2js8TwVefTfCYt0oWMEqlQqSqgQwIuzpRO6I
+ ik7HAFq8fssy2cY8Imofbj77uKz0BNZC/1nGG1OI9cU2jHrqsn1i95KaS6fPu4EN6XP/Gi/O
+ 0DxND+HEyzVqhUJkvXUhTsOzgzWAvW9BlkKRiVizKM6PLsVm/XmeapGs4ir/U8OzKI+SM3R8
+ VMW8eovWgXNUQ9F2vS1dHO8eRn2UqDKBZSo+qCRWLRtsqNzmU4N0zuGqZSaDCvkMwF6kIRkD
+ ZkDjjYQtoftPGchLBTUzeUa2gfOr1T4xSQUHhPL8zsFNBGZY+hkBEADb5quW4M0eaWPIjqY6
+ aC/vHCmpELmS/HMa5zlA0dWlxCPEjkchN8W4PB+NMOXFEJuKLLFs6+s5/KlNok/kGKg4fITf
+ Vcd+BQd/YRks3qFifckU+kxoXpTc2bksTtLuiPkcyFmjBph/BGms35mvOA0OaEO6fQbauiHa
+ QnYrgUQM+YD4uFoQOLnWTPmBjccoPuiJDafzLxwj4r+JH4fA/4zzDa5OFbfVq3ieYGqiBrtj
+ tBFv5epVvGK1zoQ+Rc+h5+dCWPwC2i3cXTUVf0woepF8mUXFcNhY+Eh8vvh1lxfD35z2CJeY
+ txMcA44Lp06kArpWDjGJddd+OTmUkFWeYtAdaCpj/GItuJcQZkaaTeiHqPPrbvXM361rtvaw
+ XFUzUlvoW1Sb7/SeE/BtWoxkeZOgsqouXPTjlFLapvLu5g9MPNimjkYqukASq/+e8MMKP+EE
+ v3BAFVFGvNE3UlNRh+ppBqBUZiqkzg4q2hfeTjnivgChzXlvfTx9M6BJmuDnYAho4BA6vRh4
+ Dr7LYTLIwGjguIuuQcP2ENN+l32nidy154zCEp5/Rv4K8SYdVegrQ7rWiULgDz9VQWo2zAjo
+ TgFKg3AE3ujDy4V2VndtkMRYpwwuilCDQ+Bpb5ixfbFyZ4oVGs6F3jhtWN5Uu43FhHSCqUv8
+ FCzl44AyGulVYU7hTQARAQABwsF8BBgBCgAmFiEEAExkfXVyz31yvbT7aZ2FCp9Be9gFAmZY
+ +hkCGwwFCQWjmoAACgkQaZ2FCp9Be9hN3g/8CdNqlOfBZGCFNZ8Kf4tpRpeN3TGmekGRpohU
+ bBMvHYiWW8SvmCgEuBokS+Lx3pyPJQCYZDXLCq47gsLdnhVcQ2ZKNCrr9yhrj6kHxe1Sqv1S
+ MhxD8dBqW6CFe/mbiK9wEMDIqys7L0Xy/lgCFxZswlBW3eU2Zacdo0fDzLiJm9I0C9iPZzkJ
+ gITjoqsiIi/5c3eCY2s2OENL9VPXiH1GPQfHZ23ouiMf+ojVZ7kycLjz+nFr5A14w/B7uHjz
+ uL6tnA+AtGCredDne66LSK3HD0vC7569sZ/j8kGKjlUtC+zm0j03iPI6gi8YeCn9b4F8sLpB
+ lBdlqo9BB+uqoM6F8zMfIfDsqjB0r/q7WeJaI8NKfFwNOGPuo93N+WUyBi2yYCXMOgBUifm0
+ T6Hbf3SHQpbA56wcKPWJqAC2iFaxNDowcJij9LtEqOlToCMtDBekDwchRvqrWN1mDXLg+av8
+ qH4kDzsqKX8zzTzfAWFxrkXA/kFpR3JsMzNmvextkN2kOLCCHkym0zz5Y3vxaYtbXG2wTrqJ
+ 8WpkWIE8STUhQa9AkezgucXN7r6uSrzW8IQXxBInZwFIyBgM0f/fzyNqzThFT15QMrYUqhhW
+ ZffO4PeNJOUYfXdH13A6rbU0y6xE7Okuoa01EqNi9yqyLA8gPgg/DhOpGtK8KokCsdYsTbk=
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0080.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:cd::15) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AS2PR10MB7852:EE_
+X-MS-Office365-Filtering-Correlation-Id: d1d21052-1906-45e3-8818-08dea103c78c
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: 
+	BCL:0;ARA:13230040|366016|1800799024|376014|18002099003|55112099003|56012099003;
+X-Microsoft-Antispam-Message-Info: 
+	+nE+RtHDkB3PhY4h3FKEptklkU1FKb7qUJecA4A92dY2M/Jtj/eVdd8Np5CJcx3yXc2TCQH9dewEL+df65Ag7hH+tdQxA6FtuPW9m4Hhl4lXVdsFN9LbbptgwrUJrbQPQv8g6KbxBRY+Qstnww1zrMaOCAW+39GldFUgkUgXMIN7IFc69BzObu5cUIWRT6ecMg9WlS4Do0EbJ6qliGQijWziBe72r+gvw7205Wy5JsPKAxDp0YAE3/HzcpuUUx7SzhqH6FdeNAEQDvxBOdDfUhtEpD3cOZzw5FP/gTt5597+SeeSF0SSSh6an3xD0W13egLGF/S4SSVMLcTsSpFGaIsDKq8HVuK983uajJ+ftOvB+z2qOnNx2KXvuG1MNW80DHkKyab19FATTUV6faiW9gAerIoAJ5u+gurs6y546Z2wJ0AipN5p993u9T65YdtAipSpvhz3ocDMhRmz8jI2lUGcOhOy2g93chsPBqnC1SFfAOgQe2Iy0mRwrkBMiPWP2Yl+N//Bqa/6g7AmZuZzd3QqV3wYDMv+wbeT2l5UsZu0ei/fxKaXp+0JRiORO/jm3G73ixa9HjYfL4xtAJyxS2nFfYWLU3uu/CA8c19g7PTu7KE9p2wH+t17IyoUlskMZFQNN2nNlA5StYB74I4pMblGTcARb2dARLg0hSVUE7m/t1V28s5AS6a7qPWuCADk
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(18002099003)(55112099003)(56012099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?YXl5cEpxL2tTcm5iTVhOOUxUc0U0ZzVzT3gwbVNHbDRYbUxoMjB3UlVweklK?=
+ =?utf-8?B?VE02OVgwV0c0NEJNSFZxRlgzNWFkaEVVWlVSNmFoYkNXWWNtRzJSNWVuSTRX?=
+ =?utf-8?B?V1VZL29nZ3NRN0hRNVI5LzA5NnlTbkV5eXZibU4xb2FuaTI2ZTFFNEp0SGYv?=
+ =?utf-8?B?cHd6aUVRYmJhQTNJQUN2UFZIWW9temtFNnFGR2JURDRlSkJuWGM2VURXTkJI?=
+ =?utf-8?B?UHA4MjQvcG55enJxMExYTXk3eUVMQWNxRWVIOXd5VDc1Y1VWT0RkYVlMQllL?=
+ =?utf-8?B?OGFMTHgva3FraURsRHVCWFJ5YWVBc1VOQTVNYWtJeEJWYXVxMVZkVnZ5RDlI?=
+ =?utf-8?B?dCszSS9QS1crSGJoN2x3Z3Q4T3FWZnI4ZUY0dktZS01BZlZMZnVjNUpMeTEv?=
+ =?utf-8?B?eURUQm80MzhscXJLZjlZSkV1a2I1RXRWS1lmV3BJZ2RUTnpBN2ZQaUZNQkZx?=
+ =?utf-8?B?akJDTzdXckgwdzdLMlNpUnlTYTRsOGFiN0Q1b3lvOGRYdzBXNk1Ec1RjWExy?=
+ =?utf-8?B?RVBqZXhhd0dwK1pRYTZxd1pNR04rR20zdGMzeG1NWTBmU0YwS3BVNXN2Ny8v?=
+ =?utf-8?B?MnEwS2drc250TXpLMklJdk9DcllXRHI5QWNsVU9ZSlpuM0RMZC9FVEVzekhZ?=
+ =?utf-8?B?MGI1dG9McUxyaEQ5cHNIdmp0TjlkWVlNMWpYdlhNSVpzQVFEM1RXUU1tbEZK?=
+ =?utf-8?B?eFhnN1VZSjVVWVp2VE5zb2hGenorbkZ5TzFoYVd6bnBPNEZPTUJoTHVkb0Vy?=
+ =?utf-8?B?ZG5NN0UrWHEzanpNWHhHSDRVN3pzd2tTRmQyL3B2eHFweUZPRW84RnFQbjlZ?=
+ =?utf-8?B?S1dyUVVVQldKdjE1TC9raFZlaGdCNkZxK0c1TFAyOXBFS2puSVZZaDIzSGQw?=
+ =?utf-8?B?UVNxa3BSQ2YyUXllU01DRmltNEM0c2dJMzBMUUJQbUFDaGFjbDhWTE5ndHdv?=
+ =?utf-8?B?RWtPVGdHdWUzaSswVVlMVHI4MW40WjhSSjhxeUhTKzMzUWorMi82VnhtRG1y?=
+ =?utf-8?B?Q25SUElFdkxVWDdTOE9hbEozbklNdG1FWDUwYUNTZ0orekZuMm9iYzdRZkha?=
+ =?utf-8?B?Z3hGaUhZditIakNIWUJIbTAyYXJUNVo3Sy9HQnhUc0ZYSW56bmJuTnA4d1E1?=
+ =?utf-8?B?REdNdXdQYXNseUF1RUNRN1QwYnlyWFkwZ283d3BQWU92Smk2VUg1T09DOG5N?=
+ =?utf-8?B?WGg3dlRkUCt6NlRmM3MvYjlNcnhGZUp3ZUh6TzFWWGJkK1RzanZVS3JuOEF4?=
+ =?utf-8?B?eVA1N3M1SUk2K1RhYVBtNXVNenI4SzEzS0V1c0J4MC9qbTVsMm9wVnpLQ0FU?=
+ =?utf-8?B?ZSt5U25RQzYyQWVWUXBPYmxnU3F4aC9mNVFILzIrOWVKZk5JQ1ZieE9NYlEr?=
+ =?utf-8?B?dDlqWFNuS3ZkUlVrTTVCMGovbXBiU1dtU21oS1EyeElBQkcrajh1SGgzdE9E?=
+ =?utf-8?B?azJldExGNmozcVZYL0h5OEZxcmg2dTRrN3B2WVgxenkyWWFra2orYlJhaVpI?=
+ =?utf-8?B?bUtvanhSeE1sNU1FNk1BMUdwcVNLY0tmQllobjZGNWIwTVU1b1Voc3lQNENq?=
+ =?utf-8?B?dTlwWFRvRG81OWFuS2ZGUU5WTXBpMDBFOGpmTnlqTVZUT2ZaY1owZndOZDZm?=
+ =?utf-8?B?SGZXcUk3eVVmU2lIODBNVW44SGNSblZlQkZtcWJuNFJDbjlQV096ZENCYjhl?=
+ =?utf-8?B?ZjhIMmdtTUVLUTNzclpuYi9sSjlLenF3T1dYT1ltUk1aTlZmWFFoaGJsd29C?=
+ =?utf-8?B?TmlhQkFSYXRPeXA2YWJwRk9DbC9Pdi9CcW1VeFFHdFRIOGhhZjhSWm1Zb01u?=
+ =?utf-8?B?Sm1oUjh0YlVqN2k4T21iUFUxMEFvV1FqVXBqOStkT1lrbUUxSkprakxzc1ZX?=
+ =?utf-8?B?dzFSNjlXM1JaeDhoT3E0ZFhHbXNBVzhkdzlwTlVjbkczZC93U1c0T3ZMa1gv?=
+ =?utf-8?B?SmJBS0VuVDl2dUVZTFdRcDJPZ01NZElvcVQwYk1oSnBkdC9JbWw0ZTl3TDNP?=
+ =?utf-8?B?YjBjaks4LzQzbS8xTlNhVkQ5b3AwWUNWLzNLNGU5RWZhOU03eVFENEN0cnNC?=
+ =?utf-8?B?Nm1wcXRwM1QrV3VzQTJDWlNxNldHbHo2WFRNZUsyVWg4WnJaR3AycFd0Ymtr?=
+ =?utf-8?B?ZFVPdlNKTFc5NzBub3dwQklpdEFhZmo1dnNGbmp0ZUFPbzdQMlpRZWRqWmhn?=
+ =?utf-8?B?SlBsN0ZkZ09aYllwQy9WbHZkNU9wOEllWEVOMGhIbWU0L1dkMTh6VFF3WUNE?=
+ =?utf-8?B?T09ZM0FCb09IQis0R2ZIbTg4R2ZVRHV1eEJmUXZROTVhbGQrbndkc2pOVHVY?=
+ =?utf-8?B?VkQ1VEEvUXU2NUpJWTVaYkxobVN5a2dxM1N0aXY1MGpHWGhoV0pQUT09?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d1d21052-1906-45e3-8818-08dea103c78c
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS3PR01MB8319.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4cf58562-e54e-44d7-de21-08dea0da55fa
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Apr 2026 01:47:53.8532
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Apr 2026 06:44:33.9354
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 9P5uXs8eaerHzdtUHPDCBwW07YfagW/9YJc2GGkWFWneo1BLPnwIjRuhMtMwkMFqubRWymQEYECTGXU9bnAldcWwL31JzUb1TWz15hHHHSQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB9936
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: XUiAjPtCEcIXoB2ZyOAvywLVdGT8Xw0+touqF9HtaeolNwP7s6h+5EZowWVJFYiN3C2VpT90PNjWqH12Vd/0rA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR10MB7852
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 23 Apr 2026 01:48:08 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22789
+ <cip-dev@lists.cip-project.org>; Thu, 23 Apr 2026 06:44:48 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22790
 
---_000_OS3PR01MB8319CE5D43B757DE104545318A2A2OS3PR01MB8319jpnp_
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-Hi,
+Kindly be reminded to attend the weekly meeting through IRC to discuss
+technical topics with CIP kernel today. Our channel is the following:
 
-> It looks like you're backporting patches from LTS.
-> Could you please backport them from the upstream kernel?
+    irc:irc.libera.chat:6697/cip
 
-Since this is just a 1-line change, all I need to do is update the commit m=
-essage.
-The commit hash is from the upstream kernel.
+The IRC meeting is scheduled to UTC (GMT) 12:00:
 
-So, all I have to do is remove this line from the commit message:
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=2026&month=4&day=23&hour=12&min=0&sec=0&p1=224&p2=179&p3=136&p4=37&p5=241&p6=248
 
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
+USWest    USEast    UK        DE        TW        JP
+05:00     08:00     13:00     14:00     20:00     21:00
 
-Do you want me to re-submit the entire series? Or just this patch?
+Last meeting minutes:
+https://ircbot.wl.linuxfoundation.org/meetings/cip/2026/04/cip.2026-04-16-12.02.log.html
 
+* Action items
+* Kernel maintenance updates
+* Kernel release status [*]
+* Kernel testing
+* AOB
+   - Glasswing topics
 
-Chris
+Jan
 
-
-________________________________
-From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> on beha=
-lf of Nobuhiro Iwamatsu via lists.cip-project.org <nobuhiro.iwamatsu.x90=3D=
-mail.toshiba@lists.cip-project.org>
-Sent: Wednesday, April 22, 2026 5:42 PM
-To: Chris Brandt <Chris.Brandt@renesas.com>; cip-dev@lists.cip-project.org =
-<cip-dev@lists.cip-project.org>; pavel@nabladev.com <pavel@nabladev.com>
-Subject: Re: [cip-dev] [PATCH 5.10.y-cip 06/10] clk: renesas: rzg2l: Fix in=
-tin variable size
-
-Hi,
-
-> -----Original Message-----
-> From: Chris Brandt <chris.brandt@renesas.com>
-> Sent: Thursday, April 16, 2026 3:18 AM
-> To: cip-dev@lists.cip-project.org; iwamatsu nobuhiro(=1B$B4d>>=1B(B =1B$B=
-?.MN=1B(B =1B$B""#D#I#T#C!{#C#P#T=1B(B)
-> <nobuhiro.iwamatsu.x90@mail.toshiba>; Pavel Machek <pavel@nabladev.com>
-> Subject: [PATCH 5.10.y-cip 06/10] clk: renesas: rzg2l: Fix intin variable=
- size
->
-> [ Upstream commit a00655d98cd885472c311f01dff3e668d1288d0a ]
->
-> INTIN is a 12-bit register value, so u8 is too small.
->
-> Fixes: 1561380ee72f ("clk: renesas: rzg2l: Add FOUTPOSTDIV clk support")
-> Cc: stable@vger.kernel.org
-> Reported-by: Hugo Villeneuve <hugo@hugovil.com>
-> Closes: https://jpn01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F=
-%2Flore.kernel.org%2F20251107113058.f334957151d1a8dd94dd740b%40hugovil.com&=
-data=3D05%7C02%7CChris.Brandt%40renesas.com%7C5800573b6dfd43099f3b08dea0b81=
-c1d%7C53d82571da1947e49cb4625a166a4a2a%7C0%7C0%7C639124909762951163%7CUnkno=
-wn%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMi=
-IsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=3DAubj6SDPhuTOrs1Zp7w=
-dfyFQUSYQxi0UeAiqCOUPAac%3D&reserved=3D0<https://lore.kernel.org/2025110711=
-3058.f334957151d1a8dd94dd740b@hugovil.com>
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Link: https://jpn01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2=
-Fpatch.msgid.link%2F20251114193711.3277912-1-chris.brandt%40renesas.com&dat=
-a=3D05%7C02%7CChris.Brandt%40renesas.com%7C5800573b6dfd43099f3b08dea0b81c1d=
-%7C53d82571da1947e49cb4625a166a4a2a%7C0%7C0%7C639124909762976580%7CUnknown%=
-7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsI=
-kFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=3DMwsosum%2FweloQSkzyLfC=
-LpNo52mw7ZImb%2FcdbTlk430%3D&reserved=3D0<https://patch.msgid.link/20251114=
-193711.3277912-1-chris.brandt@renesas.com>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-
-It looks like you're backporting patches from LTS.
-Could you please backport them from the upstream kernel?
-
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> ---
->  drivers/clk/renesas/rzg2l-cpg.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-=
-cpg.c index 0c0d9d76c4d6..c45c22190fcd
-> 100644
-> --- a/drivers/clk/renesas/rzg2l-cpg.c
-> +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> @@ -121,8 +121,8 @@ struct div_hw_data {
->
->  struct rzg2l_pll5_param {
->        u32 pl5_fracin;
-> +     u16 pl5_intin;
->        u8 pl5_refdiv;
-> -     u8 pl5_intin;
->        u8 pl5_postdiv1;
->        u8 pl5_postdiv2;
->        u8 pl5_spread;
-> --
-> 2.52.0
-
-Best regards,
-  Nobuhiro
-
-
---_000_OS3PR01MB8319CE5D43B757DE104545318A2A2OS3PR01MB8319jpnp_
-Content-Type: text/html; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
-
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
-jp">
-<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
-ttom:0;} </style>
-</head>
-<body dir=3D"ltr">
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-Hi,</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-&gt; It looks like you're backporting patches from LTS.<br>
-&gt; Could you please backport them from the upstream kernel?</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-Since this is just a 1-line change, all I need to do is update the commit m=
-essage.</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-The commit hash is from the upstream kernel.</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-So, all I have to do is remove this line from the commit message:</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
-&gt; Signed-off-by: Sasha Levin &lt;sashal@kernel.org&gt;</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-Do you want me to re-submit the entire series? Or just this patch?</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-Chris</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<hr style=3D"display: inline-block; width: 98%;">
-<div id=3D"divRplyFwdMsg">
-<div style=3D"direction: ltr; font-family: Calibri, sans-serif; font-size: =
-11pt; color: rgb(0, 0, 0);">
-<b>From:</b>&nbsp;cip-dev@lists.cip-project.org &lt;cip-dev@lists.cip-proje=
-ct.org&gt; on behalf of Nobuhiro Iwamatsu via lists.cip-project.org &lt;nob=
-uhiro.iwamatsu.x90=3Dmail.toshiba@lists.cip-project.org&gt;<br>
-<b>Sent:</b>&nbsp;Wednesday, April 22, 2026 5:42 PM<br>
-<b>To:</b>&nbsp;Chris Brandt &lt;Chris.Brandt@renesas.com&gt;; cip-dev@list=
-s.cip-project.org &lt;cip-dev@lists.cip-project.org&gt;; pavel@nabladev.com=
- &lt;pavel@nabladev.com&gt;<br>
-<b>Subject:</b>&nbsp;Re: [cip-dev] [PATCH 5.10.y-cip 06/10] clk: renesas: r=
-zg2l: Fix intin variable size</div>
-<div style=3D"direction: ltr;">&nbsp;</div>
-</div>
-<div style=3D"font-size: 11pt;">Hi,<br>
-<br>
-&gt; -----Original Message-----<br>
-&gt; From: Chris Brandt &lt;chris.brandt@renesas.com&gt;<br>
-&gt; Sent: Thursday, April 16, 2026 3:18 AM<br>
-&gt; To: cip-dev@lists.cip-project.org; iwamatsu nobuhiro(=1B$B4d>>=1B(B =
-=1B$B?.MN=1B(B =1B$B""#D#I#T#C!{#C#P#T=1B(B)<br>
-&gt; &lt;nobuhiro.iwamatsu.x90@mail.toshiba&gt;; Pavel Machek &lt;pavel@nab=
-ladev.com&gt;<br>
-&gt; Subject: [PATCH 5.10.y-cip 06/10] clk: renesas: rzg2l: Fix intin varia=
-ble size<br>
-&gt;<br>
-&gt; [ Upstream commit a00655d98cd885472c311f01dff3e668d1288d0a&nbsp;]<br>
-&gt;<br>
-&gt; INTIN is a 12-bit register value, so u8 is too small.<br>
-&gt;<br>
-&gt; Fixes: 1561380ee72f (&quot;clk: renesas: rzg2l: Add FOUTPOSTDIV clk su=
-pport&quot;)<br>
-&gt; Cc: stable@vger.kernel.org<br>
-&gt; Reported-by: Hugo Villeneuve &lt;hugo@hugovil.com&gt;<br>
-&gt; Closes: <a href=3D"https://lore.kernel.org/20251107113058.f334957151d1=
-a8dd94dd740b@hugovil.com" id=3D"OWA5b39e24f-a592-d92f-3645-71b69f64a385" cl=
-ass=3D"OWAAutoLink" data-auth=3D"NotApplicable">
-https://jpn01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Flore.ke=
-rnel.org%2F20251107113058.f334957151d1a8dd94dd740b%40hugovil.com&amp;data=
-=3D05%7C02%7CChris.Brandt%40renesas.com%7C5800573b6dfd43099f3b08dea0b81c1d%=
-7C53d82571da1947e49cb4625a166a4a2a%7C0%7C0%7C639124909762951163%7CUnknown%7=
-CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIk=
-FOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&amp;sdata=3DAubj6SDPhuTOrs1Zp7w=
-dfyFQUSYQxi0UeAiqCOUPAac%3D&amp;reserved=3D0</a><br>
-&gt; Signed-off-by: Chris Brandt &lt;chris.brandt@renesas.com&gt;<br>
-&gt; Reviewed-by: Geert Uytterhoeven &lt;geert+renesas@glider.be&gt;<br>
-&gt; Link: <a href=3D"https://patch.msgid.link/20251114193711.3277912-1-chr=
-is.brandt@renesas.com" id=3D"OWA57cd9a55-ac16-8042-27c2-8728c2c3b380" class=
-=3D"OWAAutoLink" data-auth=3D"NotApplicable">
-https://jpn01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fpatch.m=
-sgid.link%2F20251114193711.3277912-1-chris.brandt%40renesas.com&amp;data=3D=
-05%7C02%7CChris.Brandt%40renesas.com%7C5800573b6dfd43099f3b08dea0b81c1d%7C5=
-3d82571da1947e49cb4625a166a4a2a%7C0%7C0%7C639124909762976580%7CUnknown%7CTW=
-FpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOI=
-joiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&amp;sdata=3DMwsosum%2FweloQSkzyLfC=
-LpNo52mw7ZImb%2FcdbTlk430%3D&amp;reserved=3D0</a><br>
-&gt; Signed-off-by: Geert Uytterhoeven &lt;geert+renesas@glider.be&gt;<br>
-&gt; Signed-off-by: Sasha Levin &lt;sashal@kernel.org&gt;<br>
-<br>
-It looks like you're backporting patches from LTS.<br>
-Could you please backport them from the upstream kernel?<br>
-<br>
-&gt; Signed-off-by: Chris Brandt &lt;chris.brandt@renesas.com&gt;<br>
-&gt; ---<br>
-&gt;&nbsp; drivers/clk/renesas/rzg2l-cpg.c | 2 +-<br>
-&gt;&nbsp; 1 file changed, 1 insertion(+), 1 deletion(-)<br>
-&gt;<br>
-&gt; diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg=
-2l-cpg.c index 0c0d9d76c4d6..c45c22190fcd<br>
-&gt; 100644<br>
-&gt; --- a/drivers/clk/renesas/rzg2l-cpg.c<br>
-&gt; +++ b/drivers/clk/renesas/rzg2l-cpg.c<br>
-&gt; @@ -121,8 +121,8 @@ struct div_hw_data {<br>
-&gt;<br>
-&gt;&nbsp; struct rzg2l_pll5_param {<br>
-&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; u32 pl5_fracin;<br>
-&gt; +&nbsp;&nbsp;&nbsp;&nbsp; u16 pl5_intin;<br>
-&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; u8 pl5_refdiv;<br>
-&gt; -&nbsp;&nbsp;&nbsp;&nbsp; u8 pl5_intin;<br>
-&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; u8 pl5_postdiv1;<br>
-&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; u8 pl5_postdiv2;<br>
-&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; u8 pl5_spread;<br>
-&gt; --<br>
-&gt; 2.52.0<br>
-<br>
-Best regards,<br>
-&nbsp; Nobuhiro<br>
-<br>
-</div>
-</body>
-</html>
-
---_000_OS3PR01MB8319CE5D43B757DE104545318A2A2OS3PR01MB8319jpnp_--
+[*]
+Date the data is created: Thu Apr 23 06:33:52 AM UTC 2026
+linux-4.4.y-cip: interval 30 day
+  latest version release date: Wed Mar 11 03:13:57 AM UTC 2026
+  limit date: Fri Apr 10 03:13:57 AM UTC 2026
+  Status: *Late*
+linux-4.4.y-cip-rt: interval 60 day
+  latest version release date: Mon Mar 16 09:03:44 AM UTC 2026
+  limit date: Fri May 15 09:03:44 AM UTC 2026
+  Status: On track
+linux-4.19.y-cip: interval 30 day
+  latest version release date: Sun Apr 12 05:58:25 AM UTC 2026
+  limit date: Tue May 12 05:58:25 AM UTC 2026
+  Status: On track
+linux-4.19.y-cip-rt: interval 60 day
+  latest version release date: Thu Apr  9 08:04:37 AM UTC 2026
+  limit date: Mon Jun  8 08:04:37 AM UTC 2026
+  Status: On track
+linux-5.10.y-cip: interval 30 day
+  latest version release date: Mon Apr 13 07:54:47 AM UTC 2026
+  limit date: Wed May 13 07:54:47 AM UTC 2026
+  Status: On track
+linux-5.10.y-cip-rt: interval 60 day
+  latest version release date: Sat Mar 14 07:04:13 PM UTC 2026
+  limit date: Wed May 13 07:04:13 PM UTC 2026
+  Status: On track
+linux-6.1.y-cip: interval 30 day
+  latest version release date: Sun Mar 29 11:55:46 PM UTC 2026
+  limit date: Tue Apr 28 11:55:46 PM UTC 2026
+  Status: On track
+linux-6.1.y-cip-rt: interval 60 day
+  latest version release date: Mon Apr 13 11:43:31 AM UTC 2026
+  limit date: Fri Jun 12 11:43:31 AM UTC 2026
+  Status: On track
+linux-6.12.y-cip: interval 15 day
+  latest version release date: Fri Apr 10 06:29:21 AM UTC 2026
+  limit date: Sat Apr 25 06:29:21 AM UTC 2026
+  Status: On track
 
