@@ -1,344 +1,180 @@
-Return-Path: <Chris.Brandt@renesas.com>
+Return-Path: <nobuhiro.iwamatsu.x90@mail.toshiba>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2B2FF589A4
-	for <webhook@archiver.kernel.org>; Thu, 23 Apr 2026 12:06:54 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.17814.1776945994972266832
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AC02FDEE53
+	for <webhook@archiver.kernel.org>; Thu, 23 Apr 2026 23:11:33 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.9980.1776985885847951715
  for <cip-dev@lists.cip-project.org>;
- Thu, 23 Apr 2026 05:06:46 -0700
+ Thu, 23 Apr 2026 16:11:27 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: chris.brandt@renesas.com)
-X-CSE-ConnectionGUID: puOM9cIdRcmuQXl2qmtC7w==
-X-CSE-MsgGUID: o8jgo3t3ROCfHp0T09z3mg==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 23 Apr 2026 21:06:45 +0900
-Received: from lenovo-p330 (unknown [132.158.152.97])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 734F2419B460;
-	Thu, 23 Apr 2026 21:06:44 +0900 (JST)
-From: Chris Brandt <chris.brandt@renesas.com>
-To: cip-dev@lists.cip-project.org,
-	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
-	Pavel Machek <pavel@nabladev.com>
-Subject: [PATCH 5.10.y-cip v2 09/10] clk: renesas: rzg2l: Remove DSI clock rate restrictions
-Date: Thu, 23 Apr 2026 08:06:29 -0400
-Message-ID: <20260423120630.1487798-10-chris.brandt@renesas.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260423120630.1487798-1-chris.brandt@renesas.com>
-References: <20260423120630.1487798-1-chris.brandt@renesas.com>
+ dkim=pass header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.s=key2.smx header.b=eAtFblJb;
+ spf=pass (domain: mail.toshiba, ip: 210.130.202.158, mailfrom: nobuhiro.iwamatsu.x90@mail.toshiba)
+DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=mail.toshiba;h=From:To:
+	Subject:Date:Message-ID:References:In-Reply-To:Content-Type:
+	Content-Transfer-Encoding:MIME-Version;i=nobuhiro.iwamatsu.x90@mail.toshiba;
+	s=key2.smx;t=1776985874;x=1778195474;bh=xORFiHeGxcvtNK174tUlI30+5XNbuslm2bREc
+	6P2vTA=;b=eAtFblJblTVC/ryfzj53wq9gGIcUSgpPdqvpfP6tAhsHsM4k5sFEaCaxgaIMRZf5i7f
+	iOjpunvQdPOD/MGKv1mbFOODNOyUMlKES4R62QMc63N/i4MofBtKLmx4O3KIciXEk+WRNtq2h+TYH
+	ZWLgj4A8/TlrHV5IT6+dYYSLkimcEYYMT1QZHLqsmpdHfPGWtlMb5Uj05rNDCSEyO7J/tuzxyMI4Y
+	nqXsocZe2Ogw32epWcQ43hQDx+mgTAnDWhRdQCBuVx7FvauWy+aEQLpTG3m/w5JwWlDqI+/AUEI4K
+	WX+Z42wR0VVgxQypPkIyHp0tsy4oH8P6Q2nuDvsT/nUA==;
+Received: by mo-csw.securemx.jp (mx-mo-csw1122) id 63NNBDTo1978726; Fri, 24 Apr 2026 08:11:14 +0900
+X-Iguazu-Qid: 2rWhBcKdniIEBOLy0T
+X-Iguazu-QSIG: v=2; s=0; t=1776985873; q=2rWhBcKdniIEBOLy0T; m=0OUtx0FzgSyP7ToHeAjB2GhhoDMWx4S3IgtjXBYVBFk=
+Received: from imx12-a.toshiba.co.jp (unknown [38.106.60.135])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	 id 4g1sKF0wm1z4vym; Fri, 24 Apr 2026 08:11:12 +0900 (JST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KQNxaye2OM31Wlc6Od27oxOW9z3GpGXhdmGcpwvZ2s9Y3jlmWftrEvEPagn4yilXe4BQeui+tN0cdgUWKc3uw3kC9BrPp47dfQZL8yGl43FwUnCKPBiGKywNzIwrzmicmVdZJhbn1fBJPYMl9HYGJ8H1ED4axl2Is8jvGSfIRPFVZc7m3Uhz9N1xTA/m0WBykJ8VfXJqeVXSY5WlGzrPYLNjDqEFUvJra91NBy2CRCHWlYObVO1mQcyHdN7oBL2iTVR5uRRTW8w5WhWD/tIbyO/boJ3fbOX0QmbkRKq7dSgZ3vs/GeAFlnQ0a6AvSCHisjrwQttSoKcZXKSNrupWLA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4GZVC9IxndLZf7KzjQVFB+BLqO0Z1t3bbDaWyzLf1No=;
+ b=mIB/M7dmSgwgL/YPvY0vUyUaOejLeL9mVSBxPFEuKRU0QlyC9kbtzMY4kYdXDp4mYZ3mZLU+E9tIDq4iFJPL/HtDywzBID95D8LS9PPnGZYfYUDn6c+JdxYdqZV2w6Gqcy7eQiJJm7Ad2zugQWgnr3V3BsU5F9Tq9UDyRffvUDTYJBmKp7ooL/AZvmWPIruA1ZvSljUmCDkpGp0fnD9vRYcQN7p50lD60zK21RBRksLu1g+uwv5aMrAxEUxE9uvnpF8buKGFDe6c3k7SijKRmXf+qu/RZej24S/mfjFEm+rHl+md2CAceFp1OdWJjbJ1mC1Dmt1t6TrG2EaVefgoHA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mail.toshiba; dmarc=pass action=none header.from=mail.toshiba;
+ dkim=pass header.d=mail.toshiba; arc=none
+From: <nobuhiro.iwamatsu.x90@mail.toshiba>
+To: <uli@fpond.eu>, <cip-dev@lists.cip-project.org>, <pavel@nabladev.com>
+Subject: RE: [cip-dev] Request for review for 4.4-st75, 4.4-cip110
+Thread-Topic: [cip-dev] Request for review for 4.4-st75, 4.4-cip110
+Thread-Index: AQHc0js6zeLtiNBgBk6Ixd7iAtoaQrXtR81A
+Date: Thu, 23 Apr 2026 23:11:10 +0000
+X-TSB-HOP2: ON
+Message-ID: 
+ <TY7PR01MB14818853A3654BD45BF6BB2A2CD2A2@TY7PR01MB14818.jpnprd01.prod.outlook.com>
+References: <310741778.1030622.1776850439887@webmail.strato.de>
+In-Reply-To: <310741778.1030622.1776850439887@webmail.strato.de>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mail.toshiba;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY7PR01MB14818:EE_|TY7PR01MB13872:EE_
+x-ms-office365-filtering-correlation-id: 1704a29a-6687-42d1-0e56-08dea18d9b5b
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|366016|376014|1800799024|38070700021|22082099003|18002099003|56012099003;
+x-microsoft-antispam-message-info: 
+ ifrkAqsc7B5sgdZ40f94vL4qAXuVFng2UiysZrXUOVLHcjwDMe9JyNWYO3eMkD5N+vjwKzrXKaxpUopgLR0tr3lpj3AhYRX1Vd6c2UBdPKA3QWSn7BBLX2LJXilSVlr+/GLnyODYHjmyA8k1OFwAeKFYzIyPYIqpuRR5w2Cv5GOc9fVA46qv/45icHrlPYLvuDwyzvP1v8Au9YgqhUp21cOmzLMmKWS397NlztblwT21nPAHZxfVFWLNR1UXGpTmMDmKI9eC2XcprB+TBUcKKApx9s/+5RlA8gq1iD6VQyqIX0XllmZg8szm9TDL/04rSjAp+RoUlw7/6Hmm3Y67Xh8/zaFtKChajKcmHii3ZJ8GJJlY1A3e1cVBo8D1Vk/RqanxB+eLJVtXkYf/hzwZ619gEMj8Zo/9IJvvgBgETu9zyDAGVXD4YzFQjpBXVq2IUbkxOejIx8+5IBdmJTLETfx5CTrcPt6WezXlHSwxaUBCbvtPBewbx8EHxoqYchm8fBFjEB4jofssxvCIFIAlWkOz0mxV4dvAJikmr9MuOSuYkHvdPen5M2vPlAQycsetEAddgp9t2uiAMdh3M6OhkZtS5vAyCzHkvJ4YdD6Dk2VWypE4e96V1GyP7D1OwcGTbEXqxOSXHse/5a9NEQKsvmvh58bD1aXv99kSc8XbsJYf3eRJin6z4gRb9Y6UBB+cvY/DlvgAjXz1O1rzZaNg8tBAPGKROF10IPp+GMbxHC46xYrEw1M1PiIuysyur3IjBMIvwu6wOUQ8HmoecXO8V30v9e0gix2xvKWUFBUkWto=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7PR01MB14818.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700021)(22082099003)(18002099003)(56012099003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?WGo0L2RETjJpcm1yeVoyOWZoNmZVR3dWREV4QVZjMWZJZmtkNkpoUEpi?=
+ =?iso-2022-jp?B?bUJXSFNua2d5dUtLd0U4VEFWNklPUkRFNnJ6L3ZnWEhxaXgzdGtrbUE2?=
+ =?iso-2022-jp?B?Q3ZHQ24vd00zVlFneXRmQU44bjZ3WUc2ZWdYM0RHaGcrOVQzWkRTWmRG?=
+ =?iso-2022-jp?B?NDlwZnR1ZjQzQUgzeFl4STV5Q2JsbjArRXNnbXpKWVNyUHVWMWw1U3ln?=
+ =?iso-2022-jp?B?Vlc5ODVFQjJZZ1RwckxqamQ3TXdYUldJTEJ0N1ZTSDhiSDlRb3B3WkZD?=
+ =?iso-2022-jp?B?Z09tdUE2VERRdVlRR1ZQWnZtMmlsVUNvQS9Vb0xMY0Fwc3pFZ0tjNGND?=
+ =?iso-2022-jp?B?WlZVK240d2NWTytzaDFjTENMTWxqTmZKdVRubmZheURhOElTQmYrSVNN?=
+ =?iso-2022-jp?B?bjI0T1hEamNMam9aYVZFWXkzMzl1bDhnZlVmMXF4bmI5SHlhRzI3NThN?=
+ =?iso-2022-jp?B?UmVzaWhxN3dvOVBKL1NyUGZVZDRXelVGYVFEc3lQdnQ1V3QxSHplN1pI?=
+ =?iso-2022-jp?B?YkV1ZklDWGdJZHNwRWVwSmpkcEs3QmcrUEY5Nlh1V25vQWZUNE5lTTVu?=
+ =?iso-2022-jp?B?bzRaZVZjbWptQ1RhMEhvMy9QeWJVRUNVY25pVUR2ckhCUGNVbDhsK3Vp?=
+ =?iso-2022-jp?B?TmFnTmhRQTYwR0Vnemk4dDEwRXdicXZ0T1p0SGVETnJPc3JLSDlkOW1U?=
+ =?iso-2022-jp?B?UW5Qa3hGeEdXL2xLdnNyeEJISW13U1U1ZEtXOUxsSXM1bHNLWlFEUzhE?=
+ =?iso-2022-jp?B?NUlUQVJhN0JIbkRnMXhoaFJkY3ZobHNKa3puZ3p6Umo0a2txMnQ0YnBR?=
+ =?iso-2022-jp?B?QUJMUjJGeWlFS2krTDBDUTJ3M01vVVpoeTVlRDJLWWthWGRWSC9PdVd1?=
+ =?iso-2022-jp?B?SHFFVTF1VzdPNE5yNVdCaGRiTWpVa3JhbWNGUnlodEVQWXVnOGVic2dv?=
+ =?iso-2022-jp?B?SUFRVUZISkVJRjh5VnhoZjkwWXRjbitUaU55YStiUGtyN3YyRit4SG1B?=
+ =?iso-2022-jp?B?cktwVGNPU3VoRkMrUEVCdC9adFZkZXBNUWV5QU9abXBHM2NTZGtwRExx?=
+ =?iso-2022-jp?B?d2p1dWhxQm03N3oyUTJxYkI1OGlJekJUdThScVYrSDlQcDFEM1prNTBU?=
+ =?iso-2022-jp?B?cTdub1BySzlDbTNlTEt0Tm5MbW5JQ25la2VlTU5sRnF4QTBkdFREY01M?=
+ =?iso-2022-jp?B?SVRsYjRIVlJnYXE0RlIvYXB1cTd4SEFRV1V4eHhOcm1ZL1ZRcWdEam5I?=
+ =?iso-2022-jp?B?bFhZem5zTGlHcjhMRXZQcXFhVXV6VG1rQzZLd2tlN3V4c050MHdxb1VZ?=
+ =?iso-2022-jp?B?NUhSSVA5cHVqZW0wV2ZyenZSdHBOUFI4UE9md0MxMEh4MHg2cFA5R0tZ?=
+ =?iso-2022-jp?B?MnBSSGdUUlJtR2poUFFKTzFPeVNBVHN4RG5kYmh3M0YzUStnR00yREhN?=
+ =?iso-2022-jp?B?cXQwSjZMUlVSdFlzR2lPcW42Zk13TEJtQVIycHJlQ1FzNE5DQjZtT3FM?=
+ =?iso-2022-jp?B?aFRneGp1T1VEYy9Rd3lzN3RCZ0VqSUhJaXd5RXJnQlk5YURHVS96NDVT?=
+ =?iso-2022-jp?B?OVMzYnl3VXVvc2NqN2F6d0NYWURoNEh3TVU1SXNmTE1hVCtFdHNHYjBv?=
+ =?iso-2022-jp?B?czNvQkpKWlZUZTJIUnJRUFJDYTNadDR0UytiTkFseGZiQy93T05sMmM5?=
+ =?iso-2022-jp?B?Njh2eWFvTVVEL2NmOGd2V2p2cGcwcGEwaU5nYWtSL1lMeDdaaGk0OU1n?=
+ =?iso-2022-jp?B?OWVxMlR0NGlJREVyZnVWVWVBaWNueUFnSWNWUEdDbXRGMW85RFNhV01w?=
+ =?iso-2022-jp?B?WkVZVjhsOHdYZ1hZVE0vWDNpM1lUTVZTeXkrZ3hzNUN1QkJ4bG4yczdP?=
+ =?iso-2022-jp?B?MmREWitIMVpMRExsTE96Q012Q2N5NDZUemtBdVFHZFZCV3M3MGdtTEhR?=
+ =?iso-2022-jp?B?STN0UFRaNnZ5bUlsSk9LbVl2WE9UakZ3Zk11Mi90YVd0UEh1RFlIclJL?=
+ =?iso-2022-jp?B?b2ROT2E4SzZaaHJaWVhrZjlFcytaR1hHQWgrcnc4SW4rT2NINnJyTHp2?=
+ =?iso-2022-jp?B?ckthcU9hMHNTRzlVUGhrL1o4YlM3dndsMVhOQmVWcmpneGZmQTVST2FC?=
+ =?iso-2022-jp?B?c1ovcjJmVzIxN2xTV2QzMHNzMXBka25uaVpjVjMzZElmRmRQTGQ2TGlk?=
+ =?iso-2022-jp?B?YzhFWEx4cTJMV3p3NnpEOTBJU3o3RDR5dnNNMDVjUFNyMVRQOEs5dTBV?=
+ =?iso-2022-jp?B?bXk0WHVTN0hkTW9IekpNQUhSS3lTQnVIbHBLZk9ERy9zSXFNaXJhN3hF?=
+ =?iso-2022-jp?B?Rzk5WVY5ci8xNjJoYnJyaStMWXEzTmZoTWlHa3JzTGlydWpHK2swQ1Jk?=
+ =?iso-2022-jp?B?VlNsNDBpQzYzZ29lbGlSd0krcGpqNkgyU29OdzY5NHlCNHUrUHVXZzJ0?=
+ =?iso-2022-jp?B?YThQNFFDOWxrdUR5RlhtTTNSeHdMMGtpaU5jemZicDcxT1RQb3dJWWhX?=
+ =?iso-2022-jp?B?dDVKMG0xYUVzYUZlMVRiOTljbTdHWDdmT2hCTyt6b0RNQVNuS3l0alpl?=
+ =?iso-2022-jp?B?OFk5UUVpcz0=?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Exchange-RoutingPolicyChecked: 
+	pUT+ukRNkmT6B6ckH1/KPr07hzM5X0sdhSK/eljlpqQqQoo2RNXN/X/GLitoun2r260yaADBsJJwHh09GR08wtMpQs+MnLfjvHdgTuu7KN1fQOUmPq1t6/UfuKa5a00vIYzUusaNGLWFUU5r1jc0JKMRTvfKfoxk/plqv2SInypFfzYHtSkWW1LFPaMBegTNRl+I1bXTA2TTFktGm6omBh/v3PDVM5UodSyOITrtMIFiR289okskQICOLrndPLwoVmZJamtMYvDuGV21WP3E18yTYKOaroV59kHQ0z2qIwqnAul3nuHISQJg7NNPVVmcwaTpCjLo/299s/ZcsvR5AA==
+X-OriginatorOrg: mail.toshiba
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY7PR01MB14818.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1704a29a-6687-42d1-0e56-08dea18d9b5b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Apr 2026 23:11:10.1986
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: m6vtLk2IYxu3GrTIRvS7FchtZcWOPIQ70FuLtrsFJwZe4OcXKLQhSl3c4nI+N7yucPnw9CwqAfPE6V4wjSQKRNo68L2FB5bzHlV4iCoIwWBSNDUV8buYXyefasfHuB5d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY7PR01MB13872
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 23 Apr 2026 12:06:54 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22802
+ <cip-dev@lists.cip-project.org>; Thu, 23 Apr 2026 23:11:33 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22804
 
-commit 5a4326f2e3b1edfb3329c1bee59035dc9f048b59 upstream.
+Hi Uli,
 
-Convert the limited MIPI clock calculations to a full range of settings
-based on math including H/W limitation validation.
-Since the required DSI division setting must be specified from external
-sources before calculations, expose a new API to set it.
+> -----Original Message-----
+> From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On Be=
+half Of Ulrich Hecht via lists.cip-project.org
+> Sent: Wednesday, April 22, 2026 6:34 PM
+> To: cip-dev@lists.cip-project.org; pavel@nabladev.com; iwamatsu nobuhiro(=
+=1B$B4d>>=1B(B =1B$B?.MN=1B(B =1B$B""#D#I#T#C!{#C#P#T=1B(B)
+> <nobuhiro.iwamatsu.x90@mail.toshiba>
+> Subject: [cip-dev] Request for review for 4.4-st75, 4.4-cip110
+>=20
+> Hi!
+>=20
+> Here are the manual backports for the upcoming 4.4 kernel release. As alw=
+ays they can be found in
+> https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=
+=3Dlinux-4.4.y-st-rc
+>=20
+> 7c091280e3bb2 net: usb: pegasus: enable basic endpoint checking e2727eb73=
+284b ceph: supply snapshot context in
+> ceph_zero_partial_object() 2574b34a8eb2d xen-netback: reject zero-queue c=
+onfiguration from guest
+> 14894a8decc71 net: atm: fix crash due to unvalidated vcc pointer in sigd_=
+send()
+> de412dd7471d2 PCI/portdrv: Fix potential resource leak 1837000f16f5e hrti=
+mer: Fix trace oddity
+> 5525cf4093568 md/raid10: fix any_working flag handling in raid10_sync_req=
+uest
+> 554c2968593e9 net: usb: catc: enable basic endpoint checking
+>=20
+> Thanks for having a look!
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-Tested-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-Tested-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20251124131003.992554-2-chris.brandt@renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- drivers/clk/renesas/rzg2l-cpg.c | 174 ++++++++++++++++++++++++++------
- include/linux/clk/renesas.h     |  12 +++
- 2 files changed, 155 insertions(+), 31 deletions(-)
+Thanks for your work!
+I reviewed this update, looks good to me.
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index d83755e273d9..70ddfc917a17 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -21,6 +21,7 @@
- #include <linux/device.h>
- #include <linux/init.h>
- #include <linux/iopoll.h>
-+#include <linux/math64.h>
- #include <linux/mod_devicetable.h>
- #include <linux/module.h>
- #include <linux/of_address.h>
-@@ -73,6 +74,17 @@
- #define MSTOP_OFF(conf)		FIELD_GET(GENMASK(31, 16), (conf))
- #define MSTOP_MASK(conf)	FIELD_GET(GENMASK(15, 0), (conf))
- 
-+#define PLL5_FOUTVCO_MIN	800000000
-+#define PLL5_FOUTVCO_MAX	3000000000
-+#define PLL5_POSTDIV_MIN	1
-+#define PLL5_POSTDIV_MAX	7
-+#define PLL5_REFDIV_MIN		1
-+#define PLL5_REFDIV_MAX		2
-+#define PLL5_INTIN_MIN		20
-+#define PLL5_INTIN_MAX		320
-+#define PLL5_HSCLK_MIN		10000000
-+#define PLL5_HSCLK_MAX		187500000
-+
- /**
-  * struct clk_hw_data - clock hardware data
-  * @hw: clock hw
-@@ -128,6 +140,12 @@ struct rzg2l_pll5_param {
- 	u8 pl5_spread;
- };
- 
-+/* PLL5 output will be used for DPI or MIPI-DSI */
-+static int dsi_div_target = PLL5_TARGET_DPI;
-+
-+/* Required division ratio for MIPI D-PHY clock depending on number of lanes and bpp. */
-+static u8 dsi_div_ab_desired;
-+
- struct rzg2l_pll5_mux_dsi_div_param {
- 	u8 clksrc;
- 	u8 dsi_div_a;
-@@ -169,6 +187,11 @@ struct rzg2l_cpg_priv {
- 	struct rzg2l_pll5_mux_dsi_div_param mux_dsi_div_params;
- };
- 
-+static inline u8 rzg2l_cpg_div_ab(u8 a, u8 b)
-+{
-+	return (b + 1) << a;
-+}
-+
- static void rzg2l_cpg_del_clk_provider(void *data)
- {
- 	of_clk_del_provider(data);
-@@ -559,24 +582,121 @@ rzg2l_cpg_sd_mux_clk_register(const struct cpg_core_clk *core,
- 	return clk_hw->clk;
- }
- 
-+/*
-+ * VCO-->[POSTDIV1,2]--FOUTPOSTDIV--------------->|
-+ *                          |                     |-->[1/(DSI DIV A * B)]--> MIPI_DSI_VCLK
-+ *                          |-->[1/2]--FOUT1PH0-->|
-+ *                          |
-+ *                          |------->[1/16]--------------------------------> hsclk (MIPI-PHY)
-+ */
- static unsigned long
--rzg2l_cpg_get_foutpostdiv_rate(struct rzg2l_pll5_param *params,
-+rzg2l_cpg_get_foutpostdiv_rate(struct rzg2l_cpg_priv *priv,
-+			       struct rzg2l_pll5_param *params,
- 			       unsigned long rate)
- {
--	unsigned long foutpostdiv_rate, foutvco_rate;
-+	const u32 extal_hz = EXTAL_FREQ_IN_MEGA_HZ * MEGA;
-+	unsigned long foutpostdiv_rate;
-+	unsigned int a, b, odd;
-+	unsigned long hsclk;
-+	u8 dsi_div_ab_calc;
-+	u64 foutvco_rate;
-+
-+	if (dsi_div_target == PLL5_TARGET_DSI) {
-+		/* Check hsclk */
-+		hsclk = rate * dsi_div_ab_desired / 16;
-+		if (hsclk < PLL5_HSCLK_MIN || hsclk > PLL5_HSCLK_MAX) {
-+			dev_err(priv->dev, "hsclk out of range\n");
-+			return 0;
-+		}
-+
-+		/* Determine the correct clock source based on even/odd of the divider */
-+		odd = dsi_div_ab_desired & 1;
-+		if (odd) {
-+			priv->mux_dsi_div_params.clksrc = 0;	/* FOUTPOSTDIV */
-+			dsi_div_ab_calc = dsi_div_ab_desired;
-+		} else {
-+			priv->mux_dsi_div_params.clksrc = 1;	/*  FOUT1PH0 */
-+			dsi_div_ab_calc = dsi_div_ab_desired / 2;
-+		}
-+
-+		/* Calculate the DIV_DSI_A and DIV_DSI_B based on the desired divider */
-+		for (a = 0; a < 4; a++) {
-+			/* FOUT1PH0: Max output of DIV_DSI_A is 750MHz so at least 1/2 to be safe */
-+			if (!odd && a == 0)
-+				continue;
-+
-+			/* FOUTPOSTDIV: DIV_DSI_A must always be 1/1 */
-+			if (odd && a != 0)
-+				break;
-+
-+			for (b = 0; b < 16; b++) {
-+				/* FOUTPOSTDIV: DIV_DSI_B must always be odd divider 1/(b+1) */
-+				if (odd && b & 1)
-+					continue;
-+
-+				if (rzg2l_cpg_div_ab(a, b) == dsi_div_ab_calc) {
-+					priv->mux_dsi_div_params.dsi_div_a = a;
-+					priv->mux_dsi_div_params.dsi_div_b = b;
-+					goto calc_pll_clk;
-+				}
-+			}
-+		}
-+
-+		dev_err(priv->dev, "Failed to calculate DIV_DSI_A,B\n");
-+
-+		return 0;
-+	} else if (dsi_div_target == PLL5_TARGET_DPI) {
-+		/* Fixed settings for DPI */
-+		priv->mux_dsi_div_params.clksrc = 0;
-+		priv->mux_dsi_div_params.dsi_div_a = 3; /* Divided by 8 */
-+		priv->mux_dsi_div_params.dsi_div_b = 0; /* Divided by 1 */
-+		dsi_div_ab_desired = rzg2l_cpg_div_ab(priv->mux_dsi_div_params.dsi_div_a,
-+						      priv->mux_dsi_div_params.dsi_div_b);
-+	}
-+
-+calc_pll_clk:
-+	/* PLL5 (MIPI_DSI_PLLCLK) = VCO / POSTDIV1 / POSTDIV2 */
-+	for (params->pl5_postdiv1 = PLL5_POSTDIV_MIN;
-+	     params->pl5_postdiv1 <= PLL5_POSTDIV_MAX;
-+	     params->pl5_postdiv1++) {
-+		for (params->pl5_postdiv2 = PLL5_POSTDIV_MIN;
-+		     params->pl5_postdiv2 <= PLL5_POSTDIV_MAX;
-+		     params->pl5_postdiv2++) {
-+			foutvco_rate = rate * params->pl5_postdiv1 * params->pl5_postdiv2 *
-+				       dsi_div_ab_desired;
-+			if (foutvco_rate <= PLL5_FOUTVCO_MIN || foutvco_rate >= PLL5_FOUTVCO_MAX)
-+				continue;
-+
-+			for (params->pl5_refdiv = PLL5_REFDIV_MIN;
-+			     params->pl5_refdiv <= PLL5_REFDIV_MAX;
-+			     params->pl5_refdiv++) {
-+				u32 rem;
-+
-+				params->pl5_intin = div_u64_rem(foutvco_rate * params->pl5_refdiv,
-+								extal_hz, &rem);
-+
-+				if (params->pl5_intin < PLL5_INTIN_MIN ||
-+				    params->pl5_intin > PLL5_INTIN_MAX)
-+					continue;
-+
-+				params->pl5_fracin = div_u64((u64)rem << 24, extal_hz);
-+
-+				goto clk_valid;
-+			}
-+		}
-+	}
- 
--	params->pl5_intin = rate / MEGA;
--	params->pl5_fracin = div_u64(((u64)rate % MEGA) << 24, MEGA);
--	params->pl5_refdiv = 2;
--	params->pl5_postdiv1 = 1;
--	params->pl5_postdiv2 = 1;
-+	dev_err(priv->dev, "Failed to calculate PLL5 settings\n");
-+	return 0;
-+
-+clk_valid:
- 	params->pl5_spread = 0x16;
- 
- 	foutvco_rate = div_u64(mul_u32_u32(EXTAL_FREQ_IN_MEGA_HZ * MEGA,
- 					   (params->pl5_intin << 24) + params->pl5_fracin),
- 			       params->pl5_refdiv) >> 24;
--	foutpostdiv_rate = DIV_ROUND_CLOSEST(foutvco_rate,
--					     params->pl5_postdiv1 * params->pl5_postdiv2);
-+	foutpostdiv_rate = DIV_U64_ROUND_CLOSEST(foutvco_rate,
-+						 params->pl5_postdiv1 * params->pl5_postdiv2);
- 
- 	return foutpostdiv_rate;
- }
-@@ -610,7 +730,7 @@ static unsigned long rzg2l_cpg_get_vclk_parent_rate(struct clk_hw *hw,
- 	struct rzg2l_pll5_param params;
- 	unsigned long parent_rate;
- 
--	parent_rate = rzg2l_cpg_get_foutpostdiv_rate(&params, rate);
-+	parent_rate = rzg2l_cpg_get_foutpostdiv_rate(priv, &params, rate);
- 
- 	if (priv->mux_dsi_div_params.clksrc)
- 		parent_rate /= 2;
-@@ -626,9 +746,19 @@ static int rzg2l_cpg_dsi_div_determine_rate(struct clk_hw *hw,
- 
- 	req->best_parent_rate = rzg2l_cpg_get_vclk_parent_rate(hw, req->rate);
- 
-+	if (!req->best_parent_rate)
-+		return -EINVAL;
-+
- 	return 0;
- }
- 
-+void rzg2l_cpg_dsi_div_set_divider(u8 divider, int target)
-+{
-+	dsi_div_ab_desired = divider;
-+	dsi_div_target = target;
-+}
-+EXPORT_SYMBOL_GPL(rzg2l_cpg_dsi_div_set_divider);
-+
- static int rzg2l_cpg_dsi_div_set_rate(struct clk_hw *hw,
- 				      unsigned long rate,
- 				      unsigned long parent_rate)
-@@ -800,22 +930,6 @@ struct sipll5 {
- 
- #define to_sipll5(_hw)	container_of(_hw, struct sipll5, hw)
- 
--static unsigned long rzg2l_cpg_get_vclk_rate(struct clk_hw *hw,
--					     unsigned long rate)
--{
--	struct sipll5 *sipll5 = to_sipll5(hw);
--	struct rzg2l_cpg_priv *priv = sipll5->priv;
--	unsigned long vclk;
--
--	vclk = rate / ((1 << priv->mux_dsi_div_params.dsi_div_a) *
--		       (priv->mux_dsi_div_params.dsi_div_b + 1));
--
--	if (priv->mux_dsi_div_params.clksrc)
--		vclk /= 2;
--
--	return vclk;
--}
--
- static unsigned long rzg2l_cpg_sipll5_recalc_rate(struct clk_hw *hw,
- 						  unsigned long parent_rate)
- {
-@@ -861,9 +975,9 @@ static int rzg2l_cpg_sipll5_set_rate(struct clk_hw *hw,
- 	if (!rate)
- 		return -EINVAL;
- 
--	vclk_rate = rzg2l_cpg_get_vclk_rate(hw, rate);
-+	vclk_rate = rate / dsi_div_ab_desired;
- 	sipll5->foutpostdiv_rate =
--		rzg2l_cpg_get_foutpostdiv_rate(&params, vclk_rate);
-+		rzg2l_cpg_get_foutpostdiv_rate(priv, &params, vclk_rate);
- 
- 	/* Put PLL5 into standby mode */
- 	writel(CPG_SIPLL5_STBY_RESETB_WEN, priv->base + CPG_SIPLL5_STBY);
-@@ -951,9 +1065,7 @@ rzg2l_cpg_sipll5_register(const struct cpg_core_clk *core,
- 	if (ret)
- 		return ERR_PTR(ret);
- 
--	priv->mux_dsi_div_params.clksrc = 1; /* Use clk src 1 for DSI */
--	priv->mux_dsi_div_params.dsi_div_a = 1; /* Divided by 2 */
--	priv->mux_dsi_div_params.dsi_div_b = 2; /* Divided by 3 */
-+	rzg2l_cpg_dsi_div_set_divider(8, PLL5_TARGET_DPI);
- 
- 	return clk_hw->clk;
- }
-diff --git a/include/linux/clk/renesas.h b/include/linux/clk/renesas.h
-index 0ebbe2f0b45e..96f54becfa4b 100644
---- a/include/linux/clk/renesas.h
-+++ b/include/linux/clk/renesas.h
-@@ -32,4 +32,16 @@ void cpg_mssr_detach_dev(struct generic_pm_domain *unused, struct device *dev);
- #define cpg_mssr_attach_dev	NULL
- #define cpg_mssr_detach_dev	NULL
- #endif
-+
-+enum {
-+	PLL5_TARGET_DPI,
-+	PLL5_TARGET_DSI
-+};
-+
-+#ifdef CONFIG_CLK_RZG2L
-+void rzg2l_cpg_dsi_div_set_divider(u8 divider, int target);
-+#else
-+static inline void rzg2l_cpg_dsi_div_set_divider(u8 divider, int target) { }
-+#endif
-+
- #endif
--- 
-2.52.0
+Reviewed-by: Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
+
+>=20
+> CU
+> Uli
+
+Best regards,
+  Nobuhiro
 
 
