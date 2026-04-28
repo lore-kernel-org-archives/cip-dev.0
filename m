@@ -2,50 +2,49 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40261FF886D
-	for <webhook@archiver.kernel.org>; Tue, 28 Apr 2026 17:13:35 +0000 (UTC)
-Received: from GVXPR05CU001.outbound.protection.outlook.com (GVXPR05CU001.outbound.protection.outlook.com [52.101.83.11])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.2675.1777396407293656501
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37936FF885A
+	for <webhook@archiver.kernel.org>; Tue, 28 Apr 2026 22:20:13 +0000 (UTC)
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (DB3PR0202CU003.outbound.protection.outlook.com [52.101.84.21])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.1420.1777414807104426224
  for <cip-dev@lists.cip-project.org>;
- Tue, 28 Apr 2026 10:13:27 -0700
+ Tue, 28 Apr 2026 15:20:07 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=xB/l5djo;
- spf=pass (domain: siemens.com, ip: 52.101.83.11, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=w9Ts2/6c;
+ spf=pass (domain: siemens.com, ip: 52.101.84.21, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ldcCQ+l6ZhXpg7CaRaPeydYRZBf+WibumX3Br0HCZ0IH2QQadxrvqJxFA2y1pETD4pJQBIvbtNMjJJ20ae34rx3i4MSk0kp1/qRDwwPV/F5phsnVuRkD8rX8bQ3K7tMHA165BSniWWTwk+Z63bvBj1g6DBzYTCHe4wzpxQrTI/Fr6z5VjJnQwr0/L+7YsNAPuhL5+VzRrLfEaRCbt+O7bS+8wckfm3ddrJrrvaGzQthNQcHCy0HNie2BSYssunM+C+6ZPES8fPr80H2DTAYeTHLmZRFhgJWmc0kK+U/bpATYRQz7vWvvNWoLrMz6i0jyW4LFkS7DuhTSH1aEs6cAkA==
+ b=FaBU5rbbxjw+V8et6K/J3SHzZe9GbjR8Z0cO1+y+NaxQgaZbVRHpQPL0DkKW2le2waxqVAPcRM/kCJNz1KVy051VJ2hgrYoC4M0vW1pt0CBiGWRiInJIUlMIpXQy7ElFdTbtHYkgEdFszwJBycrvFZtcHxz4HEF4lgPfhKa8sBc2KKdztX+Qd8e7uxKvSQX8aPzt6zN5pH20GX1WSMGgMZIAl3cBFpUQyRvPdlP4ZyvFTXo7GB+cgyZDNya93HaluQe1MKOCWouGXYcZHKxRl6rrJ5JekuwJE8pMmU5NLat1eEiuBw5cMznMf710aJAQpealPmcs4Ul1xm0pEa28hw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9cYC+de9LpZGb+BwkwCHdCtS1ZuZhTfwQm4CfVJ+y70=;
- b=uligutYvrIEFKStnmLSUSsUiZB+Oa8GOHGYHCWKD3y6NttAjIPKy41dJoPqBTrDhtpu3hUy+jw3tnXKPeLcbE6Xyr+QuQ38Te1VACrkX6cpep8mWlkqlxJYk2Ltvri6pPtwW3IS2iK/LqnGqCJf06C5157Il5HdUtnXdEOZNK+c3/qRfQBi65zCvla2jtz3HG8ltS7s+p8atGRXkCqEaX2I27xQeodQKRQpLFSuHbJhvh/Wy+eaqZz8pZ6a9aM/FuuWPnliBSsDAZhdkpUK332YkOYKLjc1FXVYfeD5MP4Fz0TfcZlRUputowOs3IDccGd2YLX137jjDCaIU6c5adg==
+ bh=Bcpy6wkfcloiTwdlpycK62kGCNx6yK8bJ8CnczEe29U=;
+ b=Op8JC5wpvmEsRT0TyPhZN1T/wBYFLfj5AZhZQC2BNsn9Qza0CSVlJiBtpatjCdrSwUmax2aDgpXvhv/NpG2PQ2p5TmD2zffzNMOFSc843rrSJhHjFmnBfG+lN6LPo2zZX65DWpGajRYzxgKEjfTqd0VAS8kVG1UMX2wBhCqW/IP2hRmKoCz/LfO4wxwvI2euCADxWC1WG3lQy9r4QXGZlhWpv+Pmt3o+QJEEVaUSbVIs2EJ/atPIcsVhgIGsqZfUa5KgmyJyrQcsoybXs6qzr5CPStVZrIdHXhjcZFfTZ6WE5m7pEThbXepW3z4IRHGWBkEwJ5pGaEDMuc7kM0bBDA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9cYC+de9LpZGb+BwkwCHdCtS1ZuZhTfwQm4CfVJ+y70=;
- b=xB/l5djol1UU+yHfDLderMjhvkgDk54qiNONkU16cc0Ph/pMVQeyMNQZx/MVxMQe6CjSyZCpb4g0Fe9FvPQ9nC6IKU2pM85hX5RRJP4Qx6lz/Hy0EK3wc++dFpB/Ojb56aaEZFugR3GL/ovgwbaQNZSU/NNAfy7EOfYiYAuoBfHBT7CRktIE0YIxAD0lhU+MxWyLGV069ANDQfOYx5OSiqPfOAVIxZd+Ov4h+9o7/qXQ6ObAZ5C2/05knODQqlgHV+ARl3mYu/d1dQZLbeZp4MDikGH5vMQR3XINsKmW06xHXEB7cFujVJLuCQgOlnDFiSHG4IjroOwVwTAjrK4ZBQ==
+ bh=Bcpy6wkfcloiTwdlpycK62kGCNx6yK8bJ8CnczEe29U=;
+ b=w9Ts2/6cQzOE/Btx/Rj5VCPlNDzLf+SCeTOUssTCx6ai0bWZ6sF61oM0pol6br5LxSj34QCL/tsY8yskv2LMgTBjL1uKzdnBN3Y9NsdMB0a7052Q2zbqBNCyMK3nM+zeEwAnj8ve6XRwpmlMJoVBDY6Tq++eUzqlSnmB0HEtdKGn8nnER7Bo0codMHyP/dFLapVXL1In/cMgr8OOXF0r0/7TQXnEP412bqNfrkqWCT8yc/vn9bT6DBdQQLpvJ9MRrj4y60YUM+2pUnvIuEqztpScu7p8zdU4m99ThjyMKCpkVYY3Exq4yOoAICkX+8DHkmlWyGv9pWAVRITAr5ig/g==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by VI0PR10MB8882.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:800:239::21) with
+ by VI1PR10MB3472.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:800:136::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9846.26; Tue, 28 Apr
- 2026 17:13:21 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9870.20; Tue, 28 Apr
+ 2026 22:20:03 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::be9f:e8ca:ee9:83e1]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::be9f:e8ca:ee9:83e1%3]) with mapi id 15.20.9846.025; Tue, 28 Apr 2026
- 17:13:21 +0000
-Message-ID: <dc510635-15ec-44d6-b64c-2af7a7e7cb14@siemens.com>
-Date: Tue, 28 Apr 2026 19:13:18 +0200
+ 22:20:02 +0000
+Message-ID: <3e88bc83-3502-4e8a-9bcb-5bb157485acb@siemens.com>
+Date: Wed, 29 Apr 2026 00:20:01 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [cip-dev][isar-cip-core][PATCH v2] crypt-hook: Check if
- WATCHDOG_DEV is set and available
-To: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>,
- cip-dev@lists.cip-project.org
-References: <20260428113247.27835-1-Quirin.Gylstorff@siemens.com>
 From: Jan Kiszka <jan.kiszka@siemens.com>
+To: cip-dev <cip-dev@lists.cip-project.org>,
+ Quirin Gylstorff <quirin.gylstorff@siemens.com>
+Subject: [isar-cip-core][PATCH v3] crypt-hook: Check if WATCHDOG_DEV is set
+ and available
 Content-Language: en-US
 Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  xsFNBGZY+hkBEACkdtFD81AUVtTVX+UEiUFs7ZQPQsdFpzVmr6R3D059f+lzr4Mlg6KKAcNZ
@@ -90,163 +89,164 @@ Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  qH4kDzsqKX8zzTzfAWFxrkXA/kFpR3JsMzNmvextkN2kOLCCHkym0zz5Y3vxaYtbXG2wTrqJ
  8WpkWIE8STUhQa9AkezgucXN7r6uSrzW8IQXxBInZwFIyBgM0f/fzyNqzThFT15QMrYUqhhW
  ZffO4PeNJOUYfXdH13A6rbU0y6xE7Okuoa01EqNi9yqyLA8gPgg/DhOpGtK8KokCsdYsTbk=
-In-Reply-To: <20260428113247.27835-1-Quirin.Gylstorff@siemens.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR0P281CA0096.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a9::9) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: FR4P281CA0199.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:e5::19) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|VI0PR10MB8882:EE_
-X-MS-Office365-Filtering-Correlation-Id: d7fef592-06ea-4a0a-c9ab-08dea54972b3
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|VI1PR10MB3472:EE_
+X-MS-Office365-Filtering-Correlation-Id: 442d0af7-eb42-4e17-d57e-08dea5744af2
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|376014|1800799024|366016|22082099003|18002099003|56012099003|55112099003;
+	BCL:0;ARA:13230040|1800799024|376014|366016|55112099003|18002099003|56012099003;
 X-Microsoft-Antispam-Message-Info: 
-	chjB0wTHRwFKCBjicA2PktIMEoYok6HeECnxOezAXEwMCpZ5LltDz7WyiIC575KFToeB5YB3ILDGdowAe3e+hcWjqizOsmol6pCMftcdZcs5W7pLREhAG/reL9e397hye4fJLuT9bpnoKFNnlvQNPqMjIwxIIfT8MIMy5wJyjfFclsoKcehA6jrRYwx0v8nQODw/MnFY1KLEqv4LvjetvjxLbrgeMhV7FED7KkCrOy3lqine7gOZOsm1KX4rGmqu8FcJb27WDdvBinWk7kz9R3Z8s4/PrLx6jM2ILgWa10NtZ9e1RkxH2gRWc9vxoRoi9mnUOQ19h8u7G2mIhT1UQCCTfJfkwIPMc0BExV0+eYHYdcDfUkg2/T/7cOvCGtm6v7KX9EJf/ZGL+bImFcRq5wOxW3XPuCUV8oFB6yDsd7FMVlmmhF225K1N7FONkZIe1cNIxLqLVS9DY8xTUxmuUfEx8zGcLZBWLwFhy4Ve0mvcSF4+Op9wNACSYS3BKQOxi2+0doUTGaJUsZlG5sZpcFBsDlC9LapDSht3T5aF941y31M0H7ZcTe065jkvND/rCRynRPpJki8XwehWxopSJZOWqtx+hOep9SRkdHxkxIgo2NliWLpzcuAd6rrz1yExvQcCEe3Qss6q+uSJvBGcSJfMGKd+V6BfJBXqvbv2A0J248Brqx0DDwX/Oqs9CPrFYXJMhhPmT8HxC3hekaMKnRejNpWk8Wb7JR5R/T6plVo=
+	KKBbb36KJsBckT6hcF/jjv8KDeFRUAW4FnRC6BnNw2/e39Aq9+5IE8zJxV7Je49Pd+6K7lsI2xkWPHc/StIuZupYRSqGL8Sfy3FGzrcSeY8hEReuezcbRLn6DM7rKHRc2D/sBP1qLLMdZBzu0Z2Ue7Ogqf1M8GbjpHKCxictUF8Qsb8Jm4LQnjXNgddM10LTeurNAI+/1KiFFUjXQehAGGHL8/+jZ1VXVKLjjlI3yCr07eBJ0SybgGfxUwMz9+ldeq0MdQv4BTmewKiTV5mcxK9X7OVmgRW+/sHlaKjjKR1Rdl7vmBi7onyOIzfr8gfmPuzRvDcMh2ckntMQa4l/uxKYvDyQpifwLwf6duD74voVd/ClVGSb7c8rRtsqolkor/byhE8Il9gwjeZxixrk5XY4LbpsMRFUzrrDCKFJ1xqEqxwNjM5V11DCNpmOsbaix23BgdG2kh+MLNYm8sTXN1McZsQtNKYRczW1ZcIK8+dfxQyeHdbShEomOkXBQW5tMdidzgC5y5hlADeBhltzSY72/CcPPZRIAQk8iIQ6LrsYaQI0xwzxkIPKq1wMmS7597cGfxMscwNid0g1kaKOV//V1Ozwq6jCB69kVsGbHZbSdmTaFSAlWiZ37AsTuM+B6blylSEz8Kd20Fl5G08S/VezQBBhZszH/4Moxehx15dOpuoFQ2q+9eGGGh+EtGIvS95k1eyllzlnReX3yDN8T1Du+4MiviKXJK8WzlwtdrY=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(22082099003)(18002099003)(56012099003)(55112099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(55112099003)(18002099003)(56012099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?YTd1ZGhhRHFVK2hxb2t3Zkd6TjhiTitGWmp2aDV6K3VuYlZVeENMRWJ1VFlD?=
- =?utf-8?B?WlNONzZLdldsYVlhOHhWR1hQVXJOdFloajBlZ25EWGVoWE9Gd1plRFE5SHVX?=
- =?utf-8?B?TjdhV21FamRNWm1LRm1oMlVEQWsybGlqcGJITFpMcDZhaHJkcDNRa1lFcFpB?=
- =?utf-8?B?SjkxZWd6SDR4Q0FQcE1adjJQNEpIMG5OMkhDRC9JRXhQNUgzRWJsUk1MdlRr?=
- =?utf-8?B?YmV3ZFlQK2RZdHVDSzBNNnoxekF6N1VmV0pPUDZSelUzTVJjcS9MU2QvRW9x?=
- =?utf-8?B?THpvMVh6T3J5VnpxMlJqd3RVNlY1T01xdGVscUFjaExOV3ZGUS9Dc0FKL29z?=
- =?utf-8?B?cG84dDlQelN4YS93WlFJdDFoL3BtS1NuRVVSc3cvcVNCdXg1YVBxY2o3V29B?=
- =?utf-8?B?RWZORmRlbzR0dHlOL2NNWm10Y1laUDFzV04vZk1xZVd6eFJ6eGx0Q2xqVlFQ?=
- =?utf-8?B?V3BnMzljUjBuaktBSnZ1VHJvZW1NeXhOS2NBMmtUYVBOUy9RaTdxaWNpMFZr?=
- =?utf-8?B?THhObDhyL1djeitpdlJsR21keFZBNDRhUWN6M1dOUjNLcjdWdXI0YUdyOVBQ?=
- =?utf-8?B?enBRaU9neml1UVIxelpCcitsemR1QW55YzRJSzNzcC9ZUzN6ZDF2cHZ3U04y?=
- =?utf-8?B?WWd3a1VuaDNDR21nTlIvS0VZK1BVOXo4elJOWGRWZzE1RVkzQ3dXYU1OUVJ3?=
- =?utf-8?B?WTEwMVF5OHdCb2hoR3BOVlNiTjlJMjJwK1hYcThQV3RoNFU2bCtOdzQ5bWtn?=
- =?utf-8?B?RjByNmhLd3NjMWZLYk52TnZOY2FZcnlzdTJGYjVaS3lvbGFvbGNyN3BaY3hm?=
- =?utf-8?B?QWhGaDFuSzRUd3o1cTZJNnA2UU5TNm9wbmdRWmU5RDFCc2hYSFcyZlZvcHlq?=
- =?utf-8?B?cTNBSEU1cXp5am1jQlBVRUhIRWVGQ1RvYmxDYVpFUzBPQjFWNXRNNGtPWnov?=
- =?utf-8?B?dGdTZmlYWU1MTXN1VUV2dDhZK0toQWk1b09aSDk4UkhXUSthSTd4VTNVZWM1?=
- =?utf-8?B?YXQza3kzUExMWjFQc0lGQURpc2ZMU2t4Rlc0YVdRbGFhYWhIYXEzU2lJUnRC?=
- =?utf-8?B?bTFyaWJTQ1E5b0F1YnRyakxLQ0M0UVd2aytxUmhVQjZYR1hIbTZDYWxSMHhO?=
- =?utf-8?B?WVFlWlRySFo1dkk3cFI1YWdDV2xsMFVMQzBmRWhKTm1lSnF2NFpvVk5hbUU4?=
- =?utf-8?B?aFpyVzBINWdvTm1Ybjd2OThaczc3V3kvTmJyRGwrUzJXUzVta0ZSaUVWdk9Z?=
- =?utf-8?B?Q1JOeXgxTmtLeXk4SVhYQmVzNk9wUEs4SUgyQk4zaHM4N0ZZWFdjYUNZZWQy?=
- =?utf-8?B?ZkVkT2tlTlB6Y2hBQlgzRHd2UHlUMTdrR1RmdXhTZ0gzWmJIVEtMT0NKdVEw?=
- =?utf-8?B?LzNCR3JFTnhjY3Z5RkVUUjU3M2JYVmlIaXoxcmU3WUVzS0UvZ3VYYkovUE9p?=
- =?utf-8?B?ekhVQXNXMEJaMnNydkdxS25DVnFGU1UzeVZpU2xobktxZGJOVTRvWnBNUFY1?=
- =?utf-8?B?L3UxbW05U2dEOVA3N3NpS1ptalFONjJXVVRrQ3Y3SVhLTThMcWd1MjV5Mzg2?=
- =?utf-8?B?L3FXbmkrNzZOV0FOelUzUHJnRW1mcnNFOTBGMDRsWngxOVJscW8vTFZ2SDRR?=
- =?utf-8?B?c053M2pIYkY3NVBWNzd0NnYyMDJtazYwSkM3Y0MvMVQxMkNDQnNmNjMyNEpm?=
- =?utf-8?B?ODdZS3E0dGlLekVNTU1lRXJpdVd0UHlPNE55YnhQTWJrZXdQUE9VdnhOeGtt?=
- =?utf-8?B?T2pKZUlQVzMrVDJ6UHEzRDV2MEhnWWRYR1AwYlJqWkd2MnYzMG82cnJXU3F6?=
- =?utf-8?B?SHl6SkV4VUd0TEM4K2xWOGJoMTRJTlVOT01MYTQ2UXpPSE1US0w3N29EMm11?=
- =?utf-8?B?Y1RLeGhVR21vM2QzdXpqRjBUQWRRQUxxUjdraW83SGsrL0tFR3loZXlhTUJZ?=
- =?utf-8?B?YVVxc2V4MlJNL0EwV2QwSDlydUdZdDFNMnkwbEVFWnBSWjJrK3kvZy9IUzRh?=
- =?utf-8?B?WVlTNG4yM3ZnU2w2U25aRWt3NmNraEVUU2hCMlB1UGVjdW5LTmV6K1ZIdGVY?=
- =?utf-8?B?VVVoblUzdmYzY0k2bU1RTStXcWZGSUJEUXRkUCt4ZTdBb3VnR283UVc0QlhT?=
- =?utf-8?B?VnZtSlJZLyt2U2ZXa3d4bGk1WkFjeDNZeXBZVnVmTEFBVG1GUXNiZ1RBMkxx?=
- =?utf-8?B?bHdzU2NYNDdrNElJNjFQZFdXc1NZUWF5YVF4NXVLVXBLYWF4dFh1cmRFTEVG?=
- =?utf-8?B?cVFIcUl3SUp0c3h6WW8zUFR1dkdkTWFWQURhS0oxM1Bkb3ZGdFVPV3FMVWJW?=
- =?utf-8?B?WGhWUU84djV1cGxWeFJEUnNCclZRVkpsUGxPYnVuMXEzeHAyTVFsZz09?=
+	=?utf-8?B?azZvZWFqVHE1QWpnUkg5QVh2Qml4dmF1KzFMdFFkekE0UXhIVVBYaEhFc1Vv?=
+ =?utf-8?B?UERkdEM3Y0ZacWRHZENYaE1wKzk4eEhIWmRESzl0blJRMXJyVHVoQmc1S2Mw?=
+ =?utf-8?B?T21uOHJXUTFBYUl5czAwaDRVc2UxUWdWVWdzaGVnRkpBT04yc2kzSElRd21T?=
+ =?utf-8?B?U2s2dlhrMlNnK2ZZVTBTd2I0SEVqQ3hMTFdiQ0FqRWtPM1dQYmtQc1ZpT1ov?=
+ =?utf-8?B?V3FjQU94SlJtMlRNQlRIOE9CZjlqT0Uwa3ZlQzZBTmR4UVB2U1VRdktmSVJS?=
+ =?utf-8?B?YUJHSVQ5YzE0REZYbWpjdlhBek9hNDF4dFhiRmhCTjkxdTU4WWdtczlsQmFr?=
+ =?utf-8?B?MHF1LzFQdll0WTZKU0NSVXFiVTZGa01iajNoTnJvSzdNZy9ORW9PZldaY3No?=
+ =?utf-8?B?TWRPY2xMSEs4ZmdiMnpVVVpxSFlWc3J4a1c2bUE5TlR3UkZaZXRyNngxV3JJ?=
+ =?utf-8?B?ajRrOFMxeG13Um10S2pnSWxBdzJxc3FJcHNQVVFNWGVTeXVpekFucGVNV3k2?=
+ =?utf-8?B?RzFYQ0NteWdJVFNMR0ljcjVjZ1Q2TnlQRlBHSkxBMkVSbDZ6TE1PREFnM241?=
+ =?utf-8?B?dUdMQjNEM256QjZKNytncjhZcTRUN25VQlBZalQ4K1dFakNHY21Eb3FmM1Vv?=
+ =?utf-8?B?YmZLZGFXcGZSb0U3d1hBVEpPc0Q3QXBhWE5ZbkxYaVRUQXRkQ0VQdUxsQ2px?=
+ =?utf-8?B?L0NIQWd5VldFWkVoSy9yUGZMWlk0dEN0M05jSFVySmZsUzI3d1NwbERtaUtH?=
+ =?utf-8?B?UWp2MCtPS2xyaHhRalQzb1RRcmt6ZkhqeURHY3N0aStnaDh3SnNNVDNXRnBw?=
+ =?utf-8?B?Y2pEdUp2T0RkREJKR3hRRmcyVWw5ZU1CZkxhSkljNHc3M1J1Tk9OYnNTUEQw?=
+ =?utf-8?B?N3luUlBLTENJeGZtd29nS0F2ZkVWWjVObjV6c3pJbHBmYnBNdXVhSVMxNzFT?=
+ =?utf-8?B?Z21SdHVOVG1LcWVMSm5oOFBjL2lGUDA1NlNtd0JYVGVQYWF5WllPZGpTOW9y?=
+ =?utf-8?B?MEd2Nzd4dGZ5ZFIzRzlsc05rOUhNYVdHMzdjT2VZUXllNUxHTkNTWTFHbnBh?=
+ =?utf-8?B?M3Iyc2NXdkppSFM4WUgrSFVYeUk0UXFhVFpQbzkwSjM2SDJzL09CM3hRcXFV?=
+ =?utf-8?B?aVFXZnZja3Y2TnpMTHYxNHZ1NTZuSjl6WUdZaXUxakVJVmxuaVk2WWYrVlVP?=
+ =?utf-8?B?RGdaaktpS3QzVnc2SDJMZUJXdUdCSEZkVHlwNnduYmVTWGlTc1U4ZHRFc0hk?=
+ =?utf-8?B?SmsyNDhjL0I2M3lYVlZVVERSbkhqUXBrdTZsdEdkOXNtQjBMNmc4V3JhTDcv?=
+ =?utf-8?B?ZTZhTVpkUnZubmRzRVA5K0U1SEhrVUp1bkpBbDFlWmJLVFRUWklZOSt3bkdU?=
+ =?utf-8?B?Tk5EWjNlYVpQRUYrVU5IMkpUN2RqM0ZVbkpUZlVKMS9IZjB1eDIrQlZaN1Rz?=
+ =?utf-8?B?ZENzekpSR2FKdXdRb2hZQ3ZQa1RJTnZmc0hJOStETTBaMUIyMVRtZnUwUVZC?=
+ =?utf-8?B?cU0zTEFYbFVKWFUvb2JuaUxGMnZLeTVLUXgxYjExSGRKRHltTEkwRWFQa0J0?=
+ =?utf-8?B?SmJpckE3NXNTQ2Jrd2NCSDY1Ymh1SkxxQWJOUjJKTWtaY1BGa0hXSUNDU0RG?=
+ =?utf-8?B?YWhDcnBlcTR2amZJbkJUWmVRSWRIanovTXQzb05mZlpMYlNMUU4zVlF3STUx?=
+ =?utf-8?B?NjVWTDZHaXRuMVdOS0k0UUJPTHNKTkh1ZVNFbWJoaHBRRTNIRUt1bzk4cldW?=
+ =?utf-8?B?M1lqR2t2Y3Q1cUhWLzRtcW1HUURGcHlHR0N5dlFYTVExU3pGWnhUSW5JcXVJ?=
+ =?utf-8?B?WXYwUkhVc0V3OWpkU0dodVl6Wm4xTUp6KzNRZ0oybEFka0U0a0VpZGRGUW12?=
+ =?utf-8?B?RUZUNDZVdXVnblRJa09WbURoWkd6Z1hKZ3hNMUEyZVpSYm93dnVsSzhka3R2?=
+ =?utf-8?B?VEgyK25FRExYcEVRMGtHOElXUWR3Z0xxZGdaekRYL3JjVkFpeEloS2FwZXFk?=
+ =?utf-8?B?Szlic3N3ZlVqSVlPY2RWSC9mdCtEUDFJQ3NFbFNiOGNTUzlmWlExVWVHRlhT?=
+ =?utf-8?B?RVB0amF4dUlBb3I3anhQT1pJU2M3clBPeVJ5VzV5ZWxPY3FYT1AvSnFDRTdJ?=
+ =?utf-8?B?MXFmQWZkak9JRlM0REsxSmFOaVpJYnZDKzJQRFdyUzk3c3dlZWhXV2ttUkU0?=
+ =?utf-8?B?QStVVmlUYjZJS2RPbHhWRkNYZ25kL0xUSjhzeTVCSmlZSWJsTlM4VzdGdldy?=
+ =?utf-8?B?S0VTeWdOOGY4Mmhqc3VGUTRyN2NBOUhQRENXNGt2R3Z4VTVza29ud0VZNEd4?=
+ =?utf-8?B?c3hHUk5zbi94cEtVSkM2WFg2ZVNrZHZ0YWZ0S3ExcE1DQXl3NXdXQT09?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d7fef592-06ea-4a0a-c9ab-08dea54972b3
+X-MS-Exchange-CrossTenant-Network-Message-Id: 442d0af7-eb42-4e17-d57e-08dea5744af2
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2026 17:13:21.0281
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2026 22:20:02.8446
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MI0sDBP2vkwihhSnJh+xko6noT20R3C8hLyOBg1Rxn22a+lPLwonfHYIjGsEi3sqZ1mc3B4tOZl+PicwjIlJjQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR10MB8882
+X-MS-Exchange-CrossTenant-UserPrincipalName: bMJUGz+99UMg6fxrqpO7uDUhllo0MvHBkjlN0lFyYRg1BC20FCIOAA0mK7Pqi5UnUpIOYUh7g8niwP6dRDO03Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB3472
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 28 Apr 2026 17:13:35 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22820
+ <cip-dev@lists.cip-project.org>; Tue, 28 Apr 2026 22:20:13 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22821
 
-On 28.04.26 13:32, Quirin Gylstorff wrote:
-> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> 
-> This allows the user to disable the watchdog by emptying the variable
-> `INITRAMFS_WATCHDOG_DEVICE`.
-> 
-> Also add  a panic if the watchdog device is configured
-> and not available.
-> 
-> Reported-by: Stefan Koch <stefan.koch@siemens.com>
-> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> ---
-> Changes v2:
->  - if the watchdog is configured and not available panic the initrd
->  - add a message if the watchdog is disable
-> 
->  .../files/local-top-complete                    | 17 ++++++++++++-----
->  ...ook_0.10.bb => initramfs-crypt-hook_0.11.bb} |  2 +-
->  2 files changed, 13 insertions(+), 6 deletions(-)
->  rename recipes-initramfs/initramfs-crypt-hook/{initramfs-crypt-hook_0.10.bb => initramfs-crypt-hook_0.11.bb} (99%)
-> 
-> diff --git a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-> index 4f3eafc..e802f0b 100644
-> --- a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-> +++ b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-> @@ -2,7 +2,7 @@
->  #
->  # CIP Core, generic profile
->  #
-> -# Copyright (c) Siemens AG, 2023-2025
-> +# Copyright (c) Siemens AG, 2023-2026
->  #
->  # Authors:
->  #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> @@ -64,10 +64,17 @@ if [ -z "${create_file_system_cmd}" ]; then
->  fi
->  
->  service_watchdog() {
-> -	for n in $(seq $(($SETUP_TIMEOUT / 10)) ); do
-> -		printf '\0'
-> -		sleep 10
-> -	done > "$WATCHDOG_DEV"
-> +	if [ -n "$WATCHDOG_DEV" ]; then
-> +		if [ ! -f "$WATCHDOG_DEV" ]; then
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-Given how red our pipeline now is, we likely want "-e" here. Fixing up
-and retrying.
+This allows the user to disable the watchdog by emptying the variable
+`INITRAMFS_WATCHDOG_DEVICE`.
 
-Jan
+Also add  a panic if the watchdog device is configured
+and not available.
 
-> +			panic "Could not find '$WATCHDOG_DEV' - Please check your kernel configuration."
-> +		fi
-> +		for n in $(seq $(($SETUP_TIMEOUT / 10)) ); do
-> +			printf '\0'
-> +			sleep 10
-> +		done > "$WATCHDOG_DEV"
-> +	else
-> +		echo "Watchdog is disabled."
-> +	fi
->  }
->  
->  check_partitions()
-> diff --git a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.10.bb b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.11.bb
-> similarity index 99%
-> rename from recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.10.bb
-> rename to recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.11.bb
-> index c0572f2..331a662 100644
-> --- a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.10.bb
-> +++ b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.11.bb
-> @@ -1,7 +1,7 @@
->  #
->  # CIP Core, generic profile
->  #
-> -# Copyright (c) Siemens AG, 2020-2025
-> +# Copyright (c) Siemens AG, 2020-2026
->  #
->  # Authors:
->  #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
+Reported-by: Stefan Koch <stefan.koch@siemens.com>
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+[Jan: fix up device test, link INITRAMFS_WATCHDOG_DEVICE to WDOG_TIMEOUT]
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+---
 
+Posting as the second change, conditional INITRAMFS_WATCHDOG_DEVICE 
+default, deserves review.
+
+ .../files/local-top-complete                    | 17 ++++++++++++-----
+ ...ook_0.10.bb => initramfs-crypt-hook_0.11.bb} |  4 ++--
+ 2 files changed, 14 insertions(+), 7 deletions(-)
+ rename recipes-initramfs/initramfs-crypt-hook/{initramfs-crypt-hook_0.10.bb => initramfs-crypt-hook_0.11.bb} (97%)
+
+diff --git a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
+index 4f3eafc6..b0335975 100644
+--- a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
++++ b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
+@@ -2,7 +2,7 @@
+ #
+ # CIP Core, generic profile
+ #
+-# Copyright (c) Siemens AG, 2023-2025
++# Copyright (c) Siemens AG, 2023-2026
+ #
+ # Authors:
+ #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
+@@ -64,10 +64,17 @@ if [ -z "${create_file_system_cmd}" ]; then
+ fi
+ 
+ service_watchdog() {
+-	for n in $(seq $(($SETUP_TIMEOUT / 10)) ); do
+-		printf '\0'
+-		sleep 10
+-	done > "$WATCHDOG_DEV"
++	if [ -n "$WATCHDOG_DEV" ]; then
++		if [ ! -e "$WATCHDOG_DEV" ]; then
++			panic "Could not find '$WATCHDOG_DEV' - Please check your kernel configuration."
++		fi
++		for n in $(seq $(($SETUP_TIMEOUT / 10)) ); do
++			printf '\0'
++			sleep 10
++		done > "$WATCHDOG_DEV"
++	else
++		echo "Watchdog is disabled."
++	fi
+ }
+ 
+ check_partitions()
+diff --git a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.10.bb b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.11.bb
+similarity index 97%
+rename from recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.10.bb
+rename to recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.11.bb
+index c0572f2f..3cb05201 100644
+--- a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.10.bb
++++ b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.11.bb
+@@ -1,7 +1,7 @@
+ #
+ # CIP Core, generic profile
+ #
+-# Copyright (c) Siemens AG, 2020-2025
++# Copyright (c) Siemens AG, 2020-2026
+ #
+ # Authors:
+ #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
+@@ -88,7 +88,7 @@ CRYPT_CREATE_FILE_SYSTEM_CMD ??= "/usr/sbin/mke2fs -t ext4"
+ # Timeout for creating / re-encrypting partitions on first boot
+ CRYPT_SETUP_TIMEOUT ??= "600"
+ # Watchdog to service during the initial setup of the crypto partitions
+-INITRAMFS_WATCHDOG_DEVICE ??= "/dev/watchdog"
++INITRAMFS_WATCHDOG_DEVICE ??= "${@'/dev/watchdog' if int(d.getVar('WDOG_TIMEOUT') or 0) > 0 else ''}"
+ # clevis needs tpm hash algorithm type
+ CRYPT_HASH_TYPE ??= "sha256"
+ CRYPT_KEY_ALGORITHM ??= "ecc"
 -- 
-Siemens AG, Foundational Technologies
-Linux Expert Center
+2.47.3
 
