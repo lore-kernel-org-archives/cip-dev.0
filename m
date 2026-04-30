@@ -2,107 +2,88 @@ Return-Path: <pavel@nabladev.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CE0FFF8875
-	for <webhook@archiver.kernel.org>; Thu, 30 Apr 2026 09:58:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 663D0FF8875
+	for <webhook@archiver.kernel.org>; Thu, 30 Apr 2026 13:05:03 +0000 (UTC)
 Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.16500.1777543073812438530
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.20163.1777554295026072587
  for <cip-dev@lists.cip-project.org>;
- Thu, 30 Apr 2026 02:57:54 -0700
+ Thu, 30 Apr 2026 06:04:55 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=csI6SZov;
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=JyqI17Tz;
  spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 846BF113CBF;
-	Thu, 30 Apr 2026 11:57:50 +0200 (CEST)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BEB9A11507A
+	for <cip-dev@lists.cip-project.org>; Thu, 30 Apr 2026 15:04:46 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1777543071;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=BLrL99e0KdP0EhmDW2Q2G7e6X6osw7lJDIMIYQA7dRI=;
-	b=csI6SZove3zr+2PKXH8+jiC7tV/Z1a2iBrPQ5ZttmMhZvCYFeuecRPN4veR3YfASlPSTo6
-	W2T1ywg5ksHSC2lSlNlfJIhj3rIA+DWbwZMBvNYrewIj3wy1x9lv4pAAYIaXpZT+CMWm1t
-	Rw3nnNRe+JiYCURYpblboT0R1paYkVF/H0pxmfkoCApTiZMX/QoyA2WihoJRbql/x6r7fQ
-	jdzBvLp0XT0mqHP4nGlILPHFmSDGTWXwiAAzena/bOkNyYInknafbTCt+TwMwoJdHl2y7s
-	f8BTXbpvrW+C+N+p4bp8eO4PImme1X1aPUDkRXxUSZbpQSXO8eAK1U5XgYQZkw==
-Date: Thu, 30 Apr 2026 11:57:49 +0200
+	s=dkim; t=1777554288; h=from:subject:date:message-id:to:mime-version:content-type;
+	bh=BTlmGJfSVUOEGENBjRUIkyzC71NW0AL2lEFJGgC3xn4=;
+	b=JyqI17TzOVc7iuyvtUTOW2MrEY40w5G2psP2LDT+n5X3S8MQXdmUwtP+bhiyO3xKRegvve
+	gYjL3WVxmiwksZXxeW/22TMUSYzPoE3Qet49TpjXHBPW7A2RIcxnuBAAsVOGajHBnb8alp
+	c6Kb06lgsZ18kwpZNle/KyoxF+hCcKNkGhF/Gqb0bxfAe16t6RqckoBzW3jwk05VVS8vK5
+	vwfxyGV9YSjo+mXQjK5nEWNjmClSz11VAxIHjfQRXTq1jlWGIPep5Ut5ldA4WOwhqMuXSk
+	0RvWjEaCcrmP36AQTmV27wCOMDfhBcBf71pE7rZpxtim6tWLgmA8p9HGA4+n5w==
+Date: Thu, 30 Apr 2026 15:04:44 +0200
 From: Pavel Machek <pavel@nabladev.com>
-To: Pavel Machek <pavel@nabladev.com>
-Cc: masami.ichikawa@miraclelinux.com,
-	cip-dev <cip-dev@lists.cip-project.org>
-Subject: Re: "Copy fail" -- Fun CVE -- CVE-2026-31431, likely should do
- out-of-schedule releases
-Message-ID: <afMnnRcuwvQyaW-8@duo.ucw.cz>
-References: <CAODzB9pBqBOhOpu=H4RyON1VaLGJSP4jsFrLmGVdACU73DXyxw@mail.gmail.com>
- <18AB121F2F67B74D.2435051@lists.cip-project.org>
- <afMOaPbHBf806Ypb@duo.ucw.cz>
- <afMYZJ4CQynbitnJ@duo.ucw.cz>
+To: cip-dev@lists.cip-project.org
+Subject: CVE-2026-31431 aka "Copy fail" allows root exploit from local access
+Message-ID: <afNTbMBYYVXVvTYF@duo.ucw.cz>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="b9QW9Z01JxdcNl3x"
+	protocol="application/pgp-signature"; boundary="Te+SNS0zbJZROETg"
 Content-Disposition: inline
-In-Reply-To: <afMYZJ4CQynbitnJ@duo.ucw.cz>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 30 Apr 2026 09:58:01 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22830
+ <cip-dev@lists.cip-project.org>; Thu, 30 Apr 2026 13:05:03 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22831
 
 
---b9QW9Z01JxdcNl3x
+--Te+SNS0zbJZROETg
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi1
+Hi!
 
->=20
-> > > Apparently there's new CVE with a name, and when a CVE has a name,
-> > > that's not good news.
-> > >=20
-> > > https://nvd.nist.gov/vuln/detail/CVE-2026-31431
-> > > https://xint.io/blog/copy-fail-linux-distributions
-> >=20
-> > I assume it is real.
-> >=20
-> > 72548b093ee3 -- place where this was introduced
-> >=20
-> > a664bf3d603d -- is the fix
-> >=20
-> > This is another remainder that running untrusted code on your machine
-> > is a bad idea.
->=20
-> # 6.12-cip:
->=20
-> I don't see fixes in the stable tree or queues.
->=20
-> Cherry picking f2804d0eee8ddd57aa79d0b82872b74c21e1b69b allows me to
-> pick a664bf3d603d, and looks like good hotfix for the bug. I'll push
-> it for testing.
->=20
-> Testing as 51d7d95a40bce11143de82150c2ff9372e3c34c4 .
+Apparently there's new CVE with a name:
 
-Nope. At least these would need to be backported, and they cause more
-rejects. This is more effort then I assumed.
+https://nvd.nist.gov/vuln/detail/CVE-2026-31431
+https://xint.io/blog/copy-fail-linux-distributions
 
-131bdceca1f0 ("crypto: scatterwalk - Add memcpy_sglist").
+You may have already heard about it, or likely you'll hear about it,
+soon, as it is widespread and easy to exploit for local users.
 
-commit 4dffc9bbffb9ccfcda730d899c97c553599e7ca8
-Author: Eric Biggers <ebiggers@kernel.org>
-Date:   Sat Nov 15 15:08:16 2025 -0800
+If you don't have local untrusted users, you don't need to do
+anything urgently.
 
-    crypto: scatterwalk - Fix memcpy_sglist() to always succeed
+If you don't have CONFIG_CRYPTO_AUTHENC enabled, you are not
+vulnerable and don't need to do anything. CRYPTO_AUTHENC is "Authenc:
+Combined mode wrapper for IPsec. This is required for IPSec ESP
+(XFRM_ESP)."
+
+4.4-cip is not affected, other -cip branches are affected. If you are
+running affected -cip branch, have CRYPTO_AUTHENC enabled, have local
+untrusted users and have security requirements, you may want to
+investigate immediately and let us know.
+
+[This may be another reminder to disable config options you don't
+strictly needed.]
+
+Current plan is to release 6.12-cip, 6.1-cip, 5.10-cip and 4.19-cip
+ahead of their normal schedule, followed by -cip-rt kernels.
+
+If you believe you are affected by this bug, let us know.
 
 Best regards,
 								Pavel
-
---b9QW9Z01JxdcNl3x
+--Te+SNS0zbJZROETg
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCafMnnQAKCRAw5/Bqldv6
-8tdJAKCaEs1MkT79R0TtwXK3eGF2ZKjacACePPQ+yq/a6/6oZ8QswOU9N0IiZmY=
-=fJID
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCafNTbAAKCRAw5/Bqldv6
+8rklAKCWPoRHTAdg7l6wwTLpfsolGpRuCQCfXwtXcTC/UU6PI82lynxFxENXDLw=
+=D14A
 -----END PGP SIGNATURE-----
 
---b9QW9Z01JxdcNl3x--
+--Te+SNS0zbJZROETg--
 
