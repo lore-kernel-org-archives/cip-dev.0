@@ -1,97 +1,113 @@
-Return-Path: <ovidiu.panait.rb@renesas.com>
+Return-Path: <pavel@nabladev.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D155CD3427
-	for <webhook@archiver.kernel.org>; Mon,  4 May 2026 06:50:04 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.9370.1777877388211967274
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 122B4FF885A
+	for <webhook@archiver.kernel.org>; Mon,  4 May 2026 09:18:36 +0000 (UTC)
+Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.10855.1777886308764890146
  for <cip-dev@lists.cip-project.org>;
- Sun, 03 May 2026 23:49:58 -0700
+ Mon, 04 May 2026 02:18:29 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: t1HCtURGSciv7fvIKXof5w==
-X-CSE-MsgGUID: EApfnaU8ScCB01lJht1htw==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 04 May 2026 15:49:57 +0900
-Received: from vm01.adwin.renesas.com (unknown [10.226.92.25])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id B26D9400754C;
-	Mon,  4 May 2026 15:49:56 +0900 (JST)
-From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-To: cip-dev@lists.cip-project.org,
-	pavel@nabladev.com,
-	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.12.y-cip 7/9] clk: renesas: r9a09g056: Add USB3.0 clocks/resets
-Date: Mon,  4 May 2026 06:49:41 +0000
-Message-ID: <20260504064943.7237-8-ovidiu.panait.rb@renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260504064943.7237-1-ovidiu.panait.rb@renesas.com>
-References: <20260504064943.7237-1-ovidiu.panait.rb@renesas.com>
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=bF720TPi;
+ spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4303711426A;
+	Mon,  4 May 2026 11:18:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
+	s=dkim; t=1777886306;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=EWzjCbGffhKpQQGGO7RHBcQDFi+9fTq6QMSzUfh7CkA=;
+	b=bF720TPiVfn7yUJQuHcBAj29URLvqdZLfLH646OKfskT8eH0UmQtCqObENIy537xjDAj5k
+	QxHXbsW7xLxNx/tAWUW5nJ98CwSRvHKDk5YCW8dshWSkDU0iyxDCLm60QUUq3Ht3iS+4HF
+	T66sRXWvi8RhBSkdoXwbO985J0voaQreeletDXO6qsE+v8whNr5nHmzAw3RpSbg9BZeFsP
+	GPFPQ1JcDsEUPh4ojtsveLronCRZuAKw9w4JofAEHArOGQPlnzsTBeN1y8dJjHThOwEtVs
+	x7076H3pBgXR/siz/C4UsgiS3Fm6cu1AB/uajNQJwMsIoLo9MkaMJKd1L2eJmw==
+Date: Mon, 4 May 2026 11:18:23 +0200
+From: Pavel Machek <pavel@nabladev.com>
+To: Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
+Cc: stable@vger.kernel.org, gregkh@linuxfoundation.org,
+	cip-dev@lists.cip-project.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Sasha Levin <sashal@kernel.org>
+Subject: Re: [cip-dev] [PATCH for 5.10.y] phy: renesas: rcar-gen3-usb2: Fix
+ the use of msleep during spinlock
+Message-ID: <afhkX2Ys2BG1gnqy@duo.ucw.cz>
+References: <20260501225859.504868-1-nobuhiro.iwamatsu.x90@mail.toshiba>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="DEaLSnFnVzGAR+pM"
+Content-Disposition: inline
+In-Reply-To: <20260501225859.504868-1-nobuhiro.iwamatsu.x90@mail.toshiba>
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 04 May 2026 06:50:04 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22854
+ <cip-dev@lists.cip-project.org>; Mon, 04 May 2026 09:18:36 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22857
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit 7efa3a6d96348bfbe02e330219b05ec922958fab upstream.
+--DEaLSnFnVzGAR+pM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Add USB3.0 clock and reset entries.
+Hi!
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20251101050034.738807-5-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
----
- drivers/clk/renesas/r9a09g056-cpg.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+> From: Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
+>=20
+> This fixes an issue caused by the use of msleep during spinlock.
+> In the original commit, msleep was changed to mdelay, but this fix was not
+> carried over during the backport to 5.10.y tree.
 
-diff --git a/drivers/clk/renesas/r9a09g056-cpg.c b/drivers/clk/renesas/r9a09g056-cpg.c
-index fc092f57aed0..8c0203eaeaeb 100644
---- a/drivers/clk/renesas/r9a09g056-cpg.c
-+++ b/drivers/clk/renesas/r9a09g056-cpg.c
-@@ -17,7 +17,7 @@
- 
- enum clk_ids {
- 	/* Core Clock Outputs exported to DT */
--	LAST_DT_CORE_CLK = R9A09G056_SPI_CLK_SPI,
-+	LAST_DT_CORE_CLK = R9A09G056_USB3_0_CLKCORE,
- 
- 	/* External Input Clocks */
- 	CLK_AUDIO_EXTAL,
-@@ -217,6 +217,8 @@ static const struct cpg_core_clk r9a09g056_core_clks[] __initconst = {
- 		  CLK_PLLETH_DIV_125_FIX, 1, 1),
- 	DEF_FIXED_MOD_STATUS("spi_clk_spi", R9A09G056_SPI_CLK_SPI, CLK_PLLCM33_XSPI, 1, 2,
- 			     FIXED_MOD_CONF_XSPI),
-+	DEF_FIXED("usb3_0_ref_alt_clk_p", R9A09G056_USB3_0_REF_ALT_CLK_P, CLK_QEXTAL, 1, 1),
-+	DEF_FIXED("usb3_0_core_clk", R9A09G056_USB3_0_CLKCORE, CLK_QEXTAL, 1, 1),
- };
- 
- static const struct rzv2h_mod_clk r9a09g056_mod_clks[] __initconst = {
-@@ -340,6 +342,10 @@ static const struct rzv2h_mod_clk r9a09g056_mod_clks[] __initconst = {
- 						BUS_MSTOP(8, BIT(4))),
- 	DEF_MOD("sdhi_2_aclk",			CLK_PLLDTY_ACPU_DIV4, 10, 14, 5, 14,
- 						BUS_MSTOP(8, BIT(4))),
-+	DEF_MOD("usb3_0_aclk",			CLK_PLLDTY_DIV8, 10, 15, 5, 15,
-+						BUS_MSTOP(7, BIT(12))),
-+	DEF_MOD("usb3_0_pclk_usbtst",		CLK_PLLDTY_ACPU_DIV4, 11, 0, 5, 16,
-+						BUS_MSTOP(7, BIT(14))),
- 	DEF_MOD("usb2_0_u2h0_hclk",		CLK_PLLDTY_DIV8, 11, 3, 5, 19,
- 						BUS_MSTOP(7, BIT(7))),
- 	DEF_MOD("usb2_0_u2p_exr_cpuclk",	CLK_PLLDTY_ACPU_DIV4, 11, 5, 5, 21,
-@@ -443,6 +449,7 @@ static const struct rzv2h_reset r9a09g056_resets[] __initconst = {
- 	DEF_RST(10, 7, 4, 24),		/* SDHI_0_IXRST */
- 	DEF_RST(10, 8, 4, 25),		/* SDHI_1_IXRST */
- 	DEF_RST(10, 9, 4, 26),		/* SDHI_2_IXRST */
-+	DEF_RST(10, 10, 4, 27),		/* USB3_0_ARESETN */
- 	DEF_RST(10, 12, 4, 29),		/* USB2_0_U2H0_HRESETN */
- 	DEF_RST(10, 14, 4, 31),		/* USB2_0_U2P_EXL_SYSRST */
- 	DEF_RST(10, 15, 5, 0),		/* USB2_0_PRESETN */
--- 
-2.34.1
+Doing this as a quick fix is probably okay, but this should not be
+final version.
 
+You are right that msleep inside spinlock will blow up immediately:
+
+> ```
+> [   62.677594] BUG: scheduling while atomic: kworker/1:2/126/0x00000002
+> [   62.683957] Modules linked in:
+
+But mdelay for 20 msec inside irqsave spinlock is borderline
+unacceptable, too.
+
+I believe we'll need Renesas to analyze/fix this properly after the
+CVE emergency is done.
+
+This fix is good for now, but better fix is needed.
+
+Claudiu, are you right person for this, or should we cc someone else?
+
+Best regards,
+								Pavel
+
+
+> index 5166a115879ea..90f2a0e5b2aa0 100644
+> --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> @@ -386,7 +386,7 @@ static void rcar_gen3_init_otg(struct rcar_gen3_chan =
+*ch)
+>  	val =3D readl(usb2_base + USB2_ADPCTRL);
+>  	writel(val | USB2_ADPCTRL_IDPULLUP, usb2_base + USB2_ADPCTRL);
+> =20
+> -	msleep(20);
+> +	mdelay(20);
+> =20
+>  	writel(0xffffffff, usb2_base + USB2_OBINTSTA);
+>  	writel(USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
+
+
+--=20
+
+--DEaLSnFnVzGAR+pM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCafhkXwAKCRAw5/Bqldv6
+8l4DAJwLQ6N1oT4KVzwMek0jrXCS58qXjQCgvcp3cNkn9ABnuvmSjiZwaWyOiwE=
+=iTXT
+-----END PGP SIGNATURE-----
+
+--DEaLSnFnVzGAR+pM--
 
