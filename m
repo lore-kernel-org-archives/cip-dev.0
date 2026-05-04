@@ -2,28 +2,28 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 058BCCD3423
-	for <webhook@archiver.kernel.org>; Mon,  4 May 2026 06:49:54 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.9369.1777877386474264569
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E887CFF885A
+	for <webhook@archiver.kernel.org>; Mon,  4 May 2026 06:49:53 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.9370.1777877388211967274
  for <cip-dev@lists.cip-project.org>;
- Sun, 03 May 2026 23:49:51 -0700
+ Sun, 03 May 2026 23:49:53 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: rBlPDq3zRuKqGMSf2jz6Zw==
-X-CSE-MsgGUID: Xh1KFO9kSgCNeQQi7gu6tA==
+ dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
+X-CSE-ConnectionGUID: PYtd7/v9Q621bcbTKyUWWg==
+X-CSE-MsgGUID: rGxiPgunQgaHlJphWBniAA==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 04 May 2026 15:49:51 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 04 May 2026 15:49:52 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.92.25])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id DA219400754C;
-	Mon,  4 May 2026 15:49:49 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 91B55400A884;
+	Mon,  4 May 2026 15:49:51 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.12.y-cip 3/9] dt-bindings: phy: renesas,rzg3e-usb3-phy: Add RZ/V2H(P) and RZ/V2N support
-Date: Mon,  4 May 2026 06:49:37 +0000
-Message-ID: <20260504064943.7237-4-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.12.y-cip 4/9] arm64: dts: renesas: r9a09g057: Add USB3 PHY/Host nodes
+Date: Mon,  4 May 2026 06:49:38 +0000
+Message-ID: <20260504064943.7237-5-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260504064943.7237-1-ovidiu.panait.rb@renesas.com>
 References: <20260504064943.7237-1-ovidiu.panait.rb@renesas.com>
@@ -32,46 +32,95 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 04 May 2026 06:49:54 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22850
+ <cip-dev@lists.cip-project.org>; Mon, 04 May 2026 06:49:53 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22851
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit 8a203b0571d0a28e227dff7ab81e64cd7aa18e17 upstream.
+commit 92279daefc1740961404bca0a7f5149bf6b23dea upstream.
 
-Add compatibles for the USB3.0 PHY used in the RZ/V2H(P) and RZ/V2N SoCs.
-These SoCs integrate the same USB3 PHY IP block as the RZ/G3E, so the
-RZ/G3E compatible is used as a fallback for both.
+Add USB3 PHY/Host nodes to RZ/V2H(P) ("R9A09G057") SoC DTSI.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-Link: https://patch.msgid.link/20251222161846.152952-1-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://patch.msgid.link/20251119110505.100253-2-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- .../devicetree/bindings/phy/renesas,rzg3e-usb3-phy.yaml  | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/r9a09g057.dtsi | 60 ++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/phy/renesas,rzg3e-usb3-phy.yaml b/Documentation/devicetree/bindings/phy/renesas,rzg3e-usb3-phy.yaml
-index b86dc7a291a4..6d97e038a927 100644
---- a/Documentation/devicetree/bindings/phy/renesas,rzg3e-usb3-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/renesas,rzg3e-usb3-phy.yaml
-@@ -11,7 +11,14 @@ maintainers:
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+index 34c2a50a9925..7d0ee6ef4d20 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+@@ -1079,6 +1079,66 @@ usb21phyrst: usb21phy-reset@15840000 {
+ 			status = "disabled";
+ 		};
  
- properties:
-   compatible:
--    const: renesas,r9a09g047-usb3-phy
-+    oneOf:
-+      - const: renesas,r9a09g047-usb3-phy # RZ/G3E
++		xhci0: usb@15850000 {
++			compatible = "renesas,r9a09g057-xhci", "renesas,r9a09g047-xhci";
++			reg = <0 0x15850000 0 0x10000>;
++			interrupts = <GIC_SPI 759 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 758 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 757 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 756 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 755 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "all", "smi", "hse", "pme", "xhc";
++			clocks = <&cpg CPG_MOD 0xaf>;
++			power-domains = <&cpg>;
++			resets = <&cpg 0xaa>;
++			phys = <&usb3_phy0>, <&usb3_phy0>;
++			phy-names = "usb2-phy", "usb3-phy";
++			status = "disabled";
++		};
 +
-+      - items:
-+          - enum:
-+              - renesas,r9a09g056-usb3-phy # RZ/V2N
-+              - renesas,r9a09g057-usb3-phy # RZ/V2H(P)
-+          - const: renesas,r9a09g047-usb3-phy
- 
-   reg:
-     maxItems: 1
++		xhci1: usb@15860000 {
++			compatible = "renesas,r9a09g057-xhci", "renesas,r9a09g047-xhci";
++			reg = <0 0x15860000 0 0x10000>;
++			interrupts = <GIC_SPI 764 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 763 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 762 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 761 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 760 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "all", "smi", "hse", "pme", "xhc";
++			clocks = <&cpg CPG_MOD 0xb1>;
++			power-domains = <&cpg>;
++			resets = <&cpg 0xab>;
++			phys = <&usb3_phy1>, <&usb3_phy1>;
++			phy-names = "usb2-phy", "usb3-phy";
++			status = "disabled";
++		};
++
++		usb3_phy0: usb-phy@15870000 {
++			compatible = "renesas,r9a09g057-usb3-phy", "renesas,r9a09g047-usb3-phy";
++			reg = <0 0x15870000 0 0x10000>;
++			clocks = <&cpg CPG_MOD 0xb0>,
++				 <&cpg CPG_CORE R9A09G057_USB3_0_CLKCORE>,
++				 <&cpg CPG_CORE R9A09G057_USB3_0_REF_ALT_CLK_P>;
++			clock-names = "pclk", "core", "ref_alt_clk_p";
++			power-domains = <&cpg>;
++			resets = <&cpg 0xaa>;
++			#phy-cells = <0>;
++			status = "disabled";
++		};
++
++		usb3_phy1: usb-phy@15880000 {
++			compatible = "renesas,r9a09g057-usb3-phy", "renesas,r9a09g047-usb3-phy";
++			reg = <0 0x15880000 0 0x10000>;
++			clocks = <&cpg CPG_MOD 0xb2>,
++				 <&cpg CPG_CORE R9A09G057_USB3_1_CLKCORE>,
++				 <&cpg CPG_CORE R9A09G057_USB3_1_REF_ALT_CLK_P>;
++			clock-names = "pclk", "core", "ref_alt_clk_p";
++			power-domains = <&cpg>;
++			resets = <&cpg 0xab>;
++			#phy-cells = <0>;
++			status = "disabled";
++		};
++
+ 		sdhi0: mmc@15c00000  {
+ 			compatible = "renesas,sdhi-r9a09g057";
+ 			reg = <0x0 0x15c00000 0 0x10000>;
 -- 
 2.34.1
 
