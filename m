@@ -2,41 +2,41 @@ Return-Path: <john.madieu.xa@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4BD6CD4F39
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1733CD4F3E
 	for <webhook@archiver.kernel.org>; Thu, 14 May 2026 09:40:43 +0000 (UTC)
-Received: from TYVP286CU001.outbound.protection.outlook.com (TYVP286CU001.outbound.protection.outlook.com [52.101.125.32])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.6978.1778751634469304810
+Received: from OS0P286CU011.outbound.protection.outlook.com (OS0P286CU011.outbound.protection.outlook.com [52.101.228.50])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.6976.1778751640816255723
  for <cip-dev@lists.cip-project.org>;
- Thu, 14 May 2026 02:40:35 -0700
+ Thu, 14 May 2026 02:40:41 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=ZzqfyIEQ;
- spf=pass (domain: bp.renesas.com, ip: 52.101.125.32, mailfrom: john.madieu.xa@bp.renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=nYgfkOVr;
+ spf=pass (domain: bp.renesas.com, ip: 52.101.228.50, mailfrom: john.madieu.xa@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kzhKf3EcvW3kfRhKQAiwb4c0R1tmiZsl2EHaEgxWgBPEuZ/J/98a5pwdsv1mJ67HVJFoC3LZy4yNTXGByZUwmEp4h5uZVwQSfAZfOpU9jDQQsGjf96lZJfYIF2UrtXTUGewu02y0Tq+53555hdQPzadLD9/Q+JljoNrdtrssu80vbFHMPnLQUNxBnZxhtZ2uXx2NyYBrH/mwkUWujJ0ABtDbBiZlerB++52Am89XFQMX/0OvTodHS2wuaW/ANn5KZEdeoDGFlKQCZnC6qmInpp82qNs8WSGXZsSW12mhkIp6q1ozf7A3jwCUASnvSnJ1n+SD7U2FV9zW99hI1drP9Q==
+ b=c+Tlg9Uy+wN20SnEtmsNOW1VxiBE/maqodlTObMqVBfSVelz/3hpxBKNB73Z/NInTMDecxbBA57767IaGtO1YGveOuQCjKweFjick1AB5CwnPWtO0YxPs3aNVjk+y9wjcvOpC953QRn3/Thw/4TNQ1o+g8k7eppMbOCn2GKKZyu27gYi6KGgVT68seKzjjJ5armYOdoJHjwzd2mF0yZ6bNnevfZLsiPBp5xQWbxZ5xw3hMvhLvHBGhcVjMsPbuWP33LLQ0NVtI6sfmq6WcXvIGNJSW0lThN2FrIMxo7EmVAf2UDjzp2/QS904yV5ZGoCLpFxwhWOWC5DPH74IAo3QA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=F9LDo2hchL+IoBIHSHR3CDagB5UGk+tq5SvgK4r4sX8=;
- b=CkTwXKTCfEmv+vJwG5N+tA+/XHVpjBc5SHDEadoCvIalz9VoNkgbA++QuhJZb+/ku9WOGLLzu+tUjMh9PyH5nW4TtFoQs+RKBqmToj6yIc1z2LUHOEtLUJixXixgdt476OtcDgZI9kVi5Fg7RWPTf/Xbfnr+aBqq6ygYJ6trfCP3iI8hq2wJrZIWEMjZMGdWYYw4+fimPhVOqOGZ/awUKTw0zKlxOrHjzZL/imEHuaahqKNRJNnCzX6XuNj5lotDJHaia7NlVLavYcJhMFPaJZTP2nPAiVdl5EGo6jrQrJNi2WJVy3qTJr+jJyonUw6SzbmUH1mWoTcv1PNK4Jtg5A==
+ bh=a7mihzS7cohSGxbOB57kaxL6xDceyukcSZZGy2txNTk=;
+ b=PF2VKfUZqw2XLijK2H3D9e6U/vCeCts5a8+miuJcGf/STjLGfBYOVYDgvXpVtw9csDR9Qr/zrpDSCxyd3B6OlLN8YiZcdh3q6Tp5OlAi4s2/H+5MvbVM5wz8/HAdBE3HcaIt9pjU7pjLHqyXvHx5pe1TZ5Ns+MbI8dWCr05RtQoLtdhnVpIocXHzHdVlDAWM6jfHXkhLVo7zEBlozs0wYUfu7qEnK10JOYL4EoLqBvnoqqFCzcV7NSom5Dc3vJlQ3uZv/ozFxranPFtX8aPEV6d3k6MQafeIXwNMucYf2+bLuOBfrG2RIgtCEvzuAcAZCPsHI1kBChyUHdDILa+zEA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=F9LDo2hchL+IoBIHSHR3CDagB5UGk+tq5SvgK4r4sX8=;
- b=ZzqfyIEQJHLu9o00THQv8DPXe/OnkqAG/xzP/N57balK1T7AF5/rsp/j7gap3pNupAqwV3olbl2QtC7H6LdkWInsvRyx6tsItdaERnhn+9eCy3l3FbCRxsMMM7UiTAaedTBDvbZibT9aGZ3FgUCi91y5SQF6SrAWOnYRMB1U2nM=
+ bh=a7mihzS7cohSGxbOB57kaxL6xDceyukcSZZGy2txNTk=;
+ b=nYgfkOVrY4sfOgux/qhtWiReA1eizvT9Yt5vYI1jpjRFy4v1iNjfkhFjqdWJ4bGsPRo6xn9sLPP9TfEjaypoc0i8bqN4nt+wV0yGh/jOWRWPtxoI/qCRhb/TcB6DufpLBvaiOtwarp19Ynrmk5ZpYzY7pHfXYmYqbqgT8QeFUWo=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=bp.renesas.com;
 Received: from TY6PR01MB17377.jpnprd01.prod.outlook.com (2603:1096:405:35b::6)
  by TYRPR01MB13674.jpnprd01.prod.outlook.com (2603:1096:405:18f::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9913.11; Thu, 14 May
- 2026 09:40:33 +0000
+ 2026 09:40:36 +0000
 Received: from TY6PR01MB17377.jpnprd01.prod.outlook.com
  ([fe80::f373:26d6:86c4:6aa3]) by TY6PR01MB17377.jpnprd01.prod.outlook.com
  ([fe80::f373:26d6:86c4:6aa3%6]) with mapi id 15.20.9891.021; Thu, 14 May 2026
- 09:40:33 +0000
+ 09:40:36 +0000
 From: John Madieu <john.madieu.xa@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -44,9 +44,9 @@ To: cip-dev@lists.cip-project.org,
 CC: Biju Das <biju.das.jz@bp.renesas.com>,
 	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
 	john.madieu@gmail.com
-Subject: [PATCH 6.12.y-cip 10/17] PCI: rzg3s-host: Make configuration reset lines optional
-Date: Thu, 14 May 2026 09:39:28 +0000
-Message-ID: <20260514093935.2212718-11-john.madieu.xa@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 11/17] PCI: rzg3s-host: Add SoC-specific configuration and initialization callbacks
+Date: Thu, 14 May 2026 09:39:29 +0000
+Message-ID: <20260514093935.2212718-12-john.madieu.xa@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260514093935.2212718-1-john.madieu.xa@bp.renesas.com>
 References: <20260514093935.2212718-1-john.madieu.xa@bp.renesas.com>
@@ -58,71 +58,81 @@ X-ClientProxiedBy: PA7P264CA0033.FRAP264.PROD.OUTLOOK.COM
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: TY6PR01MB17377:EE_|TYRPR01MB13674:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9e52dabb-d72a-49eb-2027-08deb19cd824
+X-MS-Office365-Filtering-Correlation-Id: fc8e49b7-decb-44db-d286-08deb19cd9ea
 X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
 	BCL:0;ARA:13230040|1800799024|52116014|366016|376014|38350700014|11063799003|56012099003|22082099003|18002099003;
 X-Microsoft-Antispam-Message-Info: 
-	GrtARlAf9ut9Oc9cHF67GVCt+X7LMRJCaH1cOni96ZoA3ynDa30TIB8y8ZYqTh1E+NSyHV5xiXwPOlovc+zvlObDOB+IMcrX6n9jva2u4v290RJ3TA/nsqn9610b7yd1QQeDzsCbfW+rBqLV2vXwyF2KEp/djpK/mf40Ttum3k9FNYevScqzhDaExvwnfP6WI5h4nzizqM2gREVqJZMGZMenBFoI1YQnt5YJcQTyTrsh7vEu6ggrkKAey1gD+mKdMdiSx/1x7cj6IkF4wqB1/CxV28KiteuKmL9Fxw98C3BTx4dHNTo9vRHOPNjnqSWBjMejaowq/uIB+dvMwaVj2ej4hgHOiDB2+L29/zVRWOlh39mpR7akEeIsfUUkKGn+Mia7/KNhuvldz8kgDL2OI9ar2ogmXFMT7+c1UR+YjQTWnayawnRlzcJC+UcyDsYh5o+jnuID6V1D8hM+RUI+YxWlQ7yit0ePlaPQRnRkUoc6w0Evpbb/Li5NmuBiNKh18JyQ+4+qr+RelDFk0JFFfGM4V9+I9L/yjkaqMGFx8ln1520jhi3BdOOlM1LRzGHlqaesZ1ioCQExJjigS2ahJdWhjw8dFOQ4Aq675mmFsNWlI5Y8erlfMCFruPQk4aIq/7vfzgbKSerTxd/jei+4pi1XhyTHp5k4gLTt1kaNhG98q1wL5da2sw1Q9w7+gJ4wH8UlBNaubiIz02HgCA7oRg==
+	xKjmAPJWyIpfK3UFS+AfSjpjvB2ww/SgNbX9H83tYQTEvEAu9DxXdPFIN6WjW1IqV58Oqbb5SJ7QVcKLSlzrMBcG7c6T7C4Glt64f6pFQUt2EDjuawJ+7JwL1dcEDPadxgjDu0gEAPZIx/7+i/jODBVqEWBnuk0PhoEjKqPZ8neH627viIwgjKUL5HF2beR4hVygxN62O5ssnFQe+ySKRGDOjZMULcZtk8JMYkODWZyvyZZOcnPtMnsOH1g8UxP8GXHg1vr5A9yZ/wBYpqIqjTzle6E7C6taj5Yo10XC46tZn4SgGe+5u/r92ySgjhx9N0FPAifzIRzHNSQghuYAU3Z+3lteAXfUCihm3vACIv1Xp+dEAPcFTigkNZKoJxfb0Mm2k8mp1+0t9wc/xtXYhuGE4Be9Fh9ykLV8xlJhKQuu/yI9xshREEqc3JyGtdifxz9VyVJH2jeS7bBfis8AmygT/OyAOCuwzZdtgjzns2oJxuxb7cmgu3yHFeoIVswPzxVdHVa68wYoWDE7dkLID/sVeofoJkBpe3lZZs7UMNkZWtQmKOnAfErLwJzt+M6Gg4/IQooK/nIj2mEO75ZDfOkS4Oc4AWP1yjDdGiMUFu7YRvy7f5myFTTn5eVvqUim5l7H/1H6jXllOxm/+FdUTS06ICb4bCvSNC4db9/uN+ZMfj7G00gy8uB4xztkl+yP4QvYJ0yAt3ZvArP4/FIHsg==
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY6PR01MB17377.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(366016)(376014)(38350700014)(11063799003)(56012099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?hDa226HdDL52JkF1uSiNMBQyStB9i1hr2GRwPQX4yOr3OvYdo/NK4fDYdAKG?=
- =?us-ascii?Q?wUSyTDf7GrZezicln1tXrmcqHrWn9MI7+dqnmJgeTQ7IUxFAKWNGlHRtDvd2?=
- =?us-ascii?Q?Q/UjyxeA6aBW5AjM0k3X8122t9vvDuMO3EwrSNlWegPfZR4KvI74gFLE7q8B?=
- =?us-ascii?Q?l6/ForI70JZDkyt/KY6XHs9DW0qniYee66p54a5KwJoxd4qfOixme2+U0hBV?=
- =?us-ascii?Q?6c3GluAaOJ8I1a+PpUi58NqfxGbL+7maok1Z5/3ZmZciQuj6R+FLr05Qo6PQ?=
- =?us-ascii?Q?e9yiTFm8xe0M26wSL/cOyvoDGEOOuzVVGcDG/JOHjKfWhqpHnPRr00al1u8y?=
- =?us-ascii?Q?6BsaX9gczZZ2c4sIMvqHaV/IvXu9VmKg65QH01Cf78m8G0UFBvbA7eGXZM9t?=
- =?us-ascii?Q?7WnhNGwaLE+GeJBUCyN0oxN/zr0xeTVt1VRp91DdKerZn2r0Ja1OPpnmzNr1?=
- =?us-ascii?Q?Hh9VwAmoA1RxWaHb9dDhAffmFFkFVEjdiaihLrtqh9SB5CUKcXVWZZIyQm2B?=
- =?us-ascii?Q?0pk7Gl2O510M4ENCjpBvXrmrOVl40msN1uLGAT4Z2xCHUGNkSjsMGb9zU78x?=
- =?us-ascii?Q?jjxH03azxW9KPhQ9HZHiYe1zeT9xI1obLlyoo5RsXRzH+tYdfxcospn214Jx?=
- =?us-ascii?Q?ODtvzOSKxc7SiJpvA7Mv1mcRzAVgjQP8pipTkhEgSfjDXSA19hFHxdpbvM3v?=
- =?us-ascii?Q?+JdEZZzWu/r6020TbrP4NQneO5Xp2HOZzcaZzn2B6BejlepGSUMYXZYvZI3y?=
- =?us-ascii?Q?dg2LvuDf7lprSsN/c/+Oh0SqxGU0vvFsE35UDLyFEOEZ0qtqpbXR1t6NabSU?=
- =?us-ascii?Q?WneKBC8mWACmj860Uo+Sg6y0hw590icRWgfkN5rjlUao0eoMCwwtfbWweeKo?=
- =?us-ascii?Q?G+roeWjqRwXoMjUdQXXXnUJkW7ZE7in67my/m8tE1IdcO7+o7ISOqpwqiPgw?=
- =?us-ascii?Q?Eo9A5P9EaUufTdXs5jSm2qv0Oyu0TyEuY8v7q7WiwBp/64E50CpxbR4tZgke?=
- =?us-ascii?Q?edcaGstZH73FWva8xjlr9O82bMjNIZLsrn5V3gkUvYHnL6IO+zA8Ny3/xRnZ?=
- =?us-ascii?Q?i4bOtjOPW/vWd+87odaBQNHLKdFHWWC1gh86KFE6e3WnnijQ9p5GPfktBOOh?=
- =?us-ascii?Q?dzaoi3nsrcbE0PXaWEa9PMxpHrrFTrVrdJ2CqYYVk17ILWRcMb2iyUqp1viY?=
- =?us-ascii?Q?kXgXla2XjXsVy9M3tx637UiPGVI+25CTTYbxJWrE8ZbfmdvkS75bsu7MFTNg?=
- =?us-ascii?Q?3WoozzM1CVoZ3d2ZN1c9TJkex9YihmfzXQ2HDRNvi9I5wezjERHF4rPDsuEd?=
- =?us-ascii?Q?zN6B0l5I4RazZTTL6fHIVHS9lW+QtnB0prdlfTLzqdO5JxGLcw8iT4TSPvAF?=
- =?us-ascii?Q?fSBulRGIfsC7wzYttGxoX7ydi4fQWejSjAjazjEmIFBhLTQsdv0V+eYHCqDw?=
- =?us-ascii?Q?9agdI9wHMQyw/aLPFo4g9xTzNVHiXLIP8wn2K5Njd+6jDgGdDKQEfbswiCoC?=
- =?us-ascii?Q?hoTIdTJ3i8zpvuTwISq7WL8TU5SLChy5zQT488yEg3VjFEHWUyhhf/r7dLj3?=
- =?us-ascii?Q?IeCN42IfR24OjrrhkAb+vD3eDrDHhtpkZOGFfn9Zccbt9IA0CY8hTgXM0IL8?=
- =?us-ascii?Q?7qEFFmzhhSCpXP+iqAJgaKKHkgC+5wbfsHdrtotVo8/SqNqPwxwjN8Bef+gu?=
- =?us-ascii?Q?Okdno2dztuswCbKcEbMQfqR5gE+KAj7seb44M71NwFh7Q+BDMfe8LsLnF9X1?=
- =?us-ascii?Q?AWwG0ZZh5FsAG6uutCMYqbxJzKKufRk=3D?=
+	=?us-ascii?Q?+eldrrF4TzPl7exFwdSnMXdlMDAo7JpGVjUuOzY+WTAnNcdOvZbQNTynvW9R?=
+ =?us-ascii?Q?Rb4eSbeJg4VntUgMFIVhWWwp8qJxsVpec1asZW/mVAGCShRTr6MZXHvPfqdV?=
+ =?us-ascii?Q?t8pO7PhqyEszatUflHxnCCegB9VUED5jOnn92J4riMGQnfZvZG+Iyclqs6VI?=
+ =?us-ascii?Q?7GblnXxeFx+Eck3tUai2tMfpR5t1OosqsaPq69G2eqY0O3vnsH9p26pwQ8R3?=
+ =?us-ascii?Q?IgAt3jBvojsxwi2RMIfuqmi+nS+0vU1syPbCL1hrVsGQ3wPR2FxOLmsZK5ke?=
+ =?us-ascii?Q?GfnkBwRSGpXi659w2z6CO6jRMEImjiigQNq0/hIx76npF5eUJfqgtGC/raKX?=
+ =?us-ascii?Q?UUprH3bQ03B7hYuoLNUQTIxJdh35JaDZVYVfG6JzLEvECp72IMMYgb7Y9yoN?=
+ =?us-ascii?Q?CYNJzyNVf+kfFGRZzgzsRenMYserH1zvsYulsoTqADYPMv2RkIUAMkuREHrm?=
+ =?us-ascii?Q?81H/6y/khlRDMiFrGXAEW08St/SXizEKyiJsonmPIZlP+2tMB9cjx2xB3xWk?=
+ =?us-ascii?Q?Xg72etzpk3xVSn9Mc1h2wMJRtFS/sZyt7Y+eERrsYI1HNjkkDgC6LYKRiWHj?=
+ =?us-ascii?Q?E/9+rHB6PCN86hzQXHa2sPLciogLiyK669X6oUgQ+imHXtgK8mUi3MSo9iE5?=
+ =?us-ascii?Q?skRwg/5OiMcGSxW92JWxtnTI3pjP3936gzne7JbfqMgcpGi81hX2ipHm2SPT?=
+ =?us-ascii?Q?A/yyYu9h5pj8D7tCj+3pNV16rPdK3oZGedzPRTrcwTggf8MHj6pfhw0xJbhS?=
+ =?us-ascii?Q?WgmwXttNXQxDhUNp18Ny3tkGNTLftobUNiN6qjUASzev3ehCNt8U9tOpyo4R?=
+ =?us-ascii?Q?/xKSfKe1p8DLv1GU5CBU5SKUj3nliP8ieQLvCsFXUs0uj4stwSStfjGVCtx1?=
+ =?us-ascii?Q?6SnPOwvC5fbSfCD0xsxpjVHwyJe4y6mbE148tQH3sX+tsIsi/uTftWiJ3bHH?=
+ =?us-ascii?Q?p0QQtyeUyMtqIpuJzuaKkVMArs3rGbfehfeaqN9ATmCcgYRtS+BZwEcpPL/H?=
+ =?us-ascii?Q?7GsHeQa79GlE5MoWgv32KB27yBv6E2qStIPfyGNI0NcpwWVati/C5WKFStzR?=
+ =?us-ascii?Q?DlZ9+LBmHSNuMl7X0YY1+3sh3j750pflvKT9p7ZRLB0WhSe3bQW88RRfQHO6?=
+ =?us-ascii?Q?NHuw+DHVQLzi2bYvkNvvGKZBMLCyUKh6dE0UbgGylebYADFI0DV5a2m7EA/Z?=
+ =?us-ascii?Q?ggpClacme4ILZdlGMg36FEEjOeTjSH6z0oNhBcqPV2gk309ms68z4oF3LRYy?=
+ =?us-ascii?Q?l3V/2JtiOteGD7ZDy/uRvoa57rdrZCqv5Mkzu+IDFoBKTq9RhCy0WQNxiyx1?=
+ =?us-ascii?Q?OzNjmQcFp5B91UvfRahU5KBAlhDzkpCTk7A1iguUv61Ti7/HCBW1/lpxHEGG?=
+ =?us-ascii?Q?I4ZLSjEIavttj2Ovvb/cDVDrKEY0BApdKlLiiw4pzhvK7oSr4/LzrgcW99I8?=
+ =?us-ascii?Q?HefSY93FVJ9/h1koOuvsbyDxuDN84QdbJekoAA3BsH8VtBq+hF/2j91i1AnI?=
+ =?us-ascii?Q?7TKblMzzSSYwe1dzD6kmtPd5XorURQpr9UwIUxKZojdzhDBmXxdWSWYpijmQ?=
+ =?us-ascii?Q?sdOChghYdqM0RdKTSA/zargdVNMTZkFG2e7jx3WT156Th88nRF7HXEbNU3G0?=
+ =?us-ascii?Q?hi5fSXl76i/Dd11KZlHbI5xGRn2v4lZ47xJtB5TWRLZK+Uq5sl4PSvLKh3qF?=
+ =?us-ascii?Q?UokhM/NnRnBADxKejBUDjRuAGGpgh/fH0pscs8DmKJA7HSzoCTHGXiJhB32Y?=
+ =?us-ascii?Q?KfGSufOAQlOeFhj4+pGKTbGgeiOtN7k=3D?=
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9e52dabb-d72a-49eb-2027-08deb19cd824
+X-MS-Exchange-CrossTenant-Network-Message-Id: fc8e49b7-decb-44db-d286-08deb19cd9ea
 X-MS-Exchange-CrossTenant-AuthSource: TY6PR01MB17377.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2026 09:40:33.5597
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2026 09:40:36.5789
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EUwpvnkKr2HEjxGl+fy59CVSWyunTUCcccKpPtBSbWXqocZSq4UG6yM8vjj6Q15zolo1UG4Eyz78fVHHmZaCibLa7eD7iU3RBugID51ZhBo=
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5e2sNc6SMqSH7s+6tEpEVMu0/syoYDkwv1WZTfm1g8zS7vnDW8Q0VlO9BTQSOy6aQt9K3xDuLhhf6CBa6JrAKwzwliicO4Orzch+G90Zic8=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYRPR01MB13674
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 14 May 2026 09:40:43 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22944
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22945
 
-[ Upstream commit 4ec4ccdaace40397638c305c0a36b423d2142a93 ]
+[ Upstream commit 5f2c4de717786150f8d6cdbdbffb986cd3c59edb ]
 
-Some SoC variants such as RZ/G3E handle configuration reset control through
-PCIe AXI registers instead of dedicated reset lines. Make cfg_resets
-optional by using devm_reset_control_bulk_get_optional_exclusive() to allow
-SoCs to use alternative or complementary reset control mechanisms.
+Add optional cfg_pre_init, cfg_post_init, and cfg_deinit callbacks
+to handle SoC-specific configuration methods. While RZ/G3S uses the Linux
+reset framework with dedicated reset lines, other SoC variants like RZ/G3E
+control configuration resets through PCIe AXI registers.
+
+As Linux reset bulk API gracefully handles optional NULL reset lines
+(num_cfg_resets =3D 0 for RZ/G3E), the driver continues to use the standard
+reset framework when reset lines are available, while custom callbacks
+are only invoked when provided.
+
+This provides a balanced pattern where:
+- RZ/G3S: Uses callbacks that fall back to the reset framework
+- RZ/G3E: Sets num_cfg_resets=3D0, provides
+  cfg_pre_init/cfg_post_init/cfg_deinit
 
 Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
 Signed-off-by: Manivannan Sadhasivam <mani@kernel.org>
@@ -130,32 +140,173 @@ Tested-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com> # RZ/V2N=
  EVK
 Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://patch.msgid.link/20260306143423.19562-9-john.madieu.xa@bp.ren=
-esas.com
+Link: https://patch.msgid.link/20260306143423.19562-10-john.madieu.xa@bp.re=
+nesas.com
 Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
 ---
- drivers/pci/controller/pcie-rzg3s-host.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/pci/controller/pcie-rzg3s-host.c | 61 +++++++++++++++++-------
+ 1 file changed, 44 insertions(+), 17 deletions(-)
 
 diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/control=
 ler/pcie-rzg3s-host.c
-index e4102744aab4..8620d8d31137 100644
+index 8620d8d31137..1de91ac54069 100644
 --- a/drivers/pci/controller/pcie-rzg3s-host.c
 +++ b/drivers/pci/controller/pcie-rzg3s-host.c
-@@ -1210,9 +1210,9 @@ static int rzg3s_pcie_resets_prepare_and_get(struct r=
-zg3s_pcie_host *host)
- 	if (ret)
- 		return ret;
-=20
--	return devm_reset_control_bulk_get_exclusive(host->dev,
--						     data->num_cfg_resets,
--						     host->cfg_resets);
-+	return devm_reset_control_bulk_get_optional_exclusive(host->dev,
-+							      data->num_cfg_resets,
-+							      host->cfg_resets);
+@@ -232,6 +232,9 @@ struct rzg3s_pcie_host;
+ /**
+  * struct rzg3s_pcie_soc_data - SoC specific data
+  * @init_phy: PHY initialization function
++ * @config_pre_init: Optional callback for SoC-specific pre-configuration
++ * @config_post_init: Callback for SoC-specific post-configuration
++ * @config_deinit: Callback for SoC-specific de-initialization
+  * @power_resets: array with the resets that need to be de-asserted after
+  *                power-on
+  * @cfg_resets: array with the resets that need to be de-asserted after
+@@ -242,6 +245,9 @@ struct rzg3s_pcie_host;
+  */
+ struct rzg3s_pcie_soc_data {
+ 	int (*init_phy)(struct rzg3s_pcie_host *host);
++	void (*config_pre_init)(struct rzg3s_pcie_host *host);
++	int (*config_post_init)(struct rzg3s_pcie_host *host);
++	int (*config_deinit)(struct rzg3s_pcie_host *host);
+ 	const char * const *power_resets;
+ 	const char * const *cfg_resets;
+ 	struct rzg3s_sysc_info sysc_info;
+@@ -1131,6 +1137,18 @@ static int rzg3s_pcie_config_init(struct rzg3s_pcie_=
+host *host)
+ 	return 0;
  }
 =20
- static int rzg3s_pcie_host_parse_port(struct rzg3s_pcie_host *host)
++static int rzg3s_pcie_config_post_init(struct rzg3s_pcie_host *host)
++{
++	return reset_control_bulk_deassert(host->data->num_cfg_resets,
++					   host->cfg_resets);
++}
++
++static int rzg3s_pcie_config_deinit(struct rzg3s_pcie_host *host)
++{
++	return reset_control_bulk_assert(host->data->num_cfg_resets,
++					 host->cfg_resets);
++}
++
+ static void rzg3s_pcie_irq_init(struct rzg3s_pcie_host *host)
+ {
+ 	/*
+@@ -1279,22 +1297,26 @@ static int rzg3s_pcie_host_init(struct rzg3s_pcie_h=
+ost *host)
+ 	u32 val;
+ 	int ret;
+=20
++	/* SoC-specific pre-configuration */
++	if (host->data->config_pre_init)
++		host->data->config_pre_init(host);
++
+ 	/* Initialize the PCIe related registers */
+ 	ret =3D rzg3s_pcie_config_init(host);
+ 	if (ret)
+-		return ret;
++		goto config_deinit;
+=20
+ 	ret =3D rzg3s_pcie_host_init_port(host);
+ 	if (ret)
+-		return ret;
++		goto config_deinit;
+=20
+ 	/* Initialize the interrupts */
+ 	rzg3s_pcie_irq_init(host);
+=20
+-	ret =3D reset_control_bulk_deassert(host->data->num_cfg_resets,
+-					  host->cfg_resets);
++	/* SoC-specific post-configuration */
++	ret =3D host->data->config_post_init(host);
+ 	if (ret)
+-		goto disable_port_refclk;
++		goto config_deinit_and_refclk;
+=20
+ 	/* Wait for link up */
+ 	ret =3D readl_poll_timeout(host->axi + RZG3S_PCI_PCSTAT1, val,
+@@ -1303,18 +1325,20 @@ static int rzg3s_pcie_host_init(struct rzg3s_pcie_h=
+ost *host)
+ 				 PCIE_LINK_WAIT_SLEEP_MS * MILLI *
+ 				 PCIE_LINK_WAIT_MAX_RETRIES);
+ 	if (ret)
+-		goto cfg_resets_deassert;
++		goto config_deinit_post;
+=20
+ 	val =3D readl_relaxed(host->axi + RZG3S_PCI_PCSTAT2);
+ 	dev_info(host->dev, "PCIe link status [0x%x]\n", val);
+=20
+ 	return 0;
+=20
+-cfg_resets_deassert:
+-	reset_control_bulk_assert(host->data->num_cfg_resets,
+-				  host->cfg_resets);
+-disable_port_refclk:
++config_deinit_post:
++	host->data->config_deinit(host);
++config_deinit_and_refclk:
+ 	clk_disable_unprepare(host->port.refclk);
++config_deinit:
++	if (host->data->config_pre_init)
++		host->data->config_deinit(host);
+ 	return ret;
+ }
+=20
+@@ -1675,7 +1699,7 @@ static int rzg3s_pcie_probe(struct platform_device *p=
+dev)
+=20
+ host_probe_teardown:
+ 	rzg3s_pcie_teardown_irqdomain(host);
+-	reset_control_bulk_assert(host->data->num_cfg_resets, host->cfg_resets);
++	host->data->config_deinit(host);
+ rpm_put:
+ 	pm_runtime_put_sync(dev);
+ rpm_disable:
+@@ -1708,15 +1732,15 @@ static int rzg3s_pcie_suspend_noirq(struct device *=
+dev)
+=20
+ 	clk_disable_unprepare(port->refclk);
+=20
+-	ret =3D reset_control_bulk_assert(data->num_cfg_resets,
+-					host->cfg_resets);
++	/* SoC-specific de-initialization */
++	ret =3D data->config_deinit(host);
+ 	if (ret)
+ 		goto refclk_restore;
+=20
+ 	ret =3D reset_control_bulk_assert(data->num_power_resets,
+ 					host->power_resets);
+ 	if (ret)
+-		goto cfg_resets_restore;
++		goto config_reinit;
+=20
+ 	ret =3D rzg3s_sysc_config_func(sysc, RZG3S_SYSC_FUNC_ID_RST_RSM_B, 0);
+ 	if (ret)
+@@ -1728,9 +1752,10 @@ static int rzg3s_pcie_suspend_noirq(struct device *d=
+ev)
+ power_resets_restore:
+ 	reset_control_bulk_deassert(data->num_power_resets,
+ 				    host->power_resets);
+-cfg_resets_restore:
+-	reset_control_bulk_deassert(data->num_cfg_resets,
+-				    host->cfg_resets);
++config_reinit:
++	if (data->config_pre_init)
++		data->config_pre_init(host);
++	data->config_post_init(host);
+ refclk_restore:
+ 	clk_prepare_enable(port->refclk);
+ 	pm_runtime_resume_and_get(dev);
+@@ -1795,6 +1820,8 @@ static const struct rzg3s_pcie_soc_data rzg3s_soc_dat=
+a =3D {
+ 	.num_power_resets =3D ARRAY_SIZE(rzg3s_soc_power_resets),
+ 	.cfg_resets =3D rzg3s_soc_cfg_resets,
+ 	.num_cfg_resets =3D ARRAY_SIZE(rzg3s_soc_cfg_resets),
++	.config_post_init =3D rzg3s_pcie_config_post_init,
++	.config_deinit =3D rzg3s_pcie_config_deinit,
+ 	.init_phy =3D rzg3s_soc_pcie_init_phy,
+ 	.sysc_info =3D {
+ 		.functions =3D {
 --=20
 2.25.1
 
