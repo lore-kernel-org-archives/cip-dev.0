@@ -2,41 +2,41 @@ Return-Path: <john.madieu.xa@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1733CD4F3E
-	for <webhook@archiver.kernel.org>; Thu, 14 May 2026 09:40:43 +0000 (UTC)
-Received: from OS0P286CU011.outbound.protection.outlook.com (OS0P286CU011.outbound.protection.outlook.com [52.101.228.50])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.6976.1778751640816255723
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8FBACD4851
+	for <webhook@archiver.kernel.org>; Thu, 14 May 2026 09:40:53 +0000 (UTC)
+Received: from OS0P286CU011.outbound.protection.outlook.com (OS0P286CU011.outbound.protection.outlook.com [52.101.228.59])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.6981.1778751644786602955
  for <cip-dev@lists.cip-project.org>;
- Thu, 14 May 2026 02:40:41 -0700
+ Thu, 14 May 2026 02:40:45 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=nYgfkOVr;
- spf=pass (domain: bp.renesas.com, ip: 52.101.228.50, mailfrom: john.madieu.xa@bp.renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=FtdCFzdg;
+ spf=pass (domain: bp.renesas.com, ip: 52.101.228.59, mailfrom: john.madieu.xa@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=c+Tlg9Uy+wN20SnEtmsNOW1VxiBE/maqodlTObMqVBfSVelz/3hpxBKNB73Z/NInTMDecxbBA57767IaGtO1YGveOuQCjKweFjick1AB5CwnPWtO0YxPs3aNVjk+y9wjcvOpC953QRn3/Thw/4TNQ1o+g8k7eppMbOCn2GKKZyu27gYi6KGgVT68seKzjjJ5armYOdoJHjwzd2mF0yZ6bNnevfZLsiPBp5xQWbxZ5xw3hMvhLvHBGhcVjMsPbuWP33LLQ0NVtI6sfmq6WcXvIGNJSW0lThN2FrIMxo7EmVAf2UDjzp2/QS904yV5ZGoCLpFxwhWOWC5DPH74IAo3QA==
+ b=TpuAC7Dh70U/c2LBWrwp4t4e0/0xUn+8onWu/jmFaujg2YgpLoHFEJI+Gb1C0YfW1d7h88P52BLKduA7gbKnhEt1st6C7cdHfJ7iVVMZJNYPd7DJKp/v7jydmWAHejsBnpZNrQrDuQxo/pDPqEkFf8weBkt3NBF36nF1KYbsrXkCvlYw7tuTtSuB6knArDRcVkb/S7vwGV5OpnkuFaZCG1xR6CBAWWGxKDY7RXhDRnzQn9hEqqSkggVgV9GXV8lUyGk8hF3m1BBjKLMXyuqX3VLBtYWgJCTmNxOamUikoqee+Eo/2erMy88joC5hzdwjlAUvNipZ2NImoU4+6rpnVQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=a7mihzS7cohSGxbOB57kaxL6xDceyukcSZZGy2txNTk=;
- b=PF2VKfUZqw2XLijK2H3D9e6U/vCeCts5a8+miuJcGf/STjLGfBYOVYDgvXpVtw9csDR9Qr/zrpDSCxyd3B6OlLN8YiZcdh3q6Tp5OlAi4s2/H+5MvbVM5wz8/HAdBE3HcaIt9pjU7pjLHqyXvHx5pe1TZ5Ns+MbI8dWCr05RtQoLtdhnVpIocXHzHdVlDAWM6jfHXkhLVo7zEBlozs0wYUfu7qEnK10JOYL4EoLqBvnoqqFCzcV7NSom5Dc3vJlQ3uZv/ozFxranPFtX8aPEV6d3k6MQafeIXwNMucYf2+bLuOBfrG2RIgtCEvzuAcAZCPsHI1kBChyUHdDILa+zEA==
+ bh=Qft2dpVV7mpsCe1g6bhNMHSu6MNH0ZQc22hTSxYGCvk=;
+ b=lx5/7cmjMpDY6i9yu4Mtot/HRNYMiji4nSqQM754FwOZ98v60wdZF1Eok8vNxLYYf8EnPAX7NiaxmOcboMBS2uBhPxMnXoxaHlXDAo/BCFRVDemyVYeydufLfruhenjNl9nHjlz0h8rC0FUyPiEP/T7/i5Qlydk+0XNGLifvmASiQOnd8/QSsv4jCPTgcsDxfEGf0J1Ue89FCbYePZK5e0QCu36mVlNth4NpaITVevCOi/KjR5gIGD0C0MZ/hNtUlvareLAwGU2i0yA9BNoB8pM8ibPROmYVG5cEDc/ZvNJdd84UJZXA7QAUPyDuLj2W/mmYpatxWlAjZFvjPtYtjw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=a7mihzS7cohSGxbOB57kaxL6xDceyukcSZZGy2txNTk=;
- b=nYgfkOVrY4sfOgux/qhtWiReA1eizvT9Yt5vYI1jpjRFy4v1iNjfkhFjqdWJ4bGsPRo6xn9sLPP9TfEjaypoc0i8bqN4nt+wV0yGh/jOWRWPtxoI/qCRhb/TcB6DufpLBvaiOtwarp19Ynrmk5ZpYzY7pHfXYmYqbqgT8QeFUWo=
+ bh=Qft2dpVV7mpsCe1g6bhNMHSu6MNH0ZQc22hTSxYGCvk=;
+ b=FtdCFzdgyTARgA6hXIyquU2wBqs7p42jE35cNnD1a+XdmOH/S3QSTijSjU7SwfoKzxJZmpPZdY12FwYlLhIUdm+3wcsBql7UbdYNCY/urO9JhgsXnUbFh64YlJjj7zN1ARDzbxmhsBNNq1wpkL3jiCFHSLU+NbSTzaK46OI33WU=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=bp.renesas.com;
 Received: from TY6PR01MB17377.jpnprd01.prod.outlook.com (2603:1096:405:35b::6)
  by TYRPR01MB13674.jpnprd01.prod.outlook.com (2603:1096:405:18f::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9913.11; Thu, 14 May
- 2026 09:40:36 +0000
+ 2026 09:40:42 +0000
 Received: from TY6PR01MB17377.jpnprd01.prod.outlook.com
  ([fe80::f373:26d6:86c4:6aa3]) by TY6PR01MB17377.jpnprd01.prod.outlook.com
  ([fe80::f373:26d6:86c4:6aa3%6]) with mapi id 15.20.9891.021; Thu, 14 May 2026
- 09:40:36 +0000
+ 09:40:42 +0000
 From: John Madieu <john.madieu.xa@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -44,9 +44,9 @@ To: cip-dev@lists.cip-project.org,
 CC: Biju Das <biju.das.jz@bp.renesas.com>,
 	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
 	john.madieu@gmail.com
-Subject: [PATCH 6.12.y-cip 11/17] PCI: rzg3s-host: Add SoC-specific configuration and initialization callbacks
-Date: Thu, 14 May 2026 09:39:29 +0000
-Message-ID: <20260514093935.2212718-12-john.madieu.xa@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 13/17] PCI: rzg3s-host: Add PCIe Gen3 (8.0 GT/s) link speed support
+Date: Thu, 14 May 2026 09:39:31 +0000
+Message-ID: <20260514093935.2212718-14-john.madieu.xa@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260514093935.2212718-1-john.madieu.xa@bp.renesas.com>
 References: <20260514093935.2212718-1-john.madieu.xa@bp.renesas.com>
@@ -58,81 +58,76 @@ X-ClientProxiedBy: PA7P264CA0033.FRAP264.PROD.OUTLOOK.COM
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: TY6PR01MB17377:EE_|TYRPR01MB13674:EE_
-X-MS-Office365-Filtering-Correlation-Id: fc8e49b7-decb-44db-d286-08deb19cd9ea
+X-MS-Office365-Filtering-Correlation-Id: 375634f9-5ca8-4205-477b-08deb19cdd78
 X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|1800799024|52116014|366016|376014|38350700014|11063799003|56012099003|22082099003|18002099003;
+	BCL:0;ARA:13230040|1800799024|52116014|366016|376014|38350700014|11063799003|56012099003|10063799003|22082099003|18002099003;
 X-Microsoft-Antispam-Message-Info: 
-	xKjmAPJWyIpfK3UFS+AfSjpjvB2ww/SgNbX9H83tYQTEvEAu9DxXdPFIN6WjW1IqV58Oqbb5SJ7QVcKLSlzrMBcG7c6T7C4Glt64f6pFQUt2EDjuawJ+7JwL1dcEDPadxgjDu0gEAPZIx/7+i/jODBVqEWBnuk0PhoEjKqPZ8neH627viIwgjKUL5HF2beR4hVygxN62O5ssnFQe+ySKRGDOjZMULcZtk8JMYkODWZyvyZZOcnPtMnsOH1g8UxP8GXHg1vr5A9yZ/wBYpqIqjTzle6E7C6taj5Yo10XC46tZn4SgGe+5u/r92ySgjhx9N0FPAifzIRzHNSQghuYAU3Z+3lteAXfUCihm3vACIv1Xp+dEAPcFTigkNZKoJxfb0Mm2k8mp1+0t9wc/xtXYhuGE4Be9Fh9ykLV8xlJhKQuu/yI9xshREEqc3JyGtdifxz9VyVJH2jeS7bBfis8AmygT/OyAOCuwzZdtgjzns2oJxuxb7cmgu3yHFeoIVswPzxVdHVa68wYoWDE7dkLID/sVeofoJkBpe3lZZs7UMNkZWtQmKOnAfErLwJzt+M6Gg4/IQooK/nIj2mEO75ZDfOkS4Oc4AWP1yjDdGiMUFu7YRvy7f5myFTTn5eVvqUim5l7H/1H6jXllOxm/+FdUTS06ICb4bCvSNC4db9/uN+ZMfj7G00gy8uB4xztkl+yP4QvYJ0yAt3ZvArP4/FIHsg==
+	3nKR5gxIGooOiPPi3jH9ZYh0wKYoqs9LqbOQKs8NpLiPvtC8bh2lcYH/cPin+nXAH/187l/xDlgMNcIWyMI5JajnGz/O0SuP5v1V4M7yz5/KIVuT/TmwAhmFh/PQmvEG0NMJs6ESMPJy+ZTVgpxUyXw2cDmtVmChs0kO7246J19UJEKSqBedvPWNETlDt9ylzWFAqWa9DsFbpKUPdQfx7rov/gY7i48KTF/3RtWr6vrURrmd1LtA65VdoWlROJG8Tl712aN4rncIt4tiPBy/tUHJgVV2SJIkm6xw8h+KIa79Jotom/0rXQpVj+XUvpeGZntluHAABHn3Nhn7Utpml2UqS813Bn78vPyJv8adszL9M1/5Ks9LrV0tumeb50G8FhxJxS2BPe2K/RiL3HtZNZxTktFiQq+KApltpFhs2WBrKXL0WquJsuerj0oJlIniMbSprefFCv7aSE2zGpF6oplQf0R0M0SG8XLrDedPmHzROztzCy57SEqOVvEE6eOmaLwimEx88LrG25Mc+GWMx0o4BUcu93z9w9Tvf1hlGvE5+h/PjUpT7AunmW/zzhNu4Z5uypdvQa+P33Lstem/6UOngbVO9PXlwoIlhF+k4GkVy56ex8KCGDsNU425M4cbWypn9kp6FvxOHNeRBAUdohuK4vBpgDBfo6gatMMNnWOZ1CiNRNtjSrLPDkWWWHJAu4UK7z+PGkslE9dNVPUnHg==
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY6PR01MB17377.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(366016)(376014)(38350700014)(11063799003)(56012099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY6PR01MB17377.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(366016)(376014)(38350700014)(11063799003)(56012099003)(10063799003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?+eldrrF4TzPl7exFwdSnMXdlMDAo7JpGVjUuOzY+WTAnNcdOvZbQNTynvW9R?=
- =?us-ascii?Q?Rb4eSbeJg4VntUgMFIVhWWwp8qJxsVpec1asZW/mVAGCShRTr6MZXHvPfqdV?=
- =?us-ascii?Q?t8pO7PhqyEszatUflHxnCCegB9VUED5jOnn92J4riMGQnfZvZG+Iyclqs6VI?=
- =?us-ascii?Q?7GblnXxeFx+Eck3tUai2tMfpR5t1OosqsaPq69G2eqY0O3vnsH9p26pwQ8R3?=
- =?us-ascii?Q?IgAt3jBvojsxwi2RMIfuqmi+nS+0vU1syPbCL1hrVsGQ3wPR2FxOLmsZK5ke?=
- =?us-ascii?Q?GfnkBwRSGpXi659w2z6CO6jRMEImjiigQNq0/hIx76npF5eUJfqgtGC/raKX?=
- =?us-ascii?Q?UUprH3bQ03B7hYuoLNUQTIxJdh35JaDZVYVfG6JzLEvECp72IMMYgb7Y9yoN?=
- =?us-ascii?Q?CYNJzyNVf+kfFGRZzgzsRenMYserH1zvsYulsoTqADYPMv2RkIUAMkuREHrm?=
- =?us-ascii?Q?81H/6y/khlRDMiFrGXAEW08St/SXizEKyiJsonmPIZlP+2tMB9cjx2xB3xWk?=
- =?us-ascii?Q?Xg72etzpk3xVSn9Mc1h2wMJRtFS/sZyt7Y+eERrsYI1HNjkkDgC6LYKRiWHj?=
- =?us-ascii?Q?E/9+rHB6PCN86hzQXHa2sPLciogLiyK669X6oUgQ+imHXtgK8mUi3MSo9iE5?=
- =?us-ascii?Q?skRwg/5OiMcGSxW92JWxtnTI3pjP3936gzne7JbfqMgcpGi81hX2ipHm2SPT?=
- =?us-ascii?Q?A/yyYu9h5pj8D7tCj+3pNV16rPdK3oZGedzPRTrcwTggf8MHj6pfhw0xJbhS?=
- =?us-ascii?Q?WgmwXttNXQxDhUNp18Ny3tkGNTLftobUNiN6qjUASzev3ehCNt8U9tOpyo4R?=
- =?us-ascii?Q?/xKSfKe1p8DLv1GU5CBU5SKUj3nliP8ieQLvCsFXUs0uj4stwSStfjGVCtx1?=
- =?us-ascii?Q?6SnPOwvC5fbSfCD0xsxpjVHwyJe4y6mbE148tQH3sX+tsIsi/uTftWiJ3bHH?=
- =?us-ascii?Q?p0QQtyeUyMtqIpuJzuaKkVMArs3rGbfehfeaqN9ATmCcgYRtS+BZwEcpPL/H?=
- =?us-ascii?Q?7GsHeQa79GlE5MoWgv32KB27yBv6E2qStIPfyGNI0NcpwWVati/C5WKFStzR?=
- =?us-ascii?Q?DlZ9+LBmHSNuMl7X0YY1+3sh3j750pflvKT9p7ZRLB0WhSe3bQW88RRfQHO6?=
- =?us-ascii?Q?NHuw+DHVQLzi2bYvkNvvGKZBMLCyUKh6dE0UbgGylebYADFI0DV5a2m7EA/Z?=
- =?us-ascii?Q?ggpClacme4ILZdlGMg36FEEjOeTjSH6z0oNhBcqPV2gk309ms68z4oF3LRYy?=
- =?us-ascii?Q?l3V/2JtiOteGD7ZDy/uRvoa57rdrZCqv5Mkzu+IDFoBKTq9RhCy0WQNxiyx1?=
- =?us-ascii?Q?OzNjmQcFp5B91UvfRahU5KBAlhDzkpCTk7A1iguUv61Ti7/HCBW1/lpxHEGG?=
- =?us-ascii?Q?I4ZLSjEIavttj2Ovvb/cDVDrKEY0BApdKlLiiw4pzhvK7oSr4/LzrgcW99I8?=
- =?us-ascii?Q?HefSY93FVJ9/h1koOuvsbyDxuDN84QdbJekoAA3BsH8VtBq+hF/2j91i1AnI?=
- =?us-ascii?Q?7TKblMzzSSYwe1dzD6kmtPd5XorURQpr9UwIUxKZojdzhDBmXxdWSWYpijmQ?=
- =?us-ascii?Q?sdOChghYdqM0RdKTSA/zargdVNMTZkFG2e7jx3WT156Th88nRF7HXEbNU3G0?=
- =?us-ascii?Q?hi5fSXl76i/Dd11KZlHbI5xGRn2v4lZ47xJtB5TWRLZK+Uq5sl4PSvLKh3qF?=
- =?us-ascii?Q?UokhM/NnRnBADxKejBUDjRuAGGpgh/fH0pscs8DmKJA7HSzoCTHGXiJhB32Y?=
- =?us-ascii?Q?KfGSufOAQlOeFhj4+pGKTbGgeiOtN7k=3D?=
+	=?us-ascii?Q?3xJtTQ4edchFyJj1HqnasNUa/9piIvANfhiB9RQXU+YxsQv1xlMiApopbHuF?=
+ =?us-ascii?Q?D+EYo8CIxNyAbC9KE+RckieKfzNrDC3H6NLAFq6cXcN9ZHuLVvT0h6Ec+lRW?=
+ =?us-ascii?Q?xtU3ZsFippalxfKdDAghmePwpMtcTrqQ0YsMYx7A21XNc7dDoT+EGLmYdhdZ?=
+ =?us-ascii?Q?rY092q1zcqgnUgOpfk8eF3UaQPxP55WRrVlMVG5Z4T0n1pN/NbqlBjnx2Zpq?=
+ =?us-ascii?Q?j6vr7HCDjBFMgw4C27/gMIAKLjYvkIhpldtZBVR3lLEp8wtGvQdQsI697+Ol?=
+ =?us-ascii?Q?8cYTudVvOCRkRw6DSfq9tqeVeHGgxPWnufL46PaOsFYn7OWUBurf1LVqQaUQ?=
+ =?us-ascii?Q?ECsDkZMwt+GkhePinHzRpHaTS7HMCvGvpYjj4N762zWy3Kn2K1HoSyFrIkt8?=
+ =?us-ascii?Q?Og87hl+mQHXHZIO4IFZOAVHTAd2PtX31SfGRu1fH9jB56jnyuKcI0vVPEhqr?=
+ =?us-ascii?Q?CTUGmZr2LakvhbQcGsAhLSRUp4lsAcgCyl6JJI8sc/Z8YqH7c1Zye0eNR6F/?=
+ =?us-ascii?Q?xXbHNk4VS4AK4M2jppgY/et8U3An3R2y2JB6E8VUny1TAX5GHevPrpGIdVqw?=
+ =?us-ascii?Q?xc8Wnh8b5A9Ev09YVb0TCD5yFjJelN+TnwNeEJrJBwpeP8O8FXlAz64MDmlQ?=
+ =?us-ascii?Q?xIIKTVge+InS2IjYGbjm+bJcoMx2YoL6cK2JzEz5VZLKRDXynEs2IviJ7t+M?=
+ =?us-ascii?Q?dszFy8BWRfwXQyuVMcbuvTX/pi8Rgq9PCKquTfFRWh7CACT0u8TJu/Zes7Vt?=
+ =?us-ascii?Q?LlQwH/imXQdb+8Q0pf530sVt6CbxbILwKBB4B84HNRLRukw9hHzdhtnAeggz?=
+ =?us-ascii?Q?XnQZwnFBf8Dhbl1KC9WvrrRjfWCDMW0rjUbuYnP2VbB+BF+it/8vHVcB5aJf?=
+ =?us-ascii?Q?cZqOJ1t/Yukv/dddNlnqeSkaRLX0gZ75BVuOQkLK71oOGmxsBYPh4LSQMK3E?=
+ =?us-ascii?Q?8hiAqhEtCLXPtkdXBzPWXCLmCmcsDFDw5Df2wPWgVwE907viVfU0E7Ka+XTt?=
+ =?us-ascii?Q?T+Db0fYAyXYm0cpcxiFQmpUT4p5Ag6hV+EgsK7oJ/aoVanHpuDaXR1CM/QQq?=
+ =?us-ascii?Q?uMwTTdViEFqY5efIsIt6/OLr5y9/LhTSJKIyG70jcb3CBEBPDhiRzwyUmPXQ?=
+ =?us-ascii?Q?C1bsJpgTpb2/rHdQdU6i7T7yt/CWLqxwxNxKz4LjkwDotolcoBIatL5dx/1k?=
+ =?us-ascii?Q?hgAYsH2Bj/YXZmEaC8Cyiu2CUIhRW+ogVqPXiislXSkdkR91vd5ruEU09yzs?=
+ =?us-ascii?Q?ubtxMv5ICR5iVmFbk3iDbxfUIOXhdw9zuyVs11+ta8lGVJNWzw9mfefQZD1i?=
+ =?us-ascii?Q?bO8oipBPFDfGQ39tOHyWry7AQZG7zNaTXi3px36uir4eGeDVG3QgjyY00UBW?=
+ =?us-ascii?Q?UGpDXLfS+VsUjgHtiuynj1gq6exjYAkTVi7L5yGCJzIURi0dbsnKzjogdGkP?=
+ =?us-ascii?Q?Ki5jtC8iR9yiuvi9mQqbwdAfPCnKBajsLoLL3AnBVgdZoBzf3OZUTSVy9oBs?=
+ =?us-ascii?Q?9Q8AMxhf1jIXomlRZ9O9hpKd/QDVgrCxyZP2wVdYpPWisnWgiXHiKB1ZrP9U?=
+ =?us-ascii?Q?+UPzmeNA/YEEhXlDPgmVGOea6hJMZLIfbUPOYUWBFo7iasrkPc8Q7DFoeShh?=
+ =?us-ascii?Q?tIsVRAxhLE9XVEF1D2MH0kTS6P2ikUd5vw1EDcz9XNPuCgmV3MbDcc0RB8sC?=
+ =?us-ascii?Q?C3PVrCsUl7cOiw+lsOJmIrNJT4OJnAHrQenJUZSP7cDjO0jNJICzVocmIWUm?=
+ =?us-ascii?Q?JnxxhNj8YIEQ3u3zEEBM4C9BdJgyzc4=3D?=
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fc8e49b7-decb-44db-d286-08deb19cd9ea
+X-MS-Exchange-CrossTenant-Network-Message-Id: 375634f9-5ca8-4205-477b-08deb19cdd78
 X-MS-Exchange-CrossTenant-AuthSource: TY6PR01MB17377.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2026 09:40:36.5789
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2026 09:40:42.5454
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5e2sNc6SMqSH7s+6tEpEVMu0/syoYDkwv1WZTfm1g8zS7vnDW8Q0VlO9BTQSOy6aQt9K3xDuLhhf6CBa6JrAKwzwliicO4Orzch+G90Zic8=
+X-MS-Exchange-CrossTenant-UserPrincipalName: z0EGeeeTqfvPT8+tLQHfcoko3y0bBfm0jIJIpO8tHjVmFM2sEAYyXu45BjGLO4XFzTb5hGC8qyVMuEdSWW0C8P5ydPgkyMy0aRPuKCNJxC8=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYRPR01MB13674
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 14 May 2026 09:40:43 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22945
+ <cip-dev@lists.cip-project.org>; Thu, 14 May 2026 09:40:53 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22947
 
-[ Upstream commit 5f2c4de717786150f8d6cdbdbffb986cd3c59edb ]
+[ Upstream commit 5e9a5af5c9a2797a5e41e8ee565ce8108588f956 ]
 
-Add optional cfg_pre_init, cfg_post_init, and cfg_deinit callbacks
-to handle SoC-specific configuration methods. While RZ/G3S uses the Linux
-reset framework with dedicated reset lines, other SoC variants like RZ/G3E
-control configuration resets through PCIe AXI registers.
+Extend the link speed configuration to support Gen3 (8.0 GT/s) in
+addition to Gen2 (5.0 GT/s). This is required for RZ/G3E PCIe host
+support, which is Gen3 capable.
 
-As Linux reset bulk API gracefully handles optional NULL reset lines
-(num_cfg_resets =3D 0 for RZ/G3E), the driver continues to use the standard
-reset framework when reset lines are available, while custom callbacks
-are only invoked when provided.
-
-This provides a balanced pattern where:
-- RZ/G3S: Uses callbacks that fall back to the reset framework
-- RZ/G3E: Sets num_cfg_resets=3D0, provides
-  cfg_pre_init/cfg_post_init/cfg_deinit
+Instead of relying on DT max-link-speed for configuration, read the
+hardware capabilities from the PCI_EXP_LNKCAP register to determine the
+maximum supported speed. The DT max-link-speed property is now only used
+as an optional limit when explicitly specified, which aligns with PCIe
+subsystem expectations.
 
 Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
 Signed-off-by: Manivannan Sadhasivam <mani@kernel.org>
@@ -140,173 +135,79 @@ Tested-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com> # RZ/V2N=
  EVK
 Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://patch.msgid.link/20260306143423.19562-10-john.madieu.xa@bp.re=
+Link: https://patch.msgid.link/20260306143423.19562-12-john.madieu.xa@bp.re=
 nesas.com
 Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
 ---
- drivers/pci/controller/pcie-rzg3s-host.c | 61 +++++++++++++++++-------
- 1 file changed, 44 insertions(+), 17 deletions(-)
+ drivers/pci/controller/pcie-rzg3s-host.c | 26 ++++++++++++++++++------
+ 1 file changed, 20 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/control=
 ler/pcie-rzg3s-host.c
-index 8620d8d31137..1de91ac54069 100644
+index b3fade8443db..39828d8f4e0c 100644
 --- a/drivers/pci/controller/pcie-rzg3s-host.c
 +++ b/drivers/pci/controller/pcie-rzg3s-host.c
-@@ -232,6 +232,9 @@ struct rzg3s_pcie_host;
- /**
-  * struct rzg3s_pcie_soc_data - SoC specific data
-  * @init_phy: PHY initialization function
-+ * @config_pre_init: Optional callback for SoC-specific pre-configuration
-+ * @config_post_init: Callback for SoC-specific post-configuration
-+ * @config_deinit: Callback for SoC-specific de-initialization
-  * @power_resets: array with the resets that need to be de-asserted after
-  *                power-on
-  * @cfg_resets: array with the resets that need to be de-asserted after
-@@ -242,6 +245,9 @@ struct rzg3s_pcie_host;
-  */
- struct rzg3s_pcie_soc_data {
- 	int (*init_phy)(struct rzg3s_pcie_host *host);
-+	void (*config_pre_init)(struct rzg3s_pcie_host *host);
-+	int (*config_post_init)(struct rzg3s_pcie_host *host);
-+	int (*config_deinit)(struct rzg3s_pcie_host *host);
- 	const char * const *power_resets;
- 	const char * const *cfg_resets;
- 	struct rzg3s_sysc_info sysc_info;
-@@ -1131,6 +1137,18 @@ static int rzg3s_pcie_config_init(struct rzg3s_pcie_=
-host *host)
- 	return 0;
- }
-=20
-+static int rzg3s_pcie_config_post_init(struct rzg3s_pcie_host *host)
-+{
-+	return reset_control_bulk_deassert(host->data->num_cfg_resets,
-+					   host->cfg_resets);
-+}
-+
-+static int rzg3s_pcie_config_deinit(struct rzg3s_pcie_host *host)
-+{
-+	return reset_control_bulk_assert(host->data->num_cfg_resets,
-+					 host->cfg_resets);
-+}
-+
- static void rzg3s_pcie_irq_init(struct rzg3s_pcie_host *host)
+@@ -1026,8 +1026,9 @@ static int rzg3s_pcie_set_max_link_speed(struct rzg3s=
+_pcie_host *host)
  {
- 	/*
-@@ -1279,22 +1297,26 @@ static int rzg3s_pcie_host_init(struct rzg3s_pcie_h=
-ost *host)
- 	u32 val;
+ 	u32 remote_supported_link_speeds, max_supported_link_speeds;
+ 	u32 cs2, tmp, pcie_cap =3D RZG3S_PCI_CFG_PCIEC;
+-	u32 cur_link_speed, link_speed;
++	u32 cur_link_speed, link_speed, hw_max_speed;
+ 	u8 ltssm_state_l0 =3D 0xc;
++	u32 lnkcap;
  	int ret;
+ 	u16 ls;
 =20
-+	/* SoC-specific pre-configuration */
-+	if (host->data->config_pre_init)
-+		host->data->config_pre_init(host);
+@@ -1047,7 +1048,22 @@ static int rzg3s_pcie_set_max_link_speed(struct rzg3=
+s_pcie_host *host)
+ 	ls =3D readw_relaxed(host->pcie + pcie_cap + PCI_EXP_LNKSTA);
+ 	cs2 =3D readl_relaxed(host->axi + RZG3S_PCI_PCSTAT2);
+=20
+-	switch (pcie_link_speed[host->max_link_speed]) {
++	/* Read hardware supported link speed from Link Capabilities Register */
++	lnkcap =3D readl_relaxed(host->pcie + pcie_cap + PCI_EXP_LNKCAP);
++	hw_max_speed =3D FIELD_GET(PCI_EXP_LNKCAP_SLS, lnkcap);
 +
- 	/* Initialize the PCIe related registers */
- 	ret =3D rzg3s_pcie_config_init(host);
- 	if (ret)
--		return ret;
-+		goto config_deinit;
++	/*
++	 * Use DT max-link-speed only as a limit. If specified and lower
++	 * than hardware capability, cap to that value.
++	 */
++	if (host->max_link_speed > 0 && host->max_link_speed < hw_max_speed)
++		hw_max_speed =3D host->max_link_speed;
++
++	switch (pcie_link_speed[hw_max_speed]) {
++	case PCIE_SPEED_8_0GT:
++		max_supported_link_speeds =3D GENMASK(PCI_EXP_LNKSTA_CLS_8_0GB - 1, 0);
++		link_speed =3D PCI_EXP_LNKCTL2_TLS_8_0GT;
++		break;
+ 	case PCIE_SPEED_5_0GT:
+ 		max_supported_link_speeds =3D GENMASK(PCI_EXP_LNKSTA_CLS_5_0GB - 1, 0);
+ 		link_speed =3D PCI_EXP_LNKCTL2_TLS_5_0GT;
+@@ -1063,10 +1079,10 @@ static int rzg3s_pcie_set_max_link_speed(struct rzg=
+3s_pcie_host *host)
+ 	remote_supported_link_speeds &=3D max_supported_link_speeds;
 =20
- 	ret =3D rzg3s_pcie_host_init_port(host);
- 	if (ret)
--		return ret;
-+		goto config_deinit;
+ 	/*
+-	 * Return if max link speed is already set or the connected device
++	 * Return if target link speed is already set or the connected device
+ 	 * doesn't support it.
+ 	 */
+-	if (cur_link_speed =3D=3D host->max_link_speed ||
++	if (cur_link_speed =3D=3D hw_max_speed ||
+ 	    remote_supported_link_speeds !=3D max_supported_link_speeds)
+ 		return 0;
 =20
- 	/* Initialize the interrupts */
- 	rzg3s_pcie_irq_init(host);
-=20
--	ret =3D reset_control_bulk_deassert(host->data->num_cfg_resets,
--					  host->cfg_resets);
-+	/* SoC-specific post-configuration */
-+	ret =3D host->data->config_post_init(host);
- 	if (ret)
--		goto disable_port_refclk;
-+		goto config_deinit_and_refclk;
-=20
- 	/* Wait for link up */
- 	ret =3D readl_poll_timeout(host->axi + RZG3S_PCI_PCSTAT1, val,
-@@ -1303,18 +1325,20 @@ static int rzg3s_pcie_host_init(struct rzg3s_pcie_h=
-ost *host)
- 				 PCIE_LINK_WAIT_SLEEP_MS * MILLI *
- 				 PCIE_LINK_WAIT_MAX_RETRIES);
- 	if (ret)
--		goto cfg_resets_deassert;
-+		goto config_deinit_post;
-=20
- 	val =3D readl_relaxed(host->axi + RZG3S_PCI_PCSTAT2);
- 	dev_info(host->dev, "PCIe link status [0x%x]\n", val);
-=20
- 	return 0;
-=20
--cfg_resets_deassert:
--	reset_control_bulk_assert(host->data->num_cfg_resets,
--				  host->cfg_resets);
--disable_port_refclk:
-+config_deinit_post:
-+	host->data->config_deinit(host);
-+config_deinit_and_refclk:
- 	clk_disable_unprepare(host->port.refclk);
-+config_deinit:
-+	if (host->data->config_pre_init)
-+		host->data->config_deinit(host);
- 	return ret;
- }
-=20
-@@ -1675,7 +1699,7 @@ static int rzg3s_pcie_probe(struct platform_device *p=
+@@ -1654,8 +1670,6 @@ static int rzg3s_pcie_probe(struct platform_device *p=
 dev)
+ 	host->pcie =3D host->axi + RZG3S_PCI_CFG_BASE;
 =20
- host_probe_teardown:
- 	rzg3s_pcie_teardown_irqdomain(host);
--	reset_control_bulk_assert(host->data->num_cfg_resets, host->cfg_resets);
-+	host->data->config_deinit(host);
- rpm_put:
- 	pm_runtime_put_sync(dev);
- rpm_disable:
-@@ -1708,15 +1732,15 @@ static int rzg3s_pcie_suspend_noirq(struct device *=
-dev)
+ 	host->max_link_speed =3D of_pci_get_max_link_speed(np);
+-	if (host->max_link_speed < 0)
+-		host->max_link_speed =3D 2;
 =20
- 	clk_disable_unprepare(port->refclk);
-=20
--	ret =3D reset_control_bulk_assert(data->num_cfg_resets,
--					host->cfg_resets);
-+	/* SoC-specific de-initialization */
-+	ret =3D data->config_deinit(host);
+ 	ret =3D rzg3s_pcie_host_parse_port(host);
  	if (ret)
- 		goto refclk_restore;
-=20
- 	ret =3D reset_control_bulk_assert(data->num_power_resets,
- 					host->power_resets);
- 	if (ret)
--		goto cfg_resets_restore;
-+		goto config_reinit;
-=20
- 	ret =3D rzg3s_sysc_config_func(sysc, RZG3S_SYSC_FUNC_ID_RST_RSM_B, 0);
- 	if (ret)
-@@ -1728,9 +1752,10 @@ static int rzg3s_pcie_suspend_noirq(struct device *d=
-ev)
- power_resets_restore:
- 	reset_control_bulk_deassert(data->num_power_resets,
- 				    host->power_resets);
--cfg_resets_restore:
--	reset_control_bulk_deassert(data->num_cfg_resets,
--				    host->cfg_resets);
-+config_reinit:
-+	if (data->config_pre_init)
-+		data->config_pre_init(host);
-+	data->config_post_init(host);
- refclk_restore:
- 	clk_prepare_enable(port->refclk);
- 	pm_runtime_resume_and_get(dev);
-@@ -1795,6 +1820,8 @@ static const struct rzg3s_pcie_soc_data rzg3s_soc_dat=
-a =3D {
- 	.num_power_resets =3D ARRAY_SIZE(rzg3s_soc_power_resets),
- 	.cfg_resets =3D rzg3s_soc_cfg_resets,
- 	.num_cfg_resets =3D ARRAY_SIZE(rzg3s_soc_cfg_resets),
-+	.config_post_init =3D rzg3s_pcie_config_post_init,
-+	.config_deinit =3D rzg3s_pcie_config_deinit,
- 	.init_phy =3D rzg3s_soc_pcie_init_phy,
- 	.sysc_info =3D {
- 		.functions =3D {
 --=20
 2.25.1
 
