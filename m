@@ -1,105 +1,148 @@
-Return-Path: <uli@fpond.eu>
+Return-Path: <yoshitake.kobayashi.x25@mail.toshiba>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99BFDCD343F
-	for <webhook@archiver.kernel.org>; Mon, 18 May 2026 20:40:13 +0000 (UTC)
-Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [85.215.255.21])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.7159.1779136810795283448
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51723CD4F54
+	for <webhook@archiver.kernel.org>; Tue, 19 May 2026 02:18:11 +0000 (UTC)
+Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.5747.1779100969637954645
  for <cip-dev@lists.cip-project.org>;
- Mon, 18 May 2026 13:40:11 -0700
+ Mon, 18 May 2026 03:42:50 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@fpond.eu header.s=strato-dkim-0002 header.b=LehMjFGG;
- dkim=pass header.i=@fpond.eu header.s=strato-dkim-0003 header.b=PmxgKdUG;
- spf=none, err=permanent DNS error (domain: fpond.eu, ip: 85.215.255.21, mailfrom: uli@fpond.eu)
-ARC-Seal: i=1; a=rsa-sha256; t=1779136795; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=kgaf0sKuFK9hM0YMRRHPfCtDBCKwK+0WmqLofS2qNbcB4OY4NbKYn98AVZL8EBjQff
-    uA6Y/pxxpA122THF7CnbE71zFmL11g05ZiPKQ91GOr6PUoYt/zeGpLonLm7Tu1tD9pOs
-    kVuvYwPNTF17jdfv99a/+bzpRZRd4ctbz8sLwXWtANubKQM0YptuL5JoWQXymJZHAaGc
-    rT/fziSAtxRnfV62EaKflGAnmbUNBd1YfB7MnKg2xSYGkR0qaD5XnbIQv8ebgfgD3pJc
-    Qwr6SXHOlzKO6QR+bd8z1L1ZWbo4KTo92IbuOY7i4LvP50o5rwfksPVVms+WbVV/CYhW
-    MnAg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1779136795;
-    s=strato-dkim-0002; d=strato.com;
-    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
-    bh=0gbVokiqe65r9J4NmEdtfxiTXs3Z1ZnY5Uh6Y58srQ0=;
-    b=tA9AjdbEbHp4RaHnCrLyw6TOxWRqc80/WbUmaemx6/32E4PvEbIWdj7WNrx9Nlxba6
-    eWFPVdsp16sNhCJEVEVe69fHOCR/eA8vyWKWEhdvsgOD0Uz9Qi5VUnw9/hzwmFqY7OdL
-    Y+ZRS1kiB/rciwIBx07v0YIp4kPBbRrowpMotFbF4ljlO7WiIPH0Z2BhHhT7G0VUor6J
-    JCePgF9AFiZE0vZeyVz+OHW/rlLskqRf1wQeLrcNOjatulDUbgHayB8jUU9RUGzDv28T
-    k6D/BrV8IxDj9nGNQJbk6rhmCP7C4l+oojrNfmeCGm02sxx4dM4CZkOHXne3gYZBnxaW
-    7jbg==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo00
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1779136795;
-    s=strato-dkim-0002; d=fpond.eu;
-    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
-    bh=0gbVokiqe65r9J4NmEdtfxiTXs3Z1ZnY5Uh6Y58srQ0=;
-    b=LehMjFGGF32a7eL948w92oprsnAbHE8pMqjhf+z/D3WIwu0hFQ0ZMbUwMXCGZuCyMm
-    6w2QsmwE1kczNVdLqoMC04D7klNOGk+A1e9WAApEO3bd+TD2jEcQCGvm3O/Q2D1zQq8b
-    Hz6RO3FMux+vCKN1gmTeUU5M6q9Uy9mvaAk889r6JCfURqxNkAYoS9NWILxzuzRiBYU8
-    TZfi1quHQ3mAtKTYrprFgTRhnRDMlsUN21ToB0UYk2hYLcZHjgB0jwr9Dih+aPqpNeoo
-    JI+p9DGsZMZxyWZicn1du/xrX1NsxCBy7uBzErBHZkow7Pz5JnnhknbEw2Z2ZRh8ncVo
-    N+Iw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1779136795;
-    s=strato-dkim-0003; d=fpond.eu;
-    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
-    bh=0gbVokiqe65r9J4NmEdtfxiTXs3Z1ZnY5Uh6Y58srQ0=;
-    b=PmxgKdUGPoo7f7jn/pngAQEtUvB5ZX29+CdDbv4DPC0ox3+T/VYE4eUQdDgh+Gh8PB
-    JfPaFi8Gs5FLMXVUVYAw==
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzvv30UF1hexKDG+LdTmA=="
-Received: from open-xchange-core-mw-gw-36.open-xchange-core-mw-hazelcast-headless.open-xchange.svc.cluster.local
-    by smtp-ox.front (RZmta 55.0.1 AUTH)
-    with ESMTPSA id z7806e24IKdszA0
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256 bits))
-	(Client did not present a certificate);
-    Mon, 18 May 2026 22:39:54 +0200 (CEST)
-Date: Mon, 18 May 2026 22:39:54 +0200 (CEST)
-From: Ulrich Hecht <uli@fpond.eu>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	"pavel@nabladev.com" <pavel@nabladev.com>,
-	"nobuhiro.iwamatsu.x90@mail.toshiba" <nobuhiro.iwamatsu.x90@mail.toshiba>
-Message-ID: <596572994.133475.1779136794242@webmail.strato.de>
-Subject: Request for review for 4.4-st76, 4.4-cip111
+ dkim=pass header.i=gouravsingh@siemens.com header.s=fm1 header.b=eLufsR71;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-1333022-202605181032404505aa96ba00020786-to5nr5@rts-flowmailer.siemens.com)
+Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 202605181032404505aa96ba00020786
+        for <cip-dev@lists.cip-project.org>;
+        Mon, 18 May 2026 12:32:40 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=gouravsingh@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=uMMOo9LeMsX3TIwrwVF/dheVhqZ+a+kClnkYobXTkyU=;
+ b=eLufsR71RXPNYJ4v7vilDCM9ySx7eNQ3rBc2Dk1f65/ey04GGgxx9/tKntRSrVxM6cmcnT
+ hB0vc2iS6HT4ZCd8FcvRWTDdMyqRYNbRyr7rOxePBqCR28f7ZCIPdJQKz1pfsXugisj4XSOv
+ ILUch2Hn4v1xOUqUineRkhdsy0R77IaiVFigTllyqIJJFnYi1ZpxDwu3pq3Bi0U4akHLtKmg
+ 3N8k2S28QB98sCrJmFOQmMbjrF9XwFS9o74q/z3DsgpmVc/iqlEKv/fiV86amF3IgVbyiF0o
+ RFHSr7xjmnTgM9y+e0Ek/6EutWt+u0BxAnMTZEXohvLaGRYNhHfzGxoQ==;
+From: Gourav Singh <gouravsingh@siemens.com>
+To: cip-dev@lists.cip-project.org
+Cc: jan.kiszka@siemens.com,
+	Gourav Singh <gouravsingh@siemens.com>
+Subject: [isar-cip-core][PATCH v2] linux-cip: Update to 5.10.256-cip73, 6.1.173-cip56, 6.12.88-cip23, 4.19.325-cip130-rt47
+Date: Mon, 18 May 2026 16:02:26 +0530
+Message-Id: <20260518103226.1527605-1-gouravsingh@siemens.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v8.42.88
-X-Originating-Port: 50802
-X-Originating-Client: open-xchange-appsuite
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1333022:519-21489:flowmailer
+Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 18 May 2026 20:40:13 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22976
+ <cip-dev@lists.cip-project.org>; Tue, 19 May 2026 02:18:11 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22978
 
-Hi!
+Signed-off-by: Gourav Singh <gouravsingh@siemens.com>
+---
+ ...25-cip130-rt47.bb => linux-cip-rt_4.19.325-cip132-rt48.bb} | 4 ++--
+ recipes-kernel/linux/linux-cip-rt_6.12.85-cip22.bb            | 1 -
+ recipes-kernel/linux/linux-cip-rt_6.12.88-cip23.bb            | 1 +
+ ...inux-cip_5.10.254-cip72.bb => linux-cip_5.10.256-cip73.bb} | 4 ++--
+ ...{linux-cip_6.12.85-cip22.bb => linux-cip_6.1.173-cip56.bb} | 2 +-
+ ...{linux-cip_6.1.170-cip55.bb => linux-cip_6.12.88-cip23.bb} | 2 +-
+ 6 files changed, 7 insertions(+), 7 deletions(-)
+ rename recipes-kernel/linux/{linux-cip-rt_4.19.325-cip130-rt47.bb => linux-cip-rt_4.19.325-cip132-rt48.bb} (54%)
+ delete mode 120000 recipes-kernel/linux/linux-cip-rt_6.12.85-cip22.bb
+ create mode 120000 recipes-kernel/linux/linux-cip-rt_6.12.88-cip23.bb
+ rename recipes-kernel/linux/{linux-cip_5.10.254-cip72.bb => linux-cip_5.10.256-cip73.bb} (54%)
+ rename recipes-kernel/linux/{linux-cip_6.12.85-cip22.bb => linux-cip_6.1.173-cip56.bb} (59%)
+ rename recipes-kernel/linux/{linux-cip_6.1.170-cip55.bb => linux-cip_6.12.88-cip23.bb} (59%)
 
-Here are the manual backports for the upcoming 4.4 kernel release. As always they can be found in https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-4.4.y-st-rc
+diff --git a/recipes-kernel/linux/linux-cip-rt_4.19.325-cip130-rt47.bb b/recipes-kernel/linux/linux-cip-rt_4.19.325-cip132-rt48.bb
+similarity index 54%
+rename from recipes-kernel/linux/linux-cip-rt_4.19.325-cip130-rt47.bb
+rename to recipes-kernel/linux/linux-cip-rt_4.19.325-cip132-rt48.bb
+index 4ab07e3..59489cf 100644
+--- a/recipes-kernel/linux/linux-cip-rt_4.19.325-cip130-rt47.bb
++++ b/recipes-kernel/linux/linux-cip-rt_4.19.325-cip132-rt48.bb
+@@ -1,7 +1,7 @@
+ #
+ # CIP Core, generic profile
+ #
+-# Copyright (c) Siemens AG, 2019-2025
++# Copyright (c) Siemens AG, 2019-2026
+ #
+ # Authors:
+ #  Jan Kiszka <jan.kiszka@siemens.com>
+@@ -11,4 +11,4 @@
 
-1369f9bda4b79 x86/CPU: Fix FPDSS on Zen1
-3f64e9548b885 virtio_net: Fix UAF on dst_ops when IFF_XMIT_DST_RELEASE is cleared and napi_tx is false
-4a2616a1bc204 net: stmmac: fix integer underflow in chain mode
-bcbb001290534 netfilter: nfnetlink_log: fix uninitialized padding leak in NFULA_PAYLOAD
-0e368cfcb8d95 PM: runtime: Fix a race condition related to device removal
-596467b2c8a25 netfilter: ctnetlink: fix use-after-free in ctnetlink_dump_exp_ct()
-5964034f67b50 netfilter: ctnetlink: remove refcounting in expectation dumpers
-20b9c909f5106 net/tcp-md5: Fix MAC comparison to be constant-time
-f8f81dfa5ec62 btrfs: abort transaction on failure to update root in the received subvol ioctl
-f949f9c5b025a usb: class: cdc-wdm: fix reordering issue in read code path
-031802bdc81c9 net: usb: lan78xx: fix silent drop of packets with checksum errors
-e2402f11daafc xen/acpi-processor: fix _CST detection using undersized evaluation buffer
-d46bd876ce21f drbd: fix "LOGIC BUG" in drbd_al_begin_io_nonblock()
-8a344e750e899 media: dvb-core: fix wrong reinitialization of ringbuffer on reopen
-0ca67aeb9a9d5 wifi: libertas: fix use-after-free in lbs_free_adapter()
+ require linux-cip-release.inc
 
-Thanks for having a look!
+-SRC_URI[sha256sum] = "15950e3c757037ceaf02d19f64519618fa7f1119905e6f975f7ae3658c1d5b6e"
++SRC_URI[sha256sum] = "65230ec52117a1896b2ec285cfca7ecc0cdf09441613e23cd7dea590d92e0859"
+diff --git a/recipes-kernel/linux/linux-cip-rt_6.12.85-cip22.bb b/recipes-kernel/linux/linux-cip-rt_6.12.85-cip22.bb
+deleted file mode 120000
+index ed5ab00..0000000
+--- a/recipes-kernel/linux/linux-cip-rt_6.12.85-cip22.bb
++++ /dev/null
+@@ -1 +0,0 @@
+-linux-cip_6.12.85-cip22.bb
+\ No newline at end of file
+diff --git a/recipes-kernel/linux/linux-cip-rt_6.12.88-cip23.bb b/recipes-kernel/linux/linux-cip-rt_6.12.88-cip23.bb
+new file mode 120000
+index 0000000..306c2a9
+--- /dev/null
++++ b/recipes-kernel/linux/linux-cip-rt_6.12.88-cip23.bb
+@@ -0,0 +1 @@
++linux-cip_6.12.88-cip23.bb
+\ No newline at end of file
+diff --git a/recipes-kernel/linux/linux-cip_5.10.254-cip72.bb b/recipes-kernel/linux/linux-cip_5.10.256-cip73.bb
+similarity index 54%
+rename from recipes-kernel/linux/linux-cip_5.10.254-cip72.bb
+rename to recipes-kernel/linux/linux-cip_5.10.256-cip73.bb
+index b4beedc..4d2fec6 100644
+--- a/recipes-kernel/linux/linux-cip_5.10.254-cip72.bb
++++ b/recipes-kernel/linux/linux-cip_5.10.256-cip73.bb
+@@ -1,7 +1,7 @@
+ #
+ # CIP Core, generic profile
+ #
+-# Copyright (c) Siemens AG, 2021-2023
++# Copyright (c) Siemens AG, 2026
+ #
+ # Authors:
+ #  Jan Kiszka <jan.kiszka@siemens.com>
+@@ -11,4 +11,4 @@
 
-CU
-Uli
+ require linux-cip-release.inc
+
+-SRC_URI[sha256sum] = "59e32e7cedd32bfc3a42e673898384f23931219911e4ca6a4215a375393944e6"
++SRC_URI[sha256sum] = "b911f12ba8975ab4c114713c03275662457190fd9709148a4ad735705019e7f8"
+diff --git a/recipes-kernel/linux/linux-cip_6.12.85-cip22.bb b/recipes-kernel/linux/linux-cip_6.1.173-cip56.bb
+similarity index 59%
+rename from recipes-kernel/linux/linux-cip_6.12.85-cip22.bb
+rename to recipes-kernel/linux/linux-cip_6.1.173-cip56.bb
+index fecdba2..1138c23 100644
+--- a/recipes-kernel/linux/linux-cip_6.12.85-cip22.bb
++++ b/recipes-kernel/linux/linux-cip_6.1.173-cip56.bb
+@@ -7,4 +7,4 @@
+
+ require linux-cip-release.inc
+
+-SRC_URI[sha256sum] = "b99c97c032e3516475e90853a3075274cdc64000699fb5425fcff39c3b998b93"
++SRC_URI[sha256sum] = "0332d054d7ab7f74506184d1616ac9dd9d77ef2f33c3de1f7128466ec0d8d933"
+diff --git a/recipes-kernel/linux/linux-cip_6.1.170-cip55.bb b/recipes-kernel/linux/linux-cip_6.12.88-cip23.bb
+similarity index 59%
+rename from recipes-kernel/linux/linux-cip_6.1.170-cip55.bb
+rename to recipes-kernel/linux/linux-cip_6.12.88-cip23.bb
+index a339926..f61cbf9 100644
+--- a/recipes-kernel/linux/linux-cip_6.1.170-cip55.bb
++++ b/recipes-kernel/linux/linux-cip_6.12.88-cip23.bb
+@@ -7,4 +7,4 @@
+
+ require linux-cip-release.inc
+
+-SRC_URI[sha256sum] = "2b0b200234b03aea3ed77de553935512ad42b25ee260e00745b0729ed892cf63"
++SRC_URI[sha256sum] = "c7044d8f5135c80bb32c5f194a940b1bdf8904cd80eea1aee90588be0e12d59d"
+--
+2.39.5
+
 
