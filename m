@@ -1,200 +1,356 @@
-Return-Path: <uli@fpond.eu>
+Return-Path: <masami.ichikawa@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AE84CD4F54
-	for <webhook@archiver.kernel.org>; Wed, 20 May 2026 11:16:10 +0000 (UTC)
-Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [81.169.146.219])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.9771.1779275760490643341
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41A22CD4F3D
+	for <webhook@archiver.kernel.org>; Wed, 20 May 2026 22:19:59 +0000 (UTC)
+Received: from mail-yx1-f44.google.com (mail-yx1-f44.google.com [74.125.224.44])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.24212.1779315592251127162
  for <cip-dev@lists.cip-project.org>;
- Wed, 20 May 2026 04:16:01 -0700
+ Wed, 20 May 2026 15:19:52 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@fpond.eu header.s=strato-dkim-0002 header.b=jRHhfXOE;
- dkim=pass header.i=@fpond.eu header.s=strato-dkim-0003 header.b=LrYMZZRC;
- spf=none, err=permanent DNS error (domain: fpond.eu, ip: 81.169.146.219, mailfrom: uli@fpond.eu)
-ARC-Seal: i=1; a=rsa-sha256; t=1779275734; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=HrMHwVbK26UEKIn1CtjrTPKTTpeHcG/VouGYR34wOJyUbctAzbFJq2Vg1cO9pZCyfv
-    q9wFqLNP7bI8T6sUGr9WACv+SMRSs6IN43/L7Xbw4U2ivnFQfWMRq3ZFCF8Ib0GQxwJv
-    ieHuahloj3PHJjNBoe4UdTQiC2muoM5Yg52RXBtO9yapWYBOmJ1Z04QWAWSAMjc8Xlri
-    C6HNpc5gfZN/xbLqVoLDry420RBE7cmx6+Qol4Ov/F7sKIMY8EFaK00P5nuPKZb2HrwH
-    guTUjp1+jGj2tKrra18PsrAgwqQlin4wh5LR9sorBGBtehKGnFHd/RMkVAEw8+iBPpVl
-    9EdQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1779275734;
-    s=strato-dkim-0002; d=strato.com;
-    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
-    bh=/w8RduUSFqq1Ktqki1FXzWQSUAyuoVKL1sOsXUnsb+A=;
-    b=r0CiVLN6nL0GpAl0NPjbz+TAa5MaJzdANMDYLx2gN3tPEvJCes3GKVeRvZfkaNxQQM
-    CxhN6bnGwnPDx8baiuE5lw/rdcs1muowsaozenBI5rfPrIMlO2zBdfRhYjPWOztvo4bg
-    y5Qg4MoWOYbKSGKiYp48GcegeMY55n55yNOKlaVq3HOryIPUryZc+UmgmLQRtzQH/Nh/
-    ejTCi75RDN/srHJA0K1b3PqPgeodyOHcYirk5irQ8BzMqiHqhMqHsprZxNhUJe1FMwqx
-    Aru7skb0JOZl9qfdODaLaorVQNN0RyUGbeXBLVje6BRc7JdTrgM9jvZRM97lmfuADvyd
-    cAaQ==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo00
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1779275734;
-    s=strato-dkim-0002; d=fpond.eu;
-    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
-    bh=/w8RduUSFqq1Ktqki1FXzWQSUAyuoVKL1sOsXUnsb+A=;
-    b=jRHhfXOEM1Y5DCq21hJKmsSyXbKn7MnrD7nlsoDJdX/NUllyWa1WvxvyAAwuPJObbn
-    UhODzAAskHfzDawpFyjkbbH9TbPuLq6TPVbXqAeqIgGAkqkn3aXCBZTwwtgHxBNmIL19
-    RTczEwJARlFrWDDJ+cM+DhvLvgiaZm0tnMAwRaiINrGPTGN9CgUAxN4RQbupQ/QUuGXI
-    WDAsmmGdXkUkQNrVz3kdTZTxvzZpou7tjA0IRVW7iogG6Ra1edQkVeYjr3JgxvDcxacL
-    FOmAMNEvRuRmX03riWhpy8v6S6KNqi7jA4y5lqQDXWgDMZgBDS4WjHlCaXbwRnMq1qio
-    1xJg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1779275734;
-    s=strato-dkim-0003; d=fpond.eu;
-    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
-    bh=/w8RduUSFqq1Ktqki1FXzWQSUAyuoVKL1sOsXUnsb+A=;
-    b=LrYMZZRC6sgK3DkhD47Ar0J48JrwRQ3cjzftNX33EZNwZ2LdZC2yzZxVdaPKkB21cW
-    xugfGVY6A5TAhn8Q9EDw==
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzvv30UF1hexKDG+LdTmA=="
-Received: from open-xchange-core-mw-gw-16.open-xchange-core-mw-hazelcast-headless.open-xchange.svc.cluster.local
-    by smtp-ox.front (RZmta 55.0.1 AUTH)
-    with ESMTPSA id z7806e24KBFX6Pu
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256 bits))
-	(Client did not present a certificate);
-    Wed, 20 May 2026 13:15:33 +0200 (CEST)
-Date: Wed, 20 May 2026 13:15:33 +0200 (CEST)
-From: Ulrich Hecht <uli@fpond.eu>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	"pavel@nabladev.com" <pavel@nabladev.com>,
-	"jan.kiszka@siemens.com" <jan.kiszka@siemens.com>,
-	"masami.ichikawa@cybertrust.co.jp" <masami.ichikawa@cybertrust.co.jp>,
-	"chris.paterson2@renesas.com" <chris.paterson2@renesas.com>,
-	"nobuhiro.iwamatsu.x90@mail.toshiba" <nobuhiro.iwamatsu.x90@mail.toshiba>
-Message-ID: <1481865007.142047.1779275733476@webmail.strato.de>
-Subject: [ANNOUNCE] Release v4.4.302-cip111
+ dkim=pass header.i=@miraclelinux-com.20251104.gappssmtp.com header.s=20251104 header.b=Vj2jlmpJ;
+ spf=pass (domain: miraclelinux.com, ip: 74.125.224.44, mailfrom: masami.ichikawa@miraclelinux.com)
+Received: by mail-yx1-f44.google.com with SMTP id 956f58d0204a3-651bf695701so5241357d50.2
+        for <cip-dev@lists.cip-project.org>; Wed, 20 May 2026 15:19:52 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1779315591; cv=none;
+        d=google.com; s=arc-20240605;
+        b=AGSP/EEbwbkXixoV96SsHN6CNuYiE/XBHzxU6Xl/HgGqiOK0zB9Y9LXGXY816ypn7e
+         lVMnpE0Z0E6UqoHTyGJAmS/aW9i7LuSdY2b+kPOqFkwCmg29hQtrxi0IfAuH2fvlfguv
+         p19QppVp/3QDHS3O0GTJv0TjV5BiG8mDY4Nw6Hl5QH1vkMSOOkHVdPItyTNCmxx0MfTa
+         9WSqtM6ExAMELShz3++gI81d1XhPhAL6dWi5ELqOB4Pv+Z84s6BhSOFBbC6fCOYRS9LH
+         1cbKBcdmD/M9FIhh/9JumLWWUtMso994afk7kfKybjI7Vz2RgAqcLE413MZe6JpSEwBU
+         2CJQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=to:subject:message-id:date:from:mime-version:dkim-signature;
+        bh=Di+XIHc9EUc5OIxd5E8pqEzU3YtFGN+FkYMckQZrdO8=;
+        fh=pMdhRv1kyG5MNR0BUSVIPLHum9zPZW2mYB9oYwYp5mc=;
+        b=L03c6iVDv39lvbYZsE/O12N4rJwoAiywPAHCam2LeBFFM5sPifXc13R3i/Qz4C2Ec0
+         A0Vt6ZUZwufNyuTUem7inby5JKo19Om+tZLAGYSk+qE98u0twygM33LYHN3ZTxVlWc4S
+         LmL8wA1wva7H8RLdCLqpliCc48lzK76sI6fkHTUEvTa11vWS7mhVYlGn3UpBbMui1O9k
+         I1oENlG7C9TRakz8vSgRV7hNDA5AeMJ1Fji+Wx5KqGCXEE/Am0ztY3pC7IxMVYQ60Kpy
+         BM1EeCwupk1Qgi55/cEDnxl66L7xdDOyjbdeT+/Mot16KudcZUgfvIfzzQiTnu/xAbph
+         +iqw==;
+        darn=lists.cip-project.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=miraclelinux-com.20251104.gappssmtp.com; s=20251104; t=1779315591; x=1779920391; darn=lists.cip-project.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Di+XIHc9EUc5OIxd5E8pqEzU3YtFGN+FkYMckQZrdO8=;
+        b=Vj2jlmpJAQe/LmONUIGd5E2XHltSUNkFIbaNzMm8LcxVrdQI6iOwP5zH5pxI37muPI
+         GvniVI0dJUTtdGAH1Mheqw+GbRn0OkGWdiI114W2qzyavbU4pX8WsEl51uILK1xlZ2Vp
+         UlEzdsaQHIZu9MotiVCBDJBJtjMi78qE56MA92IHRDDjWa//N2I3SgnbPrF3ncfnrrB1
+         PiMVlbgSFOj4y94R59dkIMluRSTk6KwUL4srJh8pAxnRrmorzm86UgvP0zoXunRbZOv9
+         LwnzMM5SpSlG/aFJ0SbbZWtH8DmNCQcspkv9HEiO9W7It5Z94LMCAomME5ga3Cc4oAeB
+         ep0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779315591; x=1779920391;
+        h=to:subject:message-id:date:from:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Di+XIHc9EUc5OIxd5E8pqEzU3YtFGN+FkYMckQZrdO8=;
+        b=S2EUKAx2wCYpyvT9vJ05BAfAKXpiWTA6FF2QfP/3gJRvFP7orEhJItB4U/ynBfUasg
+         3PfG5nROmPUym8KZL9XslzWQ194uerHsdWjthH6MybVq+XixDB1QDPnfrkzaFBJBGm16
+         k2bczjDy3mQCZpZoiAPZpxotdvvEhM1stnf0huuVL1urC3hcwXqd7KfWuRNeKNZUNTpG
+         TMWkPe/OK4JGm5gLRwFglnx5KUuTKrFjwvjFygO1BvdqQZfmMihrnuv76+lsYyOX8epn
+         yODyMMZVjPDBW7F3j3myN3bE3yko2jvFsM6XW7YfTr5kn4l64zjmotI92HeFwxMgfhXT
+         tqnA==
+X-Gm-Message-State: AOJu0YwOpaJHXZMGjQeziV3GaCDfsoLrNxTiideMfciYIoesK6wnCbSz
+	h8eOjmpwThbzfqLm0gsutG3xENzhBUASglxBpjiaTMkTR/cXUKtyJ0MrBPVwYFSSK89LUo1GxLp
+	2H1cSeFVb8LZaZpbN+S8ygCyyGGJOOt0QwbvuHed6bbGXDeMcgMcpjLDtDQ==
+X-Gm-Gg: Acq92OE7Z2C5ehqGA8Ti8jJh3EF9NrTSojiqDlKr3yVhiMrCOBWi6tbUsIiVKWbb9Mr
+	2SKL7uDQW1oQ7k2Z784GSVWlsF4ly9hTTSWsXJiJuqstwhO5UB177Ppb0b6rQJ2FF8y8NtptaPk
+	9ptz4SkxqOVwBsLW5zcQ3mCaCBO0CXgpiYr0EsDmeJhkC1l4RAlZmjWZTbABMf5MG8JXjnn2pDH
+	/lcPEF4skwUVz5cTxHqNt4zp/j248/NKTB1Ox9yN0LmTxmMKQAsB7V3kGjc38j9uysHD9wNAH64
+	8BzX3Y/+
+X-Received: by 2002:a05:690e:4193:b0:65c:5b88:84b5 with SMTP id
+ 956f58d0204a3-65eadf343b1mr114826d50.6.1779315590954; Wed, 20 May 2026
+ 15:19:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v8.46.134
-X-Originating-Port: 56980
-X-Originating-Client: open-xchange-appsuite
+From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+Date: Thu, 21 May 2026 07:19:14 +0900
+X-Gm-Features: AVHnY4JWl3ZteOeLOvuSUgQFUf6Jf41p-TD636BbT-OzI_A8BvAhix4s0WymwQs
+Message-ID: <CAODzB9oq_mRaQUc2fyu8CYVd40iPc_mqa03xg0F5kKB0sBWwmA@mail.gmail.com>
+Subject: [kernel-cve-report] New CVE entries this week
+To: cip-dev <cip-dev@lists.cip-project.org>
+Content-Type: text/plain; charset="UTF-8"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 20 May 2026 11:16:10 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22984
+ <cip-dev@lists.cip-project.org>; Wed, 20 May 2026 22:19:59 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22985
 
-Hi,
+Hi!
 
-the CIP kernel team has released Linux kernel v4.4.302-cip111. The linux-4.4.y-cip tree's base version has been updated to v4.4-st76. The trees are up-to-date with kernel 4.19-st16.
+It's this week's CVE report.
 
-You can get this release via the git tree or as a tarball from https://mirrors.edge.kernel.org/pub/linux/kernel/projects/cip/4.4/
+This week reported 4 new CVEs and 25 updated CVEs.
 
-  v4.4.302-cip111:
-    repository:
-      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-    branch:
-      linux-4.4.y-cip
-    commit hash:
-      90c0c4bac1b0e1fc4663395c5eb4e488ed372815
-    Fixed CVEs:
-      CVE-2025-38693: media: dvb-frontends: w7090p: fix null-ptr-deref in w7090p_tuner_write_serpar and w7090p_tuner_read_serpar
-      CVE-2025-39764: netfilter: ctnetlink: remove refcounting in expectation dumpers
-      CVE-2025-54505: x86/CPU: Fix FPDSS on Zen1
-      CVE-2026-23253: media: dvb-core: fix wrong reinitialization of ringbuffer on reopen
-      CVE-2026-23277: net/sched: teql: fix NULL pointer dereference in iptunnel_xmit on TEQL slave xmit
-      CVE-2026-23279: wifi: mac80211: fix NULL pointer dereference in mesh_rx_csa_frame()
-      CVE-2026-23281: wifi: libertas: fix use-after-free in lbs_free_adapter()
-      CVE-2026-23286: atm: lec: fix null-ptr-deref in lec_arp_clear_vccs
-      CVE-2026-23290: net: usb: pegasus: validate USB endpoints
-      CVE-2026-23293: net: vxlan: fix nd_tbl NULL dereference when IPv6 is disabled
-      CVE-2026-23303: smb: client: Don't log plaintext credentials in cifs_set_cifscreds
-      CVE-2026-23307: can: ems_usb: ems_usb_read_bulk_callback(): check the proper length of a message
-      CVE-2026-23312: net: usb: kaweth: validate USB endpoints
-      CVE-2026-23339: nfc: nci: free skb on nci_transceive early error paths
-      CVE-2026-23356: drbd: fix "LOGIC BUG" in drbd_al_begin_io_nonblock()
-      CVE-2026-23365: net: usb: kalmia: validate USB endpoints
-      CVE-2026-23367: wifi: radiotap: reject radiotap with unknown bits
-      CVE-2026-23372: nfc: rawsock: cancel tx_work before socket teardown
-      CVE-2026-23388: Squashfs: check metadata block offset is within range
-      CVE-2026-23396: wifi: mac80211: fix NULL deref in mesh_matches_local()
-      CVE-2026-23398: icmp: fix NULL pointer dereference in icmp_tag_validation()
-      CVE-2026-23403: apparmor: fix memory leak in verify_header
-      CVE-2026-23439: udp_tunnel: fix NULL deref caused by udp_sock_create6 when CONFIG_IPV6=n
-      CVE-2026-23452: PM: runtime: Fix a race condition related to device removal
-      CVE-2026-23455: netfilter: nf_conntrack_h323: check for zero length in DecodeQ931()
-      CVE-2026-23457: netfilter: nf_conntrack_sip: fix Content-Length u32 truncation in sip_help_tcp()
-      CVE-2026-23458: netfilter: ctnetlink: fix use-after-free in ctnetlink_dump_exp_ct()
-      CVE-2026-23460: net/rose: fix NULL pointer dereference in rose_transmit_link on reconnect
-      CVE-2026-23462: Bluetooth: HIDP: Fix possible UAF
-      CVE-2026-31393: Bluetooth: L2CAP: Validate L2CAP_INFO_RSP payload length before access
-      CVE-2026-31399: nvdimm/bus: Fix potential use after free in asynchronous initialization
-      CVE-2026-31402: nfsd: fix heap overflow in NFSv4.0 LOCK replay cache
-      CVE-2026-31405: media: dvb-net: fix OOB access in ULE extension header tables
-      CVE-2026-31415: ipv6: avoid overflows in ip6_datagram_send_ctl()
-      CVE-2026-31416: netfilter: nfnetlink_log: account for netlink header size
-      CVE-2026-31417: net/x25: Fix overflow when accumulating packets
-      CVE-2026-31423: net/sched: sch_hfsc: fix divide-by-zero in rtsc_min()
-      CVE-2026-31424: netfilter: x_tables: restrict xt_check_match/xt_check_target extensions for NFPROTO_ARP
-      CVE-2026-31427: netfilter: nf_conntrack_sip: fix use of uninitialized rtp_addr in process_sdp
-      CVE-2026-31428: netfilter: nfnetlink_log: fix uninitialized padding leak in NFULA_PAYLOAD
-      CVE-2026-31447: ext4: reject mount if bigalloc with s_first_data_block != 0
-      CVE-2026-31452: ext4: convert inline data to extents when truncate exceeds inline size
-      CVE-2026-31464: scsi: ibmvfc: Fix OOB access in ibmvfc_discover_targets_done()
-      CVE-2026-31466: mm/huge_memory: fix folio isn't locked in softleaf_to_folio()
-      CVE-2026-31469: virtio_net: Fix UAF on dst_ops when IFF_XMIT_DST_RELEASE is cleared and napi_tx is false
-      CVE-2026-31498: Bluetooth: L2CAP: Fix ERTM re-init and zero pdu_len infinite loop
-      CVE-2026-31504: net: fix fanout UAF in packet_release() via NETDEV_UP race
-      CVE-2026-31508: net: openvswitch: Avoid releasing netdev before teardown completes
-      CVE-2026-31510: Bluetooth: L2CAP: Fix null-ptr-deref on l2cap_sock_ready_cb
-      CVE-2026-31512: Bluetooth: L2CAP: Validate PDU length before reading SDU length in l2cap_ecred_data_rcv()
-      CVE-2026-31515: af_key: validate families in pfkey_send_migrate()
-      CVE-2026-31546: net: bonding: fix NULL deref in bond_debug_rlb_hash_show
-      CVE-2026-31552: wifi: wlcore: Return -ENOMEM instead of -EAGAIN if there is not enough headroom
-      CVE-2026-31628: x86/CPU: Fix FPDSS on Zen1
-      CVE-2026-31649: net: stmmac: fix integer underflow in chain mode
-      CVE-2026-31651: mmc: vub300: fix NULL-deref on disconnect
-      CVE-2026-31658: net: altera-tse: fix skb leak on DMA mapping error in tse_start_xmit()
-      CVE-2026-31659: batman-adv: reject oversized global TT response buffers
-      CVE-2026-31661: wifi: brcmsmac: Fix dma_free_coherent() size
-      CVE-2026-31670: net: rfkill: prevent unlimited numbers of rfkill events from being created
-      CVE-2026-31671: xfrm_user: fix info leak in build_report()
-      CVE-2026-31674: netfilter: ip6t_rt: reject oversized addrnr in rt_mt6_check()
-      CVE-2026-31679: openvswitch: validate MPLS set/set_masked payload length
-      CVE-2026-31680: net: ipv6: flowlabel: defer exclusive option free until RCU teardown
-      CVE-2026-31683: batman-adv: avoid OGM aggregation when skb tailroom is insufficient
-      CVE-2026-31728: usb: gadget: u_ether: Fix race between gether_disconnect and eth_stop
-      CVE-2026-31738: vxlan: validate ND option lengths in vxlan_na_create
-      CVE-2026-31747: comedi: me4000: Fix potential overrun of firmware buffer
-      CVE-2026-31748: comedi: me_daq: Fix potential overrun of firmware buffer
-      CVE-2026-31749: comedi: ni_atmio16d: Fix invalid clean-up after failed attach
-      CVE-2026-31751: comedi: dt2815: add hardware detection to prevent crash
-      CVE-2026-31759: usb: ulpi: fix double free in ulpi_register_interface() error path
-      CVE-2026-31773: Bluetooth: SMP: derive legacy responder STK authentication from MITM state
-      CVE-2026-31776: ALSA: ctxfi: Fix missing SPDIFI1 index handling
-      CVE-2026-31778: ALSA: caiaq: fix stack out-of-bounds read in init_card
-      CVE-2026-43011: net/x25: Fix potential double free of skb
-      CVE-2026-43020: Bluetooth: MGMT: validate LTK enc_size on load
-      CVE-2026-43026: netfilter: ctnetlink: zero expect NAT fields when CTA_EXPECT_NAT absent
-      CVE-2026-43037: ip6_tunnel: clear skb2->cb[] in ip4ip6_err()
-      CVE-2026-43040: net: ipv6: ndisc: fix ndisc_ra_useropt to initialize nduseropt_padX fields to zero to prevent an info-leak
-      CVE-2026-43047: HID: multitouch: Check to ensure report responses match the request
-      CVE-2026-43050: atm: lec: fix use-after-free in sock_def_readable()
-      CVE-2026-43051: HID: wacom: fix out-of-bounds read in wacom_intuos_bt_irq
-      CVE-2026-43068: ext4: avoid allocate block from corrupted group in ext4_mb_find_by_goal()
-      CVE-2026-43327: USB: dummy-hcd: Fix locking/synchronization error
-      CVE-2026-43334: Bluetooth: SMP: force responder MITM requirements before building the pairing response
-      CVE-2026-43340: comedi: Reinit dev->spinlock between attachments to low-level drivers
-      CVE-2026-43363: x86/apic: Disable x2apic on resume if the kernel expects so
-      CVE-2026-43381: nouveau/dpcd: return EBUSY for aux xfer if the device is asleep
-      CVE-2026-43383: net/tcp-md5: Fix MAC comparison to be constant-time
-      CVE-2026-43407: libceph: Fix potential out-of-bounds access in ceph_handle_auth_reply()
-      CVE-2026-43425: usb: image: mdc800: kill download URB on timeout
-      CVE-2026-43427: usb: class: cdc-wdm: fix reordering issue in read code path
-      CVE-2026-43430: usb: yurex: fix race in probe
-      CVE-2026-43445: e1000/e1000e: Fix leak in DMA error cleanup
-      CVE-2026-43450: netfilter: nfnetlink_cthelper: fix OOB read in nfnl_cthelper_dump_table()
-      CVE-2026-43452: netfilter: x_tables: guard option walkers against 1-byte tail reads
-      CVE-2026-43458: serial: caif: hold tty->link reference in ldisc_open and ser_release
-      CVE-2026-43472: unshare: fix unshare_fs() handling
+* New CVEs
+CVE-2026-46333: ptrace: slightly saner 'get_dumpable()' logic
 
-Best regards,
-Ulrich Hecht
+Announce: https://www.cve.org/CVERecord?id=CVE-2026-46333
+
+
+Introduced by commit bfedb58 ("mm: Add a user_ns owner to mm_struct
+and fix ptrace permission checks") in 4.10-rc1. Fixed in mainline.
+Bug introduced commit was backported to following branches.
+cip/4.4 cip/4.4-rt cip/4.4-st
+
+Fixed status
+mainline: [31e62c2ebbfdc3fe3dbdf5e02c92a9dc67087a3a]
+stable/5.10: [93d4ba49d18e3d7fb41a9927c2d0cca5e9dfefd6]
+stable/5.15: [15b828a46f305ae9f05a7c16914b3ce273474205]
+stable/6.1: [4709234fd1b95136ceb789f639b1e7ea5de1b181]
+stable/6.12: [6e5b51e74a40d377bcd3081dd33fbaa0e1aa7e3d]
+stable/6.18: [2a93a4fac7b6051d3be7cd1b015fe7320cd0404d]
+stable/6.6: [8f907d345bae8f4b3f004c5abc56bf2dfb851ea7]
+stable/7.0: [01363cb3fbd0238ffdeb09f53e9039c9edf8a730]
+
+CVE-2026-43491: net: qrtr: ns: Limit the maximum server registration per node
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2026-43491
+
+Introduced by commit 0c2204a ("net: qrtr: Migrate nameservice to
+kernel from userspace") in v5.7-rc1.
+Fixed in v7.1-rc1.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [d5ee2ff98322337951c56398e79d51815acbf955]
+stable/6.12: [3efaad55cad1ded429e3a873bfece389058a526b]
+stable/6.18: [35fb4a0c077c5d1049c2628b769e0a1b1e65df0d]
+stable/6.6: [e6f6cd501fb54060940a6eb3f4103eeb5e426ae7]
+stable/7.0: [868202aa2adae427060a42d5bd663b4d782ec02c]
+
+CVE-2026-43492: lib/crypto: mpi: Fix integer underflow in
+mpi_read_raw_from_sgl()
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2026-43492
+
+Introduced by commit 2d4d1ee ("lib/mpi: Add mpi sgl helpers") in v4.4-rc1.
+Fixed in v7.1-rc1.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [8c2f1288250a90a4b5cabed5d888d7e3aeed4035]
+stable/6.12: [26d3a97ad46c7a9226ec04d4bf35bd4998a97d16]
+stable/6.18: [8637dfb4c1d8a7026ef681f2477c6de8b71c4003]
+stable/6.6: [2aa77a18dc7f2670497fe3ee5acbeda0b57659e5]
+stable/7.0: [30e513e755bb381afce6fb57cdc8694136193f22]
+
+CVE-2026-43493: crypto: pcrypt - Fix handling of MAY_BACKLOG requests
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2026-43493
+
+Introduced by commit 5a1436b ("crypto: pcrypt - call the complete
+function on error") in v2.6.34-rc1.
+Fixed in v7.1-rc1.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [915b692e6cb723aac658c25eb82c58fd81235110]
+stable/6.12: [eb34e243df57e32f4c08fa191f3602ea19076276]
+stable/6.18: [77d55bc8675ee851ed639dc9be77325a8024cf67]
+stable/6.6: [9f1cbca178c03188e201ed175251372149bb25f2]
+stable/7.0: [46271895ddfb1ba41f89f7e0dffbe9c2bcf7380a]
+
+
+
+* Updated CVEs
+CVE-2026-31499: Bluetooth: L2CAP: Fix deadlock in l2cap_conn_del()
+CVE-2026-43490: "ksmbd: validate inherited ACE SID length"
+
+stable/6.12 was fixed.
+
+Fixed status
+stable/6.12: [f7f35a4f7fd574f5889bb2e4b397e14cbb83f6da]
+
+CVE-2026-43088: net: af_key: zero aligned sockaddr tail in PF_KEY exports
+
+stable/6.12, stable/6.18 were fixed.
+
+Fixed status
+stable/6.12: [11cbf294bac623bd57296f231199193087f57b4a]
+stable/6.18: [edd446ee7cd3d02cac246168063d5b3e9ea68460]
+
+CVE-2026-43109: x86: shadow stacks: proper error handling for mmap lock
+
+stable/6.12 and stable/6.6 were fixed.
+
+Fixed status
+stable/6.12: [1a30468eff661937d978495644d2e5ebfeef5ce6]
+stable/6.6: [c79cf42321600e931933e11f94aba8b245d4cd66]
+
+CVE-2026-43220: iommu/amd: serialize sequence allocation under
+concurrent TLB invalidations
+
+stable/6.12 and stable/6.6 were fixed.
+
+Fixed status
+stable/6.12: [fca7aa0264ae99e5ff287d0ced5af0b82b121c4f]
+stable/6.6: [d51bf43193b1e95dc4e34e540dc76e19def2ae5a]
+
+CVE-2026-43500: rxrpc: Also unshare DATA/RESPONSE packets when paged
+frags are present
+
+stable/6.12 and stable/6.6 were fixed.
+
+Fixed status
+stable/6.12: [3711382a77342a9a1c3d2e7330dcfc7ea927f568]
+stable/6.6: [7c504ffab3efce8f7e4f463b314ae31030bdf18b]
+
+CVE-2024-56647: net: Fix icmp host relookup triggering ip_rt_bug
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [da54b3039d436227deebbc202cefea63bd318a38]
+
+CVE-2025-21845: mtd: spi-nor: sst: Fix SST write failure
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [f7c14993dc2f1eca661975c0ff90a6e2098ecd41]
+
+CVE-2025-38584: padata: Fix pd UAF once and for all
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [a11a12a9880ab37342b73c93cfe1a3ada02ff0db]
+
+CVE-2025-39981: Bluetooth: MGMT: Fix possible UAFs
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [0b60eb04b8524e1b4b3f07fea0d16fda9a677d9a]
+
+CVE-2025-68315: f2fs: fix to detect potential corrupted nid in free_nid_list
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [9337ed5e777e1c19854928cba7a8131dd00e611b]
+
+CVE-2026-23151: Bluetooth: MGMT: Fix memory leak in set_ssp_complete
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [d7e42dc47beb48851bc0008c1e1b79126de9d975]
+
+CVE-2026-23171: bonding: fix use-after-free due to enslave fail after
+slave array update
+
+stable/6.12, stable/6.6 were fixed.
+
+Fixed status
+stable/6.12: [2889d92c5f728351c9930c7996d22fe6e906e785]
+stable/6.6: [172dcb67dd35b162357df229d7806acc724cd469]
+
+CVE-2026-23468: drm/amdgpu: Limit BO list entry count to prevent
+resource exhaustion
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [e620378aab78d415bd8a15a2f91c145906520288]
+
+CVE-2026-23473: [REJECTED]: io_uring/poll: fix multishot recv missing
+EOF on wakeup race
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [8bbed28f6b4259e06278e19734d5855a681a2cf4]
+
+CVE-2026-31440: dmaengine: idxd: Fix leaking event log memory
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [695b491dc3f20365fd5821f22e25dbe3c1c20cbc]
+
+CVE-2026-31443: dmaengine: idxd: Fix crash when the event log is disabled
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [5ba95b119aa700daf5686609b8e2766571cad097]
+
+CVE-2026-31449: ext4: validate p_idx bounds in ext4_ext_correct_indexes
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [4d08401aa13f1531216f1a7ae281ca4806e90a5c]
+
+CVE-2026-31488: drm/amd/display: Do not skip unrelated mode changes in
+DSC validation
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [21159d8b335a6b9f44cbb506733013a902ae2da4]
+
+CVE-2026-31489: spi: meson-spicc: Fix double-put in remove path
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [0d645c6d13fa0597935d3d16b09a7ba5d24ed284]
+
+CVE-2026-31511: Bluetooth: MGMT: Fix dangling pointer on
+mgmt_add_adv_patterns_monitor_complete
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [2074dfffad76981ca451cb7fc98703d04ac562fe]
+
+CVE-2026-31709: smb: client: validate the whole DACL before rewriting
+it in cifsacl
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [8e47d297e7cf9a6029a0d38e7b22faba7d7aaf12]
+
+CVE-2026-31712: ksmbd: require minimum ACE size in smb_check_perm_dacl()
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [325d4ac11f526cb8964cff14548ccf02d8c756d8]
+
+CVE-2026-31715: f2fs: fix UAF caused by decrementing sbi->nr_pages[]
+in f2fs_write_end_io()
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [1171f329cf1c175321251ac40fd126150d7ad1e8]
+
+CVE-2026-31718: ksmbd: fix use-after-free in __ksmbd_close_fd() via
+durable scavenger
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [0000a7780e0e446a28a273572f6ea8f7f582f694]
+
+
+Regards,
+-- 
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
+
+Email :masami.ichikawa@cybertrust.co.jp
+          :masami.ichikawa@miraclelinux.com
 
