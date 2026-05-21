@@ -1,139 +1,182 @@
-Return-Path: <chris.paterson2@renesas.com>
+Return-Path: <nobuhiro.iwamatsu.x90@mail.toshiba>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72E8ACD5BAC
-	for <webhook@archiver.kernel.org>; Thu, 21 May 2026 18:37:38 +0000 (UTC)
-Received: from OS0P286CU010.outbound.protection.outlook.com (OS0P286CU010.outbound.protection.outlook.com [40.107.74.5])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.894.1779388648444697529
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B78DACD5BAF
+	for <webhook@archiver.kernel.org>; Thu, 21 May 2026 23:42:00 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.132])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.6809.1779406918754353972
  for <cip-dev@lists.cip-project.org>;
- Thu, 21 May 2026 11:37:28 -0700
+ Thu, 21 May 2026 16:42:00 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@renesas.com header.s=selector1 header.b=pGcCMi4k;
- spf=pass (domain: renesas.com, ip: 40.107.74.5, mailfrom: chris.paterson2@renesas.com)
+ dkim=pass header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.s=key2.smx header.b=Y1yjbt8I;
+ spf=pass (domain: mail.toshiba, ip: 210.130.202.132, mailfrom: nobuhiro.iwamatsu.x90@mail.toshiba)
+DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=mail.toshiba;h=From:To:CC:
+	Subject:Date:Message-ID:References:In-Reply-To:Content-Type:
+	Content-Transfer-Encoding:MIME-Version;i=nobuhiro.iwamatsu.x90@mail.toshiba;
+	s=key2.smx;t=1779406910;x=1780616510;bh=Lg8gGJy5JYdLYUOTYUAFNjtDNt+pQHH/YLffh
+	SpSxsA=;b=Y1yjbt8IUaQwDCs/ypc7D7yQ0A+ZzqAvnBKsexUJpJHt5a7Ln9+aU/hmdpE/w4z+5bl
+	QnwYx7ENVnzGLjmlc9y8Tx9/TT/KWjT7Cv7G6bafroYY97AkKKWI8zLPGmN6D2qd7r1QhdqBmZtWT
+	p4XK5oSxGduDKkE4FyTnH+U4kf1DxtpgvxX62skDzwwsCU7WHAqWOAL+g0oYvmM6ieBP8mdBWuY8E
+	+3BETsBr1/Ec5D/vD39Rave9v12N5lZV8oLn9MBKTzKWnNtt1YzQRXNy0eHJSscxdTodP3XddNaML
+	LFr3frjC9AZNn9mn5QsyvkQLDgwsBpH4G/AfC1vDvH7w==;
+Received: by mo-csw.securemx.jp (mx-mo-csw1121) id 64LNfnH22534786; Fri, 22 May 2026 08:41:49 +0900
+X-Iguazu-Qid: 2rWgBpEpjBxTZ04VHf
+X-Iguazu-QSIG: v=2; s=0; t=1779406908; q=2rWgBpEpjBxTZ04VHf; m=E6dTXAQbjlOCY+l+WuH3up71TdYm0jxlTvRKhOV1O1U=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	 id 4gM4gb6Q5fz1xnZ; Fri, 22 May 2026 08:41:47 +0900 (JST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XY6kpzxclPERmcFFws8PsCVTDIzpRNUzLuMfHyiT+xneZqZonqUnNZpmMBRVrd4vrfNiSurickj6HAfiqhAvsrzdsELEbQzT9vx5LcjnmdGXdEocwUxN7PaKou+WDTrmoE80utV1ltPaDkcQlwgZS9jMs16vW+co5/caNg7svT0PGliY9QzjDmrcJ6YfghPZqef55TnpMNezKFMlBXMB2KmIZPqIE8X7WtvYpeULg8T5aSDCn7HOKxwf3EnjGcLrAicOOJn4SS3ZUl1FwpJnONAIw+hktAQ6s9wvpNYyDdqyVRHWshNn/eOqTnQcxYOZ/3n4x4iBZkcmETjGOvb2hA==
+ b=kmva0s15epsBfhruDLTSvPpXsW6ci3HqCZdIsPydBZ+9NxfQWHhz9LMlPsVR1RdhcYgknlC97hI8LnAID/MP0TZCHZDgbo61fqshrJBKNw2aEy8SEWnNxYYvzw6KxDR7192iUilp49RdGnygk7x+ln12QXevooEZsEp2MjDSEN8SUymvMir7+wG7lBnfP2Z/2bnoTE4pTuHLteUceBn609AGBdkBdyiIxhW4FXzYio0OaP6KL6OKhVc+caNDBsZLxf3iy+0qvh84CaAQtuj/mDDnNA9kOP/bSmMhGPr9M3lvU5d6XWiuATRmKlqKN4eVWPtMbb0O3TLQ/LIbm4kMEA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Du8i1d5o4P/fExZ7ZerEelR9M2C4r1Uov76zOFetE3w=;
- b=NG9X7fwuV4qdAYDgLoLRqsqD/WUc3X2SRjoPnDwfCETAOjTZkfzgR4L4xzK8tQIEP+VHW4wlqofLGXUhQZ9Gl7f+uYeUX0H0n8pk289yZ/jy6hK7XGsV8to/7nQeuLW1fhLudFqTMU5TGyjkqv9u2f1FOEVABP02/NX+RcrLL1TbRyK89ApNrvqxthWR5flkEhF4FAc0bLHpT1bmxbPhQuqbfWHXpnjC8cUzy4XVEL83t1eDID+I9vzqqVQ/J21m0SKXJySC07hs5aogucti49c8XeI9rcc9JXSO8uJ3P6rSw87Gcmn0LzvnxzzcPvTKLPms84EFbsRWGZxO4T9b3A==
+ bh=6Jnz0kNCSxYEBNPKr18NbgI5Em1t+quGJh1zIrvb7FY=;
+ b=jkEzMA54Qi8PKHYJntXTqvhVQL6TsAONmZ/fc7fjx7Oc5ceP/EF+0Z83TN6kM45pWG4JJ0/01xlPdz2HGh1202ODY6RCcZqjTy1a3PNxkEjEnqOwXLFH9oi7yf9baN3JSp7HNV755r1G9WzZGPa2aUSEs35jF52lMKW8MrPNNeCofSis5jg9BEx6+PA65AIEEbd5jlPsI2mII7rdkpqupERJb3sOD+FhHQZ5PZ4mzANj/khjM+tlUvCYCV7ISVuk4R9s9McEqwANTqQUhY5PjNDYr9FiIYNwYIjZ4b0GSOPqNqNoZ91zxCqsf/aSKmZMHzffRwCtWs4T8uFLgpW+iQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Du8i1d5o4P/fExZ7ZerEelR9M2C4r1Uov76zOFetE3w=;
- b=pGcCMi4kJ+4Hm0o02I4b+edSt+A7+J00HRJflByS6j4tkaiYLAEU84knN6pLGGsZGn1bQ99ZNQWneZLg9C64RXAABGdos6MO+pIf6xoZOidfWHyvGZw7zfMA52CFe85JV29ZzWlT/fy5k9/Hxa0MlyhH+2UZaO7OCWnhVsMLfsI=
-Received: from OSZPR01MB8123.jpnprd01.prod.outlook.com (2603:1096:604:165::7)
- by OS9PR01MB17519.jpnprd01.prod.outlook.com (2603:1096:604:44b::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.48.14; Thu, 21 May
- 2026 18:37:24 +0000
-Received: from OSZPR01MB8123.jpnprd01.prod.outlook.com
- ([fe80::f2ff:7635:979f:c31a]) by OSZPR01MB8123.jpnprd01.prod.outlook.com
- ([fe80::f2ff:7635:979f:c31a%3]) with mapi id 15.21.0048.013; Thu, 21 May 2026
- 18:37:24 +0000
-From: Chris Paterson <Chris.Paterson2@renesas.com>
-To: Chris Paterson <Chris.Paterson2@renesas.com>, cip-dev
-	<cip-dev@lists.cip-project.org>
-Subject: RE: CIP LAVA maintenance
-Thread-Topic: CIP LAVA maintenance
-Thread-Index: Adzo+JuHBZ5/iHf/SfWB9OFwxLDj9wAWCAEw
-Date: Thu, 21 May 2026 18:37:24 +0000
+ smtp.mailfrom=mail.toshiba; dmarc=pass action=none header.from=mail.toshiba;
+ dkim=pass header.d=mail.toshiba; arc=none
+From: <nobuhiro.iwamatsu.x90@mail.toshiba>
+To: <pavel@nabladev.com>
+CC: <john.madieu.xa@bp.renesas.com>, <cip-dev@lists.cip-project.org>,
+        <biju.das.jz@bp.renesas.com>, <claudiu.beznea@tuxon.dev>,
+        <john.madieu@gmail.com>
+Subject: RE: [cip-dev] [PATCH 6.1.y-cip 00/17] PCI: renesas: Add RZ/G3E PCIe
+ controller support
+Thread-Topic: [cip-dev] [PATCH 6.1.y-cip 00/17] PCI: renesas: Add RZ/G3E PCIe
+ controller support
+Thread-Index: AQHc44YB22ldBFq4R0uQZZrEuIwlVbYX36qggAB0XgCAANtsEA==
+Date: Thu, 21 May 2026 23:41:45 +0000
+X-TSB-HOP2: ON
 Message-ID: 
- <OSZPR01MB8123FEAF029F43D90E9522CEB70E2@OSZPR01MB8123.jpnprd01.prod.outlook.com>
-References: <18B1861DAB679118.3012052@lists.cip-project.org>
-In-Reply-To: <18B1861DAB679118.3012052@lists.cip-project.org>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
+ <TY7PR01MB148185260482FA754B8DF6D45CD0E2@TY7PR01MB14818.jpnprd01.prod.outlook.com>
+References: <20260514094152.2215176-1-john.madieu.xa@bp.renesas.com>
+ <TY7PR01MB148184CC9DDA8E51E85ACB89ACD0E2@TY7PR01MB14818.jpnprd01.prod.outlook.com>
+ <ag7f8NjbSGWZA7_8@duo.ucw.cz>
+In-Reply-To: <ag7f8NjbSGWZA7_8@duo.ucw.cz>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
+ header.d=none;dmarc=none action=none header.from=mail.toshiba;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OSZPR01MB8123:EE_|OS9PR01MB17519:EE_
-x-ms-office365-filtering-correlation-id: 86386ae5-e22c-47e7-4ebb-08deb7680056
+x-ms-traffictypediagnostic: TY7PR01MB14818:EE_|TY3PR01MB10172:EE_
+x-ms-office365-filtering-correlation-id: 143b94d3-433d-4e38-4c5b-08deb79284b4
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: 
- BCL:0;ARA:13230040|1800799024|376014|366016|11063799006|22082099003|56012099003|18002099003|38070700021;
+ BCL:0;ARA:13230040|376014|1800799024|366016|38070700021|11063799006|4143699003|18002099003|22082099003|56012099003;
 x-microsoft-antispam-message-info: 
- M5qUvz8Kdhfozqod0TiKYCgIfynOWSv52MuKslN78AgQJo0uQYRk4i/kNZF6z4/aM7nT1YeZvckm/e8ucbQB0nLyvrsFGIh1XlpEDTNCb3DsexDpaGGi4yuiPvu+isM03ui0z0Y/GiMRaNwmV+bdwWvlUMU/z2tiQOpzUr/JIfnV5YAOEjf+6qIvbStCltgJYHeVqrdqpAyk2uzLhazU/33gGDtLveP+NZtVxwrSuERq9caNCr6fQ9n8jddThOo+0mwEeWPLGwtx0bR6tFPk0wBCLlZnHWgPndhb628N0QU1OaPEBhXzYKNuDFKCaPG8UQ48b8P4HqYycwcpYJmA9rRLokYYX58VN2MhgXc+zPVdnjV9wiYsqUfFKIe+ik40Tb610VhUUJ5kWFhKddnhf4udiRJwkKlcgBE+EHlJ1Gp0zh5JCI8r56zzCpJiPmn4G46h2CtviBe0YNr1D8IMVCg/4BVPE2w0CDvNzdErvNFx1+shwopMrCjLvZn4EaYzi5hcnO0sjj3va1d38X69eJfFO4/TbKSZaWyQhusuEXczypQS35CJ0MMVZ91hrxVNZDBb1iV+Kne4csX+MWf7CTyGr/tIu1aJiaWQeCCNiMLXS8mX62lpuSQ5/vkT+R9VBhOpfHtWA7Z6TiBAVpsGCJ75IymoBCUj4K4dzuwt4fRVQqDbLK4cf+hRGcvtverjLgApOGfI+a/fpK6UI5K8nknJjbSbplWLazfbCWG2mVKUE6X4UklTkniEhuO1zg2G
+ qrqVe09/V6gQkir9t7+8MPahgtTNuRB60ym2L3zLtXPvwFV+EOosy8/kzNRJ9d/xd798ab86cTAkVI1lYCIbI200s9s1PEDn0xe94Ha0xNkLPTa04X7HaUYYsoDMFJ+wcX59lyqcZJb+OEpzNVThr4Q3/6tjqVqY8o/5Rf9rJf2s+DeAetz5G58ryyWXR7mP7dokccgBPJCESXsq1ivWrZTHTrNvv56hems1obIZHjM0Q6C/NyEc+DNyQwbmZ7OSUBWnMCLzVJBPcDQTBr1U+vIMqToCiuJd7quHdN5k4EPBKKv0x3h9x6Ov/QLoABBW1tOB6ca2CYOeJzN5RDpGC8x3y2+5AHAANGUuG8PnxZOMlwSJO6w2K5dOMVkh+I8BMI//TGKDTRfSkZ1fb6hFpdmdJhpbCu/dNp5cJkr+QOWIdNJJNl1/0+0WXMdlZCwEqaPlVMJmeDL6bHbZSkSsy8V3cKmN8HLq7megY24DmNojsJuTKBa+C6RTI/yzB7NxG09rDkfZ2VgoRCWNrQJTOJ7J+jw0rVvnGH+x9k5G/8apP3SZVMTipE7H1wBA8rYOxVRComoBU7sIGBW+oP7qX+4+HKgAWWrgT3ZWZyoyAV8bI0zkR1UJLin4xLtnvVI4HVT42Xqzfft1uUH5tfJPpC3+IugOedd5R394nTMnlmT8/gR9jx1Zsu5GaiyltLEZZWfxkPwy3UM91KIEGY2rvijXkH147JAM/vtc8u2fUpHSyRjlumIhOXLAIOTnwL3v
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZPR01MB8123.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(11063799006)(22082099003)(56012099003)(18002099003)(38070700021);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7PR01MB14818.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700021)(11063799006)(4143699003)(18002099003)(22082099003)(56012099003);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?Windows-1252?Q?MxoHS52bRtlFoB+xzCF+sgb8kx8C1cOlHZmqMIqN45FiTBcOnhO4u/Nk?=
- =?Windows-1252?Q?0xXEaoG8IOudPBWDI3GnzHDLhNjd/3S/DCaBSS3c5QGUApQF+vhlEF2b?=
- =?Windows-1252?Q?DST1zaqvuk0/plAuT0OfDXXg7V54pbqj0Y4+7Eu2dpGevv030pTpoS2W?=
- =?Windows-1252?Q?LYDT/1NzEZk1f1LxrSWmcSvsQ3uR+b+YE2+m9hA5gfmbJC6ZpwQ+Sp02?=
- =?Windows-1252?Q?h/zrCQm/ji2+UlRcgXmM3EazO2KIGKSWofZWwbW42XQu4WSBn3mwyq7j?=
- =?Windows-1252?Q?RIobW25Lddmvg++bXqNRYPxAgNrt6rEvJ1akT125go5qYtJcx6/pshG6?=
- =?Windows-1252?Q?uy4Ut1JT5NqF3Pq05/PkdA3Sl6Tvez8W7bHNZiIob1figo8HyTVXcN6O?=
- =?Windows-1252?Q?5al0cnIz8PLnr/H9rxVrMAiTcCmkBJUBEkyFkM0bYhE9mp0FkHenNPfN?=
- =?Windows-1252?Q?eo7XGebaHoOIeNmL8ea2TzKSZ3vp/pSu/MWw729tXfPbHyyunada5mth?=
- =?Windows-1252?Q?WQ/yfrK5EjHGdzNgmMDW3EIX9KIwgZ4ZbZYlG1WgkCSoZ4Jy3Fq8RB+Y?=
- =?Windows-1252?Q?ZRNCIefPr+BG18bknR04YeUHwSAogoXNrx1qulZXThSnfyA/h1qtXTKn?=
- =?Windows-1252?Q?A1Q0F5lvYaqs+DDlwRAgeae+SFAFxLkx0+w6uoP7C9Z29RP3t9fm5uzo?=
- =?Windows-1252?Q?rQ7bg9EdHGGXFgoTDCZKwUNxct/1KFxVlA66S6N2+tLJbP+Q1XSBJOTV?=
- =?Windows-1252?Q?Ntd+A10OTGCTJboYA/6z/ZP2VkBSLfrQl84BGxAbcRmPsfFgdMEAO9X8?=
- =?Windows-1252?Q?pCs1rAL/5ZLPzG5RYScoAOprDBeqUeCH5SLRMmk/7/rtBI5O3hijceMt?=
- =?Windows-1252?Q?LIP3W2HghXgxOplZlI62buJIPFkw7QJTfRdJUrYuHOkdaEkk9sD9Yl6C?=
- =?Windows-1252?Q?5a6n9atmFNJyJV0AQKMGSooqPhnxzBPoJwCTC/PcNB5e+GHKdS1pg2sl?=
- =?Windows-1252?Q?mGojN88kRUkrARmmVMdCkaVuG2nXxA35XmHCek2H6ZQantsP0XHEGx7B?=
- =?Windows-1252?Q?xnVbICiRALMljnkRTWmFbptn9WNVaZGVRQpU1bKZSY9Moo4tTkd/PYI0?=
- =?Windows-1252?Q?7DAKn0eCPtBksv94Kv9ZwDnj34a0UGY0meZUUUcxMaJIiUXI4ziljlO8?=
- =?Windows-1252?Q?Ml5EKAZlZytSWHo8LO5IP2UL4N265XgrbuhJfys2pvtGLIuYEtjSclPO?=
- =?Windows-1252?Q?ptzuNPFMTiA4nSUPP7D23dQk7x28zgplhc+Zvm1ntPxVfc+MlSUk+ELU?=
- =?Windows-1252?Q?isuyphhVSDcRr5PRpy2JJakMqooaWDDSC834l0z5n/0BZLcmdBT2L6Ca?=
- =?Windows-1252?Q?NbAYQzv8OqYTAKW6SGoMCE1PrP5cL2jMvQZySUGNZpAHV3mYOPgVf65N?=
- =?Windows-1252?Q?FOpAobOKgarNUaemNMF74s28q/n7I+njkcDpPNHw59ru37yofI+T95tt?=
- =?Windows-1252?Q?x+Ydxhs7eHOPPUlHUIiUr8mc93Q8d+zCodCDi02PpNrdkndNg9NGafyI?=
- =?Windows-1252?Q?ugj1MkWcUd2x3FLtauqd7VVGa5rDhfs4f8g46EhY4zadS09TTVuuF9Ky?=
- =?Windows-1252?Q?ip4HOr5kgo+jCw2esVzsB00bt+b2J7FumJ8QJaRHXWu3mSMwkpLF9ecN?=
- =?Windows-1252?Q?a56N3+kv7v+5WCrMlasNJM3zai1iS/FpD8wuSakbv/NqPVHLudt0Tv07?=
- =?Windows-1252?Q?FKY1VsbeCh3cqgPNZkS4s5hPrjFEcTxZxZQTWMfx0ezmHAOcHGdlMkiD?=
- =?Windows-1252?Q?aqcWhCiTVl822ue6tx0wv15jAjcLpFz0HfHPGWmXGSKty7WCOG8kMKbL?=
- =?Windows-1252?Q?Ij/vaOKBmBBw8A=3D=3D?=
-Content-Type: text/plain; charset="Windows-1252"
+ =?iso-2022-jp?B?NUdBK21kUUZGSGFCSVNaUDhKblFIZkxzRVFqUDVDSklJckVQb01NaU1p?=
+ =?iso-2022-jp?B?MVVQMzJmY0pRSUErYytTbnY4TW9hOWorZXliWVNaQ2c5bFdVeXIvRlMz?=
+ =?iso-2022-jp?B?V0dLam4yYWY2bXFibEppRFhKTWFRUEhScHRDV2MzMHV4cWdjY3hZM1pI?=
+ =?iso-2022-jp?B?TndXcDZvM1puZ2I1RVpCUmZSeUUvY01mY01kck5xZTh6RWE3M0k0a1F6?=
+ =?iso-2022-jp?B?RStUSWM3NnNRMVU2SkFHeXpvTXNPYXIxb3hXN0lwcXQ5WWwvOVM3c3pQ?=
+ =?iso-2022-jp?B?RC9LbTErMVdVZmJMYlpzSGpyMzZhb2dKcU1yVE83V1lZYzMwbmFVZngz?=
+ =?iso-2022-jp?B?ZFg1UzVXcHBHN1RDVzd0OWNITkpvVTcxTW1ZTlZsL2ZJc1Z4TU9yT1Ny?=
+ =?iso-2022-jp?B?M05TckVabUZjbmE1TisxSXhMdlNpZzN5QStKaG5XY3F1cXNvd2NGQUU3?=
+ =?iso-2022-jp?B?K0RIRkY5d0Y4SHZJWFdIWEppK2RDdkVtbEdMcnRoRzJKOE4ya29yTmR2?=
+ =?iso-2022-jp?B?dVNneE0xQWJtQjhjU3VlUXJ3S2svcGliWlNRMmVLeWREN0NLMFlrSXJ2?=
+ =?iso-2022-jp?B?cGFKMG0zUTNJT2VUWXlpMVRVRGh1emVIdjNWN0I1WDhYOEVOZEkrT0k1?=
+ =?iso-2022-jp?B?RnRHS0hPSmk1TlBYdjJHNkdycWZSTTIvMml2dkRGWkpldDdjeXNiWmha?=
+ =?iso-2022-jp?B?WThlN0VkOU9sMzBiSTNzZ2tBY2VBTldLeXc2K2phY0M5eWFXbGF3T215?=
+ =?iso-2022-jp?B?TUFLeU1mNHp0ZGRuUDVUSmVVVmxhV1JkL0dSM3NjYzZvOGg4bmhKcWJm?=
+ =?iso-2022-jp?B?cGQrMTZ1Sy93RHpOKzFTcTlVbnV0OUNqSFprcmRkRFVTRGhldjY2Snph?=
+ =?iso-2022-jp?B?TVFmamV2Mk5XY2FTYUxPS0FISS9OMklNZVpZRy9KbVFSeHE4MjVMbFlr?=
+ =?iso-2022-jp?B?UnNlMXlGS3JFdU4rZWkvVlMzQ1RiZWtNK25vQVl3Q01YVHl5RVJEWUNt?=
+ =?iso-2022-jp?B?MTlzcS9yTmZOZDJwMWNkSlF4bE1qdko4Vmw2Y2FTcSt4Qk5LS1MyVlpq?=
+ =?iso-2022-jp?B?S0lWdDhSd0NRL2E2clFYSFB4b3BMQi96Wjh0VjJ3UlFYOG1WQ1VzenM2?=
+ =?iso-2022-jp?B?TnNHZFA1UEQxMmY2azUveGJqQno4eHZEOEU4RzdNVnBjbjBWaUVaQUVG?=
+ =?iso-2022-jp?B?Nm9lQ3VNSVZncVR2bjdJbzE4czBvb1lCZHNLTFprSTk2ZzBDYmZseW51?=
+ =?iso-2022-jp?B?VDJWbXcrQSs0MnlhbHpkQncyRVlwWXpLLzRJRkFiY1QwZGhnK2FoOU96?=
+ =?iso-2022-jp?B?VkxYZHdyWm5jdmtIbFN6a1IwWnM1eDNRTUJGSzc3T3pONk9teVgwQ3hH?=
+ =?iso-2022-jp?B?Uk5IRW56RnhWYWRyWE04RmhtSUM4UHllTW5IWmppZEVKSHU2YXg0TUQv?=
+ =?iso-2022-jp?B?d1lnLzR0QVJzaXNwZEVSSFpya0lZSmVLWHRzSm1kMlAreG1Tb0VHckVP?=
+ =?iso-2022-jp?B?VEhwdFd0Mkx2U0dRVzhtME40bVZTU2IrNFY1RG9JUmpCQTgxVnBwTSsr?=
+ =?iso-2022-jp?B?eGEydzhLMEtoNDhTUGxEVFlpeldNcTFmcVN1ZGZmbTYyUUxacDRhdGJ3?=
+ =?iso-2022-jp?B?TUxpM05oZGpSS3N6cGxqYTNGbllaVTRsd2RIOGlNNjFHY1FLNzJSOEJk?=
+ =?iso-2022-jp?B?azJyNU0zOTEvRDFVYWxlK1hocDA2OXpEeWtXN3JmU3FkY0xDOEVlQmQz?=
+ =?iso-2022-jp?B?ZVFta3FLakphMkJZSnBkUFJFQ0pwMFVuaDZVdWZodW95VWZHV2lRUU42?=
+ =?iso-2022-jp?B?QS9GWlUyRng2K01ncklITHVBYjM0cnVBMlNJNUJVTERpdWVRVGE5blVT?=
+ =?iso-2022-jp?B?Rm95SmVVTXQ5TDBrZUE4b2VMKzFtSlRKazR2R1NPUVY2SHc1ZVVVZWJW?=
+ =?iso-2022-jp?B?QitJbUg2SkNMTVhTWGxsNDQyTmp5ZlNvVFpUQlpsVzFwY3RXNVlhTlkw?=
+ =?iso-2022-jp?B?T2RZQWNiOGZPUjc5bUNUSnpYNzEwNzIxL0ZTVThObjBNdTREUHVqSWpo?=
+ =?iso-2022-jp?B?TVdSb2xCMVdkN1VKRGk0TXo3bWMwbkdoRHg4a29wTzdvbFFIMEtYMFNO?=
+ =?iso-2022-jp?B?QVp5YWxVYTZlU1Y2WWtjSmxVbmx2THBlc0RvMWdSbkQwWGdRa1htUklO?=
+ =?iso-2022-jp?B?c09DcGJuMHNYL3YxMkhtc0UyVnJmWDdoa0YyRnJOelBjZFJzbTZQVkNU?=
+ =?iso-2022-jp?B?elRDZUI4Qy9URzB5aytLWUVUWDZBQ3hOUCsyZzEvNkM0RnplcWtLNm1w?=
+ =?iso-2022-jp?B?TmN1RE56V29hN0R4aE9oUURZWTNnKzMxektRWVFOR3ZUc2hXcmhsWWg1?=
+ =?iso-2022-jp?B?eWY3U2ZBR1FYd0dzaDBNcmRvVTRHdi9hYUVBdm52QnkvUk1tajdtdVV2?=
+ =?iso-2022-jp?B?T0tMK1FWb1pkak9UTTlneHFWeFAzNFhWcS8yUnY3MHl6Vlh3b3MzQVFr?=
+ =?iso-2022-jp?B?WmpVc2JWK2Nxb2VUb0hOTVdGZU9kc0J2emhOZkh2T2s0c29rdm9rWjIv?=
+ =?iso-2022-jp?B?WjlaTmRPQT0=?=
+Content-Type: text/plain; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
+X-Exchange-RoutingPolicyChecked: 
+	MzvwSBV6jI4edt2ZsNJTph/3OhTlX6wepWVgyruSPvg28fSu2HL7CQcvChrQruoLieq7tglQ2cJv1fL9AWkI8cu92RQU0nezGP8fCSDPlJq5nQZ9VIn6+dmPCQiDJxbaUMuSx4iVmrdvnpiKv6fVPUM4BcsRijClm1NEznYjdgxDgDRrRIqeYnBXv08skyihK5aZ8RExqbKjwewz204yb1EwFXr8+8m6dLm0wlOs5LMQkMczVS1gxZs+GLlvIz8GKdx5OJ3rKioPTx3B1sSswdJxQjigIagqipcewcSp5ritB+S/hlz9xhI83XN0FL/KKUb+pPmbO6M4QDdz2qAhmw==
+X-OriginatorOrg: mail.toshiba
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OSZPR01MB8123.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 86386ae5-e22c-47e7-4ebb-08deb7680056
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 May 2026 18:37:24.3112
+X-MS-Exchange-CrossTenant-AuthSource: TY7PR01MB14818.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 143b94d3-433d-4e38-4c5b-08deb79284b4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 May 2026 23:41:45.2328
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: k1LuGaAEyg65tjbI7SymJ5MAPbLFdIv3/hW4NktoWb5Mu8L4iwd1tbbxepyfMX9T4FbuYQRAak0QaLy6ACI5k4jJGBZclsgJklQRSZYb5r0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB17519
+X-MS-Exchange-CrossTenant-userprincipalname: 6chRzZPXrJWOaPMsFlciOREmLCv8A/4AWiF1qTWzArZ8/0xYN/VdiOLu6N3zjU/+34lbgL7nTAQrHbUQeJFZJqYb6snYebVJl0LUI+/+dytYYUtTaEu2CRi75cMnM6Un
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB10172
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 21 May 2026 18:37:38 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22993
+ <cip-dev@lists.cip-project.org>; Thu, 21 May 2026 23:42:00 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/22994
 
-Hello,
+Hi all,
 
-> From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On
-> Behalf Of Chris Paterson via lists.cip-project.org
-> Sent: 21 May 2026 09:06
+> -----Original Message-----
+> From: Pavel Machek <pavel@nabladev.com>
+> Sent: Thursday, May 21, 2026 7:35 PM
+> To: iwamatsu nobuhiro(=1B$B4d>>=1B(B =1B$B?.MN=1B(B =1B$B""#D#I#T#C!{#C#P=
+#T=1B(B) <nobuhiro.iwamatsu.x90@mail.toshiba>
+> Cc: john.madieu.xa@bp.renesas.com; cip-dev@lists.cip-project.org; pavel@n=
+abladev.com; biju.das.jz@bp.renesas.com;
+> claudiu.beznea@tuxon.dev; john.madieu@gmail.com
+> Subject: Re: [cip-dev] [PATCH 6.1.y-cip 00/17] PCI: renesas: Add RZ/G3E P=
+CIe controller support
 >=20
-> Hello all,
+> Hi!
 >=20
-> Just to let you know that the CIP LAVA server will be down for maintenanc=
-e
-> and an upgrade, starting at 0900 UTC today.
-> Apologies for any disruption this may cause.
+> > I reviewed this series and 6.12.y-cip, looks good to me.
+> > I can apply if there are no other comments and no test issues.
+> >
+> > Tests:
+> >   https://gitlab.com/cip-project/cip-kernel/linux-cip/-/pipelines/25422=
+48407
+> >   https://gitlab.com/cip-project/cip-kernel/linux-cip/-/pipelines/25422=
+57325
+> >
+> > Reviewed-by: Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
+>=20
+> This looks okay to me.
+>=20
+> Reviewed-by: Pavel Machek <pavel@nabladev.com>
+>=20
 
-Just an update.
-The server is back online.
-The labs will come online as soon as the lab admins can upgrade.
+Applied and pushed with Pavel's Reviewed-by tag.
 
-Kind regards, Chris
+> Best regards,
+>                                                                 Pavel
+
+Best regards,
+  Nobuhiro
 
 
