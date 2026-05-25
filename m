@@ -1,219 +1,260 @@
-Return-Path: <nobuhiro.iwamatsu.x90@mail.toshiba>
+Return-Path: <john.madieu.xa@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F389CD5BAB
-	for <webhook@archiver.kernel.org>; Sun, 24 May 2026 23:45:16 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.135])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.6358.1779666312126028489
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83911CD5BBF
+	for <webhook@archiver.kernel.org>; Mon, 25 May 2026 08:00:28 +0000 (UTC)
+Received: from TY3P286CU002.outbound.protection.outlook.com (TY3P286CU002.outbound.protection.outlook.com [52.101.229.26])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.11494.1779696022261648269
  for <cip-dev@lists.cip-project.org>;
- Sun, 24 May 2026 16:45:13 -0700
+ Mon, 25 May 2026 01:00:23 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.s=key2.smx header.b=UxpDWfD4;
- spf=pass (domain: mail.toshiba, ip: 210.130.202.135, mailfrom: nobuhiro.iwamatsu.x90@mail.toshiba)
-DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=mail.toshiba;h=From:To:CC:
-	Subject:Date:Message-ID:References:In-Reply-To:Content-Type:
-	Content-Transfer-Encoding:MIME-Version;i=nobuhiro.iwamatsu.x90@mail.toshiba;
-	s=key2.smx;t=1779666306;x=1780875906;bh=+AYjcCm8bzLzGefWnlDrfCzYQvdMHo3Vh07b4
-	yzOpbE=;b=UxpDWfD4qPxgTQnhGFM9GQQ7pM+t3Nz4IL/nU1KpnCTB6aQ675oaiH4GsQEoYh2Lf3R
-	vosnWRz7Yw+TY8JR6aW0ZVLH7Uv710QANKF2vNibZz+eWWZErcXYs9+nFRS5mL1udOxaBNaGIuiOm
-	2MDdgz+Vac4D1q4NgLfAI16mgqnyD43NOEkNocTZZwGZxKGZAJL05ORatHzona8YhjMgQ7AUrNjJ0
-	5NTln6/YMaY2Pr5b9aZuGA/g61yrZeMv6jdRwbUzf+cwtOlr3CvO6si13MXEni6Oufltzr7T1HWCu
-	cP2j8Ze1tNyGFLALljsJ+sbcLa9iulgVPWIw5nfnOLsw==;
-Received: by mo-csw.securemx.jp (mx-mo-csw1801) id 64ONj5Ns582709; Mon, 25 May 2026 08:45:05 +0900
-X-Iguazu-Qid: 2yAaLIgT4PT9HMh5cQ
-X-Iguazu-QSIG: v=2; s=0; t=1779666305; q=2yAaLIgT4PT9HMh5cQ; m=StuAY5P1TqEm8q826stLA6wzpY82FtWH7t87bGa6o/0=
-Received: from imx12-a.toshiba.co.jp (unknown [38.106.60.135])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	 id 4gNwc03TFxzyPQ; Mon, 25 May 2026 08:45:04 +0900 (JST)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=B5rvtdYg;
+ spf=pass (domain: bp.renesas.com, ip: 52.101.229.26, mailfrom: john.madieu.xa@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UHwdRT19UZo4qYDy2l5VcmsOYuiKTC/l7hOoZWt/zQAg+ntFkQAooOlXH9n+XAhxgEFUWHzbQWER6mJ6mZHZMPm1ApC6TdAiUuT/BqS8omqkfB3HJIBigkbATi0iGrpDHjPmyZsoj8Nwmvj2hl/dZPtSMOqXnSzk4f2uuufVfjLl8K1aXlgz5yBsrMoKUhU1jtFlT8Z++11LsNbLOgA6YNforkwH7aThe/kzGqrc61j2KxL0LVCjCulKuzMrGTixdAgHS7PPolMC6UbXljwzTLSpu7j9/tN8f76baP3TPTRe4+C5ztEl9kiFSOTIGiYLRJhHHdTAnuudqA8sBn5DgQ==
+ b=J0uPTsEPdWsKWmOZrkR6ZUmWvUvZFpO7GTyPOsK6refHnBgUC7Yq5Cix1kBey1AlMzR7DTeji1KEmLsv+BniTNDcuBFGLNwNdfaWAE6WaFCxgsvOsD6b8A1T9DLx9cH7yS4j8umZhVkouJYp7f5YXMcYaR6GposY9SmCQRFE7wv/kUziJRXcNHGGawiu6sR3f2XSujljpPIuS4CatI9LWNnNbxhagyTzVEDMv8hvjCLw3EfTUkjzq5jqgKXLzHY4n8QrpAQjRcCMt+b+TCBPmcc++Rw+A9c/vg3UvgeX8e696Vqp8yFR1VkAuCenVP3CVhQMrbC7MCWpdcMai3cypg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qIL4Gph4vrisNpNacN4tkoS0PMhLHwVOsN6obUaNYSY=;
- b=KbZs2A4wyg0NlYV9MUf+aHo4HtYjYDAQzXylXSepKyvFrLzh5suExLNVas5bbon1RERJdiKNGsQdtgqiqGOgVs1GKc+WYF2HDlv+fdh66gyuh0bmeDyE/+EdrqrbxAZjRGNXOuvRlefiGJLR529kLEHBqfu7xANLqN1z5+z0vvEwiiCVu+kASRNDwmArsphXGNVZpzWo/pZv4E/zzy418RtNn9Axh55dkoj4tfhtsTlW98wLYPLUJbqkcCz1rH412ACuESS6ALjPHBfo05NrjxPryviQrRppz/cdZ8x0fbM93VuElKp0xVwtGti4hVEgQA2bhFE3wL5ASVLmDHg+bQ==
+ bh=Bs9p7zjZXxQ+dDJCET84QU4QmURX3SnyBM1SBzkqLdw=;
+ b=GUCWrr+EXUBJGzj/vhsYPiU18hTFVavUbTMb3pbJ1YV9LFzdkJ1oQI5aRswLuWsJmR68dl8M/TEb81IZMOlVJUPkLB0FKXFA2Vx9Ie5s1hpKTf+LkRho1mxTL3wZdOplohmsLkGD9RLsExRZaCPrtYZMt2M0DBWSegagzIPqTisbqOeE3mzr2JsLUilRqa+3I6uH785KuGLk4JqoVewdc36kX8whBIUrGqMvyYdwSCdm9TX9Lji2SD2QpibUg1X+msWKk16420d0zaGESZodrKcTgOM7u2GbEZ4w+NGgJKf6yKYTLKPXWfiNaPXLmHnTP/yLepXSAiQrq24e0WNZoA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mail.toshiba; dmarc=pass action=none header.from=mail.toshiba;
- dkim=pass header.d=mail.toshiba; arc=none
-From: <nobuhiro.iwamatsu.x90@mail.toshiba>
-To: <pavel@nabladev.com>, <john.madieu.xa@bp.renesas.com>
-CC: <bot=kernelci.org@lists.cip-project.org>, <kernelci-results@groups.io>,
-        <gus@collabora.com>, <cip-dev@lists.cip-project.org>
-Subject: RE: field_get problem in 6.12 -- Re: [cip-dev] [REGRESSION]
- cip/linux-6.12.y-cip: (build) "field_get" redefined [-Werror] in
- sound/usb/mixer_quirks.o (sound...
-Thread-Topic: field_get problem in 6.12 -- Re: [cip-dev] [REGRESSION]
- cip/linux-6.12.y-cip: (build) "field_get" redefined [-Werror] in
- sound/usb/mixer_quirks.o (sound...
-Thread-Index: AQHc6aBHcbFPKqNG002qAUJxDoUZx7YZvH8AgAAfnYCAAK1FAIADUPbA
-Date: Sun, 24 May 2026 23:45:01 +0000
-X-TSB-HOP2: ON
-Message-ID: 
- <TY7PR01MB14818EB11492CCF92A570276DCD0D2@TY7PR01MB14818.jpnprd01.prod.outlook.com>
-References: <177941154371.3955.14567547508285219672@330cfa3079ca>
- <ahAYjl0g7RuivHQJ@duo.ucw.cz>
- <TY6PR01MB17377025B3BE5EB9806D02FE4FF0F2@TY6PR01MB17377.jpnprd01.prod.outlook.com>
- <ahDEbDKLo7YlX2EG@duo.ucw.cz>
-In-Reply-To: <ahDEbDKLo7YlX2EG@duo.ucw.cz>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mail.toshiba;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY7PR01MB14818:EE_|TYYPR01MB12579:EE_
-x-ms-office365-filtering-correlation-id: ea21bcb5-9333-491c-fda8-08deb9ee7923
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|366016|376014|1800799024|22082099003|56012099003|18002099003|38070700021|4143699003|11063799006;
-x-microsoft-antispam-message-info: 
- dqMhPLRK4y41exZHGGELk8qdUq1BGtdQg8LjQt1jlxd3Cxwc/ab0slWAlGMY4Kf3cmlMu/pLIRSPLwp3A10fixVqNcTkbluYCwmG2AKGfYzNe/WF0/HTeRhIGLQ2V3hSx30g77wb/PVH9EtbcDp7V939j8jDKj+eNYKdayKywlCeUc2XN0PmH6vAUspnLucjlCqV+k+uC0eTQ2Yl/3ZhznL7cfvlB93g2mkjLo+0kpLPo80gVtIMr3CvMlfrhrYkld5aHn3mMQjbwFFyiQOSMC0f+e/vN6wmfosTcZ0GzSlAGiqGWsY5SnLHTvFlrpOMLqIfQ3JgTZ1zitiOJpR1xr739d7pvfrmduW+fixJJLujRBHo3KqjYAbXp+YuwDBGMzHTHhuYrqBk39Z57H0ZD7XM1+BupSSggXeZWBd2+z/Y/l+FU2A+f8Cm4P6wXaMg11A+4MeuWvsL/iz/wYYjZdIf9MKr4e/WkCw5RqYhWRUge07r8lCqDLMjMUKIDJa/C6qe3BXf1L9obbw3bbHgZ5MWfkjdXU0XC8UTrQxCSaS7fjKVGZGBqWVUmi7SdJXPNtjrpS9+6s84dOFXwwOERZTIE7MhZAJIkUlzqwcECZ+4r7ORPN5t+5RXWm91usxDgTPYPNSBUhZFm2x0qwVrtfqNS0Jwph+jw1K+7XQcja2jG+BIzBxjz27AuoECncEnmHr6vIUlyZx82yUkVsQEtENcsM5ibPMvxZ6F+a5Cie7AbNqYJa3Bc3NSjZthrD6D
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7PR01MB14818.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(22082099003)(56012099003)(18002099003)(38070700021)(4143699003)(11063799006);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?L0VQS1BEU1hYMnhnSzE0UkFYYkZOS3hXWFZMNHR4SGw0YU44Nm51VFRC?=
- =?iso-2022-jp?B?WDdoNlB1NFdGendFU2xEU0RRT2wyakhwT0RJc21iM3RrakpaSW9HYmYv?=
- =?iso-2022-jp?B?ekk5MXZ2OE8zSzUxWlM3U2F0aWNwdHR1QklURGFUT3VOU0ZWeEU3MFZ1?=
- =?iso-2022-jp?B?WFhBUTAwQXJLaDlMMVUyOG5iOTFhd255NDBETUQ1Z2RQVXQwV3l2RFY3?=
- =?iso-2022-jp?B?bDVTMEIwVlVsUmJxTXNCWng1L0NnT1NucW9SaXpkK1ZlZ0NHM0dmL2sw?=
- =?iso-2022-jp?B?Tzk2d0tFSml1VlZKbVh0YjVJSEJxSlkyeld6M3czSlNZK3RyZS9CSGFB?=
- =?iso-2022-jp?B?WlJZVjdQWExLdTBzR3F0TFFNNHZhcUwvN3VVZSttenAyTUxSY2cwNHR2?=
- =?iso-2022-jp?B?aTZJaE1sVWFSdFlEKzQ3aDhPdk5xMG1ZQUZSOVFxTlNwR3lqVXpyZ2NP?=
- =?iso-2022-jp?B?WWhobGtsd0g0dGE2Y1NuRlFXS2dNamg0eWxnbWtJYXJpQ2VzY1NSSFND?=
- =?iso-2022-jp?B?eFlUdDRPQjNISkxBUXZxeVV0dEhHNEg4cXVNU2hkcTIwNjB2L1Jrakwv?=
- =?iso-2022-jp?B?bmlNdVpKZlB2UlRKWURzZytOeVh4V3JnNkNjWlQ2aU9WZytHdVg1V0dv?=
- =?iso-2022-jp?B?alRsdkRwTE5vMUpRLzdNa3o2TEt4dk1ETUV6MmVqRU9keXlGaUJBYkFs?=
- =?iso-2022-jp?B?dGVQalp2aFhDZ2VwbU5STG5xZFh4QTdPRHc1T2JiT1BuTnhOOC9UdWRr?=
- =?iso-2022-jp?B?YURWRXZtT3VJSnpXMUxsTEVTaVNGOVlSQ2hBemdqSWJRUXhlaTh2bDNl?=
- =?iso-2022-jp?B?TTd2MTlkYndUMW4wbThtbnJWUlpXekg2cDN4UWRLSWxwVUpUTjBLNlNx?=
- =?iso-2022-jp?B?c3VWb2ZvQndadXFPajZja2VyU2tzallvWmJQbGsrZE90cFhSUWlyUmlF?=
- =?iso-2022-jp?B?U0VvcWJNbFdOaVJLQjlPeXFqTnNoUko2NDBmaU9MZkJkOGh2azlwUmJF?=
- =?iso-2022-jp?B?TFp2VzRUenhPS2dHa0hKYXk2OHJ0S2FrYlhWbEZZWjljSW5tS256blE1?=
- =?iso-2022-jp?B?S0pzQW9mUzhlVHdSQ3ExbmNzSGJQM0IwTGQ5R1p2K1Y4RCtHVkU1clRj?=
- =?iso-2022-jp?B?VnRBMVhGNlpDSTUzd0xJVnBzNkRHQUdZR01zeW5DTHVZejdZZkszK0E1?=
- =?iso-2022-jp?B?L0N4VUF1ak1nTTlxRnZBRW1WbTFaQWpsbG1LUnFHMzUvbHYrN0l2cVFN?=
- =?iso-2022-jp?B?QTFmYjlHTldhNG9kcHNtVE0vOHc5MllDd1FaNlJyZXpjVWswcklTQ2M5?=
- =?iso-2022-jp?B?V1lFUXNEUjVSaHJ5dmpFZUxxa2RSVC9kMlpvd3NDNU4yejgrbkFBNk83?=
- =?iso-2022-jp?B?MkpWQjJrUVJPUm9xcTcyZjFMZDhGS0tROFJqMDU1S2pZSVNpbFIrSWxD?=
- =?iso-2022-jp?B?L3hPWXVuMDR2MWliSStIMHVZS2JjNGFFeHQwN0U5azhlZHNpREdqTktW?=
- =?iso-2022-jp?B?SStFRFAwN2NUQzJtZVVtWmpzSE5ubXpJeEVxNDNRTW1pSGg2RmxkMmtE?=
- =?iso-2022-jp?B?N1FxZHdGTDBXVVZkS1g2OWVMMlNERmwxejA1c2U4aEJmOEI0MVdQR1lU?=
- =?iso-2022-jp?B?WUhtamdvRzh6MHV5blIxN29mbkJjODY5eG5SRE0rNmRiWFJoMERxZ1BX?=
- =?iso-2022-jp?B?QUljNTYvMnp3UldteVF0aDY0UzRheXJFRHpYSUdoVS85dzR2Q0MxUGYz?=
- =?iso-2022-jp?B?NDV4Q2llS01uc21XbWh2WnhiRzYwcWhOanJ6UnFlamF6dUEwNXJvRkxG?=
- =?iso-2022-jp?B?LzVzTjV5cmVxeW55cmtZYTE5a2tyM2xZKzlOREZpbllkTnNTWENYakxU?=
- =?iso-2022-jp?B?REtYWFdBZVY3WDhDejRLck1CMWIwU0ZiaEovbSs4WFNvVW1DZERHalFr?=
- =?iso-2022-jp?B?blNobTY1SHJscVRQNjIzRlV0UGZQZFJxdU1RTzhBYW5XU3pHUXRUWDVV?=
- =?iso-2022-jp?B?bFRJOW9RbGJ6UDBFVmhjOWtzRnhQNGhkNG1RRVMva0ZqZDlpUURublNp?=
- =?iso-2022-jp?B?VzVjM0ZjUlI1NElvcmNaNWtYRGJHTjlScXdwVU5ncHh1TlhDL0Z3MzFl?=
- =?iso-2022-jp?B?dkVrVFFxSUtSQlhZYUppSkxVaHFiMXorRTdHLzliZ2Vma0Y5K1R4d2N3?=
- =?iso-2022-jp?B?cFhTekFlak5FTjRsYjY4UTlwOWQ4ajJ4cGtDSWtlQWZ2ekNneWlpUHpT?=
- =?iso-2022-jp?B?c2dWblJjaFJKejRCRU0zbnVNVEoyZWxUM0pFWStabWduWFlHQ1cyZzZR?=
- =?iso-2022-jp?B?emY4M0R2U0VNNXFGdnA5Q09qSmdsNncwMUkwQmoxeFVTK3dUTkdLSUw5?=
- =?iso-2022-jp?B?RXNyRDNDWGl3bnhUL0o5ZVVDYk82bUQvbFU1TERhdWd4OEs4cUFndS9D?=
- =?iso-2022-jp?B?NCtLRTFPVzZtWDhFa1lDNVpMODNwNStXTFVpSHhyN0tpcHd1ZWZ1Y0Zt?=
- =?iso-2022-jp?B?K0lnWURCcVRMT0RlMHU5eDAzVk5HVElkTExaMGs3MWhabnpRc2x5MStH?=
- =?iso-2022-jp?B?Z1hsUU5Scz0=?=
-Content-Type: text/plain; charset="iso-2022-jp"
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Bs9p7zjZXxQ+dDJCET84QU4QmURX3SnyBM1SBzkqLdw=;
+ b=B5rvtdYgztw412pbusjYJ6Y83np1VDTCwsCpFrE3cSeVxjkB005LaxBM5Tcr/du0hzc9Av42fcWiKmEfz2VcBEHKEwdHCUo6iv+26Yjqb7/5utfs8CPDkIlBH9kdxJrCHhwJDMdNDpEYasPw8J21pCiBFK0j4iu2UgrbDgLSEnI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+Received: from TY6PR01MB17377.jpnprd01.prod.outlook.com (2603:1096:405:35b::6)
+ by TY7PR01MB16103.jpnprd01.prod.outlook.com (2603:1096:405:2a4::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.48.19; Mon, 25 May
+ 2026 08:00:17 +0000
+Received: from TY6PR01MB17377.jpnprd01.prod.outlook.com
+ ([fe80::f373:26d6:86c4:6aa3]) by TY6PR01MB17377.jpnprd01.prod.outlook.com
+ ([fe80::f373:26d6:86c4:6aa3%6]) with mapi id 15.21.0048.016; Mon, 25 May 2026
+ 08:00:17 +0000
+From: John Madieu <john.madieu.xa@bp.renesas.com>
+To: cip-dev@lists.cip-project.org,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	Pavel Machek <pavel@nabladev.com>
+CC: Biju Das <biju.das.jz@bp.renesas.com>,
+	john.madieu@gmail.com
+Subject: [PATCH 6.1.y-cip] PCI: rzg3s-host: Revert generic field helpers, use a local field_prep()
+Date: Mon, 25 May 2026 07:59:16 +0000
+Message-ID: <20260525075916.3817626-1-john.madieu.xa@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: FR3P281CA0183.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a4::11) To TY6PR01MB17377.jpnprd01.prod.outlook.com
+ (2603:1096:405:35b::6)
 MIME-Version: 1.0
-X-Exchange-RoutingPolicyChecked: 
-	HFUnqya73Hziv0o1UC8wSOy9Wly58gPsVc/pksrid6cdqYQxANRSNLMJ/P/9s1hCnZZ1tIUf9K8yYUiKzi1Akl8LxzT5lgC/jgsg8gmbR9mfIMAbkH9s+bZyaPEjAcn0/3peFzV0Cczteab1HRgAe5TghWN/hB9oo1D/opX3pxl9NUddU+GIK3gd2EL6MUgCOpFGb/qhduCNapOZWHR/3V1s2gljVUimmfSmL9kK76Eyzhx3CoBWC244ubH0PAlu7f5wHn9t2WKMs50M0bodivWv0QLMXF/V3JRxZ5k9T83UG45+z0GowMqdx20Yad+6x+UE+yF9RaSpv7QnA0gFnA==
-X-OriginatorOrg: mail.toshiba
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TY6PR01MB17377:EE_|TY7PR01MB16103:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0fea2d2a-d931-4539-4ec9-08deba33a8b9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: 
+	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|38350700014|9063799003|56012099003|18002099003|11063799006;
+X-Microsoft-Antispam-Message-Info: 
+	UWsOAhYZJBm1lrcovtcB49A6+F1s54UMOHHAo6fEDlsX5Qe7EYSE6Q8CZlqS85tUwCuGzwRBlAREoBzMYCTczTAY85Xziu+y2fR042jvqfGAHek9wrOkmhMd0HcDAGkUemU4QCfz6LPoPQOPeE/DfAQt9/Z8HDYJvScZjYS3mpbkpwVroBrYpXIcau4C0MdfTwypnZ30x84FHce5tt5Zk+NTgPXPDH2rxPgZuG5bVxzI/1BxIIwXoqFB1acETy/aeqFeL24k+8OssCIXqNnGHqkWdl4hAZnnSYBbpIJsxzl7sXIhgX5D7hbwI4qnJcufsP3HIvbT7ZwU4IvW8EBXfyT7mOPW6cOgTrYrQiiW3R4EeSe69P3WBjc7Q27zLzmV7+NdK1VGkba8uAzHQw+NGob2lHbFC7DGsNg8/xGEMFHCpy1ozK+ImQYGc17C810ycrrrlraOs9J85qytp4CAM7wyRBcJmglcLFJWpm2ui+NfnYcdQtxVmcHerXa7dUxMZiryriAyZggMQ+u3oaTtujDgjaZng/S18veocSI0JtpOg7+wv/fmD9fsFI2ldUpC5wdPE3JPhhiy0RFsoqmaTd3xgin2XPEcPCz2bCbDQoMpH0A5CTaPFzctmG9oGN742hddx1NWToLybkPc8Ejkcw38MnS7MrDTpcuYZDll2veIxFEfCFqNcA16Ob1Mzs9UR63evPV4oV43ipX7DYaey+5LFb4+nkOaYd3NzL0J4/UaE8I5wNUBwMk6VRBW3aWq
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY6PR01MB17377.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014)(9063799003)(56012099003)(18002099003)(11063799006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?aVbeRU2J+JZZwom5lwq4Oy6MwGJL7Ezm/GdpisoIDVmc/vp6PadW7SJzjn2r?=
+ =?us-ascii?Q?+ofzEyNzjS+BEFS04xmAPkMsTOd1kDRC0hnxCrImY2ErZPlWo3GJzkBhpz1m?=
+ =?us-ascii?Q?EpQeydI/Wr0qoyWfd89TAKa0Nw69eByNeWiVvZvk1waex7tjQDZHdnkSN9WE?=
+ =?us-ascii?Q?IVU5/UhoXJY7ygTJbVHRuM7GGw1+fcZxtMGc/DNIGbMDmQCkYSIyWvNoqjEt?=
+ =?us-ascii?Q?lzHxZ3vW+JRFpC+yaVJ0yzOakO59trMm8Z9++7fQdrcvkMhtQpQzo3TwP8Vt?=
+ =?us-ascii?Q?QZQvTTGGWc+8CGa0gLQ21exq/V6mhbCXB1qKwL+CB1SciiY+3YgNQIPrNnss?=
+ =?us-ascii?Q?L9heEznccA5uDPY17tT4GOGujVM2MBTjeJsxeNN6OJCJmWM91awm04aP8YK/?=
+ =?us-ascii?Q?PlqrHUS5oUS2elhywB8agMOPR6bVG2kr5QeobsSZePiEc5meAMFRbxvJiZSP?=
+ =?us-ascii?Q?zgpc2CTF0Ui3oLmfsvN1/SjYDPKrG96tYmG3Wum8+29Hvt9UZlhkmSfCGlfi?=
+ =?us-ascii?Q?0yKpm4OM6iDRLIR4ohOws11xgWWK3Q+oaTsxG1/Kjx85RkMcp0r+VWJTKyDf?=
+ =?us-ascii?Q?sMNP8HI7PC4dkWrT/PgLAaimG7VRFiKZ/+3lctp/KRoYJ5R46NIk26kpTVRj?=
+ =?us-ascii?Q?pVQrTnFHPcRczqiPLXqtJMMm2VC/fk5QJY8W6bznbiQXSisf+fJTU+FWI63m?=
+ =?us-ascii?Q?+RDqrIBdlOlYF+RmB4Yn16+wUeUuBQwGRhFS894/Dm2p0PZnXWB8J52PFZL/?=
+ =?us-ascii?Q?yB4mBKPYh9ygN1pmm1cY3/X0OdllvL1UHJ/xcPcZ2orHGHqQ/rVsnFZ2cbRD?=
+ =?us-ascii?Q?w708mCWdura971qqOWwmDkNc6N3YW+5CZCTEoXJx0ath2fxLcJGP5YqA5sp7?=
+ =?us-ascii?Q?lqi2Piy47uvNeY6VO/oJ3Z/tjNfpG0BZLcXO92JABjxMFypRDnsCOkQ8eimy?=
+ =?us-ascii?Q?8UehgIKPMFe6ciAEG4gIy0S3vQKGnM49+uGBVX7hO5BJdjBZucWf7FO5+mG7?=
+ =?us-ascii?Q?pBW5De9SjbHpFwdIBWWLBdE8bXcCeuqa93nyJCB6n283PaYV3Zl95YZcuzwC?=
+ =?us-ascii?Q?2eMh3Z/bh4X+knX4d4o4mo4kTC0XI1F0VXNd1Cj4WNOgS6bnF7pBFdyaJ+6N?=
+ =?us-ascii?Q?XtROvmpUbh77c74gEzXgV2cGtkdjEEAsztA+JEIC5fde5QFwHkE2CL8KmLBJ?=
+ =?us-ascii?Q?/UFHrJ42FnkC5dxOCKSRgSDFaCOMAvgSHZgwXbsklmXOG4f12CGz2x2kmc74?=
+ =?us-ascii?Q?T5GqJDG+f7qKTG618qFdr5D3G3zLNiqXXJ2X0MXXEWW/owLguqkg2V10QrZq?=
+ =?us-ascii?Q?BzDZnrRLwVn7RIM/UjkStV924QL6kjYL161lmQat0c51Dedz/4T5FbMznrvs?=
+ =?us-ascii?Q?KZuD3cpPitYSTX27v1y3aa4Vs/URt6OOrM9qK5xznPRZ6wJbRktjmg+RzefD?=
+ =?us-ascii?Q?0ZwTgCHjf5Jezw6rF3Zi0EkBRlmbJ5qkXw6V3QyEod7P8smUjHdC5zH+fcsK?=
+ =?us-ascii?Q?qqleXezu9GAoPOqysVGnVZxdmzjyXSMJZ0NhN2AKEp2EouoajNf87uKG9E7e?=
+ =?us-ascii?Q?hC+oLf12mkk1FSi4Vig5uLBfFLzToRVnMdg3xOUpAVEVdA8F2iL6cGv3746d?=
+ =?us-ascii?Q?+0Xf1cJh+Oke0Wwn6tPoR9zVDUk0eFk+j4SnusW6xWNP1LFivQ+Q6rpJe6b7?=
+ =?us-ascii?Q?1XJCJcjfuIoexXZO+7OYCv310oy8xB3XsCQeCIBGrCqj1foJ6m3fBUMdXnAC?=
+ =?us-ascii?Q?N7/KG1biKIlb56Qn0y+3RfBSq9uwf6I=3D?=
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0fea2d2a-d931-4539-4ec9-08deba33a8b9
+X-MS-Exchange-CrossTenant-AuthSource: TY6PR01MB17377.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY7PR01MB14818.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ea21bcb5-9333-491c-fda8-08deb9ee7923
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 May 2026 23:45:01.8904
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 May 2026 08:00:17.1661
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: rcnNvmwQeNqStUtUz7Le0dJpD1w9a+Q873dSwwN/f7EhD8hWi1CzVolwPO/Nge7EZKRfA1PxWVQKOxksKW8DUy9anfLzwotiX/Bs7shWGYaEIkA9tOLs1zeZ7Y7rieeM
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB12579
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6m7dnuwEtoTNPEQ1JDMhJN5IYAHa/oHjb/m4hyTlSA0/TeS7LO9B/2zEZsItWsCrZwXMS1NXJj6HAUhPRt7jE041rX1DRJrnXkvaYBMtLhY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY7PR01MB16103
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Sun, 24 May 2026 23:45:16 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23002
+ <cip-dev@lists.cip-project.org>; Mon, 25 May 2026 08:00:28 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23003
 
-Hi all,
+Commits bd9b74372900 ("bitfield: Add non-constant field_{prep,get}()
+helpers") and 8f685ab55408 ("bitfield: Add less-checking
+__FIELD_{GET,PREP}()") introduced warnings, as other drivers already
+carry their own local implementations.
 
-> -----Original Message-----
-> From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On Be=
-half Of Pavel Machek via lists.cip-project.org
-> Sent: Saturday, May 23, 2026 6:03 AM
-> To: john.madieu.xa@bp.renesas.com
-> Cc: Pavel Machek <pavel@nabladev.com>; KernelCI bot via lists.cip-project=
-.org
-> <bot=3Dkernelci.org@lists.cip-project.org>; iwamatsu nobuhiro(=1B$B4d>>=
-=1B(B =1B$B?.MN=1B(B =1B$B""#D#I#T#C!{#C#P#T=1B(B)
-> <nobuhiro.iwamatsu.x90@mail.toshiba>; kernelci-results@groups.io; gus@col=
-labora.com; cip-dev@lists.cip-project.org
-> Subject: Re: field_get problem in 6.12 -- Re: [cip-dev] [REGRESSION] cip/=
-linux-6.12.y-cip: (build) "field_get" redefined
-> [-Werror] in sound/usb/mixer_quirks.o (sound...
->=20
-> Hi!
->=20
-> > > We recently added
-> > >
-> > > include/linux/bitfield.h:#define field_get(mask, reg) \
-> > >
-> > > in renesas series (arm64: dts: renesas: r9a09g047e57-smarc: Enable PC=
-Ie):
-> > >
-> > >     bitfield: Add non-constant field_{prep,get}() helpers
-> > >
-> > >     [ Upstream commit c1c6ab80b25c8db1e2ef5ae3ac8075d2c242ae13 ]
-> > >
-> > >     Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
-> > >     Reviewed-by: Pavel Machek <pavel@nabladev.com>
-> > >     Signed-off-by: Nobuhiro Iwamatsu
-> > > <nobuhiro.iwamatsu.x90@mail.toshiba>
-> > >
-> > > and now it is causing warnings, one was reported by kernelci, and
-> > > likely more are coming:
-> > >
-> > > drivers/clk/at91/pmc.h:#define field_get(_mask, _reg) (((_reg) &
-> > > (_mask))
-> > > >> (ffs(_mask) - 1))
-> > > drivers/crypto/intel/qat/qat_common/adf_gen4_pm_debugfs.c:#define
-> > > field_get(_mask, _reg) (((_reg) & (_mask)) >> (ffs(_mask) - 1))
-> > > drivers/iio/temperature/mlx90614.c:#define field_get(_mask, _reg)
-> > > (((_reg) & (_mask)) >> (ffs(_mask) - 1))
-> > > drivers/irqchip/irq-renesas-rzv2h.c:#define field_get(_mask, _reg)
-> > > (((_reg) & (_mask)) >> (ffs(_mask) - 1))
-> > > drivers/pinctrl/nuvoton/pinctrl-ma35.c:#define field_get(_mask,
-> > > _reg)
-> > > (((_reg) & (_mask)) >> (ffs(_mask) - 1))
-> > > drivers/soc/renesas/rz-sysc.c:#define field_get(_mask, _reg)
-> > > (((_reg) &
-> > > (_mask)) >> (ffs(_mask) - 1)) sound/usb/mixer_quirks.c:#define
-> > > field_get(_mask, _reg) (((_reg) & (_mask)) >> (ffs(_mask) - 1))
-> > >
-> > > Likely similar problem will appear in 6.1.x-cip, shortly.
-> >
-> > Sorry about that. I'll drop the two field_get-related patches and
-> > define it locally like other drivers do.
->=20
-> Yes please. I guess something to apply on top of existing patches would b=
-e best.
+Revert both and add a local helper instead:
 
-Thank you for handling this issue.
-If John sends us the patch, we will release the updated CIP kernel immediat=
-ely.
+  #define field_prep(_mask, _val) (((_val) << (ffs(_mask) - 1)) & (_mask))
 
->=20
-> Thanks and best regards,
-> 								Pavel
+Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+---
+ drivers/pci/controller/pcie-rzg3s-host.c |  2 +
+ include/linux/bitfield.h                 | 89 ------------------------
+ 2 files changed, 2 insertions(+), 89 deletions(-)
 
-Best regards,
-  Nobuhiro
+diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/control=
+ler/pcie-rzg3s-host.c
+index 1b92371292dd..45cc2f3782ab 100644
+--- a/drivers/pci/controller/pcie-rzg3s-host.c
++++ b/drivers/pci/controller/pcie-rzg3s-host.c
+@@ -178,6 +178,8 @@
+ /* Timeouts experimentally determined */
+ #define RZG3S_REQ_ISSUE_TIMEOUT_US		2500
+=20
++#define field_prep(_mask, _val) (((_val) << (ffs(_mask) - 1)) & (_mask))
++
+ /**
+  * struct rzg3s_sysc_function - System Controller function descriptor
+  * @offset: Register offset from the System Controller base address
+diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
+index 3dca52ee7625..d0dfb2d86ec1 100644
+--- a/include/linux/bitfield.h
++++ b/include/linux/bitfield.h
+@@ -17,7 +17,6 @@
+  * FIELD_{GET,PREP} macros take as first parameter shifted mask
+  * from which they extract the base mask and shift amount.
+  * Mask must be a compilation time constant.
+- * field_{get,prep} are variants that take a non-const mask.
+  *
+  * Example:
+  *
+@@ -76,36 +75,6 @@
+ 					      (1ULL << __bf_shf(_mask))); \
+ 	})
+=20
+-#define __BF_FIELD_CHECK_MASK(_mask, _val, _pfx)			\
+-	({								\
+-		BUILD_BUG_ON_MSG(!__builtin_constant_p(_mask),		\
+-				 _pfx "mask is not constant");		\
+-		BUILD_BUG_ON_MSG((_mask) =3D=3D 0, _pfx "mask is zero");	\
+-		BUILD_BUG_ON_MSG(__builtin_constant_p(_val) ?		\
+-				 ~((_mask) >> __bf_shf(_mask)) &	\
+-					(0 + (_val)) : 0,		\
+-				 _pfx "value too large for the field"); \
+-		__BUILD_BUG_ON_NOT_POWER_OF_2((_mask) +			\
+-					      (1ULL << __bf_shf(_mask))); \
+-	})
+-
+-#define __BF_FIELD_CHECK_REG(mask, reg, pfx)				\
+-	BUILD_BUG_ON_MSG(__bf_cast_unsigned(mask, mask) >		\
+-			 __bf_cast_unsigned(reg, ~0ull),		\
+-			 pfx "type of reg too small for mask")
+-
+-#define __FIELD_PREP(mask, val, pfx)					\
+-	({								\
+-		__BF_FIELD_CHECK_MASK(mask, val, pfx);			\
+-		((typeof(mask))(val) << __bf_shf(mask)) & (mask);	\
+-	})
+-
+-#define __FIELD_GET(mask, reg, pfx)					\
+-	({								\
+-		__BF_FIELD_CHECK_MASK(mask, 0U, pfx);			\
+-		(typeof(mask))(((reg) & (mask)) >> __bf_shf(mask));	\
+-	})
+-
+ /**
+  * FIELD_MAX() - produce the maximum value representable by a field
+  * @_mask: shifted mask defining the field's length and position
+@@ -250,62 +219,4 @@ __MAKE_OP(64)
+ #undef __MAKE_OP
+ #undef ____MAKE_OP
+=20
+-#define __field_prep(mask, val)						\
+-	({								\
+-		__auto_type __mask =3D (mask);				\
+-		typeof(__mask) __val =3D (val);				\
+-		unsigned int __shift =3D BITS_PER_TYPE(__mask) <=3D 32 ?	\
+-				       __ffs(__mask) : __ffs64(__mask);	\
+-		(__val << __shift) & __mask;				\
+-	})
+-
+-#define __field_get(mask, reg)						\
+-	({								\
+-		__auto_type __mask =3D (mask);				\
+-		typeof(__mask) __reg =3D  (reg);				\
+-		unsigned int __shift =3D BITS_PER_TYPE(__mask) <=3D 32 ?	\
+-				       __ffs(__mask) : __ffs64(__mask);	\
+-		(__reg & __mask) >> __shift;				\
+-	})
+-
+-/**
+- * field_prep() - prepare a bitfield element
+- * @mask: shifted mask defining the field's length and position, must be
+- *        non-zero
+- * @val:  value to put in the field
+- *
+- * Return: field value masked and shifted to its final destination
+- *
+- * field_prep() masks and shifts up the value.  The result should be
+- * combined with other fields of the bitfield using logical OR.
+- * Unlike FIELD_PREP(), @mask is not limited to a compile-time constant.
+- * Typical usage patterns are a value stored in a table, or calculated by
+- * shifting a constant by a variable number of bits.
+- * If you want to ensure that @mask is a compile-time constant, please use
+- * FIELD_PREP() directly instead.
+- */
+-#define field_prep(mask, val)						\
+-	(__builtin_constant_p(mask) ? __FIELD_PREP(mask, val, "field_prep: ") \
+-				    : __field_prep(mask, val))
+-
+-/**
+- * field_get() - extract a bitfield element
+- * @mask: shifted mask defining the field's length and position, must be
+- *        non-zero
+- * @reg:  value of entire bitfield
+- *
+- * Return: extracted field value
+- *
+- * field_get() extracts the field specified by @mask from the
+- * bitfield passed in as @reg by masking and shifting it down.
+- * Unlike FIELD_GET(), @mask is not limited to a compile-time constant.
+- * Typical usage patterns are a value stored in a table, or calculated by
+- * shifting a constant by a variable number of bits.
+- * If you want to ensure that @mask is a compile-time constant, please use
+- * FIELD_GET() directly instead.
+- */
+-#define field_get(mask, reg)						\
+-	(__builtin_constant_p(mask) ? __FIELD_GET(mask, reg, "field_get: ") \
+-				    : __field_get(mask, reg))
+-
+ #endif
+--=20
+2.25.1
 
 
