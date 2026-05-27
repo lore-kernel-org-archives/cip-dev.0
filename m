@@ -1,178 +1,142 @@
-Return-Path: <felix.moessbauer@siemens.com>
+Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 420B9CD5BDE
-	for <webhook@archiver.kernel.org>; Wed, 27 May 2026 09:17:11 +0000 (UTC)
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (DB3PR0202CU003.outbound.protection.outlook.com [52.101.84.0])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.16346.1779873424421558486
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 119DFCD4F54
+	for <webhook@archiver.kernel.org>; Wed, 27 May 2026 16:14:59 +0000 (UTC)
+Received: from OS0P286CU010.outbound.protection.outlook.com (OS0P286CU010.outbound.protection.outlook.com [40.107.74.34])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.24212.1779898496354468034
  for <cip-dev@lists.cip-project.org>;
- Wed, 27 May 2026 02:17:04 -0700
+ Wed, 27 May 2026 09:14:56 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=aMiibs3o;
- spf=pass (domain: siemens.com, ip: 52.101.84.0, mailfrom: felix.moessbauer@siemens.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=kvTaBt6P;
+ spf=pass (domain: bp.renesas.com, ip: 40.107.74.34, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QlXx81HM+56/C2dFjxFfbLzIbBgWFFyodSX0Oh424HqVum7h/0tWANP4mTLRo90kXatYzmNWU3H2bX6rzGomNBEVptQoC+NUqH8m8KZbgpUwje7/c4q1B66DcArCA0B8VCQZLmZoLmyzA4Sr5M8WpSyw+6wE32g18C1Ro1N/1PjFptq89ZuBAB0NSQ2dWfuf11e+PyeJVJvXyELdBLYy7NOaY5m5W4QwSVLThDoiH3ds/hx/tMx3b3mue50TJYt315oH/RRa4+q4Yk5/V+IR6z9hJ30+880MuTCrBEfQfg3pyxwyzphONDd8nnwhDtJNrYDqvjXpm4tb3cK1L+dSWQ==
+ b=Mi1dJ6fva2uv8QJGKsBX8AWO8flniJbuUeM/7MH//od1FKJ6y4idnKQNO2Hgt46GgNMmYsFlTB6m1L356Rm6LqwCxIbWcNC6FzLKx1+emi2fQwtX0vJ/UddZI7srRu0eQ+AV+xehFPr3GvnNRG1baU3oYh05Ii1ANugk3qDc4LjiB1WD/ORuDFvg+pB+JkXyr1NmmXl+kMgdR6ZXZipSqiJm8xKOv1WnIuwTs9/OdiUNnrEjcd8YB88XXSEMCsiTspDbDNxzcJjh3wJb6ShRof6VBftFp3huCKan0wHmGbupNw6wl/6sGhQEkhQxB6UKoGLqguXDDu9gBdXvLNaABA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MAV3QvgwHI3g5PUQHaUlLIbF6p9C4xykALe7BmQGtx8=;
- b=qExyFUnT3usEjti9k+Ak12G4hO6NJPXzz2RTehpNBI0+HHBYV5rlk85RVt0w5GgVuAUyEZvP8TFvqNt2b85du6d3VLLYIZUZri+5qHB0q0jWMlMKN9oNjxcFMyLxOf8WMgAD+J6rqIVzicizMnElBcTymQFI5sZe8lc/jKWksLJBhAOyuAtMjTMBfrufXS7nNEVgJj7/ce6s62TE+snqXZtIaYOk9vXhoazPKw2t5DOhMjJIr2eIHlOPI17yqOxFVnL5exDpr7W2XEPKn4pGIlEsL474Rx7OU6ZJVa4utTexkvjujUF8Fo1oEIEhGTmJkLLljvzfDBWJ0nRApNX/eg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
+ bh=WqKu/13fwrZ0cfnY3CurjIzi/FFnu9Gz3IE6P7aVPec=;
+ b=NO5TeXslSayB48ynmDh5HtDUQxS4R32R7tnQnqeigH/uZRRxwVXTSCTphvgD1+zNJRl0IEVuh/t3ySwKsIwOd2KDsVh04WBUtZPpiqIdfs0v8COMCNbyGTOHGLserk/Y8FHFg/P9bGlIRfg+kbGFIb9CypKNSWmnbrPsKnKQqyvB4r4sngK/LDZZpk2eeKt/Q2DoDIK+C5ihtnG1EQNAQIt8Vbf7+4IT765yfQYXYB2H/r1YSpcG64N+ZBewtGRn8SSggcQyoyjO0IptgKMUTHF/JA8y9pS1CPnRIpjSM0jXIKFvQogLoMYG9gNn/Czcw/ZIGZnMW8j904YXuONegQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 8.62.32.50) smtp.rcpttodomain=bp.renesas.com smtp.mailfrom=bp.renesas.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=bp.renesas.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MAV3QvgwHI3g5PUQHaUlLIbF6p9C4xykALe7BmQGtx8=;
- b=aMiibs3ohOpt79/MHspshY+FIYYpB/7r+Qkprq71RVbEP7W/GCPX9D8BZTQgRytjWNbzHXfy3WB1yYJIpuG1+NR4N6TFF6FiTq17qwFH96Gt+TOgArENEk7QqPXlM4NOlklUvd3gm6cwT0DaNo+wsDbneOsk8O0NLcLjolWgo0WSuiVBs20FHBxJpqjyLZCS2GBumoV1pnNpS8ofoioUwYha6RvxW03s7HzN0rbn9KJXXB7q4ekf3LTJQV0pjGqUVHdub3hAbp64Im2MjJk9SUlUzTX0Dg3+XZfASw5BSUornYKgGFd1kTRQc5HJtf6//mjGEBUoueet0ojYPHfv5A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS8PR10MB5952.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:52f::15)
- by AS8PR10MB7110.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:5ed::10) with
+ bh=WqKu/13fwrZ0cfnY3CurjIzi/FFnu9Gz3IE6P7aVPec=;
+ b=kvTaBt6PQuRCQvZ1w+Nm51ApyD7GCCBYU4MQbrI6rwhWu+wMSNAsNmFersyOeYEy33bHCewJt8aYpxUvuTdJ3NsAgc0U5nUvfKLSZgOI4er9JBogjffZ57CLqdksckLUVpk52JuSDAT5mOXXtH2LvRJa7VhkSxenQ7w8wVVFMV0=
+Received: from OSTPR01CA0054.jpnprd01.prod.outlook.com (2603:1096:604:222::8)
+ by TYRPR01MB12239.jpnprd01.prod.outlook.com (2603:1096:405:106::6) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.11; Wed, 27 May
- 2026 09:16:56 +0000
-Received: from AS8PR10MB5952.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::2547:a1f4:bf9d:cb19]) by AS8PR10MB5952.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::2547:a1f4:bf9d:cb19%3]) with mapi id 15.21.0071.011; Wed, 27 May 2026
- 09:16:56 +0000
-From: Felix Moessbauer <felix.moessbauer@siemens.com>
-To: cip-dev@lists.cip-project.org
-CC: jan.kiszka@siemens.com,
-	Felix Moessbauer <felix.moessbauer@siemens.com>
-Subject: [isar-cip-core][PATCH v2 1/1] chore(factory-reset): make btrfs support optional
-Date: Wed, 27 May 2026 11:16:48 +0200
-Message-ID: <20260527091648.764283-1-felix.moessbauer@siemens.com>
-X-Mailer: git-send-email 2.53.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-X-ClientProxiedBy: FR4P281CA0311.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:f6::18) To AS8PR10MB5952.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:52f::15)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.12; Wed, 27 May
+ 2026 16:14:50 +0000
+Received: from OS3PEPF0000003B.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:604:222:cafe::89) by OSTPR01CA0054.outlook.office365.com
+ (2603:1096:604:222::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.71.13 via Frontend Transport; Wed, 27
+ May 2026 16:14:50 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
+ smtp.mailfrom=bp.renesas.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=bp.renesas.com;
+Received-SPF: Pass (protection.outlook.com: domain of bp.renesas.com
+ designates 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
+ client-ip=8.62.32.50; helo=ejcrelay005p.adwin.renesas.com; pr=E
+Received: from ejcrelay005p.adwin.renesas.com (8.62.32.50) by
+ OS3PEPF0000003B.mail.protection.outlook.com (10.167.240.4) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.71.7 via
+ Frontend Transport; Wed, 27 May 2026 16:14:50 +0000
+Received: from Ubuntu-22.. (ree-0065929.diasemi.com [10.24.0.181])
+	by ejcrelay005p.adwin.renesas.com (Postfix) with ESMTP id 47AF3300025D;
+	Thu, 28 May 2026 01:14:49 +0900 (JST)
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: cip-dev@lists.cip-project.org,
+	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
+	Pavel Machek <pavel@nabladev.com>
+CC: Biju Das <biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 1/9] i2c: riic: Introduce a separate variable for IRQ
+Date: Wed, 27 May 2026 17:14:35 +0100
+Message-ID: <20260527161446.48789-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260527161446.48789-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20260527161446.48789-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR10MB5952:EE_|AS8PR10MB7110:EE_
-X-MS-Office365-Filtering-Correlation-Id: 129bc18e-88d3-4134-1f9e-08debbd0b2d2
-X-MS-Exchange-AtpMessageProperties: SA
+X-MS-TrafficTypeDiagnostic: OS3PEPF0000003B:EE_|TYRPR01MB12239:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 8b09144e-55ce-48d0-a88a-08debc0b1473
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|376014|10070799003|1800799024|366016|55112099003|11063799006|6133799003|3023799007|18002099003|56012099006;
+	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700016|11063799006|56012099006|18002099003|22082099003;
 X-Microsoft-Antispam-Message-Info: 
-	BFJfJCnagmWM8GPdACY+Ui8kPXjQLhu/nZKzAPL4g2Tm5QY27S2bxf+mEKNZMrxsaoyeJQLwzBgCINBU/fBiQTZy6doNy7IS0eGT+9HOvu123cVTwgafCGWF+jZW90XCVc9DxQEh/JWoHqSrMjpstxfPMJLYH5S9f/6FjD/SJKeHKzk1I2bPefrtqkV9iNAmWzbFz4gFhsC5pshfzZ9XYMnvSU2EZ6yiDDdOLCha6RoqNLNf8j5D9a1Kh9tnOLL6dRqRc7SjwXACMYYzqmCyg/49l7RitjKqgk8iz+gAUDVo03sMJgq+atYgTOva4yMiJH57V2LrKMw4vWDOo8VKnXi2Z9NkwkTwsnScZEcuLPYms7YMDl+/02NpHhkyHLyzrJS2/Yg2MKz5euPp3OK7hPAqZVzUM1G39nTtwerqoZ2hyvc9WuLxKu1XwQ6h/yfPS/MT3hQ+39XI0BzTG1qYzsjQ4MQgcYu+ETXI04UPeSBah+3Pe/0keTSqaYWojFgyRCQ2sxFXTGhcFUS5ZZUxJWOwkVF7CrBq1eAqmVDj07u4w7gerzqvPK4pqfT1UM7jkYBsJDleTK5b4EY+I12WhsR6vrSioQ1QYmZE/G3HeGUyuLiqi7f6FnQMTid+1Z58W8aiwTmCv6tuG3o5X35bsBD3LeisEclrTDzQVUFmEC+QNb186bqT9wkhHUIKORvL
+	jCug8qcMW4RTbfJ+ZEM8VTnjGjt14Sqt1UvaxGDq4tF1+zx7K5QfvOEsainFKlPzuVBs5cqL/EmdPLL/wBqOlGwEX1IyscEC5uOV+yTwIybiudKIBbFUmcJ8tGAjXXQ4v5eIwzA0VLDlvAUPgDROxklTkXTNZf9kiMh0NGJ+szYerCENwc6zAOQ1CvZB5UY7d5VlEx5PXFq9AtFL1zMpzJqy/yTAUahynQy59zsWhfH56p5d19su8Oot9s8zLn9y13tz3mgNtMFIiRVatxO+eeRvfh9IvGSJpOa/67n9xoJWjrVmagPuIHaMUcUaib+CLenCPtSw+oSN+mQ9dkyHECqHJwbjJs8tSKE+OQC6fnw6Pk9w/l8lCXSbRFOzfzklBSKvPOEFJKJmrREpwRlZFXbcyZ4ygKW57EGB7RlYHlGObOouj0kKZL10K4maGsJNLZUSxD9/QtXGPiZsajzJw1a+7eH37cvrN5iLSFsci/eOapxOxOfWObaO2hQwdb/OMQbR9G9buxiNFUBi/vpW7cKEfnY392OMPuijtu4v5zGVIwUnQf6YEOXMEzSmZDLEe1ZRNBKKZI6ZREccfaSX5zZm9KcmkbrwTT+6Dixs3jmvBp24rjC9AOV/75km7SZPXNfyIc1ynJCJqkZsMrqtHbRU2C/h65dS2Eye2lB81iqk9MQM6x8VkenGfEZMJCish98pNNVg/DYFVVFruErx0m/G/zR1frO/7uFDbfZAA14=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR10MB5952.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(10070799003)(1800799024)(366016)(55112099003)(11063799006)(6133799003)(3023799007)(18002099003)(56012099006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay005p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700016)(11063799006)(56012099006)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?fcsiKRCCqb/xB3ARLAJEEO7kY+fYVw/P4D6mAsRuGuMc6oWqDrsHdoj4nj1w?=
- =?us-ascii?Q?N4VcrQDBwppJ50rS0Bbk+TTXBMYeCUk19DSYgy9Gdya4eFRqXAqmJVpS8LDS?=
- =?us-ascii?Q?wZ0gGn+3XHj84vhPOKVaUIeNBjAU12cs6C+1EXTisT9N43/ztDxo3AV8ceNE?=
- =?us-ascii?Q?RlLnRgUD+iYQ/jnfpj0q9I63qPHtovF2WXQ/2wbIQUFNfWFpJkXDJSf1vfWz?=
- =?us-ascii?Q?s1HD7HWRHTxXiMusUKkXKtA22oke62/1zgGh/cza5qsxEFS7FVaSdqzoVhCE?=
- =?us-ascii?Q?VUMFTE8iBWBFQ2Qii4t5guEAC+vak6z6SSDdK+eVzgZK8rcwqQRLD52whQQR?=
- =?us-ascii?Q?jePK27zytDdwUpBqiLcPQPdIR1WpdnQpLZCxgMN2+gQV44J9FORQQ9RV92ih?=
- =?us-ascii?Q?HvGNrCkjfLJ8quoUcA7UOjyf1UUsS1KziymjWOncbOIXTYzx50uDCTUsoxp+?=
- =?us-ascii?Q?61kmhjw7hLA1DedcKZNRYXg69X9v/9wCWgsFLVGpIGu7a8MTDEJdEDTZMxi3?=
- =?us-ascii?Q?XGq8tipN22bL27F2ZfHw1gHNPN2C7rKFzzQwfxaRS+Hp+C8Km0bmk19V4elM?=
- =?us-ascii?Q?gQECpjj2sD/QZaPDmN7pOK2Lp96tqbGCvscJNGM6J8kpcVq5/G9d93eWIMrV?=
- =?us-ascii?Q?E5n4X6rzjmsTu3Zm2cMHykymAu6aTq2vevo32Ps1vGAahDxJCbkLkJJDdyxH?=
- =?us-ascii?Q?M3g7gqpL0ELeczbGppsv26voOfUF2svA+xgH/ezzFaJCc/0/lxl9QMrV9YeK?=
- =?us-ascii?Q?dMHDAokbhpKvoVLYUt8YBcaw9Tb/gOedCWb74VdzdGNoyGu8gEButcJHksaG?=
- =?us-ascii?Q?2lfA7hnD6DmqyH+/CvlL77qagIdmH/yIYi8O/a47RUVel/eHfrhDrkSftnsu?=
- =?us-ascii?Q?u2k2qCOUSkEGR3vmwKoTEuh0L7TtpnkN/Ezzlx1bYDTsoOVgflETDYLsdqTz?=
- =?us-ascii?Q?vAkqmvWQ1y1VPEUxLBaeieBHgGV0G7plKTab6KCog2Ljf72HGRL09fqj2I4v?=
- =?us-ascii?Q?Z3PdVfxruszSip5vBKbNK1mUZQeyNJmYlX1FmKw88sntonxXAlQCBVrGaPUD?=
- =?us-ascii?Q?FUXltNMw9SldozBEYwWzUNmADtZsu4vlYtlSB8YNfPtOWTJzxc1a001N9nbe?=
- =?us-ascii?Q?PNdzPygAlBdjcNpbU4TfL9bC4jh/NvZQ+OATuNi9Spjt65LtbZoQD5Ch0uAd?=
- =?us-ascii?Q?+9DAG8sD0b+UjcsHavA8jtDsWOH36WWOzz9trcGeuEkzdWe2HWFTEZe1BSOl?=
- =?us-ascii?Q?RDVgdgf+mjoGtAufcR6+rfg9M8QuX7BbPGeqejXnWOUZozPW8M4NlnIoYZ7x?=
- =?us-ascii?Q?NLzl+aYb6sQJypI+4+Bw04L9dUoyU1MFF3ROqlNuM8hS00vIJGx0CS+EJxFr?=
- =?us-ascii?Q?vezYs4XrBFM25j80b9deO6Sa8NZn7PqClkjlTWTEvwOaKQfPklp9+/wPLy+3?=
- =?us-ascii?Q?MPjVzLn4P5FMx4h/cmesWHvq7jhhG5JIU24qLmxZDgJT0PMXIdmmzwZKhcQF?=
- =?us-ascii?Q?lRKr+tROorcoybwfg0v4pceAm9MWVEyQfvt8YNelQe5jqeQ7fKGgR2895po2?=
- =?us-ascii?Q?6KFTGz9bNh99rhNtSWwLvqpC4QOtF8WBZcN7hQo3/r9+AJQcanhe3MJLXHmd?=
- =?us-ascii?Q?zrgEh4X5p90yeGPnlVvqjaatCZOnp6IxCLApNzTrRgpbHEzSvs5JspyZ+iK5?=
- =?us-ascii?Q?hhFVVeXH+7S0HJc+tqSEIlZZdk6gvKXRN8bR2WQB20LWiJr16EX8OddJClsy?=
- =?us-ascii?Q?6x6JIAWOV49VbJ1fjZcArVdwWVf1Yz742rV712rBO7jRS7S1JE7rWabLczTp?=
-X-MS-Exchange-AntiSpam-MessageData-1: HvInhLqhvUWBUe5ue3XYWnqVLzzHfVbIB9c=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 129bc18e-88d3-4134-1f9e-08debbd0b2d2
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR10MB5952.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2026 09:16:56.2850
+	mOjaKeKRQfLRr075fX44hI0WyxzR/tRptUbvX2L0U5BPbMwg2Xl+FXjj8V+IqiukIiTOkM50RduvFwBToWeoYR+hT11UrMtjJWIDuE0TtmcKNVZtnwF94iKdsAqVYdyjzhmXAp1jtCiHaPG78UFgb8VtKgP7umIuLwMb8pBuRUZtBNL9G/M9ooZErRr/Z4IYhmbobx84L5Y6lEVrnpZM+8c6pDn0RfulOAflx1OJ4KeCysSGp2lAx28WPwk+IawfmQwIlZWGHV6gxBDLRWWA2OqiR0OtFBHelx7P2jD1b9w9aHJ9/mZO+IUZsTqnuYvZo6f0Fdouu0OVECuob1jBVyn1+ClixeERbaw+r2PXm0Km8V41R+lt4+XhWJL7ZHkI7idOKEaOzyZK0g7LCvdlQ5eae+OyrTNWZmve1NS5QYS/Vbt4cP4s1JuWcriZz5Zt
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2026 16:14:50.6314
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: byDJisENSw0a21Xai6EmIQ4vsVLnh8yt3M58VHvQdaZg1G8nhNmYTeqln3LsXzI9aMTmlRZtbFK9FmFM+6Yqc6AoPDnD0dhtFYu9uV/duLs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB7110
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8b09144e-55ce-48d0-a88a-08debc0b1473
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay005p.adwin.renesas.com]
+X-MS-Exchange-CrossTenant-AuthSource: OS3PEPF0000003B.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYRPR01MB12239
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 27 May 2026 09:17:11 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23014
+ <cip-dev@lists.cip-project.org>; Wed, 27 May 2026 16:14:59 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23016
 
-To reduce the footprint and attack surface of our images, we make the
-support of btrfs in the factory-reset initramfs hook optional. By that,
-we extend the interface to also allow support for further file system
-types.
+commit 76dc16296124ec478ec9ac011f0b9b52462c88d5 upstream.
 
-Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
+Refactor the IRQ handling in riic_i2c_probe by introducing a local variable
+`irq` to store IRQ numbers instead of assigning them to `ret`. This change
+improves code readability and clarity.
+
+Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
-Changes since v1:
+ drivers/i2c/busses/i2c-riic.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-Rename control variable to INITRAMFS_FACTORY_RESET_FSTYPES, make it a
-list for further extension.
-
- .../initramfs-factory-reset-hook_0.3.bb             | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
-
-diff --git a/recipes-initramfs/initramfs-factory-reset-hook/initramfs-facto=
-ry-reset-hook_0.3.bb b/recipes-initramfs/initramfs-factory-reset-hook/initr=
-amfs-factory-reset-hook_0.3.bb
-index e962a51..670725b 100644
---- a/recipes-initramfs/initramfs-factory-reset-hook/initramfs-factory-rese=
-t-hook_0.3.bb
-+++ b/recipes-initramfs/initramfs-factory-reset-hook/initramfs-factory-rese=
-t-hook_0.3.bb
-@@ -20,6 +20,9 @@ INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE ??=3D "ext4"
- INITRAMFS_FACTORY_RESET_CLEAR_TPM ??=3D '0'
- INITRAMFS_FACTORY_RESET_CLEAR_TPM:encrypt-partitions ?=3D '1'
+diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c
+index 4d76f066dd4c7..feab444495a4e 100644
+--- a/drivers/i2c/busses/i2c-riic.c
++++ b/drivers/i2c/busses/i2c-riic.c
+@@ -465,11 +465,13 @@ static int riic_i2c_probe(struct platform_device *pde=
+v)
+ 		return ret;
 =20
-+# to support factory reset on btrfs, add 'btrfs'
-+INITRAMFS_FACTORY_RESET_FSTYPES =3D "${INITRAMFS_FACTORY_RESET_LUKS_FORMAT=
-_TYPE}"
+ 	for (i =3D 0; i < ARRAY_SIZE(riic_irqs); i++) {
+-		ret =3D platform_get_irq(pdev, riic_irqs[i].res_num);
+-		if (ret < 0)
+-			return ret;
++		int irq;
 +
- SRC_URI +=3D " \
-     file://factory-reset-script.tmpl \
-     file://reset-env.tmpl \
-@@ -35,14 +38,18 @@ TEMPLATE_VARS +=3D " INITRAMFS_FACTORY_RESET_DEVICES \
- RDEPENDS =3D "factory-reset-helper \
-             initramfs-cip-functions"
++		irq =3D platform_get_irq(pdev, riic_irqs[i].res_num);
++		if (irq < 0)
++			return irq;
 =20
--DEBIAN_DEPENDS .=3D ", coreutils, util-linux, e2fsprogs, btrfs-progs, awk,=
- \
-+DEBIAN_DEPENDS .=3D ", coreutils, util-linux, e2fsprogs, awk, \
-                     factory-reset-helper, findutils, initramfs-cip-functio=
-ns"
- DEBIAN_DEPENDS:append:encrypt-partitions =3D ", tpm2-tools"
--HOOK_COPY_EXECS =3D "mountpoint findmnt mktemp rmdir basename \
--                   mke2fs mkfs.btrfs awk blkid rm get-factory-reset.sh \
-+HOOK_COPY_EXECS =3D "mountpoint findmnt mktemp basename \
-+                   mke2fs awk blkid rm get-factory-reset.sh \
-                    chattr grep find"
- HOOK_COPY_EXECS:append:encrypt-partitions =3D " tpm2_clear"
-=20
-+OVERRIDES .=3D "${@':btrfs-support' if 'btrfs' in d.getVar('INITRAMFS_FACT=
-ORY_RESET_FSTYPES') else ''}"
-+DEBIAN_DEPENDS:append:btrfs-support =3D ", btrfs-progs"
-+HOOK_COPY_EXECS:append:btrfs-support =3D " mkdir rmdir mkfs.btrfs"
-+
- HOOK_ADD_MODULES =3D "efivarfs"
-=20
- do_install[cleandirs] +=3D "${D}/usr/share/factory-reset/"
+-		ret =3D devm_request_irq(dev, ret, riic_irqs[i].isr,
++		ret =3D devm_request_irq(dev, irq, riic_irqs[i].isr,
+ 				       0, riic_irqs[i].name, riic);
+ 		if (ret) {
+ 			dev_err(dev, "failed to request irq %s\n", riic_irqs[i].name);
 --=20
-2.53.0
+2.43.0
 
 
