@@ -2,22 +2,22 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D55CD6E45
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 635DBCD4F54
 	for <webhook@archiver.kernel.org>; Wed, 27 May 2026 16:15:09 +0000 (UTC)
-Received: from TYVP286CU001.outbound.protection.outlook.com (TYVP286CU001.outbound.protection.outlook.com [52.101.125.20])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.24338.1779898500679920096
+Received: from TY3P286CU002.outbound.protection.outlook.com (TY3P286CU002.outbound.protection.outlook.com [52.101.229.61])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.24339.1779898503221422665
  for <cip-dev@lists.cip-project.org>;
- Wed, 27 May 2026 09:15:00 -0700
+ Wed, 27 May 2026 09:15:03 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=e+bhiYpt;
- spf=pass (domain: bp.renesas.com, ip: 52.101.125.20, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=Q4yepHeW;
+ spf=pass (domain: bp.renesas.com, ip: 52.101.229.61, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uqaEjEtUZq74GE0Ry1ouySyYX88mY3MQM6LLru3J+LqrhOzX35fO1f3CNTKiSAxJXKYKSGvxC8+pDlRkXY1dQkL5uvXli20Pcu3N2kjVNIJMP9nNpScJ4v9AGboOVfHQKp/Ecp1FmF9faqMqJb0GbEcEoC1egJDql13OZ/9ML3WsKF9oriKi5Wb+53PKhOt4blTUCmLND+mjlpRgxBB0ittjTo8137boXsqsj4FRVy210VIot16f4aHHlHOYQa6rx73vfIh/3PxrUYZDE1dUZqpKVjc6lu9OH0nPoGVe8obVapMVViRV1WJnuqeKJqiXRblO0Nenh2qg3uCJaYxPMQ==
+ b=q5+aYmxe3EH0gT26XbhCou1uxiZWBRURJohOvGFlydt1k6sM9aMDiIALb6s8qnld/WxUgBzpp6fb2+Gvn8mXTja8v4OK1ELdXDmeksw9Qst1sja6bcKfewjKLlEEGO3JnbnXw0QO2eBbT55R7om3nFiPqCV1R/opv0F10ywPH9Y/hHnppBNnpvph0q5oTWbG2U+JFDxxrQq14V0s/xlhiYyqHzlzE0nAu7PSQLwtqO8ffY9O9CvKQZHDnI3stpJLsgmX4SelGpdkdVPHLgh1tdu9UCWxFVZsNqhIgzKJr5YlH9DDCYJyQnGwF6vawDU+6aGzAVthSjkaFFQT2oAILA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zb0I9BRWWi+ZSq2RbZoY5OhrRmh+bIR47KYyIdVEFbI=;
- b=Os+E6tEcjgUYnUWax3I2Lxp0h/AicwARHjfLQ+OU+zChjrcs1lHMJESfNt4qbC5r1Jk/Zzxje7Fyt04z1Zqdjae1ZUi9dheDe7TkrYMAnj/B6miREfGKihFHnLaBqlNRbGWz91hZdhobyZ3J4yB18S8Of2dY+ukEUrrzXhOrICZMNdynqqpfMjHyFBktyP6LCc5z/IDQ1sj7+K8O4WRw2idNo6LOKOJeHcf9ySPVTDj0AJYF4aQzap1vh7ABCwBgIlxtGTYhuw5muTB4389QHdCI5Ayshw473Tfdc9S3tsERyR3PG9uDBrjH6DfhvCyThmfVN4iv3BcIQaDo1XuSgQ==
+ bh=124rUj4QtcNJJtEaWb4x7NGs7O9bYPupoEPhDB1Lhbw=;
+ b=Zywpbt3vrjeRJVbCgacOMLb07yM6nwluwxjIP5NXU+R83UKHJZYONeGBfEMp5wapbgLtKewD5eWezwODChPWPv8orgCkxFoCc+RomjytxwSCYkLaQB/uyeAUMBus+LMLZEwcJSeGXTzIdXm8dHMrHGGmwRrAF10H8utbYWdPMxGad8Sfnz6JjF1dZk2T2ww1xZM8brlK5WTWCMKNLllQ7WU3JtRw09JHQOJaBJvLI9jiPiJQc/0s6B/rifO1zdYTavP95YPSJ102RB1v6rTSQFvtNT1OWbllK6+dIepnUg3mJfvQfc4LIJq6OK2cE4zmUMym/6Hpwwh/2QZ0xOaDEQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  8.62.32.50) smtp.rcpttodomain=bp.renesas.com smtp.mailfrom=bp.renesas.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=bp.renesas.com;
@@ -25,18 +25,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zb0I9BRWWi+ZSq2RbZoY5OhrRmh+bIR47KYyIdVEFbI=;
- b=e+bhiYptkAhgrLV4CQvuWWkJMnPwJ4wYVnRVPR33EDCIZve2pTu9C47nhTYqwRPvUIBn3F6UHzD9q7WHEYdFEyupSGApPS77P/plSAOmgDs12WUD/+RQPM606h4kJ1x1TvL/fFwaIVYQWXj4VTJd0vG5W2m0d+HaXpVZOfjXX4A=
-Received: from OS0P286CA0060.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:9f::11)
- by TY3PR01MB9889.jpnprd01.prod.outlook.com (2603:1096:400:22b::13) with
+ bh=124rUj4QtcNJJtEaWb4x7NGs7O9bYPupoEPhDB1Lhbw=;
+ b=Q4yepHeWsp3wgWWK1Hj1ZyDzzul+yxlCJMl0AoDcpOIq3czYl60CoxO2dnM7R8LgoE8biHi2Nu9bSP0y7Z4D+bH/UpWxJczp0d09x6F546T8MkiogNkuzJtlgAxtTFTuZHnsxa9Lp1YOek/lSdgVjTddktmiml7ba0dvsWBEcVs=
+Received: from TY4P301CA0084.JPNP301.PROD.OUTLOOK.COM (2603:1096:405:36f::12)
+ by TYCPR01MB7339.jpnprd01.prod.outlook.com (2603:1096:400:f2::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.13; Wed, 27 May
- 2026 16:14:55 +0000
-Received: from OS3PEPF0000003C.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:604:9f:cafe::5d) by OS0P286CA0060.outlook.office365.com
- (2603:1096:604:9f::11) with Microsoft SMTP Server (version=TLS1_3,
+ 2026 16:14:58 +0000
+Received: from TYO1EPF00005020.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:405:36f:cafe::a1) by TY4P301CA0084.outlook.office365.com
+ (2603:1096:405:36f::12) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.21.71.13 via Frontend Transport; Wed, 27
- May 2026 16:14:55 +0000
+ May 2026 16:14:58 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
  smtp.mailfrom=bp.renesas.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=bp.renesas.com;
@@ -44,20 +44,20 @@ Received-SPF: Pass (protection.outlook.com: domain of bp.renesas.com
  designates 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
  client-ip=8.62.32.50; helo=ejcrelay005p.adwin.renesas.com; pr=E
 Received: from ejcrelay005p.adwin.renesas.com (8.62.32.50) by
- OS3PEPF0000003C.mail.protection.outlook.com (10.167.240.5) with Microsoft
+ TYO1EPF00005020.mail.protection.outlook.com (10.167.240.5) with Microsoft
  SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.71.7 via
- Frontend Transport; Wed, 27 May 2026 16:14:55 +0000
+ Frontend Transport; Wed, 27 May 2026 16:14:58 +0000
 Received: from Ubuntu-22.. (ree-0065929.diasemi.com [10.24.0.181])
-	by ejcrelay005p.adwin.renesas.com (Postfix) with ESMTP id 372C73010416;
-	Thu, 28 May 2026 01:14:53 +0900 (JST)
+	by ejcrelay005p.adwin.renesas.com (Postfix) with ESMTP id 7F7913000255;
+	Thu, 28 May 2026 01:14:57 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
 	Pavel Machek <pavel@nabladev.com>
 CC: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 4/9] i2c: riic: Use BIT macro consistently
-Date: Wed, 27 May 2026 17:14:38 +0100
-Message-ID: <20260527161446.48789-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 6/9] i2c: riic: Mark riic_irqs array as const
+Date: Wed, 27 May 2026 17:14:40 +0100
+Message-ID: <20260527161446.48789-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260527161446.48789-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20260527161446.48789-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -65,117 +65,67 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OS3PEPF0000003C:EE_|TY3PR01MB9889:EE_
+X-MS-TrafficTypeDiagnostic: TYO1EPF00005020:EE_|TYCPR01MB7339:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 097b6188-c5da-43c8-cfd5-08debc0b1763
+X-MS-Office365-Filtering-Correlation-Id: 8e465092-49df-4747-6440-08debc0b194e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700016|56012099006|11063799006|18002099003|22082099003;
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700016|376014|18002099003|22082099003|11063799006|56012099006;
 X-Microsoft-Antispam-Message-Info: 
-	8h+whLyc/l8TQgsG61DuVVmU1zEqnlE8FyUO+kGd5sJRgj1NvF3rVgyLbDfQYyooi0W8sbkMiRx+M3/8Kk4wAQH84jhAIcvfZ2wszT8QpFgdQWtrJ7hCxQfEC5tUGYtbHHPGZLC99Ej5Xu2t2f3jBFvsFh8OKWMabDM/PA0/uZApT7u05+szxRCjI8TZFXNU3CiQkr2h6IPGRSRHhUrW1uhpsYlWRzHyD3P1PvlJ0uTTLZbEDR6W7GaAicJdckfLbjgbYoQX2DsnBLadDkNHme842NazlMmc163Y+5XicdeNU0sXUBZVxBuPzK7HmT2g/HGPzyqkj1a0KKGEj0Cx5AyXEPP3WJ+VOhdz5rI83hejsrPQ71X8FkeG8O3Nm/Qg71BnQpl0m2rftEQIWIJ2qRk9clrPY0vfX/U1C32pcn08qvuHO9IFaNvsjSJdWeDHBHkpV0CwrOEsAPEZMY61gHgf2A4Sd+Vs069UP2w5kiSSMmOKR37HOU5MN8uUR8nkoNhOLQR/MW6l3ELwIlnZcY9fiGcwQfXubmETuucQ1SZ/NUTCQQkrbfGu3UNLFFjDMbPJ59iZ2EsuyLpFSDT9ZnuIyNelvWds4JxpWi35KVNHfhY0v48RV4FDxxQS2zRXErM9koTnMVjd2OJsoK5nQU2myGkQJSwvvtgLCWM+DKHjDzHv251bU64qRMt7e2JUGdQUncyzbicbrKsLi3Ip5Aqax58ZWyoex/+NMgzx6yo=
+	h4U/5GlFTu1FyLyhCl0R2M+H0qDiASV716nvus8sPzOLMkOBkxbe3jkLYwry2X8fxjTeACclxQn2exflRMHdRMBY0ch7tneceOh7aZrj6JIMHLxJoBjpBM2GaFSYFRcKTYfBXMLIcN5HP6yicD3K5NjFsmX9RjpUz2edIOK7YYjrQWAYXk2kBOVA0yter8UGy8XEITktYx+NP/fGuDRV2Enn3KSrSUjVZTZ+4Ey8660NO9pC9Dnla/SqlRTSjiHc7QYPJgn1U+/vCbkcPcHQdfzuOPZP5eepEKwxqzxUuyhdV5heel71CLXMmnXHA7GMhCnaCSkkO0pm14ycDkTltr5Y3ktesA76oZQiIu9wZM4yuKWvuNcFJTa/oVEXqek7iod+9C3tpDUFiUuJGUKWDcigNfas3ywVT6ihL1AEBR7pt6cLABSRpbGnlV6jua/XdSV66LA/mpUMbFvIiOuYg5vEInZz2mItLyaFv4L0WVguMTtxNFA1UdmDaxDFWit0bI3uBcdzORxPqUbiemVQoTpSzVPKOSO3CxVpNsclp08MByZDuxXEEN+TqdhqhSbqd0DcVzeyH/6TymfElHG6Cjui0M7aFNfAsUc7TVVKvxnXcODVEyCKz0jUnLB83L3hJk8kIdkQKKQNcgL0ClNoOSrCWcgkWtUtw/73Bp6et+0IyCOxiPV+SIg7e+w8I8l2Zj8LmECZbqqfsuANc7zWhGOx4KvI2t06aibMvBv1JgI=
 X-Forefront-Antispam-Report: 
-	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay005p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700016)(56012099006)(11063799006)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay005p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700016)(376014)(18002099003)(22082099003)(11063799006)(56012099006);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	TQgxdV6D/+8mgslt/+7PoDsOXCh2VPFqQhIsQmzLVJJygMfQW2VRG5P0CGgsJn8oU8UV996R+42w7J3haqDD7NmK474iwIdVU5G6jMI8X0lVhvXhw+UcIZZowV/Ad03wrZWTtAmnoYMwqKsxmK91QtcZEOx8WTdb9h+0rtMzIt61r5HuN0YaotcZy3X5oxE9HydI6/HeZ7Iddsc5RGFKnN3uKsHyvtAaIc9+WW6Z3tv8pxWb5/H275m+ZQGrkU6KEx78C1TCV+fkMiYhlz7L8TmICAi1s2G7mZez8b/PP73VnG2XTHJSdebKcIbrcJCt/FQQUTDhKXGZmfralmfxlLZdJA0ycSPW87eTquwrowWQx8+SNiT8wdUlWerTxyPKWjYbdjE157Ky70Iqrg9sDDHWNea4ew3xzrWZTA6IUKc3GlvVAElBhb98JuHhZkYx
+	R7AdpbN/AQzi0mbdmehcmEL2rtYg/m+OXe4+5bnxQU+yw1gbYohJVOfrSmQIdPLB022dlCtCyDcEqx2JidDBqEmcSFkcxfQ9UM4f9Ru8f0/10LYCBHGaDKsU1W4l8SrTpo7zIeKTjefF1O4NRTglUXjAG2sFc5Sr7F9RwnbAH+cEkVU3ksu4gVaWQip52HGFy3p7Q4fxsTUAFK5CRVqN56LaeW9+FJU+tdjIuiZhB9znDwujQNDOYWWEn1rXTT4QPnzjDPDk5k6yjFWLDSJPadhD1N2eWyPhrofckUC2QPYejRC3Oe9+komhcjYhJqQ+KZtNnIK16v665niVVyMZ4QNsZMOUisvLFs1uac+ih88LSByPY0q0mfGO3JECuk6zNtPlLB45XyTMHOnksFwyT+xoGvw7VTJzuC3I+zn9ueV8+KXTHJ6Ia/JwGLVPH+QL
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2026 16:14:55.5630
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2026 16:14:58.7919
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 097b6188-c5da-43c8-cfd5-08debc0b1763
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e465092-49df-4747-6440-08debc0b194e
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay005p.adwin.renesas.com]
-X-MS-Exchange-CrossTenant-AuthSource: OS3PEPF0000003C.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthSource: TYO1EPF00005020.JPNP286.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB9889
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB7339
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 27 May 2026 16:15:09 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23019
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23021
 
-commit 0094d6b70d6b4eb5084e3b7dd99ebfc94d3ca58d upstream.
+commit 9ae0e7f77cfb638c3cd4198ad1ce7a3bce9a5c2a upstream.
 
-Easier to read and ensures proper types.
+The riic_irqs array describes the supported IRQs by the RIIC driver and
+does not change at runtime.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Reviewed-by: Andy Shevchenko <andy@kernel.org>
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/i2c/busses/i2c-riic.c | 37 ++++++++++++++++++-----------------
- 1 file changed, 19 insertions(+), 18 deletions(-)
+ drivers/i2c/busses/i2c-riic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c
-index 521589cb5264f..e3730b8730170 100644
+index c884faa0d4ad2..98d5c2f512a3c 100644
 --- a/drivers/i2c/busses/i2c-riic.c
 +++ b/drivers/i2c/busses/i2c-riic.c
-@@ -34,6 +34,7 @@
-  * Also check the comments in the interrupt routines for some gory details=
-.
-  */
+@@ -416,7 +416,7 @@ static int riic_init_hw(struct riic_dev *riic)
+ 	return 0;
+ }
 =20
-+#include <linux/bits.h>
- #include <linux/clk.h>
- #include <linux/completion.h>
- #include <linux/err.h>
-@@ -47,32 +48,32 @@
- #include <linux/pm_runtime.h>
- #include <linux/reset.h>
-=20
--#define ICCR1_ICE	0x80
--#define ICCR1_IICRST	0x40
--#define ICCR1_SOWP	0x10
-+#define ICCR1_ICE	BIT(7)
-+#define ICCR1_IICRST	BIT(6)
-+#define ICCR1_SOWP	BIT(4)
-=20
--#define ICCR2_BBSY	0x80
--#define ICCR2_SP	0x08
--#define ICCR2_RS	0x04
--#define ICCR2_ST	0x02
-+#define ICCR2_BBSY	BIT(7)
-+#define ICCR2_SP	BIT(3)
-+#define ICCR2_RS	BIT(2)
-+#define ICCR2_ST	BIT(1)
-=20
- #define ICMR1_CKS_MASK	0x70
--#define ICMR1_BCWP	0x08
-+#define ICMR1_BCWP	BIT(3)
- #define ICMR1_CKS(_x)	((((_x) << 4) & ICMR1_CKS_MASK) | ICMR1_BCWP)
-=20
--#define ICMR3_RDRFS	0x20
--#define ICMR3_ACKWP	0x10
--#define ICMR3_ACKBT	0x08
-+#define ICMR3_RDRFS	BIT(5)
-+#define ICMR3_ACKWP	BIT(4)
-+#define ICMR3_ACKBT	BIT(3)
-=20
--#define ICFER_FMPE	0x80
-+#define ICFER_FMPE	BIT(7)
-=20
--#define ICIER_TIE	0x80
--#define ICIER_TEIE	0x40
--#define ICIER_RIE	0x20
--#define ICIER_NAKIE	0x10
--#define ICIER_SPIE	0x08
-+#define ICIER_TIE	BIT(7)
-+#define ICIER_TEIE	BIT(6)
-+#define ICIER_RIE	BIT(5)
-+#define ICIER_NAKIE	BIT(4)
-+#define ICIER_SPIE	BIT(3)
-=20
--#define ICSR2_NACKF	0x10
-+#define ICSR2_NACKF	BIT(4)
-=20
- #define ICBR_RESERVED	0xe0 /* Should be 1 on writes */
-=20
+-static struct riic_irq_desc riic_irqs[] =3D {
++static const struct riic_irq_desc riic_irqs[] =3D {
+ 	{ .res_num =3D 0, .isr =3D riic_tend_isr, .name =3D "riic-tend" },
+ 	{ .res_num =3D 1, .isr =3D riic_rdrf_isr, .name =3D "riic-rdrf" },
+ 	{ .res_num =3D 2, .isr =3D riic_tdre_isr, .name =3D "riic-tdre" },
 --=20
 2.43.0
 
