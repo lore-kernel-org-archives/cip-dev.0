@@ -2,22 +2,22 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DB6FCD6E43
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D542CD5BD0
 	for <webhook@archiver.kernel.org>; Wed, 27 May 2026 16:15:09 +0000 (UTC)
-Received: from OS0P286CU011.outbound.protection.outlook.com (OS0P286CU011.outbound.protection.outlook.com [52.101.228.6])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.24215.1779898502342748637
+Received: from OS0P286CU011.outbound.protection.outlook.com (OS0P286CU011.outbound.protection.outlook.com [52.101.228.51])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.24344.1779898507747340715
  for <cip-dev@lists.cip-project.org>;
- Wed, 27 May 2026 09:15:02 -0700
+ Wed, 27 May 2026 09:15:08 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=PJjlNQoK;
- spf=pass (domain: bp.renesas.com, ip: 52.101.228.6, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=LuyCj4GQ;
+ spf=pass (domain: bp.renesas.com, ip: 52.101.228.51, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BHE2kc/yHDrES6+T07cuCTvJwZDqocGWnXRonomlwiKDo5Ch+QFe9XSztyZbnjWpe14dnp6LGy2VzCBKeHsRNwMn2L9ezFYHb2xen3ZyNqbKGrj3aZkA/XhslabhbB0y7MdQaDFn67iaRcrTux4ssn8RKnJ+2QmZKvAd2mrd3rPoN7IITMTuwELT8aDw8yRguD7cghULhGh63HkMgar2ETI2D83X+l8Z26wXfiC8iqw0HLNVkhhV96KHV1KJI46RfHj3HnHgrFJHdL/E0TOYjZMNZLquWNqmIaLzesgoXTXvty2CxuSpdvY/kIwPS4bZdsBXCcU36/qdyQHueQEKjg==
+ b=XIyW+LMG9RnbosxLAJ528ozOwo01TEAKmP5iTQw/qBC0Dm7qhIaHTbVf5DbJpliOkVJTu7t/AuvR9FR5/JhAF7vGATPHnc0FbeXtAQ4ZAtIbyoZb1bo8a50XRaG+r0z2vbULSidoghSw5dCzH8A1FqtHBddC6ByUvXNRhJMOeBE2D8WhHboNJPGPuPJh6gy5tRQ6ceTDTjVecHZlLdVctByL3DBQ5oKhjk+d4SydG0krxPuVPe72jlO9Y18OqGnFJvX++jfJOPbPcRbt7a7DlxFKodbcRv9ZmLiSNsrtkeXIcY4ZFPPP4R1m5SIhibagc9vvvxn0Cain98ail/dvTA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wqctY7VNG0Ou+MXVZFMmUGTQMLYzGT8+AAFtfdbGdJQ=;
- b=JzjZzIK8pysZXlZ7DWFXFtmK+4bQB+xv3hqqqOzsfnLjHMYDjSVIlclNaaxM+j8ZgFFsA1M//OTeqkMUFNFA5ZerC3W+Czm1RW50Ocefvt1ISbSQqXgrV64NOYhiR0NwPTvV6vHB8t4VSuNB9wTAY74lOuXGBh/SxMMb+BnpwfSgiJn1s17w5sVfO6TTYjikQXlm5lmzHzEbcMY/z2ArpQi4NVY7Tji7yXAT4P8LmpuzbKDNDC+PmlDQmXfKg41687FGYyGzcppqfwKdgafjypU3FIxgJ1xI8Hl+znZWEFyUWESe5W81rzUttgY8MweJ7Ghxiwp+rMHdkbtJF+TzkA==
+ bh=WEqltW2pie/8Ja3maODqMApLzNsdcvzD2OZbW060rm4=;
+ b=AFW4TwbcxpmezRW1xO1SeAAI8hvZH4VM3X1r4iZjIk/2qdPy3WVNyDEU01KJ45xlEeY4IwmjcaNYg4Oq1HWNG5V50Af5Me2CpreGMEECT03w+GmZr0qptqnhxDJZtOf2hdAByBRehpZHhGrncn/R2w0se5l/McAjiBwAvfXzjiqi11xDXh5i6LnHUdM8e7gSIFO2XCKIT7LWKx2RN9Xpzb0C8mI4SwfWGUbUf3VEvZPJJgNCl2yItKjdr5XOW+OC08qlJFfVI3+jvBHTbXQ1L62JlJBL5KglNzprEaDU9eI6AJUTghGDOSJZC9S//0oMWHtc+ktMzNyXYmd4SFKePA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  8.62.32.50) smtp.rcpttodomain=bp.renesas.com smtp.mailfrom=bp.renesas.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=bp.renesas.com;
@@ -25,18 +25,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wqctY7VNG0Ou+MXVZFMmUGTQMLYzGT8+AAFtfdbGdJQ=;
- b=PJjlNQoKFJhQWX+ANg6YSxGjiVkxHI1S18uwEj+Xqat51jgz79Ld9ekDA2s2CWjOia6xkYL0kmAHA2a41I8DrpEX5MgZ/ValX3yEjoUuexE6f80rMSTJ/1AeD3zT4HMSDG0HIPQsTCUkOpjSpM6IeaoqpDrWd3qvxitqlLgHhu8=
-Received: from OS3P301CA0032.JPNP301.PROD.OUTLOOK.COM (2603:1096:604:21e::10)
- by TYRPR01MB15648.jpnprd01.prod.outlook.com (2603:1096:405:286::11) with
+ bh=WEqltW2pie/8Ja3maODqMApLzNsdcvzD2OZbW060rm4=;
+ b=LuyCj4GQLaEDzeTuxuyPTRHxLu42L/fnK7m1PXnlSbI5cIVxhfwh8d7/Y7VHmN8nN08Y2a3Jo7d8yElw5+1MCGtpm773Gh5W7tD1CicAeTnmf3kQrtssO3HqOjE2/jV2JS1Vd0D9EmJgf/JgMPQCeaMbHUwtXM1mPr/kiKl8ozU=
+Received: from TY4P301CA0042.JPNP301.PROD.OUTLOOK.COM (2603:1096:405:2be::18)
+ by TY7PR01MB14819.jpnprd01.prod.outlook.com (2603:1096:405:257::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.48.20; Wed, 27 May
- 2026 16:14:57 +0000
-Received: from OS1PEPF0000D213.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:604:21e:cafe::72) by OS3P301CA0032.outlook.office365.com
- (2603:1096:604:21e::10) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.12; Wed, 27 May
+ 2026 16:15:03 +0000
+Received: from TYO1EPF00005025.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:405:2be:cafe::14) by TY4P301CA0042.outlook.office365.com
+ (2603:1096:405:2be::18) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.21.71.13 via Frontend Transport; Wed, 27
- May 2026 16:14:57 +0000
+ May 2026 16:15:03 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
  smtp.mailfrom=bp.renesas.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=bp.renesas.com;
@@ -44,20 +44,20 @@ Received-SPF: Pass (protection.outlook.com: domain of bp.renesas.com
  designates 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
  client-ip=8.62.32.50; helo=ejcrelay005p.adwin.renesas.com; pr=E
 Received: from ejcrelay005p.adwin.renesas.com (8.62.32.50) by
- OS1PEPF0000D213.mail.protection.outlook.com (10.167.240.20) with Microsoft
+ TYO1EPF00005025.mail.protection.outlook.com (10.167.240.22) with Microsoft
  SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.71.7 via
- Frontend Transport; Wed, 27 May 2026 16:14:57 +0000
+ Frontend Transport; Wed, 27 May 2026 16:15:03 +0000
 Received: from Ubuntu-22.. (ree-0065929.diasemi.com [10.24.0.181])
-	by ejcrelay005p.adwin.renesas.com (Postfix) with ESMTP id D62633010432;
-	Thu, 28 May 2026 01:14:55 +0900 (JST)
+	by ejcrelay005p.adwin.renesas.com (Postfix) with ESMTP id 7325A3010426;
+	Thu, 28 May 2026 01:15:02 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
 	Pavel Machek <pavel@nabladev.com>
 CC: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 5/9] i2c: riic: Use GENMASK() macro for bitmask definitions
-Date: Wed, 27 May 2026 17:14:39 +0100
-Message-ID: <20260527161446.48789-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 9/9] i2c: riic: Implement bus recovery
+Date: Wed, 27 May 2026 17:14:43 +0100
+Message-ID: <20260527161446.48789-10-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260527161446.48789-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20260527161446.48789-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -65,75 +65,149 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OS1PEPF0000D213:EE_|TYRPR01MB15648:EE_
+X-MS-TrafficTypeDiagnostic: TYO1EPF00005025:EE_|TY7PR01MB14819:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 6ab295b9-42da-41c0-f126-08debc0b1867
+X-MS-Office365-Filtering-Correlation-Id: 2eea9f09-bc75-4681-d2e6-08debc0b1c3c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|1800799024|82310400026|36860700016|376014|22082099003|56012099006|18002099003|11063799006;
+	BCL:0;ARA:13230040|82310400026|376014|36860700016|1800799024|11063799006|22082099003|18002099003|13003099007|56012099006;
 X-Microsoft-Antispam-Message-Info: 
-	ajmVwE5H2PdAUF6B3zSKSgiliB8NUTdvZjJi1b1pIjQTWJcZyUbVOI6yJzFTkmpC0RnRWts/6veCz6XqtICV+HeyNSQeDZd8byisCfr3blPPr7bZLAJiOa1/I/FH/SuV5t3YQdoJ25zLeko4Y+m14e04+QmVBjw5jV1AfyC9/OkJ+O0jsoHUiqzUSjxB5F6YslAU1cFyTnwreA+5DUyW166rEpPyycpNH3jlkqVmPz+1chsg/Tk9gd+9i3ulYKrP31McVLxBT84uGcQFbdbNjjiowZqPcWFfqX/xDHaxioLxFUyxiE9z9YlHR8vt9xQPfuDyA3rHqUlmadRWBGTeds7cWROMOpzFYa+0VyLSQzbKdy73/Ke8/RrmsxUUn6RJgjBpds7SXu5nyQ/JvIe22eNIxlrLk4ar5cGT3TZ0OcWjOCmuBbscWdWvmnULR+KKaxeji7r4DziE/tk3L8x2d0vYzKVoTZe/eOKM34eb/d8szdPL2dH8IGJONCsTf5vWFmmMyMSkqwieHfaX1c9+lAhxGiIAeFEDTfSp9Sb7E0VXDxUZZ2KL3JukQktfHi0SgIfw7HiEhW1Pv8LEv2/Zc+npHKJOWTerfsAGY5zCwR+giaOThhXSX/uxWPqYDXSn8yg/iAT7BqwMh2AhMipRwfUYppquqUWp3AWcXbo4SXBaBe8BGaRtRRD7Fy+XvMUZjRwN8BuVIuzyh8u8xanN8wpfbL+qvtBCRQXd03S4Frc=
+	mpNnWuCaN0kZY8H6WQBCE3BIR4p6ynsxRCYp7vabn/4HTEuPq8MzcKOsc/CTfzebNvNZK7nSTc7RswzBT62bouWFWmRufCrjx+AqhhJ6mCrVqkUqls41789rDMlNe/XHYLOSh1GyTtzx1GgsdwD/h3uToZyyknZlbk6VLishnVK/bMudQ89KxCOOzc9XEw/l7tU71dlaNtzIFAyxFUjRuG5xoxlh64jUckdtggaFOWKfbbSwY5uBoOplAav6CQjm76rvNBWz/4kPd2qvSORLJt4/aNAOMA5zI16ywWvlFtzMMao88NPNGaYUIbR8+PvkPpzxF+0BxmyjXehEr1lFNEvRZewi2RiXgFutRhEiiroGL1UbS+fISmByncHeu7efVcca15XOppGjsLHUePnQJ+hoDVD9+AaNL1B8JKYlkWj4JJiX7j7XmMCwms8tk01yVeX0PbDXh01q4wDrAg3WrtqoZIA7lMhHQpQHHyfWDTdi/SNZJ5Ij7XVYWr2lAut2SBgO6GMgEnLFil1DfcDRp2kavNZY08I9hQ/V1ZPaow4BgQ1LokRcD5Pbd6QRpMim8q8T8zrF2+SclMDUPhOFm/IcSrQfzXSOtQTfEKSZ9PRTIR4sSQTXCa8KvsLqrLelOvk4/iCJYFx+vnRtTQIkg7TRVjHIn/ODqZXSZEbSq/Su3nR1eKiRDDA+xlMX34JlTiGzChHht3f4WRO4EDVD81oTAWZRnIb6zhPBdBxHlsY=
 X-Forefront-Antispam-Report: 
-	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay005p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700016)(376014)(22082099003)(56012099006)(18002099003)(11063799006);DIR:OUT;SFP:1101;
+	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay005p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700016)(1800799024)(11063799006)(22082099003)(18002099003)(13003099007)(56012099006);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	Wt+6f5+NP7Z1aORwxyGPB76/UgM16NaGHMl8Yi6Udn58XlhdzEwKdsvtmipAxc3Tm+ImauuQw3fcc/VEN5iQoZWhf3wANamym3Fuv9GoDpSbo5ursRH1HS4Nc/pevuXKCdAOmLwuW9+fAxK3O7vEjte1mxme7NaZ18KGdgYpZWTK/NlpyVtlB/AeE8AZ4MGn6NNce8VzjwPpbNYLjYvf8rQ3pTbkUmoodQAH7z8ZRH1IQQ1GxkfgjMVp5ZLvOWufLCE874Ors7fTG3KuQpCoYzkpmjVO6oWSKUnxXjnSwHQPKOO9r7cqRFpTvEIR6i0XezDRpLIKTPMkkzTu4YSCXVdBccp4+MVKinsn2bU2t9xdw0GUglgHbHZxX2i+pp1GSnl2LpNckBEz6Cmq+kqdy35a6DBMngOg0ikjwlxISGzFH5GKEh5jSK7xhTMeuaKa
+	7kbGEpquHB/KeETkVwNfZztb1/3qMg98MVnzMlRt4AuLcyjpjckJcZz8DfGCmOOWHey4pJbZr8aWdN0EV4Z2P5lV05316UO79fktLLPG10PQsXBZI5Cmdv0iIsz0CHba/2C0+nwKr419lkZS7t3xoK91V9YVTRYiLruqsz/vFpyXKU6CI7C/EwelK9QPqGT5H+rLNHInJaQgTie9OFQwtyTWQnF9U3Xh0Yh5zJx+CdgS5yWC9n5lQQifVffwD/0+pb+FRRCFh5Vxnlt8J3cL6tAkr1OfFs9juBauJTTCzoe4pttrYbVMHO3cLRO8OT7jsQzTswXgXTpgnCuyFUs21AZh8sgYJ8LcfPpVg0E0SREYgS7KvoknY297e2/kuNgBmb0uSyYKVmcMRpckYbm0YEVOeS9MjZ3Aa7B5Xb2X42I9nMoDIyD5BCDAXAu3IiTL
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2026 16:14:57.2661
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2026 16:15:03.7089
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6ab295b9-42da-41c0-f126-08debc0b1867
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2eea9f09-bc75-4681-d2e6-08debc0b1c3c
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay005p.adwin.renesas.com]
-X-MS-Exchange-CrossTenant-AuthSource: OS1PEPF0000D213.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthSource: TYO1EPF00005025.JPNP286.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYRPR01MB15648
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY7PR01MB14819
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 27 May 2026 16:15:09 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23020
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23024
 
-commit 72252162258c8a0b19d5bd0bb49fe20495898d6d upstream.
+commit ba9e1b5254783528e10b45b1f0fb40e21f4ff88a upstream.
 
-Replace raw bitmask values with the `GENMASK()` macro in the `i2c-riic`
-driver to improve readability and maintain consistency.
+Implement I2C bus recovery support for the RIIC controller by making use
+of software-controlled SCL and SDA line manipulation. The controller allows
+forcing SCL and SDA levels through control bits, which enables generation
+of manual clock pulses and a stop condition to free a stuck bus.
+
+This implementation wires up the bus recovery mechanism using
+i2c_generic_scl_recovery and provides get/set operations for SCL and SDA.
+
+This allows the RIIC driver to recover from bus hang scenarios where SDA
+is held low by a slave.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Reviewed-by: Andy Shevchenko <andy@kernel.org>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Link: https://lore.kernel.org/r/20250501204003.141134-1-prabhakar.mahadev-l=
+ad.rj@bp.renesas.com
+Signed-off-by: Andi Shyti <andi.shyti@kernel.org>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/i2c/busses/i2c-riic.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/i2c/busses/i2c-riic.c | 53 +++++++++++++++++++++++++++++++++--
+ 1 file changed, 51 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c
-index e3730b8730170..c884faa0d4ad2 100644
+index 0bde3c25878f9..a71e5fc678f15 100644
 --- a/drivers/i2c/busses/i2c-riic.c
 +++ b/drivers/i2c/busses/i2c-riic.c
-@@ -57,7 +57,7 @@
- #define ICCR2_RS	BIT(2)
- #define ICCR2_ST	BIT(1)
+@@ -53,6 +53,8 @@
+ #define ICCR1_ICE	BIT(7)
+ #define ICCR1_IICRST	BIT(6)
+ #define ICCR1_SOWP	BIT(4)
++#define ICCR1_SCLO	BIT(3)
++#define ICCR1_SDAO	BIT(2)
+ #define ICCR1_SCLI	BIT(1)
+ #define ICCR1_SDAI	BIT(0)
 =20
--#define ICMR1_CKS_MASK	0x70
-+#define ICMR1_CKS_MASK	GENMASK(6, 4)
- #define ICMR1_BCWP	BIT(3)
- #define ICMR1_CKS(_x)	((((_x) << 4) & ICMR1_CKS_MASK) | ICMR1_BCWP)
+@@ -152,11 +154,11 @@ static int riic_bus_barrier(struct riic_dev *riic)
+ 	ret =3D readb_poll_timeout(riic->base + riic->info->regs[RIIC_ICCR2], val=
+,
+ 				 !(val & ICCR2_BBSY), 10, riic->adapter.timeout);
+ 	if (ret)
+-		return ret;
++		return i2c_recover_bus(&riic->adapter);
 =20
-@@ -75,7 +75,7 @@
+ 	if ((riic_readb(riic, RIIC_ICCR1) & (ICCR1_SDAI | ICCR1_SCLI)) !=3D
+ 	     (ICCR1_SDAI | ICCR1_SCLI))
+-		return -EBUSY;
++		return i2c_recover_bus(&riic->adapter);
 =20
- #define ICSR2_NACKF	BIT(4)
+ 	return 0;
+ }
+@@ -440,6 +442,52 @@ static int riic_init_hw(struct riic_dev *riic)
+ 	return 0;
+ }
 =20
--#define ICBR_RESERVED	0xe0 /* Should be 1 on writes */
-+#define ICBR_RESERVED	GENMASK(7, 5) /* Should be 1 on writes */
++static int riic_get_scl(struct i2c_adapter *adap)
++{
++	struct riic_dev *riic =3D i2c_get_adapdata(adap);
++
++	return !!(riic_readb(riic, RIIC_ICCR1) & ICCR1_SCLI);
++}
++
++static int riic_get_sda(struct i2c_adapter *adap)
++{
++	struct riic_dev *riic =3D i2c_get_adapdata(adap);
++
++	return !!(riic_readb(riic, RIIC_ICCR1) & ICCR1_SDAI);
++}
++
++static void riic_set_scl(struct i2c_adapter *adap, int val)
++{
++	struct riic_dev *riic =3D i2c_get_adapdata(adap);
++
++	if (val)
++		riic_clear_set_bit(riic, ICCR1_SOWP, ICCR1_SCLO, RIIC_ICCR1);
++	else
++		riic_clear_set_bit(riic, ICCR1_SOWP | ICCR1_SCLO, 0, RIIC_ICCR1);
++
++	riic_clear_set_bit(riic, 0, ICCR1_SOWP, RIIC_ICCR1);
++}
++
++static void riic_set_sda(struct i2c_adapter *adap, int val)
++{
++	struct riic_dev *riic =3D i2c_get_adapdata(adap);
++
++	if (val)
++		riic_clear_set_bit(riic, ICCR1_SOWP, ICCR1_SDAO, RIIC_ICCR1);
++	else
++		riic_clear_set_bit(riic, ICCR1_SOWP | ICCR1_SDAO, 0, RIIC_ICCR1);
++
++	riic_clear_set_bit(riic, 0, ICCR1_SOWP, RIIC_ICCR1);
++}
++
++static struct i2c_bus_recovery_info riic_bri =3D {
++	.recover_bus =3D i2c_generic_scl_recovery,
++	.get_scl =3D riic_get_scl,
++	.set_scl =3D riic_set_scl,
++	.get_sda =3D riic_get_sda,
++	.set_sda =3D riic_set_sda,
++};
++
+ static const struct riic_irq_desc riic_irqs[] =3D {
+ 	{ .res_num =3D 0, .isr =3D riic_tend_isr, .name =3D "riic-tend" },
+ 	{ .res_num =3D 1, .isr =3D riic_rdrf_isr, .name =3D "riic-rdrf" },
+@@ -509,6 +557,7 @@ static int riic_i2c_probe(struct platform_device *pdev)
+ 	adap->algo =3D &riic_algo;
+ 	adap->dev.parent =3D dev;
+ 	adap->dev.of_node =3D dev->of_node;
++	adap->bus_recovery_info =3D &riic_bri;
 =20
- #define RIIC_INIT_MSG	-1
+ 	init_completion(&riic->msg_done);
 =20
 --=20
 2.43.0
