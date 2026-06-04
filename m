@@ -1,111 +1,178 @@
-Return-Path: <uli@fpond.eu>
+Return-Path: <pavel@nabladev.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2EE2CD6E57
-	for <webhook@archiver.kernel.org>; Thu,  4 Jun 2026 09:18:21 +0000 (UTC)
-Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [85.215.255.22])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.7254.1780564699172707146
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F262CD6E57
+	for <webhook@archiver.kernel.org>; Thu,  4 Jun 2026 10:44:42 +0000 (UTC)
+Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.8453.1780569874191593582
  for <cip-dev@lists.cip-project.org>;
- Thu, 04 Jun 2026 02:18:19 -0700
+ Thu, 04 Jun 2026 03:44:34 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@fpond.eu header.s=strato-dkim-0002 header.b=UBTlCBqt;
- dkim=pass header.i=@fpond.eu header.s=strato-dkim-0003 header.b=hEJNOe1a;
- spf=none, err=permanent DNS error (domain: fpond.eu, ip: 85.215.255.22, mailfrom: uli@fpond.eu)
-ARC-Seal: i=1; a=rsa-sha256; t=1780564697; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=gmUo8mmSLpLVpqMHft9dhJiZ2dNx9PEuzSpCMP3nM+GrJM/O52VDTupyv6ZSQh0hj5
-    sdHh9/+B+y80ZiZ5vyNOPG/oMX3ZUBgSBUSJzVZZiMDczibGNxo2MZq3MgFVvltS/Two
-    10Hah5uGYaFeNZFH7bm6an+ElmI2BtgxwPUKEeoSvTHeMuOiWVXGKc4+P1J/sb4AflGb
-    UkRF5N9q2aBqx7IPuumM+oWA1+ZDZHWDO+Fx5OijPeKhPmb8B9IdOuMXFURfZmfJHCcr
-    SAZRvq9JS7LWRfEcxrFYKHOUf2S9EbFscYqb8hFZlxv8g9NV9wYE7ipRp/kjsIBNtggu
-    l8CA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1780564697;
-    s=strato-dkim-0002; d=strato.com;
-    h=Subject:References:In-Reply-To:Message-ID:To:From:Date:Cc:Date:From:
-    Subject:Sender;
-    bh=rVI8k4SmJB/45iCBOCiRYAj4whRjqkiGk1GeZw4yEIw=;
-    b=CeZsflQpN3s0Z5FoLHmSalDOSKUgiVIsfMMj4raOXfqHo23NgyJmbimFAAP1m96wvu
-    y0RAyuYmybq49y4Xebts3LTQhFYNu7Xt7TLWlKUrfUkRAPiDW56gqtQvdff46xcxS2FX
-    PZnRO7oVcnd0NuCgIqdJwhDUK7nQd/r0cMGfPX44XkbuhNieVAwol//hO5g/3aMl9G3V
-    J8nEEZWaXeeWyqhhKxm+zoJkrLRLr9lbsbav9y9qPpTxkvBFv82BSLlEhZJ7hY5lFmJg
-    2rtbHxd3a7Z7T05W9UKVBQ2vEBuDdqUp0SQ6rT1SiprKe9XAw/kzWaW+e0FxRwn2Gs53
-    nKrw==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo00
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1780564697;
-    s=strato-dkim-0002; d=fpond.eu;
-    h=Subject:References:In-Reply-To:Message-ID:To:From:Date:Cc:Date:From:
-    Subject:Sender;
-    bh=rVI8k4SmJB/45iCBOCiRYAj4whRjqkiGk1GeZw4yEIw=;
-    b=UBTlCBqt5kw3o+5AMF55V8W2ODGShPTO+7bgfFqPegYk6NuVjyuC/zsyafEdlbsqFA
-    ytMlCMtN0LCjNvbqclzSrHlMWe1ITQKQmFbhqSS25QKIAIqR5m5ESOi5JljnbSK9uIup
-    kATl9kZ3gud21C0Epk9K0VP6Ng0MVJ3xChhkbNK0g+VYGpDOKIbzGGADSTQ/qhM1xB2u
-    L2ltV6N9g9MYxjkSTI4LFhO5jQAxfnrZ03U6v8l55cPEzQOkSrudpc7yBBMISqZVx1kV
-    jAoxcChBIFDijKR4iyFAQwCqzJ/3htkS8VYldseHy8uqvAPA96k3r6fDGAubp1XkXl2S
-    OaRQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1780564697;
-    s=strato-dkim-0003; d=fpond.eu;
-    h=Subject:References:In-Reply-To:Message-ID:To:From:Date:Cc:Date:From:
-    Subject:Sender;
-    bh=rVI8k4SmJB/45iCBOCiRYAj4whRjqkiGk1GeZw4yEIw=;
-    b=hEJNOe1aVTIvj/Bj8hBdkMvef85ZntJ7SAs3T+oDcw/4pCbNSKW7WTqDp9rbtgLoDb
-    yIg3kLFnKFuwrD5kTRCA==
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzvv30UF1hexKDK+NL2bA=="
-Received: from open-xchange-core-mw-gw-13.open-xchange-core-mw-hazelcast-headless.open-xchange.svc.cluster.local
-    by smtp-ox.front (RZmta 55.0.1 AUTH)
-    with ESMTPSA id z7806e2549IGup3
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256 bits))
-	(Client did not present a certificate);
-    Thu, 4 Jun 2026 11:18:16 +0200 (CEST)
-Date: Thu, 4 Jun 2026 11:18:16 +0200 (CEST)
-From: Ulrich Hecht <uli@fpond.eu>
-To: lnasby@intwineconnect.com, cip-dev@lists.cip-project.org
-Message-ID: <456657683.453228.1780564696890@webmail.strato.de>
-In-Reply-To: <CAJ6VbX+9vr3_KsyK59Pr3Nv3g_Tr8yN=ZQ=F78NH_wYxNmoo1w@mail.gmail.com>
-References: <CAJ6VbX+9vr3_KsyK59Pr3Nv3g_Tr8yN=ZQ=F78NH_wYxNmoo1w@mail.gmail.com>
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=i9dVZTl0;
+ spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A3A2D115529;
+	Thu,  4 Jun 2026 12:44:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
+	s=dkim; t=1780569871;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=EYEkPDc+lrIAZxWzcM7dx3ggjKGLKch1z0fmZHcWGOw=;
+	b=i9dVZTl0GkFTL/vk22WGkcxMNSZxAsxBI0MWcw+KZGEg6cFpAZBAPWScj2zpMcekPDswNQ
+	CeFd5lEorZwkHPBAKs7WSeINCwomeQ/lHUTuolxWoFr4shRK83gT9svqnzv0Ixe6QZytz+
+	TaCNH0hIhbd4whKp9IVqkh8M6kUz1nXF5bhmg9TEzKs10nTN/iABXDrPCt63MF8XTZLIDx
+	vxy408pdJmedxH2eNG4DJFXEfJFAIlR3mQvcFmPMonHeVgAXOhwZ28CTuM4LfxMgfPH/H6
+	wfAnYTV7f44DdJoDrwOS1t0pyDmElkjJ1OPw6eVl3iWkCEQ7vS3jx/FvMjGZxw==
+Date: Thu, 4 Jun 2026 12:44:28 +0200
+From: Pavel Machek <pavel@nabladev.com>
+To: lnasby@intwineconnect.com
+Cc: cip-dev@lists.cip-project.org
 Subject: Re: [cip-dev] v4.19.325-cip133 pipeline failure question
+Message-ID: <aiFXDL7eCz-ClAVc@duo.ucw.cz>
+References: <CAJ6VbX+9vr3_KsyK59Pr3Nv3g_Tr8yN=ZQ=F78NH_wYxNmoo1w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v8.46.139
-X-Originating-Port: 33718
-X-Originating-Client: open-xchange-appsuite
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="UKgzsjROG6CA0TqJ"
+Content-Disposition: inline
+In-Reply-To: <CAJ6VbX+9vr3_KsyK59Pr3Nv3g_Tr8yN=ZQ=F78NH_wYxNmoo1w@mail.gmail.com>
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 04 Jun 2026 09:18:21 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23043
+ <cip-dev@lists.cip-project.org>; Thu, 04 Jun 2026 10:44:42 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23044
 
 
-> On 06/03/2026 5:07 PM CEST Luke Nasby via lists.cip-project.org <lnasby=
-=3Dintwineconnect.com@lists.cip-project.org> wrote:
-> I noticed that one of the tests in the=C2=A0pipeline for v4.19.325-cip133=
- shows a failure that seems non-trivial:=C2=A0https://gitlab.com/cip-projec=
-t/cip-kernel/linux-cip/-/pipelines/2558173750
+--UKgzsjROG6CA0TqJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+> I noticed that one of the tests in the pipeline for v4.19.325-cip133 shows
+> a failure that seems non-trivial:
+> https://gitlab.com/cip-project/cip-kernel/linux-cip/-/pipelines/2558173750
 >=20
-> In particular, it seems like a handful of specific CVE-related tests are =
-failing. Is this kernel considered stable for release though? It is quite p=
-ossible that I do not understand something related to these failures, but I=
- am just curious to know if I should wait for this to be fixed, or if this =
-version is currently safe to include in another project.
+> In particular, it seems like a handful of specific CVE-related tests are
+> failing. Is this kernel considered stable for release though? It is
+> quite
 
-We have decided against backporting some speculation-related fixes to 4.4 a=
-nd 4.19 due to their complexity and because we consider the vulnerabilities=
- to be outside our threat model. (We assume a trusted userspace.)
+If you need to run 4.19, 4.19.325-cip133 is very good option.
 
-These issues will not be fixed in the 4.4 and 4.19 trees, and related test =
-failures are ignored in our test pipelines.
+Whether it is stable/secure enough for your usecase really depends on
+your usecase, and it is up to you to evaluate. Start by taking a look
+at "KNOWN-BUGS" file. If you are running shell server with untrusted
+users (for example), well, that a) is a bad idea and b) certainly is
+very bad idea with 4.19 kernel.
 
-Whether these branches are safe to use for your project depends on whether =
-you allow execution of untrusted userland code. Generally speaking, if you =
-are not already running 4.19-based systems in production we would recommend=
- to use more recent versions.
+Below is generic document that may give you some hints.
 
-CU
-Uli
+Best regards,
+								Pavel
+
+
+Good and bad ideas w.r.t. kernel and security
+
+Kernel tries to provide many security guarantees at different
+levels. Still, some things are easier to guarantee than others, and
+some security barriers are really important, while others... not so
+much.
+
+Kernel should be secure against remote attackers.
+
+    And it reasonably is, when not, we get it fixed with high priority.
+
+Kernel should protect itself and other users against local, non-priviledged=
+ users.
+
+    Tries, but attack surface is big.
+    People don't care about DoS attacks much.
+    =3D> Running untrusted code is a bad idea. Forkbomb is few characters i=
+n sh.
+
+Fast, out-of-order CPUs leak user data via timing side-channels. Those
+CPUs should not process sensitive data. JITs can be used to extract the dat=
+a.
+
+    We can try to work around the problems and apply vendor-provided
+    workarounds, but there are likely more problems in future. Similar
+    bugs are hidden in CPU microarchitectures, and in particular
+    Spectre workarounds are whack-a-mole and thus incomplete.
+   =20
+    Hyperthreading makes those attacks easier.
+    =3D> Use suitable CPUs to process sensitive data.
+
+    BPF is in-kernel JIT
+    =3D> Don't use BPF, make sure it is disabled on your configurations.
+
+Filesystems are complex, robustness against malformed filesystems is hard.
+
+    Some filesystems try to be robust against filesystems corruption,
+    and some don't even try. Some perform checks during mount, but
+    that means that malicious device can work around them.
+
+    =3D> Don't mount untrusted filesystems. If you have to, use simple and
+    common filesystem. VFAT might be good choice.
+   =20
+Kernel should protect itself against local users with CAP_XX.
+
+    Yes, there's capability system, and in theory capabilities should be se=
+parated.
+    =3D> Don't rely on that. Noone else does.
+
+Some systems try to protect themselves against people with physical access.
+
+    Laws of physics says it is impossible, but people can still try to
+    make it more costly for the "attacker".
+    =3D> Please don't rely on that.
+
+Coredumps are useful for debugging, but random processes leaving files in c=
+wd
+may not be welcome
+
+    Consider disabling coredumps, perhaps with RLIMIT_CORE=3D0.
+
+    Consider putting all coredumps into single directory with /proc/sys/ker=
+nel/core_pattern.
+
+io_uring is rather new and buggy
+
+    https://www.phoronix.com/news/Linux-6.6-sysctl-IO_uring
+
+Kernel config options for hardened kernel
+
+Investigate:
+
+CONFIG_X86_IOPL_IOPERM=3Dy
+
+https://timesys.com/security/securing-your-linux-configuration-kernel-harde=
+ning/
+
+RETPOLINE=3DY
+DEVMEM=3Dis not set
+PAGE_POISONING=3DY , enable withpage_poison=3D1
+GCC_PLUGIN_STACKLEAK=3DY
+DEBUG_BUGVERBOSE=3Dis not set , kind of security by obscurity, but may make=
+ attackers work harder; will also make your own debugging harder, so..
+ARCH_HAS_ELF_RANDOMIZE=3DY
+INIT_ON_FREE_DEFAULT_ON=3DY
+INIT_ON_ALLOC_DEFAULT_ON=3DY
+DEBUG_VIRTUAL=3DY
+
+
+https://github.com/a13xp0p0v/kconfig-hardened-check ?
+
+Unloading modules is hard and rarely used.
+
+--UKgzsjROG6CA0TqJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaiFXDAAKCRAw5/Bqldv6
+8vSqAJ0WjuNP/VJCX5um2tUXWoHxP5RqfACgiOvBjH/0ECayflXjI5B4eAHK7Lw=
+=ZSR8
+-----END PGP SIGNATURE-----
+
+--UKgzsjROG6CA0TqJ--
 
