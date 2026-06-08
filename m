@@ -1,76 +1,97 @@
-Return-Path: <yoshitake.kobayashi.x25@mail.toshiba>
+Return-Path: <uli@fpond.eu>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91232CD8C9D
-	for <webhook@archiver.kernel.org>; Mon,  8 Jun 2026 14:29:30 +0000 (UTC)
-Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.55854.1780928596188411866
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7278DCD8C9D
+	for <webhook@archiver.kernel.org>; Mon,  8 Jun 2026 15:23:21 +0000 (UTC)
+Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [81.169.146.216])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.57239.1780932191030852538
  for <cip-dev@lists.cip-project.org>;
- Mon, 08 Jun 2026 07:23:16 -0700
+ Mon, 08 Jun 2026 08:23:11 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=korg header.b=LLaZohXL;
- spf=pass (domain: linuxfoundation.org, ip: 172.234.252.31, mailfrom: gregkh@linuxfoundation.org)
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by sea.source.kernel.org (Postfix) with ESMTP id B95DE42AF9;
-	Mon,  8 Jun 2026 14:13:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0766F1F00893;
-	Mon,  8 Jun 2026 14:13:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxfoundation.org;
-	s=korg; t=1780927983;
-	bh=vRxLlxgtv49yThNDJjZj+u0T4tKRy5pFjIWLLHPYj04=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=LLaZohXLdqDt2VDERAmFyjPwBvq+lxTWS/jHUJzlO6uAlmXKEqGVwDnMMaS1bbjMn
-	 IhQflL0qdOhSl13g7BtjnIRiKnLAazGLjFcqW860v6+CfWFpWZ2p2x0XPdpPQQhmPW
-	 9Q4CBrLI/SILKGZ4KlvQvOwMss0ltbkb/TqjLxiA=
-Date: Mon, 8 Jun 2026 16:12:05 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: stable@vger.kernel.org, Bryan Brattlof <bb@ti.com>,
-	Daniel Wagner <daniel.wagner@monom.org>,
-	Jan Kiszka <jan.kiszka@siemens.com>, cip-dev@lists.cip-project.org,
-	nobuhiro.iwamatsu.x90@mail.toshiba, pavel@nabladev.com,
-	Russell King <rmk+kernel@armlinux.org.uk>
-Subject: Re: [PATCH 0/4] ARM: stable backports
-Message-ID: <2026060832-extortion-cattail-2467@gregkh>
-References: <20260511135357.2786242-1-bigeasy@linutronix.de>
- <20260608082818.LZiPJ9ot@linutronix.de>
+ dkim=pass header.i=@fpond.eu header.s=strato-dkim-0002 header.b=dOkc4CuB;
+ dkim=pass header.i=@fpond.eu header.s=strato-dkim-0003 header.b=ugctGeAg;
+ spf=none, err=permanent DNS error (domain: fpond.eu, ip: 81.169.146.216, mailfrom: uli@fpond.eu)
+ARC-Seal: i=1; a=rsa-sha256; t=1780932177; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=jEURHXogSVKeNtsF0ktXXW3US7h0NwqrWe+YUAMXAyqvhH+Fdb8D/7nx9KZqGSjkzJ
+    uCdE3rGmE4SwwO4Re1rwGvJ7NauGclxKIYXZUkBC+UouxvuVxk6jM1lEQtD0RyKUNG0B
+    yALp2YFYM97AsetBTppYbj1D6gQ02QWn7s1WJzR87J7w5h0xQEIWleW2nwxRJIB1HOiF
+    p7h3yNXeKoKAVm3eTeClhzP4iDxjnYzZs3LjQxHRysDnPHHI/EQBjCPh03NrH0lueY16
+    m1HBzX0I2IvVjiAk0CgQtMyCUq33+u8wvtgoq29xG3beZ8UihGVmXyW3nL06QCMF1wl1
+    S60w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1780932177;
+    s=strato-dkim-0002; d=strato.com;
+    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
+    bh=Rr5RaAWEEDGCMImlXTSH7UtRrjwkfnKsWyPGr3C6/JQ=;
+    b=e0sQ8NsoiP0THlG/wQOdlKHTeEEcBMHRLcj+py2wqVPSrhNZKgwgFasy6s+P0Rv6C0
+    hJzV6nyA+auUYA8/maNpSVmiX+qDUPSUu3yHtE6KV73CDDGGexdCnm9TjFxasr0ha1Y7
+    wAv6Khx8xoj6izIbtSNYciM2anab/LlcPMhU/6Dc3VaIREvVtT3t+rnMU8QYwr/dkp82
+    O7DvOf6Hh2hOIYAZkCf3CRbzLfhFm7FtCCEfkOqSMAIT2zg/mjjH2LPglvnw+rEE4txm
+    376tUxrMl3IeZY4h+/0yqR3t+lCCtEf4WSgqhlcKf7YyjtIeBTelz+51ZTvsOT4Cnd3E
+    0AWQ==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo00
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1780932177;
+    s=strato-dkim-0002; d=fpond.eu;
+    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
+    bh=Rr5RaAWEEDGCMImlXTSH7UtRrjwkfnKsWyPGr3C6/JQ=;
+    b=dOkc4CuB0q9N0VDCAr+AQ2rN7qfnkQVoN/3jBeC+8d4993Op9x1xjC0Ry5NotAB+4n
+    6P0x3g4nqlKZyCxtEhwZSG2e3v3g/kXBhKpZevj37XAmVviCPuME9BAOYMGRI6Zw+o9G
+    22lV+FPtoaQy4PNGXefgfWwSwNDuKLRb/WUJ08PzmRnPgz/ub6JEoVa1ve3x+2qFOvLj
+    ALoT4DfIHDvsUgfjGdsxY95VXlEpDsMrF+Ba1IqjPfp+uWCJPJHDZmFZEJoqeZQ4gtxO
+    aOHODsnGQfQevuSVkRodCgMFamvy0L7a/Qb1MJ16fRJexMLFdmwxCVu3JNg770rtr4b1
+    yLgA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1780932177;
+    s=strato-dkim-0003; d=fpond.eu;
+    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
+    bh=Rr5RaAWEEDGCMImlXTSH7UtRrjwkfnKsWyPGr3C6/JQ=;
+    b=ugctGeAgqDjS6iXLRF0S7qG9+NQA+Kz806aAjpyca5RdVGaWvdkbxIl7m6nH9BsMF8
+    4fyBvlu+5tI7wN6oUVAg==
+X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzvv30UF1hexKDK+NL2bA=="
+Received: from open-xchange-core-mw-gw-13.open-xchange-core-mw-hazelcast-headless.open-xchange.svc.cluster.local
+    by smtp-ox.front (RZmta 55.0.1 AUTH)
+    with ESMTPSA id z7806e258FMv7ro
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256 bits))
+	(Client did not present a certificate);
+    Mon, 8 Jun 2026 17:22:57 +0200 (CEST)
+Date: Mon, 8 Jun 2026 17:22:56 +0200 (CEST)
+From: Ulrich Hecht <uli@fpond.eu>
+To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+	"pavel@nabladev.com" <pavel@nabladev.com>,
+	"nobuhiro.iwamatsu.x90@mail.toshiba" <nobuhiro.iwamatsu.x90@mail.toshiba>
+Message-ID: <1985872946.840508.1780932177008@webmail.strato.de>
+Subject: Request for review for 4.4-st77, 4.4-cip112
 MIME-Version: 1.0
-In-Reply-To: <20260608082818.LZiPJ9ot@linutronix.de>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
+X-Mailer: Open-Xchange Mailer v8.46.139
+X-Originating-Port: 54806
+X-Originating-Client: open-xchange-appsuite
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 08 Jun 2026 14:29:30 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23048
+ <cip-dev@lists.cip-project.org>; Mon, 08 Jun 2026 15:23:21 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23049
 
-On Mon, Jun 08, 2026 at 10:28:18AM +0200, Sebastian Andrzej Siewior wrote:
-> On 2026-05-11 15:53:53 [+0200], To stable@vger.kernel.org wrote:
-> > This is a backport of ARM related fixes. This applies cleanly to v6.18
-> > and v6.12. I have an updated batch for v6.6 and v6.1 because this does
-> > not apply cleanly.
-> > 
-> > #1 and #2 are prerequisites for #3.
-> > 
-> > Can't tell the origin of #3 (fix hash_name() fault). It might be there
-> > since the begin of time.
-> > 
-> > #4 (fix branch predictor hardening) fixes commit f5fe12b1eaee2 ("ARM:
-> > spectre-v2: harden user aborts in kernel space") which is v4.20-rc2.
-> > 
-> > If there are no objections I would post the v6.6 version once this is
-> > accepted and then rebase the PREEMPT_RT bits on top of this.
-> 
-> I noticed that the ARM64 patches I sent recently were picked up and
-> backported but this is still waiting.
-> 
-> I there something I can do to speed things up?
+Hi!
 
-We have hundreds of patches in the backlog right now, these are way down
-the list, sorry.  Hope to catch up "soon"...
+Here are the manual backports for the upcoming 4.4 kernel release. As always they can be found in https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-4.4.y-st-rc
 
-thanks,
+6e6dafcb73d7f x86/CPU/AMD: Prevent improper isolation of shared resources in Zen2's op cache
+8e98545170c1b x86/CPU/AMD: Add X86_FEATURE_ZEN1
+5e0f887ad764d x86/CPU/AMD: Rename init_amd_zn() to init_amd_zen_common()
+6f2a036399e90 x86/CPU/AMD: Add ZenX generations flags
+e379f10bd8fb5 ptrace: slightly saner 'get_dumpable()' logic
 
-greg k-h
+(All of these patches had to be manually backported to 4.19 and again to 4.4.)
+
+Thanks for having a look!
+
+CU
+Uli
 
