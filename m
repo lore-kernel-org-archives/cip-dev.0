@@ -2,81 +2,71 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4D07CD98D5
-	for <webhook@archiver.kernel.org>; Thu, 11 Jun 2026 10:47:08 +0000 (UTC)
-Received: from tor.source.kernel.org (tor.source.kernel.org [172.105.4.254])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.42646.1781174820462532833
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 020B9CD98D8
+	for <webhook@archiver.kernel.org>; Thu, 11 Jun 2026 10:47:09 +0000 (UTC)
+Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.42651.1781174825893012402
  for <cip-dev@lists.cip-project.org>;
- Thu, 11 Jun 2026 03:47:00 -0700
+ Thu, 11 Jun 2026 03:47:05 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.105.4.254, mailfrom: srs0=pbru=eh=tuxon.dev=claudiu.beznea@kernel.org)
+ dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.234.252.31, mailfrom: srs0=pbru=eh=tuxon.dev=claudiu.beznea@kernel.org)
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by tor.source.kernel.org (Postfix) with ESMTP id C2C9E60209;
-	Thu, 11 Jun 2026 10:46:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80CA31F00893;
-	Thu, 11 Jun 2026 10:46:58 +0000 (UTC)
+	by sea.source.kernel.org (Postfix) with ESMTP id AFD0F40B14;
+	Thu, 11 Jun 2026 10:47:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A5A71F00893;
+	Thu, 11 Jun 2026 10:47:04 +0000 (UTC)
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 6.12.y-cip 00/17] Backport RZ/G3S USB support
-Date: Thu, 11 Jun 2026 13:46:39 +0300
-Message-ID: <20260611104656.2533096-1-claudiu.beznea@tuxon.dev>
+Subject: [PATCH 6.12.y-cip 04/17] reset: rzg2l-usbphy-ctrl: Fix a NULL vs IS_ERR() bug in probe
+Date: Thu, 11 Jun 2026 13:46:43 +0300
+Message-ID: <20260611104656.2533096-5-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260611104656.2533096-1-claudiu.beznea@tuxon.dev>
+References: <20260611104656.2533096-1-claudiu.beznea@tuxon.dev>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 11 Jun 2026 10:47:08 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23111
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23115
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Dan Carpenter <dan.carpenter@linaro.org>
 
-Hi,
+commit cea5d43b63b221522f8532a7894149f3d8d11f4b upstream.
 
-Patches backport the Renesas RZ/G3S USB support.
+The devm_regmap_field_alloc() function never returns NULL, it returns
+error pointers.  Update the error checking to match.
 
-Thank you,
-Claudiu
+Fixes: 58128aa88867 ("reset: rzg2l-usbphy-ctrl: Add support for USB PWRRD=
+Y")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
+ drivers/reset/reset-rzg2l-usbphy-ctrl.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
-Claudiu Beznea (16):
-  reset: rzg2l-usbphy-ctrl: Add support for USB PWRRDY
-  dt-bindings: reset: renesas,rzg2l-usbphy-ctrl: Document RZ/G3S support
-  reset: rzg2l-usbphy-ctrl: Add support for RZ/G3S SoC
-  reset: rzg2l-usbphy-ctrl: Propagate the return value of
-    regmap_field_update_bits()
-  reset: rzg2l-usbphy-ctrl: Add suspend/resume support
-  reset: rzg2l-usbphy-ctrl: Check pwrrdy is valid before using it
-  usb: host: Do not check priv->clks[clk]
-  usb: host: ehci-platform: Call reset assert/deassert on suspend/resume
-  usb: host: ohci-platform: Call reset assert/deassert on suspend/resume
-  dt-bindings: usb: renesas,usbhs: Document RZ/G3S SoC
-  usb: renesas_usbhs: Assert/de-assert reset signals on suspend/resume
-  dt-bindings: phy: renesas,usb2-phy: Mark resets as required for RZ/G3S
-  phy: renesas: rcar-gen3-usb2: Move phy_data->init_bus check
-  phy: renesas: rcar-gen3-usb2: Add suspend/resume support
-  arm64: dts: renesas: r9a08g045: Add USB support
-  arm64: dts: renesas: rzg3s-smarc: Enable USB support
-
-Dan Carpenter (1):
-  reset: rzg2l-usbphy-ctrl: Fix a NULL vs IS_ERR() bug in probe
-
- .../bindings/phy/renesas,usb2-phy.yaml        |   1 +
- .../reset/renesas,rzg2l-usbphy-ctrl.yaml      |  41 ++++-
- .../bindings/usb/renesas,usbhs.yaml           |   1 +
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi    | 118 ++++++++++++++
- arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi  |  57 +++++++
- drivers/phy/renesas/phy-rcar-gen3-usb2.c      |  66 +++++---
- drivers/reset/Kconfig                         |   1 +
- drivers/reset/reset-rzg2l-usbphy-ctrl.c       | 151 +++++++++++++++++-
- drivers/usb/host/ehci-platform.c              |  25 ++-
- drivers/usb/host/ohci-platform.c              |  24 ++-
- drivers/usb/renesas_usbhs/common.c            |  35 ++--
- 11 files changed, 470 insertions(+), 50 deletions(-)
-
+diff --git a/drivers/reset/reset-rzg2l-usbphy-ctrl.c b/drivers/reset/rese=
+t-rzg2l-usbphy-ctrl.c
+index 4d51213e59ba..6d8c48d247a0 100644
+--- a/drivers/reset/reset-rzg2l-usbphy-ctrl.c
++++ b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
+@@ -158,8 +158,8 @@ static int rzg2l_usbphy_ctrl_pwrrdy_init(struct devic=
+e *dev)
+ 	field.msb =3D __fls(args[1]);
+=20
+ 	pwrrdy =3D devm_regmap_field_alloc(dev, regmap, field);
+-	if (!pwrrdy)
+-		return -ENOMEM;
++	if (IS_ERR(pwrrdy))
++		return PTR_ERR(pwrrdy);
+=20
+ 	rzg2l_usbphy_ctrl_set_pwrrdy(pwrrdy, true);
+=20
 --=20
 2.43.0
 
