@@ -2,26 +2,26 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB4A7CD98D7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C748FCD98D8
 	for <webhook@archiver.kernel.org>; Thu, 11 Jun 2026 10:47:29 +0000 (UTC)
 Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.42664.1781174843645765384
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.42667.1781174847006630330
  for <cip-dev@lists.cip-project.org>;
- Thu, 11 Jun 2026 03:47:23 -0700
+ Thu, 11 Jun 2026 03:47:27 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.234.252.31, mailfrom: srs0=pbru=eh=tuxon.dev=claudiu.beznea@kernel.org)
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by sea.source.kernel.org (Postfix) with ESMTP id 72A6D4081B;
-	Thu, 11 Jun 2026 10:47:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E8691F00893;
-	Thu, 11 Jun 2026 10:47:22 +0000 (UTC)
+	by sea.source.kernel.org (Postfix) with ESMTP id C96D64355C;
+	Thu, 11 Jun 2026 10:47:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1ED61F00893;
+	Thu, 11 Jun 2026 10:47:25 +0000 (UTC)
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 6.12.y-cip 15/17] phy: renesas: rcar-gen3-usb2: Add suspend/resume support
-Date: Thu, 11 Jun 2026 13:46:54 +0300
-Message-ID: <20260611104656.2533096-16-claudiu.beznea@tuxon.dev>
+Subject: [PATCH 6.12.y-cip 17/17] arm64: dts: renesas: rzg3s-smarc: Enable USB support
+Date: Thu, 11 Jun 2026 13:46:56 +0300
+Message-ID: <20260611104656.2533096-18-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260611104656.2533096-1-claudiu.beznea@tuxon.dev>
 References: <20260611104656.2533096-1-claudiu.beznea@tuxon.dev>
@@ -31,144 +31,112 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 11 Jun 2026 10:47:29 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23126
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23128
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 942a7a6bf4c6a8661324539f686a34c9448610bd upstream.
+commit 0926e6e69852a450dc2f6e3f8412ae58f773e29b upstream.
 
-The Renesas RZ/G3S supports a power saving mode where power to most of th=
-e
-SoC components is turned off. The USB PHY is among these components.
-Because of this the settings applied in driver probe need to be executed
-also on resume path. On suspend path only reset signal need to be asserte=
-d.
-Add suspend/resume support.
+Enable USB support (host, device, USB PHYs).
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-Link: https://patch.msgid.link/20251119120418.686224-3-claudiu.beznea.uj@=
-bp.renesas.com
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Link: https://patch.msgid.link/20251023135810.1688415-8-claudiu.beznea.uj=
+@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 57 +++++++++++++++++-------
- 1 file changed, 42 insertions(+), 15 deletions(-)
+ arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi | 57 ++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renes=
-as/phy-rcar-gen3-usb2.c
-index 6127c0b4b944..1628ede79f9a 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -132,6 +132,7 @@ struct rcar_gen3_chan {
- 	struct device *dev;	/* platform_device's device */
- 	const struct rcar_gen3_phy_drv_data *phy_data;
- 	struct extcon_dev *extcon;
-+	struct reset_control *rstc;
- 	struct rcar_gen3_phy rphys[NUM_OF_PHYS];
- 	struct regulator *vbus;
- 	struct work_struct work;
-@@ -778,38 +779,24 @@ static void rcar_gen3_reset_assert(void *data)
- static int rcar_gen3_phy_usb2_init_bus(struct rcar_gen3_chan *channel)
- {
- 	struct device *dev =3D channel->dev;
--	struct reset_control *rstc;
- 	int ret;
- 	u32 val;
-=20
- 	if (!channel->phy_data->init_bus)
- 		return 0;
-=20
--	rstc =3D devm_reset_control_array_get_shared(dev);
--	if (IS_ERR(rstc))
--		return PTR_ERR(rstc);
--
- 	ret =3D pm_runtime_resume_and_get(dev);
- 	if (ret)
- 		return ret;
-=20
--	ret =3D reset_control_deassert(rstc);
--	if (ret)
--		goto rpm_put;
--
--	ret =3D devm_add_action_or_reset(dev, rcar_gen3_reset_assert, rstc);
--	if (ret)
--		goto rpm_put;
--
- 	val =3D readl(channel->base + USB2_AHB_BUS_CTR);
- 	val &=3D ~USB2_AHB_BUS_CTR_MBL_MASK;
- 	val |=3D USB2_AHB_BUS_CTR_MBL_INCR4;
- 	writel(val, channel->base + USB2_AHB_BUS_CTR);
-=20
--rpm_put:
- 	pm_runtime_put(dev);
-=20
--	return ret;
-+	return 0;
- }
-=20
- static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
-@@ -849,6 +836,18 @@ static int rcar_gen3_phy_usb2_probe(struct platform_=
-device *pdev)
- 		}
- 	}
-=20
-+	channel->rstc =3D devm_reset_control_array_get_optional_shared(dev);
-+	if (IS_ERR(channel->rstc))
-+		return PTR_ERR(channel->rstc);
-+
-+	ret =3D reset_control_deassert(channel->rstc);
-+	if (ret)
-+		return ret;
-+
-+	ret =3D devm_add_action_or_reset(dev, rcar_gen3_reset_assert, channel->=
-rstc);
-+	if (ret)
-+		return ret;
-+
- 	/*
- 	 * devm_phy_create() will call pm_runtime_enable(&phy->dev);
- 	 * And then, phy-core will manage runtime pm for this device.
-@@ -937,10 +936,38 @@ static void rcar_gen3_phy_usb2_remove(struct platfo=
-rm_device *pdev)
- 	pm_runtime_disable(&pdev->dev);
+diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi b/arch/arm64/bo=
+ot/dts/renesas/rzg3s-smarc.dtsi
+index d90f65a7d79b..071da86ed3dc 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
+@@ -95,6 +95,20 @@ &audio_clk2 {
+ 	clock-frequency =3D <12288000>;
  };
 =20
-+static int rcar_gen3_phy_usb2_suspend(struct device *dev)
-+{
-+	struct rcar_gen3_chan *channel =3D dev_get_drvdata(dev);
++&ehci0 {
++	dr_mode =3D "otg";
++	status =3D "okay";
++};
 +
-+	return reset_control_assert(channel->rstc);
-+}
++&ehci1 {
++	status =3D "okay";
++};
 +
-+static int rcar_gen3_phy_usb2_resume(struct device *dev)
-+{
-+	struct rcar_gen3_chan *channel =3D dev_get_drvdata(dev);
-+	int ret;
++&hsusb {
++	dr_mode =3D "otg";
++	status =3D "okay";
++};
 +
-+	ret =3D reset_control_deassert(channel->rstc);
-+	if (ret)
-+		return ret;
+ &i2c0 {
+ 	status =3D "okay";
+=20
+@@ -128,6 +142,19 @@ &pcie {
+ 	status =3D "okay";
+ };
+=20
++&ohci0 {
++	dr_mode =3D "otg";
++	status =3D "okay";
++};
 +
-+	ret =3D rcar_gen3_phy_usb2_init_bus(channel);
-+	if (ret)
-+		reset_control_assert(channel->rstc);
++&ohci1 {
++	status =3D "okay";
++};
 +
-+	return ret;
-+}
++&phyrst {
++	status =3D "okay";
++};
 +
-+static DEFINE_SIMPLE_DEV_PM_OPS(rcar_gen3_phy_usb2_pm_ops,
-+				rcar_gen3_phy_usb2_suspend,
-+				rcar_gen3_phy_usb2_resume);
+ &pinctrl {
+ 	audio_clock_pins: audio-clock {
+ 		pins =3D "AUDIO_CLK1", "AUDIO_CLK2";
+@@ -208,6 +235,23 @@ ssi3_pins: ssi3 {
+ 			 <RZG2L_PORT_PINMUX(18, 4, 8)>, /* TXD */
+ 			 <RZG2L_PORT_PINMUX(18, 5, 8)>; /* RXD */
+ 	};
 +
- static struct platform_driver rcar_gen3_phy_usb2_driver =3D {
- 	.driver =3D {
- 		.name		=3D "phy_rcar_gen3_usb2",
- 		.of_match_table	=3D rcar_gen3_phy_usb2_match_table,
-+		.pm		=3D pm_ptr(&rcar_gen3_phy_usb2_pm_ops),
- 	},
- 	.probe	=3D rcar_gen3_phy_usb2_probe,
- 	.remove_new =3D rcar_gen3_phy_usb2_remove,
++	usb0_pins: usb0 {
++		peri {
++			pinmux =3D <RZG2L_PORT_PINMUX(5, 0, 1)>, /* VBUS */
++				 <RZG2L_PORT_PINMUX(5, 2, 1)>; /* OVC */
++		};
++
++		otg {
++			pinmux =3D <RZG2L_PORT_PINMUX(5, 3, 1)>; /* OTG_ID */
++			bias-pull-up;
++		};
++	};
++
++	usb1_pins: usb1 {
++		pinmux =3D <RZG2L_PORT_PINMUX(5, 4, 5)>, /* OVC */
++			 <RZG2L_PORT_PINMUX(6, 0, 1)>; /* VBUS */
++	};
+ };
+=20
+ &scif0 {
+@@ -243,3 +287,16 @@ &ssi3 {
+ 	pinctrl-0 =3D <&ssi3_pins>, <&audio_clock_pins>;
+ 	status =3D "okay";
+ };
++
++&usb2_phy0 {
++	pinctrl-0 =3D <&usb0_pins>;
++	pinctrl-names =3D "default";
++	vbus-supply =3D <&usb0_vbus_otg>;
++	status =3D "okay";
++};
++
++&usb2_phy1 {
++	pinctrl-0 =3D <&usb1_pins>;
++	pinctrl-names =3D "default";
++	status =3D "okay";
++};
 --=20
 2.43.0
 
