@@ -2,26 +2,26 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92C09CD98D7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86622CD98D6
 	for <webhook@archiver.kernel.org>; Thu, 11 Jun 2026 10:45:47 +0000 (UTC)
 Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.42601.1781174737025307826
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.42661.1781174740303656384
  for <cip-dev@lists.cip-project.org>;
- Thu, 11 Jun 2026 03:45:37 -0700
+ Thu, 11 Jun 2026 03:45:40 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.234.252.31, mailfrom: srs0=pbru=eh=tuxon.dev=claudiu.beznea@kernel.org)
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by sea.source.kernel.org (Postfix) with ESMTP id CF2F443378;
-	Thu, 11 Jun 2026 10:45:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FC4F1F00893;
-	Thu, 11 Jun 2026 10:45:35 +0000 (UTC)
+	by sea.source.kernel.org (Postfix) with ESMTP id 1EA5B435AF;
+	Thu, 11 Jun 2026 10:45:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB5A31F00893;
+	Thu, 11 Jun 2026 10:45:38 +0000 (UTC)
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 6.1.y-cip 01/21] clk: renesas: r9a08g045: Add clocks, resets and power domains for USB
-Date: Thu, 11 Jun 2026 13:45:11 +0300
-Message-ID: <20260611104532.2532863-2-claudiu.beznea@tuxon.dev>
+Subject: [PATCH 6.1.y-cip 03/21] dt-bindings: reset: renesas,rzg2l-usbphy-ctrl: Document RZ/G3S support
+Date: Thu, 11 Jun 2026 13:45:13 +0300
+Message-ID: <20260611104532.2532863-4-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260611104532.2532863-1-claudiu.beznea@tuxon.dev>
 References: <20260611104532.2532863-1-claudiu.beznea@tuxon.dev>
@@ -31,73 +31,111 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 11 Jun 2026 10:45:47 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23090
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23092
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit f0fe60cae63573c801246204414e70035770bdc6 upstream.
+commit 20eee0f69c9034a0f613528f829dcaca192740d5 upstream.
 
-Add clocks, resets and power domains for USB modules available on the
-Renesas RZ/G3S SoC.
+The Renesas USB PHY hardware block needs to have the PWRRDY bit in the
+system controller set before applying any other settings. The PWRRDY bit
+must be controlled during power-on, power-off, and system suspend/resume
+sequences as follows:
+- during power-on/resume, it must be set to zero before enabling clocks a=
+nd
+  modules
+- during power-off/suspend, it must be set to one after disabling clocks
+  and modules
 
+Add the renesas,sysc-pwrrdy device tree property, which allows the
+reset-rzg2l-usbphy-ctrl driver to parse, map, and control the system
+controller PWRRDY bit at the appropriate time. Along with it add a new
+compatible for the RZ/G3S SoC.
+
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20240822152801.602318-2-claudiu.beznea.uj@b=
-p.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[claudiu.beznea:
- - fixed conflict in r9a08g045_mod_clks[] array by keeping the code from
-   v6.1 CIP and adding USB clocks along with filling the MSTOP
-   information (as this was not present in the original commit)
- - fixed conflict in r9a08g045_resets[] array by keeping both the SSI
-   and USB nodes
- - dropped the r9a08g045_pm_domains[] as this is not available in v6.1
-   CIP
- - kept r9a08g045_no_pm_mod_clks[] array]
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+[claudiu.beznea: fixed conflict by dropping the "and RZ/Five" string
+ from the description of renesas,r9a07g043-usbphy-ctrl compatible]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/clk/renesas/r9a08g045-cpg.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ .../reset/renesas,rzg2l-usbphy-ctrl.yaml      | 41 ++++++++++++++++---
+ 1 file changed, 35 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9=
-a08g045-cpg.c
-index 3e8eae79af09..937a044cd5d3 100644
---- a/drivers/clk/renesas/r9a08g045-cpg.c
-+++ b/drivers/clk/renesas/r9a08g045-cpg.c
-@@ -245,6 +245,14 @@ static const struct rzg2l_mod_clk r9a08g045_mod_clks=
-[] =3D {
- 					MSTOP(BUS_MCPU1, BIT(13))),
- 	DEF_MOD("ssi3_sfr",		R9A08G045_SSI3_PCLK_SFR, R9A08G045_CLK_P0, 0x570, =
-7,
- 					MSTOP(BUS_MCPU1, BIT(13))),
-+	DEF_MOD("usb0_host",		R9A08G045_USB_U2H0_HCLK, R9A08G045_CLK_P1, 0x578,=
- 0,
-+					MSTOP(BUS_PERI_COM, BIT(5))),
-+	DEF_MOD("usb1_host",		R9A08G045_USB_U2H1_HCLK, R9A08G045_CLK_P1, 0x578,=
- 1,
-+					MSTOP(BUS_PERI_COM, BIT(7))),
-+	DEF_MOD("usb0_func",		R9A08G045_USB_U2P_EXR_CPUCLK, R9A08G045_CLK_P1, 0=
-x578, 2,
-+					MSTOP(BUS_PERI_COM, BIT(6))),
-+	DEF_MOD("usb_pclk",		R9A08G045_USB_PCLK, R9A08G045_CLK_P1, 0x578, 3,
-+					MSTOP(BUS_PERI_COM, BIT(4))),
- 	DEF_COUPLED("eth0_axi",		R9A08G045_ETH0_CLK_AXI, R9A08G045_CLK_M0, 0x57=
-c, 0,
- 					MSTOP(BUS_PERI_COM, BIT(2))),
- 	DEF_COUPLED("eth0_chi",		R9A08G045_ETH0_CLK_CHI, R9A08G045_CLK_ZT, 0x57=
-c, 0,
-@@ -305,6 +313,10 @@ static const struct rzg2l_reset r9a08g045_resets[] =3D=
- {
- 	DEF_RST(R9A08G045_SSI1_RST_M2_REG, 0x870, 1),
- 	DEF_RST(R9A08G045_SSI2_RST_M2_REG, 0x870, 2),
- 	DEF_RST(R9A08G045_SSI3_RST_M2_REG, 0x870, 3),
-+	DEF_RST(R9A08G045_USB_U2H0_HRESETN, 0x878, 0),
-+	DEF_RST(R9A08G045_USB_U2H1_HRESETN, 0x878, 1),
-+	DEF_RST(R9A08G045_USB_U2P_EXL_SYSRST, 0x878, 2),
-+	DEF_RST(R9A08G045_USB_PRESETN, 0x878, 3),
- 	DEF_RST(R9A08G045_ETH0_RST_HW_N, 0x87c, 0),
- 	DEF_RST(R9A08G045_ETH1_RST_HW_N, 0x87c, 1),
- 	DEF_RST(R9A08G045_I2C0_MRST, 0x880, 0),
+diff --git a/Documentation/devicetree/bindings/reset/renesas,rzg2l-usbphy=
+-ctrl.yaml b/Documentation/devicetree/bindings/reset/renesas,rzg2l-usbphy=
+-ctrl.yaml
+index ca6a3002546e..c04176315af1 100644
+--- a/Documentation/devicetree/bindings/reset/renesas,rzg2l-usbphy-ctrl.y=
+aml
++++ b/Documentation/devicetree/bindings/reset/renesas,rzg2l-usbphy-ctrl.y=
+aml
+@@ -15,12 +15,14 @@ description:
+=20
+ properties:
+   compatible:
+-    items:
+-      - enum:
+-          - renesas,r9a07g043-usbphy-ctrl # RZ/G2UL
+-          - renesas,r9a07g044-usbphy-ctrl # RZ/G2{L,LC}
+-          - renesas,r9a07g054-usbphy-ctrl # RZ/V2L
+-      - const: renesas,rzg2l-usbphy-ctrl
++    oneOf:
++      - items:
++          - enum:
++              - renesas,r9a07g043-usbphy-ctrl # RZ/G2UL
++              - renesas,r9a07g044-usbphy-ctrl # RZ/G2{L,LC}
++              - renesas,r9a07g054-usbphy-ctrl # RZ/V2L
++          - const: renesas,rzg2l-usbphy-ctrl
++      - const: renesas,r9a08g045-usbphy-ctrl # RZ/G3S
+=20
+   reg:
+     maxItems: 1
+@@ -48,6 +50,20 @@ properties:
+     $ref: /schemas/regulator/regulator.yaml#
+     unevaluatedProperties: false
+=20
++  renesas,sysc-pwrrdy:
++    description:
++      The system controller PWRRDY indicates to the USB PHY if the power=
+ supply
++      is ready. PWRRDY needs to be set during power-on before applying a=
+ny
++      other settings. It also needs to be set before powering off the US=
+B.
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    items:
++      - items:
++          - description:
++              System controller phandle required by USB PHY CTRL driver =
+to set
++              PWRRDY
++          - description: Register offset associated with PWRRDY
++          - description: Register bitmask associated with PWRRDY
++
+ required:
+   - compatible
+   - reg
+@@ -57,6 +73,19 @@ required:
+   - '#reset-cells'
+   - regulator-vbus
+=20
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: renesas,r9a08g045-usbphy-ctrl
++    then:
++      required:
++        - renesas,sysc-pwrrdy
++    else:
++      properties:
++        renesas,sysc-pwrrdy: false
++
+ additionalProperties: false
+=20
+ examples:
 --=20
 2.43.0
 
