@@ -1,143 +1,104 @@
-Return-Path: <claudiu.beznea@tuxon.dev>
+Return-Path: <uli@fpond.eu>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C748FCD98D8
-	for <webhook@archiver.kernel.org>; Thu, 11 Jun 2026 10:47:29 +0000 (UTC)
-Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.42667.1781174847006630330
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEBEDCD98D5
+	for <webhook@archiver.kernel.org>; Thu, 11 Jun 2026 11:04:09 +0000 (UTC)
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.167])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.42919.1781175848867352472
  for <cip-dev@lists.cip-project.org>;
- Thu, 11 Jun 2026 03:47:27 -0700
+ Thu, 11 Jun 2026 04:04:09 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.234.252.31, mailfrom: srs0=pbru=eh=tuxon.dev=claudiu.beznea@kernel.org)
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by sea.source.kernel.org (Postfix) with ESMTP id C96D64355C;
-	Thu, 11 Jun 2026 10:47:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1ED61F00893;
-	Thu, 11 Jun 2026 10:47:25 +0000 (UTC)
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-To: nobuhiro.iwamatsu.x90@mail.toshiba,
-	pavel@nabladev.com
-Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 6.12.y-cip 17/17] arm64: dts: renesas: rzg3s-smarc: Enable USB support
-Date: Thu, 11 Jun 2026 13:46:56 +0300
-Message-ID: <20260611104656.2533096-18-claudiu.beznea@tuxon.dev>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260611104656.2533096-1-claudiu.beznea@tuxon.dev>
-References: <20260611104656.2533096-1-claudiu.beznea@tuxon.dev>
+ dkim=pass header.i=@fpond.eu header.s=strato-dkim-0002 header.b=E9WXtKNF;
+ dkim=pass header.i=@fpond.eu header.s=strato-dkim-0003 header.b=UmMtrf7q;
+ spf=none, err=permanent DNS error (domain: fpond.eu, ip: 81.169.146.167, mailfrom: uli@fpond.eu)
+ARC-Seal: i=1; a=rsa-sha256; t=1781175818; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=RdsjLno+XoyC44b5GD5LD8ZdMy5tggq+WmVABkLDMMutAZxjxrEdSei5lREpaFcPMV
+    TDIeLVneW41kMGFTYBwadOknW9J/YqEEePUl5VGPvkUn4UHYekCWFOpfWRg0Vo+UGVem
+    YoERomX4SAWBPoCuK/RKXIH6RnRNFUAdnLe7V2CS/5Qh2IlCpOX2VWsArvXFInAf017y
+    dKkZ57n5+1nqJW+gP8q4nHVTni8LmXE6dyjn9yHwS1aAx7xFAtX5dE+NuWMbtKM31qXw
+    4AVvUYrwegczFjmv8i/3kUBG7Z2paz583KJ7+OgvVwTH5vmrZ7/MgyBYhHHCWf02O5kh
+    NWUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1781175818;
+    s=strato-dkim-0002; d=strato.com;
+    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
+    bh=8kJZj04XI6wm2+JOPEHmfV2r54AvswR3gMQlpWwFNgE=;
+    b=bIBAEasX4AKSDzvixdpwbYBKUbg4KZc7PueOreyldtKG9fiAZV/lsCwlwnVWQIUAyu
+    2F6OppgoOjBrWoFfbJCAAZr20/D9+Nd6dyfTBoH1neEHNvHH7DLzjbxfG/UNiycksSIE
+    FIdR+sF4jeKTM0iraqoHz/EFw/pGDsQa7Ldszsavvu739C+nxCCYqCJ9dMTNvQqf1O8U
+    xVA51R4wPzAi8/Gft/T/e/4n3XIsh18SYV+gZFb4S7k378zXUexESZ8mXVNT8WTY0+Cm
+    zsJEx1ptZr5EC7CAEBp/e+LZVUIyjtixXN6PX+rsVuTFT9Wu/Js8BCvrblTE+8lFLUa8
+    4gGA==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1781175818;
+    s=strato-dkim-0002; d=fpond.eu;
+    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
+    bh=8kJZj04XI6wm2+JOPEHmfV2r54AvswR3gMQlpWwFNgE=;
+    b=E9WXtKNFLpOvh/ULQFyunU2K4EEC9kPsPnffK6SxcxdawhbCizX1W0l88KlhLQ1RAg
+    Waay21NxB0ar1wkQof4XujIQP5iGKvakpqMtJOwSRwDrUzePgTRsn8QC/aAvtQy2kIrq
+    D8Yzu82N+538KncFyhUL1V6wS2pxypoWPdRtGX8q7hUybgjzAKipjRYpZDsjrjRgm74Y
+    eD6phukAVOyEyUVpefwZC/9QyRVFdoVyH1Z7f+IvThcoOtMQJSREYKbvDelX1PZtkR47
+    YkXqDtwLIFqU3FQJj/Sd3GpXhJQ+ZFc2SdaAiFlsM7hqkhz/JCwFxUv3cXv8ds3tt4bv
+    xt6w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1781175818;
+    s=strato-dkim-0003; d=fpond.eu;
+    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
+    bh=8kJZj04XI6wm2+JOPEHmfV2r54AvswR3gMQlpWwFNgE=;
+    b=UmMtrf7q7n6YDFkHulpIeMzO7Xkf157RsyBYX/gdWD6VJdJP3fvMusH+atZREJYdFh
+    m0+rb8cEj9Jxa6QsfdCA==
+X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzvv30UF1hexKDK+NL2bA=="
+Received: from open-xchange-core-mw-gw-4.open-xchange-core-mw-hazelcast-headless.open-xchange.svc.cluster.local
+    by smtp-ox.front (RZmta 55.0.1 AUTH)
+    with ESMTPSA id z7806e25BB3cLDr
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256 bits))
+	(Client did not present a certificate);
+    Thu, 11 Jun 2026 13:03:38 +0200 (CEST)
+Date: Thu, 11 Jun 2026 13:03:38 +0200 (CEST)
+From: Ulrich Hecht <uli@fpond.eu>
+To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+	"pavel@nabladev.com" <pavel@nabladev.com>,
+	"jan.kiszka@siemens.com" <jan.kiszka@siemens.com>,
+	"masami.ichikawa@cybertrust.co.jp" <masami.ichikawa@cybertrust.co.jp>,
+	"chris.paterson2@renesas.com" <chris.paterson2@renesas.com>,
+	"nobuhiro.iwamatsu.x90@mail.toshiba" <nobuhiro.iwamatsu.x90@mail.toshiba>
+Message-ID: <2096828768.335498.1781175818065@webmail.strato.de>
+Subject: [ANNOUNCE] Release v4.4.302-cip112
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
+X-Mailer: Open-Xchange Mailer v8.46.142
+X-Originating-Port: 39830
+X-Originating-Client: open-xchange-appsuite
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 11 Jun 2026 10:47:29 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23128
+ <cip-dev@lists.cip-project.org>; Thu, 11 Jun 2026 11:04:09 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23129
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Hi,
 
-commit 0926e6e69852a450dc2f6e3f8412ae58f773e29b upstream.
+the CIP kernel team has released Linux kernel v4.4.302-cip112. The linux-4.4.y-cip tree's base version has been updated to v4.4-st77. The trees are up-to-date with kernel 4.19-st17.
 
-Enable USB support (host, device, USB PHYs).
+You can get this release via the git tree or as a tarball from https://mirrors.edge.kernel.org/pub/linux/kernel/projects/cip/4.4/
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://patch.msgid.link/20251023135810.1688415-8-claudiu.beznea.uj=
-@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi | 57 ++++++++++++++++++++
- 1 file changed, 57 insertions(+)
+  v4.4.302-cip112:
+    repository:
+      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+    branch:
+      linux-4.4.y-cip
+    commit hash:
+      56627e4054266cea66abc1e4c86fe10f90a5da96
+    Fixed CVEs:
+      CVE-2025-54518: Improper isolation of shared resources within the CPU operation cache on Zen 2-based products.
+      CVE-2026-46174: x86/CPU/AMD: Prevent improper isolation of shared resources in Zen2's op cache
+      CVE-2026-46333: ptrace: slightly saner 'get_dumpable()' logic
 
-diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi b/arch/arm64/bo=
-ot/dts/renesas/rzg3s-smarc.dtsi
-index d90f65a7d79b..071da86ed3dc 100644
---- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-@@ -95,6 +95,20 @@ &audio_clk2 {
- 	clock-frequency =3D <12288000>;
- };
-=20
-+&ehci0 {
-+	dr_mode =3D "otg";
-+	status =3D "okay";
-+};
-+
-+&ehci1 {
-+	status =3D "okay";
-+};
-+
-+&hsusb {
-+	dr_mode =3D "otg";
-+	status =3D "okay";
-+};
-+
- &i2c0 {
- 	status =3D "okay";
-=20
-@@ -128,6 +142,19 @@ &pcie {
- 	status =3D "okay";
- };
-=20
-+&ohci0 {
-+	dr_mode =3D "otg";
-+	status =3D "okay";
-+};
-+
-+&ohci1 {
-+	status =3D "okay";
-+};
-+
-+&phyrst {
-+	status =3D "okay";
-+};
-+
- &pinctrl {
- 	audio_clock_pins: audio-clock {
- 		pins =3D "AUDIO_CLK1", "AUDIO_CLK2";
-@@ -208,6 +235,23 @@ ssi3_pins: ssi3 {
- 			 <RZG2L_PORT_PINMUX(18, 4, 8)>, /* TXD */
- 			 <RZG2L_PORT_PINMUX(18, 5, 8)>; /* RXD */
- 	};
-+
-+	usb0_pins: usb0 {
-+		peri {
-+			pinmux =3D <RZG2L_PORT_PINMUX(5, 0, 1)>, /* VBUS */
-+				 <RZG2L_PORT_PINMUX(5, 2, 1)>; /* OVC */
-+		};
-+
-+		otg {
-+			pinmux =3D <RZG2L_PORT_PINMUX(5, 3, 1)>; /* OTG_ID */
-+			bias-pull-up;
-+		};
-+	};
-+
-+	usb1_pins: usb1 {
-+		pinmux =3D <RZG2L_PORT_PINMUX(5, 4, 5)>, /* OVC */
-+			 <RZG2L_PORT_PINMUX(6, 0, 1)>; /* VBUS */
-+	};
- };
-=20
- &scif0 {
-@@ -243,3 +287,16 @@ &ssi3 {
- 	pinctrl-0 =3D <&ssi3_pins>, <&audio_clock_pins>;
- 	status =3D "okay";
- };
-+
-+&usb2_phy0 {
-+	pinctrl-0 =3D <&usb0_pins>;
-+	pinctrl-names =3D "default";
-+	vbus-supply =3D <&usb0_vbus_otg>;
-+	status =3D "okay";
-+};
-+
-+&usb2_phy1 {
-+	pinctrl-0 =3D <&usb1_pins>;
-+	pinctrl-names =3D "default";
-+	status =3D "okay";
-+};
---=20
-2.43.0
-
+Best regards,
+Ulrich Hecht
 
