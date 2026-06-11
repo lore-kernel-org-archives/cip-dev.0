@@ -2,26 +2,26 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05EF5CD98DC
-	for <webhook@archiver.kernel.org>; Thu, 11 Jun 2026 10:43:26 +0000 (UTC)
-Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.42601.1781174605645865546
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02911CD98D2
+	for <webhook@archiver.kernel.org>; Thu, 11 Jun 2026 10:43:36 +0000 (UTC)
+Received: from tor.source.kernel.org (tor.source.kernel.org [172.105.4.254])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.42542.1781174614882900417
  for <cip-dev@lists.cip-project.org>;
- Thu, 11 Jun 2026 03:43:25 -0700
+ Thu, 11 Jun 2026 03:43:35 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.234.252.31, mailfrom: srs0=pbru=eh=tuxon.dev=claudiu.beznea@kernel.org)
+ dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.105.4.254, mailfrom: srs0=pbru=eh=tuxon.dev=claudiu.beznea@kernel.org)
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by sea.source.kernel.org (Postfix) with ESMTP id 73EE54167D;
-	Thu, 11 Jun 2026 10:43:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6851C1F00893;
-	Thu, 11 Jun 2026 10:43:24 +0000 (UTC)
+	by tor.source.kernel.org (Postfix) with ESMTP id 4223560209;
+	Thu, 11 Jun 2026 10:43:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEB761F00893;
+	Thu, 11 Jun 2026 10:43:32 +0000 (UTC)
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 10/26] reset: rzg2l-usbphy-ctrl: Check pwrrdy is valid before using it
-Date: Thu, 11 Jun 2026 13:42:51 +0300
-Message-ID: <20260611104307.2532466-11-claudiu.beznea@tuxon.dev>
+Subject: [PATCH 5.10.y-cip 15/26] usb: renesas_usbhs: Assert/de-assert reset signals on suspend/resume
+Date: Thu, 11 Jun 2026 13:42:56 +0300
+Message-ID: <20260611104307.2532466-16-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260611104307.2532466-1-claudiu.beznea@tuxon.dev>
 References: <20260611104307.2532466-1-claudiu.beznea@tuxon.dev>
@@ -30,43 +30,103 @@ Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 11 Jun 2026 10:43:26 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23072
+ <cip-dev@lists.cip-project.org>; Thu, 11 Jun 2026 10:43:36 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23077
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit e0cf84109bc6c6768337123f1de24ff56b41c91b upstream.
+commit 3578b1cde59496efc4625ba3fbd14eb2918807a2 upstream.
 
-The pwrrdy regmap_filed is allocated in rzg2l_usbphy_ctrl_pwrrdy_init()
-only if the driver data is set to RZG2L_USBPHY_CTRL_PWRRDY. Check that
-pwrrdy is valid before using it to avoid "Unable to handle kernel NULL
-pointer dereference at virtual address" errors.
+The Renesas RZ/G3S SoC supports a power-saving mode in which power to mos=
+t
+SoC components is turned off, including the USB subsystem.
 
-Fixes: c5b7cd9adefc ("reset: rzg2l-usbphy-ctrl: Add suspend/resume suppor=
-t")
+To properly restore from such a state, the reset signal needs to be
+asserted/de-asserted during suspend/resume. Add reset assert/de-assert on
+suspend/resume.
+
+The resume code has been moved into a separate function to allow reusing
+it in case reset_control_assert() from suspend fails.
+
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Link: https://patch.msgid.link/20251106143625.3050119-5-claudiu.beznea.uj=
+@bp.renesas.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[claudiu.beznea:
+ - fixed conflict by keeping usbhsc_restore() function introduced by
+   commit 3578b1cde59496efc4625ba3fbd14eb2918807a2
+ - kept __maybe_unused on suspend/resume functions]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/reset/reset-rzg2l-usbphy-ctrl.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/usb/renesas_usbhs/common.c | 35 ++++++++++++++++++++++--------
+ 1 file changed, 26 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/reset/reset-rzg2l-usbphy-ctrl.c b/drivers/reset/rese=
-t-rzg2l-usbphy-ctrl.c
-index 5a8483e44165..4f06654e3133 100644
---- a/drivers/reset/reset-rzg2l-usbphy-ctrl.c
-+++ b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
-@@ -136,6 +136,9 @@ static int rzg2l_usbphy_ctrl_set_pwrrdy(struct regmap=
-_field *pwrrdy,
- {
- 	u32 val =3D power_on ? 0 : 1;
+diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usb=
+hs/common.c
+index 5f5cd15e92bf..742290515326 100644
+--- a/drivers/usb/renesas_usbhs/common.c
++++ b/drivers/usb/renesas_usbhs/common.c
+@@ -838,10 +838,26 @@ static int usbhs_remove(struct platform_device *pde=
+v)
+ 	return 0;
+ }
 =20
-+	if (!pwrrdy)
-+		return 0;
++static void usbhsc_restore(struct device *dev)
++{
++	struct usbhs_priv *priv =3D dev_get_drvdata(dev);
++	struct platform_device *pdev =3D usbhs_priv_to_pdev(priv);
 +
- 	/* The initialization path guarantees that the mask is 1 bit long. */
- 	return regmap_field_update_bits(pwrrdy, 1, val);
++	if (!usbhs_get_dparam(priv, runtime_pwctrl)) {
++		usbhsc_power_ctrl(priv, 1);
++		usbhs_mod_autonomy_mode(priv);
++	}
++
++	usbhs_platform_call(priv, phy_reset, pdev);
++
++	usbhsc_schedule_notify_hotplug(pdev);
++}
++
+ static __maybe_unused int usbhsc_suspend(struct device *dev)
+ {
+ 	struct usbhs_priv *priv =3D dev_get_drvdata(dev);
+ 	struct usbhs_mod *mod =3D usbhs_mod_get_current(priv);
++	int ret;
+=20
+ 	if (mod) {
+ 		usbhs_mod_call(priv, stop, priv);
+@@ -851,22 +867,23 @@ static __maybe_unused int usbhsc_suspend(struct dev=
+ice *dev)
+ 	if (mod || !usbhs_get_dparam(priv, runtime_pwctrl))
+ 		usbhsc_power_ctrl(priv, 0);
+=20
+-	return 0;
++	ret =3D reset_control_assert(priv->rsts);
++	if (ret)
++		usbhsc_restore(dev);
++
++	return ret;
+ }
+=20
+ static __maybe_unused int usbhsc_resume(struct device *dev)
+ {
+ 	struct usbhs_priv *priv =3D dev_get_drvdata(dev);
+-	struct platform_device *pdev =3D usbhs_priv_to_pdev(priv);
+-
+-	if (!usbhs_get_dparam(priv, runtime_pwctrl)) {
+-		usbhsc_power_ctrl(priv, 1);
+-		usbhs_mod_autonomy_mode(priv);
+-	}
++	int ret;
+=20
+-	usbhs_platform_call(priv, phy_reset, pdev);
++	ret =3D reset_control_deassert(priv->rsts);
++	if (ret)
++		return ret;
+=20
+-	usbhsc_schedule_notify_hotplug(pdev);
++	usbhsc_restore(dev);
+=20
+ 	return 0;
  }
 --=20
 2.43.0
