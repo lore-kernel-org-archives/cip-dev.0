@@ -2,26 +2,26 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E1B0CD98D7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E981CD98CC
 	for <webhook@archiver.kernel.org>; Thu, 11 Jun 2026 10:43:25 +0000 (UTC)
-Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.42528.1781174598451344825
+Received: from tor.source.kernel.org (tor.source.kernel.org [172.105.4.254])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.42533.1781174604882407548
  for <cip-dev@lists.cip-project.org>;
- Thu, 11 Jun 2026 03:43:18 -0700
+ Thu, 11 Jun 2026 03:43:25 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.234.252.31, mailfrom: srs0=pbru=eh=tuxon.dev=claudiu.beznea@kernel.org)
+ dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.105.4.254, mailfrom: srs0=pbru=eh=tuxon.dev=claudiu.beznea@kernel.org)
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by sea.source.kernel.org (Postfix) with ESMTP id 42FCF41AE4;
-	Thu, 11 Jun 2026 10:43:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 211661F00893;
-	Thu, 11 Jun 2026 10:43:16 +0000 (UTC)
+	by tor.source.kernel.org (Postfix) with ESMTP id 39C0E60209;
+	Thu, 11 Jun 2026 10:43:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5FD01F00893;
+	Thu, 11 Jun 2026 10:43:22 +0000 (UTC)
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 05/26] dt-bindings: reset: renesas,rzg2l-usbphy-ctrl: Document RZ/G3S support
-Date: Thu, 11 Jun 2026 13:42:46 +0300
-Message-ID: <20260611104307.2532466-6-claudiu.beznea@tuxon.dev>
+Subject: [PATCH 5.10.y-cip 09/26] reset: rzg2l-usbphy-ctrl: Add suspend/resume support
+Date: Thu, 11 Jun 2026 13:42:50 +0300
+Message-ID: <20260611104307.2532466-10-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260611104307.2532466-1-claudiu.beznea@tuxon.dev>
 References: <20260611104307.2532466-1-claudiu.beznea@tuxon.dev>
@@ -31,111 +31,215 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 11 Jun 2026 10:43:25 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23067
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23071
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 20eee0f69c9034a0f613528f829dcaca192740d5 upstream.
+commit c5b7cd9adefc5c060facaff6f54d3187480e4e1b upstream.
 
-The Renesas USB PHY hardware block needs to have the PWRRDY bit in the
-system controller set before applying any other settings. The PWRRDY bit
-must be controlled during power-on, power-off, and system suspend/resume
-sequences as follows:
-- during power-on/resume, it must be set to zero before enabling clocks a=
-nd
-  modules
-- during power-off/suspend, it must be set to one after disabling clocks
-  and modules
+The RZ/G2L USBPHY control driver is also used on the RZ/G3S SoC.
+The RZ/G3S SoC supports a power-saving mode in which power to most USB
+components (including the USBPHY control block) is turned off. Because of
+this, the USBPHY control block needs to be reconfigured when returning
+from power-saving mode.
 
-Add the renesas,sysc-pwrrdy device tree property, which allows the
-reset-rzg2l-usbphy-ctrl driver to parse, map, and control the system
-controller PWRRDY bit at the appropriate time. Along with it add a new
-compatible for the RZ/G3S SoC.
+Add suspend/resume support to handle runtime suspend/resume of the device=
+,
+assert/deassert the reset signal, and reinitialize the USBPHY control
+block.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
-[claudiu.beznea: fixed conflict by dropping the "and RZ/Five" string
- from the description of renesas,r9a07g043-usbphy-ctrl compatible]
+[claudiu.beznea: use SIMPLE_DEV_PM_OPS() instead of
+ DEFINE_SIMPLE_DEV_PM_OPS()]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- .../reset/renesas,rzg2l-usbphy-ctrl.yaml      | 41 ++++++++++++++++---
- 1 file changed, 35 insertions(+), 6 deletions(-)
+ drivers/reset/reset-rzg2l-usbphy-ctrl.c | 99 +++++++++++++++++++++----
+ 1 file changed, 84 insertions(+), 15 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/reset/renesas,rzg2l-usbphy=
--ctrl.yaml b/Documentation/devicetree/bindings/reset/renesas,rzg2l-usbphy=
--ctrl.yaml
-index ca6a3002546e..c04176315af1 100644
---- a/Documentation/devicetree/bindings/reset/renesas,rzg2l-usbphy-ctrl.y=
-aml
-+++ b/Documentation/devicetree/bindings/reset/renesas,rzg2l-usbphy-ctrl.y=
-aml
-@@ -15,12 +15,14 @@ description:
+diff --git a/drivers/reset/reset-rzg2l-usbphy-ctrl.c b/drivers/reset/rese=
+t-rzg2l-usbphy-ctrl.c
+index a75de9b2e9ef..5a8483e44165 100644
+--- a/drivers/reset/reset-rzg2l-usbphy-ctrl.c
++++ b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
+@@ -36,6 +36,7 @@ struct rzg2l_usbphy_ctrl_priv {
+ 	struct reset_control *rstc;
+ 	void __iomem *base;
+ 	struct platform_device *vdev;
++	struct regmap_field *pwrrdy;
 =20
- properties:
-   compatible:
--    items:
--      - enum:
--          - renesas,r9a07g043-usbphy-ctrl # RZ/G2UL
--          - renesas,r9a07g044-usbphy-ctrl # RZ/G2{L,LC}
--          - renesas,r9a07g054-usbphy-ctrl # RZ/V2L
--      - const: renesas,rzg2l-usbphy-ctrl
-+    oneOf:
-+      - items:
-+          - enum:
-+              - renesas,r9a07g043-usbphy-ctrl # RZ/G2UL
-+              - renesas,r9a07g044-usbphy-ctrl # RZ/G2{L,LC}
-+              - renesas,r9a07g054-usbphy-ctrl # RZ/V2L
-+          - const: renesas,rzg2l-usbphy-ctrl
-+      - const: renesas,r9a08g045-usbphy-ctrl # RZ/G3S
+ 	spinlock_t lock;
+ };
+@@ -92,6 +93,19 @@ static int rzg2l_usbphy_ctrl_status(struct reset_contr=
+oller_dev *rcdev,
+ 	return !!(readl(priv->base + RESET) & port_mask);
+ }
 =20
-   reg:
-     maxItems: 1
-@@ -48,6 +50,20 @@ properties:
-     $ref: /schemas/regulator/regulator.yaml#
-     unevaluatedProperties: false
-=20
-+  renesas,sysc-pwrrdy:
-+    description:
-+      The system controller PWRRDY indicates to the USB PHY if the power=
- supply
-+      is ready. PWRRDY needs to be set during power-on before applying a=
-ny
-+      other settings. It also needs to be set before powering off the US=
-B.
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    items:
-+      - items:
-+          - description:
-+              System controller phandle required by USB PHY CTRL driver =
-to set
-+              PWRRDY
-+          - description: Register offset associated with PWRRDY
-+          - description: Register bitmask associated with PWRRDY
++/* put pll and phy into reset state */
++static void rzg2l_usbphy_ctrl_init(struct rzg2l_usbphy_ctrl_priv *priv)
++{
++	unsigned long flags;
++	u32 val;
 +
- required:
-   - compatible
-   - reg
-@@ -57,6 +73,19 @@ required:
-   - '#reset-cells'
-   - regulator-vbus
-=20
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: renesas,r9a08g045-usbphy-ctrl
-+    then:
-+      required:
-+        - renesas,sysc-pwrrdy
-+    else:
-+      properties:
-+        renesas,sysc-pwrrdy: false
++	spin_lock_irqsave(&priv->lock, flags);
++	val =3D readl(priv->base + RESET);
++	val |=3D RESET_SEL_PLLRESET | RESET_PLLRESET | PHY_RESET_PORT2 | PHY_RE=
+SET_PORT1;
++	writel(val, priv->base + RESET);
++	spin_unlock_irqrestore(&priv->lock, flags);
++}
 +
- additionalProperties: false
+ #define RZG2L_USBPHY_CTRL_PWRRDY	1
 =20
- examples:
+ static const struct of_device_id rzg2l_usbphy_ctrl_match_table[] =3D {
+@@ -131,9 +145,9 @@ static void rzg2l_usbphy_ctrl_pwrrdy_off(void *data)
+ 	rzg2l_usbphy_ctrl_set_pwrrdy(data, false);
+ }
+=20
+-static int rzg2l_usbphy_ctrl_pwrrdy_init(struct device *dev)
++static int rzg2l_usbphy_ctrl_pwrrdy_init(struct device *dev,
++					 struct rzg2l_usbphy_ctrl_priv *priv)
+ {
+-	struct regmap_field *pwrrdy;
+ 	struct reg_field field;
+ 	struct regmap *regmap;
+ 	const int *data;
+@@ -158,15 +172,15 @@ static int rzg2l_usbphy_ctrl_pwrrdy_init(struct dev=
+ice *dev)
+ 	field.lsb =3D __ffs(args[1]);
+ 	field.msb =3D __fls(args[1]);
+=20
+-	pwrrdy =3D devm_regmap_field_alloc(dev, regmap, field);
+-	if (IS_ERR(pwrrdy))
+-		return PTR_ERR(pwrrdy);
++	priv->pwrrdy =3D devm_regmap_field_alloc(dev, regmap, field);
++	if (IS_ERR(priv->pwrrdy))
++		return PTR_ERR(priv->pwrrdy);
+=20
+ 	ret =3D rzg2l_usbphy_ctrl_set_pwrrdy(priv->pwrrdy, true);
+ 	if (ret)
+ 		return ret;
+=20
+-	return devm_add_action_or_reset(dev, rzg2l_usbphy_ctrl_pwrrdy_off, pwrr=
+dy);
++	return devm_add_action_or_reset(dev, rzg2l_usbphy_ctrl_pwrrdy_off, priv=
+->pwrrdy);
+ }
+=20
+ static int rzg2l_usbphy_ctrl_probe(struct platform_device *pdev)
+@@ -175,9 +189,7 @@ static int rzg2l_usbphy_ctrl_probe(struct platform_de=
+vice *pdev)
+ 	struct rzg2l_usbphy_ctrl_priv *priv;
+ 	struct platform_device *vdev;
+ 	struct regmap *regmap;
+-	unsigned long flags;
+ 	int error;
+-	u32 val;
+=20
+ 	priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+@@ -191,7 +203,7 @@ static int rzg2l_usbphy_ctrl_probe(struct platform_de=
+vice *pdev)
+ 	if (IS_ERR(regmap))
+ 		return PTR_ERR(regmap);
+=20
+-	error =3D rzg2l_usbphy_ctrl_pwrrdy_init(dev);
++	error =3D rzg2l_usbphy_ctrl_pwrrdy_init(dev, priv);
+ 	if (error)
+ 		return error;
+=20
+@@ -214,12 +226,7 @@ static int rzg2l_usbphy_ctrl_probe(struct platform_d=
+evice *pdev)
+ 		goto err_pm_disable_reset_deassert;
+ 	}
+=20
+-	/* put pll and phy into reset state */
+-	spin_lock_irqsave(&priv->lock, flags);
+-	val =3D readl(priv->base + RESET);
+-	val |=3D RESET_SEL_PLLRESET | RESET_PLLRESET | PHY_RESET_PORT2 | PHY_RE=
+SET_PORT1;
+-	writel(val, priv->base + RESET);
+-	spin_unlock_irqrestore(&priv->lock, flags);
++	rzg2l_usbphy_ctrl_init(priv);
+=20
+ 	priv->rcdev.ops =3D &rzg2l_usbphy_ctrl_reset_ops;
+ 	priv->rcdev.of_reset_n_cells =3D 1;
+@@ -267,10 +274,72 @@ static int rzg2l_usbphy_ctrl_remove(struct platform=
+_device *pdev)
+ 	return 0;
+ }
+=20
++static int rzg2l_usbphy_ctrl_suspend(struct device *dev)
++{
++	struct rzg2l_usbphy_ctrl_priv *priv =3D dev_get_drvdata(dev);
++	u32 val;
++	int ret;
++
++	val =3D readl(priv->base + RESET);
++	if (!(val & PHY_RESET_PORT2) || !(val & PHY_RESET_PORT1))
++		WARN(1, "Suspend with resets de-asserted\n");
++
++	pm_runtime_put_sync(dev);
++
++	ret =3D reset_control_assert(priv->rstc);
++	if (ret)
++		goto rpm_resume;
++
++	ret =3D rzg2l_usbphy_ctrl_set_pwrrdy(priv->pwrrdy, false);
++	if (ret)
++		goto reset_deassert;
++
++	return 0;
++
++reset_deassert:
++	reset_control_deassert(priv->rstc);
++rpm_resume:
++	pm_runtime_resume_and_get(dev);
++	return ret;
++}
++
++static int rzg2l_usbphy_ctrl_resume(struct device *dev)
++{
++	struct rzg2l_usbphy_ctrl_priv *priv =3D dev_get_drvdata(dev);
++	int ret;
++
++	ret =3D rzg2l_usbphy_ctrl_set_pwrrdy(priv->pwrrdy, true);
++	if (ret)
++		return ret;
++
++	ret =3D reset_control_deassert(priv->rstc);
++	if (ret)
++		goto pwrrdy_off;
++
++	ret =3D pm_runtime_resume_and_get(dev);
++	if (ret)
++		goto reset_assert;
++
++	rzg2l_usbphy_ctrl_init(priv);
++
++	return 0;
++
++reset_assert:
++	reset_control_assert(priv->rstc);
++pwrrdy_off:
++	rzg2l_usbphy_ctrl_set_pwrrdy(priv->pwrrdy, false);
++	return ret;
++}
++
++static SIMPLE_DEV_PM_OPS(rzg2l_usbphy_ctrl_pm_ops,
++			 rzg2l_usbphy_ctrl_suspend,
++			 rzg2l_usbphy_ctrl_resume);
++
+ static struct platform_driver rzg2l_usbphy_ctrl_driver =3D {
+ 	.driver =3D {
+ 		.name		=3D "rzg2l_usbphy_ctrl",
+ 		.of_match_table	=3D rzg2l_usbphy_ctrl_match_table,
++		.pm		=3D pm_ptr(&rzg2l_usbphy_ctrl_pm_ops),
+ 	},
+ 	.probe	=3D rzg2l_usbphy_ctrl_probe,
+ 	.remove	=3D rzg2l_usbphy_ctrl_remove,
 --=20
 2.43.0
 
