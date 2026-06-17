@@ -2,41 +2,41 @@ Return-Path: <tommaso.merciai.xr@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFA68CD98E4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9F0DCD98F4
 	for <webhook@archiver.kernel.org>; Wed, 17 Jun 2026 08:32:05 +0000 (UTC)
-Received: from TYVP286CU001.outbound.protection.outlook.com (TYVP286CU001.outbound.protection.outlook.com [52.101.125.7])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.10936.1781685119226560205
+Received: from OS0P286CU011.outbound.protection.outlook.com (OS0P286CU011.outbound.protection.outlook.com [52.101.228.71])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.10942.1781685125123537376
  for <cip-dev@lists.cip-project.org>;
- Wed, 17 Jun 2026 01:31:59 -0700
+ Wed, 17 Jun 2026 01:32:05 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=dO1Rqrr4;
- spf=pass (domain: bp.renesas.com, ip: 52.101.125.7, mailfrom: tommaso.merciai.xr@bp.renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=o9+PSanp;
+ spf=pass (domain: bp.renesas.com, ip: 52.101.228.71, mailfrom: tommaso.merciai.xr@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aIzDQeiplwuMgEMPaVuMhwv8IXu2oK3P1wYVeF1Qnpsj9j7pYUmAfGXWii8nKeS27oCkv2XrcZ5B6hUZn+sKnu8dqUnbfUc9IyEMaBo5rdZF6hch+pIaVP+8s1Zx677dntDGO3MENLr7IS32C3lXKSz4z8Eo3/5kffItCYVSu4OKslEZDwAFYGmnN12R0EScsrT/vt4f8n8RV4WVimBEY5WmbHUYAv2UhIQsnG9H9fzrnGSs2Y169n/TDbshfcJBrroSjh82bxpdZgvH62pDctj/p1xHG9RfnhUb2FNnYO5LD/1GyyLMb/rcJ5Vzy3+Qb2cmmJsAxzkuPUgU2DDy/Q==
+ b=LEvb8sPsC+taxNyd3zRYyl9cZ05V/05Gr6zDcXLCjtWDPb/bvaATYeOxYXlc07ZzoGg5RMdN8GUg+RbzaEmAB2LS7qW6yjNy7sVItYidlZFPkyXNbY1ZAKBu7p5Y7x363dQigYcUyHQnuP8pot0NbfQPI7I/8waxhxf3y8jPXcHVrs5XaGkFnVX5iwEyhJuSIeeHRJ0Ocysheaa8dfYcJdRtSqGMjV6U3ysV8qoFH1bPRqZw5gThBVg3A3pBxWqxbn6giByUi7U9cZ2jFZiLAGR32nraxl4jQNgAj9w+3+6ktPF7JZozRhkCpHDDi/4rVeMMbx6+4oGoYTpsZ7yZCg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=F7dh9cMjg045KPHwpgX463asAlC/qRqp3KxYlkAZUFQ=;
- b=ATq8S3UqtaIhkB3CX91KCJTz1iwWMQwH/Igd1fo22arhTjZinvoKivEhYZz5uHWfKbsGW757cM5CPpAleoC43yTtC1v8uoL5ay3KlyLO3xtzmIIgO7HGycL6LNmQvm1iNurMzxJEylOnN8g+fHBwgc4BY7vmbBfC8iIlgN3Oj0bmyQbmvQL1emSeySMpzyma/mvmcxh8O/6AoV59wx0klV/qRDiR0hxL/TPAqlueZbfWY3gvDBCX5naH3dL6BAdvMTvcSxxdZHbBTxeB8vF6GKy5Nh1OwxhHF1YfFMSE2TCqVBXHvxoBu4NqXvNju04wMt4BgpWecIQAOh2Z2+/jww==
+ bh=2yGf1dFPlqwQ51NwUyptxX/XJUKweCl9J2SIez8nnmM=;
+ b=E7ZlvgaJGS/cz1VMEMLvpNvRjNvx5sRCQNOTYo0RlzSXfvX6YQR2YKTqeGYHx1XXevFqg0I1yvfB4ElPcyFCNkg7qkW8ypZQSPCqh9hYPc8oNVMt13FI4ug4OvLBukkA3bCHxSxkGE8fukXx5KPD+VbfZXdDAoO7SmxTwfAuEphtOfaxzWpNjX7oypS6a98o7BZ+r36k7/MroJGbf9ZxxfXyptP/nMVnhbKxpEJUvctte0nj5KLklLKWOseSYugDiRcx6g64zQoLdEfrkAYVDZhKmPW2WOaQIja3OM03W5NGII2nDITfcr5awFW9ow3FpX40tRI9TITZOFER6oNkCg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=F7dh9cMjg045KPHwpgX463asAlC/qRqp3KxYlkAZUFQ=;
- b=dO1Rqrr4yTDkvcJKnCL/0r80rYkG+bkyBbRkHJJ6og023mQn5vM0vgx8uSUc7K0rU/Sd26ljVzisk+U1vgihHJdPYOUafAC1Aduc7D9qzGRK1i8dH9Vrb3DdiWHl1bLvauKHGNhWgEKDaqP0/9IC6RoMRy63A8hITzGo0lPEr/Y=
+ bh=2yGf1dFPlqwQ51NwUyptxX/XJUKweCl9J2SIez8nnmM=;
+ b=o9+PSanpEcgfhlPl3yjptX3Vun/3jH+DkCndn68oFd8h0oC4rwlG647x7A1getzDcRjuZM1+RUdn9BxSUEiT+AzxnWPYWNpiTPkYPqR9IYcp/bomCjfAuJS70K1/OWRqGQRJF+6dndo1GCcZOgn+gJwCrv36lJApxk1HhLLONqk=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=bp.renesas.com;
 Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com (2603:1096:400:3e1::6)
  by OSZPR01MB8108.jpnprd01.prod.outlook.com (2603:1096:604:165::14) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.139.11; Wed, 17 Jun
- 2026 08:31:57 +0000
+ 2026 08:32:02 +0000
 Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com
  ([fe80::33f1:f7cd:46be:e4d8]) by TYCPR01MB11947.jpnprd01.prod.outlook.com
  ([fe80::33f1:f7cd:46be:e4d8%5]) with mapi id 15.21.0139.009; Wed, 17 Jun 2026
- 08:31:57 +0000
+ 08:32:02 +0000
 From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -44,9 +44,9 @@ To: cip-dev@lists.cip-project.org,
 CC: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	tomm.merciai@gmail.com
-Subject: [PATCH 6.1.y-cip 29/32] spi: rzv2h-rspi: Simplify clock rate search function signatures
-Date: Wed, 17 Jun 2026 10:30:00 +0200
-Message-ID: <20260617083003.1071543-30-tommaso.merciai.xr@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 31/32] arm64: dts: renesas: r9a09g047: Add RSPI nodes
+Date: Wed, 17 Jun 2026 10:30:02 +0200
+Message-ID: <20260617083003.1071543-32-tommaso.merciai.xr@bp.renesas.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260617083003.1071543-1-tommaso.merciai.xr@bp.renesas.com>
 References: <20260617083003.1071543-1-tommaso.merciai.xr@bp.renesas.com>
@@ -58,175 +58,175 @@ X-ClientProxiedBy: FR0P281CA0166.DEUP281.PROD.OUTLOOK.COM
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: TYCPR01MB11947:EE_|OSZPR01MB8108:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7567cad9-e389-42c6-5e9e-08decc4ae40f
+X-MS-Office365-Filtering-Correlation-Id: dc1c5c40-c132-4db0-d971-08decc4ae7ed
 X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|376014|1800799024|366016|52116014|23010399003|18002099003|22082099003|38350700014|56012099006|3023799007|11063799006;
+	BCL:0;ARA:13230040|376014|1800799024|366016|52116014|23010399003|18002099003|22082099003|38350700014|56012099006|11063799006;
 X-Microsoft-Antispam-Message-Info: 
-	S3S5QGViuSjbHA0fKNZBoCdfyiwNC+u5hLgFmaWY/I2YQxgGxvqyVICAl3zC/TBeW+oBxGTp/OHp049ZO2bjpS0VM27Lpo0RBQgG/zkkH4V8RFwaNPYVgQoKAA+hRsKA9IDO5s3EYlQdODAyjxUw7ORuQwwnUhSRM+eVBAnSPM2mRVt2YVVYutLXlFUbb/mAl84DyYDjBCrE6QP28qcgBAGOH62meN7n1v9jDCPynAgiNUpQPWb2NHTeE7Ydk+8PpOg5jfYEvL8lOAd0xaTCslrwGjkjQPNJCsSDq1SflFPZZieeHYYrlaVVqSdVwILPeKVc3167db16qLI/mJEYnImD5mcNg5l4Gub/ieeCsagbAfqUIqokqTWa6IoVI/jl0KTaYW6ueEP6jz2PMe+l1IqGLl4vqGwLjtblFM7TcTxQf9TFbEyHd01gB/AM3DN2GMU1Sp6p+vg0jZ6U5fnKfco4W3HQCcDPSxShVwpuZF6OYiIEzJSmaHvdF7sLZQC8Nwm6XNMuqQ4pRWACMwpHK8mpi5QuI1MZ3BxqfwEyd5BDT72LhdzXjZWx6oDISLBV4SqcOhMzhitgAkMVhRTzQxeqgoDu9KP6Uk/Lc1XFTo5cpsXNARCr43Ia2zclZDbfTaAJvONT7xgMeSDTASJuhFeT3+kTQ0vtv8I6YoKL0OPitZpjZ6nea0+aVc4akTWIbk02DVstvYFWyqqhcZnjlw==
+	fRgWHe9e5Wn7olhtJtgOe0Qg077E+qEPZsn/3QPhDKvfXCXwcEy8A/UO9OtHyCb7c+EkwDzxteGizba6pzEqgWruE+qa4qh8lgbSaheKeLO0RXG6Axh64BGLyKnRqal/+AFP6kSeTYWYcFBchKVyyQHhjXmKD4MOJ4zFBxsglODufVLpWRpIeftiKIx71vwVqIXdm8dt8WyluGAM/6T24Uug1vrHXOsaXYDTtZZV23FSq9PTx9Tr6qKFuJODQiQ+eRFMPsoSi1kz25Z/9bjI91ZhdLlRiGrSVrP7qUJWhh1iITg6Tw8xk7gf8chME1uauY4Wyk+M0/YMmpwyLFFLzGLlUEHTZFK09m8Kx3lcRRk282tbLUEfiCc0x20BReQwZIkluqrDCIvS6XpunapgwC9gG6Cf4UAVTncucx6JDo5K52qU7nx4hGh3uQI0Tm4STEq+BLdKcsTVyav056LtTd4cGAVUhBuNW0PNxnK3kUAO7LlH8yWA8JQoOC2TFhbo8wxLjlGTvgvilfteyAr1OeDNRCwU+APBjSR333QGVk+LZYxYYdCSsxgBjvzPDwzSIqUYgCExM5Nqxtsvfa3kDjclmomEMpPzYWfFSWzcImgUXxJ30axtNhw+31860n/TQFcZiGHrwTdBJ+D7iOloPlslgqaxKzbxXXqlQh+WYbfxQjdHWhTTkXe/A+ZWVhsPGkoukJGqxsWmHyHZCUo6JA==
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11947.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(52116014)(23010399003)(18002099003)(22082099003)(38350700014)(56012099006)(3023799007)(11063799006);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11947.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(52116014)(23010399003)(18002099003)(22082099003)(38350700014)(56012099006)(11063799006);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?vxsWYVsoyPATAXuVFbH10umxnKOlbgKWtUakAk41KHY0ZyDQ4AvyGYjHxG31?=
- =?us-ascii?Q?5UOEDSavundKOhiwVsYPr+JSwBDBtZy9NyQg+Ymlq0PNhN0BCAonrlrKUPe1?=
- =?us-ascii?Q?+tRjIlBOrdlZwb4S3eQ6rc1smFX6/c4UF1IOqwbSztT3VSiZPAuzSYZ2/Upk?=
- =?us-ascii?Q?I+zMhxWAHwXDdtGFh+tYCs6xEcns7JfhFFiTkhVDQMdYCdph9VdIITUffFSY?=
- =?us-ascii?Q?xsPxS3feZijbEHeyDnKXa7BHUbnXWk03IKExf/XGNk6tWNXGFhtjpIGAiAOB?=
- =?us-ascii?Q?sE5E6T0Fli0eq71difAmHGf47rZizNYcdx6K8HYqaxmZXyAL5FrWjBSu8/mV?=
- =?us-ascii?Q?++OIiD0qoIrr22ResKyJnADDG/sK2+EoD+UUzjBIR0965kKFjRCjgWxpyLtc?=
- =?us-ascii?Q?A/hwbRif3YqI+5enEZ6Pzg6/edkqqPQjuMLdRMbJ9yTuO6AjuYyEFOtirzL5?=
- =?us-ascii?Q?+K3QdJQRRYSw4qv5jKQzjp7KMZJWKyXTL79v86gHB4Rq3mvuI77MyeSMzZI9?=
- =?us-ascii?Q?WUs3Z9j5QqLoACyiv35XJIlqVfRw0xSXB6s2q61RqvjAHSborRKK3aGwxGRZ?=
- =?us-ascii?Q?S/z2MD/w7mOKA5CsXEXzyr4iTzkBWFyefLuNvwVVjtbAQDZptzXBiPGe28hB?=
- =?us-ascii?Q?DbyJQJpBn3r9z0RxuhXduBcg3F1DLCDxhYdMtMmklCtMC1Ahsjluily/uUgd?=
- =?us-ascii?Q?L34Flz0UF99m7oyCGNW2XRPst42ZUogrCsHjYyTpyZYQOyRVlU1hy9Ic8C17?=
- =?us-ascii?Q?4QBE1mQgVix50IgN/qoujAPWYM8ARpouSnaZZoHyTiKCbeu3ZPWmPlILcOcU?=
- =?us-ascii?Q?n3MGfFvsmeQv+cJWADPyPFWUesykURd5v9vOHDjSDFMY5BnYu/1Xbt60Dywt?=
- =?us-ascii?Q?CKHeIKski+cxAhRIAOIcNV/C2TVN4WE4qFBtvsIdokYZ9JIQWRPXSqKOCvW5?=
- =?us-ascii?Q?5WytuRqZoOIRjrJuN3jwGAzYNR0x5Mxvgh7G6Ce0vc3AtmrTl9Fs8e2JlyRh?=
- =?us-ascii?Q?gXgSHt6HI6Xsey0dGWqn3iWSR8azPISYeCeW0w6OSJjEAJzMwMCNiC5IKO3I?=
- =?us-ascii?Q?c1SGd87va8jQWvTWQf+EZfhZuzuAZ6QXPXfbG6MDUtXkNjC85u59iVkJHUOD?=
- =?us-ascii?Q?umDv8UqeLf3xfl1/OBiuFQxWhcvYOebuCwMINatTgeEvnNEmCeYtB5/qBXun?=
- =?us-ascii?Q?uzwxTLKuRqsLMpmtZDZe4a+oAe7bANY92xxeU47K2ZZAgEUenjKBFITvXenx?=
- =?us-ascii?Q?Rv+9vBOFm0KJ6aDS1QDnh1zHp40KFkBQHqzlJYkAAqIXO6o/iBqUGx2qOVJm?=
- =?us-ascii?Q?sYIwMC+s75zq9RSwu/v9VmNRDKP0GJgYwbPCIHRZTDZV8PpT6aCOswOP+IUA?=
- =?us-ascii?Q?oQlnM/NOkJf6uGqKsLgJ0YjBOtcZxdI80yd3sEaOc6KnQK69G0gbqvvo7Xj1?=
- =?us-ascii?Q?B9ZoPSmOi8DY1uxEBot8ILz3skqzh5OeZZ9nuUXcNTvzil9lUnb/64Vawszw?=
- =?us-ascii?Q?sqn1r2KC3rNLYjjC9ZphbA400LxOLV67oEssRiWI+ddZ5MvweYUoNN2K4ugT?=
- =?us-ascii?Q?wrRDVafouWLQclsD+ceNPiPv5KUiaVSlZRJW1gKdgDgnVhJujDtFcQs2QW/i?=
- =?us-ascii?Q?pqL7nEMCB22KcONw5BLdjOZAQH2xZ1qtf4KDarUkO9p4x5zZOX0tBb29KOv+?=
- =?us-ascii?Q?O5rjFZ9P+EzhX7hQb6JEANs+0UTGrDMZleR97hL8vFZc0S1bMQYUcH3mRlm5?=
- =?us-ascii?Q?SCmBktTeOlSSpKvrErh4fu4t+CrAM6qxCiJ+gJlSPQk+T5t0mj/7?=
+	=?us-ascii?Q?3LBS9d684/cdkAkxbpm7h+RiGSg+sB4GU/bMylwBUu0hUt6okxMDIIjUye3d?=
+ =?us-ascii?Q?eisWpEax5fCuYCE95O/rxdD3LgSKfsK7ZBc7N+W9Kkde3erYiblB/9L9mKMd?=
+ =?us-ascii?Q?/g9jPSYji0oJyl1r5y9q2CsxfnKU7vHMoYOp699B//gHZ+GyQra3okZsc63g?=
+ =?us-ascii?Q?o/BE+irIlpb92msklQ85Wv9tkJXgIPbCfxrAT/nJoaZD/UCnjeLyuzsHtbex?=
+ =?us-ascii?Q?nbm9dfems6fGNuoyVuGKYUNXoN/7stst9qKP25t+ixc3FUZdm6XLh7z7EIwA?=
+ =?us-ascii?Q?21KvJNvP+cca/+U59yCZtTmr9rtOa5DJ/2FS32rIEn8ebWYLWaMSwn/m7Gr1?=
+ =?us-ascii?Q?lsiWvcoWq979OMheU9kTJKK5lW6qTZN4280S5Xd3zviENfwQ0Dpb+lAAd2Xs?=
+ =?us-ascii?Q?dLh5Rvq8Xk182+Q2qXRRIl6d9JZWoIBSpSxCyxVvKkcfIqzrTnOx/K27hm9A?=
+ =?us-ascii?Q?QkanQtfOJWgpzTYROLbufE03THYPU8Iz/WH4tew+y/dLeVEXnXGSx8MSI7H0?=
+ =?us-ascii?Q?gJWigkPghFKPBGYHUVpMsKHO6olzObWvMnMQc39hCy0uUxlI/mpEBAdQmBYq?=
+ =?us-ascii?Q?r6hxiYgSjbvMxCXS4NRnt68d72HpLjuFzZNhLgTrnuq0pHr7ACdZDvMrKjAY?=
+ =?us-ascii?Q?AzcKPNduIA1OHaogkB3c+5wRzGgIXSgruBFe6D17MErsXbH37FmQHoj6Ja5V?=
+ =?us-ascii?Q?C+tP/v4QT+HUF3F4Sl2pUdODlL4ZAX+LxR3HIMor1CcTphAZ/hjqTtu9Je2Y?=
+ =?us-ascii?Q?88a2McyrV+egLfxsToauVUiFPys6cQ9hJp1qwwTD2PKUr6uvHtgA6ZmfjtDS?=
+ =?us-ascii?Q?4PI8R1RldXCMDnfCoNQKbi3h9I0n8nfuqyuwzSWSo8qySB6mwGrGVTXSTYiw?=
+ =?us-ascii?Q?bXN5Ap1VgZAi3M/jkUtVZOtgu+57tg3THvpq7z+OlHXIPA2z/nDXA4voNQvY?=
+ =?us-ascii?Q?ApRfNooGOCb6dIVhaFk47NO2SI4PP1pdKClI6cqJvVfkB+n/jM6/tPuJCAoE?=
+ =?us-ascii?Q?NOU1G3ZowCGOKs0nX8Lm2HvSkl9H6GQHfTIBh+ntoOMLv80Za+KJ+dz5Hb2V?=
+ =?us-ascii?Q?u3ZQDByOFg5PReIkHwKkN3J0/GPOK9F0LoyCsgytqu0ZqWRBiivzlh0fmTER?=
+ =?us-ascii?Q?usDV3yuaFgGXC122a0e6bHiPajATSDCDZYUFZUaoo+K5ApMrZ7qxElNR3jXi?=
+ =?us-ascii?Q?6OEWGMGem06QNTfjz10ZyTOhWfv0Ih732G0nEYffaUfGWfEZbHd3O9KZiwzD?=
+ =?us-ascii?Q?1FECFHT5xVuzhwzWqyL4SO5ula0l5SUl9TAY7a6wU5weHlC42Qf2cwoF9Tvq?=
+ =?us-ascii?Q?OUqaHpBxdv6WnmE/Yjrv/2toKBdFneQ3pD0DQekUsT+nVH2BBkzCz+VRzOAy?=
+ =?us-ascii?Q?ndKf8U1gR0jzQcUHdPmyLWiOCUXeT0PVLTRL/vSjEa8SCkuqzpBmrMCPpe3Z?=
+ =?us-ascii?Q?AA9pClZY/3jCkLOhxhsCDUQWTjpMBJGSrRXJb8l18MJl3expwZJCG3H1mQKz?=
+ =?us-ascii?Q?sl2HZeImGWcq7L5CiTAws/zY18OziaTX8h/XJU9iViiWntmdHlr7VpcQqE/S?=
+ =?us-ascii?Q?2iUORo8Yhfn1GV0UgsN+7/fEhYIJ9feLIfjuoyJZ+NBp2NEr28OJXhO0xmhr?=
+ =?us-ascii?Q?txI2u3ZvIXYZaPzPAOsRT2/RqZd41DPciX6DHj5k2Fhr5vkYPXetZ4mYZY7r?=
+ =?us-ascii?Q?Dfx/0jf81TSc+S7Yv9dZcpUA3e/fxgETx2Czt6xwlY1knRojweSowBYa5Xb6?=
+ =?us-ascii?Q?h0C2S9PLyvEqMZh+Ia07QqrXU4wzFd+m42hecqgQZNWPegOp79Ff?=
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7567cad9-e389-42c6-5e9e-08decc4ae40f
+X-MS-Exchange-CrossTenant-Network-Message-Id: dc1c5c40-c132-4db0-d971-08decc4ae7ed
 X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11947.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2026 08:31:56.7907
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2026 08:32:02.7624
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ngu6Lx3XWzZOKY6GVgXntvmw4IRNpZ/u2nvXiUyDqhzdGmmFJwOHlAAfhYS2yvK4SirSmyCRpWYF1EQ0v/9rIxfzG4zoITjP8WenEWruD/ibYz61dIWhj06vwy3SL57R
+X-MS-Exchange-CrossTenant-UserPrincipalName: E1dQ8TuXNhUV8Zv/Oz3+oegc/d8i7gh4fIGXGOfeAptg2Y6gSw1ybxQpTdUecwbzq/YwT/hQFURHpzBXjETbszN+IZZG0TYCVgJv6QWczezdJi3HrmSJhFMhI2+2G6Dg
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZPR01MB8108
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 17 Jun 2026 08:32:05 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23188
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23190
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+commit d2c3353ddbebd07b27ded9813a665557cc0f96d7 upstream.
 
-commit c958bb67b2dfd87b09d725a60162d13674fc5fd9 upstream.
+Add nodes for the RSPI IPs found in the Renesas RZ/G3E SoC.
 
-The spr_min and spr_max parameters passed to
-rzv2h_rspi_find_rate_variable() and rzv2h_rspi_find_rate_fixed() were
-always called with RSPI_SPBR_SPR_MIN and RSPI_SPBR_SPR_MAX respectively.
-There is no need to pass these as parameters since the valid SPR range
-is fixed by the hardware.
-
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://patch.msgid.link/20260410080517.2405700-4-prabhakar.mahadev-l=
-ad.rj@bp.renesas.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://patch.msgid.link/c8df5202caf4e36ee5beafe78ad0940643edcbb6.177=
+1344527.git.tommaso.merciai.xr@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 ---
- drivers/spi/spi-rzv2h-rspi.c | 26 +++++++++++---------------
- 1 file changed, 11 insertions(+), 15 deletions(-)
+ arch/arm64/boot/dts/renesas/r9a09g047.dtsi | 84 ++++++++++++++++++++++
+ 1 file changed, 84 insertions(+)
 
-diff --git a/drivers/spi/spi-rzv2h-rspi.c b/drivers/spi/spi-rzv2h-rspi.c
-index fec389233d42..09d80a31ed4e 100644
---- a/drivers/spi/spi-rzv2h-rspi.c
-+++ b/drivers/spi/spi-rzv2h-rspi.c
-@@ -88,9 +88,9 @@ struct rzv2h_rspi_best_clock {
- };
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi b/arch/arm64/boot/d=
+ts/renesas/r9a09g047.dtsi
+index cc0dc3df9e7f..10b7b8a5c236 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
+@@ -591,6 +591,90 @@ channel5 {
+ 			};
+ 		};
 =20
- struct rzv2h_rspi_info {
--	void (*find_tclk_rate)(struct clk *clk, u32 hz, u8 spr_min, u8 spr_max,
-+	void (*find_tclk_rate)(struct clk *clk, u32 hz,
- 			       struct rzv2h_rspi_best_clock *best_clk);
--	void (*find_pclk_rate)(struct clk *clk, u32 hz, u8 spr_low, u8 spr_high,
-+	void (*find_pclk_rate)(struct clk *clk, u32 hz,
- 			       struct rzv2h_rspi_best_clock *best_clk);
- 	const char *tclk_name;
- 	unsigned int fifo_size;
-@@ -413,7 +413,6 @@ static inline u32 rzv2h_rspi_calc_bitrate(unsigned long=
- tclk_rate, u8 spr,
- }
-=20
- static void rzv2h_rspi_find_rate_variable(struct clk *clk, u32 hz,
--					  u8 spr_min, u8 spr_max,
- 					  struct rzv2h_rspi_best_clock *best)
- {
- 	long clk_rate, clk_min_rate, clk_max_rate;
-@@ -464,7 +463,7 @@ static void rzv2h_rspi_find_rate_variable(struct clk *c=
-lk, u32 hz,
- 		 * minimum SPR that is in the valid range.
- 		 */
- 		min_rate_spr =3D DIV_ROUND_CLOSEST(clk_min_rate, rate_div) - 1;
--		if (min_rate_spr > spr_max)
-+		if (min_rate_spr > RSPI_SPBR_SPR_MAX)
- 			continue;
-=20
- 		/*
-@@ -474,14 +473,14 @@ static void rzv2h_rspi_find_rate_variable(struct clk =
-*clk, u32 hz,
- 		 * maximum SPR that is in the valid range.
- 		 */
- 		max_rate_spr =3D DIV_ROUND_CLOSEST(clk_max_rate, rate_div) - 1;
--		if (max_rate_spr < spr_min)
-+		if (max_rate_spr < RSPI_SPBR_SPR_MIN)
- 			break;
-=20
--		if (min_rate_spr < spr_min)
--			min_rate_spr =3D spr_min;
-+		if (min_rate_spr < RSPI_SPBR_SPR_MIN)
-+			min_rate_spr =3D RSPI_SPBR_SPR_MIN;
-=20
--		if (max_rate_spr > spr_max)
--			max_rate_spr =3D spr_max;
-+		if (max_rate_spr > RSPI_SPBR_SPR_MAX)
-+			max_rate_spr =3D RSPI_SPBR_SPR_MAX;
-=20
- 		for (spr =3D min_rate_spr; spr <=3D max_rate_spr; spr++) {
- 			clk_rate =3D (spr + 1) * rate_div;
-@@ -512,7 +511,6 @@ static void rzv2h_rspi_find_rate_variable(struct clk *c=
-lk, u32 hz,
- }
-=20
- static void rzv2h_rspi_find_rate_fixed(struct clk *clk, u32 hz,
--				       u8 spr_min, u8 spr_max,
- 				       struct rzv2h_rspi_best_clock *best)
- {
- 	unsigned long clk_rate;
-@@ -545,7 +543,7 @@ static void rzv2h_rspi_find_rate_fixed(struct clk *clk,=
- u32 hz,
- 		 */
- 		if (!spr && !brdv)
- 			continue;
--		if (spr >=3D spr_min && spr <=3D spr_max)
-+		if (spr >=3D RSPI_SPBR_SPR_MIN && spr <=3D RSPI_SPBR_SPR_MAX)
- 			goto clock_found;
- 	}
-=20
-@@ -575,12 +573,10 @@ static u32 rzv2h_rspi_setup_clock(struct rzv2h_rspi_p=
-riv *rspi, u32 hz)
- 	};
- 	int ret;
-=20
--	rspi->info->find_tclk_rate(rspi->tclk, hz, RSPI_SPBR_SPR_MIN,
--				   RSPI_SPBR_SPR_MAX, &best_clock);
-+	rspi->info->find_tclk_rate(rspi->tclk, hz, &best_clock);
-=20
- 	if (best_clock.error && rspi->info->find_pclk_rate)
--		rspi->info->find_pclk_rate(rspi->pclk, hz, RSPI_SPBR_SPR_MIN,
--					   RSPI_SPBR_SPR_MAX, &best_clock);
-+		rspi->info->find_pclk_rate(rspi->pclk, hz, &best_clock);
-=20
- 	if (!best_clock.clk_rate)
- 		return -EINVAL;
++		rspi0: spi@12800000 {
++			compatible =3D "renesas,r9a09g047-rspi", "renesas,r9a09g057-rspi";
++			reg =3D <0x0 0x12800000 0x0 0x400>;
++			interrupts =3D <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 107 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 500 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 501 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names =3D "idle", "error", "end", "rx", "tx";
++			clocks =3D <&cpg CPG_MOD 0x54>,
++				 <&cpg CPG_MOD 0x55>,
++				 <&cpg CPG_MOD 0x56>;
++			clock-names =3D "pclk", "pclk_sfr", "tclk";
++			resets =3D <&cpg 0x7b>, <&cpg 0x7c>;
++			reset-names =3D "presetn", "tresetn";
++			dmas =3D <&dmac0 0x448c>, <&dmac0 0x448d>,
++			       <&dmac1 0x448c>, <&dmac1 0x448d>,
++			       <&dmac2 0x448c>, <&dmac2 0x448d>,
++			       <&dmac3 0x448c>, <&dmac3 0x448d>,
++			       <&dmac4 0x448c>, <&dmac4 0x448d>;
++			dma-names =3D "rx", "tx", "rx", "tx", "rx", "tx",
++				    "rx", "tx", "rx", "tx";
++			power-domains =3D <&cpg>;
++			#address-cells =3D <1>;
++			#size-cells =3D <0>;
++			status =3D "disabled";
++		};
++
++		rspi1: spi@12800400 {
++			compatible =3D "renesas,r9a09g047-rspi", "renesas,r9a09g057-rspi";
++			reg =3D <0x0 0x12800400 0x0 0x400>;
++			interrupts =3D <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 110 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 502 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 503 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names =3D "idle", "error", "end", "rx", "tx";
++			clocks =3D <&cpg CPG_MOD 0x57>,
++				 <&cpg CPG_MOD 0x58>,
++				 <&cpg CPG_MOD 0x59>;
++			clock-names =3D "pclk", "pclk_sfr", "tclk";
++			resets =3D <&cpg 0x7d>, <&cpg 0x7e>;
++			reset-names =3D "presetn", "tresetn";
++			dmas =3D <&dmac0 0x448e>, <&dmac0 0x448f>,
++			       <&dmac1 0x448e>, <&dmac1 0x448f>,
++			       <&dmac2 0x448e>, <&dmac2 0x448f>,
++			       <&dmac3 0x448e>, <&dmac3 0x448f>,
++			       <&dmac4 0x448e>, <&dmac4 0x448f>;
++			dma-names =3D "rx", "tx", "rx", "tx", "rx", "tx",
++				    "rx", "tx", "rx", "tx";
++			power-domains =3D <&cpg>;
++			#address-cells =3D <1>;
++			#size-cells =3D <0>;
++			status =3D "disabled";
++		};
++
++		rspi2: spi@12800800 {
++			compatible =3D "renesas,r9a09g047-rspi", "renesas,r9a09g057-rspi";
++			reg =3D <0x0 0x12800800 0x0 0x400>;
++			interrupts =3D <GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 113 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 504 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 505 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names =3D "idle", "error", "end", "rx", "tx";
++			clocks =3D <&cpg CPG_MOD 0x5a>,
++				 <&cpg CPG_MOD 0x5b>,
++				 <&cpg CPG_MOD 0x5c>;
++			clock-names =3D "pclk", "pclk_sfr", "tclk";
++			resets =3D <&cpg 0x7f>, <&cpg 0x80>;
++			reset-names =3D "presetn", "tresetn";
++			dmas =3D <&dmac0 0x4490>, <&dmac0 0x4491>,
++			       <&dmac1 0x4490>, <&dmac1 0x4491>,
++			       <&dmac2 0x4490>, <&dmac2 0x4491>,
++			       <&dmac3 0x4490>, <&dmac3 0x4491>,
++			       <&dmac4 0x4490>, <&dmac4 0x4491>;
++			dma-names =3D "rx", "tx", "rx", "tx", "rx", "tx",
++				    "rx", "tx", "rx", "tx";
++			power-domains =3D <&cpg>;
++			#address-cells =3D <1>;
++			#size-cells =3D <0>;
++			status =3D "disabled";
++		};
++
+ 		rsci0: serial@12800c00 {
+ 			compatible =3D "renesas,r9a09g047-rsci";
+ 			reg =3D <0 0x12800c00 0 0x400>;
 --=20
 2.54.0
 
