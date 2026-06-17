@@ -2,41 +2,41 @@ Return-Path: <tommaso.merciai.xr@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20DFBCD98E2
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 382D2CD98F0
 	for <webhook@archiver.kernel.org>; Wed, 17 Jun 2026 08:35:36 +0000 (UTC)
-Received: from TY3P286CU002.outbound.protection.outlook.com (TY3P286CU002.outbound.protection.outlook.com [52.101.229.27])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.10985.1781685333191238265
+Received: from OS0P286CU010.outbound.protection.outlook.com (OS0P286CU010.outbound.protection.outlook.com [40.107.74.40])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.10818.1781685335021261913
  for <cip-dev@lists.cip-project.org>;
- Wed, 17 Jun 2026 01:35:33 -0700
+ Wed, 17 Jun 2026 01:35:35 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=iMhAc3El;
- spf=pass (domain: bp.renesas.com, ip: 52.101.229.27, mailfrom: tommaso.merciai.xr@bp.renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=eaKoTnmY;
+ spf=pass (domain: bp.renesas.com, ip: 40.107.74.40, mailfrom: tommaso.merciai.xr@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vML/DTcCTCYnPV3jafHylrq5WRHZ+c+9ySOCdWfOEkc3ZB2sapcEeprw0vNvMKACFxEDi0ERLOARkGrTGGR3N50fVvFEfsg8u8LljcLvyc9Aq3IOGs8OlZUSyHZSAL7qnNiTK9bypyH1MX1MZ0/51SY5DwihBCvW/6QOyxTHRtAdbgQedSUp5Ba+mVR2e8biz3PS3pJsniAd+RPlOm74oeKjjkHopewQHsPJDJ+11ya+aR2hpFPYkLmkSmmLqqbOFvmtmo6S2Gw7DLiAq7aDtsjr6xtOvnyP8Y2QGPnyzuhpbsQCadlJiSLDDSuEB1Q8kUiXCs1vfgZOAKWraH3slg==
+ b=BNrBaqw3QV2uzV3ivOwYOFfooxNbEtdWplyZEX33EKHOX50i3oq+pMHGWlNXiuAit4yxNq7Un5cpGm4pLzijkgWq6nhG9FVfI0FYRrncQ8nxVYsmIgbSRMf8qD9yDiUbHlk/QaWYlQvSgO1pYrGLllenxdKnt622OOV2Vh7x/x615StTN68wQ9wwNjbcQDw+OMtadSTkbj7MiOah369F3dWZpp1WSoi4NcE+RpmPhmlytcN0tBAR6sJj6kMXic2bk2NUsGMZHoEUlLt+JAAb0ZyskP3eGh/lQIoLW8QWlB+Xts+NKIt2Adz/u9qw2pLDdsVDnPAawTUJ2IjgrXTp6Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2syHazeo5+pN2lIsxHoiquOl+Rj1OdEBkHfvHDeCapI=;
- b=CZum+ScPJanAjfo/baMeCS+qb9FDgGdfsSBnaKm9WvcOHqNTSj2h1CJ3aDiU8eLwKdDFAlPYozl4X2D1XnfGijXFiaTRpdZfiGK1nyGAcYyuN60/DpfO30QcqUeozRlY40EkuAzbt+TvA8AxmJXK43KHBKr9YJGgH5pxG7+o9VrQIAN/crQQg6NADnrLxG1rM+QWOS7ITaa3i36meb3tTR65nN7BFv56zHcwvLDmZXTcvj4S3TDmWyFgjRcmpOzRovHVl1Y8old66k2yDO05sFzEyEXVK4BDBYAM+GJnSHDKv+zsU88C7Ov00shpPmfKYO+ILimfkRfW+Ovq3Ptu1Q==
+ bh=ry+LSIac4XMqWsV3cXSQxUfdAt2TsC2Z8/t3QOAE5as=;
+ b=RuBQzJrzYLTqxXaul3RYmO75D31WrfZcxBMFEEKJxIkXjbLNKQoB6LFUKEUrxT/CRzuk6HhGKV5iR+4RoZNk5JLPVdw8ZyAU6POmhFEX4YB8s5/XTqQOwOyF+9PpqRay2yoRAq9TpkI6S9F8ieInjmoD//iSW5K87OndT3USsz5Nu8Ir7LFfPVaEM9vuZ57JNplE3jpgSMjgBNJf+Dvg3hB5aQEx3SIzjTtD+bacAxdUyKySAdni7oFrXwXobgtI/drM3kU2YRuhMEZyt/ppEzxR/wolZfj2MbVFv48piZS5Jbl0eIOBd9QIjz75eDTFsQdeQI7CFcZ6gT8Kng8sbg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2syHazeo5+pN2lIsxHoiquOl+Rj1OdEBkHfvHDeCapI=;
- b=iMhAc3El2cbzxXS4cmLd3l3/YVpqQh4nYd11BcA4PNJncxULy+THbtF6tB+6gE71z+SYJGDAHUfu2luTRmYIIQF/F8nvvaQQbN2S/VZ4EIAgbjCAmJ0aPZPkkX6OBH8N8hYb8dC+Ju2EZMzlbc4+T4yz4AhrqXA142eRJiii/GM=
+ bh=ry+LSIac4XMqWsV3cXSQxUfdAt2TsC2Z8/t3QOAE5as=;
+ b=eaKoTnmY/XEpq0GskJwGSRc8KzA9zvqX5K8bR9Dr8q8FDdL/ha9cTsAkAub+AOA/6Bamrrmn3pkG/YHjgmCJflSKtGB5vAhC96c4fAjyZkCkrDszl/JWBob38b+zj9gDlGGAJkgozJ6wWXMEyKrU8NUTaIUbbZzkxjEsKYBGMgs=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=bp.renesas.com;
 Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com (2603:1096:400:3e1::6)
  by TYYPR01MB13245.jpnprd01.prod.outlook.com (2603:1096:405:162::14) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.113.18; Wed, 17 Jun
- 2026 08:35:29 +0000
+ 2026 08:35:32 +0000
 Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com
  ([fe80::33f1:f7cd:46be:e4d8]) by TYCPR01MB11947.jpnprd01.prod.outlook.com
  ([fe80::33f1:f7cd:46be:e4d8%5]) with mapi id 15.21.0139.009; Wed, 17 Jun 2026
- 08:35:29 +0000
+ 08:35:32 +0000
 From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -44,298 +44,138 @@ To: cip-dev@lists.cip-project.org,
 CC: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	tomm.merciai@gmail.com
-Subject: [PATCH 6.12.y-cip 02/24] driver core: Add device probe log helper dev_warn_probe()
-Date: Wed, 17 Jun 2026 10:34:40 +0200
-Message-ID: <20260617083502.1074160-3-tommaso.merciai.xr@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 03/24] clk: renesas: r9a09g047: Add entries for the RSPIs
+Date: Wed, 17 Jun 2026 10:34:41 +0200
+Message-ID: <20260617083502.1074160-4-tommaso.merciai.xr@bp.renesas.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260617083502.1074160-1-tommaso.merciai.xr@bp.renesas.com>
 References: <20260617083502.1074160-1-tommaso.merciai.xr@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 X-ClientProxiedBy: FR3P281CA0004.DEUP281.PROD.OUTLOOK.COM
  (2603:10a6:d10:1d::23) To TYCPR01MB11947.jpnprd01.prod.outlook.com
  (2603:1096:400:3e1::6)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: TYCPR01MB11947:EE_|TYYPR01MB13245:EE_
-X-MS-Office365-Filtering-Correlation-Id: 13f4455b-6bbe-465f-426a-08decc4b6309
+X-MS-Office365-Filtering-Correlation-Id: a3cb7018-d96e-49df-5419-08decc4b64e3
 X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|23010399003|366016|52116014|376014|1800799024|56012099006|11063799006|3023799007|6133799003|22082099003|38350700014|18002099003;
+	BCL:0;ARA:13230040|23010399003|366016|52116014|376014|1800799024|56012099006|11063799006|22082099003|38350700014|18002099003;
 X-Microsoft-Antispam-Message-Info: 
-	IhZfdwF+zndwNWl4x9b/zLUd3hRlISl7ANQD+meGOUaunRuMCumRrFzHQbvu6HFyBIo6RCMUSFZ7OXYv+fCGJkCJvBfM8FmyQkaDLMANyx/jsHfYvksdRTD9vpnnkwBYP36oWpi237s0VWRFNSoCIDyHoUk6s1ZjQ4+o7V/8/4QI6iE6x/58jvVd9vzcvGIv6ao/l66uS1RdB5PuMBRs3HB/pfjJbn2SLyCyWp1ot4HbGUQvjXi3VXlSYyaka1302wxIBQjd5g6tOpaaXxof6BQ9vmPKxSlY+bD7BFYFnRyCTpIHFX6TrNOVbLW3iBu5JiiF6xmER4A+gr+CmMDytSiXemcVN4vJBM/dhNlU8aiQYxrQ6CcZCL3eHcj+BAsOnXTQYm1j/OenivE5rU5gewqK9SQfNlZiz1MP3GcinHYnEkjBZg5p7kdUk4/toiKmCpyuiTMBmMh+pCJUDC3atRLAvTJD7Zt9Hnf46KdP1ubi84LGd/Uweo4dEtQptGAAIXhAi130cjQEzC9tz7jU+BHHqiFxUXvIRUR7RpPQ8NS8jZ+5nRtyRUxXPNX9GZvtSSIJl7khgiMs36C8ZnxRnERk7J00GBgUjJQrdtwLBBwhgT6TiZVWaKzlyDdhZRF3W5W0ALs40BOSUnvkEgCZskwCfhkzUhkdgCrLJNrYuOArpTq0/MfZ5AU2ncd+SjPfVWM/Xu3fW1sOlIRBSZ+qCQ==
+	t1Z4mVs/zA9q0Y1SG28ITPB151VReocd5oZh3k0q/OCW+dta6blX7r6eJ+nQnp4SEfVCJ3Bx/jHQoSDC3uwfkDmv4TmWfBCG4fDgn2IyHMpEhLB/Z8EdRwk0cyReKWcjitlG6XrAeE6tlBiT8T60NLVRIIX4toeJlay6G+bj2AjG322+GyElgl6b6W1hAb836in9zKKE95jb9ZDGW1ZnehxZmDBQt0SITWs5JPiwWzdkjl5lQNdhKquQF72RCgYrEORL2SSMagduTTm8HfNH22ZoyKD2b7bFcbOwIB/FpfcV97mmXgEagr0ccnq2XYz/RXY6s7Ft9kmAF55HcxgvFGELC4sqmtDPSMb18zZ/NK0NYvR8Bp4Xl7NI1/63Ju2ogPZQMSdOa8yJNuhwcO83O6v4eTkuO6Av0Pmz98b4/RZ/3H6legACHgqasfWsIC5oaOLt4ROlMVHOnL0Rtj6l7aSPcyJI6ltiBrJtXtus1ltFNRG6S27iAhazfOe7JUwh34C3tXyIZ7ctP1pIFuFmdVgB90DIU740jV7X5vBMiZRVL38HeTP3xKXTZwUeX0aHDyEI9tx5EJY/RIvlnInu4VHZ32Ao0dzcENTUd7kyQtiKlpG0X6VgRd0gnlY2q4aA+nTtrkK3+jP/GjFN1RkHtx9T9xverKFeZLNadjK+W5JyfTvugnR09U+LtwWwZqvJLevrgA4KMrkmr+ti/2WZkw==
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11947.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(52116014)(376014)(1800799024)(56012099006)(11063799006)(3023799007)(6133799003)(22082099003)(38350700014)(18002099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11947.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(52116014)(376014)(1800799024)(56012099006)(11063799006)(22082099003)(38350700014)(18002099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?XtyE2AgfH0z1Q8MAqqPE+r4WM/uOR1wHbDyxzFBwytx8UlVEJGZOtF4UUIJa?=
- =?us-ascii?Q?8BCtX9PDuAgaogTCIat8T13hkHtaxmxPvf1Zn66sZIRqcvsXMHFG2OveN994?=
- =?us-ascii?Q?6sjmWFTntIVv4KDaRuOpD7Gv5SPHwMPXl2iSFlxzqgP94ddqT6YSyfvbxiaI?=
- =?us-ascii?Q?trIhUShqgGKC8xCmVuQYiyFaLU5lzrrw1BttMeHTFvSwBc/KzrE8voCNSnmv?=
- =?us-ascii?Q?TkwnkHLcWMUor9UjMr1pHLJh5h1xAgLgal/73w47oiLPWmLmFZ51RNrkevo5?=
- =?us-ascii?Q?4IQLKlDMfL3iFBeE25Bl38OAzDsy/lO7TyUtY1A7zDoOdjoM9IYcbPDvlhn0?=
- =?us-ascii?Q?V5efZuyT3sAsy5QyEqXKc0dyz9uU4rBGLjHL3BvQWWeFhGUHidH+GcnF3ddm?=
- =?us-ascii?Q?Bfpg93cHhbG6t0DG1JRx9jVT8CJmhEoS9HrQqxAi1C5E7r2LIOmqN6gjSnOd?=
- =?us-ascii?Q?EZCERVtAc4R492HoyhVbjTYQxI9tsaA8hVCR06VaLJNHyuk/lViyLx6jPMHw?=
- =?us-ascii?Q?Xj1149Bg/UDOrYS+p8IVGL7My4CrUs9a03IJUh25gIXhhaAgfqfmOParT7jh?=
- =?us-ascii?Q?KFXxlsVnpKz5KjKXsxhQOBf/oT81IJFgbfBeVHeUmtzpiwhQeNVWk5wYveqR?=
- =?us-ascii?Q?EQbUiXEoa6LWpNjylG51oFcUQrhdxkEI40k+QJ1jlQp84NzQThSwZynUoJC8?=
- =?us-ascii?Q?XZfOOPh8GgUEzxFYQWxtqMasFyo0JQbvZ11N2s7F9ze4yLsNNLhuw9X+LyEC?=
- =?us-ascii?Q?cukFF1LzLYsTrmdMPJCNLWE6gFB6gZ//NB3QZ4UvTVFK3zWqBVJ5A8aa0P+y?=
- =?us-ascii?Q?9xjm/WeGWX2Qvc73OFF0/mYacwq0zP2hyppHuSSEseR8tY/DWicpmc4jn/F2?=
- =?us-ascii?Q?R0R5EcxiphvMimDCdSNY8a5ZUJbk4ifJeeUGDIkfGYN6jo5B4hDBDha8WVkD?=
- =?us-ascii?Q?1wGiXz8aS0wq7l2Gnf/mxLBmxV//DkwvDgnSeHtC7mhEabaVUA/0vdhkHVZm?=
- =?us-ascii?Q?Gy/Yl+01RK5mi8XdYA/YdJRjtM4S2hdS7l00/77d38uAS7q/RayAF2VuQcZA?=
- =?us-ascii?Q?wrXhp5E/RB/ZXkUjbFQo4S4S88EB34GREHAwAN58TWAxMEuuNtSC9u9/IH4x?=
- =?us-ascii?Q?y2m26LmYGYPRBjFAWmu6z+z1d7mX0D9f5zLZ4Hf2TQGAnqal8f9THdugFVeE?=
- =?us-ascii?Q?Cihm2jv5fs8xyPbS2p+eoI654Bbt+vrrFqlHujXcj269N7FYVs74hWZr9Na9?=
- =?us-ascii?Q?RFQERGndWu/w4rtmvjkXgxVYx8andjwlgLYQxyvry8uuhykMA3fmJOVCEHnr?=
- =?us-ascii?Q?q0zoOC4JjhtxmVm0RVUswp7HxOJ4KFqoap/ImwkQIziZJ7Vkz+M8gzUrcQBc?=
- =?us-ascii?Q?+hpGLk2aSZ0Cjw7oq9pDjL3QW+rF5V1OTTUdGpLnaDukVe8yLNCiznkR+hoT?=
- =?us-ascii?Q?u6/mlWtm2a2KnQFJOhl+TDODcvPGOCprZZHGEPMCJEBLL7vAX/8PmdTitvhK?=
- =?us-ascii?Q?VUYLjpgOkNpxcqgr5uAOZrhstlSePGALzk9j3WS8akyQyhxG/UyW7YF0mbq/?=
- =?us-ascii?Q?P/iJItpu/pOzoM+MPda4z7f+Rce1t+MfKUK9nNsmn3oBYFeoe+KO5rtR0N+i?=
- =?us-ascii?Q?vSeqTzt2BarHCDOc8b9b22JF59snlXVxxvKjE0td9ytMWfq8PC/rz42C0ppA?=
- =?us-ascii?Q?njWQzJ8X6xdVa6BexAch+JxfNWn3btkwaiFD4Z70dUOz3JWVNgl+CQ1kj0v0?=
- =?us-ascii?Q?zhVSBX3EbDaMaZUfeuanuPyT/LDul1CKFBcPQqaxE6lyTQm0uTUR?=
+	=?us-ascii?Q?s1qTo1Af4AFV/1o8nMRRF3uvJKGoYYaPRanuSrQPi/jCFnQzFhr2KFU1pgs/?=
+ =?us-ascii?Q?sIo0DI2HQLYBRcdif58ylMjCTKqpY1VX45XjtCvWM/3QrPznr9oZiF+hL6DI?=
+ =?us-ascii?Q?Ji374WJFiBkVLKTcAzKJDzAgZm+aDAmxWi2TAlGXlZGgJKEqOhml1q4dj8Ls?=
+ =?us-ascii?Q?nL7aUNqwE3T+AjiWcak/AukafgfJcZH0A9T6igkyNTCAPmlB1y5gv2ba9bNu?=
+ =?us-ascii?Q?won1bEQt4fgWHA2sbJKJ4LArSNWZu2HVllcSFHDLSwTYumMJ6PNGBox1nVGk?=
+ =?us-ascii?Q?UhtJFg3R2g5lQOIWReNT3WkGRUMOmC2T5PLZvdf3m3Whs0mPXFP82EfnuA7L?=
+ =?us-ascii?Q?dB8e1qxCcAHJxhxZdbG5jl+6uCYyhAn3Hhucwxk/FyrM/mlvpVRUtnc4uNO+?=
+ =?us-ascii?Q?KQV/boSglAdZkk8lMtffzg3PahLlVBszL4SdEXxj44d2CcQjHywsiS34DH7q?=
+ =?us-ascii?Q?akxAxI7up7eOc6L8zGdk+i9c6/kJmg+ADh0wA0WSG1K6wI/z8lkUwM/PXYF+?=
+ =?us-ascii?Q?8xso3B1ama1kRExnP3vWENtWntNWAFbDXubt88Mzc8leY15/ZmEjimZpr9+H?=
+ =?us-ascii?Q?7XXqZnAGcitknEMVPDloplCP71VyTlViRDmSlGkvykuJP1RQ6thfUJfWpyYJ?=
+ =?us-ascii?Q?e8Ksuez+AbQF7z+Bg7SE77YBVLvZAHFIMsX/owY6B7m/v1Q0MDgnpDhOuQMz?=
+ =?us-ascii?Q?KJOMF4z8WfmORvO54NDxqNrEbejeda51K0taAyPhcRxWuP0ObWd9hX2cCjNX?=
+ =?us-ascii?Q?wbrO4Ft3YKfdKADQPv/gsTDulUI21fpl8VgIKpXyMLSeU+1MSZp6pFndrYDR?=
+ =?us-ascii?Q?qfXKM+omxNXD6aj6dHJV5f1EuaxI255fgoqxoXfoMOFRx/JSeEiqnLpKWtQb?=
+ =?us-ascii?Q?ELcxDzaEl62MIoDnkDQx6owaINMMLQYpJpJV8E2ZoBm7lZ3adubdxDsRsSHE?=
+ =?us-ascii?Q?dn9LZzhxI8CsjGx79vr+8S7friO81xOManl8OK513xME8ux9ykoSrawW/CZO?=
+ =?us-ascii?Q?snXTl/1f1YCMnNLngKx6qsXTY3p0BFumVNnIEK8DvwMUhQ3pxWLKmpxUX73d?=
+ =?us-ascii?Q?A5IVvqu7QBKh+xGlKHxk25pEvSG+P/tEQQ5LIuhRbZLWAXGJMsk5Ax3YBKAJ?=
+ =?us-ascii?Q?R8+oj8VXuyIrjsyzd5y+h+TE4r+YL2ZTjlZxtQXHDV2BYbCRlba45CZyTPu2?=
+ =?us-ascii?Q?hg2PytLNDQ1gLO+oFlMl9JG6QDoWUqk5V4yRY0gyvGM4hsgEuSRmoS/8ioGa?=
+ =?us-ascii?Q?oa+VhS77faLG1Ebi4Y6qSp9CUu0LZQzXDKogEN99gtvUbdDWH0700fGgWwA5?=
+ =?us-ascii?Q?Fq4r8Hp4J2LGkf8s5iJzvSGuC/Uu6aW2n48qSTA2RQiZjJzEOoLnltzMDrHu?=
+ =?us-ascii?Q?LoBlEEB+sTRNLEcQD2DSwXBrLkWFHf5R0jINgtCdbhrAsLqYu5c7Gxq2Q2qH?=
+ =?us-ascii?Q?JycL63K2/QqvgIe5+QCK3ZRawkNVw3KwqwDnkYRlmS/7yDjUSwpC105AhgYI?=
+ =?us-ascii?Q?OTuyK3gsA89h/5kfejE1AK3rovYLUIrA9oU10XUt2o6hgcgeiBVFLOmdhXyl?=
+ =?us-ascii?Q?WgoGKHyJd8JRJBUaDvJ1JCP55gSIg8RmTkAudfj22qlPWr/dH04SYP+5LgcI?=
+ =?us-ascii?Q?6IGGyV7ubtCt6LTHhiyy6tUtzs/EYPmcTDJI8Zzjmhurw1jsahn3XqIj2fvW?=
+ =?us-ascii?Q?yIdceFhi4koHMlrPltAkeFIV+fX7Y/2tKIibWU5fmEVmIzAbjYT2ecovod+V?=
+ =?us-ascii?Q?WooD2lk1GvxcyLJaXUv/ald8D5TIXhXo3SVZPVHXD6YIbQEyzaky?=
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 13f4455b-6bbe-465f-426a-08decc4b6309
+X-MS-Exchange-CrossTenant-Network-Message-Id: a3cb7018-d96e-49df-5419-08decc4b64e3
 X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11947.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2026 08:35:29.2655
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2026 08:35:32.3888
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tjsO1UGP7+Ud4V2Im5w3/T92ykTy/WrLeugHoG0P2qSVO+KeiaBWxeabmGPNs0xyZvMnylD3xWo6zkA7PzDsuJwgcSL0XmvwRZxcwsZomygAvI9w3hFY5pBSqwHIyxGu
+X-MS-Exchange-CrossTenant-UserPrincipalName: AUjV2pMCODf4rpdjPkfVtMiIFL0i2lLeFBgm3JjYb1KCpetHeuacOCqBe0tgA6VPjSb3mRmR34FX72JBM+xBGb8YG5oEEovqLbMTEoD5rM2HBSmarOa2JkEdeR8Lcaqg
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB13245
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 17 Jun 2026 08:35:36 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23194
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23195
 
-From: Dragan Simic <dsimic@manjaro.org>
+commit 24a51f8bf869053de4927e0798d17dbcda9ea3cf upstream.
 
-commit 36e69b160705b65bf136c2fb6a1194447eeb8478 upstream.
+Add clock and reset entries for the Renesas RZ/G3E RSPI IPs.
 
-Some drivers can still provide their functionality to a certain extent
-even when some of their resource acquisitions eventually fail.  In such
-cases, emitting errors isn't the desired action, but warnings should be
-emitted instead.
-
-To solve this, introduce dev_warn_probe() as a new device probe log helper,
-which behaves identically as the already existing dev_err_probe(), while it
-produces warnings instead of errors.  The intended use is with the resource=
-s
-that are actually optional for a particular driver.
-
-While there, copyedit the kerneldoc for dev_err_probe() a bit, to simplify
-its wording a bit, and reuse it as the kerneldoc for dev_warn_probe(), with
-the necessary wording adjustments, of course.
-
-Signed-off-by: Dragan Simic <dsimic@manjaro.org>
-Tested-by: H=C3=A9l=C3=A8ne Vulquin <oss@helene.moe>
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Link: https://patch.msgid.link/2be0a28538bb2a3d1bcc91e2ca1f2d0dc09146d9.172=
-7601608.git.dsimic@manjaro.org
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://patch.msgid.link/ca59fdcc6c32b8f6659aa9218f1a42d2bcd258c3.177=
+1344527.git.tommaso.merciai.xr@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 ---
- drivers/base/core.c        | 129 +++++++++++++++++++++++++++++--------
- include/linux/dev_printk.h |   1 +
- 2 files changed, 102 insertions(+), 28 deletions(-)
+ drivers/clk/renesas/r9a09g047-cpg.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index d233a245e19b..486c73061cab 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -5049,6 +5049,49 @@ define_dev_printk_level(_dev_info, KERN_INFO);
-=20
- #endif
-=20
-+static void __dev_probe_failed(const struct device *dev, int err, bool fat=
-al,
-+			       const char *fmt, va_list vargsp)
-+{
-+	struct va_format vaf;
-+	va_list vargs;
-+
-+	/*
-+	 * On x86_64 and possibly on other architectures, va_list is actually a
-+	 * size-1 array containing a structure.  As a result, function parameter
-+	 * vargsp decays from T[1] to T*, and &vargsp has type T** rather than
-+	 * T(*)[1], which is expected by its assignment to vaf.va below.
-+	 *
-+	 * One standard way to solve this mess is by creating a copy in a local
-+	 * variable of type va_list and then using a pointer to that local copy
-+	 * instead, which is the approach employed here.
-+	 */
-+	va_copy(vargs, vargsp);
-+
-+	vaf.fmt =3D fmt;
-+	vaf.va =3D &vargs;
-+
-+	switch (err) {
-+	case -EPROBE_DEFER:
-+		device_set_deferred_probe_reason(dev, &vaf);
-+		dev_dbg(dev, "error %pe: %pV", ERR_PTR(err), &vaf);
-+		break;
-+
-+	case -ENOMEM:
-+		/* Don't print anything on -ENOMEM, there's already enough output */
-+		break;
-+
-+	default:
-+		/* Log fatal final failures as errors, otherwise produce warnings */
-+		if (fatal)
-+			dev_err(dev, "error %pe: %pV", ERR_PTR(err), &vaf);
-+		else
-+			dev_warn(dev, "error %pe: %pV", ERR_PTR(err), &vaf);
-+		break;
-+	}
-+
-+	va_end(vargs);
-+}
-+
- /**
-  * dev_err_probe - probe error check and log helper
-  * @dev: the pointer to the struct device
-@@ -5061,7 +5104,7 @@ define_dev_printk_level(_dev_info, KERN_INFO);
-  * -EPROBE_DEFER and propagate error upwards.
-  * In case of -EPROBE_DEFER it sets also defer probe reason, which can be
-  * checked later by reading devices_deferred debugfs attribute.
-- * It replaces code sequence::
-+ * It replaces the following code sequence::
-  *
-  * 	if (err !=3D -EPROBE_DEFER)
-  * 		dev_err(dev, ...);
-@@ -5073,47 +5116,77 @@ define_dev_printk_level(_dev_info, KERN_INFO);
-  *
-  * 	return dev_err_probe(dev, err, ...);
-  *
-- * Using this helper in your probe function is totally fine even if @err i=
-s
-- * known to never be -EPROBE_DEFER.
-+ * Using this helper in your probe function is totally fine even if @err
-+ * is known to never be -EPROBE_DEFER.
-  * The benefit compared to a normal dev_err() is the standardized format
-- * of the error code, it being emitted symbolically (i.e. you get "EAGAIN"
-- * instead of "-35") and the fact that the error code is returned which al=
-lows
-- * more compact error paths.
-+ * of the error code, which is emitted symbolically (i.e. you get "EAGAIN"
-+ * instead of "-35"), and having the error code returned allows more
-+ * compact error paths.
-  *
-  * Returns @err.
-  */
- int dev_err_probe(const struct device *dev, int err, const char *fmt, ...)
- {
--	struct va_format vaf;
--	va_list args;
-+	va_list vargs;
-=20
--	va_start(args, fmt);
--	vaf.fmt =3D fmt;
--	vaf.va =3D &args;
-+	va_start(vargs, fmt);
-=20
--	switch (err) {
--	case -EPROBE_DEFER:
--		device_set_deferred_probe_reason(dev, &vaf);
--		dev_dbg(dev, "error %pe: %pV", ERR_PTR(err), &vaf);
--		break;
-+	/* Use dev_err() for logging when err doesn't equal -EPROBE_DEFER */
-+	__dev_probe_failed(dev, err, true, fmt, vargs);
-=20
--	case -ENOMEM:
--		/*
--		 * We don't print anything on -ENOMEM, there is already enough
--		 * output.
--		 */
--		break;
-+	va_end(vargs);
-=20
--	default:
--		dev_err(dev, "error %pe: %pV", ERR_PTR(err), &vaf);
--		break;
--	}
-+	return err;
-+}
-+EXPORT_SYMBOL_GPL(dev_err_probe);
-=20
--	va_end(args);
-+/**
-+ * dev_warn_probe - probe error check and log helper
-+ * @dev: the pointer to the struct device
-+ * @err: error value to test
-+ * @fmt: printf-style format string
-+ * @...: arguments as specified in the format string
-+ *
-+ * This helper implements common pattern present in probe functions for er=
-ror
-+ * checking: print debug or warning message depending if the error value i=
-s
-+ * -EPROBE_DEFER and propagate error upwards.
-+ * In case of -EPROBE_DEFER it sets also defer probe reason, which can be
-+ * checked later by reading devices_deferred debugfs attribute.
-+ * It replaces the following code sequence::
-+ *
-+ * 	if (err !=3D -EPROBE_DEFER)
-+ * 		dev_warn(dev, ...);
-+ * 	else
-+ * 		dev_dbg(dev, ...);
-+ * 	return err;
-+ *
-+ * with::
-+ *
-+ * 	return dev_warn_probe(dev, err, ...);
-+ *
-+ * Using this helper in your probe function is totally fine even if @err
-+ * is known to never be -EPROBE_DEFER.
-+ * The benefit compared to a normal dev_warn() is the standardized format
-+ * of the error code, which is emitted symbolically (i.e. you get "EAGAIN"
-+ * instead of "-35"), and having the error code returned allows more
-+ * compact error paths.
-+ *
-+ * Returns @err.
-+ */
-+int dev_warn_probe(const struct device *dev, int err, const char *fmt, ...=
-)
-+{
-+	va_list vargs;
-+
-+	va_start(vargs, fmt);
-+
-+	/* Use dev_warn() for logging when err doesn't equal -EPROBE_DEFER */
-+	__dev_probe_failed(dev, err, false, fmt, vargs);
-+
-+	va_end(vargs);
-=20
- 	return err;
- }
--EXPORT_SYMBOL_GPL(dev_err_probe);
-+EXPORT_SYMBOL_GPL(dev_warn_probe);
-=20
- static inline bool fwnode_is_primary(struct fwnode_handle *fwnode)
- {
-diff --git a/include/linux/dev_printk.h b/include/linux/dev_printk.h
-index ca32b5bb28eb..eb2094e43050 100644
---- a/include/linux/dev_printk.h
-+++ b/include/linux/dev_printk.h
-@@ -276,6 +276,7 @@ do {									\
- 			dev_driver_string(dev), dev_name(dev), ## arg)
-=20
- __printf(3, 4) int dev_err_probe(const struct device *dev, int err, const =
-char *fmt, ...);
-+__printf(3, 4) int dev_warn_probe(const struct device *dev, int err, const=
- char *fmt, ...);
-=20
- /* Simple helper for dev_err_probe() when ERR_PTR() is to be returned. */
- #define dev_err_ptr_probe(dev, ___err, fmt, ...) \
+diff --git a/drivers/clk/renesas/r9a09g047-cpg.c b/drivers/clk/renesas/r9a0=
+9g047-cpg.c
+index 728a72093d87..bca513f48133 100644
+--- a/drivers/clk/renesas/r9a09g047-cpg.c
++++ b/drivers/clk/renesas/r9a09g047-cpg.c
+@@ -218,6 +218,24 @@ static const struct rzv2h_mod_clk r9a09g047_mod_clks[]=
+ __initconst =3D {
+ 						BUS_MSTOP(5, BIT(13))),
+ 	DEF_MOD("wdt_3_clk_loco",		CLK_QEXTAL, 5, 2, 2, 18,
+ 						BUS_MSTOP(5, BIT(13))),
++	DEF_MOD("rspi_0_pclk",			CLK_PLLCLN_DIV8, 5, 4, 2, 20,
++						BUS_MSTOP(11, BIT(0))),
++	DEF_MOD("rspi_0_pclk_sfr",		CLK_PLLCLN_DIV8, 5, 5, 2, 21,
++						BUS_MSTOP(11, BIT(0))),
++	DEF_MOD("rspi_0_tclk",			CLK_PLLCLN_DIV8, 5, 6, 2, 22,
++						BUS_MSTOP(11, BIT(0))),
++	DEF_MOD("rspi_1_pclk",			CLK_PLLCLN_DIV8, 5, 7, 2, 23,
++						BUS_MSTOP(11, BIT(1))),
++	DEF_MOD("rspi_1_pclk_sfr",		CLK_PLLCLN_DIV8, 5, 8, 2, 24,
++						BUS_MSTOP(11, BIT(1))),
++	DEF_MOD("rspi_1_tclk",			CLK_PLLCLN_DIV8, 5, 9, 2, 25,
++						BUS_MSTOP(11, BIT(1))),
++	DEF_MOD("rspi_2_pclk",			CLK_PLLCLN_DIV8, 5, 10, 2, 26,
++						BUS_MSTOP(11, BIT(2))),
++	DEF_MOD("rspi_2_pclk_sfr",		CLK_PLLCLN_DIV8, 5, 11, 2, 27,
++						BUS_MSTOP(11, BIT(2))),
++	DEF_MOD("rspi_2_tclk",			CLK_PLLCLN_DIV8, 5, 12, 2, 28,
++						BUS_MSTOP(11, BIT(2))),
+ 	DEF_MOD("rsci0_pclk",			CLK_PLLCLN_DIV16, 5, 13, 2, 29,
+ 						BUS_MSTOP(11, BIT(3))),
+ 	DEF_MOD("rsci0_tclk",			CLK_PLLCLN_DIV16, 5, 14, 2, 30,
+@@ -441,6 +459,12 @@ static const struct rzv2h_reset r9a09g047_resets[] __i=
+nitconst =3D {
+ 	DEF_RST(7, 6, 3, 7),		/* WDT_1_RESET */
+ 	DEF_RST(7, 7, 3, 8),		/* WDT_2_RESET */
+ 	DEF_RST(7, 8, 3, 9),		/* WDT_3_RESET */
++	DEF_RST(7, 11, 3, 12),		/* RSPI_0_PRESETN */
++	DEF_RST(7, 12, 3, 13),		/* RSPI_0_TRESETN */
++	DEF_RST(7, 13, 3, 14),		/* RSPI_1_PRESETN */
++	DEF_RST(7, 14, 3, 15),		/* RSPI_1_TRESETN */
++	DEF_RST(7, 15, 3, 16),		/* RSPI_2_PRESETN */
++	DEF_RST(8, 0, 3, 17),		/* RSPI_2_TRESETN */
+ 	DEF_RST(8, 1, 3, 18),		/* RSCI0_PRESETN */
+ 	DEF_RST(8, 2, 3, 19),		/* RSCI0_TRESETN */
+ 	DEF_RST(8, 3, 3, 20),		/* RSCI1_PRESETN */
 --=20
 2.54.0
 
