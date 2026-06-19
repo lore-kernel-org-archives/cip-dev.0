@@ -1,185 +1,448 @@
-Return-Path: <benedikt.niedermayr@siemens.com>
+Return-Path: <Shivanand.Kunijadar@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D37FCD4F26
-	for <webhook@archiver.kernel.org>; Fri, 19 Jun 2026 08:46:24 +0000 (UTC)
-Received: from AS8PR04CU009.outbound.protection.outlook.com (AS8PR04CU009.outbound.protection.outlook.com [52.101.70.20])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.38426.1781858776850109331
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE51CCD98F6
+	for <webhook@archiver.kernel.org>; Fri, 19 Jun 2026 11:09:28 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.134])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.40243.1781867361214025745
  for <cip-dev@lists.cip-project.org>;
- Fri, 19 Jun 2026 01:46:17 -0700
+ Fri, 19 Jun 2026 04:09:21 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=PVomEXk4;
- spf=pass (domain: siemens.com, ip: 52.101.70.20, mailfrom: benedikt.niedermayr@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MqSB07FGFYF60Zbsu0DzhNwcx4xtmvEhvcxFuOq6CdpUuElbtq3gxlzamuWIljQVcY88orn94TcSZdyi9Sz14XwkSNrH6PsxkwOSkd2u83oOw8RWg4Yaep7dPInbKG6YtAZ7pvQHd+iAu+pLPxUoGwTNx1DezLW9r0i1ciu4+QVN8n1JcV2Ol5YTPNyXYEg6sEOPNTlqkunONMXAJqgCCjHRxjTQZI05jAStIY3/K1epASgJo7y6BeRVDZYzVpn2HlyKtZkLV9C8FkA13A3XTF6gv1cLtiNPkM8bFsPTM0KJ2e2grBfMm74vG38XY48UJ5xkzqN/DrmIeO9EGqj14A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oHVFWtDYbvY19EmJxmY12hCOfTHexARhb2BAo81kpqw=;
- b=YDM/cW92O275FVzlSJLuwwMnLxT2wFIPnzVDceIWdc/3NmOI/ZGDItB82sw/6V8HEGw1Gl1F4Hh9NzAX1m4PcygpGd3PIXx2TXkx+SMGCLVyr07B1RGjWEu+mBlPRGZh/5U6xDyZc6yAFcN82GcA++ZavrUIxwwztsaw5pRN00aZ9PWQnDKqdj9IsOYzFKm/seUh7B0+zQE4t6UOhQ+H/Cd/8588gmTLx3AeCkAYsDu7BQ6JN6GE8+02cQO0Xmo2dwXVvbD/WVGVtjE6rsr9DJPikG9SInEcQNng+LntZElQQ9l8vrBbF8IoJ75kjv+BggUlSZnhtKO1AGQ9WC8qMQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oHVFWtDYbvY19EmJxmY12hCOfTHexARhb2BAo81kpqw=;
- b=PVomEXk4Jhh1nYy8Vz4mHIiJMPuLPNHFvQPMK6LS00gxqRdtHD7XhMv5P3gLtdkNvQiiA4+Zzrg3lltf6ecYp67OnGkQZ4nAevqd2YKegO0Wt62sGGSCFcL+B5bjDkaTB4UeQ5qCPvHmYworgm4eG9flfwROEHeae+laF/rUH2aKFNd4sFvwxWGOWuawC+mOZVoBjUQBlinpfKyfZkr+/T83uycBh3X4PXm+Qh9gzo5zFdD5YAZj1Pip/bYPO2aZljJlGKe31NzagvYOtPUbkFwLWTwXp42CZkze/D8/OuW21mGrt6d13zANEZQs35M0GJGdhNWLJ59etLsFUFO/nQ==
-Received: from DU2PR10MB7645.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:497::7)
- by PAVPR10MB7115.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:316::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.139.13; Fri, 19 Jun
- 2026 08:46:12 +0000
-Received: from DU2PR10MB7645.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::e295:f11e:ecf3:deff]) by DU2PR10MB7645.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::e295:f11e:ecf3:deff%4]) with mapi id 15.21.0113.015; Fri, 19 Jun 2026
- 08:46:12 +0000
-From: "Niedermayr, BENEDIKT" <benedikt.niedermayr@siemens.com>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-Subject: Re: [cip-dev][isar-cip-core][PATCH] swupdate: fix compilation
-Thread-Topic: [cip-dev][isar-cip-core][PATCH] swupdate: fix compilation
-Thread-Index: AQHc/8cMeSocr68NOkST8NJ2xqHMC7ZFj66AgAAA7QA=
-Date: Fri, 19 Jun 2026 08:46:12 +0000
-Message-ID: <74b1dcc4-12a7-40fd-943a-df25125449ec@siemens.com>
-References: <18BA6EB3D38B258B.777602@lists.cip-project.org>
- <18BA6EEFB4B5DA0B.777602@lists.cip-project.org>
-In-Reply-To: <18BA6EEFB4B5DA0B.777602@lists.cip-project.org>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DU2PR10MB7645:EE_|PAVPR10MB7115:EE_
-x-ms-office365-filtering-correlation-id: 5791bcdc-ec1b-4622-62db-08decddf3779
-x-ms-exchange-atpmessageproperties: SA
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|1800799024|366016|4022899009|376014|23010399003|55112099003|38070700021|22082099003|18002099003|56012099006|11063799006|4143699003;
-x-microsoft-antispam-message-info: 
- iKwX5euTm1phOy/CKNnMC+eL0AnzVOwirRVXwdHQTE7vsmNzsIU+K/OvB4cN0fQa4Hiks2AXitgfs9eM6yaheiWR1iFS7BAJcTu3hA6YYLPD+8C6NOiJRrgauX4UQUiR4FAnHwrXB55KT7otn+PsM3Qdg71pr4HZYW6FwA2s9wTtwxBVv1HrVEc992Wp3bdxZ8fOg6/oOKPVdYpE7NkQ7/vfshNVdOY5zK+4Fy+rWZ0DhILN9Ne04cEWCnzD4uqBShCohGhFhUEPeBcBl4ZKM4MBV0kyDFrT4OA6DpGdf9SQtqnDR3PIi3WC+0VPCKfSPAtdxuXn8ybzFdjzrXTJdSvKghcI81CfnCw7oX6meu5R30yxBsWtKOu2cCVgT7tGvJDQYXaG/WQSAnuo1AO99N5slcgpxcfwUJdB+OpqQEOBpP+jDcZ2aqW1ViEjshjlimPWOCB4uyCkKZaMOWt4s0jaL0cXQeL0t5SCN9nqHzNw5brQbHO1dtxTzDkkibkZFJWYzRgK6ou42SWFkurhmitNNCvtMSCnIcRVA/8ioC5kAF9A9UG4DEsAeqbWWbLSpz5ro3x6+OmPVp05/vyAHQhJWvjARcTU27bD/gdSaHJaIRxaqDv7cqXQDYO8tg2ihHtMeOqdo8cYZo2iuzSE/lhuGc2f08XTYm7DzkNJmaUAqSdWLWcDa/4vQ9bxauIFM/W0KDfR2HPYLkFiBYPsc90s37EkIk8RQ6rzIDMo0QU=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR10MB7645.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(4022899009)(376014)(23010399003)(55112099003)(38070700021)(22082099003)(18002099003)(56012099006)(11063799006)(4143699003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?utf-8?B?eSsvRndSRmNlWE4rNGk1VnJDOENXQXpyckNtcGFVbndwRVZNNXROMUdkSzVP?=
- =?utf-8?B?ak01UGJ4S2NidEF4dXMvMC9CN1RvWmhHQkVwRzJGWk51MUFabWFXK1BhZ25Y?=
- =?utf-8?B?cFZMemV5THFIRkRoM1pFS0Y2dHJJb0hxNGttbGErWnFCR2c1ZGJ5OC9xQTUv?=
- =?utf-8?B?L2NTR2x6M2FlYnVGMnVLOHc0RXRnL1N1UkswUFo2MWZiMzNhM3NoODB5a09Y?=
- =?utf-8?B?cm43YnhiZHVqbXQ3a2pBaUNkaGZIVjRURm5xcEwvZGxEVmJDNERpR01YNHdP?=
- =?utf-8?B?RnJlandaV1kwYlc5aUVOWXJyV04zbzhRaXN5M2tGRHFLY09yZEw1Mmp3ZXRq?=
- =?utf-8?B?cFE5bDdNMlJ3enU4NGY3V29IRldxSHFPQ3V1cnUycVdoQWw1SDEzL085bzJS?=
- =?utf-8?B?TGdQL1dEYXU1R1V4c3hzQ0Z4RUdTeVMxS1VnOHhYMyt3TFRKYnBqN2plckpi?=
- =?utf-8?B?Zk9kTDNhREdDVnBlblZpcm5oNFVqcG1kRmlzMXZvaGkvUkprbHduY0UvNDRl?=
- =?utf-8?B?dHdWTzkxSDhXRjh0dDc5dmhYRjl5ZXd2YXdHMXI5TTdnM2YrdU52NnowVnRV?=
- =?utf-8?B?YnVmQ2VsNmZWSUNqcm5uc0xWcXhSaG40RFlTdk12NHNNY09NMk1UcFdTSExx?=
- =?utf-8?B?bmF0NEh1YzZyRkkwVkxDbEVYdE03ZUY0SWtqd0tPVzJyNWgzZVFKbktFZm91?=
- =?utf-8?B?TlNOYkkwaGtucmVBVXhwQTM2eURXNjZoOTBpZThBMVhobXB3S0VBODBkSnpS?=
- =?utf-8?B?d0pIbjJOcjhVUTFpdkd1UGFUaEc2SWY2TDV5MUQ0emIvR1I2L2xtQW01NmVN?=
- =?utf-8?B?a2gxRVRGYTV2bzNzSWF1WERmMm1VN3FJVm84djFlb2wyTG9MRnlyOW1YN3NX?=
- =?utf-8?B?czR3MVg2ZWVXcUtGZDk2UmFCTStoQzdsdDFFZ1lySm1qWmRPREM5SGo2K0hk?=
- =?utf-8?B?dXNYdVpPRnhKYXdwY0h6Sm56NTc4bXdnUEhoY0RFVEVYYnhRN1lIWk1YcE9B?=
- =?utf-8?B?c1R5blVKSEZGUnUrTzloQkQ1akpYVGxMbnRQYk9hdUVONEZpeDl1aU95UFJu?=
- =?utf-8?B?NWZ5Zi9qM3JxbTBzdjlXSkpGeUVBSWFCK2Y1Ym8reWc5R2xLUmw2TGl3ZDlZ?=
- =?utf-8?B?WHdaOXZ0bHlYU3FTRElMejJHMXl3TXFQSDZ0VUFaVlJSZHpWUVEzNTNHZGdq?=
- =?utf-8?B?bGVSREtqdHJlRXV3NXRZa1I2a1ZBMXJvMjlZMVVBZnBhUTNNV2tNMjZJSm9D?=
- =?utf-8?B?N3FVVkRNRFZTM1BCMjEyeFRlYWFEOTRkNmhKWE1VcUlIV0VsTzZCMnE2ZnBl?=
- =?utf-8?B?Zm5aTGxHLytpTU9qUVRIMlNaWkRxUldVYlEzbmU0SnJSdXBEN05UQzhtS2My?=
- =?utf-8?B?QUt6M3FlQ1VwNnVPMzYwN3JqNmYvZ1lVNXZpQlB3SFJzZmY5THZDQVBrZE1p?=
- =?utf-8?B?azdWN0NMNFg4OFJ4VW14cHF5NjFwbFl0ZmF5WEZmT1FxUFdTc0FTVkdnVy93?=
- =?utf-8?B?TFA2WmpHelhCRU5QQk5HM3c1cWlDdHc4Zy8xMFBHdWdvZmJjV2JUbXFvZ0ZO?=
- =?utf-8?B?YVNrNFYzcTdsTGMrSm90UGlCRi9xVWl3UXBaUS9UTjErczc2UTFXMnAzcnUx?=
- =?utf-8?B?YXlQcjlJN29XaXh5UkROaWR0VWNqcm5JaGpaZDhNRXJMNWJlWTFLcXl2c1Fo?=
- =?utf-8?B?TGt0bmluUUhwWitDVWdDdzVyc2FvLzIxQW5sR09yVWwzajMxbU1HNzdWRE1J?=
- =?utf-8?B?Nlp5TkdxcDdERmVrbUFZUFJaZW9FeHNNNW1lc2VtclFiZ0VNbmFxZzV5NUV0?=
- =?utf-8?B?RWNybFBCWVVGL2ZUbHptcmVEUlcrUklZR0oyNk5reWJnYmxkZ1htMTByckRk?=
- =?utf-8?B?Slpoai85cmE5MVB1VjdVZit3OXZkcG1INzJwYU5GNnpuNkgwZ3kyN3FuRWRW?=
- =?utf-8?B?NHZKdnNiT0NYY2t1dE5ZK0xDcVZ1ME1udXZVMkkyUDNsMG8yNDM1a3pUU2hm?=
- =?utf-8?B?em04UkRQc0s1ZFBmWFJmZ1hXdmNiVXZRakYxSzBwTVJFekhTSTl3RHlrd0Yz?=
- =?utf-8?B?Z2VEbURFaFRuTHhkTlNidW5PVjd3K0xPVHhKajNjZVBPY1ZpMEhYZDZ3VEdP?=
- =?utf-8?B?Z3MyNHJ5bWVEOCsxeUlwT3M3UTNhY2xxdTFTK2c0Rks0YzM1b0ZxZEFIbGlV?=
- =?utf-8?B?QUZKQXhmRFNPNXhnN2J1RS81Z1JhT0hPREFTRlVINS9JaURHNmVjck9zWnVq?=
- =?utf-8?B?VWQxY0NETU1MdjRHeVVYUTNxTlNqR1k1VjFyZ2NQNGFacmVMaW44dU9WNWxN?=
- =?utf-8?B?MlpHTEFsVGkydkx3Q1hPNDV6TC9sd0Ezd0lVRmVGOTIrNGFLN3hzZ0hXYTVP?=
- =?utf-8?Q?LDQOg6lxEYAkpRD4=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <2463AF7DAA14B84BAC623D01DE73FA1F@EURPRD10.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.134, mailfrom: shivanand.kunijadar@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 65JB9Jnq227730; Fri, 19 Jun 2026 20:09:19 +0900
+X-Iguazu-Qid: 2yAbtjHMo8IwwDz6um
+X-Iguazu-QSIG: v=2; s=0; t=1781867359; q=2yAbtjHMo8IwwDz6um; m=smu/jIli1T8PTMByAvCPirikGUghoLt3JMvwMX2bIPk=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	 id 4ghZbz0hG6zyPQ; Fri, 19 Jun 2026 20:09:18 +0900 (JST)
+From: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
+To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
+Cc: shivanand.kunijadar@toshiba-tsip.com, Adithya.Balakumar@toshiba-tsip.com,
+        dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
+Subject: [isar-cip-core][PATCH] Revise README files to reflect the latest changes
+Date: Fri, 19 Jun 2026 16:26:16 +0530
+X-TSB-HOP2: ON
+Message-Id: <20260619105617.1891671-1-Shivanand.Kunijadar@toshiba-tsip.com>
+X-Mailer: git-send-email 2.39.5
 MIME-Version: 1.0
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DU2PR10MB7645.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5791bcdc-ec1b-4622-62db-08decddf3779
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jun 2026 08:46:12.4785
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: hPXrrSTWVVEw4bYxMRJwZvyckG1xREmUkG9+tJgo6D5A7GnFrIVJm1vO1JyfhRQpuGeYbtOXaVThA6LEwhQB1Yq/GVjGKf9ZRAAJjBoIoR4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAVPR10MB7115
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 19 Jun 2026 11:09:16.0731 (UTC) FILETIME=[1197A0B0:01DCFFDC]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 19 Jun 2026 08:46:24 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23230
+ <cip-dev@lists.cip-project.org>; Fri, 19 Jun 2026 11:09:28 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23231
 
-T24gNi8xOS8yNiAxMDo0MiwgTmllZGVybWF5ciwgQkVORURJS1QgdmlhIGxpc3RzLmNpcC1wcm9q
-ZWN0Lm9yZyB3cm90ZToNCj4gT24gNi8xOS8yNiAxMDozOCwgTmllZGVybWF5ciwgQkVORURJS1Qg
-dmlhIGxpc3RzLmNpcC1wcm9qZWN0Lm9yZyB3cm90ZToNCj4+IFdoZW4gY29tcGlsaW5nIHN3dXBk
-YXRlIHRoZSAiY3Jvc3MiIHByb2ZpbGUgc2hvdWxkIG9ubHkgYmUgYWRkZWQgaWYNCj4+IEJVSUxE
-X0FSQ0ggIT0gUEFDS0FHRV9BUkNIIHdoaWNoIGlzIGFscmVhZHkgYmUgZG9uZSBpbg0KPj4gaXNh
-cl9kZWJfYnVpbGRfcHJvZmlsZXMoKSBpbiB0aGUgZHBrZy1iYXNlIGNsYXNzLg0KPj4NCj4+IElm
-IHRoZSAiY3Jvc3MiIHByb2ZpbGUgaXMgYWRkZWQgdGhvdWdoLCB0aGlzIGJyZWFrcyBzYnVpbGQg
-YnVpbGRzLCBzaW5jZQ0KPj4gaXQgd2lsbCBhZGQgdGhlIGhvc3QgYXJjaGl0ZWN0dXJlIHRvIHRo
-ZSBiYXJiYXJpYW4gYXJjaGl0ZWN0dXJlIGFuZCB0aHVzDQo+PiB3b24ndCBiZSBhYmxlIHRvIGlu
-c3RhbGwgcGFja2FnZXMgaW4gdGhlIGhvc3QgYXJjaGl0ZWN0dXJlLg0KPj4NCj4+IEFjdHVhbGx5
-IHRoaXMgY291bGQgYWxzbyBiZSBmaXhlZCBpbiBzYnVpbGQgaXRzZWxmIGFzIHdlbGwsIGJ1dCBz
-ZXR0aW5nIHRoZQ0KPj4gImNyb3NzIiBwcm9maWxlIHNob3VsZCBuZXZlcnRoZWxlc3Mgb25seSBi
-ZSBkb25lIGlmIHJlYWxseSByZXF1aXJlZC4NCj4+DQo+PiBUaGlzIGlzIHRoZSBlcnJvciB0aGF0
-IGlzIGZpeGVkIHdpdGggdGhpcyBjb21taXQ6DQo+Pg0KPj4gfCBSZWFkaW5nIHBhY2thZ2UgbGlz
-dHMuLi4NCj4+IHwgRTogVGhlIHBhY2thZ2UgY2FjaGUgd2FzIGJ1aWx0IGZvciBkaWZmZXJlbnQg
-YXJjaGl0ZWN0dXJlczogYW1kNjQgdnMNCj4+IHwgVzogWW91IG1heSB3YW50IHRvIHJ1biBhcHQt
-Z2V0IHVwZGF0ZSB0byBjb3JyZWN0IHRoZXNlIHByb2JsZW1zDQo+PiB8IEU6IFRoZSBwYWNrYWdl
-IGNhY2hlIGZpbGUgaXMgY29ycnVwdGVkDQo+PiB8IEU6IGFwdC1nZXQgZGlzdC11cGdyYWRlIGZh
-aWxlZA0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IEJlbmVkaWt0IE5pZWRlcm1heXIgPGJlbmVkaWt0
-Lm5pZWRlcm1heXJAc2llbWVucy5jb20+DQo+PiAtLS0NCj4+ICAgIHJlY2lwZXMtY29yZS9zd3Vw
-ZGF0ZS9zd3VwZGF0ZS5pbmMgICAgICAgIHwgMiArLQ0KPj4gICAgcmVjaXBlcy1jb3JlL3N3dXBk
-YXRlL3N3dXBkYXRlXzIwMjMuMTIuYmIgfCAzICsrKw0KPj4gICAgMiBmaWxlcyBjaGFuZ2VkLCA0
-IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4+DQo+PiBkaWZmIC0tZ2l0IGEvcmVjaXBl
-cy1jb3JlL3N3dXBkYXRlL3N3dXBkYXRlLmluYyBiL3JlY2lwZXMtY29yZS9zd3VwZGF0ZS9zd3Vw
-ZGF0ZS5pbmMNCj4+IGluZGV4IDQwMzhlN2UzODQwMi4uYjM2N2E5NmM4NDdhIDEwMDY0NA0KPj4g
-LS0tIGEvcmVjaXBlcy1jb3JlL3N3dXBkYXRlL3N3dXBkYXRlLmluYw0KPj4gKysrIGIvcmVjaXBl
-cy1jb3JlL3N3dXBkYXRlL3N3dXBkYXRlLmluYw0KPj4gQEAgLTM3LDcgKzM3LDcgQEAgREVQRU5E
-UyArPSAiJHtAYmIudXRpbHMuY29udGFpbnMoJ0RFQl9CVUlMRF9QUk9GSUxFUycsICdtdGQnLCAn
-bXRkLXV0aWxzJywgJycsIGQNCj4+ICAgIFNXVV9TSUdORUQgPz0gIjEiDQo+PiAgICBERUJfQlVJ
-TERfUFJPRklMRVMgKz0gIiR7QCdwa2cuc3d1cGRhdGUubm9zaWduaW5nJyBpZiBub3QgYmIudXRp
-bHMudG9fYm9vbGVhbihkLmdldFZhcignU1dVX1NJR05FRCcpKSBlbHNlICcnfSINCj4+DQo+PiAt
-IyBkZWFjdGl2YXRlIHRlc3RpbmcNCj4+ICsjIGRlYWN0aXZhdGUgdGVzdGluZyBmb3IgYXJtIGJh
-c2VkIGJ1aWxkcw0KPj4gICAgREVCX0JVSUxEX1BST0ZJTEVTICs9ICJub2NoZWNrIg0KPj4NCj4+
-ICAgIHB5dGhvbiBkb19jaGVja19ib290bG9hZGVyICgpIHsNCj4+IGRpZmYgLS1naXQgYS9yZWNp
-cGVzLWNvcmUvc3d1cGRhdGUvc3d1cGRhdGVfMjAyMy4xMi5iYiBiL3JlY2lwZXMtY29yZS9zd3Vw
-ZGF0ZS9zd3VwZGF0ZV8yMDIzLjEyLmJiDQo+PiBpbmRleCA4OTc4NWI2NmJmMjkuLmExMmQyMmE5
-OWJiNCAxMDA2NDQNCj4+IC0tLSBhL3JlY2lwZXMtY29yZS9zd3VwZGF0ZS9zd3VwZGF0ZV8yMDIz
-LjEyLmJiDQo+PiArKysgYi9yZWNpcGVzLWNvcmUvc3d1cGRhdGUvc3d1cGRhdGVfMjAyMy4xMi5i
-Yg0KPj4gQEAgLTM5LDYgKzM5LDkgQEAgREVCX0JVSUxEX1BST0ZJTEVTICs9ICJwa2cuc3d1cGRh
-dGUuc3VyaWNhdHRhd2Z4Ig0KPj4gICAgIyB3aXRoIGNyb3NzIGNvbXBpbGUgd2UgaGF2ZSBhIHVu
-c2F0LWRlcGVuZGVuY3kgdG8gZGgtbm9kZWpzIG9uIGFybS9hcm02NA0KPj4gICAgSVNBUl9DUk9T
-U19DT01QSUxFOmJ1bGxzZXllID0gIjAiDQo+Pg0KPj4gKyMgZGVhY3RpdmF0ZSB0ZXN0aW5nIGZv
-ciBhcm0gYmFzZWQgYnVpbGRzDQo+PiArREVCX0JVSUxEX1BST0ZJTEVTICs9ICJub2NoZWNrIg0K
-Pj4gKw0KPj4gICAgIyB1c2UgYmFja3BvcnQgYnVpbGQgcHJvZmlsZSBmb3IgYnVsbHNleWUNCj4+
-ICAgIERFQl9CVUlMRF9QUk9GSUxFUyArPSAicGtnLnN3dXBkYXRlLmJwbyINCj4+DQo+PiAtLQ0K
-Pj4gMi40My4wDQo+Pg0KPj4NCj4+DQo+Pg0KPj4NCj4gDQo+IEFoLCBmb3Jnb3QgdG8gcmViYXNl
-IGFnYWluc3QgY3VycmVudCBuZXh0Lg0KPiB2MiB3aWxsIGZvbGxvdw0KDQpBbmQgb24gY3VycmVu
-dCBuZXh0IGl0IGlzIGFscmVhZHkgZml4ZWQuDQpTbyB0aGlzIGNhbiBiZSBpZ25vcmVkLi4uDQoN
-Cj4gDQo+IEJlbmVkaWt0DQo+IA0KPiANCj4gDQo+IC09LT0tPS09LT0tPS09LT0tPS09LT0tDQo+
-IExpbmtzOiBZb3UgcmVjZWl2ZSBhbGwgbWVzc2FnZXMgc2VudCB0byB0aGlzIGdyb3VwLg0KPiBW
-aWV3L1JlcGx5IE9ubGluZSAoIzIzMjI5KTogaHR0cHM6Ly9saXN0cy5jaXAtcHJvamVjdC5vcmcv
-Zy9jaXAtZGV2L21lc3NhZ2UvMjMyMjkNCj4gTXV0ZSBUaGlzIFRvcGljOiBodHRwczovL2xpc3Rz
-LmNpcC1wcm9qZWN0Lm9yZy9tdC8xMTk4ODA1NTkvNzA3OTkyNw0KPiBHcm91cCBPd25lcjogY2lw
-LWRlditvd25lckBsaXN0cy5jaXAtcHJvamVjdC5vcmcNCj4gVW5zdWJzY3JpYmU6IGh0dHBzOi8v
-bGlzdHMuY2lwLXByb2plY3Qub3JnL2cvY2lwLWRldi91bnN1YiBbYmVuZWRpa3QubmllZGVybWF5
-ckBzaWVtZW5zLmNvbV0NCj4gLT0tPS09LT0tPS09LT0tPS09LT0tPS0NCj4gDQoNCg==
+The SWUpdate & Secure boot readme files are outdated, adjust these files
+to reflect the current changes and debian version based on the master
+branch.
+
+Signed-off-by: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
+---
+ doc/README.secureboot.md | 63 +++++++++++++--------------
+ doc/README.swupdate.md   | 92 ++++++++++++++++++++--------------------
+ 2 files changed, 75 insertions(+), 80 deletions(-)
+
+diff --git a/doc/README.secureboot.md b/doc/README.secureboot.md
+index 8ab67a8..5ac8611 100644
+--- a/doc/README.secureboot.md
++++ b/doc/README.secureboot.md
+@@ -48,7 +48,7 @@ Supply the script name and path to wic by adding
+ #### secure-boot-snakeoil
+ 
+ This package uses the snakeoil key and certificate from the ovmf package from
+-Debian bullseye or later for signing the image.
++Debian trixie or later for signing the image.
+ 
+ #### secure-boot-key
+ 
+@@ -66,10 +66,10 @@ Set up a secure boot test environment with [QEMU](https://www.qemu.org/)
+ 
+ ### Prerequisites
+ 
+-- OVMF from edk2 release edk2-stable201911 or newer
+-  - This documentation was tested under Debian 11 with OVMF (2020.11-2+deb11u1) from Debian bullseye
++- OVMF from edk2 release 2025.02-8+deb13u1 or newer
++  - This documentation was tested under Debian 13 with OVMF (2025.02-8+deb13u1) from Debian trixie
+ - efitools for KeyTool.efi
+-  - This documentation was tested under Debian 11 with efitools (1.9.2-2~deb11u1) from Debian bullseye
++  - This documentation was tested under Debian 13 with efitools (1.9.2-3.5) from Debian trixie
+ - libnss3-tools
+ 
+ ### Debian Snakeoil keys
+@@ -144,7 +144,7 @@ Build the image with a signed EFI Boot Guard and unified kernel image
+ with the snakeoil keys by executing:
+ 
+ ```bash
+-kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-secure-boot-snakeoil.yml
++./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/trixie.yml:kas/opt/ebg-secure-boot-snakeoil.yml
+ ```
+ 
+ For user-generated keys, create a new option file in the repository. This option file could look like this:
+@@ -186,7 +186,7 @@ need to stored in the folder `recipes-devtools/secure-boot-secrets/files`.
+ Build the image with user-generated keys by executing the command:
+ 
+ ```bash
+-kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:<path to the new option>.yml
++./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/trixie.yml:<path to the new option>.yml
+ ```
+ 
+ ### Start the image
+@@ -196,7 +196,7 @@ kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:<path to the new option
+ Start the image with the following command:
+ 
+ ```bash
+-SECURE_BOOT=y \
++DISTRO_RELEASE=trixie SECURE_BOOT=y \
+ ./start-qemu.sh amd64
+ ```
+ 
+@@ -211,6 +211,7 @@ and the following command is sufficient:
+ Start the image with the following command:
+ 
+ ```bash
++DISTRO_RELEASE=trixie \
+ SECURE_BOOT=y \
+ OVMF_CODE=./build/tmp/deploy/images/qemu-amd64/OVMF/OVMF_CODE_4M.secboot.fd \
+ OVMF_VARS=<path to the modified OVMF_VARS.fd> \
+@@ -233,45 +234,43 @@ EFI stub: UEFI Secure Boot is enabled.
+ 
+ For updating the image, the following steps are necessary:
+ - [Build the image with snakeoil keys](#build-image)
+-- save the generated swu `build/tmp/deploy/images/qemu-amd64/cip-core-image-cip-core-bullseye-qemu-amd64.swu` to /tmp
++- save the generated swu `build/tmp/deploy/images/qemu-amd64/cip-core-image-cip-core-trixie-qemu-amd64.swu` to /tmp
+ - modify the image for example, switch to the RT kernel as modification:
+ 
+ ```bash
+-kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-secure-boot-snakeoil.yml:kas/opt/rt.yml
++./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/trixie.yml:kas/opt/ebg-secure-boot-snakeoil.yml:kas/opt/rt.yml
+ ```
+ 
+ - start the new target
+ 
+ ```bash
+-SECURE_BOOT=y ./start-qemu.sh amd64
++DISTRO_RELEASE=trixie SECURE_BOOT=y ./start-qemu.sh amd64
+ ```
+ 
+-Copy the swu cip-core-image-cip-core-bullseye-qemu-amd64.swu to the running system
++Copy the swu cip-core-image-cip-core-trixie-qemu-amd64.swu to the running system
+ 
+ ```bash
+-scp -P 22222 /tmp/cip-core-image-cip-core-bullseye-qemu-amd64.swu root@127.0.0.1:/home/
++scp -P 22222 /tmp/cip-core-image-cip-core-trixie-qemu-amd64.swu root@127.0.0.1:/
+ ```
+ 
+ - check which partition is booted, e.g. with `lsblk`:
+ 
+ ```bash
+ root@demo:~# lsblk
+-NAME           MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
+-sda              8:0    0     6G  0 disk
+-├─sda1           8:1    0  16.1M  0 part
+-├─sda2           8:2    0    32M  0 part
+-├─sda3           8:3    0    32M  0 part
+-├─sda4           8:4    0     1G  0 part
+-│ └─verityroot 252:0    0 110.9M  1 crypt /
+-├─sda5           8:5    0     1G  0 part
+-├─sda6           8:6    0   1.3G  0 part  /home
+-└─sda7           8:7    0   2.6G  0 part  /var
++NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
++sda      8:0    0  2.8G  0 disk
++├─sda1   8:1    0 20.8M  0 part /boot
++├─sda2   8:2    0  128M  0 part
++├─sda3   8:3    0  128M  0 part
++├─sda4   8:4    0    1G  0 part
++├─sda5   8:5    0    1G  0 part
++└─sda6   8:6    0  512M  0 part /var
+ ```
+ 
+ - install the swupdate and reboot the image
+ 
+ ```bash
+-root@demo:~# swupdate -i /home/cip-core-image-cip-core-bullseye-qemu-amd64.swu`
++root@demo:~# swupdate -i cip-core-image-cip-core-trixie-qemu-amd64.swu
+ root@demo:~# reboot
+ ```
+ 
+@@ -279,16 +278,14 @@ root@demo:~# reboot
+ 
+ ```bash
+ root@demo:~# lsblk
+-NAME           MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
+-sda              8:0    0     6G  0 disk
+-├─sda1           8:1    0  16.1M  0 part
+-├─sda2           8:2    0    32M  0 part
+-├─sda3           8:3    0    32M  0 part
+-├─sda4           8:4    0     1G  0 part
+-├─sda5           8:5    0     1G  0 part
+-│ └─verityroot 252:0    0 110.9M  1 crypt /
+-├─sda6           8:6    0   1.3G  0 part  /home
+-└─sda7           8:7    0   2.6G  0 part  /var
++NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
++sda      8:0    0  2.8G  0 disk
++├─sda1   8:1    0 20.8M  0 part /boot
++├─sda2   8:2    0  128M  0 part
++├─sda3   8:3    0  128M  0 part
++├─sda4   8:4    0    1G  0 part
++├─sda5   8:5    0    1G  0 part
++└─sda6   8:6    0  512M  0 part /var
+ ```
+ 
+ ## Secure boot on Generic UEFI x86
+diff --git a/doc/README.swupdate.md b/doc/README.swupdate.md
+index affb85b..10ce1cc 100644
+--- a/doc/README.swupdate.md
++++ b/doc/README.swupdate.md
+@@ -190,23 +190,23 @@ write it to `/etc/hwrevision`.
+ Set up `kas-container` as described in the [top-level README](../README.md).
+ Then build the image which will later serve as update package:
+ ```
+-host$ ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml
++host$ ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/trixie.yml:kas/opt/ebg-swu.yml
+ ```
+-Save the generated swu `build/tmp/deploy/images/qemu-amd64/cip-core-image-cip-core-bullseye-qemu-amd64.swu` into a separate folder (ex: /tmp).
++Save the generated swu `build/tmp/deploy/images/qemu-amd64/cip-core-image-cip-core-trixie-qemu-amd64.swu` into a separate folder (ex: /tmp).
+ 
+ Next, rebuild the image, switching to the RT kernel as modification:
+ ```
+-host$ ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml:kas/opt/rt.yml
++host$ ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/trixie.yml:kas/opt/ebg-swu.yml:kas/opt/rt.yml
+ ```
+ 
+ Now start the image which will contain the RT kernel:
+ ```
+-host$ SWUPDATE_BOOT=y ./start-qemu.sh amd64
++host$ DISTRO_RELEASE=trixie SWUPDATE_BOOT=true ./start-qemu.sh amd64
+ ```
+ 
+-Copy `cip-core-image-cip-core-bullseye-qemu-amd64.swu` file from `tmp` folder into the running system:
++Copy `cip-core-image-cip-core-trixie-qemu-amd64.swu` file from `tmp` folder into the running system:
+ ```
+-host$ scp -P 22222 /tmp/cip-core-image-cip-core-bullseye-qemu-amd64.swu root@localhost:
++host$ scp -P 22222 /tmp/cip-core-image-cip-core-trixie-qemu-amd64.swu root@localhost:
+ ```
+ 
+ ## SWUpdate verification
+@@ -214,28 +214,27 @@ host$ scp -P 22222 /tmp/cip-core-image-cip-core-bullseye-qemu-amd64.swu root@loc
+ Check which partition is booted, e.g. with lsblk:
+ ```
+ root@demo:~# lsblk
+-NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+-sda      8:0    0    6G  0 disk
+-├─sda1   8:1    0 16.1M  0 part
+-├─sda2   8:2    0   32M  0 part
+-├─sda3   8:3    0   32M  0 part
++NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
++sda      8:0    0  2.8G  0 disk
++├─sda1   8:1    0   16M  0 part /boot
++├─sda2   8:2    0  128M  0 part
++├─sda3   8:3    0  128M  0 part
+ ├─sda4   8:4    0    1G  0 part /
+ ├─sda5   8:5    0    1G  0 part
+-├─sda6   8:6    0  1.3G  0 part /home
+-└─sda7   8:7    0  2.6G  0 part /var
++└─sda6   8:6    0  512M  0 part /var
+ ```
+ 
+-Also check that you are running the RT kernel:
++Also check that you are running the RT kernel (i.e PREEMPT_RT):
+ ```
+ root@demo:~# uname -a
+-Linux demo 4.19.233-cip69-rt24 #1 SMP PREEMPT RT Tue Apr 12 09:23:51 UTC 2022 x86_64 GNU/Linux
++Linux demo 6.12.85-cip22 #1 SMP PREEMPT_RT Thu, 01 Jan 1970 06:30:00 +0530 x86_64 GNU/Linux
+ root@demo:~# ls /lib/modules
+-4.19.233-cip69-rt24
++6.12.85-cip22
+ ```
+ 
+ Now apply swupdate and reboot
+ ```
+-root@demo:~# swupdate -i cip-core-image-cip-core-bullseye-qemu-amd64.swu
++root@demo:~# swupdate -i cip-core-image-cip-core-trixie-qemu-amd64.swu
+ root@demo:~# reboot
+ ```
+ Use the `-v` flag when running swupdate for verbose logs of any errors.
+@@ -243,23 +242,22 @@ Use the `-v` flag when running swupdate for verbose logs of any errors.
+ Check which partition is booted, e.g. with lsblk and the rootfs should have changed
+ ```
+ root@demo:~# lsblk
+-NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+-sda      8:0    0    6G  0 disk
+-├─sda1   8:1    0 16.1M  0 part
+-├─sda2   8:2    0   32M  0 part
+-├─sda3   8:3    0   32M  0 part
++NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
++sda      8:0    0  2.8G  0 disk
++├─sda1   8:1    0   16M  0 part /boot
++├─sda2   8:2    0  128M  0 part
++├─sda3   8:3    0  128M  0 part
+ ├─sda4   8:4    0    1G  0 part
+ ├─sda5   8:5    0    1G  0 part /
+-├─sda6   8:6    0  1.3G  0 part /home
+-└─sda7   8:7    0  2.6G  0 part /var
++└─sda6   8:6    0  512M  0 part /var
+ ```
+ 
+ Check the active kernel:
+ ```
+ root@demo:~# uname -a
+-Linux demo 4.19.235-cip70 #1 SMP Tue Apr 12 09:08:39 UTC 2022 x86_64 GNU/Linux
++Linux demo 6.12.85-cip22 #1 SMP PREEMPT_DYNAMIC Thu, 01 Jan 1970 06:30:00 +0530 x86_64 GNU/Linux
+ root@demo:~# ls /lib/modules
+-4.19.235-cip70
++6.12.85-cip22
+ ```
+ 
+ Check bootloader ustate after swupdate
+@@ -272,7 +270,7 @@ in_progress:      no
+ revision:         2
+ kernel:           C:BOOT0:linux.efi
+ kernelargs:
+-watchdog timeout: 60 seconds
++watchdog timeout: 120 seconds
+ ustate:           0 (OK)
+ 
+ user variables:
+@@ -285,7 +283,7 @@ in_progress:      no
+ revision:         3
+ kernel:           C:BOOT1:linux.efi
+ kernelargs:
+-watchdog timeout: 60 seconds
++watchdog timeout: 120 seconds
+ ustate:           2 (TESTING)
+ 
+ user variables:
+@@ -303,27 +301,27 @@ root@demo:~# bg_setenv -c
+ Build the image for swupdate with a service which causes kernel panic during system boot using below command:
+ 
+ ```
+-host$ ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml:kas/opt/kernel-panic.yml
++host$ ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/trixie.yml:kas/opt/ebg-swu.yml:kas/opt/kernel-panic.yml
+ ```
+-Save the generated swu `build/tmp/deploy/images/qemu-amd64/cip-core-image-cip-core-bullseye-qemu-amd64.swu` in a separate folder.
++Save the generated swu `build/tmp/deploy/images/qemu-amd64/cip-core-image-cip-core-trixie-qemu-amd64.swu` in a separate folder.
+ Then build the image without `kernel-panic.yml` recipe using below command:
+ ```
+-host$ ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml
++host$ ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/trixie.yml:kas/opt/ebg-swu.yml
+ ```
+ 
+ Start the target on QEMU:
+ ```
+-host$ SWUPDATE_BOOT=y ./start-qemu.sh amd64
++host$ DISTRO_RELEASE=trixie SWUPDATE_BOOT=y ./start-qemu.sh amd64
+ ```
+ 
+-Copy `cip-core-image-cip-core-bullseye-qemu-amd64.swu` file from `tmp` folder into the running system:
++Copy `cip-core-image-cip-core-trixie-qemu-amd64.swu` file from `tmp` folder into the running system:
+ ```
+-host$ scp -P 22222 /tmp/cip-core-image-cip-core-bullseye-qemu-amd64.swu root@localhost:
++host$ scp -P 22222 /tmp/cip-core-image-cip-core-trixie-qemu-amd64.swu root@localhost:
+ ```
+ 
+ Apply swupdate as below:
+ ```
+-root@demo:~# swupdate -i cip-core-image-cip-core-bullseye-qemu-amd64.swu
++root@demo:~# swupdate -i cip-core-image-cip-core-trixie-qemu-amd64.swu
+ ```
+ 
+ Check bootloader ustate after swupdate. If the swupdate is successful then **revision number** should be **3** and status should be changed to **INSTALLED** for Partition #1.
+@@ -336,7 +334,7 @@ in_progress:      no
+ revision:         2
+ kernel:           C:BOOT0:linux.efi
+ kernelargs:
+-watchdog timeout: 60 seconds
++watchdog timeout: 120 seconds
+ ustate:           0 (OK)
+ 
+ user variables:
+@@ -349,7 +347,7 @@ in_progress:      no
+ revision:         3
+ kernel:           C:BOOT1:linux.efi
+ kernelargs:
+-watchdog timeout: 60 seconds
++watchdog timeout: 120 seconds
+ ustate:           1 (INSTALLED)
+ 
+ user variables:
+@@ -377,7 +375,7 @@ in_progress:      no
+ revision:         2
+ kernel:           C:BOOT0:linux.efi
+ kernelargs:
+-watchdog timeout: 60 seconds
++watchdog timeout: 120 seconds
+ ustate:           0 (OK)
+ 
+ user variables:
+@@ -390,7 +388,7 @@ in_progress:      no
+ revision:         0
+ kernel:           C:BOOT1:linux.efi
+ kernelargs:
+-watchdog timeout: 60 seconds
++watchdog timeout: 120 seconds
+ ustate:           3 (FAILED)
+ 
+ user variables:
+@@ -419,21 +417,21 @@ The build system looks for the reference artifact in a directory named `previous
+ Copy the reference artifacts to the mentioned directory with the following commands:
+ ```
+ mkdir -p build-v2/previous-image
+-cp build/tmp/deploy/images/qemu-amd64/cip-core-image-cip-core-bookworm-qemu-amd64.squashfs build-v2/previous-image
++cp build/tmp/deploy/images/qemu-amd64/cip-core-image-cip-core-trixie-qemu-amd64.squashfs build-v2/previous-image
+ cp build/tmp/deploy/images/qemu-amd64/linux.efi build-v2/previous-image
+ ```
+ Build the second image with `build-v2` as the build directory with the following command:
+ ```
+-KAS_BUILD_DIR=build-v2 ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml:kas/opt/delta-update.yml
++KAS_BUILD_DIR=build-v2 ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/trixie.yml:kas/opt/ebg-swu.yml:kas/opt/delta-update.yml
+ ```
+ Now start the first image. Run the following commands:
+ ```
+-host$ DISTRO_RELEASE=bookworm SWUPDATE_BOOT=y ./start-qemu.sh amd64
++host$ DISTRO_RELEASE=trixie SWUPDATE_BOOT=y ./start-qemu.sh amd64
+ ```
+-Copy `cip-core-image-cip-core-bookworm-qemu-amd64.swu` file from `build-v2/tmp/deploy/images/qemu-amd64/` folder into the running system:
++Copy `cip-core-image-cip-core-trixie-qemu-amd64.swu` file from `build-v2/tmp/deploy/images/qemu-amd64/` folder into the running system:
+ ```
+ host$ cd build-v2/tmp/deploy/images/qemu-amd64/
+-host$ scp -P 22222 ./cip-core-image-cip-core-bookworm-qemu-amd64.swu root@localhost:
++host$ scp -P 22222 ./cip-core-image-cip-core-trixie-qemu-amd64.swu root@localhost:
+ ```
+ 
+ ## Delta Software Update using zchunk handler
+@@ -520,7 +518,7 @@ Next, rebuild the image using the Kconfig menu, switching to the RT kernel as mo
+ 
+ Now start the image which will contain the RT kernel:
+ ```
+-host$ SWUPDATE_BOOT=y ./start-qemu.sh amd64
++host$ DISTRO_RELEASE=trixie SWUPDATE_BOOT=y ./start-qemu.sh amd64
+ ```
+ 
+ By default, SWUpdate uses the machine-id from `/etc/machine-id` as the `client-id` (configurable via `WFX_DEVICE_ID` in the `swupdate-config-wfx` recipe). This `client-id` is later used to create `wfx` job for the client:
+@@ -604,14 +602,14 @@ Follow the steps mentioned in the section [Building and testing the CIP Core ima
+ 
+ Flash the BeagleBone Black RT kernel image into SDcard
+ ```
+-host$ dd if=build/tmp/deploy/images/bbb/cip-core-image-cip-core-bullseye-bbb.wic \
++host$ dd if=build/tmp/deploy/images/bbb/cip-core-image-cip-core-trixie-bbb.wic \
+    of=/dev/<medium-device> bs=1M status=progress
+ ```
+ 
+ After flashing the BBB RT kernel image into SD card, mount the SD card on host PC and copy .swu file from `tmp` folder to root partition like below.
+ 
+ ```
+-host$ sudo cp tmp/cip-core-image-cip-core-bullseye-bbb.swu /<mnt>/home/root/
++host$ sudo cp tmp/cip-core-image-cip-core-trixie-bbb.swu /<mnt>/root/
+ ```
+ 
+ Connect a serial port cable between host PC and BBB.
+-- 
+2.39.5
+
+
 
