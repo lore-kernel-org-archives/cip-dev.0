@@ -2,41 +2,43 @@ Return-Path: <akunuri.sahithi@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FA31CD98F2
-	for <webhook@archiver.kernel.org>; Thu, 18 Jun 2026 16:44:07 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.134])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.23888.1781801044124501184
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70C36CD98E6
+	for <webhook@archiver.kernel.org>; Fri, 19 Jun 2026 04:29:48 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.132])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.35769.1781843379367582881
  for <cip-dev@lists.cip-project.org>;
- Thu, 18 Jun 2026 09:44:04 -0700
+ Thu, 18 Jun 2026 21:29:40 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.134, mailfrom: akunuri.sahithi@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 65IGi1q81815494; Fri, 19 Jun 2026 01:44:02 +0900
-X-Iguazu-Qid: 2yAbtjHMo704HYOIAD
-X-Iguazu-QSIG: v=2; s=0; t=1781801041; q=2yAbtjHMo704HYOIAD; m=9zSH2meF0Q20yXYbvVWo567g6LQM4c1zm1ifmYy2yFg=
-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.132, mailfrom: akunuri.sahithi@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1121) id 65J4Ta4V2090721; Fri, 19 Jun 2026 13:29:37 +0900
+X-Iguazu-Qid: 2rWhpSL4OnooME2x6H
+X-Iguazu-QSIG: v=2; s=0; t=1781843376; q=2rWhpSL4OnooME2x6H; m=IqUOwnJxIa8FkQ+9ny6y9+JmZj3WTuk1wy1oSL+aU94=
+Received: from imx12-a.toshiba.co.jp (unknown [38.106.60.135])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	 id 4gh64d4qzPz1xnZ; Fri, 19 Jun 2026 01:44:01 +0900 (JST)
+	 id 4ghPkm3gl7z1xnf; Fri, 19 Jun 2026 13:29:36 +0900 (JST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hLwEjN7T8glXWQhJBr1uUb3KkWAhDJXdEHnIz8wAQBuHHWU2n3HCg6mE8fOajDVbIGFe4s5QUivliwoH0mr1QCRUekzO9WwugGgJRf1f6vMXC2HJBAbjiGuiesWv/y2w+dBHvO1aD2TAK1nc0pw8Jjkw1qg7oQY0hN0MC1Oa5lFEQ9UZOAiHRc6asrKsg/6nyXRGl4PkbybMWUx31r/JOQsyOo4vqYwbPf2APD2fVawiyY9TPB+DNeNN2PrCjP49+CJ55I5szn1qw5fWodqsyo+p5trfrlaBLF9OxnE7xQHJL8WX0NopqAji1u/lxMBeEZJiUhPtl/TACRgbiZSc3g==
+ b=WmsxcREECtTlhoxL2ygMojs025htBBWNVbl5LHPW2MoMETEDxUhlaI8PVQDh02/aEHCJScfuoJfphTAUVQC7igvemLlTHP4iijA4SnTsd84yLU1JPGYypRld3zMG8UAvRzQtpQoeEDzQKaDBIOfMunRYngcXaCTSoHTN10uyRYN7wBlyVVYJZlUr2xwWoC1xtVUasO9GESKikliHk3r6dweNrMHr19ZIPsJ9jgJLK0uOBrXF038cSCb0TBAR/SoIUwEvf5jtdNwp8JRs63QSbLX9GYxddgRjXd+F+15YuIf0JWMtFC3SwXp1r+Hk92pUBhAVvt+y3Dt+h0ojGTBjnw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Iix+JxGXVTcQ/U3t+N0r4G52zZVXni350csshyq2QmI=;
- b=uvfXe6RGhg1nMrDm8LX9WyA3ns+7IYAI6Ih+8Y+DktVsvpiGh8Eo4Ndxo+s1SdFTgFhyab0QARD3nHtMfm/WhMbFhnDdYLpulWZ9mi8UrEgnI4vnhw9aOULiBiZNPFzyN8knR8CB0PcfL8jmQOilOR8SC0lUHCHH5brpHCgXDacdJpsu4Oa1eFr14PxaT8x+xRKYsm0R8Elx0qXga2IO8AtYvlCQPo9GCIdSr4OqcBXN+QICOLCVwGjrqLxWHZKGrTXmdO5FEqHwPfGjad/KvCcqet6KWdY4VoICIgxvCkgx2rJCyyUcqOE+102r/yNTNXVKSwZTYi6FSaI8bS6YsQ==
+ bh=Rl2ftgMjpvgkTJwLsTPJvfefjmRXjZscGPIwiIfvOIk=;
+ b=bXne5TbfZM9fVezeA5y3Lc+/C3Xkm+kUQnEv08RVC2TMgHXMHO5SxxZ3RHDF+YofopoX5U64GuXavGA4kcftAp4fTZo0y9Mx/Gt90Lm+eJBMrzYd+MYlzvBgWXHyLIC8sNIgnXJXeyFOzpxczLVmAyChdwF4d4rb92ylp2NMXUWVON7ElkorGs+sNIwqcK5bcVAMciWHzITaX5il/xbZd4Shmz4V5EcsjWHgIiM7q3q/pJqLPeWKdQavn8WYJ16ADb5zgji3fpXrywxJzk1vJJDPuHDQz2w2dBwlzquahgnlfEdRTvtebH89VuvaXpm1GhJPW5lLTKBDHZ5wy6rzpw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
  header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
 From: <akunuri.sahithi@toshiba-tsip.com>
 To: <cip-dev@lists.cip-project.org>
-Subject: [cip-dev] Autopkgtest support for passwdqc package
+Subject: Re: [cip-dev] Autopkgtest support for passwdqc package
 Thread-Topic: [cip-dev] Autopkgtest support for passwdqc package
-Thread-Index: AQHc/0GFV9XGb7oCQE2hW9FxIIrPVA==
-Date: Thu, 18 Jun 2026 16:43:46 +0000
+Thread-Index: AQHc/0GFV9XGb7oCQE2hW9FxIIrPVLZFSV04
+Date: Fri, 19 Jun 2026 04:29:31 +0000
 X-TSB-HOP2: ON
 Message-ID: 
- <TYYPR01MB105921EFCE76034EB9A0FA6A5DBE32@TYYPR01MB10592.jpnprd01.prod.outlook.com>
+ <TYYPR01MB1059265F33AC401875490D349DBE22@TYYPR01MB10592.jpnprd01.prod.outlook.com>
+References: <18BA3A9C21E5716A.777602@lists.cip-project.org>
+In-Reply-To: <18BA3A9C21E5716A.777602@lists.cip-project.org>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -45,86 +47,100 @@ msip_labels:
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYYPR01MB10592:EE_|TY4PR01MB14336:EE_
-x-ms-office365-filtering-correlation-id: d6c826ba-20ae-4d46-0c29-08decd58c472
+x-ms-traffictypediagnostic: TYYPR01MB10592:EE_|TYVPR01MB11130:EE_
+x-ms-office365-filtering-correlation-id: f0b27ce8-75a8-42d5-3bb1-08decdbb5b9c
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: 
- BCL:0;ARA:13230040|366016|376014|23010399003|1800799024|8096899003|56012099006|11063799006|13003099007|38070700021|18002099003;
+ BCL:0;ARA:13230040|366016|23010399003|1800799024|376014|56012099006|8096899003|11063799006|38070700021|13003099007|18002099003|22082099003;
 x-microsoft-antispam-message-info: 
- Tk5uzKJUst4xLy6Es8sJYCmVYF0vhY9obg/td4xSJ1AOFAEpXb8xLww1fz/FXSA4HDO/vNniLabucLNph6g/oL2yv4bJNcPeGl7HSUxIzOWxFO8s9Sz92l+oZaHz2rDxdHwrLSYpqN78Vr979cOFmJeSbXgveecxUBXLE01fyJiIZSZqPGCkHw7uAFMz1RJOjuygq1uB7bZknpaKWfPfZ4p04oElQQCmRRqOCZUXW/UR5gSOsGJEaXPTSymW/COVumOjt7pCcmUbgmJ1mUXxR6o8rorwdcR4EsGkMzUaPYM4WRDu30ytPGrOQqcJr0UAoMSN8yfEx8j5XAPAG4f+7lXE2r8G6mXkD130t9arJ2uW1Scr51dHj8yqtNBV9AlhO6pbMHeUYHXWZdgCuE3BVeWfZDMWyGeE26r4bc64++zpFLlTgyhhFVNWZ8cCBG0fUN5Is7ol7WT4Yw1Joc1SOU6CvXtI7NcsKsfQWsJz25VNbHGMIx/h4/LpJdMnD7qgTbrXirkGoI4XQe6LzvBVw2vPFYjpVj65jZ9Ri2avLOYRwye26tretdOWodVtbk/XiSfGMuTpTbXxnn5TDTTTqnLqKajKJQy3lnt20h2D8/oREkUNfDwUtQZjn9KU2wH96Poz7Ct5wLi51O9ir87o0kZVWt7gaR5yC044n82DNQm7boiAUdWx9UMWT66QJ4mZY4Nb3WESNsbCi+pJowIA+NtupX4zyyttpYh8awrEHhcf3UznVU/shO+Ug8IvpHhV
+ 1FIG6tbkW1v5UNSZdLSZEbnqfXXjBU7fYrkLeazp7zxgoPFYBfX+Tt0RnLJ0Ccfvb8pcnExc3IWsoeMI5ERyBNKD99+k2Gy5U6QebvZcsrPbRem+gY0R1rfLICEL0/lISSdll4CEJBvHgVFYMnnMu76Aq984RzHYtHjoaAtTSoAiAhtt7qrjfI4WpLnU/s0iF+deuGeAI3ez9HQ9MPkdKodnBvg4x7jQQ65cc24VLAzQV7PZUcBu5xMPbkzj1CH2n6/Evr8oOLSFcr/26H7NVSe0x4nOo0fNbKrKsbY7sYt692C5z4IxniVc8jdr92EoIfvkm6si6GpsM3zmH2vz7JysZ4+P1xyGyEGX+m+SmSEF/8kQnP8QmW4ClSTHzc1d0GOTphBU0IsR0lyjCgMR3/yq1V5M+ME2c7AJlse6UUzbm7iBQA7qCmswFvCS13vST/NGh+MnZrvNBiblVTF2PYFHB749C9RX/RJj81JC0tVuehkhQyyaR7+CKOhJ99cW1w50YkPOx4aNQQkwtSG8Oq53yaxD9YvlNkgakPLoe9iMEa6YMwqxahleOaVSSEzeog+NOSQfXn949rxUlsNVCKTBTTVYzdNf5QCsOsvLexEiU5gLGyrgUOp27L6Zkaa+U23x0BFiYUx5qmXBaJUgVVuJ5xRDwkc/ddBTfoJHX4IRGvH7y47n47IJiktY3+HFTlj5G/WJD58rTPTOxgGU6wPLJFkBOVQE17ZTS4MMFnM=
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYYPR01MB10592.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(23010399003)(1800799024)(8096899003)(56012099006)(11063799006)(13003099007)(38070700021)(18002099003);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYYPR01MB10592.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(23010399003)(1800799024)(376014)(56012099006)(8096899003)(11063799006)(38070700021)(13003099007)(18002099003)(22082099003);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?VUh0N1ExT05ibHZISnFxaTQyaFlkWWlGeG5DQTVpRlBmdXk2QnQrWVdo?=
- =?iso-2022-jp?B?TGRQMTM0di94SnVuKzR0dnlrVE1FdldrRFRWL1JRSHhtSmlPWWpORURV?=
- =?iso-2022-jp?B?cHpZMTRWc0wyelJWZGpxRDhKU3IvOVZxdXY5LzFnNnFvS2g4NS9TWEJo?=
- =?iso-2022-jp?B?SEZRWmlmL3RmWC9pS0ErdXpPajNLcjh2Ui81WDB6Z0ZwV3lqeWM1eDJC?=
- =?iso-2022-jp?B?cVFuTzFkbyt2MGFWVWpNTk1EVE5yNFkraUdvRklHQ3BTR25OYTZneUR6?=
- =?iso-2022-jp?B?SHp1SlF1UTY3NTFqaW1YQWU5K1FoNDhrKzdieDZPTUVubkl6WXpkWmx1?=
- =?iso-2022-jp?B?S1p6WWZqaFNnNVBDa0NvTzBkYVMrN1kzWGZScUNpM3Fyc1hIeDExTzZF?=
- =?iso-2022-jp?B?bWlrK2ZORXpJOVZUbGZsZDhnVmFPNmxBUGU4Ti9YbTVjNUdOTUN0Qitx?=
- =?iso-2022-jp?B?NERacjIrNGcxSmN2NlVsdlZ4MEJMRTF3WnIvamRsZDgzM1p4c1Z6NTFK?=
- =?iso-2022-jp?B?dHh1RlFCVGJVWHppVElwS25DbHFHUTVlNDVYcDZjNk91MUxXSmEyTkE2?=
- =?iso-2022-jp?B?U21ERkxnck5QNW9zaXRVMlBSTGw1LzBSSEQwdk52R3MyU0QrckMyUlpC?=
- =?iso-2022-jp?B?akNnemduaURYbk1hdmpFTThlZ1pJTU5uUVBzekFWWlJuaXZCK05mcm5E?=
- =?iso-2022-jp?B?SDJiSlJzU2h1WEYvd3d3OWpXOE9wdFMrLzJGc2JHNmtBbXc3YUJGSXF4?=
- =?iso-2022-jp?B?ZXdoM2todmlUWWV6VFRGbG9VL0MvTVpTMmdSbjcxcGI3RENJbFBrWmxW?=
- =?iso-2022-jp?B?dkZlUzVDL3VUazJwZTRZTk42NjZPQnA5OHFkWXM1a3pZbS9RVEFZN3Jx?=
- =?iso-2022-jp?B?UmNTam1RWGVReVh2SUlBWU43QUJUK1R5UlNKbU54UE5nd3ZIV0Y1dnJS?=
- =?iso-2022-jp?B?bWpTWjdlUm1ic2J0V3A1ZnNxY2I5dzV1SEdkcDFuWHMvS2RGM2xueTUr?=
- =?iso-2022-jp?B?WVBzSHpVRDNFL1k0ZXd3RkozT1NDUnJUVHord3FHQ0tSU080WXhnbHVY?=
- =?iso-2022-jp?B?MHFJblJxRnNnaVdod1AxQU9sc3BGZWJnVjJ6WjB0cWh3bVYrRWMvc0RK?=
- =?iso-2022-jp?B?NFgrdUVabXR1S1VKTXlyWEd1OGJGTnpLTXlGYk85dzBxbUE5Ym0zZjZM?=
- =?iso-2022-jp?B?cURqNDVHb25hVzIxN1g3aG45bE13R0JPQ2gvVUJlNENRekUxbjdEOHUz?=
- =?iso-2022-jp?B?RWo2WUxEQkxUQXFzeEtTbVdCRWdON0lLRGc2aUwzcDdFa0dNRHVsWmx5?=
- =?iso-2022-jp?B?SkNCbmIyQVAxNFpZY2pXN3AvUTJtVUxyZFFQb21pS0lvU3J3VDZ3aEVq?=
- =?iso-2022-jp?B?dk1kNDhHalVmbmZkL3RYbzJ2aDMxZjc1MzAwOXM5WUJRK016VDI2Snhz?=
- =?iso-2022-jp?B?RjRabTRJaVh2OFE1c2JKRTFoWU1rbDgyM2pJRndHOVJucTBBZTlaemNt?=
- =?iso-2022-jp?B?VlB3eHNmWmhHRlQ5L1JhbGF1RHdtZWZ1QjV4NWQ5Z3BTNzdQamQvTFlL?=
- =?iso-2022-jp?B?YWxtRmtIOXg1djEwOVVGWWsvVWE1Q3NlVysxYm1aMW5obVFiZ0RWREZY?=
- =?iso-2022-jp?B?ZlJlM3ZwSmxiR3pDcEVjUW1lNkR4VDFSaXJ3MDg0SmJyeTI3YUhpMzIr?=
- =?iso-2022-jp?B?Y0QyRnRoY1YzRDdpWmh5OG1ZZ0Y0bjdFQXFNYnYzajdwcTJFL1R0K3VC?=
- =?iso-2022-jp?B?U1pQRHFVNE1oWGVSVUdzZkh6M3JLZFBORGFHWG1VZ28xT3BrVW95N284?=
- =?iso-2022-jp?B?eGxHd1ovT09CM25Vc1ZzSFFyT3RPNUo4QktaK0RiK0czNjV4OGlzZE9B?=
- =?iso-2022-jp?B?UzduUUN1VXQ2SHpiMy9MbzJnT1AzVlFnK29kbjJBUTl2My92YmEvVXl6?=
- =?iso-2022-jp?B?bTJneDlsVGVTaTIyS0VEd1pWQWRJL0lzdHpyV1pXMkFBQWExT01veTYr?=
- =?iso-2022-jp?B?VTBIMWNuUTBGY1daY3dwNklzS0VrSmYzRUpSRlUyQjhyQ2o1QkNsa2Z4?=
- =?iso-2022-jp?B?c08xVFgxWjZuNW5mMmhxQlNHeFRNVFRuNGJCWWM1Ukt3ZExwZEdvOElB?=
- =?iso-2022-jp?B?VTRZZ29xb3FEZmlHYXR0aGZtNFVoVEFCZXUyT21FTmdYc1NwR1pLM1BU?=
- =?iso-2022-jp?B?NXB2eFlLOTFIdGlJNVFsMVVoY2xyVk1ZQjBhdGZaWUxDWnhHbjUwZkl6?=
- =?iso-2022-jp?B?elFTVHBudzJLZEx1eTNmTzJ6aVFBUVJRZS9mZDJJOStkc0w5TnFaeTk5?=
- =?iso-2022-jp?B?eXVINHhJY2VsU0hXTER2Zkp0REZrVXppMjBRMmFIMzFRUk9Wc2t2OEln?=
- =?iso-2022-jp?B?U2xYVWorZnVzRWVSL1VrTmxKRFBZWm02bnVXb3k2cG1kZkZINHhKZnln?=
- =?iso-2022-jp?B?cmVFbHd3cVpsUHgzcTZxeEZBRWNhMWJIa1MvSTVOOFFoUHB5RDc4ejky?=
- =?iso-2022-jp?B?SFpGbzF4RHNWczh3U2RGYk96Y3dFRGVla24zY00rQ2ZNT1pKMEhqYVZk?=
- =?iso-2022-jp?B?L3JCMkVlRT0=?=
+ =?iso-2022-jp?B?UTRua0FRS210aGhmdHJwN3h0ME9YUGoxWGhDNlh6QmQwcmtxcXFYRUVn?=
+ =?iso-2022-jp?B?ZVV2NlZpNllkOURETGFlR0kzMFp4WXZhSXdrdVRaMytlU1U1UkcyQ3N4?=
+ =?iso-2022-jp?B?cmY2Y0x6SFRRdzJ5MFFhaVVOR1U5Z2tNeC9EMUUwZWVQbC81RnFpSm1s?=
+ =?iso-2022-jp?B?Qi9FMWpaRFJCMHpSYUhmUmVBRk1QY1BpY3R5ZnArTThheW1pRU02UFVV?=
+ =?iso-2022-jp?B?cUxaMFJSam9uYjJRdUdIdS9FTWtzL0Z1OWRZNTlaTm5UaWpkWXd5K1VW?=
+ =?iso-2022-jp?B?WDhyMHZ3SHc3dWl6dVpJV29MUXZ2NHg1OUxXbC9xam9Xb24vU1p2djFU?=
+ =?iso-2022-jp?B?LzRxMUhEYVY1T2tuY2ErcWNBQkZEdnBRZUxNV1FON3BHVHZPaXdVcm9P?=
+ =?iso-2022-jp?B?ZzdIMXZjU1ZNNTVSdTZtLzA4MVI2VUNYSjFlbnl4ZnFzNm1rMkI4dzlS?=
+ =?iso-2022-jp?B?QjNxeDZpQ1pKbklKVGlPaE5EWGhnTXcyL2pqVW9IaFpveGJwSDYrWXFy?=
+ =?iso-2022-jp?B?MlFjK1VzSVMyY3Jnait1emFHaDVjaVZMOVcwZXpZRkVCZEd0c0RvT1ps?=
+ =?iso-2022-jp?B?Mm9FajhVRCtmanZnSHFneTBOVmYzcDFodzBDM0FTcGg0MmJIVDBVNTIr?=
+ =?iso-2022-jp?B?SnJxYzRIR0VlLzVDS0RMSGwvWjhPSThISVNJY0RqaVpMZHM3c1ZRUG9D?=
+ =?iso-2022-jp?B?Wll6RDlRS1J5emRET1dDa09uN1F3SG5wR2xSSFVDbVcvaGI1MVQxSytq?=
+ =?iso-2022-jp?B?Q1RNcExaODZMcnRXMG9hc0ZUR3psVkdHT3NGdW1ud0J2WmNjek5nNjIw?=
+ =?iso-2022-jp?B?dDU5MDh2bUlFMDV1S1orcHVCRldYQWFCKzhEckR2cmgrRm5aNjlKSmZN?=
+ =?iso-2022-jp?B?NnA1ZThLUkxZaWdIcHpuQ1l1Vk8xNmZsMDhmK3dZb0s5Q2hlTVlJSHVS?=
+ =?iso-2022-jp?B?Z1A0S2pRMUU0TjErSGpqY3VaQkxYRzFJZXNvUW1jeXR5WmZsa2hiV3lJ?=
+ =?iso-2022-jp?B?eWl6R0NwK1JnY0ZOd3h0aUVUZHZMc0pjelZJWVp5cklqMUtMbkNGZ3Jy?=
+ =?iso-2022-jp?B?WlptRENCNjFEWXNROEdTTEZPaVhwbkU1NXJQZmNxS0MvMGdMSzNJamxY?=
+ =?iso-2022-jp?B?YXB6SGhNeVl0RXZTYkk5bHo3ZWJOazdyQytBMGpDeUYraWg3VEV4dmlx?=
+ =?iso-2022-jp?B?UkdDQWlRMS9MRFY0ZDQ0MmIrc0NXczhiS3VIZkJqQTJ1Y0RmTE0xZ1pK?=
+ =?iso-2022-jp?B?Mzk5ZG14RDNjSE5FbzNOTEpiZjVuaXpZVkJ1c0wzQlpOeStaZ25pZTY0?=
+ =?iso-2022-jp?B?MFdwUElJbUpPanpGMjRGMmxHSjg2aUtSLzNzL21PZjk2TnFhYUkvd0Zn?=
+ =?iso-2022-jp?B?NmJmQVdGdzdKQlZmbmNGb2RMYjlNdlhDTGFzSHpIa3JEN1A2bG1tVTh4?=
+ =?iso-2022-jp?B?RkVaN3FIa1BqRWs2b2lrVzMxZWFweHBGSXd1aWVnUWpZcHc1Tk9xcHJ2?=
+ =?iso-2022-jp?B?bllJWUdHYk9ydzNiTWtodUN1QnAyNEM3K1cvSG1vY2tvNFVXQkhWQ2NS?=
+ =?iso-2022-jp?B?VzIyMWZEOXZDcXlBdXdEUEtpUTdpUzdSUkM4THU1amI5NVgxMTF3a08x?=
+ =?iso-2022-jp?B?QnU1UVpvQ2RtSXptR3dsd3A1ZDVSSkpma2puOXdFVWJvS2ZRTHZwalU2?=
+ =?iso-2022-jp?B?czRBeHF3NDVYbWIxZTVYZ3RMdFpTTndEVkRMTzBQeWpmZ1dOanNYb2dz?=
+ =?iso-2022-jp?B?ZFFGeGpwN2JtZUpYOWtBa1AyZ3pSWkp4VHkyR1NTaVJwUHJHTmpxc2p6?=
+ =?iso-2022-jp?B?NGwzR1lnRERtczR4ODRlOUVUZjR3NkZjSzZCaDNzc1Y5TnorOVVuSlNH?=
+ =?iso-2022-jp?B?NVN0VkFiVVBsMzRIQ2JRbTQ1WXU3OGJ2UUU1V0ltUVRXVTRLOHl6RVpv?=
+ =?iso-2022-jp?B?VlNGZ0NwOENHbTZkYU9acFg4ZFBVeExidTYrcWdBQmtLYS9EOHRtZ2Zm?=
+ =?iso-2022-jp?B?VFFIYzIvbWhxcmNpTzRDZkEzamtwN3dzWWlGTjlsQkkvOUxlU0lhYXFL?=
+ =?iso-2022-jp?B?WUUwdHlObkZTaGRXRm0xQTdVWmVvTDJuTGQ1V0g4RThMOE13RmhpT0FQ?=
+ =?iso-2022-jp?B?STVqOEZGSm16MDVlbU1aOW02ZTJEMVlDWURDbHM0dGovZEFENlpVKzNU?=
+ =?iso-2022-jp?B?NGlSWDZTV29ZK1ZTejAwRFdudGp1R3B1MGNmOTRsdnJPcU9IZVNCeGJY?=
+ =?iso-2022-jp?B?azl5MEJ1UHQvUUpHM1FJLytsRUhUb1VzVW1aWUdscnpCZzNyM2VkNGhB?=
+ =?iso-2022-jp?B?UWRocnpRTWU1SFl5UlVuTFhjUnQyZFZPYmxCQjMvMTBNdk1BVG5peUxD?=
+ =?iso-2022-jp?B?OFNLUFFvK2o5R1l3ZXRleXJIVVlHM0svSU9pbEFJVWZhSlUvT1FuVlNO?=
+ =?iso-2022-jp?B?ZVo0WHI4Y1hRc1pVbEZRaWpFWlhuK1oxaVl4NTAwTEZQYjh3TmkvNkVC?=
+ =?iso-2022-jp?B?Z0d2Wk45bG41MkxncFpHLzRKUlRIY2grL3JpZjFIK3RzeS8yR3JrSnVW?=
+ =?iso-2022-jp?B?eFU4NHJGVT0=?=
 Content-Type: multipart/alternative;
-	boundary="_000_TYYPR01MB105921EFCE76034EB9A0FA6A5DBE32TYYPR01MB10592jp_"
+	boundary="_000_TYYPR01MB1059265F33AC401875490D349DBE22TYYPR01MB10592jp_"
 MIME-Version: 1.0
 X-Exchange-RoutingPolicyChecked: 
-	oSlunYIU6EojAfmkGRhtGvgTM78LKCL7TlEDGd3PAYw+LW+75Sw0geFEaTwXc2hxL876KBgH/syxfAjfKmG+4uuaIr4q7kuqh/UcpK4zLLGIlMvYEABtoJO6Iy9e4DoeWHVqcZpBqeYuubI/bKBAmxLQzFQL+tZBFerHllZA2Tn8ODnLoaB0hWJ/nQFBvyZzqKrYmVoS/G+mqlAxQZqvH0BSPdyTgjFS0xoaxKbcBHc74K5mjeydlLHhr5GXNPX6PfbQmjrdVLmVV95POuJST36y91M+YUAf+Oqh3+c+9RwDflC40e9Lu1EpTz18ikJ/pfUUv4Q/koaNPt1iXqY80A==
+	GnoZigvEYOHS3LwpDkNTQXsbnEd6XrtUG2K1547ZRM1R/47PJbW2StHDrKZCNMml5tLaWwlfU/X5o65faCuWJ/kv/qcMMIBmTDPWBFm067aAm4+4spj4oLO7qessEn+0di+cwP0LOz1g0z4MFwFoK7fKisFcaunuTWgx5RfT1lgzMbPRu2S+bUhxLx5g+kQseRB//TRACIFxKUyhNYjWzm/UhIhbczqaKWKKXH51oAGbYuGmxl2VyTdnwRjP0PrPg4Wz5G3zvLWKWd1dUpXPJRgvfr3A390yUyHySjqouZl5MrCpYaMt7PU3GPlcFk8T4KbSWesSKzAcc+ZvhYgTaQ==
 X-OriginatorOrg: toshiba-tsip.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: TYYPR01MB10592.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d6c826ba-20ae-4d46-0c29-08decd58c472
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jun 2026 16:43:46.9186
+X-MS-Exchange-CrossTenant-Network-Message-Id: f0b27ce8-75a8-42d5-3bb1-08decdbb5b9c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jun 2026 04:29:31.2562
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: r7FbmAeYh6naAfKe/H1gxt58VISJVqzbmfn3lV2u5T3uMBoMAGhXyLE9CoL8qYhHZzNZDobe2yVdys2sR06oPFGFKcluWYnqyfb2vgRYK6tbEprKXvwoN3xexgr9fin2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB14336
+X-MS-Exchange-CrossTenant-userprincipalname: DpxvlcOV42lW38IDCuZMn0P+LxZJ7NmkRvGdqpT1ECU8hfrSY619+aWaCPqHMME7QHYdEXR02BnfXPR1kqaWg1N0TYV2rRUt2l7IPz5xvz7XnFDFJsvIuXUTf2hlQSZM
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYVPR01MB11130
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 18 Jun 2026 16:44:07 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23226
+ <cip-dev@lists.cip-project.org>; Fri, 19 Jun 2026 04:29:48 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23227
 
---_000_TYYPR01MB105921EFCE76034EB9A0FA6A5DBE32TYYPR01MB10592jp_
+--_000_TYYPR01MB1059265F33AC401875490D349DBE22TYYPR01MB10592jp_
 Content-Type: text/plain; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
+
+Hi All,
+
+Apologies for confusion caused. Please ignore my previous email.
+The MR is currently under the package maintainer=1B$B!G=1B(Bs review.
+
+Regards,
+Sahithi
+________________________________
+From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> on beha=
+lf of akunuri.sahithi@toshiba-tsip.com <akunuri.sahithi@toshiba-tsip.com>
+Sent: Thursday, June 18, 2026 10:13 PM
+To: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org>
+Subject: [cip-dev] Autopkgtest support for passwdqc package
 
 Hi All,
 
@@ -137,7 +153,7 @@ Regards,
 Sahithi
 
 
---_000_TYYPR01MB105921EFCE76034EB9A0FA6A5DBE32TYYPR01MB10592jp_
+--_000_TYYPR01MB1059265F33AC401875490D349DBE22TYYPR01MB10592jp_
 Content-Type: text/html; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
 
@@ -149,67 +165,118 @@ jp">
 ttom:0;} </style>
 </head>
 <body dir=3D"ltr">
-<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
-background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
-s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
-ize: 11pt; color: black;">
-Hi All,</div>
-<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
-background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
-s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
-ize: 11pt; color: black;">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
-background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
-s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
-ize: 11pt; color: black;">
-Please find the autopkgtest related MR link for passwdqc package:</div>
-<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
-background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
-s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
-ize: 11pt; color: black;">
-<a href=3D"https://salsa.debian.org/pkg-security-team/passwdqc/-/merge_requ=
-ests/1" id=3D"OWA95e9fca4-2cee-9a05-4b39-da898746320c" class=3D"OWAAutoLink=
-" title=3D"https://salsa.debian.org/pkg-security-team/passwdqc/-/merge_requ=
-ests/1" data-auth=3D"NotApplicable" data-linkindex=3D"0" data-ogsc=3D"" sty=
-le=3D"margin: 0px;">https://salsa.debian.org/pkg-security-team/passwdqc/-/m=
-erge_requests/1</a></div>
-<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
-background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
-s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
-ize: 11pt; color: black;">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
-background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
-s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
-ize: 11pt; color: black;">
-Kindly review and provide your feedback as soon as possible.</div>
-<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
-background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
-s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
-ize: 11pt; color: black;">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
-background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
-s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
-ize: 11pt; color: black;">
-Regards,</div>
-<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
-background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
-s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
-ize: 11pt; color: black;">
-Sahithi</div>
 <div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
+olor: rgb(0, 0, 0);">
+Hi All,</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
 olor: rgb(0, 0, 0);">
 <br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 20px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+Apologies for confusion caused. Please ignore my previous email. </div>
+<div class=3D"elementToProof" style=3D"line-height: 20px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+The MR is currently under the package maintainer=1B$B!G=1B(Bs review.</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
+olor: rgb(0, 0, 0);">
+Regards,</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
+olor: rgb(0, 0, 0);">
+Sahithi</div>
+<div id=3D"appendonsend"></div>
+<hr style=3D"display:inline-block;width:98%" tabindex=3D"-1">
+<div id=3D"divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" st=
+yle=3D"font-size:11pt" color=3D"#000000"><b>From:</b> cip-dev@lists.cip-pro=
+ject.org &lt;cip-dev@lists.cip-project.org&gt; on behalf of akunuri.sahithi=
+@toshiba-tsip.com &lt;akunuri.sahithi@toshiba-tsip.com&gt;<br>
+<b>Sent:</b> Thursday, June 18, 2026 10:13 PM<br>
+<b>To:</b> cip-dev@lists.cip-project.org &lt;cip-dev@lists.cip-project.org&=
+gt;<br>
+<b>Subject:</b> [cip-dev] Autopkgtest support for passwdqc package</font>
+<div>&nbsp;</div>
+</div>
+<style type=3D"text/css" style=3D"display:none">
+<!--
+p
+	{margin-top:0;
+	margin-bottom:0}
+-->
+</style>
+<div dir=3D"ltr">
+<div class=3D"x_elementToProof" style=3D"text-align:left; text-indent:0px; =
+background-color:rgb(255,255,255); margin:0px; font-family:Aptos,Aptos_Embe=
+ddedFont,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:11pt; =
+color:black">
+Hi All,</div>
+<div class=3D"x_elementToProof" style=3D"text-align:left; text-indent:0px; =
+background-color:rgb(255,255,255); margin:0px; font-family:Aptos,Aptos_Embe=
+ddedFont,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:11pt; =
+color:black">
+<br>
+</div>
+<div class=3D"x_elementToProof" style=3D"text-align:left; text-indent:0px; =
+background-color:rgb(255,255,255); margin:0px; font-family:Aptos,Aptos_Embe=
+ddedFont,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:11pt; =
+color:black">
+Please find the autopkgtest related MR link for passwdqc package:</div>
+<div class=3D"x_elementToProof" style=3D"text-align:left; text-indent:0px; =
+background-color:rgb(255,255,255); margin:0px; font-family:Aptos,Aptos_Embe=
+ddedFont,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:11pt; =
+color:black">
+<a href=3D"https://salsa.debian.org/pkg-security-team/passwdqc/-/merge_requ=
+ests/1" id=3D"OWA95e9fca4-2cee-9a05-4b39-da898746320c" class=3D"x_OWAAutoLi=
+nk" title=3D"https://salsa.debian.org/pkg-security-team/passwdqc/-/merge_re=
+quests/1" data-auth=3D"NotApplicable" data-linkindex=3D"0" data-ogsc=3D"" s=
+tyle=3D"margin:0px">https://salsa.debian.org/pkg-security-team/passwdqc/-/m=
+erge_requests/1</a></div>
+<div class=3D"x_elementToProof" style=3D"text-align:left; text-indent:0px; =
+background-color:rgb(255,255,255); margin:0px; font-family:Aptos,Aptos_Embe=
+ddedFont,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:11pt; =
+color:black">
+<br>
+</div>
+<div class=3D"x_elementToProof" style=3D"text-align:left; text-indent:0px; =
+background-color:rgb(255,255,255); margin:0px; font-family:Aptos,Aptos_Embe=
+ddedFont,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:11pt; =
+color:black">
+Kindly review and provide your feedback as soon as possible.</div>
+<div class=3D"x_elementToProof" style=3D"text-align:left; text-indent:0px; =
+background-color:rgb(255,255,255); margin:0px; font-family:Aptos,Aptos_Embe=
+ddedFont,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:11pt; =
+color:black">
+<br>
+</div>
+<div class=3D"x_elementToProof" style=3D"text-align:left; text-indent:0px; =
+background-color:rgb(255,255,255); margin:0px; font-family:Aptos,Aptos_Embe=
+ddedFont,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:11pt; =
+color:black">
+Regards,</div>
+<div class=3D"x_elementToProof" style=3D"text-align:left; text-indent:0px; =
+background-color:rgb(255,255,255); margin:0px; font-family:Aptos,Aptos_Embe=
+ddedFont,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:11pt; =
+color:black">
+Sahithi</div>
+<div class=3D"x_elementToProof" style=3D"font-family:Aptos,Aptos_EmbeddedFo=
+nt,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:=
+rgb(0,0,0)">
+<br>
+</div>
 </div>
 </body>
 </html>
 
---_000_TYYPR01MB105921EFCE76034EB9A0FA6A5DBE32TYYPR01MB10592jp_--
+--_000_TYYPR01MB1059265F33AC401875490D349DBE22TYYPR01MB10592jp_--
 
 
