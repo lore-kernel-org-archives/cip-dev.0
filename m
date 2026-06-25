@@ -2,84 +2,91 @@ Return-Path: <pavel@nabladev.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42630CDE008
-	for <webhook@archiver.kernel.org>; Thu, 25 Jun 2026 10:16:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58931CDE008
+	for <webhook@archiver.kernel.org>; Thu, 25 Jun 2026 10:58:20 +0000 (UTC)
 Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.7935.1782382563665496263
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.8883.1782385095868344577
  for <cip-dev@lists.cip-project.org>;
- Thu, 25 Jun 2026 03:16:04 -0700
+ Thu, 25 Jun 2026 03:58:16 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=VtxS3z9u;
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=VhqPIfwT;
  spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D5573115751;
-	Thu, 25 Jun 2026 12:15:57 +0200 (CEST)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 300FA117AF0;
+	Thu, 25 Jun 2026 12:58:10 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1782382561;
+	s=dkim; t=1782385093;
 	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=ljs3tye3JKe+ttIV8MqkQiw+ooTwSu3WdQo0BG04Hx0=;
-	b=VtxS3z9umDojiqAhv4ybuExu8lCoPQVX9mubrssu7r67uAUA4IwSitappbtJzsHg3cnsg+
-	heQV/bGwB4fTlB2WAN+S9UodcePzixRWteVBY3KsXGSwSzehAu32ABpcYXsNmv1V+zMA/Q
-	qJKajuMlBWd3reCPUClqfMWPn6Po8Lko76wvO3rQKvN/EkXLi58Ps71NPm2P6O/iIlgfXd
-	r5ppcBY7KJ1ABRhyEybdOFf/q+Z3+hkterp3NQCnKJT7CyOFbWe0py5dNr0nwKilbYGgRM
-	jP2zCdE5oBZC/djkmrCPOP5/gKnuwS/s3AU+KLzzwihudOTc9tXg/dLQCFlCxg==
-Date: Thu, 25 Jun 2026 12:15:55 +0200
+	 in-reply-to:references; bh=ArBXXNrofDhE/kARBx6I/eO8zAi18tyW+QiaxteF8kk=;
+	b=VhqPIfwTGywuDT3D88OVxxp51BchgmPovpZX0G4UBA4KwOkfqAdBT3nwK3ZEJzwVx35qZR
+	YlK0XRmJyXGQhNUGLzk3Hv52eTkQ6DEfyhxf2gIfBytlTKTm6US+C+I1tl6yP278G5IOzB
+	YYqpFjdC9pHYu0fJyjX1OSuV3dAgyUhknfIh98fzTcUL0LxSDh3GZ8bAQSyOYRV6fROCdR
+	sOaI9xjEbLhyhbi1aqtyf7GDpxP9wIJ35twxrA+Z/yRKtz0S2k3Nh39TotwljgZdRBIMMp
+	gsUJ8xvXCHjmIQhZheE1mSFFjWKTnzP4bgwUAqPQXa7yuvndmUHzSY0i9eZlng==
+Date: Thu, 25 Jun 2026 12:58:08 +0200
 From: Pavel Machek <pavel@nabladev.com>
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: Pavel Machek <pavel@nabladev.com>, nobuhiro.iwamatsu.x90@mail.toshiba,
-	cip-dev@lists.cip-project.org
-Subject: Re: [cip-dev] [PATCH 6.12.y-cip 00/17] Backport RZ/G3S USB support
-Message-ID: <ajz_2_TJxMeESfhY@duo.ucw.cz>
-References: <20260610194849.2502517-1-claudiu.beznea@kernel.org>
- <TY7PR01MB1481870E0F531E41AE63C8462CD1B2@TY7PR01MB14818.jpnprd01.prod.outlook.com>
- <aisi82Eui1N1svgC@duo.ucw.cz>
- <38f60ffa-0dda-4e8b-a1da-82f9288e1faa@tuxon.dev>
- <ajBolVke5ENiZ9n2@duo.ucw.cz>
- <18B987A3256F1E3A.267903@lists.cip-project.org>
- <66c961dc-ebdb-4691-a86f-c7f39209f839@tuxon.dev>
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: cip-dev@lists.cip-project.org,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	Pavel Machek <pavel@nabladev.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	tomm.merciai@gmail.com
+Subject: Re: [PATCH 6.12.y-cip 00/24] Add RSPI support for RZ/G3E SoC
+Message-ID: <aj0JwEn8u2zUtM5c@duo.ucw.cz>
+References: <20260617083502.1074160-1-tommaso.merciai.xr@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="NNwIS6jY8BW0AyW7"
+	protocol="application/pgp-signature"; boundary="hIHM19KU1vXORdi6"
 Content-Disposition: inline
-In-Reply-To: <66c961dc-ebdb-4691-a86f-c7f39209f839@tuxon.dev>
+In-Reply-To: <20260617083502.1074160-1-tommaso.merciai.xr@bp.renesas.com>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 25 Jun 2026 10:16:07 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23279
+ <cip-dev@lists.cip-project.org>; Thu, 25 Jun 2026 10:58:20 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23280
 
 
---NNwIS6jY8BW0AyW7
+--hIHM19KU1vXORdi6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> Gentle ping on this topic.
+> This patch series adds RSPI support for the Renesas RZ/G3E SoC, which
+> features three RSPI controllers. The series also enables DMA support in
+> the RSPI driver, and backports the necessary infrastructure changes
+> into linux-6.12.y-cip.
+>=20
+> The series is structured as follows:
+>  - Clock entries for the three RSPI instances on RZ/G3E SoC
+>  - DT binding updates: document DMA properties and add RZ/G3E compatible
+>  - Device tree nodes for RZ/G3E RSPI controllers and SMARC board enableme=
+nt
+>  - Driver improvements backported from mainline: DMA support, device-mana=
+ged
+>   APIs, bug fixes for clock setup and FIFO thresholds
 
-There are other patches currently being reviewed.
+There will likely be some minor comments, but this looks okay to me, too.
 
-If you want to help us here, could you comment on these emails in this
-thread?
+Reviewed-by: Pavel Machek <pavel@nabladev.com>
 
-Date: Mon, 15 Jun 2026 23:50:44 +0000
-=46rom: "Nobuhiro Iwamatsu ...
-Date: Wed, 17 Jun 2026 06:03:03 +0000
-=46rom: Biju Das <biju.das.jz@bp.renesas.com>
+I can apply the series if it passes testing and there are no other
+comments.
 
-Thanks and best regards,
-								Pavel
+Best regards,
+                                                                Pavel
 
---NNwIS6jY8BW0AyW7
+--hIHM19KU1vXORdi6
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCajz/2wAKCRAw5/Bqldv6
-8qa1AJ4vdVtvTg5APcx1X8LPo3nshQKVAACbBP/EihrbX7EDp35cHSydsbi4gvo=
-=hI6l
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaj0JwAAKCRAw5/Bqldv6
+8pOiAKCP5gdPmeLaGX4rkizhe7rSw6QM9gCgmc0eeS8ni0nNNErPAP+PRVhSWMk=
+=MzhU
 -----END PGP SIGNATURE-----
 
---NNwIS6jY8BW0AyW7--
+--hIHM19KU1vXORdi6--
 
