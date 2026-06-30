@@ -2,56 +2,56 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC2B4C44508
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2597C44507
 	for <webhook@archiver.kernel.org>; Tue, 30 Jun 2026 11:48:56 +0000 (UTC)
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.19429.1782820132077653689
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.19077.1782820134823781837
  for <cip-dev@lists.cip-project.org>;
- Tue, 30 Jun 2026 04:48:52 -0700
+ Tue, 30 Jun 2026 04:48:55 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=RzSUnAJv;
- spf=pass (domain: gmail.com, ip: 209.85.221.47, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-463f1165e16so4461200f8f.0
-        for <cip-dev@lists.cip-project.org>; Tue, 30 Jun 2026 04:48:51 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=Rl/pQ7Ci;
+ spf=pass (domain: gmail.com, ip: 209.85.221.42, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-4763b0c1dcdso222781f8f.2
+        for <cip-dev@lists.cip-project.org>; Tue, 30 Jun 2026 04:48:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782820130; x=1783424930; darn=lists.cip-project.org;
+        d=gmail.com; s=20251104; t=1782820133; x=1783424933; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=CMo7MjWtKZUCp5t4Ny1+y2MiHTuWtGp3dEjdtMtrp3o=;
-        b=RzSUnAJv521Un+MVu7wa4BVt0AbuB/YskQ/0RWc8lEfx3wXuF6eqcOowT5vEJjw1WD
-         G3PnUdqpxbEj0ISdgp2G1V1i0iZZsRlJW+SoA9hjOh/RS5Z6a5cmr2bO1ctv+NlPtqu3
-         85dN2YZwtqLYECO9sieQ0OWgKuSvBbEnnw1Grvkb5oGaVd2o+aBF2ueejGGsU6wys2dD
-         etpVzp32ji5LhOPCQT0b2s+UZpqKtqR0Z59xTC+mtM6vAPt04/GHbZdDpf1eZ9IsruCJ
-         LToDw/fX3MnPTXJT/Wx+CUTd84O+qcLeVx1bC/cSS8oeru9ctab2EA0YfeayowpAqujH
-         8ImQ==
+        bh=I8M6VL17DeqUOpEJqmI6BiKIipai15iBl3EqWKrkkPE=;
+        b=Rl/pQ7Ci8eYLoKgXa/DrLDUTWr1IlPCarbmUDwZ0f6kHLx3IgYPb/Ek2LPUqjso2Ad
+         oddgIKFttzNx3CoKVrrH5RIoWEsmrt6RzDoZt6uZZlbkeOy0XYRCUGux4xHfa7NmhLRu
+         cZ2RpPczPlU4DQ2PrFexbpFSLxZ9XT1ypagwzYW14ZDNKtVzczbiT8kHbqKO20dyLtot
+         r3+OKhb0fFye8MDbDzM2o98k/+yX3QK0rTts3jOFYxuQaSSRc2yhS3/oYBsanXqfm4Hv
+         eh1Pcq+jNqSL1DDZRAN2a9azrAqcLocVJLgUkPpgda6yV0NFLJEPLJeSiQc44cFVMgGz
+         RzMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782820130; x=1783424930;
+        d=1e100.net; s=20251104; t=1782820133; x=1783424933;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=CMo7MjWtKZUCp5t4Ny1+y2MiHTuWtGp3dEjdtMtrp3o=;
-        b=BmTsSns46drXkrHzNhM9t1kJXBctONe028q5vcp+UImlMmcitKYeiS/vw8hqA1jbfI
-         Kc/MqENTu/2jU35o5oFy7wjZH3p2ELPsCSezOlHLaa+DpP4t7GQ162cbyQhGp0mm7/Og
-         3lbikttdhwLHaekxwXB/wnie4uI/qh8E2+RoRcNgGIwxdYZM3Y/Gzdr72DZsg2Ve730R
-         Y8qrXTBN563aaJuoURzp1wcLMZImaC6RCwjaZA9E057zQRlpH0PmueZBH44WyjzZm9JQ
-         v+VAtIP82Uw1ezFQbjXtNZdPxvTeAmEjrb6/K9M0+6XHFvNzfqdQYsNgKluS+HlJFiAD
-         Gy+w==
-X-Gm-Message-State: AOJu0YzfWjpqwDruY3n3EisQeJtW+y244OkjVmCoMdXdPHauGKcjuXxS
-	5KooIiM3eVY3+igU8yu21gXYlt6Dhhumwayes0WYf1kaIAXs54dUGxwMQu2HCIpz
-X-Gm-Gg: AfdE7ckc+2odYPoOeU3x9I6XsxWkaqS7cS12Y0AsD45U0YFJF+W2xqfVK2e0pbT0Eea
-	2XFc9DSZ29tUCWSdeDsFX/8H9j9I/X79OCsPg7Nk4URoc2JTvvBwZPiYOvmgrfWzDOYAHeFnknU
-	mfYj7mzaZfKVfBjQV14FEYBc7xSFTdxEhE4Yqs2h1xJ4xzmUJjQ10lsGxoUmVTkGsFLnvsZTt8B
-	e8E1yOIAgvRTw8r+jsNr5TBcQ1CRG1nws1/Nwqe4lr6LP6dMyY2JEmW1g4kI/1pmWw6uSWV1aON
-	kWaIn1kpLLUP3P6uloElkJvfIZXeA7eRjUW5efJUUHqqJX3dUjE/+opLERg7RDkV/bOqQB3Y/un
-	LoG/PYI2cpQi24sd6Cnvwh+/a4v9qUzLjfU3Jb4TnuF4EbXSXXmIf0UauReFAHzE+x0LXL13R5g
-	XuYJ+L8swAXSuQlmz/oTs5S6r9zT7SWGYSYX+9Yw==
-X-Received: by 2002:a05:6000:240c:b0:475:f100:35f9 with SMTP id ffacd0b85a97d-475f10036efmr2156979f8f.54.1782820130212;
-        Tue, 30 Jun 2026 04:48:50 -0700 (PDT)
+        bh=I8M6VL17DeqUOpEJqmI6BiKIipai15iBl3EqWKrkkPE=;
+        b=QyKH7T2/LPFgd1U0SnSwHQOZ5QJp2j1lb/vjmSb//mJHjQr4KHnRDPgud6xMUYRkXG
+         UtatJa6piynzC6GNFXCKMRz2qsRts0/69Klyy8Ae46LEhF5MRWhF4Os/ogRW52ypJCCB
+         T5n1ko9AHhNHe99SWRGk7/R2lW4SQh86U8kOcSGoYuEXhXqNAhnj0zBTqUVu2DZEPp4+
+         cj/NZbBH//xpi9m3AQvN4jqBsldSGRSnVyEbORqUe8f+JT6hSL2pClvX9wXv4sVrEc1v
+         ONlJt2vRef6U59DOtcVDLthAlbY/MyUrNd7os4XFUwFES1DDyzMd/u0bUVx1KKPJddQs
+         1Xkg==
+X-Gm-Message-State: AOJu0YwaDAzkfSY2Ek3bCf4K1LWW7Tq06Vh47+DezFMsFMoI3CDtMRBY
+	A3wHiC6HP/uOSqAqKzYo//c+O0oAnEq6Tmnrn6RPE9glY1PhM1E4iLJ6KmqgQJRv
+X-Gm-Gg: AfdE7cmMFcYxQ2aTNVILS+mOD+8MvWmW6WY5CThVdZDgXm+uVDspeZPT3TaCcjX2h+q
+	NFNd1vpYSjpyB/SHyHLpII8zAErqwjoVc/VCKeQuHndiCJevTcxckPLfoKL6N5EgRWqrjh99uUc
+	0Q6zC/0/y0k4W3v0fp01k0bC/wuUZ0iSfmpDh5WL9plmUNycx9JomlbdfZs06dorr5sSI/BuDCa
+	RTTbU68lbYZVJqbWDMiIzdBxr3ZRhaIO3SpX1r3P1j9cyZ8WzVtruvD46F0087ni/0dxLAXWW1N
+	hqrO4auSAhd0btBdGctJXzyJqNWofym+jPIBZFpWItjoKwmSGEElhBnhTWge/bSPMkFBac0y9v0
+	7AcTWLOMO8Cp6uBCv0DfgoqDgD2e2yxhiksYS11Hom0+CR4ugzP3aDOdPqPRfc7b4BOw7s3H8Jt
+	dwzHoSDvnYA2nLg5YC8vpvy2IdJKcqwXWAfeEnFg==
+X-Received: by 2002:a05:6000:1866:b0:472:55a:ef90 with SMTP id ffacd0b85a97d-475506e9944mr4385267f8f.8.1782820132948;
+        Tue, 30 Jun 2026 04:48:52 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a702:d301:3f6d:4f26:2d9c:ab4f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-475641e4542sm7343031f8f.10.2026.06.30.04.48.49
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-475641e4542sm7343031f8f.10.2026.06.30.04.48.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jun 2026 04:48:49 -0700 (PDT)
+        Tue, 30 Jun 2026 04:48:52 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,9 +59,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 17/39] clk: renesas: rzg2l: Add rzg2l_mod_clock_init_mstop_helper()
-Date: Tue, 30 Jun 2026 12:47:36 +0100
-Message-ID: <20260630114813.92739-18-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 21/39] clk: renesas: rzg2l: Drop always-false check in rzg3s_cpg_pll_clk_recalc_rate()
+Date: Tue, 30 Jun 2026 12:47:40 +0100
+Message-ID: <20260630114813.92739-22-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260630114813.92739-1-biju.das.jz@bp.renesas.com>
 References: <20260630114813.92739-1-biju.das.jz@bp.renesas.com>
@@ -71,71 +71,39 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 30 Jun 2026 11:48:56 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23341
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23345
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[ Upstream commit fa3e973ca2d7a46b9f4ad5611b42d1885d7a77b6 ]
+[ Upstream commit 79b5d6970b4e5b7b7ee4d7fdb18e950086b72bde ]
 
-Refactor the mstop initialisation logic in rzg2l_mod_clock_init_mstop()
-into a dedicated helper function rzg2l_mod_clock_init_mstop_helper().
-This decouples the logic for setting module stop state on disabled
-clocks from the iteration loop, allowing it to be reused during resume
-to re-enable critical clocks.
+Drop the unwanted check in rzg3s_cpg_pll_clk_recalc_rate() as the
+function is SoC-specific.
 
-No functional change.
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://patch.msgid.link/20260324114329.268249-6-biju.das.jz@bp.renesas.com
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://patch.msgid.link/20260326110648.29389-2-biju.das.jz@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/clk/renesas/rzg2l-cpg.c | 24 +++++++++++++++---------
- 1 file changed, 15 insertions(+), 9 deletions(-)
+ drivers/clk/renesas/rzg2l-cpg.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
 diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index 840147ca601f..408e76c31424 100644
+index 5ced73696efa..ac49eb8b4a30 100644
 --- a/drivers/clk/renesas/rzg2l-cpg.c
 +++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -1595,6 +1595,20 @@ static struct mstop *rzg2l_mod_clock_get_mstop(struct rzg2l_cpg_priv *priv, u32
- 	return NULL;
- }
+@@ -1108,9 +1108,6 @@ static unsigned long rzg3s_cpg_pll_clk_recalc_rate(struct clk_hw *hw,
+ 	u32 nir, nfr, mr, pr, val, setting;
+ 	u64 rate;
  
-+static void rzg2l_mod_clock_init_mstop_helper(struct rzg2l_cpg_priv *priv,
-+					      struct mod_clock *clk)
-+{
-+	/*
-+	 * Out of reset all modules are enabled. Set module state in case
-+	 * associated clocks are disabled at probe. Otherwise module is in
-+	 * invalid HW state.
-+	 */
-+	scoped_guard(spinlock_irqsave, &priv->rmw_lock) {
-+		if (!rzg2l_mod_clock_is_enabled(&clk->hw))
-+			rzg2l_mod_clock_module_set_state(clk, true);
-+	}
-+}
-+
- static void rzg2l_mod_clock_init_mstop(struct rzg2l_cpg_priv *priv)
- {
- 	struct mod_clock *clk;
-@@ -1604,15 +1618,7 @@ static void rzg2l_mod_clock_init_mstop(struct rzg2l_cpg_priv *priv)
- 		if (!clk->mstop)
- 			continue;
- 
--		/*
--		 * Out of reset all modules are enabled. Set module state
--		 * in case associated clocks are disabled at probe. Otherwise
--		 * module is in invalid HW state.
--		 */
--		scoped_guard(spinlock_irqsave, &priv->rmw_lock) {
--			if (!rzg2l_mod_clock_is_enabled(&clk->hw))
--				rzg2l_mod_clock_module_set_state(clk, true);
--		}
-+		rzg2l_mod_clock_init_mstop_helper(priv, clk);
- 	}
- }
- 
+-	if (pll_clk->type != CLK_TYPE_G3S_PLL)
+-		return parent_rate;
+-
+ 	setting = GET_REG_SAMPLL_SETTING(pll_clk->conf);
+ 	if (setting) {
+ 		val = readl(priv->base + setting);
 -- 
 2.43.0
 
