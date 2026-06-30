@@ -1,177 +1,453 @@
-Return-Path: <biju.das.au@gmail.com>
+Return-Path: <Shivanand.Kunijadar@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A80EEC4450B
-	for <webhook@archiver.kernel.org>; Tue, 30 Jun 2026 11:49:08 +0000 (UTC)
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.19446.1782820147381811380
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36CD0C43458
+	for <webhook@archiver.kernel.org>; Tue, 30 Jun 2026 13:45:03 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.21386.1782827092357775474
  for <cip-dev@lists.cip-project.org>;
- Tue, 30 Jun 2026 04:49:07 -0700
+ Tue, 30 Jun 2026 06:44:53 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=FsdTvvun;
- spf=pass (domain: gmail.com, ip: 209.85.221.50, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-47231f1f8f3so3785457f8f.1
-        for <cip-dev@lists.cip-project.org>; Tue, 30 Jun 2026 04:49:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782820146; x=1783424946; darn=lists.cip-project.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hISQxhCbnB7SwvHWbGn2nivhAEnDpbB6eyoB2IoQ6uc=;
-        b=FsdTvvunS4oppAeigoX0+lNtknPzypVpkUaauA2f/xpfCFn6jsx4nBJm17AmWxSvR4
-         akicPeQgMdiriarPURyIPmUlOQsCjp5Xd0ZsPoH1zhv69zMH6DiIc0VktViSpTftCR2V
-         oQuWxz35PCyruItpqXpHaUXQ2CyHUvIPQWpfoG4V51SNTwhlSoVvzS6Al239qlryW3Xy
-         i7Z7cCKqDUbHBnTpe8IdAisi4HnK2o6dagUELRc+YN9BJmcqpgYDXLwb1t3/jHpJLtVT
-         MUgdgOOJ8P6LhCN+7SySijfJP0NbWU/ZYH4adyTmsg8TbDV/xIVC5Hv9Hog3vD9SR5qP
-         5oAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782820146; x=1783424946;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=hISQxhCbnB7SwvHWbGn2nivhAEnDpbB6eyoB2IoQ6uc=;
-        b=pw0ARNoy4T51gzP3Pa1l8LzlER5ToLd9EUbYC8/TikFF3SeBSnrKF/lJOqJqH22bec
-         zERP8/Yhiuc96F5C8m0HK0QcmQP0XalSjjPKHko/lz8x8mF0KwczyIqvojGoruy7z/5p
-         ThFf6BdWVa5N4rxjCwMC645rTybMuasH/181BYWd27qu8HQ9tQZRgoZDYV93W4vwrJl5
-         tSibXNowVrxLuZW5WksrT91EGCHsb89ZwYn+GJEuRjAnVPqo1UrNIi8ciTUyf+QSYWWv
-         BcY6H+Hibgd8mTBmSmJ629rvQfFuYMgBoQz+BRW0smuOGSQ7UbQh6w82wnTlVmAJur36
-         qYsw==
-X-Gm-Message-State: AOJu0YzGyVLydVWucmg/qaDTkrRzWCC2vTDuQyii2yN8UWg4HtRBcVBM
-	uGsVYhW2hnek2WeiYVXviZ8KgBizRS6k43hEXSB7kqCHsTNgP+B0m9Mw7WH9pK1U
-X-Gm-Gg: AfdE7cl1SaJ7UKPr0uZmzciODoNOVSxMC/GtfVmt/23S5UHaDDCpl1I0+QMzxZMm88E
-	XkEBmD5XeHkzH1LVGFtd0A+usC/LXv+ge2hchdnzmyp/Gtt9Tv3DawMagbwYOvl1f+jDaow/swk
-	UbeSNOL7RaqglMy1d0mBn9vWHbHtgH12ipoxNU1bdCU7U6UppD2qVSUoJCmdtgLyE21cCvTRjyz
-	TdDD6FQ3NhStS9NkPmoKIbLddUzd6hdprOhwuha3dT71lBB2A4ZjtN+0VO+Ld0W2LFtQE5ixKhL
-	681o/NjONtWfwLCK6YP8Pd0Q7WlPLUuiaF0rtCHXne/hX7X1QulBeWEK8xdZqzdUNytIdfhq9QE
-	XubAHc+dOThYjcMp7GWdBhLyVoOjxaGR5nGmQ9EB//O4HfruthcWfywcobvL46cKUp2gka2iBre
-	wR4J5Varox20m+bUBJlK1dXDjYgoKFRNpf3ydBDw==
-X-Received: by 2002:a5d:5c89:0:b0:474:8aad:2f8 with SMTP id ffacd0b85a97d-47553028380mr4711344f8f.41.1782820145475;
-        Tue, 30 Jun 2026 04:49:05 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:23c4:a702:d301:3f6d:4f26:2d9c:ab4f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-475641e4542sm7343031f8f.10.2026.06.30.04.49.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jun 2026 04:49:05 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: cip-dev@lists.cip-project.org,
-	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
-	Pavel Machek <pavel@nabladev.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 39/39] arm64: dts: renesas: r9a08g046: Add OPP table
-Date: Tue, 30 Jun 2026 12:47:58 +0100
-Message-ID: <20260630114813.92739-40-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260630114813.92739-1-biju.das.jz@bp.renesas.com>
-References: <20260630114813.92739-1-biju.das.jz@bp.renesas.com>
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.158, mailfrom: shivanand.kunijadar@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1122) id 65UDino02025826; Tue, 30 Jun 2026 22:44:49 +0900
+X-Iguazu-Qid: 2rWgmtUYtRFVVf10L3
+X-Iguazu-QSIG: v=2; s=1; t=1782827089; q=2rWgmtUYtRFVVf10L3; m=HQ6uSQ8lRa2Ivs7xMKKKrjpMqCfh14KifB2MicQeOU0=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	 id 4gqPXK0fSDz1xnf; Tue, 30 Jun 2026 22:44:48 +0900 (JST)
+From: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
+To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
+Cc: shivanand.kunijadar@toshiba-tsip.com, Adithya.Balakumar@toshiba-tsip.com,
+        dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
+Subject: [isar-cip-core][PATCH v2] Revise README files to reflect the latest changes
+Date: Tue, 30 Jun 2026 19:01:32 +0530
+X-TSB-HOP2: ON
+Message-Id: <20260630133132.2429510-1-Shivanand.Kunijadar@toshiba-tsip.com>
+X-Mailer: git-send-email 2.39.5
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 30 Jun 2026 13:44:46.0772 (UTC) FILETIME=[9D462740:01DD0896]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 30 Jun 2026 11:49:08 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23363
+ <cip-dev@lists.cip-project.org>; Tue, 30 Jun 2026 13:45:03 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23364
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+The SWUpdate & Secure boot readme files are outdated, adjust these files
+to reflect the current changes and debian version based on the master
+branch.
 
-[ Upstream commit 60f8dfd33c1c7daade9846207be735c7f4fd802d ]
-
-Add OPP table for RZ/G3L SoC.
-
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20260430125342.439755-2-biju.das.jz@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Signed-off-by: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
 ---
- arch/arm64/boot/dts/renesas/r9a08g046.dtsi | 44 ++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+ doc/README.secureboot.md | 69 +++++++++++---------------------
+ doc/README.swupdate.md   | 86 ++++++++++++++++++++--------------------
+ 2 files changed, 65 insertions(+), 90 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g046.dtsi b/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
-index 236a675231e5..e52498b3a745 100644
---- a/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
-@@ -14,6 +14,42 @@ / {
- 	#size-cells = <2>;
- 	interrupt-parent = <&gic>;
+diff --git a/doc/README.secureboot.md b/doc/README.secureboot.md
+index 8ab67a8..3bcb3f5 100644
+--- a/doc/README.secureboot.md
++++ b/doc/README.secureboot.md
+@@ -48,7 +48,7 @@ Supply the script name and path to wic by adding
+ #### secure-boot-snakeoil
  
-+	cluster0_opp: opp-table-0 {
-+		compatible = "operating-points-v2";
-+
-+		opp-37500000 {
-+			opp-hz = /bits/ 64 <37500000>;
-+			opp-microvolt = <1000000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp-75000000 {
-+			opp-hz = /bits/ 64 <75000000>;
-+			opp-microvolt = <1000000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp-150000000 {
-+			opp-hz = /bits/ 64 <150000000>;
-+			opp-microvolt = <1000000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp-300000000 {
-+			opp-hz = /bits/ 64 <300000000>;
-+			opp-microvolt = <1000000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp-600000000 {
-+			opp-hz = /bits/ 64 <600000000>;
-+			opp-microvolt = <1000000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp-1200000000 {
-+			opp-hz = /bits/ 64 <1200000000>;
-+			opp-microvolt = <1000000>;
-+			clock-latency-ns = <300000>;
-+			opp-suspend;
-+		};
-+	};
-+
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -24,6 +60,8 @@ cpu0: cpu@0 {
- 			device_type = "cpu";
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
-+			clocks = <&cpg CPG_CORE R9A08G046_CLK_IC0>;
-+			operating-points-v2 = <&cluster0_opp>;
- 		};
+ This package uses the snakeoil key and certificate from the ovmf package from
+-Debian bullseye or later for signing the image.
++Debian trixie or later for signing the image.
  
- 		cpu1: cpu@100 {
-@@ -32,6 +70,8 @@ cpu1: cpu@100 {
- 			device_type = "cpu";
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
-+			clocks = <&cpg CPG_CORE R9A08G046_CLK_IC1>;
-+			operating-points-v2 = <&cluster0_opp>;
- 		};
+ #### secure-boot-key
  
- 		cpu2: cpu@200 {
-@@ -40,6 +80,8 @@ cpu2: cpu@200 {
- 			device_type = "cpu";
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
-+			clocks = <&cpg CPG_CORE R9A08G046_CLK_IC2>;
-+			operating-points-v2 = <&cluster0_opp>;
- 		};
+@@ -66,10 +66,10 @@ Set up a secure boot test environment with [QEMU](https://www.qemu.org/)
  
- 		cpu3: cpu@300 {
-@@ -48,6 +90,8 @@ cpu3: cpu@300 {
- 			device_type = "cpu";
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
-+			clocks = <&cpg CPG_CORE R9A08G046_CLK_IC3>;
-+			operating-points-v2 = <&cluster0_opp>;
- 		};
+ ### Prerequisites
  
- 		L3_CA55: cache-controller-0 {
+-- OVMF from edk2 release edk2-stable201911 or newer
+-  - This documentation was tested under Debian 11 with OVMF (2020.11-2+deb11u1) from Debian bullseye
++- OVMF from edk2 release 2025.02-8+deb13u1 or newer
++  - This documentation was tested under Debian 13 with OVMF (2025.02-8+deb13u1) from Debian trixie
+ - efitools for KeyTool.efi
+-  - This documentation was tested under Debian 11 with efitools (1.9.2-2~deb11u1) from Debian bullseye
++  - This documentation was tested under Debian 13 with efitools (1.9.2-3.5) from Debian trixie
+ - libnss3-tools
+ 
+ ### Debian Snakeoil keys
+@@ -144,7 +144,7 @@ Build the image with a signed EFI Boot Guard and unified kernel image
+ with the snakeoil keys by executing:
+ 
+ ```bash
+-kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-secure-boot-snakeoil.yml
++./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/trixie.yml:kas/opt/ebg-secure-boot-snakeoil.yml
+ ```
+ 
+ For user-generated keys, create a new option file in the repository. This option file could look like this:
+@@ -186,7 +186,7 @@ need to stored in the folder `recipes-devtools/secure-boot-secrets/files`.
+ Build the image with user-generated keys by executing the command:
+ 
+ ```bash
+-kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:<path to the new option>.yml
++./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/trixie.yml:<path to the new option>.yml
+ ```
+ 
+ ### Start the image
+@@ -196,22 +196,14 @@ kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:<path to the new option
+ Start the image with the following command:
+ 
+ ```bash
+-SECURE_BOOT=y \
++DISTRO_RELEASE=trixie SECURE_BOOT=y \
+ ./start-qemu.sh amd64
+ ```
+-
+-The image configuration menu will set default values for start-qemu.sh for secureboot
+-and the following command is sufficient:
+-
+-```bash
+-./start-qemu.sh amd64
+-```
+-
+ #### User-generated keys
+ Start the image with the following command:
+ 
+ ```bash
+-SECURE_BOOT=y \
++DISTRO_RELEASE=trixie SECURE_BOOT=y \
+ OVMF_CODE=./build/tmp/deploy/images/qemu-amd64/OVMF/OVMF_CODE_4M.secboot.fd \
+ OVMF_VARS=<path to the modified OVMF_VARS.fd> \
+ ./start-qemu.sh amd64
+@@ -233,62 +225,47 @@ EFI stub: UEFI Secure Boot is enabled.
+ 
+ For updating the image, the following steps are necessary:
+ - [Build the image with snakeoil keys](#build-image)
+-- save the generated swu `build/tmp/deploy/images/qemu-amd64/cip-core-image-cip-core-bullseye-qemu-amd64.swu` to /tmp
++- save the generated swu `build/tmp/deploy/images/qemu-amd64/cip-core-image-cip-core-trixie-qemu-amd64.swu` to /tmp
+ - modify the image for example, switch to the RT kernel as modification:
+ 
+ ```bash
+-kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-secure-boot-snakeoil.yml:kas/opt/rt.yml
++./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/trixie.yml:kas/opt/ebg-secure-boot-snakeoil.yml:kas/opt/rt.yml
+ ```
+ 
+ - start the new target
+ 
+ ```bash
+-SECURE_BOOT=y ./start-qemu.sh amd64
++DISTRO_RELEASE=trixie SECURE_BOOT=y \
++./start-qemu.sh amd64
+ ```
+ 
+-Copy the swu cip-core-image-cip-core-bullseye-qemu-amd64.swu to the running system
++Copy the swu cip-core-image-cip-core-trixie-qemu-amd64.swu to the running system
+ 
+ ```bash
+-scp -P 22222 /tmp/cip-core-image-cip-core-bullseye-qemu-amd64.swu root@127.0.0.1:/home/
++scp -P 22222 /tmp/cip-core-image-cip-core-trixie-qemu-amd64.swu root@127.0.0.1:/
+ ```
+ 
+-- check which partition is booted, e.g. with `lsblk`:
++- check which is the root partition and it should be `/dev/sda4`
+ 
+ ```bash
+-root@demo:~# lsblk
+-NAME           MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
+-sda              8:0    0     6G  0 disk
+-├─sda1           8:1    0  16.1M  0 part
+-├─sda2           8:2    0    32M  0 part
+-├─sda3           8:3    0    32M  0 part
+-├─sda4           8:4    0     1G  0 part
+-│ └─verityroot 252:0    0 110.9M  1 crypt /
+-├─sda5           8:5    0     1G  0 part
+-├─sda6           8:6    0   1.3G  0 part  /home
+-└─sda7           8:7    0   2.6G  0 part  /var
++root@demo:~# ls -l /sys/block/dm-0/slaves/
++total 0
++lrwxrwxrwx 1 root root 0 Jun 30 12:56 sda4 -> ../../../../pci0000:00/0000:00:1f.2/ata6/host5/target5:0:0/5:0:0:0/block/sda/sda4
+ ```
+ 
+ - install the swupdate and reboot the image
+ 
+ ```bash
+-root@demo:~# swupdate -i /home/cip-core-image-cip-core-bullseye-qemu-amd64.swu`
++root@demo:~# swupdate -i cip-core-image-cip-core-trixie-qemu-amd64.swu
+ root@demo:~# reboot
+ ```
+ 
+-- check which partition is booted, e.g. with `lsblk`. The rootfs should have changed:
++- check which is the root partition now, the rootfs should have changed (i.e `/dev/sda5`):
+ 
+ ```bash
+-root@demo:~# lsblk
+-NAME           MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
+-sda              8:0    0     6G  0 disk
+-├─sda1           8:1    0  16.1M  0 part
+-├─sda2           8:2    0    32M  0 part
+-├─sda3           8:3    0    32M  0 part
+-├─sda4           8:4    0     1G  0 part
+-├─sda5           8:5    0     1G  0 part
+-│ └─verityroot 252:0    0 110.9M  1 crypt /
+-├─sda6           8:6    0   1.3G  0 part  /home
+-└─sda7           8:7    0   2.6G  0 part  /var
++root@demo:~# ls -l /sys/block/dm-0/slaves/
++total 0
++lrwxrwxrwx 1 root root 0 Jun 30 13:20 sda5 -> ../../../../pci0000:00/0000:00:1f.2/ata6/host5/target5:0:0/5:0:0:0/block/sda/sda5
+ ```
+ 
+ ## Secure boot on Generic UEFI x86
+diff --git a/doc/README.swupdate.md b/doc/README.swupdate.md
+index affb85b..a335eb6 100644
+--- a/doc/README.swupdate.md
++++ b/doc/README.swupdate.md
+@@ -192,7 +192,7 @@ Then build the image which will later serve as update package:
+ ```
+ host$ ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml
+ ```
+-Save the generated swu `build/tmp/deploy/images/qemu-amd64/cip-core-image-cip-core-bullseye-qemu-amd64.swu` into a separate folder (ex: /tmp).
++Save the generated swu `build/tmp/deploy/images/qemu-amd64/cip-core-image-cip-core-trixie-qemu-amd64.swu` into a separate folder (ex: /tmp).
+ 
+ Next, rebuild the image, switching to the RT kernel as modification:
+ ```
+@@ -201,12 +201,12 @@ host$ ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu
+ 
+ Now start the image which will contain the RT kernel:
+ ```
+-host$ SWUPDATE_BOOT=y ./start-qemu.sh amd64
++host$ DISTRO_RELEASE=trixie SWUPDATE_BOOT=y ./start-qemu.sh amd64
+ ```
+ 
+-Copy `cip-core-image-cip-core-bullseye-qemu-amd64.swu` file from `tmp` folder into the running system:
++Copy `cip-core-image-cip-core-trixie-qemu-amd64.swu` file from `tmp` folder into the running system:
+ ```
+-host$ scp -P 22222 /tmp/cip-core-image-cip-core-bullseye-qemu-amd64.swu root@localhost:
++host$ scp -P 22222 /tmp/cip-core-image-cip-core-trixie-qemu-amd64.swu root@localhost:
+ ```
+ 
+ ## SWUpdate verification
+@@ -214,28 +214,27 @@ host$ scp -P 22222 /tmp/cip-core-image-cip-core-bullseye-qemu-amd64.swu root@loc
+ Check which partition is booted, e.g. with lsblk:
+ ```
+ root@demo:~# lsblk
+-NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+-sda      8:0    0    6G  0 disk
+-├─sda1   8:1    0 16.1M  0 part
+-├─sda2   8:2    0   32M  0 part
+-├─sda3   8:3    0   32M  0 part
++NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
++sda      8:0    0  2.8G  0 disk
++├─sda1   8:1    0   16M  0 part /boot
++├─sda2   8:2    0  128M  0 part
++├─sda3   8:3    0  128M  0 part
+ ├─sda4   8:4    0    1G  0 part /
+ ├─sda5   8:5    0    1G  0 part
+-├─sda6   8:6    0  1.3G  0 part /home
+-└─sda7   8:7    0  2.6G  0 part /var
++└─sda6   8:6    0  512M  0 part /var
+ ```
+ 
+-Also check that you are running the RT kernel:
++Also check that you are running the RT kernel (i.e PREEMPT_RT):
+ ```
+ root@demo:~# uname -a
+-Linux demo 4.19.233-cip69-rt24 #1 SMP PREEMPT RT Tue Apr 12 09:23:51 UTC 2022 x86_64 GNU/Linux
++Linux demo 6.12.85-cip22 #1 SMP PREEMPT_RT Thu, 01 Jan 1970 06:30:00 +0530 x86_64 GNU/Linux
+ root@demo:~# ls /lib/modules
+-4.19.233-cip69-rt24
++6.12.85-cip22
+ ```
+ 
+ Now apply swupdate and reboot
+ ```
+-root@demo:~# swupdate -i cip-core-image-cip-core-bullseye-qemu-amd64.swu
++root@demo:~# swupdate -i cip-core-image-cip-core-trixie-qemu-amd64.swu
+ root@demo:~# reboot
+ ```
+ Use the `-v` flag when running swupdate for verbose logs of any errors.
+@@ -243,23 +242,22 @@ Use the `-v` flag when running swupdate for verbose logs of any errors.
+ Check which partition is booted, e.g. with lsblk and the rootfs should have changed
+ ```
+ root@demo:~# lsblk
+-NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+-sda      8:0    0    6G  0 disk
+-├─sda1   8:1    0 16.1M  0 part
+-├─sda2   8:2    0   32M  0 part
+-├─sda3   8:3    0   32M  0 part
++NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
++sda      8:0    0  2.8G  0 disk
++├─sda1   8:1    0   16M  0 part /boot
++├─sda2   8:2    0  128M  0 part
++├─sda3   8:3    0  128M  0 part
+ ├─sda4   8:4    0    1G  0 part
+ ├─sda5   8:5    0    1G  0 part /
+-├─sda6   8:6    0  1.3G  0 part /home
+-└─sda7   8:7    0  2.6G  0 part /var
++└─sda6   8:6    0  512M  0 part /var
+ ```
+ 
+ Check the active kernel:
+ ```
+ root@demo:~# uname -a
+-Linux demo 4.19.235-cip70 #1 SMP Tue Apr 12 09:08:39 UTC 2022 x86_64 GNU/Linux
++Linux demo 6.12.85-cip22 #1 SMP PREEMPT_DYNAMIC Thu, 01 Jan 1970 06:30:00 +0530 x86_64 GNU/Linux
+ root@demo:~# ls /lib/modules
+-4.19.235-cip70
++6.12.85-cip22
+ ```
+ 
+ Check bootloader ustate after swupdate
+@@ -272,7 +270,7 @@ in_progress:      no
+ revision:         2
+ kernel:           C:BOOT0:linux.efi
+ kernelargs:
+-watchdog timeout: 60 seconds
++watchdog timeout: 120 seconds
+ ustate:           0 (OK)
+ 
+ user variables:
+@@ -285,7 +283,7 @@ in_progress:      no
+ revision:         3
+ kernel:           C:BOOT1:linux.efi
+ kernelargs:
+-watchdog timeout: 60 seconds
++watchdog timeout: 120 seconds
+ ustate:           2 (TESTING)
+ 
+ user variables:
+@@ -305,7 +303,7 @@ Build the image for swupdate with a service which causes kernel panic during sys
+ ```
+ host$ ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml:kas/opt/kernel-panic.yml
+ ```
+-Save the generated swu `build/tmp/deploy/images/qemu-amd64/cip-core-image-cip-core-bullseye-qemu-amd64.swu` in a separate folder.
++Save the generated swu `build/tmp/deploy/images/qemu-amd64/cip-core-image-cip-core-trixie-qemu-amd64.swu` in a separate folder.
+ Then build the image without `kernel-panic.yml` recipe using below command:
+ ```
+ host$ ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml
+@@ -313,17 +311,17 @@ host$ ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu
+ 
+ Start the target on QEMU:
+ ```
+-host$ SWUPDATE_BOOT=y ./start-qemu.sh amd64
++host$ DISTRO_RELEASE=trixie SWUPDATE_BOOT=y ./start-qemu.sh amd64
+ ```
+ 
+-Copy `cip-core-image-cip-core-bullseye-qemu-amd64.swu` file from `tmp` folder into the running system:
++Copy `cip-core-image-cip-core-trixie-qemu-amd64.swu` file from `tmp` folder into the running system:
+ ```
+-host$ scp -P 22222 /tmp/cip-core-image-cip-core-bullseye-qemu-amd64.swu root@localhost:
++host$ scp -P 22222 /tmp/cip-core-image-cip-core-trixie-qemu-amd64.swu root@localhost:
+ ```
+ 
+ Apply swupdate as below:
+ ```
+-root@demo:~# swupdate -i cip-core-image-cip-core-bullseye-qemu-amd64.swu
++root@demo:~# swupdate -i cip-core-image-cip-core-trixie-qemu-amd64.swu
+ ```
+ 
+ Check bootloader ustate after swupdate. If the swupdate is successful then **revision number** should be **3** and status should be changed to **INSTALLED** for Partition #1.
+@@ -336,7 +334,7 @@ in_progress:      no
+ revision:         2
+ kernel:           C:BOOT0:linux.efi
+ kernelargs:
+-watchdog timeout: 60 seconds
++watchdog timeout: 120 seconds
+ ustate:           0 (OK)
+ 
+ user variables:
+@@ -349,7 +347,7 @@ in_progress:      no
+ revision:         3
+ kernel:           C:BOOT1:linux.efi
+ kernelargs:
+-watchdog timeout: 60 seconds
++watchdog timeout: 120 seconds
+ ustate:           1 (INSTALLED)
+ 
+ user variables:
+@@ -377,7 +375,7 @@ in_progress:      no
+ revision:         2
+ kernel:           C:BOOT0:linux.efi
+ kernelargs:
+-watchdog timeout: 60 seconds
++watchdog timeout: 120 seconds
+ ustate:           0 (OK)
+ 
+ user variables:
+@@ -390,7 +388,7 @@ in_progress:      no
+ revision:         0
+ kernel:           C:BOOT1:linux.efi
+ kernelargs:
+-watchdog timeout: 60 seconds
++watchdog timeout: 120 seconds
+ ustate:           3 (FAILED)
+ 
+ user variables:
+@@ -419,7 +417,7 @@ The build system looks for the reference artifact in a directory named `previous
+ Copy the reference artifacts to the mentioned directory with the following commands:
+ ```
+ mkdir -p build-v2/previous-image
+-cp build/tmp/deploy/images/qemu-amd64/cip-core-image-cip-core-bookworm-qemu-amd64.squashfs build-v2/previous-image
++cp build/tmp/deploy/images/qemu-amd64/cip-core-image-cip-core-trixie-qemu-amd64.squashfs build-v2/previous-image
+ cp build/tmp/deploy/images/qemu-amd64/linux.efi build-v2/previous-image
+ ```
+ Build the second image with `build-v2` as the build directory with the following command:
+@@ -428,25 +426,25 @@ KAS_BUILD_DIR=build-v2 ./kas-container build kas-cip.yml:kas/board/qemu-amd64.ym
+ ```
+ Now start the first image. Run the following commands:
+ ```
+-host$ DISTRO_RELEASE=bookworm SWUPDATE_BOOT=y ./start-qemu.sh amd64
++host$ DISTRO_RELEASE=trixie SWUPDATE_BOOT=y ./start-qemu.sh amd64
+ ```
+-Copy `cip-core-image-cip-core-bookworm-qemu-amd64.swu` file from `build-v2/tmp/deploy/images/qemu-amd64/` folder into the running system:
++Copy `cip-core-image-cip-core-trixie-qemu-amd64.swu` file from `build-v2/tmp/deploy/images/qemu-amd64/` folder into the running system:
+ ```
+ host$ cd build-v2/tmp/deploy/images/qemu-amd64/
+-host$ scp -P 22222 ./cip-core-image-cip-core-bookworm-qemu-amd64.swu root@localhost:
++host$ scp -P 22222 ./cip-core-image-cip-core-trixie-qemu-amd64.swu root@localhost:
+ ```
+ 
+ ## Delta Software Update using zchunk handler
+ 
+ Currently zchunk based delta updates are supported only in trixie images. Make sure to build the first image with trixie as the distribution with the following command:
+ ```
+-host$ ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml:kas/opt/trixie.yml
++host$ ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml
+ ```
+ For Delta update with zchunk, set the variable `DELTA_ZCK_URL` with the URL of the zck file that is hosted in a http server and set the `DELTA_UPDATE_TYPE` to `zchunk` in `delta-update.yml` file.
+ 
+ Build the second image with the modification as shown above with the following command:
+ ```
+-KAS_BUILD_DIR=build-v2 ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml:kas/opt/trixie.yml:kas/opt/delta-update.yml
++KAS_BUILD_DIR=build-v2 ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml:kas/opt/delta-update.yml
+ ```
+ Now start the first image. Run the following commands:
+ ```
+@@ -520,7 +518,7 @@ Next, rebuild the image using the Kconfig menu, switching to the RT kernel as mo
+ 
+ Now start the image which will contain the RT kernel:
+ ```
+-host$ SWUPDATE_BOOT=y ./start-qemu.sh amd64
++host$ DISTRO_RELEASE=trixie SWUPDATE_BOOT=y ./start-qemu.sh amd64
+ ```
+ 
+ By default, SWUpdate uses the machine-id from `/etc/machine-id` as the `client-id` (configurable via `WFX_DEVICE_ID` in the `swupdate-config-wfx` recipe). This `client-id` is later used to create `wfx` job for the client:
+@@ -604,14 +602,14 @@ Follow the steps mentioned in the section [Building and testing the CIP Core ima
+ 
+ Flash the BeagleBone Black RT kernel image into SDcard
+ ```
+-host$ dd if=build/tmp/deploy/images/bbb/cip-core-image-cip-core-bullseye-bbb.wic \
++host$ dd if=build/tmp/deploy/images/bbb/cip-core-image-cip-core-trixie-bbb.wic \
+    of=/dev/<medium-device> bs=1M status=progress
+ ```
+ 
+ After flashing the BBB RT kernel image into SD card, mount the SD card on host PC and copy .swu file from `tmp` folder to root partition like below.
+ 
+ ```
+-host$ sudo cp tmp/cip-core-image-cip-core-bullseye-bbb.swu /<mnt>/home/root/
++host$ sudo cp tmp/cip-core-image-cip-core-trixie-bbb.swu /<mnt>/root/
+ ```
+ 
+ Connect a serial port cable between host PC and BBB.
 -- 
-2.43.0
+2.39.5
+
 
 
