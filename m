@@ -2,56 +2,56 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 440A2C43327
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 960D7C44500
 	for <webhook@archiver.kernel.org>; Tue, 30 Jun 2026 11:48:56 +0000 (UTC)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.19078.1782820135429811272
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.19430.1782820132811312650
  for <cip-dev@lists.cip-project.org>;
- Tue, 30 Jun 2026 04:48:55 -0700
+ Tue, 30 Jun 2026 04:48:53 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=Ouk6N8dD;
- spf=pass (domain: gmail.com, ip: 209.85.128.51, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-493b77b150aso9577915e9.2
-        for <cip-dev@lists.cip-project.org>; Tue, 30 Jun 2026 04:48:55 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=RRyS9R/W;
+ spf=pass (domain: gmail.com, ip: 209.85.128.47, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-493a7bd27c2so20495475e9.3
+        for <cip-dev@lists.cip-project.org>; Tue, 30 Jun 2026 04:48:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782820133; x=1783424933; darn=lists.cip-project.org;
+        d=gmail.com; s=20251104; t=1782820131; x=1783424931; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wCZpaOAqH7IgkKsZUin+uQluU7RGxeUcXjNvhIbegNo=;
-        b=Ouk6N8dDDd0Sg9g6GanDabm9bkW8n1wGuadESGG/rT1KM0jCwbz0y1KWI3G2ob8k4U
-         dFYeHeMdnP1i6Kd8aE6CnNwOW5nL3oZEx3JuQzygtGvDvf663OTD6To7uyeSZXimExCj
-         sRdM85lHcfEMiL2o38STb/wLmGDdhUghDpmhQ+d9jzTC5PUG61zTpTEoesCL1ds8YOS0
-         K8+JRtP8Z3/kv8zSVt3ue0mzws3YksfRLWjnKzw5QaD8wxPs77uHHl+ryOA9mC8c7hIw
-         pgWCdLCm2IpMXyaI4hXB+f4EOJqcBFln4kH8BvGe1D2rNMHqcmpHreP43YWC1Z3yVuyl
-         qiZA==
+        bh=jY7z7h7X+6/G4LKykoP+h8R6jGR9OXBkchjOpDpa7qo=;
+        b=RRyS9R/Waoz8tGhOQoKr8+BanifH3K7InaJmI8NLTbV5WmI3VYQdcFpyXXOoYKk63l
+         SOZGGa++0ukOC6uljsuLiklZyT+cU4USY5ATg67haMsPBfuc89geVgjb2bHA4bvUxlsY
+         EA+PTMF5Ie3i5OO8lSxsNOEarZKoXsjqCApG+F0FhT1ud1JjKtu7nUzGC8x1dauXXb8F
+         +6M2t8/Pf54PTU+DkgDafArRJKqBJPZY5CeO9flJ6zVJ8VH9SlfPpbt75y93KoTEm+7u
+         pQUkTe2xViW+I5c3oCfT7ffyBEq9iXzuDCmnxzkdHQMJPXIsANAN0ptYN4aeJyCisB90
+         NvXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782820133; x=1783424933;
+        d=1e100.net; s=20251104; t=1782820131; x=1783424931;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=wCZpaOAqH7IgkKsZUin+uQluU7RGxeUcXjNvhIbegNo=;
-        b=TZ0AOyXZlWYv9Em+mpTe8oPh0SSQmAnkZNpmrlydK+IHzqkAAb3Us/fm3TC+Cc58O/
-         eUHX7lksc4XnLqDAUCbUPKu1YxTEa84pIcwIrY/EO1a4EfexDimJIH9SrGD0aMNcK30X
-         cXs8E6TmdLej5o7XdK9FxABJsSR3yWVoNnXb8F6PCkN8bb6OV02FiLFo/FKEzBH522Av
-         UuXVdhu10wpdxd5RFkhRtPsYHVIgilisJ317RqpnwJaeFa+UuubJZttej38vCfKBiIU4
-         /eCN0kXQygJg9VUIYaTEJ8lcwHUrV7j+A9f8EfLcHCNNLI29ZVRuKVuQEymsHa3qX4nz
-         twzQ==
-X-Gm-Message-State: AOJu0YxL4xRBI1Y0tpzNu8bKP71PA2w10SeDsxcek+1I5MHDK905Unvf
-	RkUOVK77WbFbAyOVWVg6IhNFcoXURMV7NQRUghJtLSs+wtwqPqK6LNLZdxevacyw
-X-Gm-Gg: AfdE7cmxrt+0lDSmGJC9OAMncjxyBLke6SgQTXDK5p1u1aA9CuLNIkFSOcNJSqLVP5D
-	IsZ58MR/0ptztEvHJ9XGTe4roaIDjjCxgfbGl/CNMTwsOJ9O90ovy9YG+6Rxld2dGqIBHoIUDu2
-	zu5ZsatQjza31ahYqpEI9PV7olNawqg/bFF+JtCE35BnmxogjUlB/scFiPthmP7JIZGyk6T1m2I
-	5Q4A//xbNnu20O9XKCormtOn0tdjncDEsQjzcPuwss30ve3rtB4RQinPDeCe+b3cff55mIcCZHv
-	WtNuI97eEZP5n+PrS0TC60/7bZjs0F8fAQVuEkA5qL+KMTmjinvpoKC5LMYxCS5R0wAeKD/zKct
-	VN1aKAnNyp3T+gv392Ipi/OHplB49LfDv2CyE7WHR6IVlyIbv33/kcsuWpWeZFq+xLiulWP/oPh
-	pr45TiawoysbI4V0Gqe/Ul3cbwf1A6zG+ZeaGBbA==
-X-Received: by 2002:a05:600c:c3cb:20b0:493:ba40:ef39 with SMTP id 5b1f17b1804b1-493ba40f0cemr26497435e9.15.1782820133531;
-        Tue, 30 Jun 2026 04:48:53 -0700 (PDT)
+        bh=jY7z7h7X+6/G4LKykoP+h8R6jGR9OXBkchjOpDpa7qo=;
+        b=H7xMCdqdon95H3ea12MQzQtiCUydum2ujgwBlTpr1IYHYs86bvo2BUMDAoqXJPUdbr
+         v/e7rA6AN8Ezerg8ZC9Km5G9GH09gGvCyCwilgvbRzJ+26s87+SbX+maiay4xgxNPJrT
+         B3dU5gY7ElhDcmHj6109m79p+DW32uAZUepX6M0jmvHd9TmHu6ukq0dxIeiqnFGMN6xC
+         F4DQcpshLgHf3Yd4WuxihRuqc57tj+0PEj/8eELKHENVLgYmCEZ7rEQPV9Gig/kFVMlz
+         xp2rawdyjC2MgwASHZLwJM5CawFPMa5JGS4AmAD+fnMEPgLEL+gpBju07/fRuo02Ns+A
+         Z7yw==
+X-Gm-Message-State: AOJu0YwKyDzNMww7OUHn+vGiyUjUbhnHVNZxG/Nia+fWyVntlPHUwby+
+	rHYyhI7ntxhpq0IU/bqI0Z4SMbe2fUtMvFLQX0AydW4S8QLvbpR0js9eJi54RIPJ
+X-Gm-Gg: AfdE7cmML8lITbCvRbIM0G3hgWGonV9HpKF6CBkWHDjHYQ6GKfG2WN+ioH6fOHKkw4i
+	a5rvwnPCYbwCk7zn3gree1myIhOTWeCnQBEs0QRgM924jTmIngomPxhfndc7xONzo+xYa9oiKGj
+	vODKvDKx/9vvWZEr1xXB+JJhxfYMV4aSUsayl8/wmEroZ5krSRMtUYAy80cVZV4yMu77ZR/FxXg
+	65b6XTZvjMGnCsxcy+WaWDUTCU2v8OmmS1LpSGvXKXu8hFlEeOWS/JVg7lbO1Wx2TY1R+PtxTwP
+	DNAYqOlDpm1VLbYDvmJ52EJhMrO4Ly0YVz6PORDENEnwZ+dNerrci88W76X9XzV2xylV5Nvbow9
+	mC4dkWciJ077sCtTCQsciLTiipCHI/bfZuPEY7KRc7hS+oRx6Tr+Prl4uU/byh+3hAEg+Rf59ed
+	ao7/nbf0XGyik47M8Uvhc3sxGqwbqob1CX7z3Nxw==
+X-Received: by 2002:a05:6000:1881:b0:472:22b4:fd6c with SMTP id ffacd0b85a97d-47551179a47mr4479268f8f.8.1782820130883;
+        Tue, 30 Jun 2026 04:48:50 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a702:d301:3f6d:4f26:2d9c:ab4f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-475641e4542sm7343031f8f.10.2026.06.30.04.48.53
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-475641e4542sm7343031f8f.10.2026.06.30.04.48.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jun 2026 04:48:53 -0700 (PDT)
+        Tue, 30 Jun 2026 04:48:50 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,9 +59,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 22/39] clk: renesas: rzg2l: Add support for enabling PLLs
-Date: Tue, 30 Jun 2026 12:47:41 +0100
-Message-ID: <20260630114813.92739-23-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 18/39] clk: renesas: rzg2l: Re-enable critical module clocks during resume
+Date: Tue, 30 Jun 2026 12:47:37 +0100
+Message-ID: <20260630114813.92739-19-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260630114813.92739-1-biju.das.jz@bp.renesas.com>
 References: <20260630114813.92739-1-biju.das.jz@bp.renesas.com>
@@ -71,145 +71,77 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 30 Jun 2026 11:48:56 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23346
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23342
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[ Upstream commit 78db1faa6b681da20ec167268b28778ebb0f98b7 ]
+[ Upstream commit bf497e7babb5d14570b18b5d2c8a6bb14d4a733b ]
 
-Add support for enabling PLL clocks in the RZ/G3L CPG driver to turn off
-some PLLs, if they are not in use (e.g. PLL6, PLL7).
-
-Introduce .is_enabled() and .enable() callbacks to handle PLL state
-transitions.  With the .enable() callback, the PLL will be turned ON
-only when the PLL consumer device is enabled; otherwise, it will remain
-off.  Define new macros for PLL standby and monitor registers to
-facilitate this process.
+After a suspend/resume cycle, critical module clocks (CLK_IS_CRITICAL)
+may be left disabled as there is no owning driver to restore them,
+unlike regular clocks.
+Add rzg2l_mod_enable_crit_clock_init_mstop() which walks all module
+clocks on resume, re-enables any critical clock found disabled, and then
+restores the MSTOP state for clocks that have one via the existing
+helper.  This replaces the direct call to rzg2l_mod_clock_init_mstop()
+in rzg2l_cpg_resume(), preserving the correct clock-before-MSTOP restore
+ordering.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20260326110648.29389-3-biju.das.jz@bp.renesas.com
+Link: https://patch.msgid.link/20260324114329.268249-7-biju.das.jz@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/clk/renesas/rzg2l-cpg.c | 67 +++++++++++++++++++++++++++++++++
- drivers/clk/renesas/rzg2l-cpg.h |  4 ++
- 2 files changed, 71 insertions(+)
+ drivers/clk/renesas/rzg2l-cpg.c | 21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index ac49eb8b4a30..92b36c856f36 100644
+index 408e76c31424..3e41ed90a7eb 100644
 --- a/drivers/clk/renesas/rzg2l-cpg.c
 +++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -58,6 +58,13 @@
- #define RZG3S_DIV_NF		GENMASK(12, 1)
- #define RZG3S_SEL_PLL		BIT(0)
- 
-+#define RZG3L_PLL_STBY_OFFSET(x)	(GET_REG_SAMPLL_CLK1(x) - 0x4)
-+#define RZG3L_PLL_STBY_RESETB		BIT(0)
-+#define RZG3L_PLL_STBY_RESETB_WEN	BIT(16)
-+#define RZG3L_PLL_MON_OFFSET(x)		(GET_REG_SAMPLL_CLK1(x) + 0x8)
-+#define RZG3L_PLL_MON_RESETB		BIT(0)
-+#define RZG3L_PLL_MON_LOCK		BIT(4)
-+
- #define CLK_ON_R(reg)		(reg)
- #define CLK_MON_R(reg)		(0x180 + (reg))
- #define CLK_RST_R(reg)		(reg)
-@@ -1176,6 +1183,63 @@ rzg2l_cpg_pll_clk_register(const struct cpg_core_clk *core,
- 	return pll_clk->hw.clk;
+@@ -1600,8 +1600,8 @@ static void rzg2l_mod_clock_init_mstop_helper(struct rzg2l_cpg_priv *priv,
+ {
+ 	/*
+ 	 * Out of reset all modules are enabled. Set module state in case
+-	 * associated clocks are disabled at probe. Otherwise module is in
+-	 * invalid HW state.
++	 * associated clocks are disabled at probe/resume. Otherwise module
++	 * is in invalid HW state.
+ 	 */
+ 	scoped_guard(spinlock_irqsave, &priv->rmw_lock) {
+ 		if (!rzg2l_mod_clock_is_enabled(&clk->hw))
+@@ -1609,6 +1609,21 @@ static void rzg2l_mod_clock_init_mstop_helper(struct rzg2l_cpg_priv *priv,
+ 	}
  }
  
-+static int rzg3l_cpg_pll_clk_is_enabled(struct clk_hw *hw)
++static void rzg2l_mod_enable_crit_clock_init_mstop(struct rzg2l_cpg_priv *priv)
 +{
-+	struct pll_clk *pll_clk = to_pll(hw);
-+	struct rzg2l_cpg_priv *priv = pll_clk->priv;
-+	u32 val = readl(priv->base + RZG3L_PLL_MON_OFFSET(pll_clk->conf));
-+	u32 mon_val = RZG3L_PLL_MON_RESETB | RZG3L_PLL_MON_LOCK;
++	struct mod_clock *clk;
++	struct clk_hw *hw;
 +
-+	/* Ensure both RESETB and LOCK bits are set */
-+	return (mon_val == (val & mon_val));
-+}
++	for_each_mod_clock(clk, hw, priv) {
++		if ((clk_hw_get_flags(&clk->hw) & CLK_IS_CRITICAL) &&
++		    (!rzg2l_mod_clock_is_enabled(&clk->hw)))
++			rzg2l_mod_clock_endisable_helper(&clk->hw, true, false);
 +
-+static int rzg3l_cpg_pll_clk_endisable(struct clk_hw *hw, bool enable)
-+{
-+	struct pll_clk *pll_clk = to_pll(hw);
-+	struct rzg2l_cpg_priv *priv = pll_clk->priv;
-+	u32 stby_offset, mon_offset;
-+	u32 val, mon_val;
-+	int ret;
-+
-+	stby_offset = RZG3L_PLL_STBY_OFFSET(pll_clk->conf);
-+	mon_offset = RZG3L_PLL_MON_OFFSET(pll_clk->conf);
-+
-+	if (enable) {
-+		val = RZG3L_PLL_STBY_RESETB_WEN | RZG3L_PLL_STBY_RESETB;
-+		mon_val = RZG3L_PLL_MON_RESETB | RZG3L_PLL_MON_LOCK;
-+	} else {
-+		val = RZG3L_PLL_STBY_RESETB_WEN;
-+		mon_val = 0;
++		if (clk->mstop)
++			rzg2l_mod_clock_init_mstop_helper(priv, clk);
 +	}
-+
-+	writel(val, priv->base + stby_offset);
-+
-+	/* ensure PLL is in normal/standby mode */
-+	ret = readl_poll_timeout_atomic(priv->base + mon_offset, val, mon_val ==
-+					(val & (RZG3L_PLL_MON_RESETB | RZG3L_PLL_MON_LOCK)),
-+					10, 100);
-+	if (ret)
-+		dev_err(priv->dev, "Failed to %s PLL 0x%x/%pC\n", enable ?
-+			"enable" : "disable", stby_offset, hw->clk);
-+
-+	return ret;
 +}
 +
-+static int rzg3l_cpg_pll_clk_enable(struct clk_hw *hw)
-+{
-+	if (rzg3l_cpg_pll_clk_is_enabled(hw))
-+		return 0;
-+
-+	return rzg3l_cpg_pll_clk_endisable(hw, true);
-+}
-+
-+static const struct clk_ops rzg3l_cpg_pll_ops = {
-+	.is_enabled = rzg3l_cpg_pll_clk_is_enabled,
-+	.enable = rzg3l_cpg_pll_clk_enable,
-+	.recalc_rate = rzg3s_cpg_pll_clk_recalc_rate,
-+};
-+
- static struct clk
- *rzg2l_cpg_clk_src_twocell_get(struct of_phandle_args *clkspec,
- 			       void *data)
-@@ -1259,6 +1323,9 @@ rzg2l_cpg_register_core_clk(const struct cpg_core_clk *core,
- 	case CLK_TYPE_SAM_PLL:
- 		clk = rzg2l_cpg_pll_clk_register(core, priv, &rzg2l_cpg_pll_ops);
- 		break;
-+	case CLK_TYPE_G3L_PLL:
-+		clk = rzg2l_cpg_pll_clk_register(core, priv, &rzg3l_cpg_pll_ops);
-+		break;
- 	case CLK_TYPE_G3S_PLL:
- 		clk = rzg2l_cpg_pll_clk_register(core, priv, &rzg3s_cpg_pll_ops);
- 		break;
-diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
-index 10baf9e71a6e..ebd612d117c0 100644
---- a/drivers/clk/renesas/rzg2l-cpg.h
-+++ b/drivers/clk/renesas/rzg2l-cpg.h
-@@ -123,6 +123,7 @@ enum clk_types {
- 	CLK_TYPE_IN,		/* External Clock Input */
- 	CLK_TYPE_FF,		/* Fixed Factor Clock */
- 	CLK_TYPE_SAM_PLL,
-+	CLK_TYPE_G3L_PLL,
- 	CLK_TYPE_G3S_PLL,
+ static void rzg2l_mod_clock_init_mstop(struct rzg2l_cpg_priv *priv)
+ {
+ 	struct mod_clock *clk;
+@@ -2104,7 +2119,7 @@ static int rzg2l_cpg_resume(struct device *dev)
+ 	if (ret)
+ 		return ret;
  
- 	/* Clock with divider */
-@@ -152,6 +153,9 @@ enum clk_types {
- 	DEF_TYPE(_name, _id, _type, .parent = _parent)
- #define DEF_SAMPLL(_name, _id, _parent, _conf) \
- 	DEF_TYPE(_name, _id, CLK_TYPE_SAM_PLL, .parent = _parent, .conf = _conf)
-+#define DEF_G3L_PLL(_name, _id, _parent, _conf, _default_rate) \
-+	DEF_TYPE(_name, _id, CLK_TYPE_G3L_PLL, .parent = _parent, .conf = _conf, \
-+		 .default_rate = _default_rate)
- #define DEF_G3S_PLL(_name, _id, _parent, _conf, _default_rate) \
- 	DEF_TYPE(_name, _id, CLK_TYPE_G3S_PLL, .parent = _parent, .conf = _conf, \
- 		 .default_rate = _default_rate)
+-	rzg2l_mod_clock_init_mstop(priv);
++	rzg2l_mod_enable_crit_clock_init_mstop(priv);
+ 
+ 	return 0;
+ }
 -- 
 2.43.0
 
