@@ -2,56 +2,56 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24677C43638
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A5D0C44500
 	for <webhook@archiver.kernel.org>; Tue, 30 Jun 2026 11:48:46 +0000 (UTC)
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.19419.1782820125261347829
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.19420.1782820125784302456
  for <cip-dev@lists.cip-project.org>;
- Tue, 30 Jun 2026 04:48:45 -0700
+ Tue, 30 Jun 2026 04:48:46 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=EFv0LN9G;
- spf=pass (domain: gmail.com, ip: 209.85.221.46, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-47362928f65so1776117f8f.2
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=CkMbADC2;
+ spf=pass (domain: gmail.com, ip: 209.85.221.51, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-461edb387ddso4283642f8f.3
         for <cip-dev@lists.cip-project.org>; Tue, 30 Jun 2026 04:48:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782820123; x=1783424923; darn=lists.cip-project.org;
+        d=gmail.com; s=20251104; t=1782820124; x=1783424924; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YAR5WEhOfOkVJ+dcK6AIyjk6yCf8j4DyX/Ykf/FsNa4=;
-        b=EFv0LN9GGpX7x+HH1Gqx2gYHw7sUvtb9DrR1aMclC9cXx1r3Nz51BIlkxvZvPUI29s
-         q1gIvc04uijCkBXYZ2CT7CI7y8OddBX5CXDwr7RoeCTcRZQuB9SGh3cnjfZlpLT81BI6
-         XUPNoO6GOBTjtX1m1i3zAaHTbxwFBfkIMD4USxIgBeYSbTeaKumZHTRhlLmoNUUV34yh
-         xzp9IZ72AfGh5N0fSXc6NYclKL/TON1USYcPz4rIFO16R2pH9KpEKROKYqEJ8CMXLkrB
-         gjOS4GyFw4vCTMOucpz6d8EmRCRENkBeNQRf7aUZmv49+12hwWdCnBmP9U7ggVTyMfuW
-         mPKQ==
+        bh=Y1Byp9fwbUIDgP5OT9snTVMx07SY3tSX4rRSnBtZ1A0=;
+        b=CkMbADC2SL2qiR3S3gZuzSIgkOvWpNelY1TAYDHkJAKzg4oj3xJ6CkdEoqyac/Mgy8
+         2H7uTYYmSUkbWiG8cTVNIjCZuHqsDP8pXiRf6t/QvHK/PBoPlypkFhpXHNmfgKm+v8y1
+         klXlul+02RwDEPgR0Ph9cvrakD3KaI0SJr3pjFMduMQ29hs39brTD4NADu35ftI1YdP2
+         qjJ9okqDvXH8wbq4puhYWfiwIkFj0+uan4xk/qQRLqavgye8kWHcWkCNyBQ636KZFeDT
+         5Vi57Gt9GTh/hq6M6wJKk2Be3xx+BaFuwPY2qRoD/U3RAcNbTC5O/nnfbd7Xx2w5qmNX
+         SSIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782820123; x=1783424923;
+        d=1e100.net; s=20251104; t=1782820124; x=1783424924;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=YAR5WEhOfOkVJ+dcK6AIyjk6yCf8j4DyX/Ykf/FsNa4=;
-        b=fMbgyUQ3kUDwki8Av82/Wy0eFVK5IsJJMfzMIhFnMybe+5+C6uFRuGaGkTlqtGPQEY
-         Vx5aJBFm2jLgZbqbWMfD/vL5SSEKQsGSWlED+odu9+Zhn3nBal+mx2OyySWCGhkyg7kr
-         mcskfHKqC+9Iyw/3hMAWTuoSJoJzP+v8Nto82VzxlBDPoTLNzZeh1YzlJyGJUSX/1p6y
-         23WtVuqpirGaky5Mj41K+alaW2GZmLlLktKBYrZ15QC4wHzQokS7rIQPEHdOAAicluDv
-         x/vNjjfu4oooZt3AvuTJUpI2hscbwehDrYz3OLiU0Wud+HxMBWuyWgOArulGteec6Acx
-         E8dg==
-X-Gm-Message-State: AOJu0YwGIfUbf49D1i6eeeN+L4n1PCr4igZiJoVTdchKYkDfgNr+UOqj
-	L3eOsxGAQTiQzg0mlG7Hb/roi+kwDf3A9cZ4boTbj4RS9Lf1Cxl7pBReYsFoBtCp
-X-Gm-Gg: AfdE7cm7ynoxpVs012/O7crXehbLJiL9nYwz/BFZYkx0mL3v0JnrZXkCPZYZFtSaAf+
-	8KSMD4tdQkFxRJiJt0491si5hWS7b2lelwpIZvyHVYgaiUE4SMZsu7uHIOmuB0PJ0nSHii3AKGA
-	IU/W9Z3HrYEg5roiG0YjnyBQ6FVpAmJ90Y1QFc7NtCely9ZHfklhYqe0aKqoN6Kcx4coBstuD4h
-	KoeQe4h8mk5zWN991ZPCfIGv/bZSeDDgK0fpAPfqzkpEp39dBkgCbRg+MvmXTKFOoFOKXXYawnB
-	87JLrB7+FEJj6uH+exgZlumQ+E9sotmw81urHS9ounOzunr559VdopKRU3iFZy/V5RKHGcr09xP
-	Z/wcjGiyxdgfcGfJERWQcqdUW/BjCun4ncDKtjlS7SciuRUyZ6SBqHYblKL54rnlF2yO5uCoY7U
-	AooGPwJuZPnkQl2qWTAtJtC15dhmCvF4NTp+6aWJL6tFgSFt1Q
-X-Received: by 2002:a05:6000:25e3:b0:46f:7d90:8128 with SMTP id ffacd0b85a97d-47551737cf2mr4009489f8f.14.1782820120140;
-        Tue, 30 Jun 2026 04:48:40 -0700 (PDT)
+        bh=Y1Byp9fwbUIDgP5OT9snTVMx07SY3tSX4rRSnBtZ1A0=;
+        b=kySi/S39sOCPtbuEpNX2/Mws4JDnGzsz2yP3eaT5WtHIo2MCuNT+BwG7pmiZinJbgn
+         s4TyH/YUNsnloQ4tVBFbrgKUFp54ZaH8zqRcVERYOjAjpvRSSD4Hl6x2VLgxCzEIHUSE
+         CtOk7XgA5RxwyVe7vbJOOpexVexMvakGQ7YZr+/VEgtbq+LGsi4tmYHuAjXFFKV+fcYd
+         /803Cyh7fAFQKSX6gOvOvo6tFftnkYEO1CX7v3avYaQDGtkLouNV6xUVnYFWAr52V2xd
+         BOTVygvv2QRBbOf9y2g7kj2uCoeX0HdagxSYxaa+EAbdm8lwCqptvsu/eMsCM4rwDHaQ
+         48rQ==
+X-Gm-Message-State: AOJu0YxlrDqF08Vo+CMdSdlnGppLEbXA/pot+O0p/ThRxf6W5BCMKYyg
+	tSqQql5CmmjT1Nk42DElkBv7S+RACGLx5RR2Fpm3K7HJvfZyNCjAgLpURbCqIvGH
+X-Gm-Gg: AfdE7ckBC6LgYYBD0mE53jOgnulIm6sO0qsB0UZoCOz5qzLIU9f8aDTsWcqZWqtnpEc
+	5Awqg5l0I7xavXPDFHmaV7/+Ml4Avhi2FtTL1YKb0w1NqUak3WKR0NbUQ3qW5Njgm7IY2tCui1n
+	kiWR+hQMknkVCbSox1ZNmPQnZ8QHeivG3LCFRWY/tghEEWmFDDxvnFtx34+Bf0TZF2zjuJaNuj5
+	krTwICTTRcIdUuFG611I1a3n9KyJHmA8F+CYKLlbBhMBM900EBvj24aYoD9utBtsQ5kB5UfPjz+
+	6PNPefZ/ep4LSqE7UC7yd2FtrrOlMYDAyKAazYXcWWrMsjwXkncd8ca8D3wpjroGvH78E4sz1mk
+	9zMjzuD88gnlwNPkilGBp8QSRwnDTy53idDwQuuDernunUcGThn17skSuq8J79+CbKA6MsqLoAX
+	GgL+TzZbgTtzXBhJT6/w1fzwUbWeSLAJVeuJk1UA==
+X-Received: by 2002:adf:e542:0:b0:473:673e:3836 with SMTP id ffacd0b85a97d-475524a8898mr3712571f8f.28.1782820124007;
+        Tue, 30 Jun 2026 04:48:44 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a702:d301:3f6d:4f26:2d9c:ab4f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-475641e4542sm7343031f8f.10.2026.06.30.04.48.39
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-475641e4542sm7343031f8f.10.2026.06.30.04.48.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jun 2026 04:48:39 -0700 (PDT)
+        Tue, 30 Jun 2026 04:48:43 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,9 +59,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 06/39] net: stmmac: dwmac-renesas-gbeth: Add support for RZ/G3L SoC
-Date: Tue, 30 Jun 2026 12:47:25 +0100
-Message-ID: <20260630114813.92739-7-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 07/39] dt-bindings: soc: renesas: Document RZ/G3L SoC variants, SMARC SoM and Carrier-II EVK
+Date: Tue, 30 Jun 2026 12:47:26 +0100
+Message-ID: <20260630114813.92739-8-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260630114813.92739-1-biju.das.jz@bp.renesas.com>
 References: <20260630114813.92739-1-biju.das.jz@bp.renesas.com>
@@ -71,40 +71,53 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 30 Jun 2026 11:48:46 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23330
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23331
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[ Upstream commit 1ba377008420a63ba2cdbb3f5d1f9d30591f6c52 ]
+[ Upstream commit 56c828dff9ff5e787e74d901e8b530a36b8941da ]
 
-Compared to other Renesas GBETH stmmac glue drivers, RZ/G3L GBETH IP use
-the version Synopsys DesignWare MAC (version 5.30). It has an extra clock
-compared to RZ/V2H and has ptp_pps_o interrupts. Add support for RZ/G3L
-GBETH by reusing device data of RZ/V2H and can be extended to add other
-functionalities later.
+Document Renesas RZ/G3L (R9A08G046) SoC variants and the Renesas RZ/G3L
+SMARC Carrier-II EVK board which is based on the Renesas RZ/G3L SMARC SoM.
+The RZ/G3L SMARC Carrier-II EVK consists of an RZ/G3L SoM module and a
+SMARC Carrier-II carrier board.  The SoM module sits on top of the carrier
+board.
 
-Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+Reviewed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://patch.msgid.link/20260131161250.5047-3-biju.das.jz@bp.renesas.com
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://patch.msgid.link/20260203103031.247435-3-biju.das.jz@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c | 1 +
- 1 file changed, 1 insertion(+)
+ .../devicetree/bindings/soc/renesas/renesas.yaml    | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c
-index 62a33b3fb00d..3233d979cf32 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c
-@@ -213,6 +213,7 @@ static const struct renesas_gbeth_of_data renesas_gmac_of_data = {
- };
+diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+index 2006c6975b30..b0ac451abf6c 100644
+--- a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
++++ b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+@@ -519,6 +519,19 @@ properties:
+           - const: renesas,r9a08g045s33 # PCIe support
+           - const: renesas,r9a08g045
  
- static const struct of_device_id renesas_gbeth_match[] = {
-+	{ .compatible = "renesas,r9a08g046-gbeth", .data = &renesas_gbeth_of_data },
- 	{ .compatible = "renesas,r9a09g077-gbeth", .data = &renesas_gmac_of_data },
- 	{ .compatible = "renesas,rzv2h-gbeth", .data = &renesas_gbeth_of_data },
- 	{ /* Sentinel */ }
++      - description: RZ/G3L (R9A08G046)
++        items:
++          - enum:
++              - renesas,smarc2-evk # RZ SMARC Carrier-II EVK
++          - enum:
++              - renesas,rzg3l-smarcm # RZ/G3L SMARC Module (SoM)
++          - enum:
++              - renesas,r9a08g046l26 # Dual Cortex-A55 + Cortex-M33 + GE3D/VCP (14mm LFBGA)
++              - renesas,r9a08g046l28 # Dual Cortex-A55 + Cortex-M33 + GE3D/VCP (17mm LFBGA)
++              - renesas,r9a08g046l46 # Quad Cortex-A55 + Cortex-M33 + GE3D/VCP (14mm LFBGA)
++              - renesas,r9a08g046l48 # Quad Cortex-A55 + Cortex-M33 + GE3D/VCP (17mm LFBGA)
++          - const: renesas,r9a08g046
++
+       - description: RZ/V2M (R9A09G011)
+         items:
+           - enum:
 -- 
 2.43.0
 
