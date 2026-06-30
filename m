@@ -2,56 +2,56 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB1FCC43602
-	for <webhook@archiver.kernel.org>; Tue, 30 Jun 2026 11:49:07 +0000 (UTC)
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.19087.1782820144535934754
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25499C44501
+	for <webhook@archiver.kernel.org>; Tue, 30 Jun 2026 11:49:08 +0000 (UTC)
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.19441.1782820142530976948
  for <cip-dev@lists.cip-project.org>;
- Tue, 30 Jun 2026 04:49:04 -0700
+ Tue, 30 Jun 2026 04:49:02 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=bdI5fyJJ;
- spf=pass (domain: gmail.com, ip: 209.85.221.49, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-472326ca506so1431905f8f.2
-        for <cip-dev@lists.cip-project.org>; Tue, 30 Jun 2026 04:49:04 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=oYsd45Pc;
+ spf=pass (domain: gmail.com, ip: 209.85.128.49, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-49270caa5c0so34739515e9.3
+        for <cip-dev@lists.cip-project.org>; Tue, 30 Jun 2026 04:49:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782820143; x=1783424943; darn=lists.cip-project.org;
+        d=gmail.com; s=20251104; t=1782820141; x=1783424941; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=x1VtgIW1TCLej3nJc7SbmiLFIYmFbx1aq1fxm7lcpD0=;
-        b=bdI5fyJJQ89sauDnqogGr5gLF8DACG5wv35a1zYLyFgXH+3XEyi6UplSnz1sN99JKQ
-         kNygpOpLXY+IysnvT+Tgak92XK2MTmx7ZlVJyKl1KZTepTXvt3onIkUtkuyxygc8K0rq
-         gDXexLZKrWCXiW99/vULEeBv/QfuUySDSKimJXH4P6VSwhaWh8vVo/bdrrHv+xytgMvI
-         aH91glosIzKvCe9e/YycToVVnMjRBcj5DDZRWF9tg2Ib/M15WVAdUTBp/4uduC7yuR09
-         GoArWA99HeJLsmf9BQt+tS9mgEc3Tk7oXY/1snJ/OzyE/4fLTK3p6XHNHtcJhKoSP16/
-         zOYw==
+        bh=TbX/K+tcZZ9DvnMUcqLbiUNQVe7XeloPVbtj7zc8a3U=;
+        b=oYsd45PcRedksp2R7guNF9WvFt45vbuLVV170Oej7GcPOYc4cFaPTt1mFwbH7UKQ5I
+         0m9clXG0u24cXJIRsJKIBU8Z4BSkRy2x40OLmfyJ/wj2/khByTGJUPyEgBw1bVurxJsV
+         DZTLXX3xVoz4iVbBY7vzQQSgljdqnXGzRbCI26QGgsmnE2zzgokMVd6FiO0oOQKu+10d
+         b2BFZP+1QwrCixPOSV6jSQRvPx3/CzLUxAAFkKPiDEodQ2/FNX8f9EyT3YlF/JVSB69P
+         jERCfzh3yyYfDe2CENdyqiB/aNx3BkF+ciwUuM1inEkMtwettOGPaq/9hQbty9zUG060
+         PJ/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782820143; x=1783424943;
+        d=1e100.net; s=20251104; t=1782820141; x=1783424941;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=x1VtgIW1TCLej3nJc7SbmiLFIYmFbx1aq1fxm7lcpD0=;
-        b=lNCz6HjqgKiLokjkQyT48ob7NYQE55Al3McMFI1Ksv9gxOL0SUyqcoMsWglpueXkyr
-         DmUq0BNpZ1w05zPFCH6VNpmHNf/0700Xwy2du3jPVVjmHg2KR2/J5cmQFuNCjXoHNlJe
-         MKeiaSjwAs62+mQcW6s7FWQGeX0dh4Y+La2gHxQMQmtmCAMAFYJTk5j7u+Ljl86Xr7yK
-         i7cua3RDoqZVwOkpsYOxJ1Y+zo5VeHfNHPjiKvUcmFJ/K0o/Qz2+0zYq+nVqBC2YFFDr
-         0R3avHnhN/bvJYXUcKK7z3c5U8jn3VWeqUlyAwaAZOoJi/O0J7GlKX2XckoKG1+ZisI2
-         2l7Q==
-X-Gm-Message-State: AOJu0YxYMLp7ORKXRsOKJ45It3bIjl0jclPaj5/Nd8uzfdcK0lZ7qehX
-	KzzfeEijtOuFbkOZTTmt3yjQCXXWAkd0orM5R/BN7Gn7JfhHFY5AOkDdvlVA6G96
-X-Gm-Gg: AfdE7cm33dqMNBOnf4KZbmlH3RyDZUZ1eEmpzEr37OwvaAhoxUeaF4TQrA7cf5Uu70D
-	JCbuzWxZ4iL2V18Tb+B8bpEKOntrjOUYDv/N+tWoprP/E9IyIrjzDY6etJL1BzfZvfO7lbz9Lea
-	wzWDQ3m7FiHPOiKCbHFsXsPSroBbjMLoXkQDU/0JEOnyApO8wnV5lmgbEXzWRpGHmhZQY7A+kbB
-	aVd3CWjAD/j31xf3Gp2GYlaixeCRDC9VhnIk+4oOzxHUvBjC+YtOpE+DKj9JUaqz1wyUonMQnPl
-	ISDSmYwKfkUKy7UGUn09DnvG/8T7kZq4ZKgFZYrGPYREYlxgsdmZUBx0PVS8lnnrT/Ui5u0LbA0
-	cCTNInA94HVHVQTPfEgQGCOe5F65lDu/oX2K1K5lrPjwjEm+jC3iEcGwAaS9O3cIZBG6xOwwOsh
-	/ZB8RQwEqJPKGr91rkIJzbPTbjXx1tFvlk05kOQA==
-X-Received: by 2002:a05:6000:2386:b0:475:e015:c2a with SMTP id ffacd0b85a97d-475e0150e6fmr2490032f8f.8.1782820142634;
-        Tue, 30 Jun 2026 04:49:02 -0700 (PDT)
+        bh=TbX/K+tcZZ9DvnMUcqLbiUNQVe7XeloPVbtj7zc8a3U=;
+        b=kYcGmWhQEQJL7LyZfIddokTMfhGejMJqdtzrEdr83CLor7g3VvZTn0n0dP0J/HiPh5
+         ECw8Uz5fcb7J6S7CeUj3JUTEtHH5nfK+ixUbysXyyDQ5wd2YxLWsuE09IyUtxy1wIbeu
+         5g7xyBgYzriYfRz8C4zfIWItaPYMlfTdJdRTNGP8PhFnhzhDnB8Iz69tv21WXHOXjTR6
+         xyQFw60aaYGCLhT8/Nzd0l3Tmq9RDcdjQQ8BOpGEHMolIUS6a3b+UeInjM76Jfjq1izs
+         UfTjDUSIY/PpMKa+v+ognEvzLFy0ZYL6bKvO86hXl1fMQ5fIVEHMkok/qP6LwqS8X82r
+         W1fQ==
+X-Gm-Message-State: AOJu0YwzvwnG9wTtEdwLAVMdmO1o5ptupJamevRj5ozbrv4SDhpX9725
+	n90xhGO93iRG+1fr97ZV5JUmPafGr8DUiU1N4xWizz2rMeet7LEgcFbFR+x8UHrR
+X-Gm-Gg: AfdE7cl4S41mSo6aCQTh0GhbTlWAofT5vIxJy94sKk5zsbqwKZh2K3LBDzg4j8ZSJit
+	PJo5CGoraFUZ2s811yc07/GqL8Fk9IUKau+/tpuaYwE/3ZGS3fxT8ELcL2LBR47u3FtQ3cdgJZB
+	DFZ5WWTCtvlCGyqn5+e3IYoQtgXZ3XAoVsLUikWO8b5X68BH/Jkb1FJIDxTnnREwoHYCHOaBMNI
+	WGCOthqgeF3dJEnnuUmmIF3yIr+HHxFePUnAH2wPQJJCPez6yzs33bosRUqz0+BlPY22BQwsMJK
+	+/lE3zr8f9KnqVF2EdjjeYyiwkYqDpLdjjGjbpCqmrrQMJx7Hm+71UT2Vi9tD4twH25YjCY31uw
+	UlYXBBeACLXqGUHokVnAmlrzafxrKMFMi45aeOtYWCiSDxz4etsHTo5yIpy3zs2jXz2aA47Jwt2
+	VsLP4wZoQWSqLdY/OgWjphZZ0ZZzBB1CiQplKEptg4Wfkon9fA
+X-Received: by 2002:a05:600c:4745:b0:492:3316:4b34 with SMTP id 5b1f17b1804b1-493b827ea26mr46425955e9.2.1782820140707;
+        Tue, 30 Jun 2026 04:49:00 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a702:d301:3f6d:4f26:2d9c:ab4f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-475641e4542sm7343031f8f.10.2026.06.30.04.49.02
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-475641e4542sm7343031f8f.10.2026.06.30.04.49.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jun 2026 04:49:02 -0700 (PDT)
+        Tue, 30 Jun 2026 04:49:00 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,9 +59,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 35/39] arm64: dts: renesas: renesas-smarc2: Move usb3 nodes to board DTS
-Date: Tue, 30 Jun 2026 12:47:54 +0100
-Message-ID: <20260630114813.92739-36-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 32/39] clk: renesas: rzg2l: Refactor rzg3l_cpg_pll_clk_endisable()
+Date: Tue, 30 Jun 2026 12:47:51 +0100
+Message-ID: <20260630114813.92739-33-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260630114813.92739-1-biju.das.jz@bp.renesas.com>
 References: <20260630114813.92739-1-biju.das.jz@bp.renesas.com>
@@ -70,60 +70,64 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 30 Jun 2026 11:49:07 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23359
+ <cip-dev@lists.cip-project.org>; Tue, 30 Jun 2026 11:49:08 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23356
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 7eeed6cd6a419f2f412aab29344a129e1c5c37f7 ]
+[ Upstream commit 33cd08ac6200a8f96ff26183433affc10bead0ed ]
 
-The SMARC2 board DTSI is common to multiple SoCs.  Move the USB3 nodes
-to the board DTS, as some SoCs (e.g. RZ/G3[SL]) do not support USB3.
+Reduce duplication by introducing mon_mask.
+Eliminate an else branch by moving common parts into variable
+pre-initializations.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://patch.msgid.link/20260324114329.268249-11-biju.das.jz@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+Link: https://patch.msgid.link/9cda94b9b37c562a305f4dd6091fd71246764fd2.1777562043.git.geert+renesas@glider.be
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts | 6 ++++++
- arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi    | 8 --------
- 2 files changed, 6 insertions(+), 8 deletions(-)
+ drivers/clk/renesas/rzg2l-cpg.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-index 9be57785d9d5..6372f582a7c4 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-@@ -280,7 +280,13 @@ &sdhi1 {
- 	vqmmc-supply = <&vqmmc_sd1_pvdd>;
- };
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+index 92b36c856f36..8d9cf13a1633 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -1198,27 +1198,25 @@ static int rzg3l_cpg_pll_clk_endisable(struct clk_hw *hw, bool enable)
+ {
+ 	struct pll_clk *pll_clk = to_pll(hw);
+ 	struct rzg2l_cpg_priv *priv = pll_clk->priv;
++	u32 mon_mask = RZG3L_PLL_MON_RESETB | RZG3L_PLL_MON_LOCK;
++	u32 val = RZG3L_PLL_STBY_RESETB_WEN;
+ 	u32 stby_offset, mon_offset;
+-	u32 val, mon_val;
++	u32 mon_val = 0;
+ 	int ret;
  
-+&usb3_phy {
-+	status = "okay";
-+};
-+
- &xhci {
- 	pinctrl-0 = <&usb3_pins>;
- 	pinctrl-names = "default";
-+
-+	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi b/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
-index e2a34577a1a1..696a933af808 100644
---- a/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
-+++ b/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
-@@ -111,11 +111,3 @@ &sdhi1 {
+ 	stby_offset = RZG3L_PLL_STBY_OFFSET(pll_clk->conf);
+ 	mon_offset = RZG3L_PLL_MON_OFFSET(pll_clk->conf);
  
- 	status = "okay";
- };
--
--&usb3_phy {
--	status = "okay";
--};
--
--&xhci {
--	status = "okay";
--};
+ 	if (enable) {
+-		val = RZG3L_PLL_STBY_RESETB_WEN | RZG3L_PLL_STBY_RESETB;
+-		mon_val = RZG3L_PLL_MON_RESETB | RZG3L_PLL_MON_LOCK;
+-	} else {
+-		val = RZG3L_PLL_STBY_RESETB_WEN;
+-		mon_val = 0;
++		val |= RZG3L_PLL_STBY_RESETB;
++		mon_val = mon_mask;
+ 	}
+ 
+ 	writel(val, priv->base + stby_offset);
+ 
+ 	/* ensure PLL is in normal/standby mode */
+-	ret = readl_poll_timeout_atomic(priv->base + mon_offset, val, mon_val ==
+-					(val & (RZG3L_PLL_MON_RESETB | RZG3L_PLL_MON_LOCK)),
+-					10, 100);
++	ret = readl_poll_timeout_atomic(priv->base + mon_offset, val,
++					mon_val == (val & mon_mask), 10, 100);
+ 	if (ret)
+ 		dev_err(priv->dev, "Failed to %s PLL 0x%x/%pC\n", enable ?
+ 			"enable" : "disable", stby_offset, hw->clk);
 -- 
 2.43.0
 
