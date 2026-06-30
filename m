@@ -2,54 +2,54 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC243C44503
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3AD3C44506
 	for <webhook@archiver.kernel.org>; Tue, 30 Jun 2026 11:48:56 +0000 (UTC)
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.19427.1782820130167665933
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.19428.1782820130967243345
  for <cip-dev@lists.cip-project.org>;
- Tue, 30 Jun 2026 04:48:50 -0700
+ Tue, 30 Jun 2026 04:48:51 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=cXn5dZJr;
- spf=pass (domain: gmail.com, ip: 209.85.221.41, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-463f1165e16so4461159f8f.0
-        for <cip-dev@lists.cip-project.org>; Tue, 30 Jun 2026 04:48:49 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=RrpCi+Ck;
+ spf=pass (domain: gmail.com, ip: 209.85.128.45, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-493bb510ce4so4139195e9.1
+        for <cip-dev@lists.cip-project.org>; Tue, 30 Jun 2026 04:48:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782820128; x=1783424928; darn=lists.cip-project.org;
+        d=gmail.com; s=20251104; t=1782820129; x=1783424929; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VNBZbbGHHPgQdFdDoYRB7ZcuS4CZUIVCILv7FOHSi0U=;
-        b=cXn5dZJrS2ssobpWeN/x+hDuIwz1EXRhyonMlutF7MV1cDdBXlcc1z1o8nz/4thoFx
-         TqT3hvS7NpfNshs75TDAbyFSzBBw1qiOdn6QW0OA0p1Pmge5tZO6dHXEvJYHjq4vmisz
-         LpQ1rY47Xg7/FYce6lRaK5ZEg3kWIm4nfvfb0CRi4EBPHrvfWbEnOkU7KJts9wkvL+Xu
-         J2wX+3DCRSGxeNXuzArLTU7FvmLVrhpEq4BDEyNWt7XrRotzwTtB/KmxJDaCi7eQ7Y1g
-         zUsm9btHhbVs0w22od8T9/3l8WGVU24Ry0zM9j6/xALXBUH8WGnpELBh4ojOeRASu/rU
-         iv8g==
+        bh=1x4yZbZYj6DLi1YWeP+TxBwIehAGM2li/g1CPla6E6A=;
+        b=RrpCi+CkjP6G6yKooHt/TKpTnzBf+sfWhJ3nwqlyVHosd3jbzSMJyy7rns5rZ5xmSy
+         yiu+Eg9N7jW8+xAiO8xblk1U3jjUf3vOEn3o3hkMpz4ktVAoA3arnLpkcYGWGEwtK8Pt
+         KkhxgraBHkBYE9fcPivgvzB5K00JIpMM0zjbvLXmzIxa/PW5qHHicUZuaoGTloc+k1bT
+         O/hgGGAjRwFozM2srmF9+pLGtI4d2aSmCDOG0n2xQJaLqb4xMAV0H/NRGGCXIwZRccTN
+         3Ivf/U+0H1BjjzgYZ1u0hTE7uqJyeArKM5H4Ry6rTaGtTCOagzyTMM3gD7vFDay1euWL
+         2dbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782820128; x=1783424928;
+        d=1e100.net; s=20251104; t=1782820129; x=1783424929;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=VNBZbbGHHPgQdFdDoYRB7ZcuS4CZUIVCILv7FOHSi0U=;
-        b=QwcGC/gRVO2fPY2Ipk6qYY0wmibpyXSfGcBdPgA2YbwbgRqIS4rKHo/bEQk8W+QGoH
-         oCtN+qT7EkWiHhByFFv3lEb+Cjr8mAS0VYUJwPD/P3RYHuzUtUyrSYEjgtl077i/ln36
-         XfegjQZkk6X0CNuTA2wxuBXwAzaRp6iBy7CrP0RNcRhkdg+PxosKKVAT4Uok7Z85eI7B
-         ZE5VY2RA8QqdEYYFseNw0/oNA8Qk/62AWNjloXAC07NeyIuoeI5Mtas4qN1rOZ4/n2X9
-         PJVlLZbX6f9QMCAJeORQ4A9Zn4/ZZFZdva5CvhY6KZwM036hN2+HAJIqF6ot73n7guRb
-         TNrA==
-X-Gm-Message-State: AOJu0Yz4p1MUV5n9KaOsAevo9QRxeZ8T/TWIfnOWYESSiL+MZraU1/eo
-	Atfhqilrny1DC38Y+nlVK5j3VGoFvN4nCdg8m0GvP8Wk76x8bKxlfBO30gjyqjnU
-X-Gm-Gg: AfdE7cksg3dcg+JIn8KzLkFN+I2dfiU5HrbiRZKePBIzqiS+xR1vLEeWDy6MKF9LgAb
-	5R5HTbRHhuSGzpyRn/0Hw0Ng/Sk5sJtQAQdU2NCmzDfDCB/W9Jc5UhvZOZ71jsYynSp6coJVPS1
-	cSihHXfUnXD2iB3741dERVwD5Edj2I4bQuNv67hNVYF1fCsrFcx20ltgHpdI/zCkAnzvNGBBG/E
-	zvE9SHSV011kcAB52wB0/K2JEOYX4wSrgqDNgfHkW1vhfnc12JSBVhmJws8vdJNlJr+pdOm36qe
-	RZ+a0n9bVX+codz4rnrz+zXtkcPZPmN6Pqw0JDU4xfNag/fDHCrpeOHU86qSzNDOG3zr2JcCwYj
-	C276ryUGKNWh4Bsn0jeejMKgAc+ksmQ6BU8MaEZsyTTrOmh4DbbuqH3nGme+nDxbG8zcMn9YMDs
-	nB1zo/MkSZSY4yAZzYJlY4hC1zTemuxzthnC6mi3s62PT0BSlL
-X-Received: by 2002:a05:6000:27d3:b0:46f:3046:2bf1 with SMTP id ffacd0b85a97d-47550da03cbmr3137181f8f.13.1782820128265;
-        Tue, 30 Jun 2026 04:48:48 -0700 (PDT)
+        bh=1x4yZbZYj6DLi1YWeP+TxBwIehAGM2li/g1CPla6E6A=;
+        b=aNhdsSiXbhZ7juZFkUZCcKgIxL9hcAWaSqtcnrR6HBAEo+CKnDqg39AaO45fbjUy+C
+         Jyv+S/RH+2102EjxuUwWDdvNkXoF0u07I9Debvrd9mJNpq/desRBskKlLY2x03auh4G4
+         U8xnnulYq6wT+VP60p4n9cyjcHsSHi+8yHD88O/5Ld3mLkyeLOs1VCUxJ850a/ZILVyn
+         Opj73+sy4W0qmLxQXMVJJKdDL74jcSo8IHLHqEEBToXJvoNMPqaWnZMsCzy1HyscsdUy
+         WlJ8bse7JtfAitUzLQktulwS/3mUO0+yE5THkJktpEgOTuo9XSKbzlpn7ajXHkP22uIW
+         RYAA==
+X-Gm-Message-State: AOJu0YwAtGYQTzvsn1rwIEM4uXOavgzV7luZ9V83SqxlPgq4Z6v3Q8Nr
+	gbNu32xyPrpJEEE5PF5vzT9+uFwyZ0lEsQzCUfqACrjTeTW0r3JfSKbj8UrySURx
+X-Gm-Gg: AfdE7ckTy161iYyiD2zUFMs6rvIxa3mSH6Ab3TzG+Yd9DPs0bUHQ7AL4aoLBjWf3jkR
+	s4n8wOdGsaguaLPZ/s6T4gtE/e4jjLhHAUo6h+WeDCeEpiPT3KiIUutuRQVdWDvuAsX07aYVGnD
+	XOzAZZiyVWfpC3WNdn6jJbpZPtsUb5DlNQlK1PRFsljzIOxtA/kk63gBcPruga4AOF2I3VQJXF/
+	QTlTmmNym09+MJMCIznUY8C+l/Pu+PaxRQUuJo060+dBkgQnnLlGszNn/xJiLXqZS76halrY0N5
+	0Y2UgYrfANXC1KCNFYh5KXz/bWTNQlezv9gb1DUfXvsFKA6gtjrEZGC4ov3pVenWks1c1B6wg+z
+	mvXjvjvbRQCepGyN6Mqwy+GfVf1BTXR+q0SnbjfWnPbAXX6M7lQZd3JzFe+UoiMe2nqUcQWEmzF
+	frb2ABlBrkRohY/TFknTlUvrk0WTxECPHfJx2LMQ==
+X-Received: by 2002:a05:600c:1d0b:b0:493:b750:b565 with SMTP id 5b1f17b1804b1-493b82c0a30mr49817555e9.35.1782820129048;
+        Tue, 30 Jun 2026 04:48:49 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a702:d301:3f6d:4f26:2d9c:ab4f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-475641e4542sm7343031f8f.10.2026.06.30.04.48.47
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-475641e4542sm7343031f8f.10.2026.06.30.04.48.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 30 Jun 2026 04:48:48 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
@@ -59,9 +59,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 14/39] clk: renesas: rzg2l: Deassert reset on assert timeout
-Date: Tue, 30 Jun 2026 12:47:33 +0100
-Message-ID: <20260630114813.92739-15-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 15/39] clk: renesas: rzg2l: Add support for critical resets
+Date: Tue, 30 Jun 2026 12:47:34 +0100
+Message-ID: <20260630114813.92739-16-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260630114813.92739-1-biju.das.jz@bp.renesas.com>
 References: <20260630114813.92739-1-biju.das.jz@bp.renesas.com>
@@ -71,52 +71,125 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 30 Jun 2026 11:48:56 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23338
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23339
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[ Upstream commit 0b0201f259e1158a875c5fd01adf318ae5d32352 ]
+[ Upstream commit 3d700746d76bedb9f3de505494994cd3f2afb59f ]
 
-If the assert() fails due to timeout error, set the reset register bit
-back to deasserted state. This change is needed especially for handling
-assert error in suspend() callback that expect the device to be in
-operational state in case of failure.
+Some reset lines must remain deasserted at all times after boot, as
+asserting them would disable critical system functionality with no
+owning driver to restore them.  This mirrors the existing crit_mod_clks
+mechanism which protects critical module clocks from being disabled.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+On RZ/G2L family SoCs, the DMA reset must be remain deasserted for
+routing some peripheral interrupts to CPU.
+
+Add crit_resets and num_crit_resets fields to struct rzg2l_cpg_info to
+allow SoC-specific data tables to declare reset IDs that must never be
+asserted.
+
+Introduce rzg2l_cpg_deassert_crit_resets() to iterate over all critical
+resets and deassert them.  Call it both at probe time and during resume
+to ensure critical peripherals are held out of reset after power-on and
+suspend/resume cycles.
+
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20260108123433.104464-2-biju.das.jz@bp.renesas.com
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Link: https://patch.msgid.link/20260324114329.268249-3-biju.das.jz@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/clk/renesas/rzg2l-cpg.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/clk/renesas/rzg2l-cpg.c | 30 ++++++++++++++++++++++++++++++
+ drivers/clk/renesas/rzg2l-cpg.h |  7 +++++++
+ 2 files changed, 37 insertions(+)
 
 diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index bd562aa6f301..a7189c32849e 100644
+index a7189c32849e..da211010d2ba 100644
 --- a/drivers/clk/renesas/rzg2l-cpg.c
 +++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -1760,6 +1760,7 @@ static int __rzg2l_cpg_assert(struct reset_controller_dev *rcdev,
- 	u32 mask = BIT(info->resets[id].bit);
- 	s8 monbit = info->resets[id].monbit;
- 	u32 value = mask << 16;
-+	u32 mon;
- 	int ret;
- 
+@@ -1766,6 +1766,13 @@ static int __rzg2l_cpg_assert(struct reset_controller_dev *rcdev,
  	dev_dbg(rcdev->dev, "%s id:%ld offset:0x%x\n",
-@@ -1780,10 +1781,10 @@ static int __rzg2l_cpg_assert(struct reset_controller_dev *rcdev,
- 		return 0;
- 	}
+ 		assert ? "assert" : "deassert", id, CLK_RST_R(reg));
  
--	ret = readl_poll_timeout_atomic(priv->base + reg, value,
--					assert == !!(value & mask), 10, 200);
--	if (ret && !assert) {
--		value = mask << 16;
-+	ret = readl_poll_timeout_atomic(priv->base + reg, mon,
-+					assert == !!(mon & mask), 10, 200);
-+	if (ret) {
-+		value ^= mask;
- 		writel(value, priv->base + CLK_RST_R(info->resets[id].off));
- 	}
++	if (assert) {
++		for (unsigned int i = 0; i < priv->info->num_crit_resets; i++) {
++			if (id == priv->info->crit_resets[i])
++				return 0;
++		}
++	}
++
+ 	if (!assert)
+ 		value |= mask;
+ 	writel(value, priv->base + CLK_RST_R(reg));
+@@ -1803,6 +1810,20 @@ static int rzg2l_cpg_deassert(struct reset_controller_dev *rcdev,
+ 	return __rzg2l_cpg_assert(rcdev, id, false);
+ }
+ 
++static int rzg2l_cpg_deassert_crit_resets(struct reset_controller_dev *rcdev,
++					  const struct rzg2l_cpg_info *info)
++{
++	int ret;
++
++	for (unsigned int i = 0; i < info->num_crit_resets; i++) {
++		ret = rzg2l_cpg_deassert(rcdev, info->crit_resets[i]);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++
+ static int rzg2l_cpg_reset(struct reset_controller_dev *rcdev,
+ 			   unsigned long id)
+ {
+@@ -2052,6 +2073,10 @@ static int __init rzg2l_cpg_probe(struct platform_device *pdev)
+ 	if (error)
+ 		return error;
+ 
++	error = rzg2l_cpg_deassert_crit_resets(&priv->rcdev, info);
++	if (error)
++		return error;
++
+ 	debugfs_create_file("mstop", 0444, NULL, priv, &rzg2l_mod_clock_mstop_fops);
+ 	return 0;
+ }
+@@ -2059,6 +2084,11 @@ static int __init rzg2l_cpg_probe(struct platform_device *pdev)
+ static int rzg2l_cpg_resume(struct device *dev)
+ {
+ 	struct rzg2l_cpg_priv *priv = dev_get_drvdata(dev);
++	int ret;
++
++	ret = rzg2l_cpg_deassert_crit_resets(&priv->rcdev, priv->info);
++	if (ret)
++		return ret;
+ 
+ 	rzg2l_mod_clock_init_mstop(priv);
+ 
+diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
+index 55e815be16c8..af0a003d93f7 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.h
++++ b/drivers/clk/renesas/rzg2l-cpg.h
+@@ -276,6 +276,9 @@ struct rzg2l_reset {
+  * @crit_mod_clks: Array with Module Clock IDs of critical clocks that
+  *                 should not be disabled without a knowledgeable driver
+  * @num_crit_mod_clks: Number of entries in crit_mod_clks[]
++ * @crit_resets: Array with Reset IDs of critical resets that should not be
++ *               asserted without a knowledgeable driver
++ * @num_crit_resets: Number of entries in crit_resets[]
+  * @has_clk_mon_regs: Flag indicating whether the SoC has CLK_MON registers
+  */
+ struct rzg2l_cpg_info {
+@@ -302,6 +305,10 @@ struct rzg2l_cpg_info {
+ 	const unsigned int *crit_mod_clks;
+ 	unsigned int num_crit_mod_clks;
+ 
++	/* Critical Resets that should not be asserted */
++	const unsigned int *crit_resets;
++	unsigned int num_crit_resets;
++
+ 	bool has_clk_mon_regs;
+ };
  
 -- 
 2.43.0
