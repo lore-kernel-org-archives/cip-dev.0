@@ -2,56 +2,56 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5188BC4450C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BBBCC4450B
 	for <webhook@archiver.kernel.org>; Tue, 30 Jun 2026 11:48:57 +0000 (UTC)
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.19079.1782820136049409656
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.19074.1782820129518647957
  for <cip-dev@lists.cip-project.org>;
- Tue, 30 Jun 2026 04:48:56 -0700
+ Tue, 30 Jun 2026 04:48:49 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=Heo7tNef;
- spf=pass (domain: gmail.com, ip: 209.85.128.43, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-493a54b80a5so35458975e9.2
-        for <cip-dev@lists.cip-project.org>; Tue, 30 Jun 2026 04:48:55 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=a/05QDnD;
+ spf=pass (domain: gmail.com, ip: 209.85.221.54, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-473dc4cf238so1273368f8f.3
+        for <cip-dev@lists.cip-project.org>; Tue, 30 Jun 2026 04:48:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782820134; x=1783424934; darn=lists.cip-project.org;
+        d=gmail.com; s=20251104; t=1782820128; x=1783424928; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cYhNRzKGREFIFFpm6L2+Qqqx9E07KoJkFAi1uC1NTMU=;
-        b=Heo7tNefOKhdvpnvncC8XuioPrHpE9CAgFVzoGq5ebqbbthYsYU+mRtHKXAoJWjWjh
-         VhJwhXyEGniXv4fGpTc4GBBswVT2Umd5v54A1KfRDjFWKVWfuJl350uxM2g0Z51n4Nez
-         3I1RolJEgUyI0PKFipkjconzRMzLb++rCCIvyPOBmbYNh9h5Om3OpkeGfiF1M6oCY7m1
-         c8n6/S67f4v5v4opn/v5dGwGo5ghU2ZYRsJbP3FUMcctWCRrYhaqp7OYw5j1A1QRUyD5
-         9b9Ar/0xtPt5nFCf2ObbMACKSgp2Zfio8gyhIIo3TfFFknBxFVNFekXnwlUuO94zYfao
-         jAqw==
+        bh=FUBOggrD8kDray9qm34pKQ3mLi3p5+WaIEHowX3BlIA=;
+        b=a/05QDnDxsjKFPbjjJ/mcSD5B+V2v7v6GakvB30q1vqoT4qS99c04EJ2UUeeCmoVlN
+         KQrB3dnWUNQsqm3vX5SkWE/7rmRt7alZPFeApA5ZZYKKn68Tp5jGTDXaTvWOsqP6OesQ
+         ynY66ZnaWIki1z+Wzrj5tMjIOshzWveEdUQtp+1jprU7Ic09t10HInpPvPoXpVzQYfs1
+         zDhe9ZEL8/ZmSfWfTZ7ux7e4fohzUwy5VWBCqJe4WGmOyGR76oQBWMrA6ARU4yVGwEi9
+         AxO4kxRpPlNzv8rxkU+TcorSSzcVXCuYhttCuHar8fp24wRjS4QQMzDYa3i9+nAIFZ+T
+         mi/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782820134; x=1783424934;
+        d=1e100.net; s=20251104; t=1782820128; x=1783424928;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=cYhNRzKGREFIFFpm6L2+Qqqx9E07KoJkFAi1uC1NTMU=;
-        b=qcEDlUg2iP729YBHS1OM5sZCFWTWqiX/04OpEaSPi8hmqvBOCSAWDRxlLrKJKFU4dJ
-         RXaaft5Dt2j/pECTBMNvCm64krJVnrFhhJKeVhX9esWZcxSzuBRi2BfTVNrJhi24Gtgn
-         l+H1jSXfF+2twTYJDdyLx/FAud9IM8aYUwnlwHAxMkMkrGLmjMKnczUNK8r9sdKGIcJo
-         pI7UB+CDBBrQnPreXbHIOFWyhXUgwdMgxaWe4Q6ORFFt+BNNOumfsPuSYwfRtjB0+6LG
-         SHMBhI61uH8DUsHD9jzK2DXrgZoe6FlBKRNjlum58m57CMcGidPMOexuXTFYrMRZ6r6k
-         93ng==
-X-Gm-Message-State: AOJu0YyPaNNEpafyoKqlt4Ova9J58sa3GIo2xW5x/wL2ZQxdBZxpMPGa
-	xGpddxBfQ22n0TiI83thD2onOAfJOzdgph7ld5nySyk0rDHBcIX2xouNOseXVk8i
-X-Gm-Gg: AfdE7clkQ54/ETZP64Dvw2qeR1hIgP2BGeg4QgdA8pngCySHw6nSJ0niKiXwNxJy6gS
-	8/CmqpfbUvAkkn+LOku8txpKlLLrPIgAFnXF7zQPCYH67ETztbNOS7xLz0vu3kt8fxWjfvvtzmr
-	3VY35NXsc9uCt9lYO5aq9vb6PAmFc+UOw4fc6xyjer4p6ZrzX+4kOYhlZk/xf5YcLGZGfjHre3F
-	pz/6OOGG77Oe/O3nXqO9uAvWr4pswuLD5kmuiCE4zDj3MpTonZyMj84xBXEQEdkduMbyv0XO1qO
-	s3zZgQwiynZE29n9bSs09MT3y9y9OJtgYWmcuYZqSmEvaUGiiE5CLjGMEX7EYpucNMUd0BGOA0m
-	HqTw40yYB3Gc/phVV5i8CmbOKLxW4F/JhpKzRzq1DPUa2/W4aNZgXyC5fzUumZs1Gs3hcgTGRU9
-	V5wP7YngjrJVi0TgDs+MIY7pwlLzhcaqR9u/jCQw==
-X-Received: by 2002:adf:f10d:0:b0:46e:8226:96b1 with SMTP id ffacd0b85a97d-47553ab52c2mr3296141f8f.42.1782820134229;
-        Tue, 30 Jun 2026 04:48:54 -0700 (PDT)
+        bh=FUBOggrD8kDray9qm34pKQ3mLi3p5+WaIEHowX3BlIA=;
+        b=gq8DG40tfuFOTyPGwXvRGKt7RlOPZsBL+uKahXbaSlo0DJPbCtEtVU2eSwUQUMIv7F
+         gUZ++OGG+9lEISqht92mML7yBk0mvQyo4uv5zmU+zeHoRl9nirqRheVRnN8CefdbcuBQ
+         vF5BbMvrS8D1LL5W5u0wUVKZNVT5oGMc2DDIex4K0D2mUI1NsrvTK2CxObhI5kilIT/N
+         lbp4ApCrBGCKMVxCZC6LBgKNAdqjod0WkjJQ2ZyoHr+qAVXUfWWbq9+Xo6I873K9FFFy
+         IAaoKwvlC8Tc96au6xAp1TjWHW+MIww8Od+xGSqi6FYnUlOXH4YF7v6mGZe2445kcYqL
+         43Qg==
+X-Gm-Message-State: AOJu0YyYOOSBQwCJXsJsiZ8bf9Hf0lMVNr2ZXUXnwMzMOb0LLm7pT07q
+	onduTH/LkMk+V9gOh2P3mj/ilsDTZtyDcxaag2M9ILITHSTwaW24woKZILtOyydB
+X-Gm-Gg: AfdE7ck8BL2baWGPpSw0Kj5IBoDSUFaF5OPh62FmLtbmzL+11r4CtXohsSVBVagYKy3
+	3mE/gj1/epSvqA8GG3QeQ3SrqQ8idQmqYl58Mz2RIw6OX7W9D0+Ph8yl+SsrQYJeq54f9ci0AdT
+	JnJNxQgy26PKyP1ZQP3WBeJ7U+lPVhQ6Gd1RcLv9fqjoTcOXDgWjmKCRQS4QTVMdRf9CacZMQdo
+	yVR6t66R2mfOS4VA1QTQdrPRm7SzCJdBQ/Rj9jb6ijCOiHlqjQtNIQ9DUxYe7lVyi6b/cQOr2aL
+	8zpb/lpwQBT8K4WacU5D6O8FgpyQJiukW8fUEYzoPZuJnCEURV1wZ9MjsnpBdTFBr5DArSql24d
+	BIJea8n5OwhukHmea6pXANUELAKWBtHKCU3kRmzyRqgYxjmZnetHTWnCPD+63TaVLUR6RcWJhit
+	wjNhF0Yz1jLPLMilMxIW88hpA1Xb5K3xoLBMBOag==
+X-Received: by 2002:a05:6000:40dc:b0:475:e7f7:ef76 with SMTP id ffacd0b85a97d-475e7f7f236mr2436963f8f.13.1782820127769;
+        Tue, 30 Jun 2026 04:48:47 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a702:d301:3f6d:4f26:2d9c:ab4f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-475641e4542sm7343031f8f.10.2026.06.30.04.48.53
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-475641e4542sm7343031f8f.10.2026.06.30.04.48.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jun 2026 04:48:53 -0700 (PDT)
+        Tue, 30 Jun 2026 04:48:47 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,9 +59,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 23/39] clk: renesas: r8a08g046: Add support for PLL6
-Date: Tue, 30 Jun 2026 12:47:42 +0100
-Message-ID: <20260630114813.92739-24-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 13/39] clk: renesas: rzg2l: Re-assert reset on deassert timeout
+Date: Tue, 30 Jun 2026 12:47:32 +0100
+Message-ID: <20260630114813.92739-14-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260630114813.92739-1-biju.das.jz@bp.renesas.com>
 References: <20260630114813.92739-1-biju.das.jz@bp.renesas.com>
@@ -71,54 +71,47 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 30 Jun 2026 11:48:57 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23347
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23337
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 
-[ Upstream commit f232745679fe1b8dfc545d2bbb4b5cd1c50b323 ]
+[ Upstream commit f8c5f0dc77d86da36bcbf0684c6747a2937cc3cd ]
 
-Add support for the PLL6 clk by registering it with rzg2l-cpg driver.
+Prevent issues during reset deassertion by re-asserting the reset if a
+timeout occurs when trying to deassert. This ensures the reset line is in a
+known state and improves reliability for hardware that may not immediately
+clear the reset monitor bit.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20260326110648.29389-4-biju.das.jz@bp.renesas.com
+Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Link: https://lore.kernel.org/20250903082757.115778-3-tommaso.merciai.xr@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/clk/renesas/r9a08g046-cpg.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/clk/renesas/rzg2l-cpg.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/renesas/r9a08g046-cpg.c b/drivers/clk/renesas/r9a08g046-cpg.c
-index 6759957980f2..fed9607af216 100644
---- a/drivers/clk/renesas/r9a08g046-cpg.c
-+++ b/drivers/clk/renesas/r9a08g046-cpg.c
-@@ -29,6 +29,9 @@
- #define G3L_DIVPL2B_STS		DDIV_PACK(G3L_CLKDIVSTATUS, 5, 1)
- #define G3L_DIVPL3A_STS		DDIV_PACK(G3L_CLKDIVSTATUS, 8, 1)
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+index 25e565100986..bd562aa6f301 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -1780,8 +1780,14 @@ static int __rzg2l_cpg_assert(struct reset_controller_dev *rcdev,
+ 		return 0;
+ 	}
  
-+/* PLL 1/4/6/7 configuration registers macro. */
-+#define G3L_PLL1467_CONF(clk1, clk2, setting)	((clk1) << 22 | (clk2) << 12 | (setting))
+-	return readl_poll_timeout_atomic(priv->base + reg, value,
+-					 assert == !!(value & mask), 10, 200);
++	ret = readl_poll_timeout_atomic(priv->base + reg, value,
++					assert == !!(value & mask), 10, 200);
++	if (ret && !assert) {
++		value = mask << 16;
++		writel(value, priv->base + CLK_RST_R(info->resets[id].off));
++	}
 +
- enum clk_ids {
- 	/* Core Clock Outputs exported to DT */
- 	LAST_DT_CORE_CLK = R9A08G046_USB_SCLK,
-@@ -45,6 +48,7 @@ enum clk_ids {
- 	CLK_PLL2_DIV2,
- 	CLK_PLL3,
- 	CLK_PLL3_DIV2,
-+	CLK_PLL6,
++	return ret;
+ }
  
- 	/* Module Clocks */
- 	MOD_CLK_BASE,
-@@ -78,6 +82,8 @@ static const struct cpg_core_clk r9a08g046_core_clks[] __initconst = {
- 	/* Internal Core Clocks */
- 	DEF_FIXED(".pll2", CLK_PLL2, CLK_EXTAL, 200, 3),
- 	DEF_FIXED(".pll3", CLK_PLL3, CLK_EXTAL, 200, 3),
-+	DEF_G3L_PLL(".pll6", CLK_PLL6, CLK_EXTAL, G3L_PLL1467_CONF(0x54, 0x58, 0),
-+		    500000000UL),
- 	DEF_FIXED(".pll2_div2", CLK_PLL2_DIV2, CLK_PLL2, 1, 2),
- 	DEF_FIXED(".pll3_div2", CLK_PLL3_DIV2, CLK_PLL3, 1, 2),
- 
+ static int rzg2l_cpg_assert(struct reset_controller_dev *rcdev,
 -- 
 2.43.0
 
