@@ -2,56 +2,56 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BD8AC43327
-	for <webhook@archiver.kernel.org>; Tue, 30 Jun 2026 11:48:36 +0000 (UTC)
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.19065.1782820113577823166
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F87EC43327
+	for <webhook@archiver.kernel.org>; Tue, 30 Jun 2026 11:48:46 +0000 (UTC)
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.19070.1782820121218561975
  for <cip-dev@lists.cip-project.org>;
- Tue, 30 Jun 2026 04:48:33 -0700
+ Tue, 30 Jun 2026 04:48:41 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=OBt9YQuj;
- spf=pass (domain: gmail.com, ip: 209.85.221.52, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-4720f3bf164so298747f8f.1
-        for <cip-dev@lists.cip-project.org>; Tue, 30 Jun 2026 04:48:33 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=ImKMx453;
+ spf=pass (domain: gmail.com, ip: 209.85.221.50, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-4745492ed3aso1246339f8f.1
+        for <cip-dev@lists.cip-project.org>; Tue, 30 Jun 2026 04:48:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782820112; x=1783424912; darn=lists.cip-project.org;
+        d=gmail.com; s=20251104; t=1782820119; x=1783424919; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=loGB6/7AS0H/JYXAU3fdfnkjmPYDugpytFjlWsS/maM=;
-        b=OBt9YQujJXo5Yu7H0Rd3Bj8NLjiQ/fDBCzA5CCaM3XPmRPPNCQQamRLMO2ZbVEZP1h
-         5TwQD8EtdpmnAdbxcLhVd0IfNobQ+U4hCsd58oUlMg8D1oReWFHHkzUAwjxKo8MiTbjF
-         H8i4bTwsmzbwW0IrjWnYVWLmLdifOUp3b1u5BQ6RZ/EGQ6cUg9Q21WpKg2pzT8xt77RU
-         0K4B++X2v00kN1uKbLv+0gtxc9dCBwB0GIJt9snNvAEvx4E4/InZI8BzpE6NEI1doGMe
-         NsIHnrSfqKgY2w+93Ih6YZmeWilwl2QTHzU4LEpoJyZ9AuXeF0BDcn6Qhuw6iKi3BU4f
-         8JbQ==
+        bh=TQQbTGDeX1lTPVFNKyHdKooXreVBv+jC0fK7QYvy4KU=;
+        b=ImKMx453upfJ2D6LKJmdMFyWvdSMhPM5HDSJjPhMbcjw1w4Io50zsyjxXf1dKW+Cnd
+         qJdeQRSc5QtJDgVPa7Z5RnT8Cs7yd3xeHXC+XHLjWA1+gKvj0jul2SHJItoQBXo2oH8k
+         5FMUHa5XgQ7nXhBwQeBxX/VXip7FF2PwfSSlxMZydqi4CGLjgr5NuGHzTiFuPTDDz/lc
+         xN4KzWhz536Lhj92jAIZ5RKkSrS5sKiut+4RAvFho3icOWAU3XmIDvc/56t6jJIB+M9O
+         hqFDdJ6FUSxHWRBW5zLP/m0R8XUgUlDcvqRebcGXzlsu1HqA5OR3UDul02/WHn60J0tD
+         Hvhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782820112; x=1783424912;
+        d=1e100.net; s=20251104; t=1782820119; x=1783424919;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=loGB6/7AS0H/JYXAU3fdfnkjmPYDugpytFjlWsS/maM=;
-        b=J/lQjPUe8Y915Ik3QsK4P+/+0E16VWqo9i6yx6KaneQgQXQ31Yql8yGlMTtN7rfny9
-         T0EMBPrYEgx/fg0TzbPBHWM+8Ndj9IAmKDm9Xaj3vInE7AI7d2tX3u2guZ0EkUYL6+Hp
-         hi7AzkRdBAraTr/pX/2Y3Fqnaevi3aMbKSTrPNF8rSI66KWhf4yMgXjYVoRPM0aO9CLi
-         gf7+0yk3kkyrRR8aWZ+K9NYxZxinTvwxROgUjbjRwb4pTyuR/3E6/ViDaxaHj3YTHGIF
-         ls8G/SDo/Sz+S1lpAvOAFy8CrzHgVpycpm1PV4UYufkx2SQtg33yBpVdbX4Eh08ppavi
-         GCzg==
-X-Gm-Message-State: AOJu0Yy8ezsPr2U6mLFQZAXa8YpmjI2Va4n9ktDNiqSJYaXw8a9s1sDP
-	65baSCC2UB0U7/XiOaj4uqsydMEf++pN8BbtxskgJxftMGjgiIFe4N2+IAf8j+zX
-X-Gm-Gg: AfdE7cnUDukqZDiZQQZQ9lazNYdZbPnwsG6JhbwNIE9WquopxNavdEhNFJ2NqtWqxEX
-	HGis8rQMebh+soHn3BNeG+lKm6D7SzTXZQnwLXfMzQbheIs+6+wtct0pHoMOeXlXPwQvOlSbG3G
-	YzMu3fQ+s1fmHCRwCODKx71wZnbrdo/Ni6A8d21cEz1OJO+4+hxMKu6VOpCC/yhItGN/nPGPrvs
-	9g8Yne+KhfWkm6I8De0ZxWwYC0rX/o5vRgSJ9qGuE8pyCHYD5FAKAx/28FKwERXEHohBwMsSRcG
-	5BRmZvVW9bwQ5hsToKc0SlrwQTCZPTHzGbPRSRsLd9pWWqrIK1LGJUsf6JXBmxvVLOr9NevE+7d
-	49vdTA5UK423lIIPjVL/UQzRVbtkVP7i9c/EsRlTGEeRx/ZMnxnU6NKpdpHJgAW5nKw6r2e0Qqa
-	ET7BiNncWUqiOGKdpDviAngYgmG+YSU689+2B7nw==
-X-Received: by 2002:a5d:584e:0:b0:46e:6959:35a7 with SMTP id ffacd0b85a97d-475f6e773f8mr1969750f8f.22.1782820111567;
-        Tue, 30 Jun 2026 04:48:31 -0700 (PDT)
+        bh=TQQbTGDeX1lTPVFNKyHdKooXreVBv+jC0fK7QYvy4KU=;
+        b=VvI277kDxZStWrZqob6ymIhoSjQg2UOhEDC1EjkAmAbEcEL3L+kg+Vv0s0sHqcHT3P
+         5FdGfKrhROUInj6rFPsYzSvrrL8BpqzR9WUxU4KPnfpICaE+nByMngYUSpx31btaEvSt
+         F9xOnXm4yhnGrOFsvgkUhVhgYGeon3KP72eQtkeDyy10FLL1aQ1kbMS4RDm2sv6dYCVc
+         /zry+AgOhNASb+Sszw+X8YVC8I9GN+q5p3cJLzXQoZQZVUXnJy2kmgjrnt52n6zxYHCW
+         uAnjzLtsaEwuu7WCHB7LQ26/vfRis01ty8XK/9+0SwZb4RoDY1mjl7QfdBxcy8ki5pi+
+         q+ow==
+X-Gm-Message-State: AOJu0Yw1iIiDhpR4jd3On4lOMz4mxyWz8k60FRBv0b438f/f5hGo7KCm
+	FDiIMGR4dxvS/QzTak+uYc18T0PDo4Ixb3upPJ6Ut0ier7gXsHGfS4d4E5/e6eIP
+X-Gm-Gg: AfdE7cls2Sz3g0K0QoDJ1CcnBjZZPlbvHlb0BwBnxQBXc4uLuGCaYJuh8aqmFX9DACY
+	sV7lzoPUpL6GikICHz4cQGZL7mqaC5X+aU66plPFMHAvV2AmROAG3+n9bwJP6j6KBkDjYPfLUM0
+	U46x5WyZBls/DQ7NIW2FbTwQ0sdcAsFXiqaGHCia4fJocjjmqyGzYcM3fAIG37x9uJSb3mnl4u6
+	+0dEshwZvISZQg+n7riO7qgSAgZyXaqlXe+zwB0qLzQfQXWwiEc0nIQmCamSGa1Rk+rsJI+pK+P
+	wnmevJ0aOvOP7Ruh2RL1kouXGFDrTHXERTxSIsVbBsANENABUDPK9KzTRDWCDJfkYqx5CgX/LQq
+	QPhwCUgMrUzqQVjM9gxnF9B3jSwCgitaZRG5iLt7Mx1xSIBc3pyv0vQfpxFtvhu/fCtZdyPIObB
+	XUVfr1vlUFBo5kdg8y2zl4IiR54RdVcHw/QznpxQ==
+X-Received: by 2002:adf:e384:0:b0:46f:7d90:8125 with SMTP id ffacd0b85a97d-47659c03707mr196285f8f.15.1782820119436;
+        Tue, 30 Jun 2026 04:48:39 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a702:d301:3f6d:4f26:2d9c:ab4f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-475641e4542sm7343031f8f.10.2026.06.30.04.48.26
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-475641e4542sm7343031f8f.10.2026.06.30.04.48.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jun 2026 04:48:27 -0700 (PDT)
+        Tue, 30 Jun 2026 04:48:39 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,9 +59,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 02/39] dt-bindings: net: renesas,rzv2h-gbeth: Document Renesas RZ/G3L SoC
-Date: Tue, 30 Jun 2026 12:47:21 +0100
-Message-ID: <20260630114813.92739-3-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 05/39] net: stmmac: platform: Add snps,dwmac-5.30a IP compatible string
+Date: Tue, 30 Jun 2026 12:47:24 +0100
+Message-ID: <20260630114813.92739-6-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260630114813.92739-1-biju.das.jz@bp.renesas.com>
 References: <20260630114813.92739-1-biju.das.jz@bp.renesas.com>
@@ -70,195 +70,39 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 30 Jun 2026 11:48:36 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23326
+ <cip-dev@lists.cip-project.org>; Tue, 30 Jun 2026 11:48:46 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23329
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+From: Inochi Amaoto <inochiama@gmail.com>
 
-[ Upstream commit 3ac2aa31b489eb4e0e820757f336aa1ad41ed0e2 ]
+[ Upstream commit 9ef17cafc36bbf47aa840727bc1dc3e65812776f ]
 
-Add device tree binding support for the Gigabit Ethernet (GBETH) IP on
-Renesas RZ/G3L SoC. This SoC uses different Synopsys DesignWare MAC
-version 5.30 compared to RZ/G3E.
+Add "snps,dwmac-5.30a" compatible string for 5.30a version that can avoid
+to define some platform data in the glue layer.
 
-RZ/G3L requires an extra clock compared to RZ/G3E and has pps interrupts.
-
-Add a new compatible string "renesas,r9a08g046-gbeth" for RZ/G3L SoC and
-update the schema to handle hardware differences between SoC variants.
-
-Extend the base snps,dwmac.yaml schema to accommodate the PPS interrupts.
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://patch.msgid.link/20260131161250.5047-2-biju.das.jz@bp.renesas.com
+Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+Reviewed-by: Romain Gantois <romain.gantois@bootlin.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+Link: https://patch.msgid.link/20250307011623.440792-4-inochiama@gmail.com
 Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- .../bindings/net/renesas,rzv2h-gbeth.yaml     | 77 ++++++++++++++++---
- .../devicetree/bindings/net/snps,dwmac.yaml   |  3 +
- 2 files changed, 69 insertions(+), 11 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/net/renesas,rzv2h-gbeth.yaml b/Documentation/devicetree/bindings/net/renesas,rzv2h-gbeth.yaml
-index bd53ab300f50..fb60f745a1ff 100644
---- a/Documentation/devicetree/bindings/net/renesas,rzv2h-gbeth.yaml
-+++ b/Documentation/devicetree/bindings/net/renesas,rzv2h-gbeth.yaml
-@@ -26,6 +26,9 @@ select:
- properties:
-   compatible:
-     oneOf:
-+      - items:
-+          - const: renesas,r9a08g046-gbeth # RZ/G3L
-+          - const: snps,dwmac-5.30a
-       - items:
-           - enum:
-               - renesas,r9a09g047-gbeth # RZ/G3E
-@@ -47,13 +50,17 @@ properties:
-   clocks:
-     oneOf:
-       - items:
--          - description: CSR clock
--          - description: AXI system clock
-+          - description: CSR/Register access clock
-+          - description: AXI system/Main clock
-           - description: PTP clock
-           - description: TX clock
-           - description: RX clock
-           - description: TX clock phase-shifted by 180 degrees
-           - description: RX clock phase-shifted by 180 degrees
-+          - description: RMII clock
-+
-+        minItems: 7
-+
-       - items:
-           - description: CSR clock
-           - description: AXI system clock
-@@ -69,6 +76,10 @@ properties:
-           - const: rx
-           - const: tx-180
-           - const: rx-180
-+          - const: rmii
-+
-+        minItems: 7
-+
-       - items:
-           - const: stmmaceth
-           - const: pclk
-@@ -88,6 +99,22 @@ properties:
-           - const: tx-queue-1
-           - const: tx-queue-2
-           - const: tx-queue-3
-+      - items:
-+          - const: macirq
-+          - const: eth_wake_irq
-+          - const: eth_lpi
-+          - const: rx-queue-0
-+          - const: rx-queue-1
-+          - const: rx-queue-2
-+          - const: rx-queue-3
-+          - const: tx-queue-0
-+          - const: tx-queue-1
-+          - const: tx-queue-2
-+          - const: tx-queue-3
-+          - const: ptp-pps-0
-+          - const: ptp-pps-1
-+          - const: ptp-pps-2
-+          - const: ptp-pps-3
-       - items:
-           - const: macirq
-           - const: eth_wake_irq
-@@ -135,6 +162,27 @@ required:
- allOf:
-   - $ref: snps,dwmac.yaml#
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+index e685e715556d..a147243a7db6 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+@@ -412,6 +412,7 @@ static const char * const stmmac_gmac4_compats[] = {
+ 	"snps,dwmac-4.20a",
+ 	"snps,dwmac-5.10a",
+ 	"snps,dwmac-5.20",
++	"snps,dwmac-5.30a",
+ 	NULL
+ };
  
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: renesas,r9a08g046-gbeth
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 8
-+
-+        clock-names:
-+          minItems: 8
-+
-+        interrupts:
-+          minItems: 15
-+          maxItems: 15
-+
-+        interrupt-names:
-+          minItems: 15
-+          maxItems: 15
-+
-   - if:
-       properties:
-         compatible:
-@@ -163,12 +211,26 @@ allOf:
-       required:
-         - reset-names
-     else:
-+      properties:
-+        resets:
-+          maxItems: 1
-+
-+        pcs-handle: false
-+
-+        reset-names: false
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: renesas,rzv2h-gbeth
-+    then:
-       properties:
-         clocks:
--          minItems: 7
-+          maxItems: 7
- 
-         clock-names:
--          minItems: 7
-+          maxItems: 7
- 
-         interrupts:
-           minItems: 11
-@@ -178,13 +240,6 @@ allOf:
-           minItems: 11
-           maxItems: 11
- 
--        resets:
--          maxItems: 1
--
--        pcs-handle: false
--
--        reset-names: false
--
- unevaluatedProperties: false
- 
- examples:
-diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-index 68f8da626d47..4ae68ab70dee 100644
---- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-+++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-@@ -71,6 +71,7 @@ properties:
-         - qcom,sc8280xp-ethqos
-         - qcom,sm8150-ethqos
-         - renesas,r9a06g032-gmac
-+        - renesas,r9a08g046-gbeth
-         - renesas,r9a09g077-gbeth
-         - renesas,rzn1-gmac
-         - renesas,rzv2h-gbeth
-@@ -127,6 +128,8 @@ properties:
-           pattern: '^rx-queue-[0-7]$'
-         - description: Per channel transmit completion interrupt
-           pattern: '^tx-queue-[0-7]$'
-+        - description: PPS interrupt
-+          pattern: '^ptp-pps-[0-3]$'
- 
-   clocks:
-     minItems: 1
 -- 
 2.43.0
 
