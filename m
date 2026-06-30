@@ -2,56 +2,56 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CDEDC43638
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD5CEC44502
 	for <webhook@archiver.kernel.org>; Tue, 30 Jun 2026 11:48:56 +0000 (UTC)
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.19076.1782820134352730599
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.19424.1782820128193930012
  for <cip-dev@lists.cip-project.org>;
- Tue, 30 Jun 2026 04:48:54 -0700
+ Tue, 30 Jun 2026 04:48:48 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=eoxWFCBc;
- spf=pass (domain: gmail.com, ip: 209.85.221.52, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-46ed4f66256so3504787f8f.3
-        for <cip-dev@lists.cip-project.org>; Tue, 30 Jun 2026 04:48:54 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=PnTgcqAo;
+ spf=pass (domain: gmail.com, ip: 209.85.221.47, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-47640541585so122940f8f.1
+        for <cip-dev@lists.cip-project.org>; Tue, 30 Jun 2026 04:48:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782820132; x=1783424932; darn=lists.cip-project.org;
+        d=gmail.com; s=20251104; t=1782820126; x=1783424926; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2Pk+t91PnHM/YpTYXXuIgIoa0CUe6hKAKB5r9r7Ppno=;
-        b=eoxWFCBcMosIEBsmVeR0s9/6Lhl8Ohbnm4lVhu4ooM/c42Urbv7xUe4cF5S5/CAukW
-         cNftO3CVchXGJ9EXf5bhNnaY+x2b4XDoiZQCWEymoI6+80TPMMCiWcSXElDEU6P01nuW
-         jAhlytwurSXhRZWjypTUZ5RqvA8d3vBpQQcHkZ4ftmBj6E4joZ0mVNR3WwSD5cXAgBsJ
-         6QYuzdSZKjQ1ZH4sGsdzJWAFLzd1TMnf2SMaw+sDcgoC6BFRVu41h6zGlKl3EbE7zHwX
-         tue0ueL1mehkV8VF3ikH9G6+1SJYNEFSUIQsDIBdBarw6Az+KQ/CCk9a/rVzdJdGavWl
-         qbBA==
+        bh=2uw6xrZ9x0Irx5MHh9Ql6EW6GRexvK4DCsNxBxgCX3A=;
+        b=PnTgcqAoZaoKQQK4hY3rQLsY/iSzZOaaFYMOCgw89BBpAUBlDS4PagNyJuCRdLhzUz
+         88khgtdPDa4iPEMkLLcvp4Cxip9yV+IAxikdMQJIPW0tJvoCU9kcp7BUEKVwwBG28vcW
+         tqLd27m7BMV5WD9aw6lbBS2IQPO8Dbyw2XWiv1ThoR+95pt6038oA6i272pfhNSjefZK
+         jXysm2rRXdRRiJxX77IoOOq9AXBYvDD4F5HR3thiEfDvgI5v0yZnVazAZSr2V+scv/66
+         5N/BjkkMEBJLq+5RMnES8vrBTpBwqHSuI2llCglEtmrPzGRjHBg3EfXbw4410nUVHF98
+         9mKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782820132; x=1783424932;
+        d=1e100.net; s=20251104; t=1782820126; x=1783424926;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=2Pk+t91PnHM/YpTYXXuIgIoa0CUe6hKAKB5r9r7Ppno=;
-        b=KhQjmkeyYjgPKt99lyZXbfOo5qhfjhH8KkX9uxqLFCMA8GhF8SMoLFWSf2Us32T8TE
-         SCkK5PDBoVu8IjA5aymtm9ksL3n1Ii0GV5c0fRLcv2+7pk6Y2uIDUS9GZdmHQot5XuhK
-         iFS4CCEvGS31cRtvG8ZPVHtWfdgkUp6MSGEzK9ZNXVcCam8bfIJCfu0ezIO2erkwjRDv
-         rvQqxsXdZgsl2uFgfFkfpkUUNyKUTWmmePTkfqlNjT6jSbkMyfiahqeZVHyzcRe4Lt3i
-         Dd7NL5f5paVEHPOr/eIS1X+TiM5/vh9ATFi0tdPX8+3gqyCbaDZG/Kzph6mAP9QWxTcC
-         boVQ==
-X-Gm-Message-State: AOJu0YwwO4r8QLVih3q5AFONFE1RtCRKxPu/R7qCZ7swICHUAR5mhuy7
-	hOOYIkOLYMyin9W0rhFvuDnZC33eXwRRD/4lJlLDf3f7wlKYBprP3qUHEDxTba8f
-X-Gm-Gg: AfdE7clraPzOBmppC7Y+sRvMHFmFb5Etu9YbsEzs+lLiDtBBtACgiGfu7W4hUyBz8gj
-	/sJJhD2v3ZX1ocaJU6hYBoXcBdKsM2K5DpdOXZLUIii+XPpHwve8kJL850YPZfCqxbEJiW7vKgB
-	vz3EEOs547zbJUBkriSKjtvyvGnCHtrHUtoIJX8ZAE1401WZDDy2+4c5FZ+gVTgJA0LmI4TZh2t
-	Gs7F1cYmuZQHaRVwCq4FkgbPn+/XJTjZtGu1UM7HAG7tnoB0FqajkOsAx3v3sJwxHBmtT60Iwbv
-	Ha2lsiOrWbhc1FMqc/qlvUVC1l3R3MSF7MoGEoTH5h7K9Xiq2yZ14FphY6myNR1CB6KxFqEY7+r
-	y4xRUsEHrYX4Lc9z387skEYhPcgdPws6NHB/Aa57htcaH+5C+ZDqTLUOI+TjtwBUiABSZC7n70I
-	v5Kk/P0sOshMOozEQ3I+yimp5/9Qg4JEw2emW8xA==
-X-Received: by 2002:a05:6000:184f:b0:475:f0d1:eb70 with SMTP id ffacd0b85a97d-475f0d1ed5fmr2481092f8f.61.1782820132266;
-        Tue, 30 Jun 2026 04:48:52 -0700 (PDT)
+        bh=2uw6xrZ9x0Irx5MHh9Ql6EW6GRexvK4DCsNxBxgCX3A=;
+        b=H8sLCIbYR8YCUx16JOhRCsHFOSjzhy0/Gx0t5brq8lomlvUDLuXpR+T4QhtABuV8xW
+         Z/eGj7zYsqqb1E2kD2z7dA5tEXaDfw1/1PjTqiqnqLS2XZK3gHDObx9D9yLOkM584w29
+         QoqXmANfgQQiCqTzvHNcgDPmLTacHyE5UxwXmQyD6jb3jwHr6OFUouQOGhu4tnXwAiL9
+         QXRUQOZnN2sg++Zh1LxsomO6TeuXgP45FqbfB9v7tIobaqkQ8mKewg/pfZFcsBLrWHfz
+         HxYYKyKO/RsRDO2Y/0JZ1v1aRwS0rAcFOQGYpd50yoBtBp3/9Q9LL1Cde1PlMYl/KQf+
+         Hr1w==
+X-Gm-Message-State: AOJu0Ywm/Yyulgwt4gcAGoUIGEy9sBKct66JTXO92o6bUHfmVLaIOJQ5
+	jhQ4q9XD6LPWuOc5o3LPYs7Xx6qSea3A05b4SutxKQJFKKWNYUfue8ASPa+Xy6qy
+X-Gm-Gg: AfdE7cmkni/6wmZ3zc0IpMFM34eQqbKmrfugmO2jZmqfLGY7CNUW5AMIP80XeScjM/k
+	ym28IfyNw+GL4zHBVtI2GfKiDYWXKXLTEi8sFjTn1Fdu4hMlhNmWYM/FSzey3jmjf/YUF9eAVRn
+	U0WxCDY2sKk6v+386bT6Wjl9z9/dklDeUx/WD3XFjSpsPuDgjV5/18+CZVw5B/2TUpXOn99OgCg
+	fFXvfzplnjEysDSbaFvWMfcCKSqexpjE48JTfJGteD52hX8/YjTdgqSSKUFcj2sgLKEB38MAVfk
+	gGuY3g/3N8T3uTWT4MgyR7o4D3gh+TgC2S49Fk3U0uS0JyBhh8u5Qujay1/uqlMLcZzKOjsUaJW
+	lXsiQQK398TwVdrsCAC9IyCQeFMyT9d+99HjKYXTdwY/j6mdC397Ewf1XgPRYBMU3Zt2LZtHZ/f
+	3+PcCDx0fOHg0FoyXuHo2AW9IIixx81xcvlaHtEA==
+X-Received: by 2002:adf:e74c:0:b0:463:2220:4ff0 with SMTP id ffacd0b85a97d-4765907533amr187669f8f.27.1782820126309;
+        Tue, 30 Jun 2026 04:48:46 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a702:d301:3f6d:4f26:2d9c:ab4f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-475641e4542sm7343031f8f.10.2026.06.30.04.48.51
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-475641e4542sm7343031f8f.10.2026.06.30.04.48.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jun 2026 04:48:51 -0700 (PDT)
+        Tue, 30 Jun 2026 04:48:46 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,9 +59,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 20/39] clk: renesas: Add support for RZ/G3L SoC
-Date: Tue, 30 Jun 2026 12:47:39 +0100
-Message-ID: <20260630114813.92739-21-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 11/39] clk: renesas: rzg2l: Rename mstp_clock to mod_clock
+Date: Tue, 30 Jun 2026 12:47:30 +0100
+Message-ID: <20260630114813.92739-12-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260630114813.92739-1-biju.das.jz@bp.renesas.com>
 References: <20260630114813.92739-1-biju.das.jz@bp.renesas.com>
@@ -71,264 +71,198 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 30 Jun 2026 11:48:56 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23344
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23335
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 77894661c00ab99053c9606f0f7ec673065f86ac ]
+[ Upstream commit b263e653c3722349a6efbb42d9e683d8ed1c24bf ]
 
-The clock structure for RZ/G3L is almost identical to that of the RZ/G3S
-SoC with more IP blocks such as LCDC, CRU, LVDS, and GPU.
+The mstp_clock structure really represents a module clock (cfr. the
+various rzg2l_mod_clock_*() functions and the to_mod_clock() helper),
+and is not directly related to the "Module stop state".
+Rename it to "mod_clock", and replace "mstp_clock" by "mod_clock".
+to avoid confusion with the mstop registers.
 
-Add minimal clock and reset entries required to boot the system on
-Renesas RZ/G3L SMARC EVK and bind it with the RZ/G2L CPG core driver.
-
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20260324114329.268249-8-biju.das.jz@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Link: https://lore.kernel.org/53b3a730a784650762cdb27fdbde7a45b0c20db8.1749119264.git.geert+renesas@glider.be
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/clk/renesas/Kconfig         |   7 +-
- drivers/clk/renesas/Makefile        |   1 +
- drivers/clk/renesas/r9a08g046-cpg.c | 153 ++++++++++++++++++++++++++++
- drivers/clk/renesas/rzg2l-cpg.c     |   6 ++
- drivers/clk/renesas/rzg2l-cpg.h     |   1 +
- 5 files changed, 167 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/renesas/r9a08g046-cpg.c
+ drivers/clk/renesas/rzg2l-cpg.c | 44 ++++++++++++++++-----------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
-index 6a5a04664990..0203ecbb3882 100644
---- a/drivers/clk/renesas/Kconfig
-+++ b/drivers/clk/renesas/Kconfig
-@@ -39,6 +39,7 @@ config CLK_RENESAS
- 	select CLK_R9A07G044 if ARCH_R9A07G044
- 	select CLK_R9A07G054 if ARCH_R9A07G054
- 	select CLK_R9A08G045 if ARCH_R9A08G045
-+	select CLK_R9A08G046 if ARCH_R9A08G046
- 	select CLK_R9A09G011 if ARCH_R9A09G011
- 	select CLK_R9A09G047 if ARCH_R9A09G047
- 	select CLK_R9A09G056 if ARCH_R9A09G056
-@@ -194,6 +195,10 @@ config CLK_R9A08G045
- 	bool "RZ/G3S clock support" if COMPILE_TEST
- 	select CLK_RZG2L
- 
-+config CLK_R9A08G046
-+	bool "RZ/G3L clock support" if COMPILE_TEST
-+	select CLK_RZG2L
-+
- config CLK_R9A09G011
- 	bool "RZ/V2M clock support" if COMPILE_TEST
- 	select CLK_RZG2L
-@@ -250,7 +255,7 @@ config CLK_RCAR_USB2_CLOCK_SEL
- 	  This is a driver for R-Car USB2 clock selector
- 
- config CLK_RZG2L
--	bool "RZ/{G2L,G2UL,G3S,V2L} family clock support" if COMPILE_TEST
-+	bool "RZ/{G2{L,UL},G3{S,L},V2L} family clock support" if COMPILE_TEST
- 	select RESET_CONTROLLER
- 
- config CLK_RZV2H
-diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
-index d28eb276a153..bd2bed91ab29 100644
---- a/drivers/clk/renesas/Makefile
-+++ b/drivers/clk/renesas/Makefile
-@@ -36,6 +36,7 @@ obj-$(CONFIG_CLK_R9A07G043)		+= r9a07g043-cpg.o
- obj-$(CONFIG_CLK_R9A07G044)		+= r9a07g044-cpg.o
- obj-$(CONFIG_CLK_R9A07G054)		+= r9a07g044-cpg.o
- obj-$(CONFIG_CLK_R9A08G045)		+= r9a08g045-cpg.o
-+obj-$(CONFIG_CLK_R9A08G046)		+= r9a08g046-cpg.o
- obj-$(CONFIG_CLK_R9A09G011)		+= r9a09g011-cpg.o
- obj-$(CONFIG_CLK_R9A09G047)		+= r9a09g047-cpg.o
- obj-$(CONFIG_CLK_R9A09G056)		+= r9a09g056-cpg.o
-diff --git a/drivers/clk/renesas/r9a08g046-cpg.c b/drivers/clk/renesas/r9a08g046-cpg.c
-new file mode 100644
-index 000000000000..6759957980f2
---- /dev/null
-+++ b/drivers/clk/renesas/r9a08g046-cpg.c
-@@ -0,0 +1,153 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * RZ/G3L CPG driver
-+ *
-+ * Copyright (C) 2026 Renesas Electronics Corp.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+
-+#include <dt-bindings/clock/renesas,r9a08g046-cpg.h>
-+
-+#include "rzg2l-cpg.h"
-+
-+/* RZ/G3L Specific registers. */
-+#define G3L_CPG_PL2_DDIV		(0x204)
-+#define G3L_CPG_PL3_DDIV		(0x208)
-+#define G3L_CLKDIVSTATUS		(0x280)
-+
-+/* RZ/G3L Specific division configuration.  */
-+#define G3L_DIVPL2A		DDIV_PACK(G3L_CPG_PL2_DDIV, 0, 2)
-+#define G3L_DIVPL2B		DDIV_PACK(G3L_CPG_PL2_DDIV, 4, 2)
-+#define G3L_DIVPL3A		DDIV_PACK(G3L_CPG_PL3_DDIV, 0, 2)
-+
-+/* RZ/G3L Clock status configuration. */
-+#define G3L_DIVPL2A_STS		DDIV_PACK(G3L_CLKDIVSTATUS, 4, 1)
-+#define G3L_DIVPL2B_STS		DDIV_PACK(G3L_CLKDIVSTATUS, 5, 1)
-+#define G3L_DIVPL3A_STS		DDIV_PACK(G3L_CLKDIVSTATUS, 8, 1)
-+
-+enum clk_ids {
-+	/* Core Clock Outputs exported to DT */
-+	LAST_DT_CORE_CLK = R9A08G046_USB_SCLK,
-+
-+	/* External Input Clocks */
-+	CLK_EXTAL,
-+	CLK_ETH0_TXC_TX_CLK_IN,
-+	CLK_ETH0_RXC_RX_CLK_IN,
-+	CLK_ETH1_TXC_TX_CLK_IN,
-+	CLK_ETH1_RXC_RX_CLK_IN,
-+
-+	/* Internal Core Clocks */
-+	CLK_PLL2,
-+	CLK_PLL2_DIV2,
-+	CLK_PLL3,
-+	CLK_PLL3_DIV2,
-+
-+	/* Module Clocks */
-+	MOD_CLK_BASE,
-+};
-+
-+/* Divider tables */
-+static const struct clk_div_table dtable_4_128[] = {
-+	{ 0, 4 },
-+	{ 1, 8 },
-+	{ 2, 16 },
-+	{ 3, 128 },
-+	{ 0, 0 },
-+};
-+
-+static const struct clk_div_table dtable_8_256[] = {
-+	{ 0, 8 },
-+	{ 1, 16 },
-+	{ 2, 32 },
-+	{ 3, 256 },
-+	{ 0, 0 },
-+};
-+
-+static const struct cpg_core_clk r9a08g046_core_clks[] __initconst = {
-+	/* External Clock Inputs */
-+	DEF_INPUT("extal", CLK_EXTAL),
-+	DEF_INPUT("eth0_txc_tx_clk", CLK_ETH0_TXC_TX_CLK_IN),
-+	DEF_INPUT("eth0_rxc_rx_clk", CLK_ETH0_RXC_RX_CLK_IN),
-+	DEF_INPUT("eth1_txc_tx_clk", CLK_ETH1_TXC_TX_CLK_IN),
-+	DEF_INPUT("eth1_rxc_rx_clk", CLK_ETH1_RXC_RX_CLK_IN),
-+
-+	/* Internal Core Clocks */
-+	DEF_FIXED(".pll2", CLK_PLL2, CLK_EXTAL, 200, 3),
-+	DEF_FIXED(".pll3", CLK_PLL3, CLK_EXTAL, 200, 3),
-+	DEF_FIXED(".pll2_div2", CLK_PLL2_DIV2, CLK_PLL2, 1, 2),
-+	DEF_FIXED(".pll3_div2", CLK_PLL3_DIV2, CLK_PLL3, 1, 2),
-+
-+	/* Core output clk */
-+	DEF_G3S_DIV("P0", R9A08G046_CLK_P0, CLK_PLL2_DIV2, G3L_DIVPL2B, G3L_DIVPL2B_STS,
-+		    dtable_8_256, 0, 0, 0, NULL),
-+	DEF_G3S_DIV("P1", R9A08G046_CLK_P1, CLK_PLL3_DIV2, G3L_DIVPL3A, G3L_DIVPL3A_STS,
-+		    dtable_4_128, 0, 0, 0, NULL),
-+	DEF_G3S_DIV("P3", R9A08G046_CLK_P3, CLK_PLL2_DIV2, G3L_DIVPL2A, G3L_DIVPL2A_STS,
-+		    dtable_4_128, 0, 0, 0, NULL),
-+};
-+
-+static const struct rzg2l_mod_clk r9a08g046_mod_clks[] = {
-+	DEF_MOD("gic_gicclk",		R9A08G046_GIC600_GICCLK, R9A08G046_CLK_P1, 0x514, 0,
-+					MSTOP(BUS_PERI_COM, BIT(12))),
-+	DEF_MOD("ia55_pclk",		R9A08G046_IA55_PCLK, R9A08G046_CLK_P0, 0x518, 0,
-+					MSTOP(BUS_PERI_CPU, BIT(13))),
-+	DEF_MOD("ia55_clk",		R9A08G046_IA55_CLK, R9A08G046_CLK_P1, 0x518, 1,
-+					MSTOP(BUS_PERI_CPU, BIT(13))),
-+	DEF_MOD("dmac_aclk",		R9A08G046_DMAC_ACLK, R9A08G046_CLK_P3, 0x52c, 0,
-+					MSTOP(BUS_REG1, BIT(2))),
-+	DEF_MOD("dmac_pclk",		R9A08G046_DMAC_PCLK, R9A08G046_CLK_P3, 0x52c, 1,
-+					MSTOP(BUS_REG1, BIT(3))),
-+	DEF_MOD("scif0_clk_pck",	R9A08G046_SCIF0_CLK_PCK, R9A08G046_CLK_P0, 0x584, 0,
-+					MSTOP(BUS_MCPU2, BIT(1))),
-+};
-+
-+static const struct rzg2l_reset r9a08g046_resets[] = {
-+	DEF_RST(R9A08G046_GIC600_GICRESET_N, 0x814, 0),
-+	DEF_RST(R9A08G046_GIC600_DBG_GICRESET_N, 0x814, 1),
-+	DEF_RST(R9A08G046_IA55_RESETN, 0x818, 0),
-+	DEF_RST(R9A08G046_DMAC_ARESETN, 0x82c, 0),
-+	DEF_RST(R9A08G046_DMAC_RST_ASYNC, 0x82c, 1),
-+	DEF_RST(R9A08G046_SCIF0_RST_SYSTEM_N, 0x884, 0),
-+};
-+
-+static const unsigned int r9a08g046_crit_mod_clks[] __initconst = {
-+	MOD_CLK_BASE + R9A08G046_GIC600_GICCLK,
-+	MOD_CLK_BASE + R9A08G046_IA55_CLK,
-+	MOD_CLK_BASE + R9A08G046_DMAC_ACLK,
-+};
-+
-+static const unsigned int r9a08g046_crit_resets[] = {
-+	R9A08G046_DMAC_ARESETN,
-+	R9A08G046_DMAC_RST_ASYNC,
-+};
-+
-+const struct rzg2l_cpg_info r9a08g046_cpg_info = {
-+	/* Core Clocks */
-+	.core_clks = r9a08g046_core_clks,
-+	.num_core_clks = ARRAY_SIZE(r9a08g046_core_clks),
-+	.last_dt_core_clk = LAST_DT_CORE_CLK,
-+	.num_total_core_clks = MOD_CLK_BASE,
-+
-+	/* Critical Module Clocks */
-+	.crit_mod_clks = r9a08g046_crit_mod_clks,
-+	.num_crit_mod_clks = ARRAY_SIZE(r9a08g046_crit_mod_clks),
-+
-+	/* Module Clocks */
-+	.mod_clks = r9a08g046_mod_clks,
-+	.num_mod_clks = ARRAY_SIZE(r9a08g046_mod_clks),
-+	.num_hw_mod_clks = R9A08G046_BSC_X_BCK_BSC + 1,
-+
-+	/* Resets */
-+	.resets = r9a08g046_resets,
-+	.num_resets = R9A08G046_BSC_X_PRESET_BSC + 1, /* Last reset ID + 1 */
-+
-+	/* Critical Resets */
-+	.crit_resets = r9a08g046_crit_resets,
-+	.num_crit_resets = ARRAY_SIZE(r9a08g046_crit_resets),
-+
-+	.has_clk_mon_regs = true,
-+};
 diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index 3e41ed90a7eb..5ced73696efa 100644
+index 0852fb27e039..c26b0a85df43 100644
 --- a/drivers/clk/renesas/rzg2l-cpg.c
 +++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -2153,6 +2153,12 @@ static const struct of_device_id rzg2l_cpg_match[] = {
- 		.data = &r9a08g045_cpg_info,
- 	},
- #endif
-+#ifdef CONFIG_CLK_R9A08G046
-+	{
-+		.compatible = "renesas,r9a08g046-cpg",
-+		.data = &r9a08g046_cpg_info,
-+	},
-+#endif
- #ifdef CONFIG_CLK_R9A09G011
- 	{
- 		.compatible = "renesas,r9a09g011-cpg",
-diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
-index af0a003d93f7..10baf9e71a6e 100644
---- a/drivers/clk/renesas/rzg2l-cpg.h
-+++ b/drivers/clk/renesas/rzg2l-cpg.h
-@@ -316,6 +316,7 @@ extern const struct rzg2l_cpg_info r9a07g043_cpg_info;
- extern const struct rzg2l_cpg_info r9a07g044_cpg_info;
- extern const struct rzg2l_cpg_info r9a07g054_cpg_info;
- extern const struct rzg2l_cpg_info r9a08g045_cpg_info;
-+extern const struct rzg2l_cpg_info r9a08g046_cpg_info;
- extern const struct rzg2l_cpg_info r9a09g011_cpg_info;
+@@ -1314,7 +1314,7 @@ struct mstop {
+ };
  
- int rzg2l_cpg_sd_clk_mux_notifier(struct notifier_block *nb, unsigned long event, void *data);
+ /**
+- * struct mstp_clock - MSTP gating clock
++ * struct mod_clock - Module clock
+  *
+  * @hw: handle between common and hardware-specific interfaces
+  * @priv: CPG/MSTP private data
+@@ -1326,19 +1326,19 @@ struct mstop {
+  * @num_shared_mstop_clks: number of the clocks sharing MSTOP with this clock
+  * @enabled: soft state of the clock, if it is coupled with another clock
+  */
+-struct mstp_clock {
++struct mod_clock {
+ 	struct clk_hw hw;
+ 	struct rzg2l_cpg_priv *priv;
+-	struct mstp_clock *sibling;
++	struct mod_clock *sibling;
+ 	struct mstop *mstop;
+-	struct mstp_clock **shared_mstop_clks;
++	struct mod_clock **shared_mstop_clks;
+ 	u16 off;
+ 	u8 bit;
+ 	u8 num_shared_mstop_clks;
+ 	bool enabled;
+ };
+ 
+-#define to_mod_clock(_hw) container_of(_hw, struct mstp_clock, hw)
++#define to_mod_clock(_hw) container_of(_hw, struct mod_clock, hw)
+ 
+ #define for_each_mod_clock(mod_clock, hw, priv) \
+ 	for (unsigned int i = 0; (priv) && i < (priv)->num_mod_clks; i++) \
+@@ -1348,7 +1348,7 @@ struct mstp_clock {
+ 			 ((mod_clock) = to_mod_clock(hw)))
+ 
+ /* Need to be called with a lock held to avoid concurrent access to mstop->usecnt. */
+-static void rzg2l_mod_clock_module_set_state(struct mstp_clock *clock,
++static void rzg2l_mod_clock_module_set_state(struct mod_clock *clock,
+ 					     bool standby)
+ {
+ 	struct rzg2l_cpg_priv *priv = clock->priv;
+@@ -1365,7 +1365,7 @@ static void rzg2l_mod_clock_module_set_state(struct mstp_clock *clock,
+ 		unsigned int criticals = 0;
+ 
+ 		for (unsigned int i = 0; i < clock->num_shared_mstop_clks; i++) {
+-			struct mstp_clock *clk = clock->shared_mstop_clks[i];
++			struct mod_clock *clk = clock->shared_mstop_clks[i];
+ 
+ 			if (clk_hw_get_flags(&clk->hw) & CLK_IS_CRITICAL)
+ 				criticals++;
+@@ -1407,7 +1407,7 @@ static void rzg2l_mod_clock_module_set_state(struct mstp_clock *clock,
+ static int rzg2l_mod_clock_mstop_show(struct seq_file *s, void *what)
+ {
+ 	struct rzg2l_cpg_priv *priv = s->private;
+-	struct mstp_clock *clk;
++	struct mod_clock *clk;
+ 	struct clk_hw *hw;
+ 
+ 	seq_printf(s, "%-20s %-5s %-10s\n", "", "", "MSTOP");
+@@ -1442,7 +1442,7 @@ DEFINE_SHOW_ATTRIBUTE(rzg2l_mod_clock_mstop);
+ 
+ static int rzg2l_mod_clock_endisable(struct clk_hw *hw, bool enable)
+ {
+-	struct mstp_clock *clock = to_mod_clock(hw);
++	struct mod_clock *clock = to_mod_clock(hw);
+ 	struct rzg2l_cpg_priv *priv = clock->priv;
+ 	unsigned int reg = clock->off;
+ 	struct device *dev = priv->dev;
+@@ -1489,7 +1489,7 @@ static int rzg2l_mod_clock_endisable(struct clk_hw *hw, bool enable)
+ 
+ static int rzg2l_mod_clock_enable(struct clk_hw *hw)
+ {
+-	struct mstp_clock *clock = to_mod_clock(hw);
++	struct mod_clock *clock = to_mod_clock(hw);
+ 
+ 	if (clock->sibling) {
+ 		struct rzg2l_cpg_priv *priv = clock->priv;
+@@ -1509,7 +1509,7 @@ static int rzg2l_mod_clock_enable(struct clk_hw *hw)
+ 
+ static void rzg2l_mod_clock_disable(struct clk_hw *hw)
+ {
+-	struct mstp_clock *clock = to_mod_clock(hw);
++	struct mod_clock *clock = to_mod_clock(hw);
+ 
+ 	if (clock->sibling) {
+ 		struct rzg2l_cpg_priv *priv = clock->priv;
+@@ -1529,7 +1529,7 @@ static void rzg2l_mod_clock_disable(struct clk_hw *hw)
+ 
+ static int rzg2l_mod_clock_is_enabled(struct clk_hw *hw)
+ {
+-	struct mstp_clock *clock = to_mod_clock(hw);
++	struct mod_clock *clock = to_mod_clock(hw);
+ 	struct rzg2l_cpg_priv *priv = clock->priv;
+ 	u32 bitmask = BIT(clock->bit);
+ 	u32 value;
+@@ -1556,11 +1556,11 @@ static const struct clk_ops rzg2l_mod_clock_ops = {
+ 	.is_enabled = rzg2l_mod_clock_is_enabled,
+ };
+ 
+-static struct mstp_clock
+-*rzg2l_mod_clock_get_sibling(struct mstp_clock *clock,
++static struct mod_clock
++*rzg2l_mod_clock_get_sibling(struct mod_clock *clock,
+ 			     struct rzg2l_cpg_priv *priv)
+ {
+-	struct mstp_clock *clk;
++	struct mod_clock *clk;
+ 	struct clk_hw *hw;
+ 
+ 	for_each_mod_clock(clk, hw, priv) {
+@@ -1573,7 +1573,7 @@ static struct mstp_clock
+ 
+ static struct mstop *rzg2l_mod_clock_get_mstop(struct rzg2l_cpg_priv *priv, u32 conf)
+ {
+-	struct mstp_clock *clk;
++	struct mod_clock *clk;
+ 	struct clk_hw *hw;
+ 
+ 	for_each_mod_clock(clk, hw, priv) {
+@@ -1589,7 +1589,7 @@ static struct mstop *rzg2l_mod_clock_get_mstop(struct rzg2l_cpg_priv *priv, u32
+ 
+ static void rzg2l_mod_clock_init_mstop(struct rzg2l_cpg_priv *priv)
+ {
+-	struct mstp_clock *clk;
++	struct mod_clock *clk;
+ 	struct clk_hw *hw;
+ 
+ 	for_each_mod_clock(clk, hw, priv) {
+@@ -1609,9 +1609,9 @@ static void rzg2l_mod_clock_init_mstop(struct rzg2l_cpg_priv *priv)
+ }
+ 
+ static int rzg2l_mod_clock_update_shared_mstop_clks(struct rzg2l_cpg_priv *priv,
+-						    struct mstp_clock *clock)
++						    struct mod_clock *clock)
+ {
+-	struct mstp_clock *clk;
++	struct mod_clock *clk;
+ 	struct clk_hw *hw;
+ 
+ 	if (!clock->mstop)
+@@ -1619,7 +1619,7 @@ static int rzg2l_mod_clock_update_shared_mstop_clks(struct rzg2l_cpg_priv *priv,
+ 
+ 	for_each_mod_clock(clk, hw, priv) {
+ 		int num_shared_mstop_clks, incr = 1;
+-		struct mstp_clock **new_clks;
++		struct mod_clock **new_clks;
+ 
+ 		if (clk->mstop != clock->mstop)
+ 			continue;
+@@ -1653,7 +1653,7 @@ rzg2l_cpg_register_mod_clk(const struct rzg2l_mod_clk *mod,
+ 			   const struct rzg2l_cpg_info *info,
+ 			   struct rzg2l_cpg_priv *priv)
+ {
+-	struct mstp_clock *clock = NULL;
++	struct mod_clock *clock = NULL;
+ 	struct device *dev = priv->dev;
+ 	unsigned int id = mod->id;
+ 	struct clk_init_data init;
+@@ -1721,7 +1721,7 @@ rzg2l_cpg_register_mod_clk(const struct rzg2l_mod_clk *mod,
+ 	}
+ 
+ 	if (mod->is_coupled) {
+-		struct mstp_clock *sibling;
++		struct mod_clock *sibling;
+ 
+ 		clock->enabled = rzg2l_mod_clock_is_enabled(&clock->hw);
+ 		sibling = rzg2l_mod_clock_get_sibling(clock, priv);
 -- 
 2.43.0
 
