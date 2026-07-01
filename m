@@ -1,202 +1,223 @@
-Return-Path: <claudiu.beznea@tuxon.dev>
+Return-Path: <alexander.heinisch@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22254C43458
-	for <webhook@archiver.kernel.org>; Wed,  1 Jul 2026 13:35:04 +0000 (UTC)
-Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.45324.1782912901096795147
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA7FEC43458
+	for <webhook@archiver.kernel.org>; Wed,  1 Jul 2026 14:30:45 +0000 (UTC)
+Received: from MRWPR03CU001.outbound.protection.outlook.com (MRWPR03CU001.outbound.protection.outlook.com [40.107.130.60])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.46470.1782916244758459562
  for <cip-dev@lists.cip-project.org>;
- Wed, 01 Jul 2026 06:35:01 -0700
+ Wed, 01 Jul 2026 07:30:45 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.234.252.31, mailfrom: srs0=frra=e3=tuxon.dev=claudiu.beznea@kernel.org)
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by sea.source.kernel.org (Postfix) with ESMTP id 30202439FD;
-	Wed,  1 Jul 2026 13:35:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C4061F00A3A;
-	Wed,  1 Jul 2026 13:34:58 +0000 (UTC)
-Message-ID: <22407076-5811-4184-9c33-8278d7538488@tuxon.dev>
-Date: Wed, 1 Jul 2026 16:34:57 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [cip-dev] [PATCH 6.12.y-cip 00/17] Backport RZ/G3S USB support
-To: Biju Das <biju.das.jz@bp.renesas.com>,
- "nobuhiro.iwamatsu.x90@mail.toshiba" <nobuhiro.iwamatsu.x90@mail.toshiba>,
- "pavel@nabladev.com" <pavel@nabladev.com>
-Cc: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-References: <20260610194849.2502517-1-claudiu.beznea@kernel.org>
- <TY7PR01MB1481870E0F531E41AE63C8462CD1B2@TY7PR01MB14818.jpnprd01.prod.outlook.com>
- <aisi82Eui1N1svgC@duo.ucw.cz>
- <38f60ffa-0dda-4e8b-a1da-82f9288e1faa@tuxon.dev>
- <ajBolVke5ENiZ9n2@duo.ucw.cz>
- <TY7PR01MB148180CBA9D53CA9256F7189CCDE62@TY7PR01MB14818.jpnprd01.prod.outlook.com>
- <TY3PR01MB113465DBF7530E6B918E49F3486E42@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=mi2grDRo;
+ spf=pass (domain: siemens.com, ip: 40.107.130.60, mailfrom: alexander.heinisch@siemens.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cJTLRrdiOiRAVP6bi7JFgJ3jBdchvC7BFkwjUx+ISNJx1Oj3I7/UIKQI8T4/gZe/0MumqbmKR3PVWvstOwAOeRr10Ha2rFzgl6/miXXxlkcBhRRF1/tAw4uNNDRDDHfRMvyksXLXQ2S1XY8+aX9l21MlAlUtoQx/iq1SkwgdyMYy78MfigQddada3BAyp6qV7hkGza9FHDsl1AhTp+TOHQgxqIcC5cT35fDbve0GBmz82bt4B8GLFgcJpVal6Rj1wbtRpFBgqrr27zJJFKHA67aziDZt/YfUDWOpRigwZ0adRVumyKMuh3z0j1J44GReZb/RGiHamSoXkrEXSyBx5w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JUYNNvF9BH8WEt23WhYZVu+/dlB4R+TAF9cA6QZvkEw=;
+ b=CqyCJtsn2o9A7eezJrk7TJoTepdtvkpbltoBoMnz2WaNOc22gCy/EVGYM7/6zs+3MX+kzHnhpD5VuKcg+YnT3GQEOdcqfBKviHGAEjIDMY0nGrnsEblEM5IZxdMMoX/wLmUKkksyC6AkKRITz6mHnIkdqCYoTEl7yxqNAb3XmrtWHthEV4HGVyMysNuH+XA6JHE/qv/xsL79/0Uq+bqIIcd6V5UTcntCJppc5PRjAHnWUc0gmXFVdJ7Hjuvw5a4FQyHLXiPij2C6naegeF42SSPzGdojgbPwS6cqk8oo3XuYVDNedYFihViOqPSKVCMatfJEKO8BjRfpbF1i1LcuhA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JUYNNvF9BH8WEt23WhYZVu+/dlB4R+TAF9cA6QZvkEw=;
+ b=mi2grDRoufAlhAMICR2v5oiecQDOy1sBVEo6doTd0kTTii4mZWbv1zRaACcQ2YMdqRb6BD4elK+l/kvfAOndYsOVRi7iTezHOgnTdL1hDK8GQLcpOQVApr4ekFVcPtPu8awOzxSoSmsiLsf11JPDai9RAH7fswru7GwcIiwuarCQjgPAJWwwyAZfPNt+qnWQ0Tx6XxFUiWihHA9cgTOj6AW1mTUdMgze/0keyZh4YsvmzYKN6si8NNKZ/NWUd9TrcjefGZHLrMvwSzxcgeazhdRKzCLbXwCqt9owCrdJMVVzKmgjfeyWIgWGRmjJLPE2+9bYYhC8cK4gZnvU7ZRtSw==
+Received: from DB9PR10MB8045.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:4ed::14)
+ by DU4PR10MB8349.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:56b::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.159.16; Wed, 1 Jul
+ 2026 14:30:39 +0000
+Received: from DB9PR10MB8045.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::2339:186:874d:c405]) by DB9PR10MB8045.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::2339:186:874d:c405%3]) with mapi id 15.21.0181.008; Wed, 1 Jul 2026
+ 14:30:39 +0000
+From: "Heinisch, Alexander" <alexander.heinisch@siemens.com>
+To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+	"M.tenBerge@awl.nl" <M.tenBerge@awl.nl>
+Subject: Re: [cip-dev] [isar-cip-core] Support for systemd-sysusers?
+Thread-Topic: [cip-dev] [isar-cip-core] Support for systemd-sysusers?
+Thread-Index: AQHdAhUNS4cXcjLtBUS70Wa412Hh3rZKVGuAgABATgCADjN7AA==
+Date: Wed, 1 Jul 2026 14:30:39 +0000
+Message-ID: <de2e392a98aa6620e0f201c580cb8ccecb5d579b.camel@siemens.com>
+References: 
+ <DU2PR01MB849335D7E2B7ECFA6C2CEA1DE7E22@DU2PR01MB8493.eurprd01.prod.exchangelabs.com>
+	 <b55e2783072d6d4cc85bbe6fbe289678868d0f43.camel@siemens.com>
+	 <DU2PR01MB84936A72F86F8EF3D9EB69E0E7EF2@DU2PR01MB8493.eurprd01.prod.exchangelabs.com>
+In-Reply-To: 
+ <DU2PR01MB84936A72F86F8EF3D9EB69E0E7EF2@DU2PR01MB8493.eurprd01.prod.exchangelabs.com>
+Accept-Language: en-US, de-AT
 Content-Language: en-US
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <TY3PR01MB113465DBF7530E6B918E49F3486E42@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Evolution 3.56.2-0+deb13u1 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DB9PR10MB8045:EE_|DU4PR10MB8349:EE_
+x-ms-office365-filtering-correlation-id: 9398f524-7c67-43dc-2600-08ded77d52f5
+x-ms-exchange-atpmessageproperties: SA
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|4022899009|376014|23010399003|1800799024|366016|55112099003|18002099003|22082099003|38070700021|4133799003|4143699003|11063799006|56012099006;
+x-microsoft-antispam-message-info: 
+ j3CfETp4NjX3gysonQr4VOwTMmxDyS+9miYANYqWhALdQokUsM+8WkMrpU+2oO+Q5LV9AtS6x2bXHTuoBR4lWLoK1jkbo8cxD/2qn8B9brs2xaQxoBgu/co6fAAnx1wOZboVw2VlNDTTWAh5wKtxnZ8hV62tUv7jBfBAiyyWQD6mTrns7wOOskTX3n6ik4Pon/NH5H3aMvHxlmGz4aTI/JjbZco8Galqdf3xp+/yefiktmr+wBshrwHjm/xI79WiEyjnqG1AdQ2IoWF/US1F+uc+2WDaVqxtr2Xt1GwzegEooW1BkQ547aoNC+3CXqK8Y0hn8M5nbrKI9voFaMh1EXhoT/4Fi8Tmc69JlwrfJ65RmKIN30YBjSI4dmVLvqkCl8YdAfp1BI7kstsxeKe+/wAsc3XxysOK/k0uQ3iQGNVIYng0iyHxisdn8UHaKJ9FZckYfpZ5QEIqe81ao0SQyNa6waS2Orhtrs9IN6s45ob5Libh3zy92KLoeiwnLSazR19ZnRjjjxG+ZS8s0EXdnIe/F3kg4Evh9woLJ3dH0ZvdV8QhGvh56TGzKjW3uMlnCSXTjfexi/E5aDeVNJfuSceec4+iKxGj3h/abs92JvuP5aY/Mo+kJwURa4xPCtD74KAVkTQnpGrng1ZQB/gxfjm60ybCV2yfhc45kLYv6rk=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR10MB8045.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(4022899009)(376014)(23010399003)(1800799024)(366016)(55112099003)(18002099003)(22082099003)(38070700021)(4133799003)(4143699003)(11063799006)(56012099006);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?utf-8?B?VlozUHZiaVJRUkJQQ3U2bkxrTEM1SWNQSjJlOWxNcXVOdWd2a3dCR0d6OGJ3?=
+ =?utf-8?B?U1FFczVyNGZOWmJ3V3NhUlJSZEJLZk5FL3V1UnZvUFpITkFVZGduUGtJZVha?=
+ =?utf-8?B?T1Y1TFpkMTRhd0d4eFR2ZUNUQW5RYjl2Yy9nKzJ3NVl6ZmpiNVZtTXF0UVFY?=
+ =?utf-8?B?K1Y2elZ3TFIrdmhqR3g4QWhJZWJxZFlIV1dRT05EelNvQ1pxZXBQTUFQbU9T?=
+ =?utf-8?B?dXQxUnQzaG9Wbm5ycFY4NS9Gb3V3ODBjczB5THc5N2kzWG1qMm1lUUEveUdt?=
+ =?utf-8?B?SFViQnJmODQ2SGJua2hwRzdSU2I2TC9kQmhlaFNoOW1ncCtQQzgrLzgzbnZz?=
+ =?utf-8?B?ZDFrK0JrR1ZVMlM4VmZzUlhkU1czZTYrTEJzNzYvZ1ZnQ1pRUHFkQ2ZpaXVl?=
+ =?utf-8?B?QkFrWU1veGVrSk5KMXZybVd2UUNPNUpTT09nY2M0b0kySlVjc2docmZGZ2gy?=
+ =?utf-8?B?Q0VBbHh1MmszV3V1THJCcE5saDFkcElkNGd0ZlFoa0YvOUdwLzcrUnpCWGEv?=
+ =?utf-8?B?Mzl2ZzRjeFVIVmd4TkRnRjFSZFJyaXhkb0dvMHEvajdqSzM1SVVOUVBoN2My?=
+ =?utf-8?B?OTBoSVg0ekp4NjI0dWJkMEF3SVJ2Q2dneHdZWTYvMnc3QmZYbG5Xa0hJa1Nk?=
+ =?utf-8?B?UVQzNlAyN3V2aGtvN0tEbGdnemFUMXZhUmJjTjJ3blp5dGtxcXBZeWwwNDNq?=
+ =?utf-8?B?V0dlTzhMRGprMUtLNXYrSWttSkk5d1IyQUZ0ZTg1anZzOXRJQk55SDNSVUdi?=
+ =?utf-8?B?bEtkVkdNYi9GN0NJa3RzdG45UTc5ZlBvelE1bC9uRmZ4a2tCNDExc094ZTd4?=
+ =?utf-8?B?UUlVeXJ6ZjVHQUR5VVBQQ2V5RU80TE9UN0g5R2ZmT2RkVUkvWVFqeGFqd1M4?=
+ =?utf-8?B?UjhrUHp5dDBHVXJQSmRrbzVvY0lZWHpNcUxXZis0NzlGKzlZbkcvNjRvWVlS?=
+ =?utf-8?B?cTVjNE5iOFNPM1p5N2VxeUkvUmgwaURRR3hUZjZ4ME9EVW9qYzhsdzFrYUFj?=
+ =?utf-8?B?Znk1TytLSm1hUXBzSlIrKzEzU3JkcmVid0JDY1g0T2VwbERLcjFUaTM2NGFV?=
+ =?utf-8?B?OXdwNXh0UkZTTU8vVER0Nm9kSHQ4K2ZJd2FJbkkycGdaVUJtNFVsVDZ2S3R4?=
+ =?utf-8?B?MlRzcTdvV21JR2EvOUgzdTZ1ZFQxOHNkekRGaWpIWW00bWdvVU1RRWRqZmhl?=
+ =?utf-8?B?a1RZMEp4WXdWbVV4UXp0dmgzYWM4S1REU3R2b1FLSWZwMEFNYXUzeGZaTE1h?=
+ =?utf-8?B?VHJMcFF6TldWeU9KakdSZ3drN3REbGxPem01WXVoV2FwTHF2NWhwZ2krRTRh?=
+ =?utf-8?B?Rm5BMmw3Mjk0c2NYYjZYSnAxaXFEL2YybnFwaHFrZE11QWR6anFINUtsY1Bz?=
+ =?utf-8?B?cHZtWUJSZHZMSFc3Y2Z0VTlkSzIzbUJGNDRESGxYMnBuaDk3ZUoyeWcrbmNj?=
+ =?utf-8?B?N3B1U2dFWUtuc1NlekE4WEx4U3hCRjZnaDJhTGpIWFNxU1FSdWgyOTV4ekQ4?=
+ =?utf-8?B?SHh4RjI1Rlp3NE9LTDJNOUpqclJ5M21oV2FrbGtZUnlDY25nQ012aFo3T0Vz?=
+ =?utf-8?B?WFR0UFBlYndjWWt3dFlScGlTMnFTUU1SNSsyOTcvQTdSNTJSRWVQUnowY0Z2?=
+ =?utf-8?B?VFhpNHBqSHNCWk51c0JyTDJaV2FzbHM0MllpRVdvY1RUZDVWQTNzNERPU3RU?=
+ =?utf-8?B?SDdDRW1CL1F3Y0dGR0l4YXBkaEZPczVwa0RTZ2pUVU53cmRjM3NOaVlqczJ0?=
+ =?utf-8?B?emM0NHI1VWFsMHZIc0pjTWlMVTdxVnkxa09NWk4zajVIVmR1TEZscDE2WTJG?=
+ =?utf-8?B?NWhJQ1UrcGhNZmx1UVNSbkw0dDN6dXo5SWJZNm43b1dpd0ZCRU9XVVA0UU1n?=
+ =?utf-8?B?ckRXaTh0Ky91NU5SSDZMZGZJSDM1eHpWUm1valFPdVNQbC8xYkdOWE1OTDVX?=
+ =?utf-8?B?T3Y0MHQ3T09EOWorNEdyS1gzbDRQMGJFVjh2QUZ3dVhFYnJKa05sWGdxZ1U2?=
+ =?utf-8?B?QzBURGNCUVBGQ0hBMURCczVkR1EyQUxOeEI1VEt0eFJCVVc0TGZGN3pDTHNh?=
+ =?utf-8?B?c0dsSE9BWU01RGVOYVVsWHpQNTd2ekQrVXUxMHYvZmJiZjRhVkE4cHZkNEk0?=
+ =?utf-8?B?Z0o1dFRhWW1uRExVeC9uTXpXS2M1KzZpR2pMazJZSWRSSXpBSXZicjBZWVEy?=
+ =?utf-8?B?N1Z0SllPRkMrcDZ1VU9kSFJDSytyZEtSMVJMbEo5U21wVTdVeDJjMjdKNXBl?=
+ =?utf-8?B?YlpRZ2EvdG56M2NFdWZkbldIWm1rRkhwRWdJK3lRVkxYeUdKWGNoR3RhRk53?=
+ =?utf-8?B?S2FVRS85bFhZd1BuK2dzVlYvdlpTMEsyclM2WjkzV1lLbGFocXBQcm5MUUJh?=
+ =?utf-8?Q?nNURi8hvZXlkW/3s=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <262873759C058E4497A71857A983A863@EURPRD10.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR10MB8045.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9398f524-7c67-43dc-2600-08ded77d52f5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Jul 2026 14:30:39.5812
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: /lSaTLS0iQ4lcE6nDE0lsO9G/3N0G++scjZBJZZ9i1Bx//Npci/Gl2sKT3npQBpVmY96/F3AOFI0+OXBYFAcVV9TxtxMJVuakBcGvnK5W24=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR10MB8349
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 01 Jul 2026 13:35:04 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23370
+ <cip-dev@lists.cip-project.org>; Wed, 01 Jul 2026 14:30:45 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23371
 
-Hi, all,
-
-On 6/17/26 09:03, Biju Das wrote:
-> Hi,
->=20
->> -----Original Message-----
->> From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On=
- Behalf Of Nobuhiro Iwamatsu via
->> lists.cip-project.org
->> Sent: 16 June 2026 00:51
->> Subject: Re: [cip-dev] [PATCH 6.12.y-cip 00/17] Backport RZ/G3S USB su=
-pport
->>
->> Hi all,
->>
->>> -----Original Message-----
->>> From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> O=
-n
->>> Behalf Of Pavel Machek via lists.cip-project.org
->>> Sent: Tuesday, June 16, 2026 6:03 AM
->>> To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
->>> Cc: pavel@nabladev.com; iwamatsu nobuhiro(=E5=B2=A9=E6=9D=BE =E4=BF=A1=
-=E6=B4=8B =E2=96=A1=EF=BC=A4=EF=BC=A9=EF=BC=B4=EF=BC=A3=E2=97=8B=EF=BC=A3=
-=EF=BC=B0=EF=BC=B4)
->>> <nobuhiro.iwamatsu.x90@mail.toshiba>;
->>> cip-dev@lists.cip-project.org
->>> Subject: Re: [cip-dev] [PATCH 6.12.y-cip 00/17] Backport RZ/G3S USB
->>> support
->>>
->>> On Mon 2026-06-15 12:05:03, Claudiu Beznea wrote:
->>>> Hi,
->>>>
->>>> On 6/12/26 00:04, Pavel Machek via lists.cip-project.org wrote:
->>>>> Hi!
->>>>>
->>>>>> Thanks for your patch.
->>>>>> I reviewed this and other series, these seems to be fine.
->>>>>> I can apply this if tests are OK and there are no other comments.
->>>>>>     Reviewed-by: Nobuhiro Iwamatsu
->>>>>> <nobuhiro.iwamatsu.x90@mail.toshiba>
->>>>>
->>>>> I'm looking into it. As this modifies generic code, I suggest we
->>>>> are cautious here.
->>>> Please let me know if you want me to limit that code to RZ/G3S SoC o=
-nly.
->>>
->>> I'm still reviewing the series, sorry for delay.
->>>
->>> My first preffered option would be explanation why this is okay on
->>> 5.10: (Will it change behaviour on non-renesas boards? How sure we ar=
-e
->>> the behaviour change will not break something, or slow things down
->>> significantly?)
->>>
->>> +++ b/drivers/usb/host/ehci-platform.c
->>> @@ -442,6 +442,17 @@ static int __maybe_unused ehci_platform_suspend(=
-struct device *dev)
->>>          if (pdata->power_suspend)
->>>                  pdata->power_suspend(pdev);
->>>
->>> +       ret =3D reset_control_assert(priv->rsts);
->>> +       if (ret) {
->>> +               if (pdata->power_on)
->>> +                       pdata->power_on(pdev);
->>> +
->>> +               ehci_resume(hcd, false);
->>> +
->>> +               if (priv->quirk_poll)
->>> +                       quirk_poll_init(priv);
->>> +       }
->>> +
->>>
->>> If we can't have the explanation, limiting to renesas boards would be=
- fine next option.
->>
->> This concern was also discussed when the original patch was posted.
->>     https://lkml.org/lkml/2025/11/7/557
->>
->> If we are only addressing specific SoCs, I think we need to fix it in =
-Upstream first.
->=20
-> Some discussion related to this thread, and it expects
->=20
-> https://lore.kernel.org/all/b417865397822176e83bca6b9d8094fe92ff2451.ca=
-mel@pengutronix.de/
-
-The patches proposed in this series tried to drop the restore code in cas=
-e the=20
-reset_control_assert() fails. This is the code that intended to be droppe=
-d:
-
-+       if (ret) {
-+               if (pdata->power_on)
-+                       pdata->power_on(pdev);
-+
-+               ehci_resume(hcd, false);
-+
-+               if (priv->quirk_poll)
-+                       quirk_poll_init(priv);
-+       }
-
-The assumption that the core suspend/resume code handles it. The assumpti=
-on was=20
-wrong. Quoting the Alan Stern (the ohci/ehci drivers maintainer):
-
-"When recovering from a failed suspend transition, the kernel resumes
-only the devices that did suspend correctly.  The code that handles this
-is in drivers/base/power/main.c, and it's rather intricate and difficult
-to follow.
-
-In short, dpm_resume() invokes the resume callback only for devices that
-are on dpm_suspended_list.  Devices are added to this list by
-dpm_suspend(), and if the suspend callback fails they are supposed to be
-removed from the list.
-
-However, I don't see any place in device_suspend() where an error causes
-the device to be moved from dpm_suspended_list back to
-dpm_prepared_list.  Maybe this is a bug and needs to be fixed.  Or maybe
-I have misunderstood something."
-
-And Biju agreed with it in the next thread:=20
-https://lore.kernel.org/all/TY3PR01MB11346364790DE1F0D2441536786A5A@TY3PR=
-01MB11346.jpnprd01.prod.outlook.com/
-
-
->=20
-> and a patch for fixing assert failure in error path.
->=20
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/com=
-mit/drivers/clk/renesas/rzg2l-cpg.c?h=3Dnext-20260616&id=3D0b0201f259e115=
-8a875c5fd01adf318ae5d32352
-
-This patch ensure the reset control driver leaves the reset line in the=20
-de-asserted state in case the assert for it fails. It doesn't mean with w=
-e can=20
-drop the recovery code:
-
-+       if (ret) {
-+               if (pdata->power_on)
-+                       pdata->power_on(pdev);
-+
-+               ehci_resume(hcd, false);
-+
-+               if (priv->quirk_poll)
-+                       quirk_poll_init(priv);
-+       }
-
-just, it ensure the reset controller driver leaves the reset line in the =
-proper=20
-state in case an assert fails.
-
-That patch is not yet backported to any of the 5.10, 6.1, 6.12. If you pr=
-efer, I=20
-can add it to this series (and the corresponding 6.1, 5.10 ones).
-
-Thank you,
-Claudiu
+SGkgTWF0dGhpanMsIEhpIEZlbGl4LA0KDQpteSB0d28tY2VudHMgb24gdGhpcyA6LSkNCg0KT24g
+TW9uLCAyMDI2LTA2LTIyIGF0IDEzOjM4ICswMDAwLCBCZXJnZSwgTWF0dGhpanMgdGVuIHZpYSBs
+aXN0cy5jaXAtDQpwcm9qZWN0Lm9yZyB3cm90ZToNCj4gW1lvdSBkb24ndCBvZnRlbiBnZXQgZW1h
+aWwgZnJvbQ0KPiBtLnRlbmJlcmdlPWF3bC5ubEBsaXN0cy5jaXAtcHJvamVjdC5vcmcuIExlYXJu
+IHdoeSB0aGlzIGlzIGltcG9ydGFudA0KPiBhdCBodHRwczovL2FrYS5tcy9MZWFybkFib3V0U2Vu
+ZGVySWRlbnRpZmljYXRpb24gXQ0KPg0KPiBNT0VTU0JBVUVSLCBGZWxpeCA8ZmVsaXgubW9lc3Ni
+YXVlckBzaWVtZW5zLmNvbT4gd3JvdGU6DQo+ID4gSW5zdGVhZCBvZiB0aGUgcHJvcG9zYWwgZnJv
+bSBhYm92ZSwgdGhpcyBzaG91bGQgYmUgaW1wbGVtZW50ZWQgd2l0aA0KPiA+IGRoX2luc3RhbGxz
+eXN1c2Vycywgd2hpY2ggYWxzbyB0YWtlcyBjYXJlIG9mIGNyZWF0aW5nIHRoZSB1c2VyIGF0DQo+
+ID4gcGFja2FnZSBpbnN0YWxsIHRpbWUgKHVudGVzdGVkISkuIENpdGluZyBtYW4gZGhfaW5zdGFs
+bHN5c3VzZXJzDQo+ID4NCj4gPiA+IEl0ICBhbHNvICBmaW5kcyAgdGhlICBzeXN0ZW1kICBzeXN1
+c2VycyAgZmlsZXMgIGluc3RhbGxlZCBpbiBhDQo+ID4gPiBwYWNrYWdlIGFuZCBnZW5lcmF0ZXMg
+cmVsZXZhbnQgaW50ZWdyYXRpb24gc25pcHBldHMgZm9yIGVuYWJsaW5nDQo+ID4gPiB0aGUNCj4g
+PiA+IHVzZXJzIG9uIGluc3RhbGxhdGlvbi4NCj4NCj4gVGhhbmtzIGZvciB0aGUgcG9pbnRlciwg
+SSB3aWxsIGNlcnRhaW5seSBpbnZlc3RpZ2F0ZQ0KPiBkaF9pbnN0YWxsc3lzdXNlcnMgZnVydGhl
+ciENCj4NCj4gPiA+IEknbSBub3Qgc3VyZSBpZiB0aGlzIHRvcGljIGhhcyBhbHJlYWR5IGJlZW4g
+ZGlzY3Vzc2VkIGJlZm9yZSBvbg0KPiA+ID4gdGhpcyBsaXN0LiBCdXQgc2VlaW5nIHRoZSBvdGhl
+ciB0aHJlYWQgYWJvdXQgc3RhYmxlIHN5c3RlbSB1c2VyDQo+ID4gPiBpZHMgZm9yIHN3dXBkYXRl
+L3N1cmljYXR0YSwgd291bGQgaXQgYmUgd29ydGggdG8gY29uc2lkZXINCj4gPiA+IGluY2x1ZGlu
+ZyBzeXN0ZW1kLXN5c3VzZXJzIHN1cHBvcnQgaW4gdGhlIGltYWdlIGNsYXNzIHJlY2lwZXM/DQo+
+ID4NCj4gPiBOb3cgSSBzZWUgd2hlcmUgeW91IGFyZSBjb21pbmcgZnJvbSAoc3d1cGRhdGUgdGhy
+ZWFkKSA6KQ0KPg0KPiBTaWRld2F5czstKSBJJ3ZlIHNlZW4gdGhhdCB0aHJlYWQgYW5kIG5vdGlj
+ZWQgdGhlbSBtZW50aW9uaW5nDQo+IHN5c3VzZXJzIHRvby4gV2UgYXJlIHBsYW5uaW5nIGZvciB0
+aGUgdXNlIG9mIFNXVXBkYXRlIHRvbywgc28NCj4gY2VydGFpbmx5IHJlbGV2YW50Lg0KPiBNeSBh
+Y3R1YWwgdXNlIGNhc2UgaXMgdGhhdCBJIG5lZWRlZCBhIG5ld2VyIHZlcnNpb24gb2YgTlVUIChu
+ZXR3b3JrDQo+IFVQUyB0b29sKSB0aGFuIGF2YWlsYWJsZSBpbiBEZWJpYW4gKGFuZCBhbHNvIGFw
+cGx5IGEgbG9jYWwgcGF0Y2ggZm9yDQo+IG91ciBVUFMgbW9kZWwpLCBzbyBJIGhhZCB0byBjcmVh
+dGUgYSByZWNpcGUgdG8gYnVpbGQgZnJvbSBhIG5ld2VyDQo+IHRhcmJhbGwgcmVsZWFzZSBmcm9t
+IHRoYXQgcHJvamVjdC4NCj4gTnV0IHVwc3RyZWFtIG5vdyBhbHJlYWR5IHByb3ZpZGVzIHRoZSBz
+eXN1c2VycyBjb25maWcgZmlsZS4gVGhhdCdzDQo+IHdoZXJlIEkgYnVtcGVkIG15IGhlYWQuDQo+
+DQo+ID4gSU1ITyB0aGlzIGlzIHJhdGhlciBhbiBpc2FyIHRvcGljLCBidXQgdGhlIG92ZXJsYXkg
+cGFydA0KPiA+ICgvZXRjL3Bhc3N3ZA0KPiA+IGFuZCBhbGlrZSkgb25seSBhZmZlY3RzIENJUCAt
+IGFuZCBpcyBhbHJlYWR5IGEgcGl0ZmFsbCBhcyBvZiB0b2RheS4NCg0KQWJzb2x1dGVseSEgSW1v
+LCBmb3IgbWFueSBzeXN0ZW1zIGEgY29tcGxldGUgKHBlcnNpc3RlbnQpIGV0Yy1vdmVybGF5DQpp
+cyB0b28gYnJvYWQhIFVuZm9ydHVuYXRlbHksIHN5c3RlbWQgL2V0Yy9tYWNoaW5lLWlkIHNlbWFu
+dGljcyBraW5kIG9mDQpmb3JjZXMgdXNlcnMgdG8gZG8gc28sIGlmIHRoZXkgYXJlIG5vdCB3aWxs
+aW5nIHRvIHdvcmsgYXJvdW5kIHRoYXQgWzFdDQo6LSgNCg0KWzFdOiBodHRwczovL2dpdGh1Yi5j
+b20vc3lzdGVtZC9zeXN0ZW1kL2lzc3Vlcy8zOTQzOCNpc3N1ZWNvbW1lbnQtMzUyNzQzMjcyMw0K
+DQo+ID4NCj4gPiBBcGFydCBmcm9tIHRoYXQsIERlYmlhbiBkb2VzIG5vdCBlbmZvcmNlIHN0YWJs
+ZSB1c2VyIGlkcywgd2hpY2gNCj4gPiByZXN1bHRzDQo+ID4gaW4gaXNzdWVzIHdpdGggZmlsZXMg
+b3duZWQgYnkgYSBkaWZmZXJlbnQgdXNlciBhZnRlciBzd3VwZGF0ZSBydW5zLg0KPiA+DQo+ID4g
+RmVsaXgsDQo+DQo+IFRoZSBzeXN1c2Vycy5kIG1hbnBhZ2UgWzFdIHNwZWNpZmllcyB0aGUgcG9z
+c2liaWxpdHkgdG8gc3BlY2lmeQ0KPiBVSUQvR0lEIG51bWJlcnMgZXhwbGljaXRseS4gQnV0IGlm
+IERlYmlhbiBwYWNrYWdlcyBhcmUgbm90IHVzaW5nDQo+IHRoYXQsIG9yIGFyZSBldmVuIHByb2hp
+Yml0ZWQgZnJvbSB1c2luZyBmaXhlZCBudW1iZXJzIGJ5IGRlYiBwb2xpY3ksDQo+IHRoaXMgY2Fu
+IGluZGVlZCBiZWNvbWUgYSByZWFsIHBhaW4sIGJvdGggZm9yIC9ldGMgYW5kIGZvciAvdmFyLg0K
+PiBUaGFua3MgZm9yIHRoZSBoZWFkcy11cCBvbiB0aGF0IQ0KPiBbMV0NCj4gaHR0cHM6Ly9tYW5w
+YWdlcy5kZWJpYW4ub3JnL3Rlc3Rpbmcvc3lzdGVtZC9zeXN1c2Vycy5kLjUuZW4uaHRtbCNJRA0K
+Pg0KPiBUaGV5IGRvIHNwZWNpZnkgdGhhdCBjcmVhdGluZyBhY2NvdW50cyBzaG91bGQgYmUgaWRl
+bXBvdGVudCwgc28gbm90DQo+IGZhaWwgaWYgdGhlIGFjY291bnRzIGFscmVhZHkgZXhpc3QuIFVu
+Zm9ydHVuYXRlbHksIHRoZSBVU0VSUyBhbmQNCj4gR1JPVVBTIGFyZSBwcm9jZXNzZWQgd2F5IHRv
+byBsYXRlIChpbiBkb19yb290ZnNfcG9zdHByb2Nlc3MpLCBzbyBJJ2xsDQo+IHByb2JhYmx5IGdv
+IHRoZSByb3V0ZSBvZiB0cnlpbmcgdG8gY3JlYXRlIHRoZSBpbXBvcnRhbnQgYWNjb3VudHMNCj4g
+KHdpdGggZml4ZWQgbnVtYmVycykgc29tZXdoZXJlIGVhcmxpZXIgaW4gdGhlIHJvb3RmcyBwcm9j
+ZXNzLg0KDQpBbHRob3VnaCB5b3UgdGVjaG5pY2FsbHkgY2FuLCBJJ2Qgbm90IHJlY29tbWVuZCB0
+byBjcmVhdGUgc3lzdGVtIHVzZXJzDQphbmQgZ3JvdXBzIHdpdGggVVNFUlMgb3IgR1JPVVBTLiBU
+aG9zZSwgbW9zdCBwcm9iYWJseSwgYXJlIHVzZWQgdG8gcnVuDQpzZXJ2aWNlcywgdGh1cyBhcmUg
+Y291cGxlZCB0byBzcGVjaWZpYyBwYWNrYWdlcyBzaGlwcGluZyB0aG9zZS4NCg0Kc3lzdXNlcnMu
+ZCBpcyBtZWFudCBmb3Igc3lzdGVtIHVzZXJzIG9ubHkuIFNvIHRoZXJlIHNob3VsZG4ndCBiZSBh
+DQpjb25mbGljdC4NCg0KZGhfaW5zdGFsbHN5c3VzZXJzIHNob3VsZCBkbyB0aGUgdHJpY2sgYW5k
+IGNyZWF0ZSB0aGUgc3lzdGVtIHVzZXJzIGF0DQpwYWNrYWdlIGluc3RhbGxhdGlvbiBbMl0gYnkg
+aW52b2tpbmcgc3lzdGVtZC1zeXN1c2VycyBbM10uDQoNCg0KWzJdOg0KaHR0cHM6Ly9zYWxzYS5k
+ZWJpYW4ub3JnL2RlYmlhbi9kZWJoZWxwZXIvLS9ibG9iL21haW4vZGhfaW5zdGFsbHN5c3VzZXJz
+P3JlZl90eXBlPWhlYWRzI0wxMDMNClszXToNCmh0dHBzOi8vc2Fsc2EuZGViaWFuLm9yZy9kZWJp
+YW4vZGViaGVscGVyLy0vYmxvYi9tYWluL2F1dG9zY3JpcHRzL3Bvc3RpbnN0LXN5c3VzZXJzP3Jl
+Zl90eXBlPWhlYWRzDQoNCkFueXdheXMsIHNvbWV0aGluZyBsaWtlIHRtcGZpbGVzLmQgdG8gZml4
+IG93bmVyc2hpcCAoeikgb2YgbXV0YWJsZSBkYXRhDQppcyBzdGlsbCByZXF1aXJlZCBmb3IgdXBk
+YXRlcyAoaW4gY2FzZSB1c2VyL2dyb3VwLWlkcyBhcmUgbm90IGZpeGVkIG9yDQptYXkgY2hhbmdl
+KS4NCg0KQlIgQWxleGFuZGVyDQoNCg0KPiBLaW5kIHJlZ2FyZHMsDQo+DQo+IE1hdHRoaWpzDQo+
+DQo+DQo+IEFXTCBEaXNjbGFpbWVyOiBUaGlzIGUtbWFpbCBpcyBpbnRlbmRlZCBvbmx5IGZvciB0
+aGUgYWRkcmVzc2VlKHMpIGFuZA0KPiBjb250YWlucyBjb25maWRlbnRpYWwgaW5mb3JtYXRpb24u
+IElmIHlvdSBoYXZlIHJlY2VpdmVkIHRoaXMgZS1tYWlsDQo+IGluIGVycm9yLCBwbGVhc2UgaW1t
+ZWRpYXRlbHkgbm90aWZ5IHRoZSBzZW5kZXIsIGRlbGV0ZSB0aGUgZS1tYWlsDQo+IGZyb20geW91
+ciBjb21wdXRlciBhbmQgZGVzdHJveSBhbGwgY29waWVzIG9yIHByaW50LW91dHMgKGlmIGFueSku
+DQo+IFRoaXMgZS1tYWlsIGlzIG5vdCBpbnRlbmRlZCB0byBiZSByZWxpZWQgdXBvbiBieSBhbnkg
+cGVyc29uIG9yIGVudGl0eQ0KPiB3aXRob3V0IHN1YnNlcXVlbnQgY29uZmlybWF0aW9uIG9mIGl0
+cyBjb250ZW50cyBpbiB0aGUgZm9ybSBvZiBhDQo+IChmYXgpIGxldHRlci4gQVdMIGFjY2VwdHMg
+bm8gbGlhYmlsaXR5IGZvciB0aGUgdXNlIG9mIHRoZSBpbmZvcm1hdGlvbg0KPiBjb250YWluZWQg
+aW4gdGhpcyBlLW1haWwuIEZvciBvdXIgZnVsbCBkaXNjbGFpbWVyLCBwbGVhc2UgdmlzaXQNCj4g
+aHR0cHM6Ly93d3cuYXdsLm5sL2Rpc2NsYWltZXIvDQo+DQo+DQo+IC09LT0tPS09LT0tPS09LT0t
+PS09LT0tDQo+IExpbmtzOiBZb3UgcmVjZWl2ZSBhbGwgbWVzc2FnZXMgc2VudCB0byB0aGlzIGdy
+b3VwLg0KPiBWaWV3L1JlcGx5IE9ubGluZSAoIzIzMjQ3KToNCj4gaHR0cHM6Ly9saXN0cy5jaXAt
+cHJvamVjdC5vcmcvZy9jaXAtZGV2L21lc3NhZ2UvMjMyNDcNCj4gTXV0ZSBUaGlzIFRvcGljOiBo
+dHRwczovL2xpc3RzLmNpcC1wcm9qZWN0Lm9yZy9tdC8xMTk5MjA0NDUvODg4NjQyMw0KPiBHcm91
+cCBPd25lcjogY2lwLWRlditvd25lckBsaXN0cy5jaXAtcHJvamVjdC5vcmcNCj4gVW5zdWJzY3Jp
+YmU6DQo+IGh0dHBzOi8vbGlzdHMuY2lwLXByb2plY3Qub3JnL2cvY2lwLWRldi91bnN1YiBbYWxl
+eGFuZGVyLmhlaW5pc2NoQHNpZW1lbnMuY29tDQo+IF0NCj4gLT0tPS09LT0tPS09LT0tPS09LT0t
+PS0NCg0KLS0NCkFsZXhhbmRlciBIZWluaXNjaA0KU2llbWVucyBBRw0KaHR0cDovL3d3dy5zaWVt
+ZW5zLmNvbS8NCg==
 
