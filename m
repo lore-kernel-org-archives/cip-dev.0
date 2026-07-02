@@ -2,22 +2,22 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7F0AC44500
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F2D6C43327
 	for <webhook@archiver.kernel.org>; Thu,  2 Jul 2026 10:24:30 +0000 (UTC)
-Received: from TY3P286CU002.outbound.protection.outlook.com (TY3P286CU002.outbound.protection.outlook.com [52.101.229.10])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.65755.1782987863186018676
+Received: from OS0P286CU010.outbound.protection.outlook.com (OS0P286CU010.outbound.protection.outlook.com [40.107.74.48])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.66276.1782987861116300802
  for <cip-dev@lists.cip-project.org>;
- Thu, 02 Jul 2026 03:24:23 -0700
+ Thu, 02 Jul 2026 03:24:21 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=FGgd5T6R;
- spf=pass (domain: bp.renesas.com, ip: 52.101.229.10, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=gn8Fmjzs;
+ spf=pass (domain: bp.renesas.com, ip: 40.107.74.48, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=D+F8MNahrWis2LVKniYMHTSQg6a9eDx4rS31PbFGLo13YBuIntCd1JuzfUdu7u0dL+VMlszhgml43tdSw7pn60DBda8vrmFxbVVEMvkWzb4yvfd+J0R4Tpzl//GSt99o7y+Zzsm0GXsbgWkVDJoSSo7U76ur6au+CAK5srCOB1ickz9g5Smxfa5aGBniUQp5woeI/AuyPhmSa13Ty2C8a32RnWvibzAgAbJiD9bAT8KS+2K37jQ/q3zgfwldVDvWl+r22wf5UBl3zfPUuZ3O00Kts91remSajj+Zf+x0n2sdxb+oU+kNz3YvZz/8Da50YMdtKYeyQHXK/j1Lhu1XuQ==
+ b=TfcUwK+lZWk+ezx7RF/lJdX03Wj65Y+Co/0FBTVlm+RKvsphNFbsJgLNIf9yvwEVfA0YH9gpyHjuOQLhk8TmNDx+AXiEbqMuQAukk5JNN2BXA/LSSoHYgzLFVMaHh2Zb3o5DJeNlx2Lqd4a+rRTjAO4AqX6MyiqBt0P/sR9ZFAz3/t72ex4XHSqD80XgBOSTTMgSh+WQ780Itkp3if5k/8bSbw+83Ma7tGBnj6gtqEwx4nOgdmNhr5XdFff91viR2eid3dfJFcKWr68sziHcGq+qXfj8OkxNFHokpN1qOuYvgowoGpkutemLuYPkBFJgQWoRjXGQ8PAMPhosgqfSSw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Hzy8rLTNW71pE5nl4o78T56x5xjQ7FlpJ4HeC+uW+P0=;
- b=xfQLL25AAFSlKqNX2/AAEZgkwD7I60gfKOSVvOBvqrKqT48inmJPQmwhXfXjA3vaHOhkVYpvoJh0zyG/+t1JBMNFmloAIDHCljY5nI9oCIP4pjYEcb5MsN1egPJ7MrqHLXToKvF7H9d2LJrBijboo/wekgLQrz36bbzH4wXDnZNYRttHWlpXghi4ML/desfdaoAUOpXMtsyq6mKD4FoNS6Wq9KQY8G8lEr49jgoJ6TcJAm5nhp4sYZXBh2il09OR0YtIx9cNoacB8wbwUgUOZ90QIdN1FZVd67hmdeXneI4oN6Y1/XmO45zLwL7igjrcx9LPsQOHRpS2lg3N1jSQCw==
+ bh=DYnUl8AGQ4uACNTYGg+Yl6XEH3wR4Y+0plVKPHz5D+o=;
+ b=rHTzclsLMseezfqIUaLLUKKko8R2yamUHL+rvX/WzFtPfFMSXuc2tmVqECECuFVU9ohmcq7g3/WPoQQmcKz9lMFqW84264dy4RjqScDJX//3gm1VfcsFuqqxKj0GNa4bF5syIsI7Wz7agauqltBJDOFm8GaIaCBRd/PLc33kQOl68xAv4/Jpq5Mqegg3nGdMo7yTSIYhPcxp3g+nHL71XNjyTIOkK6MmUjsvDFa65O25DTCeFjePDO00IljXaTAGJQY53azhsOVFwfQ63Lu+Dz/4C1uL322p7x+QqHkqzZKHobKKHOQRHMu8YuVmfTnGW8yhXzrn2Juabp/4nbac0Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  8.62.32.50) smtp.rcpttodomain=bp.renesas.com smtp.mailfrom=bp.renesas.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=bp.renesas.com;
@@ -25,18 +25,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Hzy8rLTNW71pE5nl4o78T56x5xjQ7FlpJ4HeC+uW+P0=;
- b=FGgd5T6RYGqKKKtUnVNkwilfiTv3Dq4cEBDl3a7qvzMLGHmf6nCU+LXwHQDvfR8Kd/WRp2nGP72FqpVxeRzEu0tIwf9Z04EdhQlYC+Q4XugsX7DUzNoFrTLrtODkWeDqXpNlEwJWdVM82KWFU/PU7Eaq2rYzIhZgzpT39y6smVA=
-Received: from TY4PR01CA0014.jpnprd01.prod.outlook.com (2603:1096:405:26e::17)
- by OSCPR01MB14409.jpnprd01.prod.outlook.com (2603:1096:604:39f::11) with
+ bh=DYnUl8AGQ4uACNTYGg+Yl6XEH3wR4Y+0plVKPHz5D+o=;
+ b=gn8Fmjzsk8l4yIDnVwVvEihbzr49PBfASvppBvjN7ZO17XQfp7Rz8icIbCbwcOG8ZlAeCesc2si1SzUf5j6JhsT9YwKptyzsy90su2utv18E3PBXg7kxxcv5XGjPpywQSKE1ttxwyRVc6u40Y6XKVFYFm1qgwCLZO76oVq/Fx5w=
+Received: from TY4PR01CA0123.jpnprd01.prod.outlook.com (2603:1096:405:379::8)
+ by TYYPR01MB12745.jpnprd01.prod.outlook.com (2603:1096:405:157::14) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.10; Thu, 2 Jul
- 2026 10:24:18 +0000
-Received: from TYO1EPF00005021.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:26e:cafe::87) by TY4PR01CA0014.outlook.office365.com
- (2603:1096:405:26e::17) with Microsoft SMTP Server (version=TLS1_3,
+ 2026 10:24:15 +0000
+Received: from TYO1EPF00005023.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:405:379:cafe::5e) by TY4PR01CA0123.outlook.office365.com
+ (2603:1096:405:379::8) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.21.181.10 via Frontend Transport; Thu, 2
- Jul 2026 10:24:18 +0000
+ Jul 2026 10:24:15 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
  smtp.mailfrom=bp.renesas.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=bp.renesas.com;
@@ -44,20 +44,20 @@ Received-SPF: Pass (protection.outlook.com: domain of bp.renesas.com
  designates 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
  client-ip=8.62.32.50; helo=ejcrelay005p.adwin.renesas.com; pr=E
 Received: from ejcrelay005p.adwin.renesas.com (8.62.32.50) by
- TYO1EPF00005021.mail.protection.outlook.com (10.167.240.6) with Microsoft
+ TYO1EPF00005023.mail.protection.outlook.com (10.167.240.20) with Microsoft
  SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.181.6
- via Frontend Transport; Thu, 2 Jul 2026 10:24:18 +0000
+ via Frontend Transport; Thu, 2 Jul 2026 10:24:15 +0000
 Received: from Ubuntu-22.. (gbr-5cg2250zyy.diasemi.com [10.24.0.18])
-	by ejcrelay005p.adwin.renesas.com (Postfix) with ESMTP id 44F8B300024A;
-	Thu,  2 Jul 2026 19:24:15 +0900 (JST)
+	by ejcrelay005p.adwin.renesas.com (Postfix) with ESMTP id C3DAD3000408;
+	Thu,  2 Jul 2026 19:24:13 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
 	Pavel Machek <pavel@nabladev.com>
 CC: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip v2 10/10] pinctrl: renesas: rzt2h: Skip PFC mode configuration if already set
-Date: Thu,  2 Jul 2026 11:23:49 +0100
-Message-ID: <20260702102349.23431-11-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip v2 09/10] pinctrl: renesas: rzt2h: Remove unused variable in rzt2h_pinctrl_register()
+Date: Thu,  2 Jul 2026 11:23:48 +0100
+Message-ID: <20260702102349.23431-10-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260702102349.23431-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20260702102349.23431-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -65,45 +65,46 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYO1EPF00005021:EE_|OSCPR01MB14409:EE_
+X-MS-TrafficTypeDiagnostic: TYO1EPF00005023:EE_|TYYPR01MB12745:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 1b833e51-224c-4a4d-5949-08ded82412fd
+X-MS-Office365-Filtering-Correlation-Id: 89e2e268-85a3-4d91-d155-08ded824117a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|36860700016|82310400026|376014|1800799024|23010399003|13003099007|18002099003|22082099003|11063799006|56012099006|6133799003;
+	BCL:0;ARA:13230040|82310400026|23010399003|376014|36860700016|1800799024|13003099007|6133799003|56012099006|11063799006|18002099003|22082099003;
 X-Microsoft-Antispam-Message-Info: 
-	bZ3g/2ZHoCcc0cxxTf1yHyI31+qM7lAUrX0d7+7OFALlqizWM3eg5eeXjUZyUKGYg4KWKGIs2VheZOvfErfQVkyPuczA2rUwsgSgmQ9Aq1OY/gmHo8TB0oipXtBKDIG14fN86pVrnuHcbHhDE1aRda7qdOalLmiJx4dJJb5T29vTnBAchZt+GcwDgz95V7HFJcs9/nXau64WXNZGawGNs4Tm9j0aJwNET1mWjcM6MxElOtkW7G+cgERGi9O4Ef+9e7Y6wyas8w8QwSGzpB8oFL2LZ7nTzjbo7NVco3frJ5gkz/tyPE3V8i88dfEF3C/guWftEPTczFErB1F6Vduv3cTvJO7zFUzoDF333hUBXuhCPpIgYgUbufKiEbOphujpN67ErlccWeG9E3VI1D86sZFQqMMiia10Dq6Eq9dhrifZ3kPtYa8f15erzKV1NhPaJMu0ewLN1jymJDtoX4MiXdxwtoxuaM1oek1UrN0XaGiRMxm/jnkeLX2yCVgQTrd1u/LYgehiGKfm3t/BMBrxUQnc+tzxCSJNZp4Day3+9+NZVbXJn0SmuVBrqqLjxuhCP2+7g70bR0Vc/kiaLQOhqEvEfCGhJ/hsiqQjfFOljfwS2FU2iRRp/uhnoiq3s+h8m6LYhsBMmeQTlN/vBuSb7EjVl1tDY/cKn2durbjnoMs=
+	/Ff9mkXYpqxfypKornJahzBUaVS+PQBhtZy+AfNndPffYRYL/sMlPMn+/5waIDPHN8M2VFA9EYlzXKrajQu8z4VDm4hQ2egfj2w7cLx/cCCbsIekbLanAF6PtTjlZMGBmhR1sM2fso/ixVUVLEkIj0T3tLCRi2fHCwlyYOmG+c4w7id6FTGWJIxfuZ+VTbcIHl/p15l8WQ+Rs6/6QTbnKrZZX7+j/YiVUUrB2JRetaQQssO9Wz4my6uU2QY1CyS8a9cQLdmuw30bUnaTrcH32KjIfG4XDxLI2OOa4i1ccYHtGfY+wd2WaVFu64clY5KA2ZuvehpsEbCg/wxAzO7FuI1hw/hqJX8u6GjcKrlS4MDOWCOm3gsAVixoWMt4lypv+3RjgSs8sU+QyoapNSIb7cZit9pc8yriOpBqPSPquVqOSu0IsorBswsOTaxFNdbIR1ouUh1iYmFB90iuA3v0B09SbtGNAoKQQgDt7R+JbHzApCONAoRS3Z8hpbcaATAIoBst0PRaBKPqBB7Tm0VLxuk3TvWUEKJJV4SvwJ2yKDlTdDw4MSphE4/KROBHweEYVRp1OwPC3iGIJxIVXTuwO26hpwwfhMTACg8tYFUmzcWWXkaDGWPz+50ke+I6r36s+PWMjJ89S/+/3pE5JC7h0L/ar1PhKuKbc8BYx9yAqw4=
 X-Forefront-Antispam-Report: 
-	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay005p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(82310400026)(376014)(1800799024)(23010399003)(13003099007)(18002099003)(22082099003)(11063799006)(56012099006)(6133799003);DIR:OUT;SFP:1101;
+	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay005p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(23010399003)(376014)(36860700016)(1800799024)(13003099007)(6133799003)(56012099006)(11063799006)(18002099003)(22082099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	bn30W4x6va0A01kfx8WKiremOifAFWY2oqBqmAAFOzScEx4eGuYWyhbgpexdwtAynecX8fCuqNKaNZR8bCias7MnNDEtHRzHzn8/eRtuHD6dJNo4CQbIWz1weRv49IhYp6gutcqOiNZk5dBwujKO+I0OuoujsWT8BoNErip6FIWIQPrZc+qjMm2uHCZJCOYnF/Itd2jWzCZUl8fthnke7Er8LTuno7HaPfu+l/bh7QVbOv3bucT3Bnaec8f6VJsJTaV8MeVd2nFTYoM0m/hTyud1Bf1sQZ+Ij+GbUcNlg13gvj8MJqwCzBvAGbEVUiI7zKFXznNceUlhlBx5bIJO8iCC0zQH1DlFCjDXf1zcYNSkDHl4fgfI++yVFb/HKYGNrNRHQ98ac+IYIowf1UiNbHxGEHapL7CoiVyqC3kh4pTgjU/2FLZ+z7UCWGZaYQxM
+	+GgoWOTBNpqiuiSR18R8ym/gNOR95OnYGuWY2BsfdGNQeZ+xEZgRIYjfDibz65B8KThV38os0kP05D2r1Ocq7FLHUJGQa4Cr70W102noYt30ZL1lJNzAVqofQe9fpbWGRVuwsF3muADUdCUd9dBp+hHiv2gjACgjZ4Al5XY2CkYvUrLWcwAeQxYzfiFAs1iM86YX6fMyN+m58+bhTgwywYsMUUCjGle437FT6Tt+pySMLTOCG7lu2uXJ7iL0AxPlKbIjLJ++iEmyrR3ad0ibabbbBZUe7XdSrVHArQw895/Mu32amf6nLkLoUxjS6IyzAuZMXOa7SLVg4gD3WiCRMBG9p6qSfe1uGA09s8OfZbrrEvk7lwkCQbCAA4/zcxd5GNHlB5N8a5YRX9XgL2Ro78kuEP3yD6+AmLTPNxG6We0TlqlRSh5zpfdLKeKrXYKr
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jul 2026 10:24:18.1636
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jul 2026 10:24:15.6373
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b833e51-224c-4a4d-5949-08ded82412fd
+X-MS-Exchange-CrossTenant-Network-Message-Id: 89e2e268-85a3-4d91-d155-08ded824117a
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay005p.adwin.renesas.com]
-X-MS-Exchange-CrossTenant-AuthSource: TYO1EPF00005021.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthSource: TYO1EPF00005023.JPNP286.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSCPR01MB14409
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB12745
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 02 Jul 2026 10:24:30 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23391
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23390
 
-commit f9fb67bc77d322568bf573e81335be0e9be2a7c8 upstream.
+commit ccf707ca74cbb1d7ad0f99877518d2e3fe58611a upstream.
 
-In rzt2h_pinctrl_set_pfc_mode(), read the PMC and PFC registers upfront
-and skip the pin function configuration if the pin is already in
-peripheral mode with the desired function.
+Variable 'j' in rzt2h_pinctrl_register() is incremented during pin
+descriptor initialization but never used afterwards.
+
+Remove the unused variable and the associated dead code.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20260513115312.1574367-3-prabhakar.mahadev-l=
+Link: https://patch.msgid.link/20260513115312.1574367-2-prabhakar.mahadev-l=
 ad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -111,38 +112,38 @@ Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 v1->v2
 - No change
 ---
- drivers/pinctrl/renesas/pinctrl-rzt2h.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/pinctrl/renesas/pinctrl-rzt2h.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/pinctrl/renesas/pinctrl-rzt2h.c b/drivers/pinctrl/rene=
 sas/pinctrl-rzt2h.c
-index 5cf67649b8555..25176f5df9667 100644
+index b754d4d725e86..5cf67649b8555 100644
 --- a/drivers/pinctrl/renesas/pinctrl-rzt2h.c
 +++ b/drivers/pinctrl/renesas/pinctrl-rzt2h.c
-@@ -209,6 +209,12 @@ static void rzt2h_pinctrl_set_pfc_mode(struct rzt2h_pi=
-nctrl *pctrl,
+@@ -1156,7 +1156,7 @@ static int rzt2h_pinctrl_register(struct rzt2h_pinctr=
+l *pctrl)
+ 	struct pinctrl_desc *desc =3D &pctrl->desc;
+ 	struct device *dev =3D pctrl->dev;
+ 	struct pinctrl_pin_desc *pins;
+-	unsigned int i, j;
++	unsigned int i;
+ 	int ret;
 =20
- 	guard(raw_spinlock_irqsave)(&pctrl->lock);
+ 	desc->name =3D DRV_NAME;
+@@ -1173,11 +1173,9 @@ static int rzt2h_pinctrl_register(struct rzt2h_pinct=
+rl *pctrl)
+ 	pctrl->pins =3D pins;
+ 	desc->pins =3D pins;
 =20
-+	reg64 =3D rzt2h_pinctrl_readq(pctrl, port, PFC(port));
-+	/* Check if pin is already configured to the desired function */
-+	if ((rzt2h_pinctrl_readb(pctrl, port, PMC(port)) & BIT(pin)) &&
-+	    field_get(PFC_PIN_MASK(pin), reg64) =3D=3D func)
-+		return;
-+
- 	/* Set pin to 'Non-use (Hi-Z input protection)'  */
- 	reg16 =3D rzt2h_pinctrl_readw(pctrl, port, PM(port));
- 	reg16 &=3D ~PM_PIN_MASK(pin);
-@@ -218,7 +224,6 @@ static void rzt2h_pinctrl_set_pfc_mode(struct rzt2h_pin=
-ctrl *pctrl,
- 	rzt2h_pinctrl_set_gpio_en(pctrl, port, pin, true);
+-	for (i =3D 0, j =3D 0; i < pctrl->data->n_port_pins; i++) {
++	for (i =3D 0; i < pctrl->data->n_port_pins; i++) {
+ 		pins[i].number =3D i;
+ 		pins[i].name =3D rzt2h_gpio_names[i];
+-		if (i && !(i % RZT2H_PINS_PER_PORT))
+-			j++;
+ 	}
 =20
- 	/* Select Pin function mode with PFC register */
--	reg64 =3D rzt2h_pinctrl_readq(pctrl, port, PFC(port));
- 	reg64 &=3D ~PFC_PIN_MASK(pin);
- 	rzt2h_pinctrl_writeq(pctrl, port, reg64 | ((u64)func << (pin * 8)), PFC(p=
-ort));
-=20
+ 	ret =3D devm_pinctrl_register_and_init(dev, desc, pctrl, &pctrl->pctl);
 --=20
 2.43.0
 
