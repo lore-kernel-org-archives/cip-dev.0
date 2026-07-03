@@ -2,56 +2,56 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C5D4C44503
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7045C44501
 	for <webhook@archiver.kernel.org>; Fri,  3 Jul 2026 10:08:17 +0000 (UTC)
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.89979.1783073291192286316
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.89144.1783073289801339088
  for <cip-dev@lists.cip-project.org>;
- Fri, 03 Jul 2026 03:08:11 -0700
+ Fri, 03 Jul 2026 03:08:10 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=YKflYjh0;
- spf=pass (domain: gmail.com, ip: 209.85.128.46, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-493b77b150aso2965415e9.2
-        for <cip-dev@lists.cip-project.org>; Fri, 03 Jul 2026 03:08:10 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=P5q5W0bx;
+ spf=pass (domain: gmail.com, ip: 209.85.128.52, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-493be1b9682so3080485e9.2
+        for <cip-dev@lists.cip-project.org>; Fri, 03 Jul 2026 03:08:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783073289; x=1783678089; darn=lists.cip-project.org;
+        d=gmail.com; s=20251104; t=1783073288; x=1783678088; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=NKMoa4hUREQAeYIUgM4mEMzJN9A8bHUtcBKwoBV2Nrk=;
-        b=YKflYjh02Ws4WwLZZD/5u5eJdjwfFqij8Ke85UQomQ47a3j9rBrMbPQ6UFAA1XcBUq
-         hDUadW3T6WM79vGD7tbjs9Gf0MOt5H08XXnbn/SBUCFbOB6wDXC4sbyD2TU4Tw7TEKFd
-         gCztokbRsMjqHsBZbL1MGe2q+GzBImKGyu2KW+/QXLxdkznPInDFm9PtMykC1vhHRsKH
-         +W7zLiIxcJU/iuKLmI2KhWfsNul9vorWEME5BbnXc/oJWwaevlNsSPEm0oTOlTRrB/i4
-         ahlf7Pv/V3yX+MXinTpKAeUue0feHrfXoGN/hd2WXfbhsb4TtQYkpYsnIZbAE4xKafiV
-         rNMA==
+         :message-id:reply-to;
+        bh=Mq0RMJE68cu/fnuX/CxJuamnn8fJSeuVm84GJ/jP7wA=;
+        b=P5q5W0bxsFQMc1rL4HbPL1XotVZJW/SIIDwMc/oa+6d9bBR2VJUKVPHaHhnfRl5Y1f
+         0g2Ytv6bvCKjkr1rr8Yr4HD9XEwEVGLSnCmb0hTguSJqU5bOYom22qE+i7foGGfegyXL
+         LKVbTDmHcDjdufSNoqB8VglZA1l28nD/cQRmR1oau1gV9sFXURIon6MF2zmYEstU3RTX
+         8oqWhZNYFJfwd50jvqgR2JrHd3UBmEKrKe9V+h7nyz62tIUCfVBIy4TWbbIrQOp7Kaw0
+         SiqUCs/Q+OmeqYNZkANB/0gIfb5sBjVoHpuDRkGk/bKqgHpG2B6X1xYHfWS6Ers3D4Mi
+         2lDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783073289; x=1783678089;
+        d=1e100.net; s=20251104; t=1783073288; x=1783678088;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=NKMoa4hUREQAeYIUgM4mEMzJN9A8bHUtcBKwoBV2Nrk=;
-        b=PWTUe//GfgTkqeqCUa4UfgPT2O+TM+cu0VsnZAKqmKa2g2rz3x1KX8/8Mb9dbmxNPn
-         Y6BK4RZe9w86+r/J0ACsQ30yREeyPVJTpyiUJpXXcmMGA9yII/KmjqyD5EU7FUgE9MGO
-         XKXSi6bH6Hoe82g5mA38Cpr1GJb1sNbsYD2WUYBZVh32dgh5GlepTb8cEIxsbxuI3643
-         09HrAWpxEx41GyIDfetD3+QhQ3LIFbAunpQQzbFI5obrIpjXpldyHcD08D6WT5JPiHW8
-         8AV/T+mKKE8LU9zfkKetigKuL4RF1Xh27oxaulynRmvRsVXCRrRwYvjff4wFXQALHZCC
-         c6Ag==
-X-Gm-Message-State: AOJu0YwvpJ416rR2oIKHalhK4AQxweYtRW3q6BCGXjn9+w9kJToe9qEj
-	edLDSeGgGers8Fx6dRcza5vZV6KzcUIddgQLXcCii1Nlm4Tid5Hb56cmvyrooobL
-X-Gm-Gg: AfdE7ckavjG+r/DZn2L9TmIQJPzf8b4/QIBSc6YO9UsNyfodYbHe+laqMYH6siMO9oV
-	TAyKrL4Z4Xy8/ZgJE90mYsGQTcETe/8CDwgYaNNV37BG9Es15VL882zLMPZuopkY/5gzGUPteMm
-	ESSe58QILQBJ+3+jfl8AbFGe9/2TVlkaPJNlZvSZ/1TwXOzuoZnMTfbTkK4Xtdl3F0JXemnIGi/
-	/2N/QO9PLCzpyYnvT1jFpzmpKZowYqYbPQQPIoobEKvBybQz3Kjm/nNOF7+lx2Hryx3NCONlKPz
-	2IF283AFF7NbWaqnZBYSR7PfLyy/An1xCKrcJxcfQqSDb9xyD1EmfifsPqkUWsurELNDBOfJWXN
-	KYmc3NpgoL4IXUnEII9MVkjNLYanUx/iEO1FGHYo8vpY6WtaKR8uYRTnsQlZq/SZfZKDbND1gHk
-	S8SSmSGm93j+VvhkMDKI9i
-X-Received: by 2002:a05:600d:2:b0:492:3e69:a86f with SMTP id 5b1f17b1804b1-493c3cd0fb3mr140136105e9.1.1783073289107;
-        Fri, 03 Jul 2026 03:08:09 -0700 (PDT)
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Mq0RMJE68cu/fnuX/CxJuamnn8fJSeuVm84GJ/jP7wA=;
+        b=PXlnRsmL5fp91GXQxmwFVcKLDA5/ZPhdZDqCyAHE+w3fjXjzDKuNfy6LNO8MLQHeZR
+         ZcGUWBP0qCyanJ0lajhjR+syjpIRNPZGcBgYHeoigZcza5pK9qQ0dPZ3fQ2kdgA6+Ede
+         Fl19EqEdipw+3QVtDV/hxn+Lzos0inxo8DgvEcv4ytTVt8Ae+qXP62wNOkBmotiUs6rR
+         gfdAK/gxTQ62ULwNqd4uWqhZMCafox//v/Iaboj0yERWxQKFtvnkTGFFfhlSr6wJbYrB
+         12VWwXIiZXFXnc6PxwG0tmAqSdXy6U33vX/nkAv39pWWj0vICGFcPtDMrKWLtixfx2LP
+         IuYA==
+X-Gm-Message-State: AOJu0YzyEhdJNJSBKfk0fTkLa/IRz02+SgXGhuFRxKoKmRuRddBXKvgT
+	lZa4tUF/kRcLKJlLw/vZgWrlU2WLbSlw9MIgtBnNLWs3cuBHjy2HKjj7Dd8dgy6D
+X-Gm-Gg: AfdE7cnBz65LkJqUNgwLUfFu4BWoKw5TOKI7nYra7jsdQGGyRYVgqc1oIY5W/5wNhrz
+	MxoYWbn2TZ5bskQRH9zuOdW8UfLY5cJyAlGZMzOi5/X3WB2xFYCHi5YbBl8RMqVnzNuWU7RVndi
+	to3iiQCU/pU3jYIhec1HsyLR9+99go/I+M6so8FwSWS8Ltxz8ITkxJozF1LRXi7/c29VXPyBM9Y
+	5T5lMkGgGOOrXSnZdKotqhgO0A/eSLcaBwUhn5ShTCNLwCKLSu5mC66lBxlxClObBg/ZOF8tJzk
+	gJgeAPy7V7Udr10mt6slw4MilckKzmkLk4IuGmxj38hoa+N7SngH/E246PvihgJojb92T+qjy8B
+	Cy6PR7Wt3Ddy9+gPP0S42hqq0x42/c5feYYmSxD3gPiprZ4aEFYxm1v7q6lXXsGgvkU8geZjFhI
+	ao9SuK+VA4SwS4yMi5ZcCJ
+X-Received: by 2002:a05:600d:8649:20b0:493:a607:f3b8 with SMTP id 5b1f17b1804b1-493c2ac7199mr105369665e9.0.1783073287776;
+        Fri, 03 Jul 2026 03:08:07 -0700 (PDT)
 Received: from biju.lan ([2a00:23c4:a702:d301:76eb:405a:5f87:72eb])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-493ccdab3a8sm40993765e9.6.2026.07.03.03.08.08
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-493ccdab3a8sm40993765e9.6.2026.07.03.03.08.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jul 2026 03:08:08 -0700 (PDT)
+        Fri, 03 Jul 2026 03:08:07 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,9 +59,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 22/26] irqchip/renesas-rzg2l: Add RZ/G3L support
-Date: Fri,  3 Jul 2026 11:07:41 +0100
-Message-ID: <20260703100756.238233-23-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 20/26] dt-bindings: interrupt-controller: renesas,rzg2l-irqc: Use pattern for interrupt-names
+Date: Fri,  3 Jul 2026 11:07:39 +0100
+Message-ID: <20260703100756.238233-21-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260703100756.238233-1-biju.das.jz@bp.renesas.com>
 References: <20260703100756.238233-1-biju.das.jz@bp.renesas.com>
@@ -71,132 +71,159 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 03 Jul 2026 10:08:17 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23414
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23412
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[ Upstream commit 98b24d39c852d2498aae24c9aa0a3b11edb8cc2c ]
+[ Upstream commit 7b7d32d93e9879480ec6f00b9310b2d64c2161db ]
 
-The IRQC block on the RZ/G3L SoC is almost identical to the one found on
-the RZ/G2L SoC, with the following differences:
-
- - The number of GPIO interrupts for TINT selection is 113 instead of 123.
- - The pin index and TINT selection index are not in the 1:1 map.
- - The number of external interrupts are 16 instead of 8, out of these
-   8 external interrupts are shared with TINT.
-
-Add support for the RZ/G3L driver by filling the rzg2l_hw_info table and
-adding LUT for mapping between pin index and TINT selection index.
+Simplify the bindings by using pattern property for interrupt-names.
+It also allows to change the ordering of interrupts.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Signed-off-by: Thomas Gleixner <tglx@kernel.org>
-Link: https://patch.msgid.link/20260325192451.172562-16-biju.das.jz@bp.renesas.com
-[biju: Replaced rzg3l_irqc_probe()->rzg3l_irqc_init() ]
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Link: https://patch.msgid.link/20260325192451.172562-2-biju.das.jz@bp.renesas.com
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/irqchip/irq-renesas-rzg2l.c | 48 +++++++++++++++++++++++++++--
- 1 file changed, 46 insertions(+), 2 deletions(-)
+ .../renesas,rzg2l-irqc.yaml                   | 120 ++++--------------
+ 1 file changed, 23 insertions(+), 97 deletions(-)
 
-diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-renesas-rzg2l.c
-index 86e79f1484c2..0dd3ce30f7ad 100644
---- a/drivers/irqchip/irq-renesas-rzg2l.c
-+++ b/drivers/irqchip/irq-renesas-rzg2l.c
-@@ -68,11 +68,13 @@ struct rzg2l_irqc_reg_cache {
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml
+index 44b6ae5fc802..a0b57d808639 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml
++++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml
+@@ -48,107 +48,33 @@ properties:
  
- /**
-  * struct rzg2l_hw_info - Interrupt Control Unit controller hardware info structure.
-+ * @tssel_lut:		TINT lookup table
-  * @irq_count:		Number of IRQC interrupts
-  * @tint_start:		Start of TINT interrupts
-  * @num_irq:		Total Number of interrupts
-  */
- struct rzg2l_hw_info {
-+	const u8	*tssel_lut;
- 	unsigned int	irq_count;
- 	unsigned int	tint_start;
- 	unsigned int	num_irq;
-@@ -332,9 +334,9 @@ static int rzg2l_irq_set_type(struct irq_data *d, unsigned int type)
- {
- 	struct rzg2l_irqc_priv *priv = irq_data_to_priv(d);
- 	unsigned int hwirq = irqd_to_hwirq(d);
--	u32 iitseln = hwirq - IRQC_IRQ_START;
-+	unsigned int iitseln = hwirq - IRQC_IRQ_START;
- 	bool clear_irq_int = false;
--	u16 sense, tmp;
-+	unsigned int sense, tmp;
+   interrupts:
+     minItems: 45
+-    items:
+-      - description: NMI interrupt
+-      - description: IRQ0 interrupt
+-      - description: IRQ1 interrupt
+-      - description: IRQ2 interrupt
+-      - description: IRQ3 interrupt
+-      - description: IRQ4 interrupt
+-      - description: IRQ5 interrupt
+-      - description: IRQ6 interrupt
+-      - description: IRQ7 interrupt
+-      - description: GPIO interrupt, TINT0
+-      - description: GPIO interrupt, TINT1
+-      - description: GPIO interrupt, TINT2
+-      - description: GPIO interrupt, TINT3
+-      - description: GPIO interrupt, TINT4
+-      - description: GPIO interrupt, TINT5
+-      - description: GPIO interrupt, TINT6
+-      - description: GPIO interrupt, TINT7
+-      - description: GPIO interrupt, TINT8
+-      - description: GPIO interrupt, TINT9
+-      - description: GPIO interrupt, TINT10
+-      - description: GPIO interrupt, TINT11
+-      - description: GPIO interrupt, TINT12
+-      - description: GPIO interrupt, TINT13
+-      - description: GPIO interrupt, TINT14
+-      - description: GPIO interrupt, TINT15
+-      - description: GPIO interrupt, TINT16
+-      - description: GPIO interrupt, TINT17
+-      - description: GPIO interrupt, TINT18
+-      - description: GPIO interrupt, TINT19
+-      - description: GPIO interrupt, TINT20
+-      - description: GPIO interrupt, TINT21
+-      - description: GPIO interrupt, TINT22
+-      - description: GPIO interrupt, TINT23
+-      - description: GPIO interrupt, TINT24
+-      - description: GPIO interrupt, TINT25
+-      - description: GPIO interrupt, TINT26
+-      - description: GPIO interrupt, TINT27
+-      - description: GPIO interrupt, TINT28
+-      - description: GPIO interrupt, TINT29
+-      - description: GPIO interrupt, TINT30
+-      - description: GPIO interrupt, TINT31
+-      - description: Bus error interrupt
+-      - description: ECCRAM0 or combined ECCRAM0/1 1bit error interrupt
+-      - description: ECCRAM0 or combined ECCRAM0/1 2bit error interrupt
+-      - description: ECCRAM0 or combined ECCRAM0/1 error overflow interrupt
+-      - description: ECCRAM1 1bit error interrupt
+-      - description: ECCRAM1 2bit error interrupt
+-      - description: ECCRAM1 error overflow interrupt
++    maxItems: 48
  
- 	switch (type & IRQ_TYPE_SENSE_MASK) {
- 	case IRQ_TYPE_LEVEL_LOW:
-@@ -378,6 +380,11 @@ static u32 rzg2l_disable_tint_and_set_tint_source(struct irq_data *d, struct rzg
- 	u32 tint = (u32)(uintptr_t)irq_data_get_irq_chip_data(d);
- 	u32 tien = reg & (TIEN << TSSEL_SHIFT(tssr_offset));
+   interrupt-names:
+     minItems: 45
++    maxItems: 48
+     items:
+-      - const: nmi
+-      - const: irq0
+-      - const: irq1
+-      - const: irq2
+-      - const: irq3
+-      - const: irq4
+-      - const: irq5
+-      - const: irq6
+-      - const: irq7
+-      - const: tint0
+-      - const: tint1
+-      - const: tint2
+-      - const: tint3
+-      - const: tint4
+-      - const: tint5
+-      - const: tint6
+-      - const: tint7
+-      - const: tint8
+-      - const: tint9
+-      - const: tint10
+-      - const: tint11
+-      - const: tint12
+-      - const: tint13
+-      - const: tint14
+-      - const: tint15
+-      - const: tint16
+-      - const: tint17
+-      - const: tint18
+-      - const: tint19
+-      - const: tint20
+-      - const: tint21
+-      - const: tint22
+-      - const: tint23
+-      - const: tint24
+-      - const: tint25
+-      - const: tint26
+-      - const: tint27
+-      - const: tint28
+-      - const: tint29
+-      - const: tint30
+-      - const: tint31
+-      - const: bus-err
+-      - const: ec7tie1-0
+-      - const: ec7tie2-0
+-      - const: ec7tiovf-0
+-      - const: ec7tie1-1
+-      - const: ec7tie2-1
+-      - const: ec7tiovf-1
++      oneOf:
++        - description: NMI interrupt
++          const: nmi
++        - description: External IRQ interrupt
++          pattern: '^irq([0-7])$'
++        - description: GPIO interrupt
++          pattern: '^tint([0-9]|1[0-9]|2[0-9]|3[0-1])$'
++        - description: Bus error interrupt
++          const: bus-err
++        - description: ECCRAM0 or combined ECCRAM0/1 1bit error interrupt
++          const: ec7tie1-0
++        - description: ECCRAM0 or combined ECCRAM0/1 2bit error interrupt
++          const: ec7tie2-0
++        - description: ECCRAM0 or combined ECCRAM0/1 error overflow interrupt
++          const: ec7tiovf-0
++        - description: ECCRAM1 1bit error interrupt
++          const: ec7tie1-1
++        - description: ECCRAM1 2bit error interrupt
++          const: ec7tie2-1
++        - description: ECCRAM1 error overflow interrupt
++          const: ec7tiovf-1
  
-+	if (priv->info.tssel_lut)
-+		tint = priv->info.tssel_lut[tint];
-+	else
-+		tint = (u32)(uintptr_t)irq_data_get_irq_chip_data(d);
-+
- 	/* Clear the relevant byte in reg */
- 	reg &= ~(TSSEL_MASK << TSSEL_SHIFT(tssr_offset));
- 	/* Set TINT and leave TIEN clear */
-@@ -693,6 +700,36 @@ static int rzg2l_irqc_common_init(struct device_node *node, struct device_node *
- 	return 0;
- }
- 
-+/* Mapping based on port index on Table 4.2-1 and GPIOINT on Table 4.6-7 */
-+static const u8 rzg3l_tssel_lut[] = {
-+	 83,  84,					/* P20-P21 */
-+	  7,   8,   9,  10,  11,  12,  13,		/* P30-P36 */
-+	 85,  86,  87,  88,  89,  90,  91,		/* P50-P56 */
-+	 92,  93,  94,  95,  96,  97,  98,		/* P60-P66 */
-+	 99, 100, 101, 102, 103, 104, 105, 106,		/* P70-P77 */
-+	107, 108, 109, 110, 111, 112,			/* P80-P85 */
-+	 45,  46,  47,  48,  49,  50,  51,  52,		/* PA0-PA7 */
-+	 53,  54,  55,  56,  57,  58,  59,  60,		/* PB0-PB7 */
-+	 61,  62,  63,					/* PC0-PC2 */
-+	 64,  65,  66,  67,  68,  69,  70,  71,		/* PD0-PD7 */
-+	 72,  73,  74,  75,  76,  77,  78,  79,		/* PE0-PE7 */
-+	 80,  81,  82,					/* PF0-PF2 */
-+	 27,  28,  29,  30,  31,  32,  33,  34,		/* PG0-PG7 */
-+	 35,  36,  37,  38,  39,  40,			/* PH0-PH5 */
-+	  2,   3,   4,   5,   6,			/* PJ0-PJ4 */
-+	 41,  42,  43,  44,				/* PK0-PK3 */
-+	 14,  15,  16,  17,  26,			/* PL0-PL4 */
-+	 18,  19,  20,  21,  22,  23,  24,  25,		/* PM0-PM7 */
-+	  0,   1					/* PS0-PS1 */
-+};
-+
-+static const struct rzg2l_hw_info rzg3l_hw_params = {
-+	.tssel_lut	= rzg3l_tssel_lut,
-+	.irq_count	= 16,
-+	.tint_start	= IRQC_IRQ_START + 16,
-+	.num_irq	= IRQC_IRQ_START + 16 + IRQC_TINT_COUNT,
-+};
-+
- static const struct rzg2l_hw_info rzg2l_hw_params = {
- 	.irq_count	= 8,
- 	.tint_start	= IRQC_IRQ_START + 8,
-@@ -705,6 +742,12 @@ static int rzg2l_irqc_init(struct device_node *node, struct device_node *parent)
- 				      rzg2l_hw_params);
- }
- 
-+static int rzg3l_irqc_init(struct device_node *node, struct device_node *parent)
-+{
-+	return rzg2l_irqc_common_init(node, parent, &rzg2l_irqc_irq_chip, &rzg2l_irqc_tint_chip,
-+				      rzg3l_hw_params);
-+}
-+
- static int rzfive_irqc_init(struct device_node *node, struct device_node *parent)
- {
- 	return rzg2l_irqc_common_init(node, parent, &rzfive_irqc_irq_chip, &rzfive_irqc_tint_chip,
-@@ -713,6 +756,7 @@ static int rzfive_irqc_init(struct device_node *node, struct device_node *parent
- 
- IRQCHIP_PLATFORM_DRIVER_BEGIN(rzg2l_irqc)
- IRQCHIP_MATCH("renesas,rzg2l-irqc", rzg2l_irqc_init)
-+IRQCHIP_MATCH("renesas,r9a08g046-irqc", rzg3l_irqc_init)
- IRQCHIP_MATCH("renesas,r9a07g043f-irqc", rzfive_irqc_init)
- IRQCHIP_PLATFORM_DRIVER_END(rzg2l_irqc)
- MODULE_AUTHOR("Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>");
+   clocks:
+     maxItems: 2
 -- 
 2.43.0
 
