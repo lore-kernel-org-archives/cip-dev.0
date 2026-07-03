@@ -2,56 +2,56 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6335C43602
-	for <webhook@archiver.kernel.org>; Fri,  3 Jul 2026 10:59:38 +0000 (UTC)
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.89976.1783076375919434712
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 129F2C44502
+	for <webhook@archiver.kernel.org>; Fri,  3 Jul 2026 10:59:39 +0000 (UTC)
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.90788.1783076376267514807
  for <cip-dev@lists.cip-project.org>;
  Fri, 03 Jul 2026 03:59:36 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=b2mPM5QJ;
- spf=pass (domain: gmail.com, ip: 209.85.221.45, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-471eee9b7d5so102196f8f.0
-        for <cip-dev@lists.cip-project.org>; Fri, 03 Jul 2026 03:59:35 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=kVfJp+D8;
+ spf=pass (domain: gmail.com, ip: 209.85.221.52, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-473ba028d46so486081f8f.1
+        for <cip-dev@lists.cip-project.org>; Fri, 03 Jul 2026 03:59:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20251104; t=1783076374; x=1783681174; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9rl0ZgS1pK9WQAdfxiE1KOh2aSmJwuG4hUk+2meLyAo=;
-        b=b2mPM5QJqajPRx2ZjZ8P4gi9GuxL9lu3y208SxtgQeEOp3ALaa43tLf6mNEB4LL4vb
-         gf8LKr9ZabGewRSE4tw/KXlkOLLzRM7k/SRAqvJSerrF3NYL9YKNYaYBzxRU33HYm3dS
-         wU+OWCbiKkii7KM/QAYT3+DD6FNExiJ6rZ+jKHzFdWqB9z+VIANfSIgwBBsveTjXPSlj
-         uSCLTrLFGBbgg2c+tvLRTuOR6q+pqEFkmCMVUqiYQMSOuj9GF8i6L68IUN6yQ1tuPCDU
-         uyNVwd24WPG+fqwbfH7QweujzEbrpS1nCz3Dz+K5NaW7onYN7dMYwsScfVQ3LHWVO3bq
-         DEXw==
+        bh=eQ/FTicVIYPS/3LC8/MsozhmI893jU0srT954u/icoM=;
+        b=kVfJp+D85HHgH2OKSHGFPOMC23X8dbPkoKBt7ergCuhKvVnr2BdTx28IR1Tb8BvOMx
+         jw4hBwB0DRUJtZb9qz5pHoGP/h0Fwx8eX+x5ncSO6/PNlAGrYh5kbJP7gfUZFqz3LPag
+         dJdB4WPKapMYiVSgmymY+J+Pi5VFIC96otM6Elvj/N7ik5s8ieSZjHxi0U//i+FPZdOg
+         Jxfa7VDEBBu+HRikt9eL6a3ZTtIDGs1GmFBtqDGlZFACUPlF4fmZEfs/ssHz+aRgYbSt
+         pHFenMTnPXQir6zKgiUJJ+Q5HpNY0tPC71wsKXG9D2lrGJIQJqqHT1Doz5xmWVcY9JQ3
+         VXGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20251104; t=1783076374; x=1783681174;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=9rl0ZgS1pK9WQAdfxiE1KOh2aSmJwuG4hUk+2meLyAo=;
-        b=mub27pZG/D8CHRfB+dEzNwSEzxNKCxdKnJJ2DtU5JThhFglVcTgqSyghtKhaZ9MBmH
-         4F+wtKSCzJjnczPd3c+mY44+IMSRCvSQPs7Cwakefd1QnSJ4iOLa2gicCZYPU12fCLbi
-         aPObfggB2SFv/fhiLsswP/sNUhy5BnF49Z1jLhEeGSBBMySJIe1Shr+Zct6nfNQ7H5eX
-         4nu5RyOODBkS/NQH7YB7ZTQPhqJrco64LXrfCXYhSpHoG9nRSYOSIOwGpxaOgYGF5rgn
-         bwkZrm3/JRqSdOUPj2mPkgWLhWsTfjKw61+nNq9N1Hn+Kkl+31kVC2f2rW6AvesfIW4b
-         LHSA==
-X-Gm-Message-State: AOJu0Yy8l+dl6CrfVr4MaxbktMc5ETYQkm1njPK+ACyO9FQXMFYT//AF
-	GrurIFdFYyGAC/STMrZGBFOha5KgW7fqF7asLqe+V2KmqOEDyn1wPS1JjjPUEZ2K
-X-Gm-Gg: AfdE7cl2fOPbChEc0iRSEaEFf+lru3+9SwLLMkG98MNWfnrfiUw6mi4CVSZBVv6IDDg
-	i3YDDACpUZnk3aGQWBqEsnR2/JMDPAVVFR1It2KP9Hx3lnphHsA6N06cjgxqE1YVVBpgAgYVQVV
-	/2BBVZh2LwbiW7LpKY6ctAlpZrRF9vQazO1gtOuqy4xXoFLIK7p/hKq6xGGuGHMO76KMME+W2u3
-	jKDxvZarTV9ZAd4hL9WZx1pGYWukzidB22KF/hjkTIf5YjuC4u/u6TdGUEdTJfT0ji5eKK4JqNY
-	Pn+AdcF7ASr71IFvNgEeWtozg2gN7ck4qeE0hSE3mzqUmaw43/fe2446gRgkxkn8WSUxjEgnSOD
-	V+jwG0jgn3MPBqXmgVtfB2GX3RH3wOKLYmpSMwOhizR38moElskl/cJMD9iKyV1knsTnK2tOl1P
-	A+X8q9/N8hH7PwuSgK56qItaN9a87ggQ0=
-X-Received: by 2002:a05:6000:41e9:b0:475:f0c2:5afa with SMTP id ffacd0b85a97d-4775aba911emr14064684f8f.48.1783076374044;
+        bh=eQ/FTicVIYPS/3LC8/MsozhmI893jU0srT954u/icoM=;
+        b=gjdOIVkOzNQWif3AqNvE9TQaQXr62ByW+ujMvtUa4PYIAtGaqfkWwZRSTIqnMREHXV
+         cREuKoLC192QEgjG7NmKVBqNjDvgxUdHBdGZcZN3CUDvCf9mNgqRbVhFWlM/LTqeqt7u
+         g+3gYaSssvVd/DkppsiCqC3m7/h5uOfRjEoLMXKLR+cggZVOZvsnhOSDHroOXKTiXrFe
+         0oky1vd3Iu5HO3joSeZah+yH9OZFZIJXo8yekO5yhCMj0huqKz1Zu1bMUO0FfDTCN7+2
+         NIxeVwojLjGh9ok1b8Yphp8ABT8JWqnTCND5ptyPlZ97+CRshqSR1B6N0GWH4iNtLZMd
+         o8wg==
+X-Gm-Message-State: AOJu0Yy7TSrRRvxfKrhfhhTgQZJFITdN2bR2PvG1XauDv2HcWaz6OKie
+	R8+vY+59Di1gW5V8Ss+jkpTwYQqMqVnvxiYMlxrlyc1Dv/cR4d8EnW3h9fn8jEwO
+X-Gm-Gg: AfdE7clYKQk6WuzMkrckULWJyG9vT81r5Us0FvTWTJouPxmKMcO8bAE+ClcSNIrax4J
+	xcTBnRoWHqxq9EWrUAKW8kz6vtcEWFTdWtNFCNkpWHj9Gw2q3gZD0AlPbVOofVNkmwptB3hDMmF
+	Nj4BkeD6Gr8JMtdtTFXTk7ypiUjqiRqNX4pLr4omHLtJpzcwE2dQ3VCmelVbkPEMUGR/poetD3L
+	HLFTtlpxXJI4GRHOyp9MTWaGvqHFacKFQYM9X0YasgvvgBvSU2oPvpt+NogQ+8hGUAjniIi0bn8
+	4SDNsCG/ivkByvRdl+S/aWsEsyKhD8Em8kfTFmDdBKBnDlUr6xxgqxyob5sejOuD7PCLEG+ET/A
+	P7SbPEs4oa718Z7Cf5j1cWC2vDcoTydSvqYXe6M7JiYVpjNsSWm/cBoTCeu2+fVchPn5ygaxc96
+	Oc9/RoXNOPTYJMgsFZUrX2
+X-Received: by 2002:adf:e195:0:b0:460:64e8:2553 with SMTP id ffacd0b85a97d-47757e57472mr14060845f8f.4.1783076374418;
         Fri, 03 Jul 2026 03:59:34 -0700 (PDT)
 Received: from biju.lan ([2a00:23c4:a702:d301:76eb:405a:5f87:72eb])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47998d81e86sm4838521f8f.16.2026.07.03.03.59.33
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47998d81e86sm4838521f8f.16.2026.07.03.03.59.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jul 2026 03:59:33 -0700 (PDT)
+        Fri, 03 Jul 2026 03:59:34 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,9 +59,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 20/23] arm64: dts: renesas: r9a08g046l48-smarc: Add SCIF0 pincontrol
-Date: Fri,  3 Jul 2026 11:59:11 +0100
-Message-ID: <20260703105923.251255-21-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 21/23] arm64: dts: renesas: rzg3l-smarc-som: Add pinctrl configuration for ETH0
+Date: Fri,  3 Jul 2026 11:59:12 +0100
+Message-ID: <20260703105923.251255-22-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260703105923.251255-1-biju.das.jz@bp.renesas.com>
 References: <20260703105923.251255-1-biju.das.jz@bp.renesas.com>
@@ -70,43 +70,91 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 03 Jul 2026 10:59:38 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23439
+ <cip-dev@lists.cip-project.org>; Fri, 03 Jul 2026 10:59:39 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23440
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[ Upstream commit cdc8ef62ae6d04d2ba6a9226bc432168d06ad9a5 ]
+[ Upstream commit 72411a23c3942a2d5462f1695f0bceaf1c018bf7 ]
 
-Add device node for SCIF0 pincontrol.
+Add pin control configuration for the ETH0 Ethernet interface on the
+RZ/G3L SMARC SoM board and also enable hotplug support.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20260430125342.439755-5-biju.das.jz@bp.renesas.com
+Link: https://patch.msgid.link/20260430125342.439755-6-biju.das.jz@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ .../boot/dts/renesas/r9a08g046l48-smarc.dts   |  1 +
+ .../boot/dts/renesas/rzg3l-smarc-som.dtsi     | 32 +++++++++++++++++++
+ 2 files changed, 33 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts b/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
-index 86db86335d5e..acead2b1c842 100644
+index acead2b1c842..0ae052238b3b 100644
 --- a/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
 +++ b/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
-@@ -35,3 +35,15 @@ &keys {
- 	/delete-node/ key-2;
- 	/delete-node/ key-3;
+@@ -14,6 +14,7 @@
+ 
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/pinctrl/renesas,r9a08g046-pinctrl.h>
+ #include "r9a08g046l48.dtsi"
+ #include "rzg3l-smarc-som.dtsi"
+ #include "renesas-smarc2.dtsi"
+diff --git a/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi
+index fb781d9035aa..c7227a865fa4 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi
+@@ -23,6 +23,8 @@ &eth0 {
+ 	phy-handle = <&phy0>;
+ 	phy-mode = "rgmii-id";
+ 
++	pinctrl-0 = <&eth0_pins>;
++	pinctrl-names = "default";
+ 	status = "okay";
+ };
+ 
+@@ -38,6 +40,7 @@ &mdio0 {
+ 	phy0: ethernet-phy@7 {
+ 		compatible = "ethernet-phy-id0022.1640";
+ 		reg = <7>;
++		interrupts-extended = <&icu 3 IRQ_TYPE_LEVEL_LOW>;
+ 		rxc-skew-psec = <1400>;
+ 		txc-skew-psec = <1400>;
+ 		rxdv-skew-psec = <0>;
+@@ -52,3 +55,32 @@ phy0: ethernet-phy@7 {
+ 		txd3-skew-psec = <0>;
+ 	};
  };
 +
 +&pinctrl {
-+	scif0_pins: scif0 {
-+		pins = "SCIF0_TXD", "SCIF0_RXD";
-+		power-source = <1800>;
-+	};
-+};
++	eth0_pins: eth0 {
++		txc {
++			pinmux = <RZG3L_PORT_PINMUX(B, 1, 1)>;  /* ETH0_TXC_REF_CLK */
++			power-source = <1800>;
++			output-enable;
++			drive-strength-microamp = <5200>;
++		};
 +
-+&scif0 {
-+	pinctrl-0 = <&scif0_pins>;
-+	pinctrl-names = "default";
++		ctrl {
++			pinmux = <RZG3L_PORT_PINMUX(A, 0, 1)>, /* MDIO */
++				 <RZG3L_PORT_PINMUX(A, 1, 1)>, /* MDC */
++				 <RZG3L_PORT_PINMUX(A, 2, 1)>, /* RX_CTL */
++				 <RZG3L_PORT_PINMUX(A, 3, 1)>, /* TX_CTL */
++				 <RZG3L_PORT_PINMUX(B, 0, 1)>, /* RXC */
++				 <RZG3L_PORT_PINMUX(B, 2, 1)>, /* TXD0 */
++				 <RZG3L_PORT_PINMUX(B, 3, 1)>, /* TXD1 */
++				 <RZG3L_PORT_PINMUX(B, 4, 1)>, /* TXD2 */
++				 <RZG3L_PORT_PINMUX(B, 5, 1)>, /* TXD3 */
++				 <RZG3L_PORT_PINMUX(B, 6, 1)>, /* RXD0 */
++				 <RZG3L_PORT_PINMUX(B, 7, 1)>, /* RXD1 */
++				 <RZG3L_PORT_PINMUX(C, 0, 1)>, /* RXD2 */
++				 <RZG3L_PORT_PINMUX(C, 1, 1)>, /* RXD3 */
++				 <RZG3L_PORT_PINMUX(C, 2, 15)>; /* PHY_INTR */
++				 power-source = <1800>;
++		};
++	};
 +};
 -- 
 2.43.0
