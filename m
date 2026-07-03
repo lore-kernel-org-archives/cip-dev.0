@@ -2,22 +2,22 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D4EAC43458
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCD84C43602
 	for <webhook@archiver.kernel.org>; Fri,  3 Jul 2026 16:35:37 +0000 (UTC)
-Received: from OS0P286CU010.outbound.protection.outlook.com (OS0P286CU010.outbound.protection.outlook.com [40.107.74.50])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.96266.1783096527185080678
+Received: from TYVP286CU001.outbound.protection.outlook.com (TYVP286CU001.outbound.protection.outlook.com [52.101.125.55])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.97048.1783096527814245992
  for <cip-dev@lists.cip-project.org>;
- Fri, 03 Jul 2026 09:35:27 -0700
+ Fri, 03 Jul 2026 09:35:28 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=s5d4lC+o;
- spf=pass (domain: bp.renesas.com, ip: 40.107.74.50, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=cyAf4N//;
+ spf=pass (domain: bp.renesas.com, ip: 52.101.125.55, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yNDJh9G4d90t8+wETv6/AjC8Kedehgn6nsV1Ot6ybkKvxiku2IlIem/87EuTKjdBZ/ZxW6JS7Pi1+1Rh/clCs9U+ZdqyX07qEeCTh/a9Q4nFFc/6TnSkN96L65aCX7Cn18KcU9KCS8BVfQ9VLlMJxO627Evkp8h3jla9E0rtuO60iBQkrOdwiyFDy9vTJ1oJ2euTgUErc7+UdP2tPQwL1jTwwmk629vS6gYk5tJNqSQ4UukGJbi4R0XVQ/OOUURQ3HWyyrS2ZIcpbmw6apLtQ4v8v2fJrUeaIFyZn1rOhOE/RQbIqMUq1kBR2yltnF9e6Qz+vWx1rtrnDUuw3hQ0Xg==
+ b=AeCwdcwOMl0IVEJlNBcCLFwDqTb6wOPX7Lxjoeb70uJ6Ojpevz3Zh75VtAT1DUaz0O6vjv1xkC2WjfJ/AIGrM2cwbqGMSL1BmffKdmoprxxcB8IfkYc6PkDiGBXJFftONl69huQqsDtaRgP9XsyE5Z1FaqmmXyHHvah/N8wk55aPygJKiYrBBrIl6967GezLmItV59a495XEego6gV9rwcqm11v+YCWhEGvqicoNfgVmJXEEQQN6kN6AUkvmoYb2asdNBulUE+3vy9TCnLKqzLZFZAancfqXVUUc/Kax1LF4sSPd2KqVfNczl1mdGy8zKDKlvsVyPBJIuLcESlWlxA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9AXT6Jd1W2oECwF7dpIVZW5FmuHbDupMtyasbxqFQ0Y=;
- b=w0Ut79NcfdAdx0zPoDuLuwAn8846MzBQJLN2Qz771miAaM3V5YxzQpXRAE/Y0UB3tpCQqRqjl+zLP9xMrbJmAnI7e0+qI2MNKpCBFwALowJBBVk//D1QfYmVuHUaFqdRdV2z7bQzXYAusR4Vsi3Vrh8OSDneYBzl+gwdfjHg/HbbOalRKxILYmxSNiV2GuZeGUKq8IOsKqOg4WxM+dvq4JSjtnlrkKOGmSStW+jYFPOXpelU8dTTM029R3qNrNVp1WMZuvEwlsHS7yPb1vrFBI2MPoJiF35w0YlAZecg5rAJzUgtZRRFBroJOHXQgpwUhmke+8CKnuRuUDzKoNpIPQ==
+ bh=xbhX3+6Q2KxEXdXwwA3Eu6Wd0TnBD+7HD0bauVTOrG0=;
+ b=EeiEOvLn2wSVQccnfTN8FM8p53T8KH5V8K/x5UVpynjsp53Lo4Z74uWN8+ixFuw6Ss/4c5dx6FQd/d07kop/f7MxQpp9rcqmMu5KlCf69zp8kmRomYXqe9m9Rdf5pgGSkK1yQuzVD6MTFsgIzalYX+y/HxIsyLE2XmAWbD5NqeneAgmIlt3sNo5GqoHRpe5y/nF3bOktXhqqsriMjKkb8YktnLWCNjOBrRk3iZRduuDCseQb07MuzJmvH+bAxRSPw4o+Uc00maRjVnP6twGgsKLpDFZAlVW4b4n0kMPocd0gC5oHYp7Kt4a+WUBu5nVfJyS0SqVqcahk0vXRXEdkRQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  8.62.32.50) smtp.rcpttodomain=bp.renesas.com smtp.mailfrom=bp.renesas.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=bp.renesas.com;
@@ -25,18 +25,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9AXT6Jd1W2oECwF7dpIVZW5FmuHbDupMtyasbxqFQ0Y=;
- b=s5d4lC+o8rX4PN6Ut/MUqUMKfCMnEjJ1sedCSyx6YE/+r/Nh4NUmKBDYyx+H9HkQlSD9wK4j0Ly7DUu5ezuZQLz097VYESnCXoUgl5ocn1Em7+Zrf0Vx8zlRs4vVUAkHU/0nBZHl38/enhmpQxW4LIpMYMeVPHzOvXfKUU6W5no=
-Received: from TY4P286CA0044.JPNP286.PROD.OUTLOOK.COM (2603:1096:405:36e::15)
- by OSRPR01MB11599.jpnprd01.prod.outlook.com (2603:1096:604:230::12) with
+ bh=xbhX3+6Q2KxEXdXwwA3Eu6Wd0TnBD+7HD0bauVTOrG0=;
+ b=cyAf4N//BNsmVV4uRjlXe+1lVzHQPDgMt9vGjabjuY8Y/7K6azmeOerus+n6agEeAef5kVipAmLpm6YFC0AhPgrBx6h/iXDmFpMBz5opt+IO5CQ42iyGwvjhYu3N89L81AMllyLbQ1bBkpsLCGACN5TfDQ4z7MQCDIiTjuAibjw=
+Received: from OS7PR01CA0159.jpnprd01.prod.outlook.com (2603:1096:604:24d::15)
+ by TYYPR01MB13021.jpnprd01.prod.outlook.com (2603:1096:405:1c5::11) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.8; Fri, 3 Jul 2026
- 16:35:19 +0000
-Received: from TY2PEPF00005621.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:36e:cafe::9b) by TY4P286CA0044.outlook.office365.com
- (2603:1096:405:36e::15) with Microsoft SMTP Server (version=TLS1_3,
+ 16:35:21 +0000
+Received: from OS1PEPF0000D20D.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:604:24d:cafe::2d) by OS7PR01CA0159.outlook.office365.com
+ (2603:1096:604:24d::15) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.21.181.11 via Frontend Transport; Fri, 3
- Jul 2026 16:35:19 +0000
+ Jul 2026 16:35:21 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
  smtp.mailfrom=bp.renesas.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=bp.renesas.com;
@@ -44,76 +44,99 @@ Received-SPF: Pass (protection.outlook.com: domain of bp.renesas.com
  designates 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
  client-ip=8.62.32.50; helo=ejcrelay004p.adwin.renesas.com; pr=E
 Received: from ejcrelay004p.adwin.renesas.com (8.62.32.50) by
- TY2PEPF00005621.mail.protection.outlook.com (10.167.240.52) with Microsoft
+ OS1PEPF0000D20D.mail.protection.outlook.com (10.167.240.36) with Microsoft
  SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.181.6
- via Frontend Transport; Fri, 3 Jul 2026 16:35:19 +0000
+ via Frontend Transport; Fri, 3 Jul 2026 16:35:21 +0000
 Received: from Ubuntu-22.. (nld-5cg2234fz3.diasemi.com [10.24.0.5])
-	by ejcrelay004p.adwin.renesas.com (Postfix) with ESMTP id 5976D300026F;
-	Sat,  4 Jul 2026 01:35:17 +0900 (JST)
+	by ejcrelay004p.adwin.renesas.com (Postfix) with ESMTP id CFDA73000293;
+	Sat,  4 Jul 2026 01:35:19 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
 	Pavel Machek <pavel@nabladev.com>
 CC: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 0/4] Add PCIe support to RZ/V2N SoC
-Date: Fri,  3 Jul 2026 17:35:11 +0100
-Message-ID: <20260703163515.35831-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 1/4] clk: renesas: r9a09g056: Add PCIe clocks and reset
+Date: Fri,  3 Jul 2026 17:35:12 +0100
+Message-ID: <20260703163515.35831-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260703163515.35831-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20260703163515.35831-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY2PEPF00005621:EE_|OSRPR01MB11599:EE_
+X-MS-TrafficTypeDiagnostic: OS1PEPF0000D20D:EE_|TYYPR01MB13021:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 89cc4754-28fa-485c-d4b3-08ded9211203
+X-MS-Office365-Filtering-Correlation-Id: 0375838c-a814-49a2-22c8-08ded9211389
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|36860700016|376014|23010399003|1800799024|82310400026|18002099003|11063799006|56012099006;
+	BCL:0;ARA:13230040|1800799024|36860700016|376014|23010399003|82310400026|22082099003|18002099003|13003099007|11063799006|56012099006;
 X-Microsoft-Antispam-Message-Info: 
-	pVFofcLb7NdJmC3+581fa/Ig6V2F7MKBVXYlqEFS/bc4SnA76ZxZBBMuxDpU8ZvSIiA/U9fj/NpiavSbARCZGnG8DxiRKGdjmyTS6QUVUcDka7Y8VxMF1JVylqLuQQBY8AjxhIX0lz8BFlkC09dhLpciyInN6TvrGFIl1NOZ0KbXKLuxn3oaJ+FLJ/dXxZzgLsipf4U9jLMi10aAQc0s1KV8C9qRSeIqcRh+ggIZuzhnSfICiwkoB8Tqkdcc6zjBy+/nkHv8ku2Zk0zzDp+114TK9WhLPWnWn+JBkF+3cQnEnWJBHE3EXGjd2dDUvLfXZe/DFDLsxcpeMZR1uTISzDQNIxgiBS/vnRlFBzwKfOCH+Vvz3sL9DI+ceOUJVrbfiFeOq4jzslpQJbul+pE3UbQcluzg8t+eLLllSDJderbz5g86gct0Ppodegs0kboJcdOECqQzukvncnE90YfvS59VfYJvFE5xutjFWwXDs8ln+Q+aEtbvVr3FIRE5hGoa8P+8HWXMP57jGx/AaKZB8QjwWIi9HUcPTD6dP70/By4wrl88RofpAhoPcm/0yLPoyDR8lZ+xsWlUNEfjSZNG1CYa75rYeIFEMSpRbCBgQBBkSRHsyTu8KXJuoE/pCA88fs993ykHi2g0zEN1afN1rlF3pDP0GsUOlieCkyQDhwK20fysF+5UxBnXVTIPzo1i+9ZVaV1XDVWVXp6Qo2PagA==
+	rfkItffzXIhiTh1zUpk5npbYZEfhXU/CTBaDNXu9/jzwvxuksbfBBYmZ3f8Q4GumrFoeC336S6vpzdflG2CZiOzH8jDzJMnDZZfANu4jcpXv3nY2Z6PiRkYRg9XrxzUkw1Tzt6bcpXoVze+F1mnGmgywL1LjRlsUEJjiuaWy23V0SA+NhUqx5HePUQWDZGWb6SH11jmNu3D0zDkgUhxngAtgY26utvPW6Lltctw2j/ekvpAyZxQPNGJYtQEmndQquHS8eUycLk2UI9krA5hlbCwzX9Mgdf6fp6W/o/L0I47WssTvkSqJdeSO5OgqkVybVNcnJlJKrwaXLFoA+zsYUzkBn2xeaOi3YMn9nYn5kYFFgkiejzsFOZjL8MyHqaESACxQOas9u/D4MAYr71H5JK9fg1CgQiJ24mahctR/0jZztqhgwkH61tm989Ai436ZIjqoOVKIx95MKyU+Ayowl86zPUpmoNHrryHHGfhInSzdglMS9ht27Dv8k/wvN+8IePxJoPEjezfvi4Bg9/Ckz7ympHcxCbI5C9RgwkKvZlwEFcRMoSR/OAlSsZ/BtI9ApDF2NXcMy6ylbQasdTJuCMRBjsh0TCa9T0deBNYakaZf+BUnprCAgzXkdV85heB2kPA2PbQnHMfLoFMUwnPz6tiFjl4pz4CtGpLveCH1sRE=
 X-Forefront-Antispam-Report: 
-	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay004p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(376014)(23010399003)(1800799024)(82310400026)(18002099003)(11063799006)(56012099006);DIR:OUT;SFP:1101;
+	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay004p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700016)(376014)(23010399003)(82310400026)(22082099003)(18002099003)(13003099007)(11063799006)(56012099006);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	sBm3JaFegKXq5dm4++q/aGz+bYFs0jequWcFVWScXKrqKjQMM/IgSPFsBkeEDWbwUKGwOueJvMrL3lq/5JhJGrtZm+Fx10Ol+LOQKsdPqXgtuzCbR8BUNVUj7Ae3TRc0v+VCGkHgeiBol9S3+j51YNNY2oJeVwlkBVkElv5MwHxpb2ZYqt+C1B3vflcwC32r32eoGkNtofzM9byr+kTKqpCfNmCrkrOfShob/WAQAjnKdYR2j/ST4gquqxupLQYSBcOv6HnQqlBWdLASWy8ssz1WGXxmN28W9jNQYCNx8qUiDcqz8G/hguHIv0oQ5kdwtx56bEleWthxStKodRJ00lGiwJuV5oWfKPz2a9b0jMwrAZ255xGti2jN42HdGsqbIujDR3l5OmJQ39wqJJGh8GSr+nroAsSvb7fGggIOW2qeUnC3E5HFWZB2F43ljyZL
+	pRSUX6WXwwKEpBC1rGCiEvntFwGFeEQK/PVQFPm//pEFolur7lPqohq/1M7ak9/Q0fl+53/WWlwxZe323yz90Nsl50blT6ZwvC238kOzitr+TIr7z2vZmNhm/jMnpdtv4xqfuvpk0Omus7WH6XnULkNQ1Z1ZBtzXnOT4bsYjPuk5oleXFQpv7WOGi9BCXkt/lQLh+ViS2Dssx22CSBbU5kKiSfV/0Rj0IY4/wU9SF2K6THuBjrgc0C+WteKlBxOGmYhA0+l5r0aEib/xe+ToCrq7pw2kFb+cECiCN/W0Cb4UGbqHlo0VC7y7NHhEbdmJr1JmVnB32QNhKApuK+ZqO4/XCHi3yKpHhTpGhaDGvBAbVChGSN0dNjdFJaM6WLn3H3fynKxD3JCqSuhgAuwm2eWJ8SM3edlEeSW0OC5LgspEdA4JpuU4RE8h4PnZgVrc
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2026 16:35:19.2077
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2026 16:35:21.7455
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 89cc4754-28fa-485c-d4b3-08ded9211203
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0375838c-a814-49a2-22c8-08ded9211389
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay004p.adwin.renesas.com]
-X-MS-Exchange-CrossTenant-AuthSource: TY2PEPF00005621.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthSource: OS1PEPF0000D20D.JPNP286.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSRPR01MB11599
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB13021
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 03 Jul 2026 16:35:37 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23448
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23449
 
-Hi all,
+commit a7719b2d04c42b527741ecce68e29113e42a10bb upstream.
 
-This patch series aims to add PCIe support to RZ/V2N SoC.
-The driver patches have been already backported. All the
-patches have been cherry-picked from upstream kernel.
+Add clocks and reset entries for the PCIe controller.
 
-Cheers,
-Prabhakar
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Link: https://patch.msgid.link/20260312111521.115392-2-prabhakar.mahadev-la=
+d.rj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[PL: manually applied the changes due to conflicts]
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/clk/renesas/r9a09g056-cpg.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Lad Prabhakar (4):
-  clk: renesas: r9a09g056: Add PCIe clocks and reset
-  dt-bindings: PCI: renesas,r9a08g045-pcie: Add RZ/V2N support
-  arm64: dts: renesas: r9a09g056: Add PCIe node
-  arm64: dts: renesas: r9a09g056n48-rzv2n-evk: Enable PCIe
-
- .../bindings/pci/renesas,r9a08g045-pcie.yaml  | 23 ++++---
- arch/arm64/boot/dts/renesas/r9a09g056.dtsi    | 69 +++++++++++++++++++
- .../dts/renesas/r9a09g056n48-rzv2n-evk.dts    | 23 +++++++
- drivers/clk/renesas/r9a09g056-cpg.c           |  5 ++
- 4 files changed, 112 insertions(+), 8 deletions(-)
-
+diff --git a/drivers/clk/renesas/r9a09g056-cpg.c b/drivers/clk/renesas/r9a0=
+9g056-cpg.c
+index 8c0203eaeaeb..197f3392c6ed 100644
+--- a/drivers/clk/renesas/r9a09g056-cpg.c
++++ b/drivers/clk/renesas/r9a09g056-cpg.c
+@@ -376,6 +376,10 @@ static const struct rzv2h_mod_clk r9a09g056_mod_clks[]=
+ __initconst =3D {
+ 						BUS_MSTOP(8, BIT(6))),
+ 	DEF_MOD("gbeth_1_aclk_i",		CLK_PLLDTY_DIV8, 12, 3, 6, 3,
+ 						BUS_MSTOP(8, BIT(6))),
++	DEF_MOD("pcie_0_aclk",			CLK_PLLDTY_ACPU_DIV2, 12, 4, 6, 4,
++						BUS_MSTOP(1, BIT(15))),
++	DEF_MOD("pcie_0_clk_pmu",		CLK_PLLDTY_ACPU_DIV2, 12, 5, 6, 5,
++						BUS_MSTOP(1, BIT(15))),
+ 	DEF_MOD("dsi_0_pclk",			CLK_PLLDTY_DIV16, 14, 8, 7, 8,
+ 						BUS_MSTOP(9, BIT(14) | BIT(15))),
+ 	DEF_MOD("dsi_0_aclk",			CLK_PLLDTY_ACPU_DIV2, 14, 9, 7, 9,
+@@ -455,6 +459,7 @@ static const struct rzv2h_reset r9a09g056_resets[] __in=
+itconst =3D {
+ 	DEF_RST(10, 15, 5, 0),		/* USB2_0_PRESETN */
+ 	DEF_RST(11, 0, 5, 1),		/* GBETH_0_ARESETN_I */
+ 	DEF_RST(11, 1, 5, 2),		/* GBETH_1_ARESETN_I */
++	DEF_RST(11, 2, 5, 3),		/* PCIE_0_ARESETN */
+ 	DEF_RST(13, 7, 6, 8),		/* DSI_0_PRESETN */
+ 	DEF_RST(13, 8, 6, 9),		/* DSI_0_ARESETN */
+ 	DEF_RST(13, 12, 6, 13),		/* LCDC_0_RESET_N */
 --=20
 2.43.0
 
