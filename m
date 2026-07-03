@@ -2,56 +2,56 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20DE1C44503
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64B34C44508
 	for <webhook@archiver.kernel.org>; Fri,  3 Jul 2026 10:59:39 +0000 (UTC)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.89975.1783076374990230256
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.90778.1783076371764372499
  for <cip-dev@lists.cip-project.org>;
- Fri, 03 Jul 2026 03:59:35 -0700
+ Fri, 03 Jul 2026 03:59:32 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=ZIK4CpEo;
- spf=pass (domain: gmail.com, ip: 209.85.128.51, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-493bc8fda98so4292855e9.0
-        for <cip-dev@lists.cip-project.org>; Fri, 03 Jul 2026 03:59:34 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=DuQF82E3;
+ spf=pass (domain: gmail.com, ip: 209.85.221.41, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-475cb71a4ebso451442f8f.0
+        for <cip-dev@lists.cip-project.org>; Fri, 03 Jul 2026 03:59:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783076373; x=1783681173; darn=lists.cip-project.org;
+        d=gmail.com; s=20251104; t=1783076370; x=1783681170; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=reVZTGgLBg9LyUkHIH53uy7l5OZXw+mKvt3xLsAPiBY=;
-        b=ZIK4CpEoO0nsMwXpa4emJSWE+HUOL/WIqmkEtOq7uTWUO8Tb/qP5wLdor5eMc0fsih
-         4u/iKd1n7fR/55sQO22OHFrr3hfVBJ8pwDa+an5XCuXRBP+Mj/S1Ofyp4FbKfUNNhnyk
-         HKXLQmE/fr2ELjEr5H5qDlt0EC6I9YcONz5UxFM6OtaUrvj+X4RfATxo5ktVwLyaHPK9
-         TNtRXrI5T97epsqaZjetvfqiZkTLpfYozMV2H/6St45xjYpOCzAhYormEMmWkKR/xfLP
-         Yg+BFaClT0KVhUJSLQ3K2LJhZU8ZoqFaL8i4jaKyA1TNzrLOAtV5+xakSVqMTFlsBVha
-         fkXA==
+         :message-id:reply-to;
+        bh=fPiM815nQTK+jME9r7FHyYPELldbM4BDk9NJ6JkBdAg=;
+        b=DuQF82E3Ef38B7wjJDPl5E5x9OnHIaw0c8Aje607LqmNbiMgWcGC1eN5mR3CSJkYQT
+         br4NCs+1Qguv2/7f63BevmtxiiQo1ygNEfdcWMI1B3axzQx79RqmgZNGu/JKTaYE/qNy
+         qhv2ZjTBPEw9DAbs9UwlXbR3WRYkr6lPaPP7A+i3C/trzWsEMSUYPLKz3BsVOswvDxKf
+         8LrdazK5sQhp9cRnjB68zJygRM6hnKmp7uXROSFUJsCXBbrGSSrF1wquTtwcJeuhraMb
+         mrW8MfClxriwASa4qxdYjXNKq/QTMAaFf4IEis3DG96tL7utBOEfUFbm3w70I0BnhmB+
+         yVIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783076373; x=1783681173;
+        d=1e100.net; s=20251104; t=1783076370; x=1783681170;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=reVZTGgLBg9LyUkHIH53uy7l5OZXw+mKvt3xLsAPiBY=;
-        b=cXb3gVl0B1rBJ5S6HE6oByeKt/EITPXVW4L5Towr9FyLuXxcWTgJtXf218UAdCXdAm
-         LyL51hAzZAkRCNbJCEScxakZ1EOUJXgEwycsiUWkbUObjLmZKNdQX8w8G7vYxBMWrwso
-         u89L7qoclh7OaUEFDJ1esKznygYWcXW12U5Ng0ckqiWGEnip177Y7DpGIxE2jpZsbKeo
-         ih8hye99Cc3FFpCHaSnQ28yE9ldfQkM1E5PzpYjxDdfkj2i+JZtCLOBStv6N/TyvUhhD
-         NEtBiTpMcwjW8YnKqMo5N7t2WROwEc8AerYh0wiTVuR8sNc/xVSjtBvyLa5gtfJTpWQU
-         Z6HQ==
-X-Gm-Message-State: AOJu0Yxf+JhWNWI7OP/EM5bAl0KuGXm8BYg6+6n6NKGzQPvNBpqigBgu
-	eifo1yO3dnGFLjqdRlGTRR/bV2AWxSZ1wnQ2a2WNpucWBq1dizwlnJMdDHObfwgR
-X-Gm-Gg: AfdE7ckH1eOYeX1CWQwT1WFP7wJ/D9hP2blMGr34SyLR11zmIbwU8X3HsQf9I3jS6/X
-	0SDBWUUMgm3sKcs/cz3Pb8NWTqZUziOzDy/lwsG2zd8psjDY1EgIAbiwd0XOFf+PPJyK8StZsU6
-	ZFeysi5zMf2DzE9XLqckeSQlMIGF5LUmFuRdzBqKOrjzzCWAbvLehGOCar/vD8zlQ10tS4HVFQy
-	BG5dxwdb97wKH6jmVZBMxTxMaYldn2RHZMRyKJ3jfyLmPWjLBqUYdzfPruQO0d6N3WTYKx0CmZf
-	vnEA+3+DUuOuBClsSh87IyAlv0Mjtb47lSOz/nBLPW2uB2BOYOZ2+fnstXq4o88LzpZvDv5iPcI
-	5GXBazQuS1FJllf2hJDKzO/pyJ79bfjf0TJLd2cQ/fOcQgoDtB9O4PpejekaekmEJoYo0xb3hVd
-	rTtewWuKLn6q8DLH2R2M/J
-X-Received: by 2002:a05:600c:3e83:b0:492:7019:caca with SMTP id 5b1f17b1804b1-493cb5eefe7mr33553935e9.26.1783076373215;
-        Fri, 03 Jul 2026 03:59:33 -0700 (PDT)
+         :to:cc:subject:date:message-id:reply-to;
+        bh=fPiM815nQTK+jME9r7FHyYPELldbM4BDk9NJ6JkBdAg=;
+        b=DRRb9Zs085IhpSq2okeZUY44GttwcZn2r9Sy0GvLlO3Jcd/oPDSrWQ+D2SmMnlUgYg
+         hVZ9ri0PQQEjDzBwx71PpZ6X2o+Y9Jaunoc8ll8wvq8jAsH3aGHbajiqyfrwX6GeuJ9i
+         qIzmoTF4JHAa8mkJH07grAIPiwnAN8sftoRkZnveZmMdcW5muC7xnmMCUrODp5gfEvWW
+         BHqgF7KcsXEDNRksFdAoCQepvigVm3tNVZ5waIdSFbs+q5jVJSaUMzmEfX2NkhPu+eiO
+         c2/0L5fdFGE9dRg85LWxhHOX6qMgiZKbfxKGCrgohOGa6zWHbAjMDjNb1fxELTNv2Um6
+         47uQ==
+X-Gm-Message-State: AOJu0YwXd1zX/Nmm/yzdNZdOpuwNET/nBjWpNflT0CFThoxUS+XAeNL+
+	0M8kZVhowCSDDKKSxfDmzfb6JFs3lZnVaNtEeZWUC4K/o8KE1CgLzppmGhxgHwoG
+X-Gm-Gg: AfdE7cmy735ne9kUFCJQisdEf6Czt9gRsLaiZcU9GhtxAdYX227cZ8xzcMh+NRKjwQs
+	Z3OZhkOrr4k9c6+UpE31dvOcm5NTp6T501nhkU1SJSKGmC/bqpY97SU1nwNUlj3vGZs0k7MrpP3
+	ThRMCBrxcUUrQx7R48udEZ5MBMBbrXlyuOT/SE/Mp2yONuUCcIFuHe1GYsKk2HUqfYDE8FSaVXN
+	t2tAtFl8n9fNZYR8O4BsV6fyGI9gWrkHnVH5RYBy7n4uUW7uIcjkqTvz5yhYK1gj6B+LKxEBiqg
+	YCIdmRbjk8AAo4GJZOReGhGaMNGh6R6QBr5v/9whgKEBVKX91dCQPivx+//6gXr/U3/lfzhO0Mk
+	Z/8D7AYikgFJtr8Vh2oXnwI6Gk8VulxofVNcVvvCWu53rNZkQ/2JRPveFxE9cfqJv+WrMV9dpTZ
+	5Xaz6KpgtjIbWknnce3hpe
+X-Received: by 2002:a05:6000:4207:b0:472:f8b5:aaca with SMTP id ffacd0b85a97d-47758327ae8mr14951828f8f.15.1783076369913;
+        Fri, 03 Jul 2026 03:59:29 -0700 (PDT)
 Received: from biju.lan ([2a00:23c4:a702:d301:76eb:405a:5f87:72eb])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47998d81e86sm4838521f8f.16.2026.07.03.03.59.32
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47998d81e86sm4838521f8f.16.2026.07.03.03.59.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jul 2026 03:59:32 -0700 (PDT)
+        Fri, 03 Jul 2026 03:59:29 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,9 +59,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 18/23] arm64: dts: renesas: r9a08g046: Add ICU node
-Date: Fri,  3 Jul 2026 11:59:09 +0100
-Message-ID: <20260703105923.251255-19-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 11/23] pinctrl: renesas: rzg2l: Update OEN pin validation to use exact match
+Date: Fri,  3 Jul 2026 11:59:02 +0100
+Message-ID: <20260703105923.251255-12-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260703105923.251255-1-biju.das.jz@bp.renesas.com>
 References: <20260703105923.251255-1-biju.das.jz@bp.renesas.com>
@@ -71,124 +71,41 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 03 Jul 2026 10:59:39 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23437
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23430
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[ Upstream commit b3eea87822b799051745fff61b2e8d0313901ea1 ]
+[ Upstream commit da4a37540b780c386eb2362bfcc638f769918cb1 ]
 
-Add interrupt control node to RZ/G3L ("R9A08G046") SoC DTSI.
+The RZ/G2L SoC uses pin 0 from a port for OEN while RZ/G3L uses pin 1. The
+existing greater-than comparison against oen_max_pin in
+rzg2l_pin_to_oen_bit() would incorrectly accept any pin below that value
+rather than enforcing the single valid OEN pin for each SoC. Replace the
+range check with an exact equality test so that only the designated OEN
+pin is accepted.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20260430125342.439755-3-biju.das.jz@bp.renesas.com
+Link: https://patch.msgid.link/20260430093422.74812-5-biju.das.jz@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a08g046.dtsi | 90 ++++++++++++++++++++++
- 1 file changed, 90 insertions(+)
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g046.dtsi b/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
-index e52498b3a745..232a0e299df7 100644
---- a/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
-@@ -210,6 +210,96 @@ pinctrl: pinctrl@11030000 {
- 			/* placeholder */
- 		};
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index 9136cc352b9c..370ffb829287 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -1126,7 +1126,7 @@ static int rzg2l_pin_to_oen_bit(struct rzg2l_pinctrl *pctrl, unsigned int _pin)
+ 	u64 caps = FIELD_GET(PIN_CFG_MASK, *pin_data);
+ 	u8 pin = RZG2L_PIN_ID_TO_PIN(_pin);
  
-+		icu: interrupt-controller@11050000 {
-+			compatible = "renesas,r9a08g046-irqc";
-+			#interrupt-cells = <2>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			reg = <0 0x11050000 0 0x10000>;
-+			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 529 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 530 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 531 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 532 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 533 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 534 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 535 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 536 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 505 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 506 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 507 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 508 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 509 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 510 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 511 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 512 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 513 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 514 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 515 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 516 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 517 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 518 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 519 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 520 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 521 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 522 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 523 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 524 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 525 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 526 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 527 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 528 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 529 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 530 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 531 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 532 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 533 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 534 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 535 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 536 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 224 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 236 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 248 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 260 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 284 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 296 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "nmi",
-+					  "irq0", "irq1", "irq2", "irq3",
-+					  "irq4", "irq5", "irq6", "irq7",
-+					  "irq8", "irq9", "irq10", "irq11",
-+					  "irq12", "irq13", "irq14", "irq15",
-+					  "tint0", "tint1", "tint2", "tint3",
-+					  "tint4", "tint5", "tint6", "tint7",
-+					  "tint8", "tint9", "tint10", "tint11",
-+					  "tint12", "tint13", "tint14", "tint15",
-+					  "tint16", "tint17", "tint18", "tint19",
-+					  "tint20", "tint21", "tint22", "tint23",
-+					  "tint24", "tint25", "tint26", "tint27",
-+					  "tint28", "tint29", "tint30", "tint31",
-+					  "bus-err", "ec7tie1-0", "ec7tie2-0", "ec7tiovf-0",
-+					  "ovfunf0", "ovfunf1", "ovfunf2", "ovfunf3",
-+					  "ovfunf4", "ovfunf5", "ovfunf6", "ovfunf7";
-+			clocks = <&cpg CPG_MOD R9A08G046_IA55_CLK>,
-+				 <&cpg CPG_MOD R9A08G046_IA55_PCLK>;
-+			clock-names = "clk", "pclk";
-+			power-domains = <&cpg>;
-+			resets = <&cpg R9A08G046_IA55_RESETN>;
-+		};
-+
- 		sdhi1: mmc@11c10000 {
- 			reg = <0x0 0x11c10000 0 0x10000>;
- 			/* placeholder */
+-	if (pin > pctrl->data->hwcfg->oen_max_pin)
++	if (pin != pctrl->data->hwcfg->oen_max_pin)
+ 		return -EINVAL;
+ 
+ 	/*
 -- 
 2.43.0
 
