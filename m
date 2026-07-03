@@ -2,56 +2,56 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E564BC44502
-	for <webhook@archiver.kernel.org>; Fri,  3 Jul 2026 10:59:28 +0000 (UTC)
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.89966.1783076368133671562
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8D79C44500
+	for <webhook@archiver.kernel.org>; Fri,  3 Jul 2026 10:59:38 +0000 (UTC)
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.89977.1783076376804723286
  for <cip-dev@lists.cip-project.org>;
- Fri, 03 Jul 2026 03:59:28 -0700
+ Fri, 03 Jul 2026 03:59:37 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=FGpKQobg;
- spf=pass (domain: gmail.com, ip: 209.85.221.41, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-474560436c3so471012f8f.0
-        for <cip-dev@lists.cip-project.org>; Fri, 03 Jul 2026 03:59:27 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=E+HXp30P;
+ spf=pass (domain: gmail.com, ip: 209.85.221.52, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-47122683cf3so318015f8f.0
+        for <cip-dev@lists.cip-project.org>; Fri, 03 Jul 2026 03:59:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783076366; x=1783681166; darn=lists.cip-project.org;
+        d=gmail.com; s=20251104; t=1783076375; x=1783681175; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=PJScGHrvr6ePXe6LsTzh9hQ2PGw4gZ7ky1qbXNuSMCI=;
-        b=FGpKQobgbqlSzga6ZF28DSimG63OWJ9FovEKoc+BdPEYPiuB5e6evXrt0zd88xJSxR
-         AEeoi1qJMN/TO7hn9KV/iLRio8oDRczwqwPKamsXIFUwVB2vXhUKBJdmP+FUDs396g33
-         uXXNouACzTkDmv2Um56vlsdfYjHJ1nCizJwK7sCINDKvEYTUHvQQvFGvYTpcaG1tGAGV
-         BLfv46jzAc5xWv4dmtJO/ZvlzBHly8qtGU1/KITTFKMu37aesbUxtG/dcTPpmj02xSNm
-         i0jrdNSkN6NIkAGQykQb8ey+5s1WlXgaDoXa0ucsFaD3H4jSb/1qJkd6q7/yyuUjbhoz
-         Fhaw==
+         :message-id:reply-to;
+        bh=RARvCY2YQohhIPnLer2qb9a10p4AQga48yte6Ix5x5Y=;
+        b=E+HXp30P6N5BVJwSDBjGY8/MqkNU8KxZpYw7/5ZLo6GX47osexKG/djoRB3+P16htP
+         hn5KW5UOHaSaVv6RzlY2YYsepId1PPCIQIQFpWXUJ8vuUr0n1w+u0brXUxnCFeKtJw9m
+         I2GNhKqoSholDoJ6Hzy1dDZvQRljw33Ckaif38mMuTp9FHSpc/hwOghjdGr5ZNjMgkoT
+         IXNbL4WxHiJKewoEDUeV9ZKU7mOktxg4j8vxUJLUesv09R+/EtW+KSuZAaHFPTD7OvHN
+         QJ/i/lwUET3sta1BXM1e8Rko1rDoy6sVYGwC37hkxR27euKZZEzLSOcfo7BwYzm1aQsO
+         tC2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783076366; x=1783681166;
+        d=1e100.net; s=20251104; t=1783076375; x=1783681175;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=PJScGHrvr6ePXe6LsTzh9hQ2PGw4gZ7ky1qbXNuSMCI=;
-        b=Mp2jvNGgv2iPFQUe7D50BfdsPD83RuDj7PHPN0uiCcB+x4Dy66mr8bMqQwVOzLafwD
-         hVmnZRJwrof1WjmJuVER29/qQaQkU+G8uiJW0H178QplIrhUre9Hlg0+M6/0UYPwfGql
-         ZWn5MVqcS394UblYRYW+yoFYdBbYZEmsWuCvjXEapFGTLzPlWcnlq23EtY7neIi8rLED
-         JYuvgKFHqSXQ3K/DiwSLmyomLww5TmusW1UKx7W7vS+awohQlt0GHhBGIvo0F107ryVe
-         8cbRwtIEMGft2VnWEinltdwgzcNoSimxS1fet/q+gH4tnSvA5b0PCAZd6zAtiCKG/7K8
-         OdVw==
-X-Gm-Message-State: AOJu0YyR5fW5iVPfiThSXWEImLWq+oZb0qXpTzUcjr9Hxin1S9c8ukll
-	N4sRr9rKK/TaONqJSrAmhXVHwh55Cx3Uv+hAOvEAtOErQM4vhJHH3y0FrZBIApCe
-X-Gm-Gg: AfdE7ckx2eM62anIfrcU3P4qoy7WzziEcY+KqAjIP3GvJqHbGyjrvB04A4WTjLi1ZK3
-	IGNtki4xXTbSUVOIUDQl0DRCLELX0AqfiDyQJvH71KRir4ekC0IGlmv2a1Swuc0W+/0bT4YvQVN
-	g80ndKUSNLI2FFZllsaC3Fk4lSkW7TKndUst8RPNrcfzzAJiKY5zAAPSelHYdYl+h+Eu5gpx0mq
-	/hVhvOxvXuH2x2DfjsgE+cuHc8c5C2I83iW4KbfJjtX7GSa7t/eY+Enajps/Uy/JBKdAmP4tOR3
-	aSlvqu0jTp2vCbq9l+9RfINd8VCIYO5MEHFBO2qy6/9p6UPobH8m2S2rc+PTuCw/BJbd74DAfof
-	2G3jzFHeiMRzBCdID5s1IWit92plrouBZ3bdu5HCkKuf6i1Intb1srDONOjax7S3rwwidOkpUpD
-	9VWyN2dK73ZCFG723uENW0
-X-Received: by 2002:adf:f104:0:b0:477:6da:1b83 with SMTP id ffacd0b85a97d-477af9dc11bmr10361919f8f.24.1783076366270;
-        Fri, 03 Jul 2026 03:59:26 -0700 (PDT)
+         :to:cc:subject:date:message-id:reply-to;
+        bh=RARvCY2YQohhIPnLer2qb9a10p4AQga48yte6Ix5x5Y=;
+        b=LTglWIRdDAzxwQsQsAbbHlw1zbD1ahFauMTaJhCWvGQ+NZiR1f9Pmv2wea7NZ2qI2g
+         nb0zRsbghHmbDUt238y4ZC13a2koDVYZhfGbkRsP423UrgHFxrrP3TSYJjmJKWT8jwF7
+         Dypg8iGuDm+PJWtiSKlP5zd/s/9JynSohuoTNLa6t3I489iRjllIt+tBrHPh0OuIjWRt
+         K/znXcqLloPRKOnuoNhU0mjHNeLohGfuCgtAG8K0wq7IJVCLvMTAJJoLS1bbac2rZXFC
+         n7CvWYUdsa1UHH1lSLFP20nCc5TU7ilRUMKVKId6aTrX3s/FenX7F+1Dl1vkQOtWPlGK
+         rpMw==
+X-Gm-Message-State: AOJu0Yxg4Fg0TA99txkD+ghpcwRwit5/QLCiaYvSpkKD9HDeu+PNz45f
+	UomcMJTMyCwzKnUb6xJVhjVGk3Ck7UrL7cJvNokb8jM3XFs4llnc4vqFcWNLqRVs
+X-Gm-Gg: AfdE7cnuBAYgKSrHNkUR3FXTeNwPZMgC4jBx/wkH97yc2tfA08nYzZNWNvyKJUCsfSf
+	hKDLWp5Bd9z/xL/gzdPKAWXro702y2LOjc74v/gDthfz6oEbwMuiORz0MXTPSMnKCoitNelMT6W
+	IB0js68INiXZD58PKzBsKbh6162I7OSV4iC+7bZ5aw9+gga1G+ckUCZS+MyuikWBEceXNzZUTqv
+	B7+yvJdN2ihXDxscORt44FXJ9/7Tutce/a1uoryBgM1D/IIgj7x/WqNIiSrdBQ+wYG+UPpm7PvU
+	C74emjCQCnlMB8c2YgcfakgsgG6L76QNOlDUltoSaXwJOcAnhUuJdEVbFGj6Fo9fCtYkNU3+k3Q
+	7v7+jp7YpduxsqFu43X+OCkBFry+nyNJRo0h2Ae9kc/mlI5t7i3/JY3pkqBazXQ4GdOq+BGgRQt
+	IpL6UjepRRg3sGD+nFD+Lc
+X-Received: by 2002:a05:6000:610:b0:46d:d5db:9a with SMTP id ffacd0b85a97d-4775abab06dmr14813228f8f.46.1783076374939;
+        Fri, 03 Jul 2026 03:59:34 -0700 (PDT)
 Received: from biju.lan ([2a00:23c4:a702:d301:76eb:405a:5f87:72eb])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47998d81e86sm4838521f8f.16.2026.07.03.03.59.25
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47998d81e86sm4838521f8f.16.2026.07.03.03.59.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jul 2026 03:59:26 -0700 (PDT)
+        Fri, 03 Jul 2026 03:59:34 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,9 +59,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 04/23] pinctrl: renesas: rzg2l: Fix SMT register cache handling
-Date: Fri,  3 Jul 2026 11:58:55 +0100
-Message-ID: <20260703105923.251255-5-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 22/23] arm64: dts: renesas: rzg3l-smarc-som: Enable eth1 (GBETH1) interface
+Date: Fri,  3 Jul 2026 11:59:13 +0100
+Message-ID: <20260703105923.251255-23-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260703105923.251255-1-biju.das.jz@bp.renesas.com>
 References: <20260703105923.251255-1-biju.das.jz@bp.renesas.com>
@@ -70,88 +70,116 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 03 Jul 2026 10:59:28 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23423
+ <cip-dev@lists.cip-project.org>; Fri, 03 Jul 2026 10:59:38 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23441
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[ Upstream commit c88ab9407986836820848128ce1f90f2fa49da95 ]
+[ Upstream commit 8a59e4f535a876fe94034f3a1e44b371d1fe363f ]
 
-Store SMT register cache per bank instead of using a single array.
+Enable the Gigabit Ethernet Interface (GBETH1) populated on the RZ/G3L
+SMARC EVK.
 
-On RZ/V2H(P), RZ/V2N, and RZ/G3E, the SMT register is split across two
-32-bit registers: bits 0/8/16/24 control pins 0-3, while pins 4-7 are
-controlled by the corresponding bits in the next register.  The previous
-implementation cached only a single SMT register, leading to incomplete
-save/restore of SMT state.
-
-Convert cache->smt to a per-bank array and allocate storage for both
-halves.  Update suspend/resume handling to save and restore both SMT
-registers when present.
-
-Fixes: 837afa592c623 ("pinctrl: renesas: rzg2l: Add suspend/resume support for Schmitt control registers")
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20260413182456.811543-2-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://patch.msgid.link/20260430125342.439755-7-biju.das.jz@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+ .../boot/dts/renesas/rzg3l-smarc-som.dtsi     | 61 +++++++++++++++++++
+ 1 file changed, 61 insertions(+)
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index ad51cf232aed..5d4ac07533cb 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -335,7 +335,7 @@ struct rzg2l_pinctrl_reg_cache {
- 	u32	*iolh[2];
- 	u32	*ien[2];
- 	u32	*pupd[2];
--	u32	*smt;
-+	u32	*smt[2];
- 	u8	sd_ch[2];
- 	u8	eth_poc[2];
- 	u8	oen;
-@@ -2746,10 +2746,6 @@ static int rzg2l_pinctrl_reg_cache_alloc(struct rzg2l_pinctrl *pctrl)
- 	if (!cache->pfc)
- 		return -ENOMEM;
+diff --git a/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi
+index c7227a865fa4..f53e6332e2f4 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi
+@@ -10,6 +10,7 @@ / {
  
--	cache->smt = devm_kcalloc(pctrl->dev, nports, sizeof(*cache->smt), GFP_KERNEL);
--	if (!cache->smt)
--		return -ENOMEM;
--
- 	for (u8 i = 0; i < 2; i++) {
- 		u32 n_dedicated_pins = pctrl->data->n_dedicated_pins;
+ 	aliases {
+ 		ethernet0 = &eth0;
++		ethernet1 = &eth1;
+ 	};
  
-@@ -2768,6 +2764,11 @@ static int rzg2l_pinctrl_reg_cache_alloc(struct rzg2l_pinctrl *pctrl)
- 		if (!cache->pupd[i])
- 			return -ENOMEM;
+ 	memory@48000000 {
+@@ -32,6 +33,19 @@ &eth0_rxc_rx_clk {
+ 	clock-frequency = <125000000>;
+ };
  
-+		cache->smt[i] = devm_kcalloc(pctrl->dev, nports, sizeof(*cache->smt[i]),
-+					     GFP_KERNEL);
-+		if (!cache->smt[i])
-+			return -ENOMEM;
++&eth1 {
++	phy-handle = <&phy1>;
++	phy-mode = "rgmii-id";
 +
- 		/* Allocate dedicated cache. */
- 		dedicated_cache->iolh[i] = devm_kcalloc(pctrl->dev, n_dedicated_pins,
- 							sizeof(*dedicated_cache->iolh[i]),
-@@ -3075,8 +3076,14 @@ static void rzg2l_pinctrl_pm_setup_regs(struct rzg2l_pinctrl *pctrl, bool suspen
- 			}
- 		}
++	pinctrl-0 = <&eth1_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++};
++
++&eth1_rxc_rx_clk {
++	clock-frequency = <125000000>;
++};
++
+ &extal_clk {
+ 	clock-frequency = <24000000>;
+ };
+@@ -56,6 +70,26 @@ phy0: ethernet-phy@7 {
+ 	};
+ };
  
--		if (has_smt)
--			RZG2L_PCTRL_REG_ACCESS32(suspend, pctrl->base + SMT(off), cache->smt[port]);
-+		if (has_smt) {
-+			RZG2L_PCTRL_REG_ACCESS32(suspend, pctrl->base + SMT(off),
-+						 cache->smt[0][port]);
-+			if (pincnt >= 4) {
-+				RZG2L_PCTRL_REG_ACCESS32(suspend, pctrl->base + SMT(off) + 4,
-+							 cache->smt[1][port]);
-+			}
-+		}
- 	}
- }
- 
++&mdio1 {
++	phy1: ethernet-phy@7 {
++		compatible = "ethernet-phy-id0022.1640";
++		reg = <7>;
++		interrupts-extended = <&icu 16 IRQ_TYPE_LEVEL_LOW>;
++		rxc-skew-psec = <1400>;
++		txc-skew-psec = <1400>;
++		rxdv-skew-psec = <0>;
++		txen-skew-psec = <0>;
++		rxd0-skew-psec = <0>;
++		rxd1-skew-psec = <0>;
++		rxd2-skew-psec = <0>;
++		rxd3-skew-psec = <0>;
++		txd0-skew-psec = <0>;
++		txd1-skew-psec = <0>;
++		txd2-skew-psec = <0>;
++		txd3-skew-psec = <0>;
++	};
++};
++
+ &pinctrl {
+ 	eth0_pins: eth0 {
+ 		txc {
+@@ -83,4 +117,31 @@ ctrl {
+ 				 power-source = <1800>;
+ 		};
+ 	};
++
++	eth1_pins: eth1 {
++		txc {
++			pinmux = <RZG3L_PORT_PINMUX(E, 1, 1)>;  /* ETH1_TXC_REF_CLK */
++			power-source = <1800>;
++			output-enable;
++			drive-strength-microamp = <5200>;
++		};
++
++		ctrl {
++			pinmux = <RZG3L_PORT_PINMUX(D, 0, 1)>, /* MDIO */
++				 <RZG3L_PORT_PINMUX(D, 1, 1)>, /* MDC */
++				 <RZG3L_PORT_PINMUX(D, 2, 1)>, /* RX_CTL */
++				 <RZG3L_PORT_PINMUX(D, 3, 1)>, /* TX_CTL */
++				 <RZG3L_PORT_PINMUX(E, 0, 1)>, /* RXC */
++				 <RZG3L_PORT_PINMUX(E, 2, 1)>, /* TXD0 */
++				 <RZG3L_PORT_PINMUX(E, 3, 1)>, /* TXD1 */
++				 <RZG3L_PORT_PINMUX(E, 4, 1)>, /* TXD2 */
++				 <RZG3L_PORT_PINMUX(E, 5, 1)>, /* TXD3 */
++				 <RZG3L_PORT_PINMUX(E, 6, 1)>, /* RXD0 */
++				 <RZG3L_PORT_PINMUX(E, 7, 1)>, /* RXD1 */
++				 <RZG3L_PORT_PINMUX(F, 0, 1)>, /* RXD2 */
++				 <RZG3L_PORT_PINMUX(F, 1, 1)>, /* RXD3 */
++				 <RZG3L_PORT_PINMUX(F, 2, 15)>; /* PHY_INTR */
++				 power-source = <1800>;
++		};
++	};
+ };
 -- 
 2.43.0
 
