@@ -2,56 +2,56 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB730C44501
-	for <webhook@archiver.kernel.org>; Fri,  3 Jul 2026 10:59:38 +0000 (UTC)
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.89971.1783076371377436106
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20DE1C44503
+	for <webhook@archiver.kernel.org>; Fri,  3 Jul 2026 10:59:39 +0000 (UTC)
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.89975.1783076374990230256
  for <cip-dev@lists.cip-project.org>;
- Fri, 03 Jul 2026 03:59:31 -0700
+ Fri, 03 Jul 2026 03:59:35 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=aZqnBnL8;
- spf=pass (domain: gmail.com, ip: 209.85.128.50, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-493c5220cb7so3035005e9.3
-        for <cip-dev@lists.cip-project.org>; Fri, 03 Jul 2026 03:59:31 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=ZIK4CpEo;
+ spf=pass (domain: gmail.com, ip: 209.85.128.51, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-493bc8fda98so4292855e9.0
+        for <cip-dev@lists.cip-project.org>; Fri, 03 Jul 2026 03:59:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783076370; x=1783681170; darn=lists.cip-project.org;
+        d=gmail.com; s=20251104; t=1783076373; x=1783681173; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=Ut2/XpoP0v2KFKrEk7mQAXg6kIOQH3PefpWTv2OjAmk=;
-        b=aZqnBnL8b3gwbm4z/YSL3qc0wNL8gJeo0cZb5ByqIToQQSJScFofNEKbl8RcgQXgQD
-         i05j0G9jp9L9367q8EsJZMpxdKaU0FP/EyZyWLM/Dxjpw6oj+KemhQ0XxoUexeP7j+yj
-         kwJ7DMGxFoV4cbhlJ/9+hOOqUcTIQKKeZ/zRS2t7IjxVSBjabTG4mbW1GZ6iT3zAcUwE
-         cqkN8O8T0u9fW2zL7p4f32P1vnXQJCuSEssJNgMzc/eDOZvJ/RyNSg3hNxj4kuFa35fW
-         /icXVrf5nkyhHL7UeMkAMFh6/zcyDFDrT82W8naXaHHy4YV5VMuSEGTb9tcyprjLQ7DA
-         EMyA==
+        bh=reVZTGgLBg9LyUkHIH53uy7l5OZXw+mKvt3xLsAPiBY=;
+        b=ZIK4CpEoO0nsMwXpa4emJSWE+HUOL/WIqmkEtOq7uTWUO8Tb/qP5wLdor5eMc0fsih
+         4u/iKd1n7fR/55sQO22OHFrr3hfVBJ8pwDa+an5XCuXRBP+Mj/S1Ofyp4FbKfUNNhnyk
+         HKXLQmE/fr2ELjEr5H5qDlt0EC6I9YcONz5UxFM6OtaUrvj+X4RfATxo5ktVwLyaHPK9
+         TNtRXrI5T97epsqaZjetvfqiZkTLpfYozMV2H/6St45xjYpOCzAhYormEMmWkKR/xfLP
+         Yg+BFaClT0KVhUJSLQ3K2LJhZU8ZoqFaL8i4jaKyA1TNzrLOAtV5+xakSVqMTFlsBVha
+         fkXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783076370; x=1783681170;
+        d=1e100.net; s=20251104; t=1783076373; x=1783681173;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=Ut2/XpoP0v2KFKrEk7mQAXg6kIOQH3PefpWTv2OjAmk=;
-        b=nJjg5NbIXvoso0+vPG4zNJgVks3QQp2A8qF2O5ev1MKrXKmHiv3XcmSAgOWQARG5hB
-         gdqye9ewtyKAqymGbzX/JYBw+uFHY75FosTgcJ//0yzrMviI4HjGYmXvLOHfaI3WpUH/
-         ixyUU0XyMnuR+CmvotzaMoy+TZ460yyZI0p7lnpTG6nkARwe3bz6RWD3m+ffj1jVev6N
-         vOP4+vE5AY4CMQYmmKoVkK3v35P/IcD7/biHto4eVZDZSsB3rG4LPMY3FE5gQSENQkyQ
-         o+s7Srqg0GZMPGXABdxK5ywWis81NOATcErNPw06LG46JEpwF3Z5co2dBvbH+0E8nhsf
-         qUcw==
-X-Gm-Message-State: AOJu0YyErlycnn0U+Fxh/a29HuNtv6VtjYDR3pBfRNLqujPYxQc618sa
-	cSpa4UK8+rfpMMwBzl3mD1SbiLyJdX/jnTkwQNqvOxx3ku83fFbSKCLafVRVuKJx
-X-Gm-Gg: AfdE7ckSYOLw1K1nicYP3KQ+XtV0KDrUShy838Lvtb+r6m/p88OHODv8ESkE/RpMumo
-	KeVEDrnuzIqgo6BVMyYce6+IZHLQQ5l9BumZtLtuk6Ktp7lVTBAI9a8vIuZf3MYsNtuQu6IuvqP
-	PYyMh/j8hcdsYd3SgQS1TVgDNC1PEpycky6c/3N+hUWjonYuuFnTPbzI9Jye9RpJeiUF5u8P8nq
-	LTZTC+yzIKddpqA5Q1swuLMqJg06V4HGgvjmNHQePtGc0eG/mAUg5LuxpPtzvIpSU96EWFVwSnf
-	D9wt+D6PIbIqnaxASJxGHnEggXno7CIwYsDowiiFtBedrdOGZU2OBBa1CfkN6gON2wZyiC9a797
-	gKcC2PFQjdCca4e5NBpwZqgqbhMb0fZ45auDjx0AfpUW984IJca2Vxw9bPsK5wHQkZDQvuNH/bT
-	3JMzq/e9o5389qAEC/mCI4JMBNFZvEhVc=
-X-Received: by 2002:a05:600c:828d:b0:493:bf86:85c5 with SMTP id 5b1f17b1804b1-493c3df3495mr130833045e9.36.1783076369479;
-        Fri, 03 Jul 2026 03:59:29 -0700 (PDT)
+        bh=reVZTGgLBg9LyUkHIH53uy7l5OZXw+mKvt3xLsAPiBY=;
+        b=cXb3gVl0B1rBJ5S6HE6oByeKt/EITPXVW4L5Towr9FyLuXxcWTgJtXf218UAdCXdAm
+         LyL51hAzZAkRCNbJCEScxakZ1EOUJXgEwycsiUWkbUObjLmZKNdQX8w8G7vYxBMWrwso
+         u89L7qoclh7OaUEFDJ1esKznygYWcXW12U5Ng0ckqiWGEnip177Y7DpGIxE2jpZsbKeo
+         ih8hye99Cc3FFpCHaSnQ28yE9ldfQkM1E5PzpYjxDdfkj2i+JZtCLOBStv6N/TyvUhhD
+         NEtBiTpMcwjW8YnKqMo5N7t2WROwEc8AerYh0wiTVuR8sNc/xVSjtBvyLa5gtfJTpWQU
+         Z6HQ==
+X-Gm-Message-State: AOJu0Yxf+JhWNWI7OP/EM5bAl0KuGXm8BYg6+6n6NKGzQPvNBpqigBgu
+	eifo1yO3dnGFLjqdRlGTRR/bV2AWxSZ1wnQ2a2WNpucWBq1dizwlnJMdDHObfwgR
+X-Gm-Gg: AfdE7ckH1eOYeX1CWQwT1WFP7wJ/D9hP2blMGr34SyLR11zmIbwU8X3HsQf9I3jS6/X
+	0SDBWUUMgm3sKcs/cz3Pb8NWTqZUziOzDy/lwsG2zd8psjDY1EgIAbiwd0XOFf+PPJyK8StZsU6
+	ZFeysi5zMf2DzE9XLqckeSQlMIGF5LUmFuRdzBqKOrjzzCWAbvLehGOCar/vD8zlQ10tS4HVFQy
+	BG5dxwdb97wKH6jmVZBMxTxMaYldn2RHZMRyKJ3jfyLmPWjLBqUYdzfPruQO0d6N3WTYKx0CmZf
+	vnEA+3+DUuOuBClsSh87IyAlv0Mjtb47lSOz/nBLPW2uB2BOYOZ2+fnstXq4o88LzpZvDv5iPcI
+	5GXBazQuS1FJllf2hJDKzO/pyJ79bfjf0TJLd2cQ/fOcQgoDtB9O4PpejekaekmEJoYo0xb3hVd
+	rTtewWuKLn6q8DLH2R2M/J
+X-Received: by 2002:a05:600c:3e83:b0:492:7019:caca with SMTP id 5b1f17b1804b1-493cb5eefe7mr33553935e9.26.1783076373215;
+        Fri, 03 Jul 2026 03:59:33 -0700 (PDT)
 Received: from biju.lan ([2a00:23c4:a702:d301:76eb:405a:5f87:72eb])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47998d81e86sm4838521f8f.16.2026.07.03.03.59.29
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47998d81e86sm4838521f8f.16.2026.07.03.03.59.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jul 2026 03:59:29 -0700 (PDT)
+        Fri, 03 Jul 2026 03:59:32 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,9 +59,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 10/23] pinctrl: renesas: rzg2l: Add support for selecting power source for {WDT,AWO,ISO}
-Date: Fri,  3 Jul 2026 11:59:01 +0100
-Message-ID: <20260703105923.251255-11-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 18/23] arm64: dts: renesas: r9a08g046: Add ICU node
+Date: Fri,  3 Jul 2026 11:59:09 +0100
+Message-ID: <20260703105923.251255-19-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260703105923.251255-1-biju.das.jz@bp.renesas.com>
 References: <20260703105923.251255-1-biju.das.jz@bp.renesas.com>
@@ -70,180 +70,125 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 03 Jul 2026 10:59:38 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23429
+ <cip-dev@lists.cip-project.org>; Fri, 03 Jul 2026 10:59:39 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23437
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[ Upstream commit bbe2277dedbeb54bb251ae3e0599007253739aad ]
+[ Upstream commit b3eea87822b799051745fff61b2e8d0313901ea1 ]
 
-The RZ/G3L SoC has support for setting power source that are not
-controlled by the following voltage control registers:
-  - SD_CH{0,1,2}_POC, XSPI_POC, ETH{0,1}_POC, I3C_SET.POC
-
-Add support for selecting voltages using OTHER_POC register for
-setting I/O domain voltage for WDT, ISO and AWO by extending
-rzg2l_caps_to_pwr_reg() with a mask output parameter so that callers
-callers can identify which bit(s) within OTHER_POC correspond to the
-requested domain. Update rzg2l_get_power_source() to extract the
-relevant bit field via field_get() when reading OTHER_POC, and update
-rzg2l_set_power_source() to perform a read-modify-write under the
-spinlock when writing to OTHER_POC, since multiple domains share the
-same register.
+Add interrupt control node to RZ/G3L ("R9A08G046") SoC DTSI.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20260430093422.74812-4-biju.das.jz@bp.renesas.com
+Link: https://patch.msgid.link/20260430125342.439755-3-biju.das.jz@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[Biju: Added local field_get macro ]
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 55 +++++++++++++++++++++----
- 1 file changed, 46 insertions(+), 9 deletions(-)
+ arch/arm64/boot/dts/renesas/r9a08g046.dtsi | 90 ++++++++++++++++++++++
+ 1 file changed, 90 insertions(+)
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index 1525dedca76e..9136cc352b9c 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -63,10 +63,18 @@
- #define PIN_CFG_SMT			BIT(16)	/* Schmitt-trigger input control */
- #define PIN_CFG_ELC			BIT(17)
- #define PIN_CFG_IOLH_RZV2H		BIT(18)
-+#define PIN_CFG_PVDD1833_OTH_AWO_POC	BIT(19) /* known on RZ/G3L only */
-+#define PIN_CFG_PVDD1833_OTH_ISO_POC	BIT(20) /* known on RZ/G3L only */
-+#define PIN_CFG_WDTOVF_N_POC		BIT(21) /* known on RZ/G3L only */
+diff --git a/arch/arm64/boot/dts/renesas/r9a08g046.dtsi b/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
+index e52498b3a745..232a0e299df7 100644
+--- a/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
+@@ -210,6 +210,96 @@ pinctrl: pinctrl@11030000 {
+ 			/* placeholder */
+ 		};
  
- #define RZG2L_SINGLE_PIN		BIT_ULL(63)	/* Dedicated pin */
- #define RZG2L_VARIABLE_CFG		BIT_ULL(62)	/* Variable cfg for port pins */
- 
-+#define PIN_CFG_OTHER_POC_MASK	\
-+					(PIN_CFG_PVDD1833_OTH_AWO_POC | \
-+					 PIN_CFG_PVDD1833_OTH_ISO_POC | \
-+					 PIN_CFG_WDTOVF_N_POC)
++		icu: interrupt-controller@11050000 {
++			compatible = "renesas,r9a08g046-irqc";
++			#interrupt-cells = <2>;
++			#address-cells = <0>;
++			interrupt-controller;
++			reg = <0 0x11050000 0 0x10000>;
++			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 529 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 530 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 531 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 532 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 533 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 534 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 535 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 536 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 505 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 506 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 507 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 508 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 509 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 510 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 511 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 512 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 513 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 514 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 515 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 516 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 517 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 518 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 519 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 520 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 521 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 522 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 523 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 524 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 525 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 526 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 527 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 528 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 529 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 530 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 531 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 532 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 533 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 534 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 535 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 536 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 224 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 236 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 248 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 260 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 284 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 296 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "nmi",
++					  "irq0", "irq1", "irq2", "irq3",
++					  "irq4", "irq5", "irq6", "irq7",
++					  "irq8", "irq9", "irq10", "irq11",
++					  "irq12", "irq13", "irq14", "irq15",
++					  "tint0", "tint1", "tint2", "tint3",
++					  "tint4", "tint5", "tint6", "tint7",
++					  "tint8", "tint9", "tint10", "tint11",
++					  "tint12", "tint13", "tint14", "tint15",
++					  "tint16", "tint17", "tint18", "tint19",
++					  "tint20", "tint21", "tint22", "tint23",
++					  "tint24", "tint25", "tint26", "tint27",
++					  "tint28", "tint29", "tint30", "tint31",
++					  "bus-err", "ec7tie1-0", "ec7tie2-0", "ec7tiovf-0",
++					  "ovfunf0", "ovfunf1", "ovfunf2", "ovfunf3",
++					  "ovfunf4", "ovfunf5", "ovfunf6", "ovfunf7";
++			clocks = <&cpg CPG_MOD R9A08G046_IA55_CLK>,
++				 <&cpg CPG_MOD R9A08G046_IA55_PCLK>;
++			clock-names = "clk", "pclk";
++			power-domains = <&cpg>;
++			resets = <&cpg R9A08G046_IA55_RESETN>;
++		};
 +
- #define RZG2L_MPXED_COMMON_PIN_FUNCS(group) \
- 					(PIN_CFG_IOLH_##group | \
- 					 PIN_CFG_PUPD | \
-@@ -146,6 +154,7 @@
- #define SD_CH(off, ch)		((off) + (ch) * 4)
- #define ETH_POC(off, ch)	((off) + (ch) * 4)
- #define QSPI			(0x3008) /* known on RZ/{G2L,G2LC,G2UL,Five} only */
-+#define OTHER_POC		(0x3028) /* known on RZ/G3L only */
- 
- #define PVDD_2500		2	/* I/O domain voltage 2.5V */
- #define PVDD_1800		1	/* I/O domain voltage <= 1.8V */
-@@ -177,6 +186,8 @@
- /* Custom pinconf parameters */
- #define RENESAS_RZV2H_PIN_CONFIG_OUTPUT_IMPEDANCE	(PIN_CONFIG_END + 1)
- 
-+#define field_get(_mask, _reg) (((_reg) & (_mask)) >> (ffs(_mask) - 1))
-+
- static const struct pinconf_generic_params renesas_rzv2h_custom_bindings[] = {
- 	{ "renesas,output-impedance", RENESAS_RZV2H_PIN_CONFIG_OUTPUT_IMPEDANCE, 1 },
- };
-@@ -900,7 +911,8 @@ static void rzg2l_rmw_pin_config(struct rzg2l_pinctrl *pctrl, u32 offset,
- 	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
- }
- 
--static int rzg2l_caps_to_pwr_reg(const struct rzg2l_register_offsets *regs, u32 caps)
-+static int rzg2l_caps_to_pwr_reg(const struct rzg2l_register_offsets *regs,
-+				 u32 caps, u8 *mask)
- {
- 	if (caps & PIN_CFG_IO_VMC_SD0)
- 		return SD_CH(regs->sd_ch, 0);
-@@ -912,6 +924,16 @@ static int rzg2l_caps_to_pwr_reg(const struct rzg2l_register_offsets *regs, u32
- 		return ETH_POC(regs->eth_poc, 1);
- 	if (caps & PIN_CFG_IO_VMC_QSPI)
- 		return QSPI;
-+	if (caps & PIN_CFG_OTHER_POC_MASK) {
-+		if (caps & PIN_CFG_PVDD1833_OTH_AWO_POC)
-+			*mask = BIT(0);
-+		else if (caps & PIN_CFG_PVDD1833_OTH_ISO_POC)
-+			*mask = BIT(1);
-+		else
-+			*mask = BIT(2);
-+
-+		return OTHER_POC;
-+	}
- 
- 	return -EINVAL;
- }
-@@ -920,17 +942,20 @@ static int rzg2l_get_power_source(struct rzg2l_pinctrl *pctrl, u32 pin, u32 caps
- {
- 	const struct rzg2l_hwcfg *hwcfg = pctrl->data->hwcfg;
- 	const struct rzg2l_register_offsets *regs = &hwcfg->regs;
-+	u8 val, mask;
- 	int pwr_reg;
--	u8 val;
- 
- 	if (caps & PIN_CFG_SOFT_PS)
- 		return pctrl->settings[pin].power_source;
- 
--	pwr_reg = rzg2l_caps_to_pwr_reg(regs, caps);
-+	pwr_reg = rzg2l_caps_to_pwr_reg(regs, caps, &mask);
- 	if (pwr_reg < 0)
- 		return pwr_reg;
- 
- 	val = readb(pctrl->base + pwr_reg);
-+	if (pwr_reg == OTHER_POC)
-+		val = field_get(mask, val);
-+
- 	switch (val) {
- 	case PVDD_1800:
- 		return 1800;
-@@ -948,8 +973,8 @@ static int rzg2l_set_power_source(struct rzg2l_pinctrl *pctrl, u32 pin, u32 caps
- {
- 	const struct rzg2l_hwcfg *hwcfg = pctrl->data->hwcfg;
- 	const struct rzg2l_register_offsets *regs = &hwcfg->regs;
-+	u8 poc_val, val, mask;
- 	int pwr_reg;
--	u8 val;
- 
- 	if (caps & PIN_CFG_SOFT_PS) {
- 		pctrl->settings[pin].power_source = ps;
-@@ -958,25 +983,37 @@ static int rzg2l_set_power_source(struct rzg2l_pinctrl *pctrl, u32 pin, u32 caps
- 
- 	switch (ps) {
- 	case 1800:
--		val = PVDD_1800;
-+		poc_val = PVDD_1800;
- 		break;
- 	case 2500:
- 		if (!(caps & (PIN_CFG_IO_VMC_ETH0 | PIN_CFG_IO_VMC_ETH1)))
- 			return -EINVAL;
--		val = PVDD_2500;
-+		poc_val = PVDD_2500;
- 		break;
- 	case 3300:
--		val = PVDD_3300;
-+		poc_val = PVDD_3300;
- 		break;
- 	default:
- 		return -EINVAL;
- 	}
- 
--	pwr_reg = rzg2l_caps_to_pwr_reg(regs, caps);
-+	pwr_reg = rzg2l_caps_to_pwr_reg(regs, caps, &mask);
- 	if (pwr_reg < 0)
- 		return pwr_reg;
- 
--	writeb(val, pctrl->base + pwr_reg);
-+	if (pwr_reg == OTHER_POC) {
-+		scoped_guard(raw_spinlock, &pctrl->lock) {
-+			val = readb(pctrl->base + pwr_reg);
-+			if (poc_val)
-+				val |= mask;
-+			else
-+				val &= ~mask;
-+			writeb(val, pctrl->base + pwr_reg);
-+		}
-+	} else {
-+		writeb(poc_val, pctrl->base + pwr_reg);
-+	}
-+
- 	pctrl->settings[pin].power_source = ps;
- 
- 	return 0;
+ 		sdhi1: mmc@11c10000 {
+ 			reg = <0x0 0x11c10000 0 0x10000>;
+ 			/* placeholder */
 -- 
 2.43.0
 
