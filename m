@@ -2,56 +2,56 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F06C44508
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A13EC44507
 	for <webhook@archiver.kernel.org>; Fri,  3 Jul 2026 10:08:06 +0000 (UTC)
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.89968.1783073279865977582
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.89970.1783073281151080861
  for <cip-dev@lists.cip-project.org>;
- Fri, 03 Jul 2026 03:08:00 -0700
+ Fri, 03 Jul 2026 03:08:01 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=RrQHDcaC;
- spf=pass (domain: gmail.com, ip: 209.85.128.44, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-493c59f740cso2551535e9.3
-        for <cip-dev@lists.cip-project.org>; Fri, 03 Jul 2026 03:07:59 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=bgmGUkw6;
+ spf=pass (domain: gmail.com, ip: 209.85.128.49, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-493bc8fda98so3789665e9.0
+        for <cip-dev@lists.cip-project.org>; Fri, 03 Jul 2026 03:08:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783073278; x=1783678078; darn=lists.cip-project.org;
+        d=gmail.com; s=20251104; t=1783073279; x=1783678079; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QR+uMQ+QAqSWDconemkgtA+1H62L3pSnlBz1o07J8GY=;
-        b=RrQHDcaCh7NnjanFSd3B16xWtN/MVL8p7Z+/luYR8EH5jLnRa3/rquukcD6ca/nZ4a
-         2l3aukht/iKRLKVrbFhe8XAycrlT24tVlpctoMP64YyFYQCS3bZZnuRYD1Y0wgroXEzz
-         XRibNka8jD8TNHhPe0P4tboWAxUpUPZbajk6SqFVedBoh8Xumg7Ex0sZFUMcnzzwlIhO
-         zgYUf4ges50THy3mXD1DTFPoYU1vWrA77ZfVKe9T9rcogU6uQTv6/9BgGAIpCY7OUVAb
-         Om1Cg+s3yXIne2ISoiIC29X85tIzKtWMsb6OWv5v2+reAAenZpcECw8R1rERnKhRVWXo
-         bCxw==
+        bh=WqG+tA89A8fNKJ96VSw6e3i6g7gxrEhlWPNMf7w3/qg=;
+        b=bgmGUkw6qIW6nWBTuaDSPqQZyElXYQ9ozJZFNBw83niv0Ov5sxhtgSvtgIjPoPDHbV
+         BfxjeC0UbYeZumgabr7JXmMeB7nvJehiD0+PSZhSAnZFhYquZksJsgjZvXPmtDZqP3JH
+         rPDHhli/cJAbJFSTGGdUqHntzSWh5KSOcWDyMxeGPofODiKR4bdnNueGx/qAIPe5h5tV
+         QiucUmqQOUYj9KjjKAp9qgma+Yset7c8C1sW9ZfQpTWDqEhKYPDOB9MLwaQ3v66QGE2O
+         h63aBGE5rfz3wX0rF6lEOyK40+VoYyQiH1JEvukpgWPGyOdJo3lAD4c0gJNmjq7xctO/
+         2Vrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783073278; x=1783678078;
+        d=1e100.net; s=20251104; t=1783073279; x=1783678079;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=QR+uMQ+QAqSWDconemkgtA+1H62L3pSnlBz1o07J8GY=;
-        b=hAoyTCCPFTRrJ6csfVpm0JWxkt8lWb6iIYhvkx392jM8FQacfDlEUGMPC17eRT2i2c
-         Wb7PQ+t/xtC2EtdJkvYPirjTdKeTV+lHTvufMfGEli3q2v25Exip/hNaxH73pn8VTN1/
-         At+ofpLUvpVp5gZCmXbzGQB6aO9NZ+BIVfBcWeEwvMwRco24NsMHxkbrAHedglZu5S16
-         uS4ybZl58fDh28GRx2AAgHxs/ujgXG58KeYjEh1rf0DY+uPtLUSk95If4B2zmw1Uz7Zn
-         fRIjdMaYt25ISg31skOss+qQUkDmjjTLV75vnnpeiVh234jjYz/1ljctKulinBZwTsfd
-         gzxQ==
-X-Gm-Message-State: AOJu0Yws/kzaqXmXhmVGfScW7EBLPvp+7WWvirVivpgYqufdBd61Zfek
-	HrLBdcNFT5bATHAXFcvUqTaTXeEQ1p+RpW570TrvCbz+42TrOzCpZHj67L8cYxJm
-X-Gm-Gg: AfdE7ckAR+k8IXJfyx3VfvC8Cnk5MUpZkM23fyXnHgT+/kImRFK843b32psxt5JOVI7
-	R+lQUgg4IublY5YNAFGXVKLI+q+SY3nm8g8tezRnKQHB8SHVUpLQWWpZMtNfyU+YJWSDTECRMOK
-	JqnI9m5DtSqNlyjomuYn8V9x7SYygkdKUrmeCxQBVyB9EFYzqI/Ew3GN6hypAClV80uiSQWjE8L
-	wuq0GoJQ4ret7M6gegI1QqaL0VP2NPlu1vb5QxY11IKdTGq4OQfR6RrS2FZAhD2zFYQgfNlXbKe
-	QXfCtZEkputlcanAY369Zx+tDDqEa9/zCibv2jDgy9R4i7zDlrTbq3hID73vHaQUuzXXXmhhbaU
-	sYeyAd2IvUvzN6DCW3+K9mVnYsf68loEHxDTLdOird0oPaSFLLhJXyugX3FIJfP2s/pkZQiYORQ
-	EE8pMKgDPHlck2rnNoucn3VnqhQKDcy5s=
-X-Received: by 2002:a05:600c:3588:b0:492:59fe:4a15 with SMTP id 5b1f17b1804b1-493c2b84695mr127239735e9.24.1783073277753;
-        Fri, 03 Jul 2026 03:07:57 -0700 (PDT)
+        bh=WqG+tA89A8fNKJ96VSw6e3i6g7gxrEhlWPNMf7w3/qg=;
+        b=qv9kgSo3+t7ulzlj4px//QIRipo7vhEF+uond6kVEQpfUjU21FQzJtHYl542koqETx
+         MeH7S/G8o731GWEy5gbGjrVxS7XOo+GetQ7QGCK5nrsvk/R1dBI+KOrE/H8p7/ZACRrp
+         kl2BhSAP8SDx9L6O6oC5OpVjeGbsuBXO52VaAEnUvOePQYX5yFcEYJncuXkCcjFrczDr
+         khaXTgggmBhEUFGEWtcIuRFsL3VrZ6RRwyHxbEZ5WOmcqv8az3HzXxK/PgrALwtidAOI
+         heLkwtm1I0emXSR8M8uNuRn0UaTA3Gho8gXQ/VqicoBqgVbW1mNvhbU+im9+bwHJwlRN
+         kxPA==
+X-Gm-Message-State: AOJu0YzXQrpbKG09Mk7diJ+JcJWrHnXTV6zF6D/McrXI+ynJW9oGvTOO
+	gKgBSUxpXGIIm0JkEgpGPvf1Ea9/lYlz8TADPCnH1H1CnNTNlIGfJDkD2kWEduFl
+X-Gm-Gg: AfdE7clEIWDO+aN4mHa40F/PoaisEojmmMcTwZ+PmUzNuLQCOQZNcGebM1kiTcDfKBE
+	kvOG1+pVWRvIoVDwksWB2aPo9TSEByh3uAEqw+9iYylpN3dfbL0uiRfMFwYgn43zAqflyGTGrPN
+	R/9a5nmFWE1so2wWr3alOz2XtOn5sVVj58l2mq1QF3WfkCJK2KyT6Uvw9iJqeLe05vOC5fg730l
+	ztTGEaN6hK7DfBgNGyLoFM9WhkQlWMAK7odw6XP22+1KS9KmFJJMni0bHDUosrgNEuPSJPHTsdY
+	FgCSSlC09Kz4x9Yr0wrdgdcnTKgFbp6Hb1ZjUSjw3CDpTxQW6oL28tviQK5dB+1K306XP11kTtg
+	+BjxqDHLTp6+v6k6cg1pJmN1DsCAcbd1O+rQDwKjb8qN1pPiuQrsDukuwNnsZrijwEW8pJyfWq2
+	hqHMWSKmGGgOJ+JbxYieDp1re8xT6FYlA=
+X-Received: by 2002:a05:600d:108:10b0:493:c337:db19 with SMTP id 5b1f17b1804b1-493c3cdf959mr101329465e9.17.1783073279205;
+        Fri, 03 Jul 2026 03:07:59 -0700 (PDT)
 Received: from biju.lan ([2a00:23c4:a702:d301:76eb:405a:5f87:72eb])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-493ccdab3a8sm40993765e9.6.2026.07.03.03.07.57
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-493ccdab3a8sm40993765e9.6.2026.07.03.03.07.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jul 2026 03:07:57 -0700 (PDT)
+        Fri, 03 Jul 2026 03:07:58 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,9 +59,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 02/26] irqchip/renesas-rzg2l: Use devm_reset_control_get_exclusive_deasserted()
-Date: Fri,  3 Jul 2026 11:07:21 +0100
-Message-ID: <20260703100756.238233-3-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 05/26] irqchip/renesas-rzg2l: Switch to using dev_err_probe()
+Date: Fri,  3 Jul 2026 11:07:24 +0100
+Message-ID: <20260703100756.238233-6-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260703100756.238233-1-biju.das.jz@bp.renesas.com>
 References: <20260703100756.238233-1-biju.das.jz@bp.renesas.com>
@@ -71,55 +71,87 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 03 Jul 2026 10:08:06 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23394
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23397
 
 From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 
-[ Upstream commit 78f384dad082af13a9399b14ff23c5ea02b0a407 ]
+[ Upstream commit 4bd0317ce63c26c8a1b6e96c9be0badac749c6f7 ]
 
-Use devm_reset_control_get_exclusive_deasserted() to simplify
-rzg2l_irqc_common_init().
+Make use of dev_err_probe() to simplify rzg2l_irqc_common_init().
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://lore.kernel.org/all/20250212182034.366167-3-fabrizio.castro.jz@renesas.com
+Link: https://lore.kernel.org/all/20250212182034.366167-6-fabrizio.castro.jz@renesas.com
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/irqchip/irq-renesas-rzg2l.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ drivers/irqchip/irq-renesas-rzg2l.c | 31 ++++++++++-------------------
+ 1 file changed, 11 insertions(+), 20 deletions(-)
 
 diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-renesas-rzg2l.c
-index 53272237d9cb..7cf3d6963935 100644
+index 9063bb98753f..1f0b83a00637 100644
 --- a/drivers/irqchip/irq-renesas-rzg2l.c
 +++ b/drivers/irqchip/irq-renesas-rzg2l.c
-@@ -562,14 +562,10 @@ static int rzg2l_irqc_common_init(struct device_node *node, struct device_node *
- 		return ret;
- 	}
+@@ -541,10 +541,8 @@ static int rzg2l_irqc_common_init(struct device_node *node, struct device_node *
+ 		return -ENODEV;
  
--	resetn = devm_reset_control_get_exclusive(dev, NULL);
--	if (IS_ERR(resetn))
-+	resetn = devm_reset_control_get_exclusive_deasserted(dev, NULL);
-+	if (IS_ERR(resetn)) {
-+		dev_err(dev, "failed to acquire deasserted reset: %d\n", ret);
- 		return PTR_ERR(resetn);
--
--	ret = reset_control_deassert(resetn);
+ 	parent_domain = irq_find_host(parent);
+-	if (!parent_domain) {
+-		dev_err(dev, "cannot find parent domain\n");
+-		return -ENODEV;
+-	}
++	if (!parent_domain)
++		return dev_err_probe(dev, -ENODEV, "cannot find parent domain\n");
+ 
+ 	rzg2l_irqc_data = devm_kzalloc(dev, sizeof(*rzg2l_irqc_data), GFP_KERNEL);
+ 	if (!rzg2l_irqc_data)
+@@ -557,28 +555,22 @@ static int rzg2l_irqc_common_init(struct device_node *node, struct device_node *
+ 		return PTR_ERR(rzg2l_irqc_data->base);
+ 
+ 	ret = rzg2l_irqc_parse_interrupts(rzg2l_irqc_data, node);
 -	if (ret) {
--		dev_err(dev, "failed to deassert resetn pin, %d\n", ret);
+-		dev_err(dev, "cannot parse interrupts: %d\n", ret);
 -		return ret;
+-	}
++	if (ret)
++		return dev_err_probe(dev, ret, "cannot parse interrupts: %d\n", ret);
+ 
+ 	resetn = devm_reset_control_get_exclusive_deasserted(dev, NULL);
+ 	if (IS_ERR(resetn)) {
+-		dev_err(dev, "failed to acquire deasserted reset: %d\n", ret);
+-		return PTR_ERR(resetn);
++		return dev_err_probe(dev, PTR_ERR(resetn),
++				     "failed to acquire deasserted reset: %d\n", ret);
  	}
  
- 	pm_runtime_enable(dev);
-@@ -609,7 +605,6 @@ static int rzg2l_irqc_common_init(struct device_node *node, struct device_node *
- 	pm_runtime_put(dev);
- pm_disable:
- 	pm_runtime_disable(dev);
--	reset_control_assert(resetn);
- 	return ret;
- }
+ 	ret = devm_pm_runtime_enable(dev);
+-	if (ret < 0) {
+-		dev_err(dev, "devm_pm_runtime_enable failed: %d\n", ret);
+-		return ret;
+-	}
++	if (ret < 0)
++		return dev_err_probe(dev, ret, "devm_pm_runtime_enable failed: %d\n", ret);
  
+ 	ret = pm_runtime_resume_and_get(dev);
+-	if (ret < 0) {
+-		dev_err(dev, "pm_runtime_resume_and_get failed: %d\n", ret);
+-		return ret;
+-	}
++	if (ret < 0)
++		return dev_err_probe(dev, ret, "pm_runtime_resume_and_get failed: %d\n", ret);
+ 
+ 	raw_spin_lock_init(&rzg2l_irqc_data->lock);
+ 
+@@ -587,8 +579,7 @@ static int rzg2l_irqc_common_init(struct device_node *node, struct device_node *
+ 					      rzg2l_irqc_data);
+ 	if (!irq_domain) {
+ 		pm_runtime_put(dev);
+-		dev_err(dev, "failed to add irq domain\n");
+-		return -ENOMEM;
++		return dev_err_probe(dev, -ENOMEM, "failed to add irq domain\n");
+ 	}
+ 
+ 	register_syscore_ops(&rzg2l_irqc_syscore_ops);
 -- 
 2.43.0
 
