@@ -2,56 +2,56 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55FDAC44506
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B598C4450B
 	for <webhook@archiver.kernel.org>; Fri,  3 Jul 2026 10:59:39 +0000 (UTC)
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.89973.1783076373987317621
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.90789.1783076377365864445
  for <cip-dev@lists.cip-project.org>;
- Fri, 03 Jul 2026 03:59:34 -0700
+ Fri, 03 Jul 2026 03:59:37 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=kXmz9n22;
- spf=pass (domain: gmail.com, ip: 209.85.221.44, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-46ed4f66256so393220f8f.3
-        for <cip-dev@lists.cip-project.org>; Fri, 03 Jul 2026 03:59:33 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=IJ41Q8pd;
+ spf=pass (domain: gmail.com, ip: 209.85.221.42, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-4745492ed3aso290261f8f.1
+        for <cip-dev@lists.cip-project.org>; Fri, 03 Jul 2026 03:59:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783076372; x=1783681172; darn=lists.cip-project.org;
+        d=gmail.com; s=20251104; t=1783076375; x=1783681175; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n/36eXRW3q3GOHfHtmRyvIoDZSfo1x1gFXkws1+u/JE=;
-        b=kXmz9n22Uak7ENzqiXiM6g6/s4Qngea2dj97/bAaESJwlYBOOgXfaWHIszoL47bRl8
-         gGxL0vvT5BeJvG5P6exCL34CDI3KNykr2rg8PLBzq+UsLCN/Sq1crnQ0UrknKbsLQktL
-         v6aeb8VZ9Lk/h+EfK9FDlOO+Ih4u4KI1M9OTZNDuQuuFX5cneAfHJts5wV5niXVFGIlP
-         HdNye427EdvRnywjTRiclBDc6F9soATGqI/UK/nPPLmFBFnESYmzKQXyJDbaHvQSZaPE
-         ql52nqVPwD9QQz86V8LpRnMo7Iy7/gP72idUDcCN0nCMYv0TvqOJ4kvCMilBeDogFGoK
-         hthQ==
+         :message-id:reply-to:content-type;
+        bh=U4q36YAJqBbnie2bdXu1m0IxU5dZpr9BBO7rbpGL/Vg=;
+        b=IJ41Q8pdvBvD1VkBGzTNyhiuM0btLOjhWlm73nA6PXBARJZesS8mFUV9yyh5Iq8Dy/
+         XadAikLTx6bnIMXuX32e73qy6s3QFtr8YzrVdh5DlhnLSqA0Wm8QvGsFWCW1z0jiPH1l
+         D8BXrFY09bz9eDineP0UR4T7q6xSg5wIXHcD7tUZqMr2LfUd5WDtQ4HCc0HLd/XKukac
+         rYMZJafTwOK7Tzv6hBXrtpwa4rG84tgKwE42IHeAH9zpG0h42hDmoplE5IgMqeOvJdhg
+         UEY0J8kEcocUDWls+HbsUf9e9eaj1MbclJIDVXnka8jGShCgQe+ovV9I4mpr8FxKndjZ
+         8tVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783076372; x=1783681172;
+        d=1e100.net; s=20251104; t=1783076375; x=1783681175;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=n/36eXRW3q3GOHfHtmRyvIoDZSfo1x1gFXkws1+u/JE=;
-        b=IJVEx5KdPYIv0HL7ytWQT4/zAjDTd70P6M6Bw/kQoi43ZSTdNN8zMowGH0D4z+Yy75
-         9avyrMIa0iwbSeOaPjgkTl5eLhGcR53vSUOQqWm8hpkKdBJxOaiKfKkhTZHjArr3lFYR
-         BfJUT17d20GBQiUQBPbxhClg/vEe/2cI1StJSlNYNg9z0ViH94KrsPO8xO77M73EQXZ5
-         z90uTvZytxxWpUZLq5dhdboCze7CF3hHPJ8kFdC5AVkxnWt/Gmf8c1KmBgZFJmetEcEd
-         UHQvN2T9x+W+8oInooFVsQKn9t+luUKgs6T97dVA/gFSwCpqcHzQ2r8UhmfAPUWBN4em
-         NqKA==
-X-Gm-Message-State: AOJu0YyfEZuF+4JP3jFpOkrghV+gyqqHuuxa6JPwEPJxUkLm8KZoYLPP
-	Sc39DM3fHnYe/rfDy3piz0HJA/5KTVtwT6ZsVL8UWTX7kcVg4P0pqFdnM7j6Ydna
-X-Gm-Gg: AfdE7ck5KIeMHgcSfFty7vIGjDjX576Strp3qqipyHLa1XjHdxxQ1TiGvnmW2SS/cVj
-	1dZB9aikftVApktf5HrkTulM+srAc++zyCc0Xuc5pNiIl8YfZD+WdTkm76bTUu61iu8RcgZbfVv
-	Bh/MQQ2aA2beraY3uLew3m3YzrtKVQLzpX16vJe4ah8os+yE3454TyYWrjbRT4lbV6RDUpyfs33
-	d1MlE2Cl8N+4WsJ8uqciPFhiHIHn2AWbKH/IvTtYEgwsH2d9GglmD8NwRZK9lIWKILJWFUzIZqc
-	NXksIFaPgJY5zDEaR9u13SaPbtk1Vt7gCDJyXJVuUgZDgVl0Qsk3HtfJxAvFTDq95WM6YDgibg1
-	XlKLnmF1e1XUgiIW8Q1sDXgINw7tIGB6Y+vX2Th62o1dK3j7lWsgIOfOKSOOdEaKHYtjW8m5RIy
-	M+mNRDIIeWk0Y18zVQMCmq
-X-Received: by 2002:adf:ea82:0:b0:475:a4ae:e630 with SMTP id ffacd0b85a97d-4775be03177mr11978886f8f.37.1783076372122;
-        Fri, 03 Jul 2026 03:59:32 -0700 (PDT)
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=U4q36YAJqBbnie2bdXu1m0IxU5dZpr9BBO7rbpGL/Vg=;
+        b=PGG471YrdNUeaz6Vc9es0WWTvRzI5eacAnmoZPC3O4yrMAcQeq3i/GQ8Kii6CiDU+l
+         Ha3oJxIJldJG7K0LSZfSNhu3b7vec1qEEeEbCzTySkZGX9OeZ3EMj+AghCjDWZhpD/Yp
+         eMV5ltE2TPZ+HogHJs8ntmxP8Tfe9sCBoF7zBiuim4JZiUHY1KBOQYXe055aLSF+6icc
+         4IpDxun2eav7J5Y8/RlfaE3XZ00nr79CTdpl/RcOKZi9LV7NIQIRe9nBWCRHedHSEbDk
+         qdygaDTr9Nn487bsikpQONaQTEf9pPBsXei8xmjF3ZS3nr8022zobgfpE8+zEElJck09
+         n6+A==
+X-Gm-Message-State: AOJu0YzaEs6eYNa687KC1Q5bJtX2tq8DNOICAAttyLz/889MchDEY82d
+	3deV0U+lXds2gT9lVCo71HG78/kEZZkwhpEfQDsIHiJHZe3eNzjOve0b66YID0+E
+X-Gm-Gg: AfdE7cmiTh1sWio+d5PdwTv6VHMHYdEV5LlkAP1+QIc6not1JbtF4hGGho0v5/tyuov
+	713/DNqBRwN2nmGUEplUaj9y2Pi8YigJoa7kufvgqsftolf6txyj4zTdRxzIbD/MrQSqnBqiVn/
+	w1vAvUZh40xRWOmKIodAfSz8qIb5zJbb++hBEMPstUXugaUF1/qjbZOf2oFNmr5hfbNbWGjy3yf
+	n1FJNNvOn8hg5aMZ/0P4z6TwK6C1TipM4Ezw+fKv14efu1a6K9eyl/IzHn+6WfsLdonfe/NOfg8
+	C4oUY1DeOLoLVRF8DIDuN54CZxmttqWYvyKdvKHu6fUXmcOkff96CN1gCjS9++5T3sdtEhNV/eA
+	5mwHE84LqCL9mwQXQKGFVhAuSggsLGafpF0RPwgxpOzoDn1PNu8sqTuZ34qc918zQq9w4s00RGa
+	/OxVv9JgxlYq6sUBq1JcOE
+X-Received: by 2002:a05:6000:4203:b0:470:3edf:e2a7 with SMTP id ffacd0b85a97d-4775918f8a9mr14116809f8f.37.1783076375473;
+        Fri, 03 Jul 2026 03:59:35 -0700 (PDT)
 Received: from biju.lan ([2a00:23c4:a702:d301:76eb:405a:5f87:72eb])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47998d81e86sm4838521f8f.16.2026.07.03.03.59.31
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47998d81e86sm4838521f8f.16.2026.07.03.03.59.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jul 2026 03:59:31 -0700 (PDT)
+        Fri, 03 Jul 2026 03:59:35 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -59,9 +59,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 16/23] arm64: dts: renesas: Add pinctrl reset-names for RZ/G2L and RZ/V2H family SoCs
-Date: Fri,  3 Jul 2026 11:59:07 +0100
-Message-ID: <20260703105923.251255-17-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 23/23] arm64: dts: renesas: r9a08g046l48-smarc: Add gpio keys
+Date: Fri,  3 Jul 2026 11:59:14 +0100
+Message-ID: <20260703105923.251255-24-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260703105923.251255-1-biju.das.jz@bp.renesas.com>
 References: <20260703105923.251255-1-biju.das.jz@bp.renesas.com>
@@ -71,114 +71,104 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 03 Jul 2026 10:59:39 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23435
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23442
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[ Upstream commit 998dd840cc7a54df214bc1a3751d5ad334e7dad1 ]
+[ Upstream commit 662ce0d73322d17614b86b641aa0ff27a254c87b ]
 
-Add reset-names properties to the pin control nodes for
-RZ/{G2L,G2UL,G3E,G3S} and RZ/{V2H,V2L,V2N} SoCs.
+RZ/G3L SMARC EVK  has 3 user buttons called USER_SW1, USER_SW2 and
+USER_SW3.  Instantiate the gpio-keys driver for these buttons by
+removing place holders and replacing proper pins for the buttons.
+
+USER_SW{1,2,3} are configured as wakeup-sources, so they can wake up the
+system during s2idle.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20260317101627.174491-4-biju.das.jz@bp.renesas.com
+Link: https://patch.msgid.link/20260528070239.33352-2-biju.das.jz@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a07g043.dtsi | 1 +
- arch/arm64/boot/dts/renesas/r9a07g044.dtsi | 1 +
- arch/arm64/boot/dts/renesas/r9a07g054.dtsi | 1 +
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi | 1 +
- arch/arm64/boot/dts/renesas/r9a09g047.dtsi | 1 +
- arch/arm64/boot/dts/renesas/r9a09g056.dtsi | 1 +
- arch/arm64/boot/dts/renesas/r9a09g057.dtsi | 1 +
- 7 files changed, 7 insertions(+)
+ .../boot/dts/renesas/r9a08g046l48-smarc.dts   | 26 ++++++++++++++-----
+ .../boot/dts/renesas/rzg3l-smarc-som.dtsi     | 17 ++++++++++++
+ 2 files changed, 37 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g043.dtsi b/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
-index 593c66b27ad1..ded4f1f11d60 100644
---- a/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
-@@ -604,6 +604,7 @@ pinctrl: pinctrl@11030000 {
- 			resets = <&cpg R9A07G043_GPIO_RSTN>,
- 				 <&cpg R9A07G043_GPIO_PORT_RESETN>,
- 				 <&cpg R9A07G043_GPIO_SPARE_RESETN>;
-+			reset-names = "rstn", "port", "spare";
- 		};
+diff --git a/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts b/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
+index 0ae052238b3b..ef00e316fbde 100644
+--- a/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
++++ b/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
+@@ -7,10 +7,18 @@
  
- 		dmac: dma-controller@11820000 {
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-index 6b1c77cd8261..0e712c55c4af 100644
---- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-@@ -902,6 +902,7 @@ pinctrl: pinctrl@11030000 {
- 			resets = <&cpg R9A07G044_GPIO_RSTN>,
- 				 <&cpg R9A07G044_GPIO_PORT_RESETN>,
- 				 <&cpg R9A07G044_GPIO_SPARE_RESETN>;
-+			reset-names = "rstn", "port", "spare";
- 		};
+ /dts-v1/;
  
- 		irqc: interrupt-controller@110a0000 {
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
-index 01f59914dd09..f215b9d0f7b6 100644
---- a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
-@@ -910,6 +910,7 @@ pinctrl: pinctrl@11030000 {
- 			resets = <&cpg R9A07G054_GPIO_RSTN>,
- 				 <&cpg R9A07G054_GPIO_PORT_RESETN>,
- 				 <&cpg R9A07G054_GPIO_SPARE_RESETN>;
-+			reset-names = "rstn", "port", "spare";
- 		};
+-/* Add place holder to avoid compilation error with renesas-smarc2.dtsi */
+-#define KEY_1_GPIO		1
+-#define KEY_2_GPIO		2
+-#define KEY_3_GPIO		3
++/* Switch selection settings */
++#define RZ_BOOT_MODE3		1
++#define SW_DPI_EN		0
++#define SW_GPIO4		1
++
++#define PMOD_GPIO4		0
++#define PMOD_GPIO6		0
++#define PMOD_GPIO7		0
++
++#define KEY_1_GPIO		RZG3L_GPIO(J, 3)
++#define KEY_2_GPIO		RZG3L_GPIO(6, 4)
++#define KEY_3_GPIO		RZG3L_GPIO(6, 5)
  
- 		irqc: interrupt-controller@110a0000 {
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-index cb7dae9f7dd6..7a5f339728d5 100644
---- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-@@ -497,6 +497,7 @@ pinctrl: pinctrl@11030000 {
- 			resets = <&cpg R9A08G045_GPIO_RSTN>,
- 				 <&cpg R9A08G045_GPIO_PORT_RESETN>,
- 				 <&cpg R9A08G045_GPIO_SPARE_RESETN>;
-+			reset-names = "rstn", "port", "spare";
- 		};
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/input/input.h>
+@@ -30,11 +38,17 @@ aliases {
+ };
  
- 		irqc: interrupt-controller@11050000 {
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-index 10b7b8a5c236..ec5e1132d9e1 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-@@ -265,6 +265,7 @@ pinctrl: pinctrl@10410000 {
- 			interrupt-parent = <&icu>;
- 			power-domains = <&cpg>;
- 			resets = <&cpg 0xa5>, <&cpg 0xa6>;
-+			reset-names = "main", "error";
- 		};
+ &keys {
+-	status = "disabled";
+-
++#if !RZ_BOOT_MODE3 || !SW_GPIO4 || PMOD_GPIO4
+ 	/delete-node/ key-1;
++#endif
++
++#if SW_DPI_EN || PMOD_GPIO6
+ 	/delete-node/ key-2;
++#endif
++
++#if SW_DPI_EN || PMOD_GPIO7
+ 	/delete-node/ key-3;
++#endif
+ };
  
- 		cpg: clock-controller@10420000 {
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g056.dtsi b/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
-index e312dd1d7ac9..eb2d8ab64b5c 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
-@@ -283,6 +283,7 @@ pinctrl: pinctrl@10410000 {
- 			gpio-ranges = <&pinctrl 0 0 96>;
- 			power-domains = <&cpg>;
- 			resets = <&cpg 0xa5>, <&cpg 0xa6>;
-+			reset-names = "main", "error";
- 		};
+ &pinctrl {
+diff --git a/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi
+index f53e6332e2f4..1e4c929d7081 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi
+@@ -5,6 +5,23 @@
+  * Copyright (C) 2026 Renesas Electronics Corp.
+  */
  
- 		cpg: clock-controller@10420000 {
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-index 7d0ee6ef4d20..0d36754ebe0c 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-@@ -265,6 +265,7 @@ pinctrl: pinctrl@10410000 {
- 			interrupt-parent = <&icu>;
- 			power-domains = <&cpg>;
- 			resets = <&cpg 0xa5>, <&cpg 0xa6>;
-+			reset-names = "main", "error";
- 		};
++/*
++ * Please set the below switch position on the SoM and the corresponding macro
++ * on the board DTS:
++ *
++ * Switch position SYS.5, Macro SW_DPI_EN:
++ *      0 - Select multiple SMARC signals active
++ *      1 - Select LCD
++ *
++ * Switch position BOOT.1, Macro RZ_BOOT_MODE3:
++ *      0 - Select JTAG enabled
++ *      1 - Select SDIO {CD,IOVS,PWEN} and GPIO4 Active
++ *
++ * Switch position SW_GPIO4, Macro SW_GPIO4:
++ *      0 - Select RZ_VBAT_TAMPER (position 2-1)
++ *      1 - Select GPIO4 (position 2-3)
++ */
++
+ / {
+ 	compatible = "renesas,rzg3l-smarcm", "renesas,r9a08g046l48", "renesas,r9a08g046";
  
- 		cpg: clock-controller@10420000 {
 -- 
 2.43.0
 
