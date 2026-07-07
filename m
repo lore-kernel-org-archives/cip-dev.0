@@ -2,111 +2,98 @@ Return-Path: <pavel@nabladev.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB480C43458
-	for <webhook@archiver.kernel.org>; Tue,  7 Jul 2026 20:17:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E93EEC43458
+	for <webhook@archiver.kernel.org>; Tue,  7 Jul 2026 20:17:57 +0000 (UTC)
 Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.158.1783455454011989907
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.163.1783455471008164088
  for <cip-dev@lists.cip-project.org>;
- Tue, 07 Jul 2026 13:17:34 -0700
+ Tue, 07 Jul 2026 13:17:51 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=RMIJPKf0;
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=dTXzNuNY;
  spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7059F118FE8;
-	Tue,  7 Jul 2026 22:17:31 +0200 (CEST)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C9D48118FA4;
+	Tue,  7 Jul 2026 22:17:48 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1783455451;
+	s=dkim; t=1783455469;
 	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=dj7nGLQv+3yNErHyWe4lf1URYMDeb7BE7iCV4v+hhrA=;
-	b=RMIJPKf0VvM/MDkUr47qIR2A69TRieZ7m7QrGUA4RMSAQ/gjZho7pzrAcTkj0hRgSAm8ru
-	4XbYMwZ/h5eUjdlKgKa+qSx9tsHQpFHznALf3TrQHcscEjycSRcSSFCkRKqBu8yJiAO/QE
-	J8L4Rzg7F7jPlSI+izi9l+UkJnyGirxLOoYn6Yb6tlCBfakuxtj4eYslvpmBmCTdIsTqyV
-	JAfkViaEBq3M4Pw0DchSTpvQw3RqDBTD5saINYPQG899r77J9xYDQeEUL3U5Fb+RbYo0xW
-	Nu6llUcT56qKqKCI8+TTXcsj2CaZ+JJ5Df+HbMLT8SlqTUpF9oFomBM+y4LQ4A==
-Date: Tue, 7 Jul 2026 22:17:28 +0200
+	 in-reply-to:references; bh=Jd45u4kdYQhsKsEUnHhMoAPhWWoSVPftawe2wwXqI5o=;
+	b=dTXzNuNY2WoLQXXC/upLTSIe8KVqL/i+UUv6g9OmomOAOnbJRNZb8ieevKWvxa/lauJfcr
+	vN7+ykxcCPKYVKetESTjdj8orhpgHNkyw43Jx88YT8gnO6cFdHnTZXVu4ZU6HJwEhARq+i
+	9m4uK5f4uXIsj99J7hPi/lf1wd3qzJX287gBKA+BsOutP9n4qQ6VuiwQiTec+rUHjb1s/6
+	3gwBs4F6cmPEgZjg4U5Pg1vkWp0YO1OXpKH2cCOYBV6QClaHKwqsz8vMCElxM713/xPuvj
+	eVUqD/HX/UXcSRrapFl7JgzQ6rGBOm3FFkU4+6CpGzq/xlfzZjUSNM5J4i15kg==
+Date: Tue, 7 Jul 2026 22:17:45 +0200
 From: Pavel Machek <pavel@nabladev.com>
 To: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Cc: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
 	Pavel Machek <pavel@nabladev.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>
-Subject: Re: [PATCH 6.12.y-cip v2 03/10] pinctrl: renesas: rzt2h: Allow
- .get_direction() for IRQ function GPIOs
-Message-ID: <ak1e2EgPQdSVIf6A@duo.ucw.cz>
+Subject: Re: [PATCH 6.12.y-cip v2 07/10] dt-bindings: pinctrl:
+ renesas,r9a09g077: Document pin configuration properties
+Message-ID: <ak1e6WV392sQ09le@duo.ucw.cz>
 References: <20260702102349.23431-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260702102349.23431-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260702102349.23431-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="4ALlVXqYNBMFOJXm"
+	protocol="application/pgp-signature"; boundary="5i0kslySyiGZAAFN"
 Content-Disposition: inline
-In-Reply-To: <20260702102349.23431-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20260702102349.23431-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 07 Jul 2026 20:17:37 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23475
+ <cip-dev@lists.cip-project.org>; Tue, 07 Jul 2026 20:17:57 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23476
 
 
---4ALlVXqYNBMFOJXm
+--5i0kslySyiGZAAFN
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> Hold the spinlock to ensure atomicity between reading the PMC register
-> (which determines whether the pin is in GPIO mode or not) and reading
-> the function of the pin when it is not in GPIO mode.
+> +++ b/Documentation/devicetree/bindings/pinctrl/renesas,r9a09g077-pinctrl.yaml
+> @@ -72,6 +72,23 @@ definitions:
+>        input: true
+>        input-enable: true
+>        output-enable: true
+> +      bias-disable: true
+> +      bias-pull-down: true
+> +      bias-pull-up: true
+> +      input-schmitt-enable: true
+> +      input-schmitt-disable: true
+> +      slew-rate:
+> +        description: 0 is slow slew rate, 1 is fast slew rate
+> +        enum: [0, 1]
 
-Ok, so according to this, two reads need to be protected.
+Elsewhere in tree we have
 
-> index 981a34dcc814e..f056e28f6a17e 100644
-> --- a/drivers/pinctrl/renesas/pinctrl-rzt2h.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rzt2h.c
-> @@ -501,8 +503,25 @@ static int rzt2h_gpio_get_direction(struct gpio_chip=
- *chip, unsigned int offset)
->  	if (ret)
->  		return ret;
-> =20
-> -	if (rzt2h_pinctrl_readb(pctrl, port, PMC(port)) & BIT(bit))
-> +	guard(spinlock_irqsave)(&pctrl->lock);
-> +
-> +	if (rzt2h_pinctrl_readb(pctrl, port, PMC(port)) & BIT(bit)) {
-> +		/*
-> +		 * When a GPIO is being requested as an IRQ, the pinctrl
-> +		 * framework expects to be able to read the GPIO's direction.
-> +		 * IRQ function is separate from GPIO, and enabling it takes the
-> +		 * pin out of GPIO mode.
-> +		 * At this point, .child_to_parent_hwirq() has already been
-> +		 * called to enable the IRQ function.
-> +		 * Default to input direction for IRQ function.
-> +		 */
-> +		reg64 =3D rzt2h_pinctrl_readq(pctrl, port, PFC(port));
-> +		reg64 =3D (reg64 >> (bit * 8)) & PFC_MASK;
-> +		if (reg64 =3D=3D PFC_FUNC_INTERRUPT)
-> +			return GPIO_LINE_DIRECTION_IN;
-> +
->  		return -EINVAL;
-> +	}
-> =20
->  	reg =3D rzt2h_pinctrl_readw(pctrl, port, PM(port));
->  	reg =3D (reg >> (bit * 2)) & PM_MASK;
+Documentation/devicetree/bindings/clock/renesas,9series.yaml
+      renesas,slew-rate:
+        $ref: /schemas/types.yaml#/definitions/uint32
+        enum: [ 2000000, 3000000 ]
+        description: Output clock slew rate select in V/ns
 
-But AFAICT here, whole rest of the function is running with spinlock
-held/interrupts disabled. Is that neccessary?
+atmel,at91-pio4-pinctrl.txt:
+        - for microchip,sama7g5-pinctrl only:
+                - slew-rate: 0 - disabled, 1 - enabled (default)
 
-Thanks and best regards,
+I guess having one solution would be best, and specifying real units
+(V/ns) rather than fast/slow seems good to me.
+
+Best regards,
 								Pavel
 
---4ALlVXqYNBMFOJXm
+--5i0kslySyiGZAAFN
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCak1e2AAKCRAw5/Bqldv6
-8tlCAJ98t4NIDUvErt88n7HkK8J04TVtCACgufGM4uwrg45eB6jQ2R7jA+cryng=
-=t2Wl
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCak1e6QAKCRAw5/Bqldv6
+8iWHAJ0fyfvkGmHQbmXPhhvdi0UQQojg4wCcC4IVR+jajcwZeoBll9jB5dFV2jc=
+=3sIH
 -----END PGP SIGNATURE-----
 
---4ALlVXqYNBMFOJXm--
+--5i0kslySyiGZAAFN--
 
