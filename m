@@ -2,87 +2,111 @@ Return-Path: <pavel@nabladev.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16EC0C43458
-	for <webhook@archiver.kernel.org>; Tue,  7 Jul 2026 20:17:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB480C43458
+	for <webhook@archiver.kernel.org>; Tue,  7 Jul 2026 20:17:37 +0000 (UTC)
 Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.156.1783455442928185494
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.158.1783455454011989907
  for <cip-dev@lists.cip-project.org>;
- Tue, 07 Jul 2026 13:17:23 -0700
+ Tue, 07 Jul 2026 13:17:34 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=OVEchgJD;
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=RMIJPKf0;
  spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6F420118FE8;
-	Tue,  7 Jul 2026 22:17:17 +0200 (CEST)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7059F118FE8;
+	Tue,  7 Jul 2026 22:17:31 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1783455440;
+	s=dkim; t=1783455451;
 	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=NunWxtMPiNNcDOwRWPO5CfbQqC4427Nv/k+oW9D9ERo=;
-	b=OVEchgJDtRMIm8RMxjS8ZLAhsiHtjY8Bskd97pLqEgEqsdOJ/2FeP+Ka/myHMcvZvM5lgL
-	qJmPw7U37ziOiIWGk0qcShtXbOF71hMEdEnTTWTnNsah/ZbNJ9SBLYT6W1ZsTD6/ByRN3v
-	gufUWl8Giypn1/kU0wk7bBVkuQ+o4EN4k5+0io1Rw3k2tF8rJsKJ+cJG1umcOGJCJXUQn1
-	k/e8QtKWEJgxo7qqgac64rNcchSRTE9UlQuvL3Ki46BEiBQFkZPrX2VN81TNl9GPsNoghr
-	NWevA6ww+bEKL5qX5d2av7aXjLJqpftMvq0IfhDg5d0PXGBQyKo1uK5WK7XaEg==
-Date: Tue, 7 Jul 2026 22:17:13 +0200
+	 in-reply-to:references; bh=dj7nGLQv+3yNErHyWe4lf1URYMDeb7BE7iCV4v+hhrA=;
+	b=RMIJPKf0VvM/MDkUr47qIR2A69TRieZ7m7QrGUA4RMSAQ/gjZho7pzrAcTkj0hRgSAm8ru
+	4XbYMwZ/h5eUjdlKgKa+qSx9tsHQpFHznALf3TrQHcscEjycSRcSSFCkRKqBu8yJiAO/QE
+	J8L4Rzg7F7jPlSI+izi9l+UkJnyGirxLOoYn6Yb6tlCBfakuxtj4eYslvpmBmCTdIsTqyV
+	JAfkViaEBq3M4Pw0DchSTpvQw3RqDBTD5saINYPQG899r77J9xYDQeEUL3U5Fb+RbYo0xW
+	Nu6llUcT56qKqKCI8+TTXcsj2CaZ+JJ5Df+HbMLT8SlqTUpF9oFomBM+y4LQ4A==
+Date: Tue, 7 Jul 2026 22:17:28 +0200
 From: Pavel Machek <pavel@nabladev.com>
-To: nobuhiro.iwamatsu.x90@mail.toshiba
-Cc: prabhakar.mahadev-lad.rj@bp.renesas.com, cip-dev@lists.cip-project.org,
-	pavel@nabladev.com, biju.das.jz@bp.renesas.com
-Subject: Re: [cip-dev] [PATCH 6.12.y-cip v2 00/10] Add pin configuration and
- GPIO IRQ support to Renesas RZ/T2H SoC
-Message-ID: <ak1eyZZU2KzTw3TP@duo.ucw.cz>
+To: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc: cip-dev@lists.cip-project.org,
+	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
+	Pavel Machek <pavel@nabladev.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH 6.12.y-cip v2 03/10] pinctrl: renesas: rzt2h: Allow
+ .get_direction() for IRQ function GPIOs
+Message-ID: <ak1e2EgPQdSVIf6A@duo.ucw.cz>
 References: <20260702102349.23431-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <TY7PR01MB1481845D862F3FDD700499334CDF02@TY7PR01MB14818.jpnprd01.prod.outlook.com>
+ <20260702102349.23431-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="zqP8fGcn5PFIFQXI"
+	protocol="application/pgp-signature"; boundary="4ALlVXqYNBMFOJXm"
 Content-Disposition: inline
-In-Reply-To: <TY7PR01MB1481845D862F3FDD700499334CDF02@TY7PR01MB14818.jpnprd01.prod.outlook.com>
+In-Reply-To: <20260702102349.23431-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 07 Jul 2026 20:17:28 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23474
+ <cip-dev@lists.cip-project.org>; Tue, 07 Jul 2026 20:17:37 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23475
 
 
---zqP8fGcn5PFIFQXI
+--4ALlVXqYNBMFOJXm
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> > This patch series aims to backport pin configuration and GPIO IRQ suppo=
-rt to
-> > Renesas RZ/T2H and RZ/N2H SoCs. Enabling of GPIO IRQ support to
-> > SoC/board DTS/I will be done as a follow-up series along with xSPI supp=
-ort.
-> >=20
-> > All the patches have been cherry-picked from upstream kernel 7.2-rc1.
-> > Patches apply on top v6.12.94-cip26 (commit-id e00178e6fe853).
->=20
-> I reviewed this series, looks good to me.
-> I apply this, thanks.
+> Hold the spinlock to ensure atomicity between reading the PMC register
+> (which determines whether the pin is in GPIO mode or not) and reading
+> the function of the pin when it is not in GPIO mode.
 
-I had some minor comments here, but those should be fixed in mainline,
-first, so they should not block the merge.
+Ok, so according to this, two reads need to be protected.
 
-This looks okay to me.
+> index 981a34dcc814e..f056e28f6a17e 100644
+> --- a/drivers/pinctrl/renesas/pinctrl-rzt2h.c
+> +++ b/drivers/pinctrl/renesas/pinctrl-rzt2h.c
+> @@ -501,8 +503,25 @@ static int rzt2h_gpio_get_direction(struct gpio_chip=
+ *chip, unsigned int offset)
+>  	if (ret)
+>  		return ret;
+> =20
+> -	if (rzt2h_pinctrl_readb(pctrl, port, PMC(port)) & BIT(bit))
+> +	guard(spinlock_irqsave)(&pctrl->lock);
+> +
+> +	if (rzt2h_pinctrl_readb(pctrl, port, PMC(port)) & BIT(bit)) {
+> +		/*
+> +		 * When a GPIO is being requested as an IRQ, the pinctrl
+> +		 * framework expects to be able to read the GPIO's direction.
+> +		 * IRQ function is separate from GPIO, and enabling it takes the
+> +		 * pin out of GPIO mode.
+> +		 * At this point, .child_to_parent_hwirq() has already been
+> +		 * called to enable the IRQ function.
+> +		 * Default to input direction for IRQ function.
+> +		 */
+> +		reg64 =3D rzt2h_pinctrl_readq(pctrl, port, PFC(port));
+> +		reg64 =3D (reg64 >> (bit * 8)) & PFC_MASK;
+> +		if (reg64 =3D=3D PFC_FUNC_INTERRUPT)
+> +			return GPIO_LINE_DIRECTION_IN;
+> +
+>  		return -EINVAL;
+> +	}
+> =20
+>  	reg =3D rzt2h_pinctrl_readw(pctrl, port, PM(port));
+>  	reg =3D (reg >> (bit * 2)) & PM_MASK;
 
-Reviewed-by: Pavel Machek <pavel@nabladev.com>
+But AFAICT here, whole rest of the function is running with spinlock
+held/interrupts disabled. Is that neccessary?
 
-Best regards,
-                                                                Pavel
+Thanks and best regards,
+								Pavel
 
---zqP8fGcn5PFIFQXI
+--4ALlVXqYNBMFOJXm
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCak1eyQAKCRAw5/Bqldv6
-8uO3AKCyK4aj7862YwA59pBLC7D1iTF4HgCgpfzVmWWNnbTjRqu66pYKCHvpl+Q=
-=C6dL
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCak1e2AAKCRAw5/Bqldv6
+8tlCAJ98t4NIDUvErt88n7HkK8J04TVtCACgufGM4uwrg45eB6jQ2R7jA+cryng=
+=t2Wl
 -----END PGP SIGNATURE-----
 
---zqP8fGcn5PFIFQXI--
+--4ALlVXqYNBMFOJXm--
 
