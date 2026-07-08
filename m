@@ -2,26 +2,26 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0734DC43458
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18EDBC44501
 	for <webhook@archiver.kernel.org>; Wed,  8 Jul 2026 08:11:24 +0000 (UTC)
-Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.3852.1783498274729731314
+Received: from tor.source.kernel.org (tor.source.kernel.org [172.105.4.254])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.3857.1783498283145711695
  for <cip-dev@lists.cip-project.org>;
- Wed, 08 Jul 2026 01:11:14 -0700
+ Wed, 08 Jul 2026 01:11:23 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.234.252.31, mailfrom: srs0=ttbc=fc=tuxon.dev=claudiu.beznea@kernel.org)
+ dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.105.4.254, mailfrom: srs0=ttbc=fc=tuxon.dev=claudiu.beznea@kernel.org)
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by sea.source.kernel.org (Postfix) with ESMTP id 863E1407D6;
-	Wed,  8 Jul 2026 08:11:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 793641F000E9;
-	Wed,  8 Jul 2026 08:11:13 +0000 (UTC)
+	by tor.source.kernel.org (Postfix) with ESMTP id 822AE6001A;
+	Wed,  8 Jul 2026 08:11:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F6FE1F000E9;
+	Wed,  8 Jul 2026 08:11:21 +0000 (UTC)
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip v2 19/27] phy: renesas: rcar-gen3-usb2: Add support to initialize the bus
-Date: Wed,  8 Jul 2026 11:10:38 +0300
-Message-ID: <20260708081046.3882290-20-claudiu.beznea@tuxon.dev>
+Subject: [PATCH 5.10.y-cip v2 25/27] arm64: dts: renesas: r9a08g045: Add USB support
+Date: Wed,  8 Jul 2026 11:10:44 +0300
+Message-ID: <20260708081046.3882290-26-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260708081046.3882290-1-claudiu.beznea@tuxon.dev>
 References: <20260708081046.3882290-1-claudiu.beznea@tuxon.dev>
@@ -31,169 +31,163 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 08 Jul 2026 08:11:24 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23497
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23503
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 4eae16375357a2a7e8501be5469532f7636064b3 upstream.
+commit c837ad879e7110227bac0096a32a7c610e430a8e upstream.
 
-The Renesas RZ/G3S need to initialize the USB BUS before transferring dat=
-a
-due to hardware limitation. As the register that need to be touched for
-this is in the address space of the USB PHY, and the UBS PHY need to be
-initialized before any other USB drivers handling data transfer, add
-support to initialize the USB BUS.
+Add USB nodes for the Renesas RZ/G3S SoC. This consists of PHY reset,
+host and device support.
 
-As the USB PHY is probed before any other USB drivers that enables
-clocks and de-assert the reset signals and the BUS initialization is done
-in the probe phase, we need to add code to de-assert reset signal and
-runtime resume the device (which enables its clocks) before accessing
-the registers.
-
-As the reset signals are not required by the USB PHY driver for the other
-USB PHY hardware variants, the reset signals and runtime PM was handled
-only in the function that initialize the USB BUS.
-
-The PHY initialization was done right after runtime PM enable to have
-all in place when the PHYs are registered.
-
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://lore.kernel.org/r/20240822152801.602318-11-claudiu.beznea.u=
-j@bp.renesas.com
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-[claudiu.beznea: fixed conflict by keeping the code from v5.10 CIP,
- dropped the platform_set_drvdata() near platform_get_irq_optional()]
+Link: https://patch.msgid.link/20251023135810.1688415-7-claudiu.beznea.uj=
+@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[claudiu.beznea: fixed conflict with the PCIe node by keeping both PCIe
+ and USB nodes and moving the PCIe after USB node to maintain the
+ sorting by block address]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
 
 Changes in v2:
 - none
 
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 50 ++++++++++++++++++++++--
- 1 file changed, 47 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi | 118 +++++++++++++++++++++
+ 1 file changed, 118 insertions(+)
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renes=
-as/phy-rcar-gen3-usb2.c
-index a8f4c69d6177..87ee9ec54302 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -22,12 +22,14 @@
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/regulator/consumer.h>
-+#include <linux/reset.h>
- #include <linux/string.h>
- #include <linux/usb/of.h>
- #include <linux/workqueue.h>
+diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot=
+/dts/renesas/r9a08g045.dtsi
+index ecca25467163..c386d92499e1 100644
+--- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+@@ -691,6 +691,124 @@ eth1: ethernet@11c40000 {
+ 			status =3D "disabled";
+ 		};
 =20
- /******* USB2.0 Host registers (original offset is +0x200) *******/
- #define USB2_INT_ENABLE		0x000
-+#define USB2_AHB_BUS_CTR	0x008
- #define USB2_USBCTR		0x00c
- #define USB2_SPD_RSM_TIMSET	0x10c
- #define USB2_OC_TIMSET		0x110
-@@ -43,6 +45,10 @@
- #define USB2_INT_ENABLE_USBH_INTB_EN	BIT(2)	/* For EHCI */
- #define USB2_INT_ENABLE_USBH_INTA_EN	BIT(1)	/* For OHCI */
-=20
-+/* AHB_BUS_CTR */
-+#define USB2_AHB_BUS_CTR_MBL_MASK	GENMASK(1, 0)
-+#define USB2_AHB_BUS_CTR_MBL_INCR4	2
++		phyrst: usbphy-ctrl@11e00000 {
++			compatible =3D "renesas,r9a08g045-usbphy-ctrl";
++			reg =3D <0 0x11e00000 0 0x10000>;
++			clocks =3D <&cpg CPG_MOD R9A08G045_USB_PCLK>;
++			resets =3D <&cpg R9A08G045_USB_PRESETN>;
++			power-domains =3D <&cpg>;
++			#reset-cells =3D <1>;
++			renesas,sysc-pwrrdy =3D <&sysc 0xd70 0x1>;
++			status =3D "disabled";
 +
- /* USBCTR */
- #define USB2_USBCTR_DIRPD	BIT(2)
- #define USB2_USBCTR_PLL_RST	BIT(1)
-@@ -113,6 +119,7 @@ struct rcar_gen3_chan {
- 	struct extcon_dev *extcon;
- 	struct rcar_gen3_phy rphys[NUM_OF_PHYS];
- 	struct regulator *vbus;
-+	struct reset_control *rstc;
- 	struct work_struct work;
- 	spinlock_t lock;	/* protects access to hardware and driver data structu=
-re. */
- 	enum usb_dr_mode dr_mode;
-@@ -126,6 +133,7 @@ struct rcar_gen3_chan {
- struct rcar_gen3_phy_drv_data {
- 	const struct phy_ops *phy_usb2_ops;
- 	bool no_adp_ctrl;
-+	bool init_bus;
- };
-=20
- /*
-@@ -662,6 +670,35 @@ static enum usb_dr_mode rcar_gen3_get_dr_mode(struct=
- device_node *np)
- 	return candidate;
- }
-=20
-+static int rcar_gen3_phy_usb2_init_bus(struct rcar_gen3_chan *channel)
-+{
-+	struct device *dev =3D channel->dev;
-+	int ret;
-+	u32 val;
++			usb0_vbus_otg: regulator-vbus {
++				regulator-name =3D "vbus";
++			};
++		};
 +
-+	channel->rstc =3D devm_reset_control_array_get_shared(dev);
-+	if (IS_ERR(channel->rstc))
-+		return PTR_ERR(channel->rstc);
++		ohci0: usb@11e10000 {
++			compatible =3D "generic-ohci";
++			reg =3D <0 0x11e10000 0 0x100>;
++			interrupts =3D <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
++			clocks =3D <&cpg CPG_MOD R9A08G045_USB_PCLK>,
++				 <&cpg CPG_MOD R9A08G045_USB_U2H0_HCLK>;
++			resets =3D <&phyrst 0>,
++				 <&cpg R9A08G045_USB_U2H0_HRESETN>;
++			phys =3D <&usb2_phy0 1>;
++			phy-names =3D "usb";
++			power-domains =3D <&cpg>;
++			status =3D "disabled";
++		};
 +
-+	ret =3D pm_runtime_resume_and_get(dev);
-+	if (ret)
-+		return ret;
++		ohci1: usb@11e30000 {
++			compatible =3D "generic-ohci";
++			reg =3D <0 0x11e30000 0 0x100>;
++			interrupts =3D <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
++			clocks =3D <&cpg CPG_MOD R9A08G045_USB_PCLK>,
++				 <&cpg CPG_MOD R9A08G045_USB_U2H1_HCLK>;
++			resets =3D <&phyrst 1>,
++				 <&cpg R9A08G045_USB_U2H1_HRESETN>;
++			phys =3D <&usb2_phy1 1>;
++			phy-names =3D "usb";
++			power-domains =3D <&cpg>;
++			status =3D "disabled";
++		};
 +
-+	ret =3D reset_control_deassert(channel->rstc);
-+	if (ret)
-+		goto rpm_put;
++		ehci0: usb@11e10100 {
++			compatible =3D "generic-ehci";
++			reg =3D <0 0x11e10100 0 0x100>;
++			interrupts =3D <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>;
++			clocks =3D <&cpg CPG_MOD R9A08G045_USB_PCLK>,
++				 <&cpg CPG_MOD R9A08G045_USB_U2H0_HCLK>;
++			resets =3D <&phyrst 0>,
++				 <&cpg R9A08G045_USB_U2H0_HRESETN>;
++			phys =3D <&usb2_phy0 2>;
++			phy-names =3D "usb";
++			companion =3D <&ohci0>;
++			power-domains =3D <&cpg>;
++			status =3D "disabled";
++		};
 +
-+	val =3D readl(channel->base + USB2_AHB_BUS_CTR);
-+	val &=3D ~USB2_AHB_BUS_CTR_MBL_MASK;
-+	val |=3D USB2_AHB_BUS_CTR_MBL_INCR4;
-+	writel(val, channel->base + USB2_AHB_BUS_CTR);
++		ehci1: usb@11e30100 {
++			compatible =3D "generic-ehci";
++			reg =3D <0 0x11e30100 0 0x100>;
++			interrupts =3D <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
++			clocks =3D <&cpg CPG_MOD R9A08G045_USB_PCLK>,
++				 <&cpg CPG_MOD R9A08G045_USB_U2H1_HCLK>;
++			resets =3D <&phyrst 1>,
++				 <&cpg R9A08G045_USB_U2H1_HRESETN>;
++			phys =3D <&usb2_phy1 2>;
++			phy-names =3D "usb";
++			companion =3D <&ohci1>;
++			power-domains =3D <&cpg>;
++			status =3D "disabled";
++		};
 +
-+rpm_put:
-+	pm_runtime_put(dev);
++		usb2_phy0: usb-phy@11e10200 {
++			compatible =3D "renesas,usb2-phy-r9a08g045";
++			reg =3D <0 0x11e10200 0 0x700>;
++			interrupts =3D <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
++			clocks =3D <&cpg CPG_MOD R9A08G045_USB_PCLK>,
++				 <&cpg CPG_MOD R9A08G045_USB_U2H0_HCLK>;
++			resets =3D <&phyrst 0>,
++				 <&cpg R9A08G045_USB_U2H0_HRESETN>;
++			#phy-cells =3D <1>;
++			power-domains =3D <&cpg>;
++			status =3D "disabled";
++		};
 +
-+	return ret;
-+}
++		usb2_phy1: usb-phy@11e30200 {
++			compatible =3D "renesas,usb2-phy-r9a08g045";
++			reg =3D <0 0x11e30200 0 0x700>;
++			interrupts =3D <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
++			clocks =3D <&cpg CPG_MOD R9A08G045_USB_PCLK>,
++				 <&cpg CPG_MOD R9A08G045_USB_U2H1_HCLK>;
++			resets =3D <&phyrst 1>,
++				 <&cpg R9A08G045_USB_U2H1_HRESETN>;
++			#phy-cells =3D <1>;
++			power-domains =3D <&cpg>;
++			status =3D "disabled";
++		};
 +
- static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- {
- 	const struct rcar_gen3_phy_drv_data *phy_data;
-@@ -713,6 +750,15 @@ static int rcar_gen3_phy_usb2_probe(struct platform_=
-device *pdev)
- 		goto error;
- 	}
-=20
-+	platform_set_drvdata(pdev, channel);
-+	channel->dev =3D dev;
++		hsusb: usb@11e20000 {
++			compatible =3D "renesas,usbhs-r9a08g045",
++				     "renesas,rzg2l-usbhs";
++			reg =3D <0 0x11e20000 0 0x10000>;
++			interrupts =3D <GIC_SPI 85 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
++			clocks =3D <&cpg CPG_MOD R9A08G045_USB_PCLK>,
++				 <&cpg CPG_MOD R9A08G045_USB_U2P_EXR_CPUCLK>;
++			resets =3D <&phyrst 0>,
++				 <&cpg R9A08G045_USB_U2P_EXL_SYSRST>;
++			renesas,buswait =3D <7>;
++			phys =3D <&usb2_phy0 3>;
++			phy-names =3D "usb";
++			power-domains =3D <&cpg>;
++			status =3D "disabled";
++		};
 +
-+	if (phy_data->init_bus) {
-+		ret =3D rcar_gen3_phy_usb2_init_bus(channel);
-+		if (ret)
-+			goto error;
-+	}
-+
- 	channel->soc_no_adp_ctrl =3D phy_data->no_adp_ctrl;
- 	if (phy_data->no_adp_ctrl)
- 		channel->obint_enable_bits =3D USB2_OBINT_IDCHG_EN;
-@@ -744,9 +790,6 @@ static int rcar_gen3_phy_usb2_probe(struct platform_d=
-evice *pdev)
- 		channel->vbus =3D NULL;
- 	}
-=20
--	platform_set_drvdata(pdev, channel);
--	channel->dev =3D dev;
--
- 	irq =3D platform_get_irq_optional(pdev, 0);
- 	if (irq < 0 && irq !=3D -ENXIO) {
- 		ret =3D irq;
-@@ -787,6 +830,7 @@ static int rcar_gen3_phy_usb2_remove(struct platform_=
-device *pdev)
- 	if (channel->is_otg_channel)
- 		device_remove_file(&pdev->dev, &dev_attr_role);
-=20
-+	reset_control_assert(channel->rstc);
- 	pm_runtime_disable(&pdev->dev);
-=20
- 	return 0;
+ 		pcie: pcie@11e40000 {
+ 			compatible =3D "renesas,r9a08g045-pcie";
+ 			reg =3D <0 0x11e40000 0 0x10000>;
 --=20
 2.43.0
 
