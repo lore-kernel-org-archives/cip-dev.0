@@ -2,26 +2,26 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42DE7C44503
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67AB0C44507
 	for <webhook@archiver.kernel.org>; Wed,  8 Jul 2026 08:12:25 +0000 (UTC)
-Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.3881.1783498338739482284
+Received: from tor.source.kernel.org (tor.source.kernel.org [172.105.4.254])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.3884.1783498341951701751
  for <cip-dev@lists.cip-project.org>;
- Wed, 08 Jul 2026 01:12:18 -0700
+ Wed, 08 Jul 2026 01:12:22 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.234.252.31, mailfrom: srs0=ttbc=fc=tuxon.dev=claudiu.beznea@kernel.org)
+ dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.105.4.254, mailfrom: srs0=ttbc=fc=tuxon.dev=claudiu.beznea@kernel.org)
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by sea.source.kernel.org (Postfix) with ESMTP id 8A9E941B66;
-	Wed,  8 Jul 2026 08:12:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 837DD1F000E9;
-	Wed,  8 Jul 2026 08:12:17 +0000 (UTC)
+	by tor.source.kernel.org (Postfix) with ESMTP id 52D986001A;
+	Wed,  8 Jul 2026 08:12:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31E581F000E9;
+	Wed,  8 Jul 2026 08:12:20 +0000 (UTC)
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 6.1.y-cip v2 12/22] usb: host: ohci-platform: Call reset assert/deassert on suspend/resume
-Date: Wed,  8 Jul 2026 11:11:49 +0300
-Message-ID: <20260708081159.3882514-13-claudiu.beznea@tuxon.dev>
+Subject: [PATCH 6.1.y-cip v2 14/22] usb: renesas_usbhs: Assert/de-assert reset signals on suspend/resume
+Date: Wed,  8 Jul 2026 11:11:51 +0300
+Message-ID: <20260708081159.3882514-15-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260708081159.3882514-1-claudiu.beznea@tuxon.dev>
 References: <20260708081159.3882514-1-claudiu.beznea@tuxon.dev>
@@ -31,113 +31,107 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 08 Jul 2026 08:12:25 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23518
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23520
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit e4d9da32bf6059cb485caac4c9c0a2e36cdd5573 upstream.
+commit 3578b1cde59496efc4625ba3fbd14eb2918807a2 upstream.
 
 The Renesas RZ/G3S SoC supports a power-saving mode in which power to mos=
 t
-of the SoC components is turned off, including the USB blocks. On the
-resume path, the reset signal must be de-asserted before applying any
-settings to the USB registers. To handle this properly, call
-reset_control_assert() and reset_control_deassert() during suspend and
-resume, respectively.
+SoC components is turned off, including the USB subsystem.
+
+To properly restore from such a state, the reset signal needs to be
+asserted/de-asserted during suspend/resume. Add reset assert/de-assert on
+suspend/resume.
+
+The resume code has been moved into a separate function to allow reusing
+it in case reset_control_assert() from suspend fails.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://patch.msgid.link/20251106143625.3050119-4-claudiu.beznea.uj=
+Link: https://patch.msgid.link/20251106143625.3050119-5-claudiu.beznea.uj=
 @bp.renesas.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[claudiu.beznea: execute the code based on the
- ohci_platform_reset_control_allowed() return value]
+[claudiu.beznea:
+ - fixed conflict by keeping usbhsc_restore() function introduced by
+   commit 3578b1cde59496efc4625ba3fbd14eb2918807a2
+ - kept __maybe_unused on suspend/resume functions]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
 
 Changes in v2:
-- added ohci_platform_reset_control_allowed() and use it in suspend/resum=
-e
-  path to avoid executing code introduced by commit
-  e4d9da32bf6059cb485caac4c9c0a2e36cdd5573 on targets other than the
-  Renesas RZ/G3S
+- none
 
- drivers/usb/host/ohci-platform.c | 38 ++++++++++++++++++++++++++++++--
- 1 file changed, 36 insertions(+), 2 deletions(-)
+ drivers/usb/renesas_usbhs/common.c | 35 ++++++++++++++++++++++--------
+ 1 file changed, 26 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/usb/host/ohci-platform.c b/drivers/usb/host/ohci-pla=
-tform.c
-index 614b7cf5155c..1b693887c65f 100644
---- a/drivers/usb/host/ohci-platform.c
-+++ b/drivers/usb/host/ohci-platform.c
-@@ -268,11 +268,22 @@ static int ohci_platform_remove(struct platform_dev=
-ice *dev)
+diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usb=
+hs/common.c
+index 15e9e3d6e3fd..e1ebd3e24f78 100644
+--- a/drivers/usb/renesas_usbhs/common.c
++++ b/drivers/usb/renesas_usbhs/common.c
+@@ -832,10 +832,26 @@ static void usbhs_remove(struct platform_device *pd=
+ev)
+ 	pm_runtime_disable(&pdev->dev);
  }
 =20
- #ifdef CONFIG_PM_SLEEP
-+static bool ohci_platform_reset_control_allowed(void)
++static void usbhsc_restore(struct device *dev)
 +{
-+	static const char * const reset_control_allow_list[] =3D {
-+		"renesas,r9a08g045", /* Renesas RZ/G3S */
-+		NULL
-+	};
++	struct usbhs_priv *priv =3D dev_get_drvdata(dev);
++	struct platform_device *pdev =3D usbhs_priv_to_pdev(priv);
 +
-+	return of_machine_compatible_match(reset_control_allow_list);
++	if (!usbhs_get_dparam(priv, runtime_pwctrl)) {
++		usbhsc_power_ctrl(priv, 1);
++		usbhs_mod_autonomy_mode(priv);
++	}
++
++	usbhs_platform_call(priv, phy_reset, pdev);
++
++	usbhsc_schedule_notify_hotplug(pdev);
 +}
 +
- static int ohci_platform_suspend(struct device *dev)
+ static __maybe_unused int usbhsc_suspend(struct device *dev)
  {
- 	struct usb_hcd *hcd =3D dev_get_drvdata(dev);
- 	struct usb_ohci_pdata *pdata =3D dev->platform_data;
- 	struct platform_device *pdev =3D to_platform_device(dev);
-+	struct ohci_platform_priv *priv =3D hcd_to_ohci_priv(hcd);
- 	bool do_wakeup =3D device_may_wakeup(dev);
- 	int ret;
+ 	struct usbhs_priv *priv =3D dev_get_drvdata(dev);
+ 	struct usbhs_mod *mod =3D usbhs_mod_get_current(priv);
++	int ret;
 =20
-@@ -283,6 +294,17 @@ static int ohci_platform_suspend(struct device *dev)
- 	if (pdata->power_suspend)
- 		pdata->power_suspend(pdev);
+ 	if (mod) {
+ 		usbhs_mod_call(priv, stop, priv);
+@@ -845,22 +861,23 @@ static __maybe_unused int usbhsc_suspend(struct dev=
+ice *dev)
+ 	if (mod || !usbhs_get_dparam(priv, runtime_pwctrl))
+ 		usbhsc_power_ctrl(priv, 0);
 =20
-+	if (!ohci_platform_reset_control_allowed())
-+		return ret;
+-	return 0;
++	ret =3D reset_control_assert(priv->rsts);
++	if (ret)
++		usbhsc_restore(dev);
 +
-+	ret =3D reset_control_assert(priv->resets);
-+	if (ret) {
-+		if (pdata->power_on)
-+			pdata->power_on(pdev);
-+
-+		ohci_resume(hcd, false);
-+	}
-+
- 	return ret;
++	return ret;
  }
 =20
-@@ -291,11 +313,23 @@ static int ohci_platform_resume_common(struct devic=
-e *dev, bool hibernated)
- 	struct usb_hcd *hcd =3D dev_get_drvdata(dev);
- 	struct usb_ohci_pdata *pdata =3D dev_get_platdata(dev);
- 	struct platform_device *pdev =3D to_platform_device(dev);
-+	struct ohci_platform_priv *priv =3D hcd_to_ohci_priv(hcd);
-+	bool reset_control_allowed =3D ohci_platform_reset_control_allowed();
-+	int err;
-+
-+	if (reset_control_allowed) {
-+		err =3D reset_control_deassert(priv->resets);
-+		if (err)
-+			return err;
-+	}
+ static __maybe_unused int usbhsc_resume(struct device *dev)
+ {
+ 	struct usbhs_priv *priv =3D dev_get_drvdata(dev);
+-	struct platform_device *pdev =3D usbhs_priv_to_pdev(priv);
+-
+-	if (!usbhs_get_dparam(priv, runtime_pwctrl)) {
+-		usbhsc_power_ctrl(priv, 1);
+-		usbhs_mod_autonomy_mode(priv);
+-	}
++	int ret;
 =20
- 	if (pdata->power_on) {
--		int err =3D pdata->power_on(pdev);
--		if (err < 0)
-+		err =3D pdata->power_on(pdev);
-+		if (err < 0) {
-+			if (reset_control_allowed)
-+				reset_control_assert(priv->resets);
- 			return err;
-+		}
- 	}
+-	usbhs_platform_call(priv, phy_reset, pdev);
++	ret =3D reset_control_deassert(priv->rsts);
++	if (ret)
++		return ret;
 =20
- 	ohci_resume(hcd, hibernated);
+-	usbhsc_schedule_notify_hotplug(pdev);
++	usbhsc_restore(dev);
+=20
+ 	return 0;
+ }
 --=20
 2.43.0
 
