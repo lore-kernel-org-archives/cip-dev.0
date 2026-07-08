@@ -2,26 +2,26 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EE43C43602
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4477BC44503
 	for <webhook@archiver.kernel.org>; Wed,  8 Jul 2026 08:11:02 +0000 (UTC)
 Received: from tor.source.kernel.org (tor.source.kernel.org [172.105.4.254])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.3843.1783498259106462087
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.3685.1783498252470227795
  for <cip-dev@lists.cip-project.org>;
- Wed, 08 Jul 2026 01:10:59 -0700
+ Wed, 08 Jul 2026 01:10:52 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.105.4.254, mailfrom: srs0=ttbc=fc=tuxon.dev=claudiu.beznea@kernel.org)
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by tor.source.kernel.org (Postfix) with ESMTP id 775236001A;
-	Wed,  8 Jul 2026 08:10:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D3241F000E9;
-	Wed,  8 Jul 2026 08:10:57 +0000 (UTC)
+	by tor.source.kernel.org (Postfix) with ESMTP id D1DC8601D9;
+	Wed,  8 Jul 2026 08:10:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3DB81F000E9;
+	Wed,  8 Jul 2026 08:10:50 +0000 (UTC)
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip v2 07/27] reset: rzg2l-usbphy-ctrl: Add support for RZ/G3S SoC
-Date: Wed,  8 Jul 2026 11:10:26 +0300
-Message-ID: <20260708081046.3882290-8-claudiu.beznea@tuxon.dev>
+Subject: [PATCH 5.10.y-cip v2 02/27] clk: renesas: rzg2l: Deassert reset on assert timeout
+Date: Wed,  8 Jul 2026 11:10:21 +0300
+Message-ID: <20260708081046.3882290-3-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260708081046.3882290-1-claudiu.beznea@tuxon.dev>
 References: <20260708081046.3882290-1-claudiu.beznea@tuxon.dev>
@@ -31,46 +31,65 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 08 Jul 2026 08:11:02 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23485
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23480
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-commit 819ac6b055350c559dbb111f970a96e2c1c812ff upstream.
+commit 0b0201f259e1158a875c5fd01adf318ae5d32352 upstream.
 
-The Renesas RZ/G3S SoC USB PHY HW block receives as input the USB PWRRDY
-signal from the system controller. Add support for the Renesas RZ/G3S SoC=
-.
+If the assert() fails due to timeout error, set the reset register bit
+back to deasserted state. This change is needed especially for handling
+assert error in suspend() callback that expect the device to be in
+operational state in case of failure.
 
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://patch.msgid.link/20260108123433.104464-2-biju.das.jz@bp.ren=
+esas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[claudiu.beznea: fixed conflict]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
 
 Changes in v2:
-- none
+- none; this patch is new
 
- drivers/reset/reset-rzg2l-usbphy-ctrl.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/clk/renesas/rzg2l-cpg.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/reset/reset-rzg2l-usbphy-ctrl.c b/drivers/reset/rese=
-t-rzg2l-usbphy-ctrl.c
-index aac947dc467b..4bdef864c331 100644
---- a/drivers/reset/reset-rzg2l-usbphy-ctrl.c
-+++ b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
-@@ -96,6 +96,10 @@ static int rzg2l_usbphy_ctrl_status(struct reset_contr=
-oller_dev *rcdev,
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-=
+cpg.c
+index 8cb0403b43c3..ebb2f6e44003 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -1777,6 +1777,8 @@ static int rzg2l_cpg_assert(struct reset_controller=
+_dev *rcdev,
+ 	u32 mask =3D BIT(info->resets[id].bit);
+ 	s8 monbit =3D info->resets[id].monbit;
+ 	u32 value =3D mask << 16;
++	u32 mon;
++	int ret;
 =20
- static const struct of_device_id rzg2l_usbphy_ctrl_match_table[] =3D {
- 	{ .compatible =3D "renesas,rzg2l-usbphy-ctrl" },
-+	{
-+		.compatible =3D "renesas,r9a08g045-usbphy-ctrl",
-+		.data =3D (void *)RZG2L_USBPHY_CTRL_PWRRDY
-+	},
- 	{ /* Sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, rzg2l_usbphy_ctrl_match_table);
+ 	dev_dbg(rcdev->dev, "assert id:%ld offset:0x%x\n", id, CLK_RST_R(reg));
+=20
+@@ -1793,8 +1795,14 @@ static int rzg2l_cpg_assert(struct reset_controlle=
+r_dev *rcdev,
+ 		return 0;
+ 	}
+=20
+-	return readl_poll_timeout_atomic(priv->base + reg, value,
+-					 value & mask, 10, 200);
++	ret =3D readl_poll_timeout_atomic(priv->base + reg, mon,
++					!!(mon & mask), 10, 200);
++	if (ret) {
++		value ^=3D mask;
++		writel(value, priv->base + CLK_RST_R(info->resets[id].off));
++	}
++
++	return ret;
+ }
+=20
+ static int rzg2l_cpg_deassert(struct reset_controller_dev *rcdev,
 --=20
 2.43.0
 
