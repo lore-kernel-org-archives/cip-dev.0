@@ -1,147 +1,89 @@
-Return-Path: <claudiu.beznea@tuxon.dev>
+Return-Path: <pavel@nabladev.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E709C44507
-	for <webhook@archiver.kernel.org>; Wed,  8 Jul 2026 08:13:06 +0000 (UTC)
-Received: from tor.source.kernel.org (tor.source.kernel.org [172.105.4.254])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.3915.1783498382900818395
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E957AC43458
+	for <webhook@archiver.kernel.org>; Wed,  8 Jul 2026 20:26:15 +0000 (UTC)
+Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.17868.1783542372263001136
  for <cip-dev@lists.cip-project.org>;
- Wed, 08 Jul 2026 01:13:03 -0700
+ Wed, 08 Jul 2026 13:26:12 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.105.4.254, mailfrom: srs0=ttbc=fc=tuxon.dev=claudiu.beznea@kernel.org)
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by tor.source.kernel.org (Postfix) with ESMTP id 466936001A;
-	Wed,  8 Jul 2026 08:13:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 283AF1F000E9;
-	Wed,  8 Jul 2026 08:13:00 +0000 (UTC)
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-To: nobuhiro.iwamatsu.x90@mail.toshiba,
-	pavel@nabladev.com
-Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 6.12.y-cip v2 17/17] arm64: dts: renesas: rzg3s-smarc: Enable USB support
-Date: Wed,  8 Jul 2026 11:12:37 +0300
-Message-ID: <20260708081237.3882574-18-claudiu.beznea@tuxon.dev>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260708081237.3882574-1-claudiu.beznea@tuxon.dev>
-References: <20260708081237.3882574-1-claudiu.beznea@tuxon.dev>
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=f0VxyTW1;
+ spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 69D021192DF;
+	Wed,  8 Jul 2026 22:26:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
+	s=dkim; t=1783542369;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=yYSGPuBED181KmBl81j5NoZngG1n/YbxxHLqQTa+yBU=;
+	b=f0VxyTW1q/edJ/aE/tVGvW++z7/KmBlAkELypi3M7vjMsCyK89YaJWL3T0LJRnZA4z/9IT
+	uJGKxJRA90eZT3n809vfbJr/WE4PMdeUscZAcpJh1XeM5k8i9jz4SOS1z7+wk2qhCGq/Wb
+	tNgloxaIn+kiq692ES/89tzLPO9z8dIJPX/UbrH4njQQRD0/iMKi3tJJ3Su+QgeR6AkzH1
+	frhq2O6J8Yg8/6H7Ipl3+aaAQN55E9h06TckTqYnB6vZJ2L4+T6zyuEM8fzMCFZm/sYoOd
+	BMpwEUv7lTRbQJpjjjsymgvOq3KnvTdoUn0w/MMHnhRNWpV8JtsYFHv/RFTCtw==
+Date: Wed, 8 Jul 2026 22:26:03 +0200
+From: Pavel Machek <pavel@nabladev.com>
+To: Biju <biju.das.au@gmail.com>
+Cc: cip-dev@lists.cip-project.org,
+	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
+	Pavel Machek <pavel@nabladev.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 6.12.y-cip 00/26] Add RZ/G3L IA55 support
+Message-ID: <ak6yWxbsPgT8X18c@duo.ucw.cz>
+References: <20260703100756.238233-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="CUK9zRvMDu35KYMA"
+Content-Disposition: inline
+In-Reply-To: <20260703100756.238233-1-biju.das.jz@bp.renesas.com>
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 08 Jul 2026 08:13:06 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23546
+ <cip-dev@lists.cip-project.org>; Wed, 08 Jul 2026 20:26:15 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23547
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 0926e6e69852a450dc2f6e3f8412ae58f773e29b upstream.
+--CUK9zRvMDu35KYMA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Enable USB support (host, device, USB PHYs).
+Hi!
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://patch.msgid.link/20251023135810.1688415-8-claudiu.beznea.uj=
-@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
+> The IRQC block on the RZ/G3L SoC is almost identical to the one found on
+> the RZ/G2L SoC, with the following differences:
+>=20
+>  - The number of GPIO interrupts for TINT selection is 113 instead of 123.
+>  - The pin index and TINT selection index are not in the 1:1 map.
+>  - The number of external interrupts are 16 instead of 8, out of these
+>    8 external interrupts are shared with TINT.
 
-Changes in v2:
-- none
+>  .../renesas,rzg2l-irqc.yaml                   | 157 ++---
+>  drivers/irqchip/irq-renesas-rzg2l.c           | 627 ++++++++++++++----
 
- arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi | 57 ++++++++++++++++++++
- 1 file changed, 57 insertions(+)
+This looks okay to me.
 
-diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi b/arch/arm64/bo=
-ot/dts/renesas/rzg3s-smarc.dtsi
-index d90f65a7d79b..071da86ed3dc 100644
---- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-@@ -95,6 +95,20 @@ &audio_clk2 {
- 	clock-frequency =3D <12288000>;
- };
-=20
-+&ehci0 {
-+	dr_mode =3D "otg";
-+	status =3D "okay";
-+};
-+
-+&ehci1 {
-+	status =3D "okay";
-+};
-+
-+&hsusb {
-+	dr_mode =3D "otg";
-+	status =3D "okay";
-+};
-+
- &i2c0 {
- 	status =3D "okay";
-=20
-@@ -128,6 +142,19 @@ &pcie {
- 	status =3D "okay";
- };
-=20
-+&ohci0 {
-+	dr_mode =3D "otg";
-+	status =3D "okay";
-+};
-+
-+&ohci1 {
-+	status =3D "okay";
-+};
-+
-+&phyrst {
-+	status =3D "okay";
-+};
-+
- &pinctrl {
- 	audio_clock_pins: audio-clock {
- 		pins =3D "AUDIO_CLK1", "AUDIO_CLK2";
-@@ -208,6 +235,23 @@ ssi3_pins: ssi3 {
- 			 <RZG2L_PORT_PINMUX(18, 4, 8)>, /* TXD */
- 			 <RZG2L_PORT_PINMUX(18, 5, 8)>; /* RXD */
- 	};
-+
-+	usb0_pins: usb0 {
-+		peri {
-+			pinmux =3D <RZG2L_PORT_PINMUX(5, 0, 1)>, /* VBUS */
-+				 <RZG2L_PORT_PINMUX(5, 2, 1)>; /* OVC */
-+		};
-+
-+		otg {
-+			pinmux =3D <RZG2L_PORT_PINMUX(5, 3, 1)>; /* OTG_ID */
-+			bias-pull-up;
-+		};
-+	};
-+
-+	usb1_pins: usb1 {
-+		pinmux =3D <RZG2L_PORT_PINMUX(5, 4, 5)>, /* OVC */
-+			 <RZG2L_PORT_PINMUX(6, 0, 1)>; /* VBUS */
-+	};
- };
-=20
- &scif0 {
-@@ -243,3 +287,16 @@ &ssi3 {
- 	pinctrl-0 =3D <&ssi3_pins>, <&audio_clock_pins>;
- 	status =3D "okay";
- };
-+
-+&usb2_phy0 {
-+	pinctrl-0 =3D <&usb0_pins>;
-+	pinctrl-names =3D "default";
-+	vbus-supply =3D <&usb0_vbus_otg>;
-+	status =3D "okay";
-+};
-+
-+&usb2_phy1 {
-+	pinctrl-0 =3D <&usb1_pins>;
-+	pinctrl-names =3D "default";
-+	status =3D "okay";
-+};
---=20
-2.43.0
+Reviewed-by: Pavel Machek <pavel@nabladev.com>
 
+However... this is unused for the moment, right? I don't see dts
+changes that would actually activate the support.
+
+Best regards,
+                                                                Pavel
+
+
+--CUK9zRvMDu35KYMA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCak6yWwAKCRAw5/Bqldv6
+8mMbAKCMMv3gTpQHcLK+h5MDzC6vUdWNnACfe0u9QQIxoM7U6OMdkKDHS4JnwWU=
+=J2mw
+-----END PGP SIGNATURE-----
+
+--CUK9zRvMDu35KYMA--
 
