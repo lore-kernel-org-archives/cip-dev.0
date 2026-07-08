@@ -2,26 +2,26 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4477BC44503
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6B2AC44506
 	for <webhook@archiver.kernel.org>; Wed,  8 Jul 2026 08:11:02 +0000 (UTC)
-Received: from tor.source.kernel.org (tor.source.kernel.org [172.105.4.254])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.3685.1783498252470227795
+Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.3840.1783498254416054464
  for <cip-dev@lists.cip-project.org>;
- Wed, 08 Jul 2026 01:10:52 -0700
+ Wed, 08 Jul 2026 01:10:54 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.105.4.254, mailfrom: srs0=ttbc=fc=tuxon.dev=claudiu.beznea@kernel.org)
+ dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.234.252.31, mailfrom: srs0=ttbc=fc=tuxon.dev=claudiu.beznea@kernel.org)
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by tor.source.kernel.org (Postfix) with ESMTP id D1DC8601D9;
-	Wed,  8 Jul 2026 08:10:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3DB81F000E9;
-	Wed,  8 Jul 2026 08:10:50 +0000 (UTC)
+	by sea.source.kernel.org (Postfix) with ESMTP id 3958441AFB;
+	Wed,  8 Jul 2026 08:10:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46D701F000E9;
+	Wed,  8 Jul 2026 08:10:53 +0000 (UTC)
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip v2 02/27] clk: renesas: rzg2l: Deassert reset on assert timeout
-Date: Wed,  8 Jul 2026 11:10:21 +0300
-Message-ID: <20260708081046.3882290-3-claudiu.beznea@tuxon.dev>
+Subject: [PATCH 5.10.y-cip v2 04/27] pinctrl: renesas: rzg2l: Add suspend/resume support for pull up/down
+Date: Wed,  8 Jul 2026 11:10:23 +0300
+Message-ID: <20260708081046.3882290-5-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260708081046.3882290-1-claudiu.beznea@tuxon.dev>
 References: <20260708081046.3882290-1-claudiu.beznea@tuxon.dev>
@@ -31,65 +31,109 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 08 Jul 2026 08:11:02 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23480
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23482
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 0b0201f259e1158a875c5fd01adf318ae5d32352 upstream.
+commit b2bd65fbb617353e3c46ba5206b3b030fa0f260c upstream.
 
-If the assert() fails due to timeout error, set the reset register bit
-back to deasserted state. This change is needed especially for handling
-assert error in suspend() callback that expect the device to be in
-operational state in case of failure.
+The Renesas RZ/G3S supports a power-saving mode where power to most of
+the SoC components is lost, including the PIN controller.  Save and
+restore the pull-up/pull-down register contents to ensure the
+functionality is preserved after a suspend/resume cycle.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20260108123433.104464-2-biju.das.jz@bp.ren=
-esas.com
+Link: https://lore.kernel.org/20250205100116.2032765-1-claudiu.beznea.uj@=
+bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[claudiu.beznea: fixed conflict]
+[claudiu.beznea: fixed conflict in rzg2l_pinctrl_pm_setup_regs()]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
 
 Changes in v2:
-- none; this patch is new
+- none
 
- drivers/clk/renesas/rzg2l-cpg.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-=
-cpg.c
-index 8cb0403b43c3..ebb2f6e44003 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -1777,6 +1777,8 @@ static int rzg2l_cpg_assert(struct reset_controller=
-_dev *rcdev,
- 	u32 mask =3D BIT(info->resets[id].bit);
- 	s8 monbit =3D info->resets[id].monbit;
- 	u32 value =3D mask << 16;
-+	u32 mon;
-+	int ret;
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/re=
+nesas/pinctrl-rzg2l.c
+index 16e32a090131..404b96d4d54d 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -275,6 +275,7 @@ struct rzg2l_pinctrl_pin_settings {
+  * @pmc: PMC registers cache
+  * @pfc: PFC registers cache
+  * @iolh: IOLH registers cache
++ * @pupd: PUPD registers cache
+  * @ien: IEN registers cache
+  * @sd_ch: SD_CH registers cache
+  * @eth_poc: ET_POC registers cache
+@@ -288,6 +289,7 @@ struct rzg2l_pinctrl_reg_cache {
+ 	u32	*pfc;
+ 	u32	*iolh[2];
+ 	u32	*ien[2];
++	u32	*pupd[2];
+ 	u8	sd_ch[2];
+ 	u8	eth_poc[2];
+ 	u8	eth_mode;
+@@ -2256,6 +2258,11 @@ static int rzg2l_pinctrl_reg_cache_alloc(struct rz=
+g2l_pinctrl *pctrl)
+ 		if (!cache->ien[i])
+ 			return -ENOMEM;
 =20
- 	dev_dbg(rcdev->dev, "assert id:%ld offset:0x%x\n", id, CLK_RST_R(reg));
-=20
-@@ -1793,8 +1795,14 @@ static int rzg2l_cpg_assert(struct reset_controlle=
-r_dev *rcdev,
- 		return 0;
- 	}
-=20
--	return readl_poll_timeout_atomic(priv->base + reg, value,
--					 value & mask, 10, 200);
-+	ret =3D readl_poll_timeout_atomic(priv->base + reg, mon,
-+					!!(mon & mask), 10, 200);
-+	if (ret) {
-+		value ^=3D mask;
-+		writel(value, priv->base + CLK_RST_R(info->resets[id].off));
-+	}
++		cache->pupd[i] =3D devm_kcalloc(pctrl->dev, nports, sizeof(*cache->pup=
+d[i]),
++					      GFP_KERNEL);
++		if (!cache->pupd[i])
++			return -ENOMEM;
 +
-+	return ret;
- }
+ 		/* Allocate dedicated cache. */
+ 		dedicated_cache->iolh[i] =3D devm_kcalloc(pctrl->dev, n_dedicated_pins=
+,
+ 							sizeof(*dedicated_cache->iolh[i]),
+@@ -2498,7 +2505,7 @@ static void rzg2l_pinctrl_pm_setup_regs(struct rzg2=
+l_pinctrl *pctrl, bool suspen
+ 	u32 port;
 =20
- static int rzg2l_cpg_deassert(struct reset_controller_dev *rcdev,
+ 	for (port =3D 0; port < nports; port++) {
+-		bool has_iolh, has_ien;
++		bool has_iolh, has_ien, has_pupd;
+ 		u32 off, caps;
+ 		u8 pincnt;
+ 		u64 cfg;
+@@ -2510,6 +2517,7 @@ static void rzg2l_pinctrl_pm_setup_regs(struct rzg2=
+l_pinctrl *pctrl, bool suspen
+ 		caps =3D FIELD_GET(PIN_CFG_MASK, cfg);
+ 		has_iolh =3D !!(caps & (PIN_CFG_IOLH_A | PIN_CFG_IOLH_B | PIN_CFG_IOLH=
+_C));
+ 		has_ien =3D !!(caps & PIN_CFG_IEN);
++		has_pupd =3D !!(caps & PIN_CFG_PUPD);
+=20
+ 		if (suspend)
+ 			RZG2L_PCTRL_REG_ACCESS32(suspend, pctrl->base + PFC(off), cache->pfc[=
+port]);
+@@ -2528,6 +2536,15 @@ static void rzg2l_pinctrl_pm_setup_regs(struct rzg=
+2l_pinctrl *pctrl, bool suspen
+ 			}
+ 		}
+=20
++		if (has_pupd) {
++			RZG2L_PCTRL_REG_ACCESS32(suspend, pctrl->base + PUPD(off),
++						 cache->pupd[0][port]);
++			if (pincnt >=3D 4) {
++				RZG2L_PCTRL_REG_ACCESS32(suspend, pctrl->base + PUPD(off),
++							 cache->pupd[1][port]);
++			}
++		}
++
+ 		RZG2L_PCTRL_REG_ACCESS16(suspend, pctrl->base + PM(off), cache->pm[por=
+t]);
+ 		RZG2L_PCTRL_REG_ACCESS8(suspend, pctrl->base + P(off), cache->p[port])=
+;
+=20
 --=20
 2.43.0
 
