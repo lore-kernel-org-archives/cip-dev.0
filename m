@@ -2,26 +2,26 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C94C43458
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 628DEC44503
 	for <webhook@archiver.kernel.org>; Wed,  8 Jul 2026 08:13:06 +0000 (UTC)
-Received: from tor.source.kernel.org (tor.source.kernel.org [172.105.4.254])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.3910.1783498376562009679
+Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.3913.1783498379243005992
  for <cip-dev@lists.cip-project.org>;
- Wed, 08 Jul 2026 01:12:56 -0700
+ Wed, 08 Jul 2026 01:12:59 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.105.4.254, mailfrom: srs0=ttbc=fc=tuxon.dev=claudiu.beznea@kernel.org)
+ dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.234.252.31, mailfrom: srs0=ttbc=fc=tuxon.dev=claudiu.beznea@kernel.org)
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by tor.source.kernel.org (Postfix) with ESMTP id E7D656001D;
-	Wed,  8 Jul 2026 08:12:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBC881F000E9;
-	Wed,  8 Jul 2026 08:12:54 +0000 (UTC)
+	by sea.source.kernel.org (Postfix) with ESMTP id 4703241B66;
+	Wed,  8 Jul 2026 08:12:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58B061F000E9;
+	Wed,  8 Jul 2026 08:12:57 +0000 (UTC)
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 6.12.y-cip v2 12/17] usb: renesas_usbhs: Assert/de-assert reset signals on suspend/resume
-Date: Wed,  8 Jul 2026 11:12:32 +0300
-Message-ID: <20260708081237.3882574-13-claudiu.beznea@tuxon.dev>
+Subject: [PATCH 6.12.y-cip v2 14/17] phy: renesas: rcar-gen3-usb2: Move phy_data->init_bus check
+Date: Wed,  8 Jul 2026 11:12:34 +0300
+Message-ID: <20260708081237.3882574-15-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260708081237.3882574-1-claudiu.beznea@tuxon.dev>
 References: <20260708081237.3882574-1-claudiu.beznea@tuxon.dev>
@@ -31,107 +31,63 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 08 Jul 2026 08:13:06 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23541
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23543
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 3578b1cde59496efc4625ba3fbd14eb2918807a2 upstream.
+commit 79d9db7f7a0c94b2b505666513879ac470c7e12f upstream.
 
-The Renesas RZ/G3S SoC supports a power-saving mode in which power to mos=
-t
-SoC components is turned off, including the USB subsystem.
-
-To properly restore from such a state, the reset signal needs to be
-asserted/de-asserted during suspend/resume. Add reset assert/de-assert on
-suspend/resume.
-
-The resume code has been moved into a separate function to allow reusing
-it in case reset_control_assert() from suspend fails.
+Move the check of phy_data->init_bus from rcar_gen3_phy_usb2_init_bus()
+to rcar_gen3_phy_usb2_probe() to avoid having it duplicated in both the
+probe path and the upcoming resume code. This is a preparatory patch.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://patch.msgid.link/20251106143625.3050119-5-claudiu.beznea.uj=
-@bp.renesas.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[claudiu.beznea:
- - fixed conflict by keeping usbhsc_restore() function introduced by
-   commit 3578b1cde59496efc4625ba3fbd14eb2918807a2
- - kept __maybe_unused on suspend/resume functions]
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Link: https://patch.msgid.link/20251119120418.686224-2-claudiu.beznea.uj@=
+bp.renesas.com
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+[claudiu.beznea: fixed conflict by keeping the code from this patch]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
 
 Changes in v2:
 - none
 
- drivers/usb/renesas_usbhs/common.c | 35 ++++++++++++++++++++++--------
- 1 file changed, 26 insertions(+), 9 deletions(-)
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usb=
-hs/common.c
-index f4a58686bf1e..c0976265b8e6 100644
---- a/drivers/usb/renesas_usbhs/common.c
-+++ b/drivers/usb/renesas_usbhs/common.c
-@@ -836,10 +836,26 @@ static void usbhs_remove(struct platform_device *pd=
-ev)
- 	pm_runtime_disable(&pdev->dev);
- }
+diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renes=
+as/phy-rcar-gen3-usb2.c
+index 4e8cf7527439..6127c0b4b944 100644
+--- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+@@ -782,6 +782,9 @@ static int rcar_gen3_phy_usb2_init_bus(struct rcar_ge=
+n3_chan *channel)
+ 	int ret;
+ 	u32 val;
 =20
-+static void usbhsc_restore(struct device *dev)
-+{
-+	struct usbhs_priv *priv =3D dev_get_drvdata(dev);
-+	struct platform_device *pdev =3D usbhs_priv_to_pdev(priv);
++	if (!channel->phy_data->init_bus)
++		return 0;
 +
-+	if (!usbhs_get_dparam(priv, runtime_pwctrl)) {
-+		usbhsc_power_ctrl(priv, 1);
-+		usbhs_mod_autonomy_mode(priv);
-+	}
-+
-+	usbhs_platform_call(priv, phy_reset, pdev);
-+
-+	usbhsc_schedule_notify_hotplug(pdev);
-+}
-+
- static __maybe_unused int usbhsc_suspend(struct device *dev)
- {
- 	struct usbhs_priv *priv =3D dev_get_drvdata(dev);
- 	struct usbhs_mod *mod =3D usbhs_mod_get_current(priv);
-+	int ret;
+ 	rstc =3D devm_reset_control_array_get_shared(dev);
+ 	if (IS_ERR(rstc))
+ 		return PTR_ERR(rstc);
+@@ -861,11 +864,9 @@ static int rcar_gen3_phy_usb2_probe(struct platform_=
+device *pdev)
+ 	platform_set_drvdata(pdev, channel);
+ 	channel->dev =3D dev;
 =20
- 	if (mod) {
- 		usbhs_mod_call(priv, stop, priv);
-@@ -849,22 +865,23 @@ static __maybe_unused int usbhsc_suspend(struct dev=
-ice *dev)
- 	if (mod || !usbhs_get_dparam(priv, runtime_pwctrl))
- 		usbhsc_power_ctrl(priv, 0);
-=20
--	return 0;
-+	ret =3D reset_control_assert(priv->rsts);
-+	if (ret)
-+		usbhsc_restore(dev);
-+
-+	return ret;
- }
-=20
- static __maybe_unused int usbhsc_resume(struct device *dev)
- {
- 	struct usbhs_priv *priv =3D dev_get_drvdata(dev);
--	struct platform_device *pdev =3D usbhs_priv_to_pdev(priv);
--
--	if (!usbhs_get_dparam(priv, runtime_pwctrl)) {
--		usbhsc_power_ctrl(priv, 1);
--		usbhs_mod_autonomy_mode(priv);
+-	if (channel->phy_data->init_bus) {
+-		ret =3D rcar_gen3_phy_usb2_init_bus(channel);
+-		if (ret)
+-			goto error;
 -	}
-+	int ret;
-=20
--	usbhs_platform_call(priv, phy_reset, pdev);
-+	ret =3D reset_control_deassert(priv->rsts);
++	ret =3D rcar_gen3_phy_usb2_init_bus(channel);
 +	if (ret)
-+		return ret;
++		goto error;
 =20
--	usbhsc_schedule_notify_hotplug(pdev);
-+	usbhsc_restore(dev);
-=20
- 	return 0;
- }
+ 	spin_lock_init(&channel->lock);
+ 	for (i =3D 0; i < NUM_OF_PHYS; i++) {
 --=20
 2.43.0
 
