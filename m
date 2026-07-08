@@ -2,26 +2,26 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C8BBC44503
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7060C44506
 	for <webhook@archiver.kernel.org>; Wed,  8 Jul 2026 08:11:13 +0000 (UTC)
-Received: from tor.source.kernel.org (tor.source.kernel.org [172.105.4.254])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.3846.1783498264530233577
+Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.3695.1783498266587811193
  for <cip-dev@lists.cip-project.org>;
- Wed, 08 Jul 2026 01:11:04 -0700
+ Wed, 08 Jul 2026 01:11:06 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.105.4.254, mailfrom: srs0=ttbc=fc=tuxon.dev=claudiu.beznea@kernel.org)
+ dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.234.252.31, mailfrom: srs0=ttbc=fc=tuxon.dev=claudiu.beznea@kernel.org)
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by tor.source.kernel.org (Postfix) with ESMTP id E00C1601EC;
-	Wed,  8 Jul 2026 08:11:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C107C1F000E9;
-	Wed,  8 Jul 2026 08:11:02 +0000 (UTC)
+	by sea.source.kernel.org (Postfix) with ESMTP id 63E4F407D6;
+	Wed,  8 Jul 2026 08:11:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72CB21F000E9;
+	Wed,  8 Jul 2026 08:11:05 +0000 (UTC)
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip v2 11/27] reset: rzg2l-usbphy-ctrl: Check pwrrdy is valid before using it
-Date: Wed,  8 Jul 2026 11:10:30 +0300
-Message-ID: <20260708081046.3882290-12-claudiu.beznea@tuxon.dev>
+Subject: [PATCH 5.10.y-cip v2 13/27] usb: host: ehci-platform: Call reset assert/deassert on suspend/resume
+Date: Wed,  8 Jul 2026 11:10:32 +0300
+Message-ID: <20260708081046.3882290-14-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260708081046.3882290-1-claudiu.beznea@tuxon.dev>
 References: <20260708081046.3882290-1-claudiu.beznea@tuxon.dev>
@@ -31,47 +31,112 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 08 Jul 2026 08:11:13 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23489
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23491
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit e0cf84109bc6c6768337123f1de24ff56b41c91b upstream.
+commit c31a401fe7abedabb5c05b5cbf36e2fdb3e6be63 upstream.
 
-The pwrrdy regmap_filed is allocated in rzg2l_usbphy_ctrl_pwrrdy_init()
-only if the driver data is set to RZG2L_USBPHY_CTRL_PWRRDY. Check that
-pwrrdy is valid before using it to avoid "Unable to handle kernel NULL
-pointer dereference at virtual address" errors.
+The Renesas RZ/G3S SoC supports a power-saving mode in which power to mos=
+t
+of the SoC components is turned off, including the USB blocks. On the
+resume path, the reset signal must be de-asserted before applying any
+settings to the USB registers. To handle this properly, call
+reset_control_assert() and reset_control_deassert() during suspend and
+resume, respectively.
 
-Fixes: c5b7cd9adefc ("reset: rzg2l-usbphy-ctrl: Add suspend/resume suppor=
-t")
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Link: https://patch.msgid.link/20251106143625.3050119-3-claudiu.beznea.uj=
+@bp.renesas.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[claudiu.beznea: execute the code based on the
+ ehci_platform_reset_control_allowed() return value]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
 
 Changes in v2:
-- none
+- added ehci_platform_reset_control_allowed() and use it in suspend/resum=
+e
+  path to avoid executing code introduced by commit
+  c31a401fe7abedabb5c05b5cbf36e2fdb3e6be63 on targets other than the
+  Renesas RZ/G3S
 
- drivers/reset/reset-rzg2l-usbphy-ctrl.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/usb/host/ehci-platform.c | 39 ++++++++++++++++++++++++++++++--
+ 1 file changed, 37 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/reset/reset-rzg2l-usbphy-ctrl.c b/drivers/reset/rese=
-t-rzg2l-usbphy-ctrl.c
-index 5a8483e44165..4f06654e3133 100644
---- a/drivers/reset/reset-rzg2l-usbphy-ctrl.c
-+++ b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
-@@ -136,6 +136,9 @@ static int rzg2l_usbphy_ctrl_set_pwrrdy(struct regmap=
-_field *pwrrdy,
- {
- 	u32 val =3D power_on ? 0 : 1;
-=20
-+	if (!pwrrdy)
-+		return 0;
-+
- 	/* The initialization path guarantees that the mask is 1 bit long. */
- 	return regmap_field_update_bits(pwrrdy, 1, val);
+diff --git a/drivers/usb/host/ehci-platform.c b/drivers/usb/host/ehci-pla=
+tform.c
+index 9140f6aade89..b954e63648f7 100644
+--- a/drivers/usb/host/ehci-platform.c
++++ b/drivers/usb/host/ehci-platform.c
+@@ -423,6 +423,16 @@ static int ehci_platform_remove(struct platform_devi=
+ce *dev)
+ 	return 0;
  }
+=20
++static bool __maybe_unused ehci_platform_reset_control_allowed(void)
++{
++	static const char * const reset_control_allow_list[] =3D {
++		"renesas,r9a08g045", /* Renesas RZ/G3S */
++		NULL
++	};
++
++	return of_machine_compatible_match(reset_control_allow_list);
++}
++
+ static int __maybe_unused ehci_platform_suspend(struct device *dev)
+ {
+ 	struct usb_hcd *hcd =3D dev_get_drvdata(dev);
+@@ -442,6 +452,20 @@ static int __maybe_unused ehci_platform_suspend(stru=
+ct device *dev)
+ 	if (pdata->power_suspend)
+ 		pdata->power_suspend(pdev);
+=20
++	if (!ehci_platform_reset_control_allowed())
++		return ret;
++
++	ret =3D reset_control_assert(priv->rsts);
++	if (ret) {
++		if (pdata->power_on)
++			pdata->power_on(pdev);
++
++		ehci_resume(hcd, false);
++
++		if (priv->quirk_poll)
++			quirk_poll_init(priv);
++	}
++
+ 	return ret;
+ }
+=20
+@@ -451,12 +475,23 @@ static int __maybe_unused ehci_platform_resume(stru=
+ct device *dev)
+ 	struct usb_ehci_pdata *pdata =3D dev_get_platdata(dev);
+ 	struct platform_device *pdev =3D to_platform_device(dev);
+ 	struct ehci_platform_priv *priv =3D hcd_to_ehci_priv(hcd);
++	bool reset_control_allowed =3D ehci_platform_reset_control_allowed();
+ 	struct device *companion_dev;
++	int err;
++
++	if (reset_control_allowed) {
++		err =3D reset_control_deassert(priv->rsts);
++		if (err)
++			return err;
++	}
+=20
+ 	if (pdata->power_on) {
+-		int err =3D pdata->power_on(pdev);
+-		if (err < 0)
++		err =3D pdata->power_on(pdev);
++		if (err < 0) {
++			if (reset_control_allowed)
++				reset_control_assert(priv->rsts);
+ 			return err;
++		}
+ 	}
+=20
+ 	companion_dev =3D usb_of_get_companion_dev(hcd->self.controller);
 --=20
 2.43.0
 
