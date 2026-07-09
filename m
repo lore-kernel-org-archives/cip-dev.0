@@ -1,200 +1,905 @@
-Return-Path: <biju.das.jz@bp.renesas.com>
+Return-Path: <whyshall.dev@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DCBFC43458
-	for <webhook@archiver.kernel.org>; Thu,  9 Jul 2026 09:07:54 +0000 (UTC)
-Received: from TYVP286CU001.outbound.protection.outlook.com (TYVP286CU001.outbound.protection.outlook.com [52.101.125.21])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.5055.1783588072367936794
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F413C43458
+	for <webhook@archiver.kernel.org>; Thu,  9 Jul 2026 09:13:04 +0000 (UTC)
+Received: from mail-oo2-f4.google.com (mail-oo2-f4.google.com [74.125.231.132])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.2268.1783572827891924605
  for <cip-dev@lists.cip-project.org>;
- Thu, 09 Jul 2026 02:07:52 -0700
+ Wed, 08 Jul 2026 21:53:48 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bp.renesas.com header.s=selector1 header.b=mccyx6gF;
- spf=pass (domain: bp.renesas.com, ip: 52.101.125.21, mailfrom: biju.das.jz@bp.renesas.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qLupRf623502SIZW0RoPhUBd+puTavj/jAvTbYhxuLRXLAixnt0RPr3Q6nv35ayTJUZBynNUkvjc8FVlX+H+l+1S/Ri2KU3Mlj3KprhvmFZYuvaU2owyEj9XejgTAo1RJhhIODj0UqoIOeP9CIKfUPi09lIoQESbaFzAA0YMaKHQHZKioM+ftEcdLAgT84i4wFvK310AMrV2ZpnAFN93xg7FiBzn/WjfOsCpBGUxNmgCH3gSvlTFekJ97wx/RRbjObnWqi4jqzL34h9/3JirgepFyVf0+ZGvig4H36T9I6X0M0n69ekBHM99csvCIsvRmDuk2iWfYbotnnoPaqjZCg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=C9K9+pbPooX9m2DyHkrI+Mz0BiiWeArLX4KSITuQzRI=;
- b=GFbRfBJjL0N5HKl0UlKggNeDs3EfdB4IDZiFzL1Fcq17o4o+hW4Y9+dOyhnbxUR5Lc3boUhxSbE/pwlP/I3tK6M69UlQsaAckIUB5wBli/GAAvSvHQiFQKGCpCOj3F2BNNktDp2FsOjyFVtcxLAzWXaeav96+0CTRzAtGpXwCpnALHPlQtHqHe1+AP2dtHuMycrfZMAx7KpdWmcmC+WjDi6Nc5BWIOy2CJnXbniZHEijO7iiGnASEgOVqzd+qR0N6JwsbcaAzWpKL12f12oknwhPoWYWIRcH74GyRloSy2tC3wXfPBQjbEJ5gOwFkEcmJGWcN33GazcQcv8FJrPVsg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=C9K9+pbPooX9m2DyHkrI+Mz0BiiWeArLX4KSITuQzRI=;
- b=mccyx6gFIZR45mIfs88k2bx+evM7OSuF9SQns32gMLr6sWOznODYv+V98Jm1JmC89c1PinafYXi0ruVT5MUE6DWMH8pldbptS8aGN0ghjVQqoc+DA88t5BMKuEmjyrJ5DPR5fzjxuFbwzh8txw8IUGZPRPJhNsdPIC1iZRR/dgY=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by OS3PR01MB10327.jpnprd01.prod.outlook.com (2603:1096:604:1fb::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.15; Thu, 9 Jul
- 2026 09:07:46 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de%4]) with mapi id 15.21.0181.009; Thu, 9 Jul 2026
- 09:07:46 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: "nobuhiro.iwamatsu.x90@mail.toshiba" <nobuhiro.iwamatsu.x90@mail.toshiba>,
-	"pavel@nabladev.com" <pavel@nabladev.com>, biju.das.au
-	<biju.das.au@gmail.com>
-CC: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>, Prabhakar
- Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [cip-dev] [PATCH 6.12.y-cip 00/26] Add RZ/G3L IA55 support
-Thread-Topic: [cip-dev] [PATCH 6.12.y-cip 00/26] Add RZ/G3L IA55 support
-Thread-Index: AQHdCtPWsMs8VrsotkWPsXOF4HAik7ZkGlaAgAAV2wCAAL548A==
-Date: Thu, 9 Jul 2026 09:07:46 +0000
-Message-ID: 
- <TY3PR01MB11346A89A4DE6D65B750D61AD86FE2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20260703100756.238233-1-biju.das.jz@bp.renesas.com>
- <ak6yWxbsPgT8X18c@duo.ucw.cz>
- <TY7PR01MB148184C559B9FCE4ED0F456AECDFF2@TY7PR01MB14818.jpnprd01.prod.outlook.com>
-In-Reply-To: 
- <TY7PR01MB148184C559B9FCE4ED0F456AECDFF2@TY7PR01MB14818.jpnprd01.prod.outlook.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OS3PR01MB10327:EE_
-x-ms-office365-filtering-correlation-id: 1a4c0a97-7d48-45b3-9fe4-08dedd998afb
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|366016|376014|1800799024|23010399003|56012099006|11063799006|4143699003|22082099003|18002099003|38070700021;
-x-microsoft-antispam-message-info: 
- oLOcXWNxW0ZuP6DZ7koq4o2e0ruAMIGNL5u5SYrCfYScoqcoQlPoE7BEc09U9E605JKtItbRyovxI2jvTcs+j9I7RkrUWAhdjjaDpzkVqVM50Pkh6a59Ph4j26OqmEiShzwJT4s1OrpYUM5RHY6sJGgnc0Eqc0C1BX9R8m/GwrjU9IFMIWV0wZKlzYueKuUNJqbuDg6ABlabNPQ+kbPeCozqlIunzearXP2xAh7ne2N4toISdLephPO9x/sf6VhJuL/DNw26N7Q/stlsX7wQVO7dnOyUqWdB5LtoNreXtVidEzKX/w9qxxM/VMic13R8DoGZeF2ffgN+z48/QylDEy5PeD/33ZWV20vMPc/TU31MugE3ZKI8LXX0l2QnQ85CSVp9HE5JtwTdUmNRvs7mY7NU/26j9T0RYsQrGvdnps2F0UWa2WCpe2tXGrumKMltv33M+23o4WUTqXSTHBfXEENhEWtGlPZ29i3ZRrXVzro1i2srJ50Kv9RBXKbNHXwegA91N+7sm71IbzF39j6NXOILOGg2gATnSbWjWGDFeZHqM1us5SSVOclJz0Fi9qm3hsIJuJ2D+THQaE4jYLRIWYDo97mrfXGbiSuxMtfu6fAfqyi2RmadaZUHFqX3NuYx+uknG+ydE0R7O+J/odMpQHTGRbTu1ER+SeLjSk8bko85AUD8/1lZl+xKEslxUoqA68Tl09ms0tsP01qNtJHmung1r6ZU0j8z839/xPzcEeg=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(23010399003)(56012099006)(11063799006)(4143699003)(22082099003)(18002099003)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?QitSdno1cXBJd3VRMEt0REtwdkh6VTJzQjZDWlJqMVhUcGhoZWF0cDQ0?=
- =?iso-2022-jp?B?WE8rT1dGcm5KT0RyUmFPWVlnTWoyTXYvTGpVR2I3QjZFMlovRlN0OUF1?=
- =?iso-2022-jp?B?bTdORUsvbERqZlVSYXNsWXo1TjBtMzA1SGpaRWRpa0IxOHlLeEVEZERy?=
- =?iso-2022-jp?B?LzJ4bFhEK0s1djRrK3pRYXk1WFJZeVNXUHBJSGNEazEzUnM2a0tiQ3VW?=
- =?iso-2022-jp?B?VVY5WFdacy95eDMvR1JLcXNXcWYrcVRPSDRhZytFdm9GTUlzUXZWSVlj?=
- =?iso-2022-jp?B?dXZXSEVrZWtveHh2L2NnQ25YTDZLMkU1K05nV2J4Y1c3ZGRhaHhpL3A3?=
- =?iso-2022-jp?B?NUJ0TGgyYUtwdTZ1WEg4aEtGU2ZqL3J0UHZ6Z3dObzJyUHhtcEZWN3Zh?=
- =?iso-2022-jp?B?cWFLaVQybUxYa2lESGJQbG1Pd3hIcmRHL2NkTjFEdGY2VDZqeDZNdk0z?=
- =?iso-2022-jp?B?UkhLc3gwbloyb3V3RlQvQUdQV055THhXL2FOM3h6NElVTWVVNnkrUVow?=
- =?iso-2022-jp?B?TVZqaERWbENBNEJrWjhUN050K3ZabndDT09BWTZ6SGcreW5Lby9xUWVm?=
- =?iso-2022-jp?B?WUN1cnpKNTRTdFFLQmczdXVtbUpZNnVhcTQ3UW8ySDZzb0w4d0duV1BF?=
- =?iso-2022-jp?B?RldPUmpiN3ZkNUs3Ni85VVJNWk14OWgrNU13eVNuMmQ0VjBGOVB3aXZB?=
- =?iso-2022-jp?B?RXlXb2tyZ3BtZlk1cFhwaVJlTCtCa1FyR2xITG0rVVZYaDJ1M1VyTEVM?=
- =?iso-2022-jp?B?dmwrRUZWVk1WaXRyUVg1MjEralNjMUhOQ0FrSDhnanFwRnUvTjBWY2R3?=
- =?iso-2022-jp?B?QzZPenpHQjQwTUFOcjNaanliK3FiWm0rM1JiNXFuN0g2Tm1LNFVLb3hN?=
- =?iso-2022-jp?B?TmFBek1FSUxYUlQzWUJVcEZNT2JVaktLRFBkSGxxSnd6NzhGVnppVVo2?=
- =?iso-2022-jp?B?YWtkSHU2a1FMWXQ4L1RQOWxiQkxTamNNMEovYlZ6WDc2TkZvQkZtaEYz?=
- =?iso-2022-jp?B?MnI1anJYUDhPZjNObUxHeXN1aUVzOEhXYkFLakc4bVdHSGJNN0c5R0tC?=
- =?iso-2022-jp?B?TjRRdUhlMllwOEFPNkowVXhTckx3VmZsOVpNcU9xemVyWGlZL1VyWGJh?=
- =?iso-2022-jp?B?a0M3eUZVMzNFOFNxUkVKeFFpazBoNjJFUEZEcDEwRGFVVHBrNFlMVy90?=
- =?iso-2022-jp?B?Y3NiRGdlYTZvci82WkNpNzFqY3M2dm80QVlJR1pwRUR0dElYMk4zS0dT?=
- =?iso-2022-jp?B?VW55WWNHdWdOT0Y5VCtNZDkzQ0VDWnVZT2Y3VUpYSFhoaGo3U1EzUUdS?=
- =?iso-2022-jp?B?UFRMYS9obFQwUUV0K3pORk1VWm1rR1NqL2tjS1RMNkRCYzhXSkRpSUtr?=
- =?iso-2022-jp?B?c3d3ZGt1NWJ0RmxaRkkvWXg0Q1kxVEY0QXk5OWZjWXJyTERUM25JeC9F?=
- =?iso-2022-jp?B?djJRVVdLc3pCZ01KTzhiV2Jqdmd5WnlMeEREZElXUWJ4OUxHUy95aXNJ?=
- =?iso-2022-jp?B?NjRlREZ2YUdaSGVnWU1wQ0lJak1vaGo0WVBtb01mZSs4cmhJSWxLNzA4?=
- =?iso-2022-jp?B?Wk1lKzh5Y1k0d2ZkbVBIVmRGcDZOWFpocnp3S3VLNmxSZURvbmdvbUly?=
- =?iso-2022-jp?B?TzdRV081ZHJ5K1hwbW02M21SNW93UXgweU4yMW54czJLdHJFSmVaNFRy?=
- =?iso-2022-jp?B?ZjhSTzlVOVZUSFhtN2Q4ZlgxdjN6UGlSM2hKeTZ2MUZoK2hHb0ZKVjA2?=
- =?iso-2022-jp?B?RnhOY0E4U2I3V0d5NVJROWVZVzhPbndHN1YwQlNrOHRUTzZlVm12cFFL?=
- =?iso-2022-jp?B?ZmVFengrbFlSckJxUmlvVEs4eFM1bUtENDdCcXEyNlFxemdQZTU1a1FO?=
- =?iso-2022-jp?B?SW42aG41cmVPRllhWENqV0dsaE81WDNxMHh4UmJjc3pYMFZVVFovZk9r?=
- =?iso-2022-jp?B?NkJQcEdiT21kOUVhVTdXVlVVQjZQTVNndEMvU1VtSnN1enI2cllqWGpO?=
- =?iso-2022-jp?B?L2t4ckRVMWd2ZHlRc0RYcHJEOVRNcVJoUW01Z0NZa2w2dWExNG9PWEt4?=
- =?iso-2022-jp?B?TUE1a203TjVWRTROczR6aE04OGhGSXZXc1FxaFJsVVkxQUV6MDE1Vktx?=
- =?iso-2022-jp?B?ZjVaWW9FcjE3S2ViaUswZXl4V2tDYjd2V21iRFRnQjhlbU9YWDFTVzll?=
- =?iso-2022-jp?B?TFdpeDV5eUxYQnVWdnFJblZZZytLNUxEbklwRG1DN0FSWkZSSnpSbERR?=
- =?iso-2022-jp?B?QWRDVlk5ZzFYTVJ0ZGEyWXRyazgwVTlzb3BKQzFEb21LY3hJN0VFL3VY?=
- =?iso-2022-jp?B?U0s0M1YxTStRMkgvTmZOeGpuaFYyMnBMUzlkeXlyS05Gem9aa2VnMGwv?=
- =?iso-2022-jp?B?d01UL2xXMG1ydFFrUTBmM3cwdXExOG1ablVYaUhCSXU4b3NEeEIralpU?=
- =?iso-2022-jp?B?ajBlaWdkT3lQd2d4RXpLUXIrRUhERUh4Y0cxQ25NUldudmNhZlRHb2ps?=
- =?iso-2022-jp?B?U2ZLVGtHOVZ2Tmh2SktmSU80alBEVkRZOHBIQT09?=
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=KPqWXiOO;
+ spf=pass (domain: gmail.com, ip: 74.125.231.132, mailfrom: whyshall.dev@gmail.com)
+Received: by mail-oo2-f4.google.com with SMTP id 46e09a7af769-7e9f37a2160so362063a34.0
+        for <cip-dev@lists.cip-project.org>; Wed, 08 Jul 2026 21:53:47 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1783572827; cv=none;
+        d=google.com; s=arc-20260327;
+        b=jZBqlLcb/RidpLapVJMZBzhmYmhV1534SP3Dgj8E/etY5ljj1vr+QLTaWa3suB9WZ3
+         QPYf3mlZdKHGVVsCUKsI93JI6qSpZmiw8hc1s29aAvyPm1ZesY3EFEsb44eAKLlfbyg9
+         UOxw+EyZVLJ/pbf0hf6NifuJjPCUmvjUNEH7IM46JWojwK7mqCMtOQ2rX7j35+VtFvxn
+         srkNdj7kmJzME9uhw/dDau1WBp1qV36FRe3NYpmhsIUYtjBnO3MrkVfcnEqTatbNje8p
+         vM7atzN6h1uxJJCCkRl9X845vTd91CR+wY7I+bnOTBxz7GTfiyzm62PAynyQBi2mSWp5
+         pcXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=to:subject:message-id:date:from:mime-version:dkim-signature;
+        bh=1/Htsa56u/JRtEHYrlLrjnxaT83oJe59cRDx/FYQ0DY=;
+        fh=RaKH4vXZgYv/1PYcQkfLRK5D2CnBMLe+KcXQA6BQxAs=;
+        b=HiYriOTwC5aS0AWv4fYLuFFfRqZnWK6KFsy/lz44K54bMYB84kygqAOomKs7Y0hZE6
+         ieS8dsWHF3avpbKdF4ryPx/ww+vJYpQK5u28DUK8eC2BP8ijhnKirP7w2lvCfX9hWMej
+         UW4/2jhIlXemnAMFgE16zS1O8wVF7g6bb0XZuswXFg65osOzj4TJb8GayA3iyY/nYAII
+         I4JCyGpXe/pXXFi+nPFrwCjB07jkmW5A+PUul5ZR3O4/7aC9w8f/e6bHlEP7YrJnvadu
+         EGfNMiXPoXasTs8ZKUIsyGRPFyspOCQLHD7sJv+bTNSHR0UDxn5cg7+vbg+0dZi4n2o7
+         0AvA==;
+        darn=lists.cip-project.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1783572827; x=1784177627; darn=lists.cip-project.org;
+        h=content-type:to:subject:message-id:date:from:mime-version:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=1/Htsa56u/JRtEHYrlLrjnxaT83oJe59cRDx/FYQ0DY=;
+        b=KPqWXiOO9G0BgeYY9A9lql6hzajACZtvmcDSXno2UOY1s+qh3IsO+JD8NPNJwWmTjW
+         sROx33Hyyy7Fq/R+i2+ean9+TxOOm7ZK8fKNpz1/bmP6zW5f0a0vDboDXvr3xjqkoFrG
+         l4L9G06h93o07bSc62+P9kzhc2Mxity2S7C/kgg6dXpYjInbnSo2nmIMQ+jS9kQtlknE
+         DI7t5bEvGEhYyz/eIaZ1GRKxsQFOJNSrZs0gX2Ya7vdz6UOpLWA2MXbtG/n7BHWe4Kl3
+         94D507+34upfPLkZTmzv93eaQqkfQ9S331Zn9uXfU8HWa6xrRyT6RQrtaUBHXzMrCYrK
+         qoxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783572827; x=1784177627;
+        h=content-type:to:subject:message-id:date:from:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=1/Htsa56u/JRtEHYrlLrjnxaT83oJe59cRDx/FYQ0DY=;
+        b=gxsfak/62j+ndm3w12+TCa9JmLvmYDh1YWDUQjn+kmRGB03SB82jGzcXFgdKnbO6Bm
+         ikB80nuWhGRIp0w3uF3/F8t+1H978gmZnLo2BknViTsN7OAa9k+0wviNqttN0+e1R0CE
+         garMYAXkTVOlggJX3aFvNr6kpSg43kB5D1rq9/upXsGBqSK7/zQN4AehF7ToBDFJVh8Z
+         VRoWnWDj9bhwHtcGjZUWsGrvFT5JrPh1ODBEbKd8vceu5bUhI8EsLUJrBUXoNuXiEds4
+         YHo4Lgf9ZwMvF21TTU2HKm/QTmxN7drM9a/SH6hwCVCjIzORZ6n2KaFRuUflv8nCn3An
+         22kg==
+X-Gm-Message-State: AOJu0Yy87gZ1Iwlb3RZtW72v/xlbpG+/dHNTXbOwT9CNguWqG9CB29gl
+	iimsEMgQzQPUyz+AzM1XMD28rWJo7IVofSjxKk4YJs/I/D12O+aibVvlq1XRGV/7N/5ydy2Fp3m
+	whx022Xh0IAkNVUazST81IXX4pDeYDIqE7eSd4yw=
+X-Gm-Gg: AfdE7cnckj/fF+A5sO8U67qQ78il2xox0mP4HJhnWCuQhh15K7JzC3ao2wTco8KdtW8
+	XvT1G7PIRLB2NHsBX+DeounIWJGZVOyQ771YKWbEBuEhuLYFe5kxFroVKaiCYQqzHFk9yz8aPxC
+	FfhiC+tlZS5kuCuluny+Oqm+MxieWzf4f5EK4bGOIOF7VwYZp2cJvpallH4qPdxp+/6K8dSCY8N
+	EzGrvIqd09NuMo+PQw/YM1HcxlIK6S+KmXcy3mCMpNk2yWTdklTwVyvuGTdKdimtg+D/vMe
+X-Received: by 2002:a05:6820:4ccb:b0:6a1:4507:3544 with SMTP id
+ 006d021491bc7-6a36d8ea5edmr3761936eaf.28.1783572826850; Wed, 08 Jul 2026
+ 21:53:46 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1a4c0a97-7d48-45b3-9fe4-08dedd998afb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2026 09:07:46.4476
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 1NLc3BUkWsbv1i6RLW01PtlH6M2sZrL18gNk/jH9745fGi1aYRxLEpxT+7zF5tl1y6Ul8VGoxpnx/6AvdqMQXpV2XLAS3WcY2U3K1Wt9RHw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB10327
+From: whyshall.dev@gmail.com
+Date: Thu, 09 Jul 2026 02:13:04 -0700
+X-Gm-Features: AUfX_my4jccLDr7W7nrjyY1exCFqgo6r4kY7jGz8ugt7aewI-hpEs9yRo4rZV5k
+Message-ID: <CAOksrezPuEAoJ86FHMS_ajoH0h7pe3usksyo84n5rF9RKHfu4g@mail.gmail.com>
+Subject: Urgent: Regarding Fixing of Security Vulnerabilities
+To: cip-dev@lists.cip-project.org
+X-Old-Date: Thu, 9 Jul 2026 10:23:35 +0530
+Content-Type: multipart/alternative; boundary="000000000000c68a330656266867"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 09 Jul 2026 09:07:54 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23556
+ <cip-dev@lists.cip-project.org>; Thu, 09 Jul 2026 09:13:04 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23552
+Message-ID: <20260709091304.RS-HV9xRMukFV0v02e2SEqvWAR9RA_yC-Dq8jV7WmaI@z>
 
-Hi Nobuhiro-San,
+--000000000000c68a330656266867
+Content-Type: text/plain; charset=UTF-8
 
-> -----Original Message-----
-> From: nobuhiro.iwamatsu.x90@mail.toshiba <nobuhiro.iwamatsu.x90@mail.tosh=
-iba>
-> Sent: 08 July 2026 22:44
-> To: pavel@nabladev.com; biju.das.au <biju.das.au@gmail.com>
-> Cc: cip-dev@lists.cip-project.org; Biju Das <biju.das.jz@bp.renesas.com>;=
- Prabhakar Mahadev Lad
-> <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Subject: RE: [cip-dev] [PATCH 6.12.y-cip 00/26] Add RZ/G3L IA55 support
->=20
-> Hi all,
->=20
-> > -----Original Message-----
-> > From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On
-> > Behalf Of Pavel Machek via lists.cip-project.org
-> > Sent: Thursday, July 9, 2026 5:26 AM
-> > To: Biju <biju.das.au@gmail.com>
-> > Cc: cip-dev@lists.cip-project.org; iwamatsu nobuhiro(=1B$B4d>>=1B(B =1B=
-$B?.MN=1B(B =1B$B""#D#I#T#C!{=1B(B
-> > =1B$B#C#P#T=1B(B) <nobuhiro.iwamatsu.x90@mail.toshiba>; Pavel Machek
-> > <pavel@nabladev.com>; Biju Das <biju.das.jz@bp.renesas.com>; Lad
-> > Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > Subject: Re: [cip-dev] [PATCH 6.12.y-cip 00/26] Add RZ/G3L IA55
-> > support
-> >
-> > Hi!
-> >
-> > > The IRQC block on the RZ/G3L SoC is almost identical to the one
-> > > found on the RZ/G2L SoC, with the following differences:
-> > >
-> > >  - The number of GPIO interrupts for TINT selection is 113 instead of=
- 123.
-> > >  - The pin index and TINT selection index are not in the 1:1 map.
-> > >  - The number of external interrupts are 16 instead of 8, out of thes=
-e
-> > >    8 external interrupts are shared with TINT.
-> >
-> > >  .../renesas,rzg2l-irqc.yaml                   | 157 ++---
-> > >  drivers/irqchip/irq-renesas-rzg2l.c           | 627
-> > ++++++++++++++----
-> >
-> > This looks okay to me.
-> >
-> > Reviewed-by: Pavel Machek <pavel@nabladev.com>
-> >
->=20
-> Thanks, I applied with your Reviewed-by tag.
->=20
-> > However... this is unused for the moment, right? I don't see dts
-> > changes that would actually activate the support.
->=20
-> That's true.
-> We do need an update commit for dts. And this is already in upstream.
-> Biju, do you plan to post for this?
+Hi ,
 
-Yes, It is already posted [1]
-[1] https://lore.kernel.org/cip-dev/20260703105923.251255-19-biju.das.jz@bp=
-.renesas.com/
+We are planning to migrate our product to the Linux Kernel 4.19.y CIP release to benefit from its long-term maintenance and security updates.
 
-Cheers,
-Biju
+We have a few questions regarding security vulnerability tracking for the CIP kernel:
+
+* Is there any tool, dashboard, or documentation available to determine:
+
+* The Kernel CVEs applicable to a specific 4.19.y CIP release.
+* Which CVEs have already been fixed till the given CIP release.
+* Which CVEs are still outstanding.
+
+* Is there a published roadmap or policy indicating how unresolved Kernel CVEs are evaluated and scheduled for backporting to the 4.19.y CIP branch?
+* For CVEs that remain unfixed in the CIP kernel:
+
+* What are the expected implications or risks for users of the CIP release?
+* Are these vulnerabilities typically already addressed in the upstream mainline Linux kernel, with backporting to CIP pending due to compatibility or maintenance considerations?
+
+* 
+If there are unfixed vulnerabilities that are considered critical for our product, what is the recommended approach to address them?
+
+* 
+Does the CIP project provide any guidance or best practices for evaluating, backporting, or mitigating such vulnerabilities?
+
+* 
+If a required fix is available only in the upstream mainline kernel, are there any recommendations or guidelines for safely backporting it to the CIP kernel?
+
+Any guidance on the recommended process or tools for tracking the security status of CIP kernel releases would be greatly appreciated.
+
+Also, we came across an opensource tool called *kernel-backport-checker* , which identifies *Linux kernel CVEs* that have been addressed through backported commits in a Git repository, filtered based on the kernel configuration. We executed this tool against the latest CIP release, cip-4.19.325-cip134.
+
+The output generated by the tool is provided below:
+
+./kernel-backport-checker.sh \
+>         -s ../../linux-cip-4.19.325- cip134 \
+>         -d ../linux \
+>         -b ../linux-stable \
+>         -e ../kev-data \
+>         -f ../nvd-json-data-feeds \
+>         -k ../../linux-cip-4.19.325- cip134/.config \
+>         -o ../../linux-cip-4.19.325- cip134/cve_report -j 4
+============================== ==========
+Kernel Backport Checker v3.2.0
+============================== ==========
+
+[INFO] Configuration:
+[INFO]   Kernel Source:   ../../linux-cip-4.19.325- cip134
+[INFO]   Kernel Config:   ../../linux-cip-4.19.325- cip134/.config
+[INFO]   Git Repository:  ../linux
+[INFO]   Stable/Vendor:   ../linux-stable
+[INFO]   KEV File:        ../kev-data/known_exploited_ vulnerabilities.json
+[INFO]   NVD Feeds:       ../nvd-json-data-feeds
+[INFO]   Output:          ../../linux-cip-4.19.325- cip134/cve_report
+[INFO]   Parallel Jobs:   4
+
+[INFO] Detecting kernel version...
+[INFO] Kernel version: 4.19.325
+[INFO] Loading kernel config: ../../linux-cip-4.19.325- cip134/.config
+[INFO] Loaded 1752 enabled CONFIG options
+[INFO] Building CONFIG mapping from kernel Makefiles...
+[INFO] Built CONFIG mapping: 16301 file mappings, 1503 directory mappings
+[INFO] Scanning NVD feeds for CVEs affecting Linux kernel 4.19.325...
+[INFO]   Phase 1: Finding kernel CVE files...
+[INFO]   Found 18117 CVE files with Linux kernel CPEs
+[INFO]   Phase 2: Extracting version ranges (sequential to ensure accuracy)...
+[INFO]   Extracted 155638 version entries
+[INFO]   Phase 3: Filtering for version 4.19.325...
+[INFO] NVD scan complete: 3600 CVEs affect kernel 4.19.325
+[INFO] Extracting upstream fix commit hashes from NVD references (jobs=4)...
+[INFO] Extracted 17487 fix commit refs for 3410 CVEs
+[INFO] Building git hash index...
+[INFO] Git hash index built: 1967640 commits
+[INFO] Extracting backported CVE fixes from git...
+[INFO] Searching stable/vendor repo for CVE mentions: ../linux-stable
+[INFO] Found 4388 commit-CVE pairs (733 unique CVEs in git)
+[INFO] Building CISA KEV index...
+[INFO] KEV index built: 1631 CVEs
+[INFO] Processing results...
+[INFO]   Matching fix commits against git repos...
+[INFO]   Found 17469 fix commits in git repos
+[INFO]   Extracting changed files and diffs from fix commits (jobs=4)...
+[INFO]   Exporting lookup tables for parallel processing...
+[INFO]   Processing 3600 affected CVEs (jobs=4)...
+[INFO]   Processing complete.
+[INFO] Generating CSV report...
+[INFO] ============================== =============
+[INFO] Report: ../../linux-cip-4.19.325- cip134/cve_report/backport- report.csv
+[INFO] ============================== =============
+[INFO]
+[INFO] Summary for kernel 4.19.325:
+[INFO]   Total CVEs:              3600
+[INFO]   Not applicable:          1718
+[INFO]   Applicable:              1882
+[INFO]     Fixed via backport:    73
+[INFO]     Likely fixed (review): 32
+[INFO]     Unfixed (remaining):   745
+[INFO]     Inconclusive:          1032
+[INFO]
+[INFO]   CVEs in CISA KEV:        6 (fixed: 1)
+[INFO]
+[INFO]   Severity (applicable / unfixed):
+[INFO]     CRITICAL:              21 / 5
+[INFO]     HIGH:                  512 / 194
+[INFO]     MEDIUM:                1327 / 538
+[INFO]     LOW:                   22 / 8
+
+[INFO] Done!
+
+Why is this tool giving *Inconclusive* ?Will these ever be counted as vulnerabilities or not?
+Also, the number of *unfixed CVEs* as per this tool are 745. This tool also generates the list of those unfixed CVEs in a .csv file.
+Will these vulnerabilities *be resolved by CIP* in the next release or will it *take multiple releases* and hence more time to get solved? That is why I had asked whether CIP maintains a list of solved and unsolved vulnerabilities till date for 4.19.y-cip kernel !
+
+We would appreciate your feedback on these results as well.
+
+--000000000000c68a330656266867
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">
+<div style=3D"color: #000000; font-family: roboto; line-height: normal;">&n=
+bsp;Hi ,</div>
+<p style=3D"color: #000000; font-family: roboto; line-height: normal;"><spa=
+n style=3D"line-height: normal;">We are planning to migrate our product to =
+the Linux Kernel 4.19.y CIP release to benefit from its long-term maintenan=
+ce and security updates.</span></p>
+<p style=3D"color: #000000; font-family: roboto; line-height: normal;"><spa=
+n style=3D"line-height: normal;">We have a few questions regarding security=
+ vulnerability tracking for the CIP kernel:</span></p>
+<ol style=3D"color: #000000; font-family: roboto;" start=3D"1">
+<li><span style=3D"line-height: normal;">Is there any tool, dashboard, or d=
+ocumentation available to determine:</span>
+<ul>
+<li><span style=3D"line-height: normal;">The Kernel CVEs applicable to a sp=
+ecific 4.19.y CIP release.</span></li>
+<li><span style=3D"line-height: normal;">Which CVEs have already been fixed=
+ till the given CIP release.</span></li>
+<li><span style=3D"line-height: normal;">Which CVEs are still outstanding.<=
+/span></li>
+</ul>
+</li>
+<li><span style=3D"line-height: normal;">Is there a published roadmap or po=
+licy indicating how unresolved Kernel CVEs are evaluated and scheduled for =
+backporting to the 4.19.y CIP branch?</span></li>
+<li><span style=3D"line-height: normal;">For CVEs that remain unfixed in th=
+e CIP kernel:</span>
+<ul>
+<li><span style=3D"line-height: normal;">What are the expected implications=
+ or risks for users of the CIP release?</span></li>
+<li><span style=3D"line-height: normal;">Are these vulnerabilities typicall=
+y already addressed in the upstream mainline Linux kernel, with backporting=
+ to CIP pending due to compatibility or maintenance considerations?</span><=
+/li>
+</ul>
+</li>
+<li>
+<div style=3D"line-height: normal;"><span style=3D"line-height: normal;">If=
+ there are unfixed vulnerabilities that are considered critical for our pro=
+duct, what is the recommended approach to address them?</span></div>
+</li>
+</ol>
+<ul style=3D"color: #000000; font-family: roboto;">
+<ul>
+<li>
+<div style=3D"line-height: normal;"><span style=3D"line-height: normal;">Do=
+es the CIP project provide any guidance or best practices for evaluating, b=
+ackporting, or mitigating such vulnerabilities?</span></div>
+</li>
+<li>
+<div style=3D"line-height: normal;"><span style=3D"line-height: normal;">If=
+ a required fix is available only in the upstream mainline kernel, are ther=
+e any recommendations or guidelines for safely backporting it to the CIP ke=
+rnel?</span></div>
+</li>
+</ul>
+</ul>
+<p style=3D"color: #000000; font-family: roboto; line-height: normal;"><spa=
+n style=3D"line-height: normal;">Any guidance on the recommended process or=
+ tools for tracking the security status of CIP kernel releases would be gre=
+atly appreciated.<br /><br /><br /><br /></span></p>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">Also, we came acro=
+ss an opensource tool called<span>&nbsp;</span><strong>kernel-backport-chec=
+ker</strong>, which identifies<span>&nbsp;</span><strong>Linux kernel CVEs<=
+/strong><span>&nbsp;</span>that have been addressed through backported comm=
+its in a Git repository, filtered based on the kernel configuration. We exe=
+cuted this tool against the latest CIP release, cip-4.19.325-cip134.<br /><=
+br />The output generated by the tool is provided below:<br /><br />./kerne=
+l-backport-checker.sh \</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">&gt;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -s ../../linux-cip-4.19.325-<wbr />cip13=
+4 \</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">&gt;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -d ../linux \</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">&gt;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -b ../linux-stable \</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">&gt;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -e ../kev-data \</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">&gt;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -f ../nvd-json-data-feeds \</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">&gt;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -k ../../linux-cip-4.19.325-<wbr />cip13=
+4/.config \</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">&gt;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -o ../../linux-cip-4.19.325-<wbr />cip13=
+4/cve_report -j 4</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<wb=
+r />=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">Kernel Backport Ch=
+ecker v3.2.0</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<wb=
+r />=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">&nbsp;</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO] Configurati=
+on:</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+ Kernel Source:&nbsp;&nbsp; ../../linux-cip-4.19.325-<wbr />cip134</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+ Kernel Config:&nbsp;&nbsp; ../../linux-cip-4.19.325-<wbr />cip134/.config<=
+/div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+ Git Repository:&nbsp; ../linux</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+ Stable/Vendor:&nbsp;&nbsp; ../linux-stable</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+ KEV File:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ../kev-data/known_expl=
+oited_<wbr />vulnerabilities.json</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+ NVD Feeds:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ../nvd-json-data-feeds</div=
+>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+ Output:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ../../linux-=
+cip-4.19.325-<wbr />cip134/cve_report</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+ Parallel Jobs:&nbsp;&nbsp; 4</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">&nbsp;</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO] Detecting k=
+ernel version...</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO] Kernel vers=
+ion: 4.19.325</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO] Loading ker=
+nel config: ../../linux-cip-4.19.325-<wbr />cip134/.config</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO] Loaded 1752=
+ enabled CONFIG options</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO] Building CO=
+NFIG mapping from kernel Makefiles...</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO] Built CONFI=
+G mapping: 16301 file mappings, 1503 directory mappings</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO] Scanning NV=
+D feeds for CVEs affecting Linux kernel 4.19.325...</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+ Phase 1: Finding kernel CVE files...</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+ Found 18117 CVE files with Linux kernel CPEs</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+ Phase 2: Extracting version ranges (sequential to ensure accuracy)...</div=
+>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+ Extracted 155638 version entries</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+ Phase 3: Filtering for version 4.19.325...</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO] NVD scan co=
+mplete: 3600 CVEs affect kernel 4.19.325</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO] Extracting =
+upstream fix commit hashes from NVD references (jobs=3D4)...</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO] Extracted 1=
+7487 fix commit refs for 3410 CVEs</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO] Building gi=
+t hash index...</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO] Git hash in=
+dex built: 1967640 commits</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO] Extracting =
+backported CVE fixes from git...</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO] Searching s=
+table/vendor repo for CVE mentions: ../linux-stable</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO] Found 4388 =
+commit-CVE pairs (733 unique CVEs in git)</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO] Building CI=
+SA KEV index...</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO] KEV index b=
+uilt: 1631 CVEs</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO] Processing =
+results...</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+ Matching fix commits against git repos...</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+ Found 17469 fix commits in git repos</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+ Extracting changed files and diffs from fix commits (jobs=3D4)...</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+ Exporting lookup tables for parallel processing...</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+ Processing 3600 affected CVEs (jobs=3D4)...</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+ Processing complete.</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO] Generating =
+CSV report...</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO] =3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D<wbr />=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO] Report: ../=
+../linux-cip-4.19.325-<wbr />cip134/cve_report/backport-<wbr />report.csv</=
+div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO] =3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D<wbr />=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO] Summary for=
+ kernel 4.19.325:</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+ Total CVEs:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp; 3600</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+ Not applicable:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1718=
+</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+ Applicable:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp; 1882</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+&nbsp;&nbsp; Fixed via backport:&nbsp;&nbsp;&nbsp; 73</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+&nbsp;&nbsp; Likely fixed (review): 32</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+&nbsp;&nbsp; Unfixed (remaining):&nbsp;&nbsp; 745</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+&nbsp;&nbsp; Inconclusive:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp; 1032</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+ CVEs in CISA KEV:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6 (fixed: 1)</=
+div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+ Severity (applicable / unfixed):</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+&nbsp;&nbsp; CRITICAL:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp; 21 / 5</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+&nbsp;&nbsp; HIGH:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 512 / 194</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+&nbsp;&nbsp; MEDIUM:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1327 / 538</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO]&nbsp;&nbsp;=
+&nbsp;&nbsp; LOW:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 22 / 8</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">&nbsp;</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">[INFO] Done!</div>
+<div style=3D"font-style: normal; font-variant-ligatures: normal; font-vari=
+ant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; tex=
+t-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spa=
+cing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decora=
+tion-thickness: initial; text-decoration-style: initial; text-decoration-co=
+lor: initial; color: #000000; font-family: Verdana, Arial, Helvetica, sans-=
+serif; font-size: 13.3333px; background-color: #ffffff;">
+<div>&nbsp;</div>
+<div>Why is this tool giving<span>&nbsp;</span><strong>Inconclusive<span>&n=
+bsp;</span></strong>?Will these ever be counted as vulnerabilities or not?<=
+br />Also, the number of<span>&nbsp;</span><strong>unfixed CVEs</strong><sp=
+an>&nbsp;</span>as per this tool are 745. This tool also generates the list=
+ of those unfixed CVEs in a .csv file.<br />Will these vulnerabilities<span=
+>&nbsp;</span><strong>be resolved by CIP</strong><span>&nbsp;</span>in the =
+next release or will it<span>&nbsp;</span><strong>take multiple releases</s=
+trong><span>&nbsp;</span>and hence more time to get solved? That is why I h=
+ad asked whether CIP maintains a list of solved and unsolved vulnerabilitie=
+s till date for 4.19.y-cip kernel ! &nbsp;<br /><br />We would appreciate y=
+our feedback on these results as well.&nbsp;</div>
+</div>
+<p style=3D"color: #000000; font-family: roboto; line-height: normal;"><spa=
+n style=3D"line-height: normal;">&nbsp;</span></p>
+</div>
+
+--000000000000c68a330656266867--
 
