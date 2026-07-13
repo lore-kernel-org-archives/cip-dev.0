@@ -2,27 +2,27 @@ Return-Path: <pavel@nabladev.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB1D7C43458
-	for <webhook@archiver.kernel.org>; Mon, 13 Jul 2026 21:09:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B8F1C43458
+	for <webhook@archiver.kernel.org>; Mon, 13 Jul 2026 21:13:25 +0000 (UTC)
 Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.6281.1783976958796260607
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.6258.1783977200173089322
  for <cip-dev@lists.cip-project.org>;
- Mon, 13 Jul 2026 14:09:19 -0700
+ Mon, 13 Jul 2026 14:13:20 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=izh6LEPR;
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=bz4LftyO;
  spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E7D2D1196C5;
-	Mon, 13 Jul 2026 23:09:15 +0200 (CEST)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E10A0119395;
+	Mon, 13 Jul 2026 23:13:16 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1783976956;
+	s=dkim; t=1783977197;
 	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=Uv4eto/Mb8MPR4pLbuBVbwt9eo6q40Wen5HrjU9c0HY=;
-	b=izh6LEPRdJIxplCGe5N0ecSZhcrJ6haUXHTWtuJDf+HHhv8vKTAxJCGDyXCMdgbYHyWZEt
-	Ruyuk05J28pskiTL7o6BCVRqjXUz0rqPH1FJO80usTpe7JePNqpJHk2jqQDYzxIv6j5T5O
-	FsoVgR2LOhV8pFq/acBCSrZKqdQZuEYFZTu5FrVgK7+NlQc03Mp2T8dZA6ZAH8/T0KxcXL
-	R62m3VeXcrIku0aOncLzXjK0iHlyNi+uGwQ7cjt7qp3UueSFcxGCry+tGlcQzHS2GCw9zz
-	22Y8v1BFKzx2MPnUcL3g7FUIsh5OGSoWuGhnnjKFuk/UO9ZyOCkZYDnqRgPEcQ==
-Date: Mon, 13 Jul 2026 23:09:14 +0200
+	 in-reply-to:references; bh=cv9t9IVjwbysHYwa2yBB84olFkEBKBOqYMtTc4yNTfU=;
+	b=bz4LftyOr2EYcFpzZvEmHk6iG02gVet6Xa2hKqd72QY+qQhP9rMPINm8p8Y+GDUO2PP6gY
+	5tVVoIlbxlY9mUfFOWZrczcdl4Qw0xNRM5iuXZfF9ySwS0vsZzkW6/smUVIN6uzn3CQDlM
+	OcAVf6WN2u/r/aZVwmYh/Iro/0fRxaxzQagWFgG/IjtDDd/9MKBrl2fxKt4UP1KFAa0/Xt
+	8CGaHV+wfVtJlLEM2IKrsJSoEsFP2Pc4MZANBWp9bPd5IDhPLQd3en7mCVIiDvx/0J+1dP
+	pAPQ71Mfn3UrwJvUKhpCjjzKVKPyr9CHa0MKjGCR0NW3nG7eZ9Pv/Y3l7vEj/A==
+Date: Mon, 13 Jul 2026 23:13:15 +0200
 From: Pavel Machek <pavel@nabladev.com>
 To: Biju <biju.das.au@gmail.com>
 Cc: cip-dev@lists.cip-project.org,
@@ -32,22 +32,22 @@ Cc: cip-dev@lists.cip-project.org,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Subject: Re: [PATCH 5.10.y-cip 0/4] arm64: dts: renesas: Add max-frequency to
  SDHI nodes
-Message-ID: <alVT-m89Z6_dQcF4@duo.ucw.cz>
+Message-ID: <alVU63qWvQGTM7Xb@duo.ucw.cz>
 References: <20260713120354.29288-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="CvKk+OtILY/JkVG2"
+	protocol="application/pgp-signature"; boundary="3/7rPgMUjP9vnq7b"
 Content-Disposition: inline
 In-Reply-To: <20260713120354.29288-1-biju.das.jz@bp.renesas.com>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 13 Jul 2026 21:09:24 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23568
+ <cip-dev@lists.cip-project.org>; Mon, 13 Jul 2026 21:13:25 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23569
 
 
---CvKk+OtILY/JkVG2
+--3/7rPgMUjP9vnq7b
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -63,21 +63,25 @@ Hi!
 >=20
 > All the patches in this series are cherry-picked from mainline.
 
-Ok, so as I understand it, we don't need this for 6.1-cip and others,
-because it is already in mainline 6.1, so no backport is needed.
+This looks okay to me.
+
+Reviewed-by: Pavel Machek <pavel@nabladev.com>
+
+I can apply the series if it passes testing and there are no other
+comments.
 
 Best regards,
-								Pavel
+                                                                Pavel
 
---CvKk+OtILY/JkVG2
+--3/7rPgMUjP9vnq7b
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCalVT+gAKCRAw5/Bqldv6
-8qaYAKCgcvJ52a311C91HxlCJcYvMIjUEwCgwsTjgy4XXYfoZ1GS2qVDspvXBQk=
-=tsqC
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCalVU6wAKCRAw5/Bqldv6
+8v0pAKDBlv6EomI9BqJoWOh0WNvxR/5pJgCgoiUJvXHbHKGYXyvk6IMCwEthtzY=
+=DTcx
 -----END PGP SIGNATURE-----
 
---CvKk+OtILY/JkVG2--
+--3/7rPgMUjP9vnq7b--
 
