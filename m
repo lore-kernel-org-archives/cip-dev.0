@@ -1,148 +1,116 @@
-Return-Path: <whyshall.dev@gmail.com>
+Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2683EC43458
-	for <webhook@archiver.kernel.org>; Tue, 14 Jul 2026 07:49:04 +0000 (UTC)
-Subject: Re: Urgent: Regarding Fixing of Security Vulnerabilities
-To: cip-dev@lists.cip-project.org
-From: "whyshall" <whyshall.dev@gmail.com>
-X-Originating-Location: IN (196.1.111.120)
-X-Originating-Platform: Linux Chrome 149
-User-Agent: GROUPS.IO Web Poster
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4C38C43458
+	for <webhook@archiver.kernel.org>; Tue, 14 Jul 2026 10:18:50 +0000 (UTC)
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.6749.1784024321959760269
+ for <cip-dev@lists.cip-project.org>;
+ Tue, 14 Jul 2026 03:18:42 -0700
+Authentication-Results: mx.groups.io;
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=gMqy00xx;
+ spf=pass (domain: gmail.com, ip: 209.85.128.42, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-493e8d4f4dcso31996595e9.0
+        for <cip-dev@lists.cip-project.org>; Tue, 14 Jul 2026 03:18:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784024320; x=1784629120; darn=lists.cip-project.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=yhW6WL26EbKDwg2e+wXcJiUB2YIDPuN8CXjwLYt4hBo=;
+        b=gMqy00xx3sI5yzILO9XhlhNKmWXqtFGboAFswOgNz28Vkvi6ug0uiuUwd6ml2ucudz
+         Jj9EBNcmNOYNEBiywptXUnugM45ysLPBn1ow/P7KR+yqBRcey3FHdLcbGA6juYdTf7SM
+         qLimsr5i3nIUnCiAnp2gn0NHf8CsMKVt6gDpedJ0AzQJuCKCZdmogpAexxh4TXd0ILVk
+         VlKNtr0xKIAZVScDUvkcCZLzn/ILqxl6XkWPlFV1ZAvfBr97Lt8p3d9z0Yptf0eut6yC
+         SHF9ohHh/YfGP6kskYFfeDkMWjuhOCGL8rXyohTSemsNm2Jx7VO1NNbfuFRqSW4nHHdY
+         uPvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784024320; x=1784629120;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=yhW6WL26EbKDwg2e+wXcJiUB2YIDPuN8CXjwLYt4hBo=;
+        b=gEz9rZjrVm92enKANJAyOlaO/viDxPWh6QDAHic1XkhANCKMmZUnEE9lLfYBp74+zQ
+         NLmAbGQGA4b92dwKetnmNbjmbX/+jYbmMKVa62TgMlTIeLcGVSsxPhlHosDPPIg1gh00
+         rYmmdLyW3TG2duIOeW8CDxIXMEOu8sLJY4LPSdYhFyEnNuxHjEQH/10EZA1eqCd/4Idx
+         A2IWIyrrr1EeVo7xIqhLtmEZFX9Q2CW75uFsgwR+E7BLJ7H0zYye4ShBNO8Car1Uv32v
+         cSjBQn49AGjezRBWdYijv8l6q5wsynzlPJkwn8JkefrvaUCBEBw9mxPTV0864Up4G5+w
+         JROQ==
+X-Gm-Message-State: AOJu0Yx1cTfIPYVde718zjyu/uwuIqG/sMhCeIHcgtVdZ25mrf8h6NjQ
+	pbugtXdccvmpyevURU3Wse+p1khaWYTHuH7TqI6BFBnwXGwEJ1YIpQY9c6DYdW94
+X-Gm-Gg: AfdE7cnxw+o9jREr8tu4wgpazppLwPyFNOCHW26dL4S8kQNtzE+lEWfS1nbapKvloOF
+	E8VZIBs+CY8RFZxiZe0sZONAhPCXpe2u0Fdf4fE7AieNWFUIC+luHI6AsXolmwDsId6nn1/pb0y
+	B9vKx156BCaMuSvXzv+xVdqUe1gdUAUIi5Q5m05f0RgAFIFh58AHWblAW8vzpGf36gGfRjvBSFd
+	NHG6rmcyC87U05x5q4Z3xeHB0IcZ1596dDXa3JSkM+JN7CQFB0ptUO+sGpHjSeh6bcqjXq3T67B
+	ZAFd+wDuJgrn0/8HJe/oXp1zIIhoPY/1jf/a8zIxuFR9zTa578wZ5mW+7cm4kJwncFpnfxZGqwF
+	rRQE4mQaSZA3g0OE/uZC/xaHmBDdCMofWOoDEJvnURG6BVcVnHT69ZzQqc1CYMgpzXl6RXlMCqb
+	52NfmDJZMEYpT8TElezHyBvYGzSL9ZkTiFaCXo
+X-Received: by 2002:a05:600c:3e1b:b0:493:e890:9e0b with SMTP id 5b1f17b1804b1-493f883157bmr133386355e9.26.1784024320092;
+        Tue, 14 Jul 2026 03:18:40 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:23c4:a702:d301:6218:8bce:b637:b72])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4950a2e8f07sm59103145e9.7.2026.07.14.03.18.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Jul 2026 03:18:39 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: cip-dev@lists.cip-project.org,
+	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
+	Pavel Machek <pavel@nabladev.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 3/3] arm64: dts: renesas: r9a07g054: Add max-frequency to SDHI nodes
+Date: Tue, 14 Jul 2026 11:18:32 +0100
+Message-ID: <20260714101836.8039-4-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260714101836.8039-1-biju.das.jz@bp.renesas.com>
+References: <20260714101836.8039-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-Date: Tue, 14 Jul 2026 00:48:46 -0700
-References: <CAOksrezPuEAoJ86FHMS_ajoH0h7pe3usksyo84n5rF9RKHfu4g@mail.gmail.com> <CAOksrezPuEAoJ86FHMS_ajoH0h7pe3usksyo84n5rF9RKHfu4g@mail.gmail.com> <alVT63ojQwHf4n7f@duo.ucw.cz>
-In-Reply-To: <alVT63ojQwHf4n7f@duo.ucw.cz>
-Message-ID: <606502.1784005832694212955@lists.cip-project.org>
-X-Old-Date: Mon, 13 Jul 2026 22:10:32 -0700
-Content-Type: multipart/alternative; boundary="QNW1Is1c48dIGdMg7Yn9"
+Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 14 Jul 2026 07:49:04 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23570
-Message-ID: <20260714074846.H9Mag7Ymi8B1djlVrNHORJlknNMdi7f_-Q7sh_o5p3Q@z>
+ <cip-dev@lists.cip-project.org>; Tue, 14 Jul 2026 10:18:50 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23581
 
---QNW1Is1c48dIGdMg7Yn9
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
--------------------------------On Tue, Jul 14, 2026 at 02:39 AM, Pavel Mach=
-ek wrote:
+[ Upstream commit dcbbb1266043d1d7ca1f129d2ca58a6ce8e04cbb ]
 
->=20
-> Would you mind introducing yourself, your company, and your product?
-> - This is Vishal Maheshwari (Senior Research Engineer) from Center for
-> Development of Telematics, Delhi, working on an embedded product based on
-> Linux kernel 4.19.94.
+Add the max-frequency property set to 133333333 Hz (133.33 MHz) to both
+SDHI0 and SDHI1 MMC controller nodes in the RZ/V2L (r9a07g054) device
+tree, increasing performance by ca. 33%.
 
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
--------------------------------
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://patch.msgid.link/20260520115144.60067-4-biju.das.jz@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ arch/arm64/boot/dts/renesas/r9a07g054.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
->=20
-> Normally, we would recommend 6.12 kernel branch if you are doing the
-> migration, anyway.
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
+index 01f59914dd09..19b5c083d601 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
+@@ -1067,6 +1067,7 @@ sdhi0: mmc@11c00000 {
+ 				 <&cpg CPG_MOD R9A07G054_SDHI0_IMCLK2>,
+ 				 <&cpg CPG_MOD R9A07G054_SDHI0_ACLK>;
+ 			clock-names = "core", "clkh", "cd", "aclk";
++			max-frequency = <133333333>;
+ 			resets = <&cpg R9A07G054_SDHI0_IXRST>;
+ 			power-domains = <&cpg>;
+ 			status = "disabled";
+@@ -1083,6 +1084,7 @@ sdhi1: mmc@11c10000 {
+ 				 <&cpg CPG_MOD R9A07G054_SDHI1_IMCLK2>,
+ 				 <&cpg CPG_MOD R9A07G054_SDHI1_ACLK>;
+ 			clock-names = "core", "clkh", "cd", "aclk";
++			max-frequency = <133333333>;
+ 			resets = <&cpg R9A07G054_SDHI1_IXRST>;
+ 			power-domains = <&cpg>;
+ 			status = "disabled";
+-- 
+2.43.0
 
-- Can't port to this kernel as the driver support for a particular device i=
-n our board based on *Linux Kernel* *4.19.94* is missing in the *6.12.x* ke=
-rnel and don't have the *expertise* to port the *driver(s)* to the *6.12.x =
-series*. So,=C2=A0 can upgrade to *linux-cip-4.19.325-cipX* kernel only.
-
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
--------------------------------
-
->=20
-> Take a look at
-> git@...:cip-project/cip-kernel/cip-kernel-sec.git .
-
-Ok, will try to run this tool. Would this tool be able to list out *the sol=
-ved and unsolved vulnerabilities* in *linux-cip-4.19.325-cipX* based on the=
- *.config file* modified as per our board ?
-
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
--------------------------------
-
-Also, will the CIP community not be solving all the vulnerabilities associa=
-ted with the *4.19.325* reported by websites like cve.org, cvedetails.com, =
-NVD=C2=A0 etc in their repository *linux-cip* (repo link:- https://gitlab.c=
-om/cip-project/cip-kernel/linux-cip.git ) in *linux-4.19.y-cip branch* ?
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
-------------------------
-
---QNW1Is1c48dIGdMg7Yn9
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-<div>
-<p style=3D"line-height: 100%;">-------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------On Tue, Jul =
-14, 2026 at 02:39 AM, Pavel Machek wrote:</p>
-<blockquote>Would you mind introducing yourself, your company, and your pro=
-duct?<br />&nbsp;- This is Vishal Maheshwari (Senior Research Engineer) fro=
-m Center for Development of Telematics, Delhi, working on an embedded produ=
-ct based on Linux kernel 4.19.94. &nbsp;</blockquote>
-<p>------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
-----------------------------------</p>
-<blockquote>Normally, we would recommend 6.12 kernel branch if you are doin=
-g the<br />migration, anyway.</blockquote>
-<p>- Can't port to this kernel as the driver support for a particular devic=
-e in our board based on <strong>Linux Kernel</strong> <strong>4.19.94</stro=
-ng> is missing in the <strong>6.12.x</strong> kernel and don't have the <st=
-rong>expertise</strong> to port the <strong>driver(s) </strong>to the <stro=
-ng>6.12.x series</strong>. So,&nbsp; can upgrade to <strong>linux-cip-4.19.=
-325-cipX</strong> kernel only.</p>
-<p>------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
-----------------------------------</p>
-<blockquote>Take a look at<br />git@...:cip-project/cip-kernel/cip-kernel-s=
-ec.git .</blockquote>
-<p>Ok, will try to run this tool. Would this tool be able to list out <stro=
-ng>the solved and unsolved vulnerabilities </strong>in<strong> &nbsp;linux-=
-cip-4.19.325-cipX</strong> based on the<strong>&nbsp;.config file</strong> =
-modified as per our board ?</p>
-<p>------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
-----------------------------------<br /><br />Also, will the CIP community =
-not be solving all the vulnerabilities associated with the <strong>4.19.325=
- </strong><em>reported by websites like cve.org, cvedetails.com, NVD&nbsp; =
-etc </em>in their repository <strong>linux-cip</strong>(repo link:- <a href=
-=3D"https://gitlab.com/cip-project/cip-kernel/linux-cip.git" target=3D"_bla=
-nk" rel=3D"nofollow noopener">https://gitlab.com/cip-project/cip-kernel/lin=
-ux-cip.git</a>) in <strong>linux-4.19.y-cip branch </strong>?<em><br />----=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
----------------------------------------------------------------------------=
---------------------</em></p>
-<p style=3D"line-height: 100%;">&nbsp;</p>
-</div>
-
---QNW1Is1c48dIGdMg7Yn9--
 
