@@ -2,158 +2,97 @@ Return-Path: <pavel@nabladev.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2755C4450A
-	for <webhook@archiver.kernel.org>; Thu, 16 Jul 2026 10:42:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3C08C44501
+	for <webhook@archiver.kernel.org>; Thu, 16 Jul 2026 10:44:40 +0000 (UTC)
 Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.9946.1784198540271548111
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.10081.1784198676330589601
  for <cip-dev@lists.cip-project.org>;
- Thu, 16 Jul 2026 03:42:20 -0700
+ Thu, 16 Jul 2026 03:44:36 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=Oaq8TIwE;
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=GhpxfX27;
  spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BD730119FA1;
-	Thu, 16 Jul 2026 12:42:15 +0200 (CEST)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CCF59119FAA;
+	Thu, 16 Jul 2026 12:44:32 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1784198537;
+	s=dkim; t=1784198673;
 	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=C6zuZM2uov/5GzwwhRTwT7GIFtagRCYq3CZbY6RxCc8=;
-	b=Oaq8TIwE1x10XAV+5AtzixqhAEZmvprLt/PkGDIic81z4lDOS4yWWyGo5yxJEduOY3hWZ3
-	BojAFl+ckS28PYCmo8jZtKkbCZFDZX4oEoD5vBh4HdafquBxPICG9BoTvdqgiKMVkv7NZe
-	s3xauLMg9coIMGxjzRXxOJT5KSL0Upbg8WHXKmaf3++qcYM2t0W/eD25MnjWXRyTWMhi9R
-	EZte/ejXp4cNpufUVxuPdttBIsHNCDf/PWJe4l/Xf230qG7U1ebQXHFDuL0AiJDdzJ13Bx
-	+lnir3GpRRPz045KhDOwUK+evR9ztVgvpRG70zYIVCTJwgBzMAiSo8aO0oxV1A==
-Date: Thu, 16 Jul 2026 12:42:14 +0200
+	 in-reply-to:references; bh=yF0bSI/2WKIOvF3AxXFn3O7FM06vWXAmFyhEZdRuxK4=;
+	b=GhpxfX27x9VpRmYd4Hjxe/IUnrUnbA6AfIQY/lt79haCNAWVwvTpbuDRuBdjpOcNIVIxtx
+	u7ziaHMc0LlCm7L6ZtpnddZo6zq18vF8lLx5r/DU0q07RjfHlQulsbdmJG6zVbvRfJM3b4
+	W/7BxnzYx636NWToZE9meSF2lY1WZkjDu/WBCR+4RDpaA2Z/cMfL+VHE57dGzLiZOFKH4V
+	/EcKiXE6pv8PclSD3zXTuP291mSVZBtGbQko5jLsgMNyIiM+ncf5/3f8LK8WSNTqO6ecuo
+	k5phzcc3WmwvcZvjlWjXbvGDyYvh2a1v1J3by7PDvR9UGPlp74M0G9IHbEjtLQ==
+Date: Thu, 16 Jul 2026 12:44:31 +0200
 From: Pavel Machek <pavel@nabladev.com>
-To: biju.das.jz@bp.renesas.com
-Cc: "nobuhiro.iwamatsu.x90@mail.toshiba" <nobuhiro.iwamatsu.x90@mail.toshiba>,
-	"pavel@nabladev.com" <pavel@nabladev.com>,
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Pavel Machek <pavel@nabladev.com>,
 	"biju.das.au" <biju.das.au@gmail.com>,
 	"cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [cip-dev] [PATCH 6.12.y-cip 02/23] dt-bindings: pinctrl:
- renesas: Document RZ/G3L SoC
-Message-ID: <ali1hhUOV931Lxb4@duo.ucw.cz>
+Subject: Re: [cip-dev] [PATCH 6.12.y-cip 00/23] Add support for RZ/G3L
+ pincontrol
+Message-ID: <ali2Dxj8ySfAX_m8@duo.ucw.cz>
 References: <20260703105923.251255-1-biju.das.jz@bp.renesas.com>
- <20260703105923.251255-3-biju.das.jz@bp.renesas.com>
- <aldc9NpJgAOV7vA9@duo.ucw.cz>
- <TY7PR01MB148181F049410E17227C1645ACDC72@TY7PR01MB14818.jpnprd01.prod.outlook.com>
- <TY3PR01MB113465350CAAF966182F658E786C72@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <18C26F8AB223D098.2287905@lists.cip-project.org>
+ <aliOuduY4Em7AIBQ@duo.ucw.cz>
+ <TY3PR01MB113464BDAE2112B58F3ADECDB86C72@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="oUmVvgf3V/HaPr8A"
+	protocol="application/pgp-signature"; boundary="EEu8cO9OptBzQGiU"
 Content-Disposition: inline
-In-Reply-To: <TY3PR01MB113465350CAAF966182F658E786C72@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY3PR01MB113464BDAE2112B58F3ADECDB86C72@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 16 Jul 2026 10:42:30 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23613
+ <cip-dev@lists.cip-project.org>; Thu, 16 Jul 2026 10:44:40 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23614
 
 
---oUmVvgf3V/HaPr8A
-Content-Type: text/plain; charset=utf-8
+--EEu8cO9OptBzQGiU
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
+HI!
 
-> > > -----Original Message-----
-> > > From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On
-> > > Behalf Of Pavel Machek via lists.cip-project.org
-> > > Sent: Wednesday, July 15, 2026 7:12 PM
-> > > To: Biju <biju.das.au@gmail.com>
-> > > Cc: cip-dev@lists.cip-project.org; iwamatsu nobuhiro(=E5=B2=A9=E6=9D=
-=BE =E4=BF=A1=E6=B4=8B =E2=96=A1=EF=BC=A4=EF=BC=A9=EF=BC=B4=EF=BC=A3=E2=97=
-=8B
-> > > =EF=BC=A3=EF=BC=B0=EF=BC=B4) <nobuhiro.iwamatsu.x90@mail.toshiba>; Pa=
-vel Machek
-> > > <pavel@nabladev.com>; Biju Das <biju.das.jz@bp.renesas.com>; Lad
-> > > Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > Subject: Re: [cip-dev] [PATCH 6.12.y-cip 02/23] dt-bindings: pinctrl:=
- renesas:
-> > > Document RZ/G3L SoC
-> > >
-> > > Hi!
-> > >
-> > > There seems to be something wrong here:
-> > >
-> > > > Add documentation for the pin controller found on the Renesas RZ/G3L
-> > > > (R9A08G046) SoC. The RZ/G3L PFC is similar to the RZ/G3S SoC but has
-> > > > more pins.
-> > > ...
-> > > > Document renesas,clonech property for controlling clone channel
-> > > > control register located on SYSC IP block on RZ/G3L SoC.
-> > >
-> > > Ok, no mention of deleting constraints for *57.
-> > >
-> > > > +++ b/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinct=
-rl.
-> > > > +++ yaml
-> > > > @@ -154,15 +165,10 @@ allOf:
-> > > >        properties:
-> > > >          compatible:
-> > > >            contains:
-> > > > -            const: renesas,r9a09g057-pinctrl
-> > > > +            const: renesas,r9a08g046-pinctrl
-> > > >      then:
-> > > > -      properties:
-> > > > -        resets:
-> > > > -          maxItems: 2
-> > > > -    else:
-> > > > -      properties:
-> > > > -        resets:
-> > > > -          minItems: 3
-> > > > +      required:
-> > > > +        - renesas,clonech
+> > > > This patch series aims to add pinctrl driver support for RZ/G3L SoC.
 > > > >
-> > > >    - if:
-> > > >        properties:
+> > > > All the patches from this series are cherry-picked from mainline
+> > > > except the patch for dropping "syscon" fallback compatible from
+> > > > sysc/sys nodes from RZ/G3S, RZ/G3E, RZ/V2H and RZ/V2N to match with
+> > > > the documentation after backporting the commit ba5095ebbc7a ("mfd: =
+syscon:
+> > > > Allow syscon nodes without a "syscon" compatible") to 6.12.y-cip.
 > > >
-> > > But now we delete constraints for *57, and add constraints for *46.
-> > > That looks wrong?
+> > > I had some minor comments here, but those should be fixed in mainline,
+> > > first, so they should not block the merge.
 > >=20
-> > This is a side effect by backporting.
-> > Depending on the order of commits, the contents of the commit log may n=
-ot match those of the patch.
+> > Aha, as noticed in patch 02/23 by Iwamatsu-san, this is actually wrong =
+backport, not mainline problem.
 >=20
-> The issue is we applied a patch twice in 6.12.y-cip which created duplica=
-te entries
->=20
-> Patch 1:
->=20
-> commit 64e2071b58f579b758c83ae3170f2eee5b46fb03
-> dt-bindings: pinctrl: renesas: Document RZ/V2H(P) SoC
->=20
-> Patch 2:
->=20
-> commit fb73d663b31398aea8528fb231e660c4958b29ff
-> dt-bindings: pinctrl: renesas: Document RZ/V2H(P) SoC
->=20
-> If we need a clean history we need to revert a patch or
->=20
-> Options:
->=20
-> 1) Revert offending patch to remove duplicate entry and send new version
->=20
-> 2) Update the change log while applying.
->=20
-> Please let me know how you want to proceed.
+> It is issue with 6.12.y-cip. Same binding patch applied twice created dup=
+licate entry.
 
-Aha, ok, I see, thanks for explanation.
+Aha, thanks for explanation. I verified the end result indeed lookes
+okay, and as I had it already in the tree and tested, pushed the
+result.
+
+So... Series is now applied, sorry for confusion.
 
 Best regards,
 								Pavel
 
---oUmVvgf3V/HaPr8A
+--EEu8cO9OptBzQGiU
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCali1hgAKCRAw5/Bqldv6
-8gfIAJwIpllAnYHA2pLJW+VBiBSkCekxmACdEQO3ohPskMWogQJFUbxuYRj7rDs=
-=a6BT
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCali2DwAKCRAw5/Bqldv6
+8ntIAJwOphatVUItBwxYFCyfG1UNW/jB/gCeJaIVq+/xelLLg+eKRsltvJmvHDU=
+=tUEX
 -----END PGP SIGNATURE-----
 
---oUmVvgf3V/HaPr8A--
+--EEu8cO9OptBzQGiU--
 
