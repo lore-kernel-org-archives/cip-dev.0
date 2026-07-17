@@ -2,41 +2,41 @@ Return-Path: <tommaso.merciai.xr@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CFB8C44521
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B6ABC44520
 	for <webhook@archiver.kernel.org>; Fri, 17 Jul 2026 13:14:10 +0000 (UTC)
 Received: from OS0P286CU011.outbound.protection.outlook.com (OS0P286CU011.outbound.protection.outlook.com [52.101.228.71])
  by mx.groups.io with SMTP id smtpd.msgproc02-g2.13281.1784294047217631671
  for <cip-dev@lists.cip-project.org>;
- Fri, 17 Jul 2026 06:14:07 -0700
+ Fri, 17 Jul 2026 06:14:08 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=PIK+fPp0;
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=tep3P14X;
  spf=pass (domain: bp.renesas.com, ip: 52.101.228.71, mailfrom: tommaso.merciai.xr@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nsEi2rTwMqNxnz2Hw5nIGFJPb0Os5SLNm5xfO21v5ByALSSZEdp+oz6NvhLVeHJhn3tFS6XCyqU/IhdgOuxCa2TVTyCkTwOnr+nAWGk3SlmHJtpPxGCJ3uUix1f4pprEJ4EDShoSA/dIH9wCS4sD3vYQZJ00+uMXPUhNEKGG6e3GBaHviGR2hI1BzkqIdDnPc0ZzTWBCmMqt2zSUJE/PpE8ePU2NhGZ/nbcAZAB4GhH33PV/eZeM0MBmZ4GUuLYoBBfA4f4BnbGJSHfPsCte2kc7w8Xrf7K+XKLUVnL5RJIpb00LSlJmhg60czNsFVaL9I94SpdAY0GN3g6+FD6Yiw==
+ b=gWWnsuCojdzBTrfM0UohCUsqFlr4WFn0bEr3n2dKv1UAEW38NC3kMgaQT5COPz5RMVHiB3Zhd90HRl/0yQdy71UQi/QnJ2ocLyQD7tZul8s3OBjQ15vezJvzrUrCRhqMWXe9UD0+7EHrP8Hj2GGpzye/v71dY6ElNbE4StSSDYwr73m/pofXbwi1wJ22Sy6QSuTfB2Xd1/3WGLHNBJ92Leh99Gj5SwpdLr0e47E8R/oYaNFIIiQ/Af0b77hKrGHTejo0yUoIS8Eb0XcGpKkAMvfuzMm5PjVBD9QtnkJ5VQPiTQ8n/OXG2AomNQqcnznJqqd/LiRDXNstBXHL3+dtLQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kNLzClwRAkq/ePXDzUoIhcOpnV5/6y5JqMnvdBFycIY=;
- b=gUwSCempFJZzJpnMSTFPpxKXaepRFWHcN49XTLhr+ZME3Db/LdlsUJiPud9GL88/G5f9V61HfPZlJVbkud2kDKsApAD25DRACxN62/LFOmQP3v4repzOT8D8QNWr5fQjM6Y+qkvmz+rtKFAKZp2EuFeeXSwnk7CGMpcIDPSHa1KYJbeTfdx5A2LBkdI30yDcLAGpmj32IHoK1qcg8B0HhebQZU+CbqbKXlc6M6FyfIgWztZgM0ixmNKeHvKosCem/krcxA4ZbW2Ii1IwvkVXu3gDW32KSjDhv5LLE6HUVCTISRWtr97uo1yQ4aPsj2hn9biRxrn5tq+tDJ7a1XScsw==
+ bh=wCEVu28g+xorgB9bvkKIm8cV+Ir2LxXLoNW+65B7+90=;
+ b=vHTEjGaY1Ns0h9NHLJfdAkxy/OVgW7RqnzCqcPcluEt7CnzHt0CU8Mqvci14TCS82P/KhrOkbAJtkxf253nFQAmWEZAcT7wqHJUy90792EGjmS4kSzpFoCSm04ow8cbD3B/D5ZkFKTijUJ2eVYtJe58ByKce0U520qdusc+Z9k6zwH/NhCh0SEq0vRtfXMpqAJlnsOnShEEPXRdRwrJQcZcfhIGKESDaMc5QdK7Cwrwo3mh9B9nh8Pr1IgWygw68lQiYhNBJxBh0XlQvm2zjcHy2eKvT6TZ7u64oqSiPT1sQakyipzwZhe4HRC20KhcBXKpRlEsQ3uBXTvjaTRx4Mg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kNLzClwRAkq/ePXDzUoIhcOpnV5/6y5JqMnvdBFycIY=;
- b=PIK+fPp0rixyIljjXerc2wvXcS5iJdhh4VnYFR6FkcUdXucEBm/9kEYH7MK1ds7eObBt6Hpwmahu3OaL00X3R7g+KvxSiQrzASMcEaP6uQlDXYpB+yv8HlzWSmi2xEUQ59u+kqX/+niUqv9Ga/r2uAOlDpsfSOa4AFst5CUQfG4=
+ bh=wCEVu28g+xorgB9bvkKIm8cV+Ir2LxXLoNW+65B7+90=;
+ b=tep3P14XffnIqOsUTglO3EerFK+DuALtUuEeiMI6ZUnalEhEd5W1Cp3+tVuj2pXv2atj+BjYs9AlRmKj2OZLE6QaXFKmYYv6sCRcjBezYVNdxW+a8gPmab+cpSQKEeE1tEOdFoljBYVfjhlElqR8REjA/eyFFozmH3obM21mJYM=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=bp.renesas.com;
 Received: from TYRPR01MB13588.jpnprd01.prod.outlook.com (2603:1096:405:18d::7)
  by TY7PR01MB13783.jpnprd01.prod.outlook.com (2603:1096:405:1fe::8) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.223.12; Fri, 17 Jul
- 2026 13:14:03 +0000
+ 2026 13:14:06 +0000
 Received: from TYRPR01MB13588.jpnprd01.prod.outlook.com
  ([fe80::2f5b:8560:48ed:3828]) by TYRPR01MB13588.jpnprd01.prod.outlook.com
  ([fe80::2f5b:8560:48ed:3828%4]) with mapi id 15.21.0223.011; Fri, 17 Jul 2026
- 13:14:03 +0000
+ 13:14:06 +0000
 From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -44,9 +44,9 @@ To: cip-dev@lists.cip-project.org,
 CC: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	tomm.merciai@gmail.com
-Subject: [PATCH 6.1.y-cip 16/23] hwmon: (lm75) Add NXP P3T1755 support
-Date: Fri, 17 Jul 2026 15:12:34 +0200
-Message-ID: <20260717131241.2233788-17-tommaso.merciai.xr@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 17/23] hwmon: (lm75) Hide register size differences in regmap access functions
+Date: Fri, 17 Jul 2026 15:12:35 +0200
+Message-ID: <20260717131241.2233788-18-tommaso.merciai.xr@bp.renesas.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260717131241.2233788-1-tommaso.merciai.xr@bp.renesas.com>
 References: <20260717131241.2233788-1-tommaso.merciai.xr@bp.renesas.com>
@@ -58,153 +58,343 @@ X-ClientProxiedBy: FR0P281CA0209.DEUP281.PROD.OUTLOOK.COM
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: TYRPR01MB13588:EE_|TY7PR01MB13783:EE_
-X-MS-Office365-Filtering-Correlation-Id: 58fdda64-af4a-4696-b6d3-08dee40545a1
+X-MS-Office365-Filtering-Correlation-Id: 2352a724-8044-42ca-f1ed-08dee4054769
 X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|366016|1800799024|23010399003|52116014|376014|38350700014|11063799006|56012099006|22082099003|18002099003|10067099003;
+	BCL:0;ARA:13230040|366016|1800799024|23010399003|52116014|376014|38350700014|6133799003|11063799006|56012099006|22082099003|18002099003|10067099003;
 X-Microsoft-Antispam-Message-Info: 
-	CaZg9SqxuAOC/fEb8zYoAPU6CSppbRi6N9DswFNsrCo5wtzLBGMyUuGGWuHQn4QHYJJa7L4isBlXzs9PG9Mpb5b8vE8YuvnalwixRLYhAPwCxtza4W3tyLvZYqC2LRA3wsfzxS9+dtDlR7nyeMG/yp6ssVuT3nhXui4lkVCmVTP014C/OuRcYEsTG5Xe2HxidcROl+Xi7+LPqU+bnj342e7hGw9GOX5pne1FTQSoKjR4Dnx8ZU29VaYfAhIBXWdsjdTP8apmzwVHwx73MNjivGOHHYQZV3JYSDIAlFrsP8pFYiHOgnwxbldO7KOwFT1m0OAxjCl+BDPeEk/FqU0GL2+q6FG8ENBGj0iR7CL0MvwsDzi0wUbg1cewFI65gZ9jBqhh51pkUwLDLweEllWF+WblmxjuEyso+WYLRtN17MU8Vzvm5ddJ1WuT+vUYWsyYVnzGNUNpIE/tdJy1QV65vxc5P+40N0xfI2Nb4KuJteYuyc+RMjVjAb1ef6foMBHztxAnHvfMvBWxaYmNxvYsVbqoZlVT7MSVn5B8DHWQVwrphoBenk984gW1rMBVWM6ilD0TPOQMluTzVBIpKx2qXwho9rbDDpkkemoLghBmak0fyhzCZcF67B9fn/rvWQpJ9DTZB2HHIL+Mdx9kNnIz0L6s0W5WWVWOMqnxKOionXNvwUJLbqY94sWYbzr6p1Q/BTTquxruBGH/MaM6sUeCPcMjkQGuqHpZhuJU/PNKTEI=
+	pT9HPQw7+KiurqYu9C9eVHd2VMcQXBtaNurqOu9RTItD7SkMuibQcuiIrHklGhPc1jQZ/rHz+eTjp32Oujp6M2sxK/yTTznHCaOBAX1wUYz7gMQZxhpkcjIC3lyf3EMYjNECPcOjIKc8T2RZLMxQca4/EqwxO2idnc00YAr+Zd3NEQGQdn3QH26bBJ5bA5Cpb56wFIzFWcB/ps3E2cDAd649rw54nltulUSIhG5Wxi1LDArYaw8KLpDa4+WuEDDPOsEBoDuSq1rvmUWu9geVnWn3Za3fOlKdw5ruzh/+woy7ytsMOb5OmyRoniLuQonP1naQzl2ezCp8iUAn/SD+o6jQld1FXs0TkU3pmn603dlpn2tHAj/PP9PFPkJQBulT0kN+Fq255RXIkLRtUaH7QXAZCA0L1OfaSsJPLVqdTK4bdSrVHG7ABHdTmbGQeSWCXE1SCf9aaJuuPuwcXESz1g4Y7OPlh81sOqcq/7M+KeBMQTqvUdX0I6L9k+IY8h0bWoMDeBZFLJEf+VACOVl99p/NKJye+Ii+9296qidPSLCS16idVPHXQKNh9b3Lem1VqyHfVAV3lIaGESGZAPZWdpiY52HjuHy8tSva8MuZBTvc8jGL0+n8MHOn84UMxgUTcYxL49Gzv0OM9P7B4/xskfncPYylIEw84SYLNk+C6I/y0bvYPqz0p6DHnf72MvOwuaiMkAqKy5KZYxjq6chENEM1uX0xrlVqoSTrd2+XBkc=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYRPR01MB13588.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(23010399003)(52116014)(376014)(38350700014)(11063799006)(56012099006)(22082099003)(18002099003)(10067099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYRPR01MB13588.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(23010399003)(52116014)(376014)(38350700014)(6133799003)(11063799006)(56012099006)(22082099003)(18002099003)(10067099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?BwIu2GcMqTFo6e7hBY4h4R3wHN5xd/uOIl1ctmWsDLHyz/6gwir00F6OXljs?=
- =?us-ascii?Q?AreZg2NRsZlxJAVXD76kbEElT+0nTMufTkZOoIY0wtcjGOqtAJBQSV0crzd+?=
- =?us-ascii?Q?Lc8y3+rM9RbGMvFDy1Z12Fb3BPsn+iqwE2llWEdAiCyd0lM24ewBNo4DhJRn?=
- =?us-ascii?Q?zr7HyoEX5Qrc7hDqiGNP9hjc/NKR1SVNbOgkbSTcPhnfOK5ngDXP93T4Bko5?=
- =?us-ascii?Q?c1jwkvt3lfKQI/L0qUW6RKnpiLCeCtzQwM6Shv9O5aZHa8Q27AAUZZ6+aVlm?=
- =?us-ascii?Q?wkZQCLRtIfhmOnV6SABZqOqz5AV2UlaH/1Xt1e2ofgP5bJPBgr6NNkfo6GNz?=
- =?us-ascii?Q?BeP0m0nNGPk0u8A4meYwiWi+4x4jDnax4Ti55it0sIT2u6/bktHTeXIHFhg0?=
- =?us-ascii?Q?cVbovH8Uo1KgFJA87Kgj3x01sgnCP7vrDVJ9m9VC2mroFfs6t97OcRsBuo/h?=
- =?us-ascii?Q?wgIjq6x8TsAj6HyCrE1YfPYfO8LOePbNZ1G0AT3H/Va5dzVUp30/Bw+jC2d8?=
- =?us-ascii?Q?ka6PXzeAT0ohJS694hqZNuEh0b++YjOkL3Y4cT9DGWLWIfkEllbCpAtJQcp4?=
- =?us-ascii?Q?bOYfiR56p3+dddTSJtCsSy5bWNj8NuKuMUcAseRDr/h8FAmPzjrrNhHQkyds?=
- =?us-ascii?Q?8M205soCV+nUVQEtfrx3paE8fEUPh8xw0kdSfH2QHqUm0vJAwaNGQq4VwioA?=
- =?us-ascii?Q?IoidOS0aBmuYPRggTJAlDLclR9rV5J0B43CzTTs28OfQgx/JP7tZpPV4n0xM?=
- =?us-ascii?Q?PcR16kbIjpC+KZUGfUXFqsTDvNdXJbMe0mNb2Fx/0KWeDtJAMu69Kc/Qfg1C?=
- =?us-ascii?Q?pMYZ4cyhPka0URrYIDdlbPwDWOg2ZZAqGqnApOIazaAo5F1hM2LVhhFKIDZ2?=
- =?us-ascii?Q?vlA+TgmiSUYPx4FwBpVbQJqmvAivH2VuwOWAR5gI0TmV+iiMaC6MzOdN4lNg?=
- =?us-ascii?Q?hR57xCtZoih6ot7kYBq8bmHlKeqx6qQL6ePUBn1zCnV8GHMjtwmEPGByaaU3?=
- =?us-ascii?Q?iWnMqpBrTIREF1PNaJVXQCqJMPXrUW4AXMSUgjynYXuvB59mbNiQOKh1gYOk?=
- =?us-ascii?Q?ABMARxucirQPt1liGhqRXQnjRLzxROoV1MrRlg4S2FOIBFffPW/1F22++Mk3?=
- =?us-ascii?Q?wN+YmjhF/UZIeuie6G8+cdaIxCcJXud/HBtaGjkE7GWF4RziPmN5VBOv0oHT?=
- =?us-ascii?Q?YN9GUXlEeooubDegzYDDSlCdGg7t8ggvwoXEK1Qb4UH5DW1hmDJVKJRDK8vV?=
- =?us-ascii?Q?eJiZxAKLO4WWNiw+rrernJZT6qG2upN3Eln0gQaxq0VJKK3Uiy0vbRu+Uq7g?=
- =?us-ascii?Q?zHXz+sl4EaSCZy6adxHYpkB9Rcn/6c5dbPZnxQnapb4pukMK3DnqEN9alwPG?=
- =?us-ascii?Q?5YWcWztniwh8b7WE8bufmYsYUmfC+uOQtFhbGWGZUJs6V9539Kja6mIAs3hR?=
- =?us-ascii?Q?yafuJudj+a0qL6U8UaC6RcJFMoMj+246IPkkj4nG6a2eql26wegemfJ9NapB?=
- =?us-ascii?Q?o6tf0s/P+80MAx6HzigNLfrcM3N+hEdz6u1uCk85+Lz6BJH2TAnB4j7UDkkk?=
- =?us-ascii?Q?wkE0dJJ1W9K7D9lI4ybX6kRcoQ706mEZprHL/Dsy4uqgGqK1Pn8XZZvacBqB?=
- =?us-ascii?Q?rVtwwT2GBboBfltWL6fbPf4x422WiNXDTNkz76FpXIROENLoYeQePNYwThrr?=
- =?us-ascii?Q?MFa2sQKIe4zuVz1od0afR5GNyxcJu15Gx4PfWzCsbF9qV6eSCIRNeDr6NzR/?=
- =?us-ascii?Q?xNIzlowzMKURzx5Wnicjnds3NdprFGTBXW7zUfj/e9t4420bNXay?=
+	=?us-ascii?Q?ubI3Nigq3i2MiISJI4a7XmXaFO9VocoCYAFFIDHgRVBXjL33JYMOCE74QyE1?=
+ =?us-ascii?Q?ofirDIIIVDRgBLAzAYOmRmb13OD5rJaohvuhNYsA0PQJAFYA4SKWBDxE+UEz?=
+ =?us-ascii?Q?BsQ1oAXED9JK/YjeqpFSsznS17YmQrK1GY1oUKUowtTZUD+V2ofR/gTUm2v4?=
+ =?us-ascii?Q?r9BK8TV7/+VpdTzzqbt2IximNK3Rj/QwNc1z9XDbpwSIC7/rbN/ATfUjbeaY?=
+ =?us-ascii?Q?ZWMnbGk3R0juX2aVIH1Kogdszm0k8ldblnuVh49BwYOF7nHO+fTuV79POzZ3?=
+ =?us-ascii?Q?2tbPm0wBUmEqrNo8g9DzwSAED+p6JBB5XR18PcvPEmR6WGQzZqitPF7AqZbJ?=
+ =?us-ascii?Q?QQjv+0fcM/1FoEzOx9XvpZjcTmlkVKMBN8QaX1pGnwdqz2rv/T88y7IkblmL?=
+ =?us-ascii?Q?ERziXw0c0sm4MITZZY3D5fR+wjk4VYwBAv3NoKWC9tRkxTLNnXQNvxa002LI?=
+ =?us-ascii?Q?Qxt32cD6n8O1vWWx/VxpaN0h1v+abl0Xr/BOqjD3kl72jWVLz2weM2aQGuhM?=
+ =?us-ascii?Q?hdgoq6yt8rynA64WNeQGm5t8Gf83RVD+bdoapdxzetligaXjCO59AdqQnLBl?=
+ =?us-ascii?Q?1GCNxoT+E3KS6tT260Bpkw9OSvLQKHfQm2n9PlUlwDawUxIamAQFWLLGzvAv?=
+ =?us-ascii?Q?Q7vKY86e6zaKEndbJcWpXML9NL3tVqE776xIcz0P8leddDiDJIeiBz9Jib/g?=
+ =?us-ascii?Q?t5HgojiE8OUEHafgA0LoVA1+iwedwjhGT6C8Azm/B60SQ73u2S2TGvx5LQXN?=
+ =?us-ascii?Q?AE+9EwySzN0UPRThMccP66P9qi60+8s6eO3MB0K1bc7QaMS0r60NA0mJYmpG?=
+ =?us-ascii?Q?syd96+768Qk57PXWTgIZfF6MUkmY9tUfGsiIVFzt05GvNWmueOCybHIP8daz?=
+ =?us-ascii?Q?5ctooA+aviuj32Hx8p/KAslgKnhauCM4szLzwN69LJvNXOngSYQIbzydel4+?=
+ =?us-ascii?Q?EmAKYnrV77W0qt22yEvWn0lIz0hTbxJT67KolbG1kdcSQjDqsN2gbbAlLgUO?=
+ =?us-ascii?Q?DYzY15NYp3X3BUTdwSYcg2Tjuc5aIy1ITeQtPMTNAVKRPjc+DBjL8dAbcz4J?=
+ =?us-ascii?Q?ifbNaMvC2A2pQMPX3WeIqHdB6aXO4kKbRoYiPV7akSlGgcTEgx3dQj71IAoH?=
+ =?us-ascii?Q?vv7ht3L/41LEKsfvoYd93DkQ1RBwdCRw5DPOO4g4yQhCztdcQ99t8z4HjC49?=
+ =?us-ascii?Q?dEkYlpk6kpsYHuOhWjNF5h7gwR5ayCwjP5X1X768aCW4oi5D5JB7d7jT7mwk?=
+ =?us-ascii?Q?m+zyF9m+dqO3rfo2cVfYhab1mhqXOv7z6tyVIFWLMXouwtLJ6G9cWTuIixaF?=
+ =?us-ascii?Q?Jkj6Tc1HDsvVq8lM10ggaZVBSlN9rXgFjQtB9xbct9QJ8ajRO0PV2nBssnw4?=
+ =?us-ascii?Q?fdkctus8hHCcYK1l+3amBddwFgU27CagpJ8PdGYEZrl8IuUNnEQLZYW3u7Hv?=
+ =?us-ascii?Q?LuUqLBaXm6hXdIWnqFLVlo8vsRnUgfhbbp6OqZ/UOwo3SJTy806b13ha5tQl?=
+ =?us-ascii?Q?tM0kd/7bho4TdB1uongW8rVlshjDNipWSeI2JgObLKWcZqqRX2uq7CrhE+dD?=
+ =?us-ascii?Q?CADKsh/EMBdfF4QNXj5PZL86xCy65EvD5yxDKNb6I8o23lqixJJPJh3kA6uK?=
+ =?us-ascii?Q?eABdhDaHFmgKSYL4M5GEXsfAVR1Am7w+Cddj9cm9qfCFvPm6O7XNDE/CaL8O?=
+ =?us-ascii?Q?kJycEIXuF0JluryJxhXdi/GJAoBTGLq9XDnbDhpm3Dx0xyrcL9j5wOObgPzh?=
+ =?us-ascii?Q?vcKtDM+3iEx/ErQhlAJx4CMtpOBCd13IOIM5c7XQwmKmUpsySZKS?=
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 58fdda64-af4a-4696-b6d3-08dee40545a1
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2352a724-8044-42ca-f1ed-08dee4054769
 X-MS-Exchange-CrossTenant-AuthSource: TYRPR01MB13588.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2026 13:14:03.0491
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2026 13:14:06.0293
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GKSF6QcCLJPPtnbDEo20g1V/lO5hZt350mpyBzwcsGkMlnuUv2Mx/Kk4kYokjNd0s2bjNxMRa8BSnx5U5BHtUGcaGZz/AGo3AFGXFRGfCtLK3fqF46To1JEKgOeQM7dR
+X-MS-Exchange-CrossTenant-UserPrincipalName: wU2Vb5w91kyVaoHz1QUM9/PxPcVYjD/8PXgZNIj9n3eWryYDfwlOtljOqYSpJ0jkG4T8QL35skSY8bggSh0B94Nj3KtJvVPWcj0E+vMFdGXdk5wStyddy0S4auDb3zHi
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY7PR01MB13783
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 17 Jul 2026 13:14:10 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23644
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23645
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Guenter Roeck <linux@roeck-us.net>
 
-commit d3506653d01c0df1f1c86cd49fe70c98f00f1aef upstream.
+commit 6da24a25f766e02fbfc07570b5560154818ba59d upstream.
 
-Add this LM75 compatible sensor which needs a separate entry because of
-its default sampling time and SMBusAlert handling.
+Hide register size differences in regmap access functions to simplify
+runtime code and to simplify adding support for I3C devices. Also
+use regmap API functions for bit operations where possible.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Link: https://lore.kernel.org/r/20241218074131.4351-7-wsa+renesas@sang-engi=
-neering.com
+For this to work, the 16-bit and 8-bit configuration register has to be
+mapped to a 16-bit value. Unlike other registers, this register is a
+low-byte-first register, presumably for compatibility with chips with
+8-bit wide configuration registers. Hide the differences in the regmap
+access code.
+
+While at it, enable alarm attribute support for TMP112.
+
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 ---
- Documentation/hwmon/lm75.rst |  6 ++++--
- drivers/hwmon/lm75.c         | 13 +++++++++++++
- 2 files changed, 17 insertions(+), 2 deletions(-)
+ drivers/hwmon/lm75.c | 131 ++++++++++++++++++++-----------------------
+ 1 file changed, 62 insertions(+), 69 deletions(-)
 
-diff --git a/Documentation/hwmon/lm75.rst b/Documentation/hwmon/lm75.rst
-index 6adab608dd05..9877ddbbf7c8 100644
---- a/Documentation/hwmon/lm75.rst
-+++ b/Documentation/hwmon/lm75.rst
-@@ -121,9 +121,9 @@ Supported chips:
-=20
-          https://www.ti.com/product/TMP1075
-=20
--  * NXP LM75B, PCT2075
-+  * NXP LM75B, P3T1755, PCT2075
-=20
--    Prefix: 'lm75b', 'pct2075'
-+    Prefix: 'lm75b', 'p3t1755', 'pct2075'
-=20
-     Addresses scanned: none
-=20
-@@ -131,6 +131,8 @@ Supported chips:
-=20
- 	       https://www.nxp.com/documents/data_sheet/LM75B.pdf
-=20
-+               https://www.nxp.com/docs/en/data-sheet/P3T1755.pdf
-+
-                https://www.nxp.com/docs/en/data-sheet/PCT2075.pdf
-=20
-   * AMS OSRAM AS6200
 diff --git a/drivers/hwmon/lm75.c b/drivers/hwmon/lm75.c
-index 4f54a50f2c12..1d0040e3276f 100644
+index 1d0040e3276f..4bb3d2959593 100644
 --- a/drivers/hwmon/lm75.c
 +++ b/drivers/hwmon/lm75.c
-@@ -39,6 +39,7 @@ enum lm75_type {		/* keep sorted in alphabetical order */
- 	max6626,
- 	max31725,
- 	mcp980x,
-+	p3t1755,
- 	pct2075,
- 	stds75,
- 	stlm75,
-@@ -223,6 +224,13 @@ static const struct lm75_params device_params[] =3D {
- 		.default_resolution =3D 9,
- 		.default_sample_time =3D MSEC_PER_SEC / 18,
+@@ -112,7 +112,6 @@ struct lm75_data {
+ 	struct regmap			*regmap;
+ 	struct regulator		*vs;
+ 	u16				orig_conf;
+-	u16				current_conf;
+ 	u8				resolution;	/* In bits, 9 to 16 */
+ 	unsigned int			sample_time;	/* In ms */
+ 	enum lm75_type			kind;
+@@ -285,6 +284,7 @@ static const struct lm75_params device_params[] =3D {
+ 		.default_sample_time =3D 125,
+ 		.num_sample_times =3D 4,
+ 		.sample_times =3D (unsigned int []){ 125, 250, 1000, 4000 },
++		.alarm =3D true,
  	},
-+	[p3t1755] =3D {
-+		.clr_mask =3D 1 << 1 | 1 << 7,	/* disable SMBAlert and one-shot */
-+		.default_resolution =3D 12,
-+		.default_sample_time =3D 55,
-+		.num_sample_times =3D 4,
-+		.sample_times =3D (unsigned int []){ 28, 55, 110, 220 },
-+	},
- 	[pct2075] =3D {
- 		.default_resolution =3D 11,
- 		.default_sample_time =3D MSEC_PER_SEC / 10,
-@@ -735,6 +743,7 @@ static const struct i2c_device_id lm75_ids[] =3D {
- 	{ "max31725", max31725, },
- 	{ "max31726", max31725, },
- 	{ "mcp980x", mcp980x, },
-+	{ "p3t1755", p3t1755, },
- 	{ "pct2075", pct2075, },
- 	{ "stds75", stds75, },
- 	{ "stlm75", stlm75, },
-@@ -814,6 +823,10 @@ static const struct of_device_id __maybe_unused lm75_o=
-f_match[] =3D {
- 		.compatible =3D "maxim,mcp980x",
- 		.data =3D (void *)mcp980x
- 	},
-+	{
-+		.compatible =3D "nxp,p3t1755",
-+		.data =3D (void *)p3t1755
-+	},
- 	{
- 		.compatible =3D "nxp,pct2075",
- 		.data =3D (void *)pct2075
+ 	[tmp175] =3D {
+ 		.set_mask =3D 3 << 5,	/* 12-bit mode */
+@@ -344,40 +344,16 @@ static inline long lm75_reg_to_mc(s16 temp, u8 resolu=
+tion)
+ static int lm75_write_config(struct lm75_data *data, u16 set_mask,
+ 			     u16 clr_mask)
+ {
+-	unsigned int value;
++	int err;
+=20
+-	clr_mask |=3D LM75_SHUTDOWN << (8 * data->params->config_reg_16bits);
+-	value =3D data->current_conf & ~clr_mask;
+-	value |=3D set_mask;
++	err =3D regmap_update_bits(data->regmap, LM75_REG_CONF,
++				 clr_mask | LM75_SHUTDOWN, set_mask);
++	if (err)
++		return err;
+=20
+-	if (data->current_conf !=3D value) {
+-		s32 err;
+-		if (data->params->config_reg_16bits)
+-			err =3D regmap_write(data->regmap, LM75_REG_CONF, value);
+-		else
+-			err =3D i2c_smbus_write_byte_data(data->client,
+-							LM75_REG_CONF,
+-							value);
+-		if (err)
+-			return err;
+-		data->current_conf =3D value;
+-	}
+ 	return 0;
+ }
+=20
+-static int lm75_read_config(struct lm75_data *data)
+-{
+-	int ret;
+-	unsigned int status;
+-
+-	if (data->params->config_reg_16bits) {
+-		ret =3D regmap_read(data->regmap, LM75_REG_CONF, &status);
+-		return ret ? ret : status;
+-	}
+-
+-	return i2c_smbus_read_byte_data(data->client, LM75_REG_CONF);
+-}
+-
+ static irqreturn_t lm75_alarm_handler(int irq, void *private)
+ {
+ 	struct device *hwmon_dev =3D private;
+@@ -427,7 +403,8 @@ static int lm75_read(struct device *dev, enum hwmon_sen=
+sor_types type,
+ 		if (attr =3D=3D hwmon_temp_alarm) {
+ 			switch (data->kind) {
+ 			case as6200:
+-				*val =3D (regval >> 5) & 0x1;
++			case tmp112:
++				*val =3D (regval >> 13) & 0x1;
+ 				break;
+ 			default:
+ 				return -EINVAL;
+@@ -478,7 +455,6 @@ static int lm75_write_temp(struct device *dev, u32 attr=
+, long temp)
+ static int lm75_update_interval(struct device *dev, long val)
+ {
+ 	struct lm75_data *data =3D dev_get_drvdata(dev);
+-	unsigned int reg;
+ 	u8 index;
+ 	s32 err;
+=20
+@@ -498,19 +474,14 @@ static int lm75_update_interval(struct device *dev, l=
+ong val)
+ 		break;
+ 	case tmp112:
+ 	case as6200:
+-		err =3D regmap_read(data->regmap, LM75_REG_CONF, &reg);
+-		if (err < 0)
+-			return err;
+-		reg &=3D ~0x00c0;
+-		reg |=3D (3 - index) << 6;
+-		err =3D regmap_write(data->regmap, LM75_REG_CONF, reg);
++		err =3D regmap_update_bits(data->regmap, LM75_REG_CONF,
++					 0xc000, (3 - index) << 14);
+ 		if (err < 0)
+ 			return err;
+ 		data->sample_time =3D data->params->sample_times[index];
+ 		break;
+ 	case pct2075:
+-		err =3D i2c_smbus_write_byte_data(data->client, PCT2075_REG_IDLE,
+-						index + 1);
++		err =3D regmap_write(data->regmap, PCT2075_REG_IDLE, index + 1);
+ 		if (err)
+ 			return err;
+ 		data->sample_time =3D data->params->sample_times[index];
+@@ -607,6 +578,39 @@ static bool lm75_is_volatile_reg(struct device *dev, u=
+nsigned int reg)
+ 	return reg =3D=3D LM75_REG_TEMP || reg =3D=3D LM75_REG_CONF;
+ }
+=20
++static int lm75_i2c_reg_read(void *context, unsigned int reg, unsigned int=
+ *val)
++{
++	struct lm75_data *data =3D context;
++	struct i2c_client *client =3D data->client;
++	int ret;
++
++	if (reg =3D=3D LM75_REG_CONF) {
++		if (!data->params->config_reg_16bits)
++			ret =3D i2c_smbus_read_byte_data(client, LM75_REG_CONF);
++		else
++			ret =3D i2c_smbus_read_word_data(client, LM75_REG_CONF);
++	} else {
++		ret =3D i2c_smbus_read_word_swapped(client, reg);
++	}
++	if (ret < 0)
++		return ret;
++	*val =3D ret;
++	return 0;
++}
++
++static int lm75_i2c_reg_write(void *context, unsigned int reg, unsigned in=
+t val)
++{
++	struct lm75_data *data =3D context;
++	struct i2c_client *client =3D data->client;
++
++	if (reg =3D=3D PCT2075_REG_IDLE ||
++	    (reg =3D=3D LM75_REG_CONF && !data->params->config_reg_16bits))
++		return i2c_smbus_write_byte_data(client, reg, val);
++	else if (reg =3D=3D LM75_REG_CONF)
++		return i2c_smbus_write_word_data(client, reg, val);
++	return i2c_smbus_write_word_swapped(client, reg, val);
++}
++
+ static const struct regmap_config lm75_regmap_config =3D {
+ 	.reg_bits =3D 8,
+ 	.val_bits =3D 16,
+@@ -619,6 +623,11 @@ static const struct regmap_config lm75_regmap_config =
+=3D {
+ 	.use_single_write =3D true,
+ };
+=20
++static const struct regmap_bus lm75_i2c_regmap_bus =3D {
++	.reg_read =3D lm75_i2c_reg_read,
++	.reg_write =3D lm75_i2c_reg_write,
++};
++
+ static void lm75_disable_regulator(void *data)
+ {
+ 	struct lm75_data *lm75 =3D data;
+@@ -629,9 +638,8 @@ static void lm75_disable_regulator(void *data)
+ static void lm75_remove(void *data)
+ {
+ 	struct lm75_data *lm75 =3D data;
+-	struct i2c_client *client =3D lm75->client;
+=20
+-	i2c_smbus_write_byte_data(client, LM75_REG_CONF, lm75->orig_conf);
++	regmap_write(lm75->regmap, LM75_REG_CONF, lm75->orig_conf);
+ }
+=20
+ static int lm75_probe(struct i2c_client *client)
+@@ -649,6 +657,9 @@ static int lm75_probe(struct i2c_client *client)
+ 	if (!data)
+ 		return -ENOMEM;
+=20
++	/* needed by custom regmap callbacks */
++	dev_set_drvdata(dev, data);
++
+ 	data->client =3D client;
+ 	data->kind =3D (uintptr_t)i2c_get_match_data(client);
+=20
+@@ -656,7 +667,8 @@ static int lm75_probe(struct i2c_client *client)
+ 	if (IS_ERR(data->vs))
+ 		return PTR_ERR(data->vs);
+=20
+-	data->regmap =3D devm_regmap_init_i2c(client, &lm75_regmap_config);
++	data->regmap =3D devm_regmap_init(dev, &lm75_i2c_regmap_bus, data,
++					&lm75_regmap_config);
+ 	if (IS_ERR(data->regmap))
+ 		return PTR_ERR(data->regmap);
+=20
+@@ -682,13 +694,10 @@ static int lm75_probe(struct i2c_client *client)
+ 		return err;
+=20
+ 	/* Cache original configuration */
+-	status =3D lm75_read_config(data);
+-	if (status < 0) {
+-		dev_dbg(dev, "Can't read config? %d\n", status);
+-		return status;
+-	}
++	err =3D regmap_read(data->regmap, LM75_REG_CONF, &status);
++	if (err)
++		return err;
+ 	data->orig_conf =3D status;
+-	data->current_conf =3D status;
+=20
+ 	err =3D lm75_write_config(data, data->params->set_mask,
+ 				data->params->clr_mask);
+@@ -986,32 +995,16 @@ static int lm75_detect(struct i2c_client *new_client,
+ #ifdef CONFIG_PM
+ static int lm75_suspend(struct device *dev)
+ {
+-	int status;
+-	struct i2c_client *client =3D to_i2c_client(dev);
++	struct lm75_data *data =3D dev_get_drvdata(dev);
+=20
+-	status =3D i2c_smbus_read_byte_data(client, LM75_REG_CONF);
+-	if (status < 0) {
+-		dev_dbg(&client->dev, "Can't read config? %d\n", status);
+-		return status;
+-	}
+-	status =3D status | LM75_SHUTDOWN;
+-	i2c_smbus_write_byte_data(client, LM75_REG_CONF, status);
+-	return 0;
++	return regmap_update_bits(data->regmap, LM75_REG_CONF, LM75_SHUTDOWN, LM7=
+5_SHUTDOWN);
+ }
+=20
+ static int lm75_resume(struct device *dev)
+ {
+-	int status;
+-	struct i2c_client *client =3D to_i2c_client(dev);
++	struct lm75_data *data =3D dev_get_drvdata(dev);
+=20
+-	status =3D i2c_smbus_read_byte_data(client, LM75_REG_CONF);
+-	if (status < 0) {
+-		dev_dbg(&client->dev, "Can't read config? %d\n", status);
+-		return status;
+-	}
+-	status =3D status & ~LM75_SHUTDOWN;
+-	i2c_smbus_write_byte_data(client, LM75_REG_CONF, status);
+-	return 0;
++	return regmap_update_bits(data->regmap, LM75_REG_CONF, LM75_SHUTDOWN, 0);
+ }
+=20
+ static const struct dev_pm_ops lm75_dev_pm_ops =3D {
 --=20
 2.54.0
 
