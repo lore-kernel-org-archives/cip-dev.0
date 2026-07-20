@@ -2,27 +2,27 @@ Return-Path: <pavel@nabladev.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 617EBC44529
-	for <webhook@archiver.kernel.org>; Mon, 20 Jul 2026 20:15:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 635C9C44515
+	for <webhook@archiver.kernel.org>; Mon, 20 Jul 2026 20:16:04 +0000 (UTC)
 Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.6763.1784578500989119456
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.6789.1784578559415730044
  for <cip-dev@lists.cip-project.org>;
- Mon, 20 Jul 2026 13:15:01 -0700
+ Mon, 20 Jul 2026 13:15:59 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=OLOpdsf2;
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=AFgf2VcH;
  spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1E44D11A91F;
-	Mon, 20 Jul 2026 22:14:59 +0200 (CEST)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 58572116D5B;
+	Mon, 20 Jul 2026 22:15:57 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1784578499;
+	s=dkim; t=1784578557;
 	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=5+aVCMrS3WSZwVoz+ZmsJni0iYgD7/ph0WSkVyZ+43E=;
-	b=OLOpdsf26+8095zwYvNqdoXTyKT2yRjcAG7G8ssrkjqryFX6uFSXvL+7CYG6EjOAsu+qVv
-	7DJMm7X8ONI7G03YACG/OD5FOib4CPN/y1eosfh890mPIDJN8onqLpuGiH7a/Zfl0kxqJe
-	LX4LYTRxEBWxdcgJEZbvn/RXTooIOEV1Z1nSn+u5aPoJ07euAt0ERcE7vNTC74dA0xBitu
-	TXFDP4Px/KsudkinX/Cg8xuNNnOcBYxZlyuf/C34sIAMnG5CXXQFUVaFi3sQ6LYHhstRsL
-	yCTo25/BvtaU6khBKcvubVNHaKd2zIAepB5GT83p+PPEMq8twGN65hzqAe/CaQ==
-Date: Mon, 20 Jul 2026 22:14:57 +0200
+	 in-reply-to:references; bh=zHgYzpuf3pZcWmHMiYlw38fBgg9UFEHEj7y4S6GaswA=;
+	b=AFgf2VcHR851F7PDP8YLA5JCiS4k3q983RMKmAavSMr6Sq1GpzThMQObxf6eytT9ecXPl2
+	EucZLNIKlJ6caXjYIg6CxM/qbpL5FV+XTVZuq34tEXZ4ym11KTSCg5WRw2Ce/AVvwv5f2S
+	/RZA9WlkTpNVjZ5iHmj7w+kke/UQiHQLvN10J/sfIQ6TqOEoE9YaD+KVh17ezUUa4/6XrQ
+	+VgggM+WBMcrM/b+tRysW0YlwuoVBsckPG//9RAHQ/+gIukX6U4UJr7lGlOGFPFlhVDzDY
+	HUXlEdJdPtVTlByBZjeKoWfYo5Nbk6J/DKspcOZ4JMNTXQ93WgoGF5nplgOECg==
+Date: Mon, 20 Jul 2026 22:15:56 +0200
 From: Pavel Machek <pavel@nabladev.com>
 To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 Cc: cip-dev@lists.cip-project.org,
@@ -31,75 +31,71 @@ Cc: cip-dev@lists.cip-project.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	tomm.merciai@gmail.com
-Subject: Re: [PATCH 6.1.y-cip 14/23] hwmon: (lm75) Fix tmp112 default config
-Message-ID: <al6BwdhAv7oaLPTh@duo.ucw.cz>
+Subject: Re: [PATCH 6.1.y-cip 02/23] dt-bindings: hwmon: ti,tmp108: Add
+ nxp,p3t1085 compatible string
+Message-ID: <al6B_ELxChTW5J0y@duo.ucw.cz>
 References: <20260717131241.2233788-1-tommaso.merciai.xr@bp.renesas.com>
- <20260717131241.2233788-15-tommaso.merciai.xr@bp.renesas.com>
+ <20260717131241.2233788-3-tommaso.merciai.xr@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="SZFG0YcF7XyJxnHM"
+	protocol="application/pgp-signature"; boundary="siBmR1QBTzlmVI/c"
 Content-Disposition: inline
-In-Reply-To: <20260717131241.2233788-15-tommaso.merciai.xr@bp.renesas.com>
+In-Reply-To: <20260717131241.2233788-3-tommaso.merciai.xr@bp.renesas.com>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 20 Jul 2026 20:15:04 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23687
+ <cip-dev@lists.cip-project.org>; Mon, 20 Jul 2026 20:16:04 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23688
 
 
---SZFG0YcF7XyJxnHM
+--siBmR1QBTzlmVI/c
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> From: Abdel Alkuor <alkuor@gmail.com>
+> From: Frank Li <Frank.Li@nxp.com>
 >=20
-> commit 8249a0e25dd2972e919a2552425bf4faa2581d24 upstream.
+> commit 4585580781d69d8627e15f027873e46282ea3787 upstream.
 >=20
-> Set tmp112 conversion rate to 8 HZ and 12-bit mode.
->=20
-> Fixes: 35cd18048542 ("hwmon: (lm75) Aproximate sample times to data-sheet=
- values")
-> Signed-off-by: Abdel Alkuor <alkuor@gmail.com>
-> Link: https://lore.kernel.org/r/20240106030254.384963-1-alkuor@gmail.com
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> ---
->  drivers/hwmon/lm75.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/hwmon/lm75.c b/drivers/hwmon/lm75.c
-> index f6e16dfa11c5..5eba180b66a0 100644
-> --- a/drivers/hwmon/lm75.c
-> +++ b/drivers/hwmon/lm75.c
-> @@ -270,8 +270,9 @@ static const struct lm75_params device_params[] =3D {
->  		.resolutions =3D (u8 []) {9, 10, 11, 12 },
->  	},
->  	[tmp112] =3D {
-> -		.set_mask =3D 3 << 5,	/* 8 samples / second */
-> -		.clr_mask =3D 1 << 7,	/* no one-shot mode*/
-> +		.config_reg_16bits =3D true,
-> +		.set_mask =3D 0x60C0,	/* 12-bit mode, 8 samples / second */
-> +		.clr_mask =3D 1 << 15,	/* no one-shot mode*/
+> The register layout of P3T1085 is the same as ti,tmp108. Add compatible
+> string nxp,p3t1085 for it. The difference of P3T1085 is support I3C.
 
-I would not mind space before "*/". But not your code and not your
-patch...
+> +++ b/Documentation/devicetree/bindings/hwmon/ti,tmp108.yaml
+> @@ -4,22 +4,26 @@
+>  $id: http://devicetree.org/schemas/hwmon/ti,tmp108.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+> =20
+> -title: TMP108 temperature sensor
+> +title: TMP108/P3T1085(NXP) temperature sensor
+> =20
+>  maintainers:
+>    - Krzysztof Kozlowski <krzk@kernel.org>
+> =20
+>  description: |
+> -  The TMP108 is a digital-output temperature sensor with a
+> +  The TMP108/P3T1085(NXP) is a digital-output temperature sensor with a
+>    dynamically-programmable limit window, and under- and overtemperature
+>    alert functions.
+> =20
+> +  P3T1085(NXP) support I3C.
+
+I believe this should be "supports".
 
 Best regards,
-								Pavel
+									Pavel
 
---SZFG0YcF7XyJxnHM
+--siBmR1QBTzlmVI/c
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCal6BwQAKCRAw5/Bqldv6
-8lu+AJ94uKOYtv1K90ETGFOkUJB2teA8BwCfT3oejY6XDBw9GFi3MyYPNIjHXOw=
-=yIkS
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCal6B/AAKCRAw5/Bqldv6
+8upEAKCOMKPJcGAWZOSzBJahRZPflfhL6QCdHwMTnRSFY4eZid6fWHYd7j1Z2iE=
+=D77z
 -----END PGP SIGNATURE-----
 
---SZFG0YcF7XyJxnHM--
+--siBmR1QBTzlmVI/c--
 
