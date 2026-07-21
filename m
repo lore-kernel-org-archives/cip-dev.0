@@ -1,333 +1,114 @@
-Return-Path: <claudiu.beznea@tuxon.dev>
+Return-Path: <pavel@nabladev.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E31BCC4451C
-	for <webhook@archiver.kernel.org>; Tue, 21 Jul 2026 09:21:46 +0000 (UTC)
-Received: from tor.source.kernel.org (tor.source.kernel.org [172.105.4.254])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.18423.1784625694713673381
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F12C4451C
+	for <webhook@archiver.kernel.org>; Tue, 21 Jul 2026 10:29:27 +0000 (UTC)
+Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.19532.1784629763405588254
  for <cip-dev@lists.cip-project.org>;
- Tue, 21 Jul 2026 02:21:34 -0700
+ Tue, 21 Jul 2026 03:29:24 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.105.4.254, mailfrom: srs0=o8it=fp=tuxon.dev=claudiu.beznea@kernel.org)
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by tor.source.kernel.org (Postfix) with ESMTP id B110F60A98;
-	Tue, 21 Jul 2026 09:21:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EF621F00A3D;
-	Tue, 21 Jul 2026 09:21:32 +0000 (UTC)
-Message-ID: <ab3ce8d0-fd10-435d-b5f0-91904ffbb9a7@tuxon.dev>
-Date: Tue, 21 Jul 2026 12:21:30 +0300
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=f0crZVkc;
+ spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A28E211AA5F;
+	Tue, 21 Jul 2026 12:29:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
+	s=dkim; t=1784629760;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=zGNxLYA2/SUwWgTiuoMYZsILmVJWIqTiQG6CjJr10BE=;
+	b=f0crZVkcfJRMX4Rch/pvNwfWFCqdRHZ9Mb50x3gNSR5dDHWJ3GX99tSIGqUtf7fzwXZ13i
+	G8cdBn3YmUOx+u9MzJ+57av9xwKBYyu3taf8E4UlJ0yhOrz35OxwN8CUt/111dFeKBRaYM
+	EfGkqH62CVOBF+MAPtl8f+xRRX6rI+kMbziXSaq7WxtKmxd96P6HU/+4J1I7isbd/PsHcq
+	SYZQwUrCKe46gctYw4X+UsqnpNUqJY2omu2RhLeT5+a92cpN8YNb57INUY4vZAZ2ukJqQz
+	OkwYm58yZhlEt/uwsQHH8YSvHLhfA384xW2TaT/V/AUaurJdbUv59kHfVJaHLw==
+Date: Tue, 21 Jul 2026 12:29:16 +0200
+From: Pavel Machek <pavel@nabladev.com>
+To: nobuhiro.iwamatsu.x90@mail.toshiba
+Cc: cip-dev@lists.cip-project.org, pavel@nabladev.com,
+	tommaso.merciai.xr@bp.renesas.com
+Subject: Re: [cip-dev] [PATCH v2 6.1.y-cip] i3c: master: dw: stop hardcoding
+ initial speed
+Message-ID: <al9J_Pud3pqoEXBO@duo.ucw.cz>
+References: <1784598692-26475-1-git-send-email-nobuhiro.iwamatsu.x90@mail.toshiba>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [cip-dev] [PATCH 6.12.y-cip v2 01/17] reset: rzg2l-usbphy-ctrl:
- Add support for USB PWRRDY
-To: nobuhiro.iwamatsu.x90@mail.toshiba, pavel@nabladev.com
-Cc: cip-dev@lists.cip-project.org
-References: <20260708081237.3882574-1-claudiu.beznea@tuxon.dev>
- <18C0424F82C9BC8D.550146@lists.cip-project.org>
-Content-Language: en-US
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <18C0424F82C9BC8D.550146@lists.cip-project.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="SR3e3J4saubMK7mE"
+Content-Disposition: inline
+In-Reply-To: <1784598692-26475-1-git-send-email-nobuhiro.iwamatsu.x90@mail.toshiba>
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 21 Jul 2026 09:21:46 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23692
+ <cip-dev@lists.cip-project.org>; Tue, 21 Jul 2026 10:29:27 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23693
 
-Hi, CIP maintainers,
 
-Could you please let me know if there's anything I need to do for this se=
-ries=20
-and the 6.1, 5.10 ones?
+--SR3e3J4saubMK7mE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thank you,
-Claudiu
+Hi!
 
-On 7/8/26 11:12, claudiu beznea via lists.cip-project.org wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> From: Jack Chen <zenghuchen@google.com>
 >=20
-> commit 78f2d64e484753bfede6a0e9eab0ef35830c34fb upstream.
+> commit 510d2358c466bf6588034f0d3b2266eed2bc0a51 upstream.
 >=20
-> On the Renesas RZ/G3S SoC, the USB PHY block has an input signal called
-> PWRRDY. This signal is managed by the system controller and must be
-> de-asserted after powering on the area where USB PHY resides and assert=
-ed
-> before powering it off.
+> Bus-speed could be default(12.5MHz) or defined by users in dts.
+> Dw-i3c-master should not hard-code the initial speed to be
+> I3C_BUS_TYP_I3C_SCL_RATE (12.5MHz)
+> And because of Synopsys's I3C controller limit (hcnt/lcnt register
+> length) and core-clk provided, there is a limit to bus speed, too.
+> For example, when core-clk is 250 MHz, the bus speed cannot be
+> lowered below 1MHz.
 >=20
-> On power-on/resume the USB PWRRDY signal need to be de-asserted before
-> enabling clock and switching the module to normal state (through MSTOP
-> support). The power-on/resume configuration sequence must be:
->=20
-> 1/ PWRRDY=3D0
-> 2/ CLK_ON=3D1
-> 3/ MSTOP=3D0
->=20
-> On power-off/suspend the configuration sequence should be:
->=20
-> 1/ MSTOP=3D1
-> 2/ CLK_ON=3D0
-> 3/ PWRRDY=3D1
->=20
-> The CLK_ON and MSTOP functionalities are controlled by clock drivers.
-> The suspend/resume support will be handled by different patches.
->=20
-> After long discussions with the internal HW team, it has been confirmed
-> that the HW connection b/w USB PHY block, the USB channels, the system
-> controller, clock, MSTOP, PWRRDY signal is as follows:
->=20
->                                 =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=90
->                                 =E2=94=82                              =
-=E2=94=82=E2=97=84=E2=94=80=E2=94=80 CPG_CLKON_USB.CLK0_ON
->                                 =E2=94=82     USB CH0                  =
-=E2=94=82
-> =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=90   =E2=94=82=E2=94=8C=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=90 =E2=94=82=E2=97=84=E2=94=80=E2=94=80 CPG_CLKON_USB.CLK2_ON
-> =E2=94=82                 =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=90   =E2=94=82=E2=94=82host co=
-ntroller registers  =E2=94=82 =E2=94=82
-> =E2=94=82                 =E2=94=82        =E2=94=82   =E2=94=82=E2=94=82=
-function controller registers=E2=94=82
-> =E2=94=82                 =E2=94=82 PHY0   =E2=94=82=E2=97=84=E2=94=80=E2=
-=94=80=E2=94=A4=E2=94=94=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=98 =E2=94=82
-> =E2=94=82     USB PHY     =E2=94=82        =E2=94=82   =E2=94=94=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=96=B2=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=98
-> =E2=94=82                 =E2=94=94=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=98                =E2=94=82
-> =E2=94=82                          =E2=94=82    CPG_BUS_PERI_COM_MSTOP.=
-MSTOP{6, 5}_ON
-> =E2=94=82=E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=90 =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=90
-> =E2=94=82=E2=94=82USHPHY control=E2=94=82 =E2=94=82        =E2=94=82
-> =E2=94=82=E2=94=82  registers   =E2=94=82 =E2=94=82 PHY1   =E2=94=82   =
-=E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=90
-> =E2=94=82=E2=94=94=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=98 =E2=94=82        =E2=94=82=E2=97=84=E2=94=80=E2=94=80=E2=94=A4    =
- USB CH1                  =E2=94=82
-> =E2=94=82                 =E2=94=94=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=98   =E2=94=82=E2=94=8C=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=90 =E2=94=82=E2=97=84=E2=94=80=E2=94=80 CPG_CLKON_USB.CLK=
-1_ON
-> =E2=94=94=E2=94=80=E2=96=B2=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=96=B2=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=96=B2=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=98   =E2=94=82=E2=94=82 host controller regis=
-ters =E2=94=82 =E2=94=82
->    =E2=94=82       =E2=94=82         =E2=94=82          =E2=94=82=E2=94=
-=94=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=98 =E2=94=82
->    =E2=94=82       =E2=94=82         =E2=94=82          =E2=94=94=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=96=B2=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=98
->    =E2=94=82       =E2=94=82         =E2=94=82                       =E2=
-=94=82
->    =E2=94=82       =E2=94=82         =E2=94=82           CPG_BUS_PERI_C=
-OM_MSTOP.MSTOP7_ON
->    =E2=94=82PWRRDY =E2=94=82         =E2=94=82
->    =E2=94=82       =E2=94=82   CPG_CLK_ON_USB.CLK3_ON
->    =E2=94=82       =E2=94=82
->    =E2=94=82  CPG_BUS_PERI_COM_MSTOP.MSTOP4_ON
->    =E2=94=82
-> =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=90
-> =E2=94=82SYSC=E2=94=82
-> =E2=94=94=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=98
->=20
-> where:
-> - CPG_CLKON_USB.CLK.CLKX_ON is the register bit controlling the clock X
->    of different USB blocks, X in {0, 1, 2, 3}
-> - CPG_BUS_PERI_COM_MSTOP.MSTOPX_ON is the register bit controlling the
->    MSTOP of different USB blocks, X in {4, 5, 6, 7}
-> - USB PHY is the USB PHY block exposing 2 ports, port0 and port1, used
->    by the USB CH0, USB CH1
-> - SYSC is the system controller block controlling the PWRRDY signal
-> - USB CHx are individual USB block with host and function capabilities
->    (USB CH0 have both host and function capabilities, USB CH1 has only
->    host capabilities)
->=20
-> The USBPHY control registers are controlled though the
-> reset-rzg2l-usbphy-ctrl driver. The USB PHY ports are controlled by
-> phy_rcar_gen3_usb2 (drivers/phy/renesas/phy-rcar-gen3-usb2.c file). The
-> USB PHY ports request resets from the reset-rzg2l-usbphy-ctrl driver.
->=20
-> The connection b/w the system controller and the USB PHY CTRL driver is
-> implemented through the renesas,sysc-pwrrdy device tree property
-> proposed in this patch. This property specifies the register offset and=
- the
-> bitmask required to control the PWRRDY signal.
->=20
-> Since the USB PHY CTRL driver needs to be probed before any other
-> USB-specific driver on RZ/G3S, control of PWRRDY is passed exclusively
-> to it. This guarantees the correct configuration sequence between clock=
-s,
-> MSTOP bits, and the PWRRDY bit on probe/resume and remove/suspend. At t=
-he
-> same time, changes are kept minimal by avoiding modifications to the US=
-B
-> PHY driver to also handle the PWRRDY itself.
->=20
-> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
->=20
-> Changes in v2:
-> - none
->=20
->   drivers/reset/Kconfig                   |  1 +
->   drivers/reset/reset-rzg2l-usbphy-ctrl.c | 56 ++++++++++++++++++++++++=
-+
->   2 files changed, 57 insertions(+)
->=20
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index 8329ebd982f1..380b7e87fcd6 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -227,6 +227,7 @@ config RESET_RASPBERRYPI
->   config RESET_RZG2L_USBPHY_CTRL
->   	tristate "Renesas RZ/G2L USBPHY control driver"
->   	depends on ARCH_RZG2L || COMPILE_TEST
-> +	select MFD_SYSCON
->   	help
->   	  Support for USBPHY Control found on RZ/G2L family. It mainly
->   	  controls reset and power down of the USB/PHY.
-> diff --git a/drivers/reset/reset-rzg2l-usbphy-ctrl.c b/drivers/reset/re=
-set-rzg2l-usbphy-ctrl.c
-> index 4e2ac1f0060c..dcc8c2dde3f8 100644
-> --- a/drivers/reset/reset-rzg2l-usbphy-ctrl.c
-> +++ b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
-> @@ -13,6 +13,7 @@
->   #include <linux/regmap.h>
->   #include <linux/reset.h>
->   #include <linux/reset-controller.h>
-> +#include <linux/mfd/syscon.h>
->  =20
->   #define RESET			0x000
->   #define VBENCTL			0x03c
-> @@ -91,6 +92,8 @@ static int rzg2l_usbphy_ctrl_status(struct reset_cont=
-roller_dev *rcdev,
->   	return !!(readl(priv->base + RESET) & port_mask);
->   }
->  =20
-> +#define RZG2L_USBPHY_CTRL_PWRRDY	1
-> +
->   static const struct of_device_id rzg2l_usbphy_ctrl_match_table[] =3D =
-{
->   	{ .compatible =3D "renesas,rzg2l-usbphy-ctrl" },
->   	{ /* Sentinel */ }
-> @@ -110,6 +113,55 @@ static const struct regmap_config rzg2l_usb_regcon=
-f =3D {
->   	.max_register =3D 1,
->   };
->  =20
-> +static void rzg2l_usbphy_ctrl_set_pwrrdy(struct regmap_field *pwrrdy,
-> +					 bool power_on)
-> +{
-> +	u32 val =3D power_on ? 0 : 1;
-> +
-> +	/* The initialization path guarantees that the mask is 1 bit long. */
-> +	regmap_field_update_bits(pwrrdy, 1, val);
-> +}
-> +
-> +static void rzg2l_usbphy_ctrl_pwrrdy_off(void *data)
-> +{
-> +	rzg2l_usbphy_ctrl_set_pwrrdy(data, false);
-> +}
-> +
-> +static int rzg2l_usbphy_ctrl_pwrrdy_init(struct device *dev)
-> +{
-> +	struct regmap_field *pwrrdy;
-> +	struct reg_field field;
-> +	struct regmap *regmap;
-> +	const int *data;
-> +	u32 args[2];
-> +
-> +	data =3D device_get_match_data(dev);
-> +	if ((uintptr_t)data !=3D RZG2L_USBPHY_CTRL_PWRRDY)
-> +		return 0;
-> +
-> +	regmap =3D syscon_regmap_lookup_by_phandle_args(dev->of_node,
-> +						      "renesas,sysc-pwrrdy",
-> +						      ARRAY_SIZE(args), args);
-> +	if (IS_ERR(regmap))
-> +		return PTR_ERR(regmap);
-> +
-> +	/* Don't allow more than one bit in mask. */
-> +	if (hweight32(args[1]) !=3D 1)
-> +		return -EINVAL;
-> +
-> +	field.reg =3D args[0];
-> +	field.lsb =3D __ffs(args[1]);
-> +	field.msb =3D __fls(args[1]);
-> +
-> +	pwrrdy =3D devm_regmap_field_alloc(dev, regmap, field);
-> +	if (!pwrrdy)
-> +		return -ENOMEM;
-> +
-> +	rzg2l_usbphy_ctrl_set_pwrrdy(pwrrdy, true);
-> +
-> +	return devm_add_action_or_reset(dev, rzg2l_usbphy_ctrl_pwrrdy_off, pw=
-rrdy);
-> +}
-> +
->   static int rzg2l_usbphy_ctrl_probe(struct platform_device *pdev)
->   {
->   	struct device *dev =3D &pdev->dev;
-> @@ -132,6 +184,10 @@ static int rzg2l_usbphy_ctrl_probe(struct platform=
-_device *pdev)
->   	if (IS_ERR(regmap))
->   		return PTR_ERR(regmap);
->  =20
-> +	error =3D rzg2l_usbphy_ctrl_pwrrdy_init(dev);
-> +	if (error)
-> +		return error;
-> +
->   	priv->rstc =3D devm_reset_control_get_exclusive(&pdev->dev, NULL);
->   	if (IS_ERR(priv->rstc))
->   		return dev_err_probe(dev, PTR_ERR(priv->rstc),
->=20
->=20
->=20
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#23530): https://lists.cip-project.org/g/cip-dev/mes=
-sage/23530
-> Mute This Topic: https://lists.cip-project.org/mt/120170421/8377987
-> Group Owner: cip-dev+owner@lists.cip-project.org
-> Unsubscribe: https://lists.cip-project.org/g/cip-dev/unsub [claudiu.bez=
-nea@tuxon.dev]
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
->=20
+> Tested: tested with an i3c sensor and captured with a logic
+> analyzer.
 
+This is already in 6.12.0, so no need to do anything there. Looks good
+to me.
+
+Reviewed-by: Pavel Machek <pavel@nabladev.com>
+
+I'll apply it if it passes testing (and there are no other comments).
+
+Best regards,
+                                                                Pavel
+
+
+> +++ b/drivers/i3c/master/dw-i3c-master.c
+> @@ -531,7 +531,7 @@ static int dw_i3c_clk_cfg(struct dw_i3c_master *maste=
+r)
+>  	if (hcnt < SCL_I3C_TIMING_CNT_MIN)
+>  		hcnt =3D SCL_I3C_TIMING_CNT_MIN;
+> =20
+> -	lcnt =3D DIV_ROUND_UP(core_rate, I3C_BUS_TYP_I3C_SCL_RATE) - hcnt;
+> +	lcnt =3D DIV_ROUND_UP(core_rate, master->base.bus.scl_rate.i3c) - hcnt;
+>  	if (lcnt < SCL_I3C_TIMING_CNT_MIN)
+>  		lcnt =3D SCL_I3C_TIMING_CNT_MIN;
+> =20
+> @@ -541,7 +541,8 @@ static int dw_i3c_clk_cfg(struct dw_i3c_master *maste=
+r)
+>  	if (!(readl(master->regs + DEVICE_CTRL) & DEV_CTRL_I2C_SLAVE_PRESENT))
+>  		writel(BUS_I3C_MST_FREE(lcnt), master->regs + BUS_FREE_TIMING);
+> =20
+> -	lcnt =3D DIV_ROUND_UP(I3C_BUS_TLOW_OD_MIN_NS, core_period);
+> +	lcnt =3D max_t(u8,
+> +		     DIV_ROUND_UP(I3C_BUS_TLOW_OD_MIN_NS, core_period), lcnt);
+>  	scl_timing =3D SCL_I3C_TIMING_HCNT(hcnt) | SCL_I3C_TIMING_LCNT(lcnt);
+>  	writel(scl_timing, master->regs + SCL_I3C_OD_TIMING);
+> =20
+
+--SR3e3J4saubMK7mE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCal9J/AAKCRAw5/Bqldv6
+8n/jAJ4s6+T6rU1shBYlMzwSto8mIZWHkQCfWSTsvtEsnzZSuDYYqrRUh2MKf3k=
+=uTW5
+-----END PGP SIGNATURE-----
+
+--SR3e3J4saubMK7mE--
 
