@@ -1,501 +1,340 @@
-Return-Path: <nobuhiro.iwamatsu.x90@mail.toshiba>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB552C44529
-	for <webhook@archiver.kernel.org>; Tue, 21 Jul 2026 12:20:50 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.135])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.21273.1784636440788598236
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C708FC4451C
+	for <webhook@archiver.kernel.org>; Tue, 21 Jul 2026 12:33:40 +0000 (UTC)
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (DB3PR0202CU003.outbound.protection.outlook.com [52.101.84.28])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.21573.1784637211543283734
  for <cip-dev@lists.cip-project.org>;
- Tue, 21 Jul 2026 05:20:42 -0700
+ Tue, 21 Jul 2026 05:33:32 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.s=key2.smx header.b=FCGWeuf4;
- spf=pass (domain: mail.toshiba, ip: 210.130.202.135, mailfrom: nobuhiro.iwamatsu.x90@mail.toshiba)
-DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=mail.toshiba;h=From:To:CC:
-	Subject:Date:Message-ID:Content-Type:Content-Transfer-Encoding:MIME-Version;
-	i=nobuhiro.iwamatsu.x90@mail.toshiba;s=key2.smx;t=1784636429;x=1785846029;bh=
-	uFaO691WC8w0k5nZE4fLiVhfVD2mJSw9psZ94zGq9dw=;b=FCGWeuf42zSuYK3mFGjMwmuzwKuXPC
-	LK7EHBY64yyFOANsQZPqs7AjzJa5FmvLkYqGQtuW1I9siTjZAEGqM+no3a3oPW+aVT6sQrnBqDKSe
-	qi3uB6lGNow5J8pBxRZTZqeVtQEAVU1+y83INGoO8HNJAFgnyWXbBupCzTweMZrGtqJj+CkDvitB0
-	44a2CEPrxPKzBpqmAClQ567b1YFvgmvylZU7faiQH/miq5XvcYs/7gD8XOOm+pjG6JUdsYPsF6c3D
-	CVUsgBYgXYKISGTUQ6Db4jnrbbO4WzeLmZhq2d5H3vpAylIrDNrhVt+6qhJOSsOgz2EgNVI0YqWTS
-	c6NA==;
-Received: by mo-csw.securemx.jp (mx-mo-csw1801) id 66LCKRmU2645408; Tue, 21 Jul 2026 21:20:28 +0900
-X-Iguazu-Qid: 2yAbkFS0Lzu9kXtuwz
-X-Iguazu-QSIG: v=2; s=1; t=1784636427; q=2yAbkFS0Lzu9kXtuwz; m=tioH2GncLNZf6wXfIt7d0W0vmSrswxTkXgL9cGzlguM=
-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	 id 4h4GgG0C5Mz1xnZ; Tue, 21 Jul 2026 21:20:26 +0900 (JST)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=nFOZ02Sy;
+ spf=pass (domain: siemens.com, ip: 52.101.84.28, mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iIVhmcDMHGxzUSambsEyus9tn2YGjnLi5kFzVPE+ya7D5X74sCzjAjcEtLKlCZcgdiNrRtpke8jLRkBsXzUf8Z/79pNo8sGe6v3YVfZ7/o1lbp0tI25anTAmzCNYp8W9Og94NzYhVXq+4+6sjhF4tcU1/SxJ3EOSOytg7Fz5cdw0Alm+zWPTDU+IEzqOi+h2nr1DvZdQAffHl6s7itf7qkImh+SW+sLQcw9M4L2CokBzeKB2WcpANsscZzEJv8w7F6thjCEs+Jx+L6OQhN4OAxgdEC+cbBqE91qokHCh/4r9B4WKD09SZIlSnE7vnefjp/c/joDq8uI9OSUJwDbkdg==
+ b=QCFz+abaps2eA75r03mMbXwEL5usx/Fmrhb9BGaFZG6Nvv/dU8NKPF9Yco6fDhvGeM82tUTUyS7GQ3hGZ+tCC1wzg9vpa95rFyRfvQbvGreHbD9xznnGysK4gCPI062bceUNTKSkEzM2ut98rC8BaUxtXrPp6mqHZQtC4I+HcgU6mFqFNzzZp7UKYo/YHVn5rrxkEfkJRoDdBgsM14v6jNGabqBRcIG4BuziXfTwjRaTC38YrU0fOwALgGtfNNGmxOQ6xgiGZAZjniA0yIHAOsf3zAEsX0Fdi+H+bpwXtGJFAQ5uRkkaWjBClmhxUZGrOsuRREDYRWcQBBkiPdT0bw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7FVvyHpt+gNOoonZW8/cQyf7psYWfNDYJpzJAs6Tey8=;
- b=i8RLI5zuCslWIwRP/N8w21IuU//gqjBEGRZD5aLZfhsdA21N9xbws6iylT47c4wv2UP8gd623DxJb41EvuzJuC50nX1XVV3+S5u+cqlK6RiXaxUcr0x9xG+j4c43PNiEvLlvmy41tqiQizAF4L8fpU165i7sA5SJExnBKvBnebYhxw2ScS7LMVxhk8o+jWFtmPjj85DovoMJ8P8dWuQf1sa1+W1tinx+DS/cupTiacxMreA/pBRUfWoVgedIkl/+QHuHc/ZpOBvuTppSCCi+esitwpjgj1A55/MQeTxcyIkm3QKh7PtkxsAdFF1a8fWOAvgnWEaHISnQLqjZJ+j45w==
+ bh=lQygGGAJJfVsiNjUDwFndaFR7tdFnqfkL/U7BVhy42M=;
+ b=cHuiMvbI1y5SP1np2KjiLOB6xfJu4iv1TlDOh35nbGXNr/65pTvP1ZEVofs0VWKiUC3jU1OpjcjIHhTVlot6c0ruT3+++z8ZPKaaWIFg3Y1KcNF1kaB3FQ7a5vMtLvnitE2+BmkVjHgpatwblczK11H1lFrROg4ARhqEy4xhwSmwHcAI/9zd5AKg1SMNkuKLTZKMho2wWSrfApG/kctZ+daZOuDAtB65GXvLaQJE3qERn4mdNh7TRFrBomZkpJOoP/mKH5M1CwAzusNG87bhRJ4GVM2cdRCgbBMC85ISjpTluXGxWAp7GC69q5m4VRIrrEHhBsdtWTt/l/zKivdoyg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mail.toshiba; dmarc=pass action=none header.from=mail.toshiba;
- dkim=pass header.d=mail.toshiba; arc=none
-From: <nobuhiro.iwamatsu.x90@mail.toshiba>
-To: <cip-dev@lists.cip-project.org>
-CC: <pavel@nabladev.com>, <jan.kiszka@siemens.com>, <uli@fpond.eu>,
-        <masami.ichikawa@cybertrust.co.jp>, <chris.paterson2@renesas.com>
-Subject: [ANNOUNCE] Release v6.1.177-cip58
-Thread-Topic: [ANNOUNCE] Release v6.1.177-cip58
-Thread-Index: Ad0ZC0aIUxaOU7TnQaSnssxfmNaNIQ==
-Date: Tue, 21 Jul 2026 12:20:22 +0000
-X-TSB-HOP2: ON
-Message-ID: 
- <TY7PR01MB14818A3080106B78557C45BD2CDC22@TY7PR01MB14818.jpnprd01.prod.outlook.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mail.toshiba;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY7PR01MB14818:EE_|OSCPR01MB15962:EE_
-x-ms-office365-filtering-correlation-id: 9928bff7-53d9-404d-314a-08dee7226fff
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|23010399003|376014|1800799024|366016|11063799006|56012099006|10067099003|6133799003|18002099003|38070700021;
-x-microsoft-antispam-message-info: 
- R/UcHL+iwVlMADSf/mIbKnHb+LcLoUj1oVJRXHJa/VPWAWiZXx/kqu3CZrV2gPS8yAVssT0TQqCqfxLXgVvotmj9UrBJ7a4KWzA6OD2fRKpfn72B5laqehbNYkGXR/eCaYwWxMDFhJkGePrFqEZrVifO4fIJH9FFSjg0VDbfLXkuaa++s/K89IlOxr2VHwWLmV+vY3+FY7VvYI3VNqVsHxrSvT7M7972Omwza/g4Skm39LvjgGefnw4lusUEWjgVnlH6otbeG9BJ1dvU7+uVo1jp31ECeWHrJQombyf5QZ8VZh6p9RqtzsVCSKdBhoc5mha/v2b9VmzWdfqx7lht9tp9w1X19BjN2He1KPzS+YC+tnCT44gENU3EknH9uZb8iOj+qU9lf0cc43PhEcRPYy8wd1PBY8NdDqU8BO0tU51QuA7DsydMuafiRCY1vxA0miyeMiUUejd2pe2jcqtCGVYhh+GjgXXojQL0PsgxrMcw5z6jrVIzxI4bKYx33I3KCpU67jMTNkg5HqYtF73ZVJPRRPycxTz0GZvqWxLBdKhcOxu4G/yu0A6N3GaudeOsQjN52Y2QrWh0+ToPC8rHn+cNk4kt70etAltkZlfAkzQuIzkzqfhyYo7Znj+pZlOGZKOh47THe1H9mxpdK4bclRxGIj8IzBMO/Ka/pVDVEYSfDoj099OfeldcpsqjWT+efz3t7LQqfsQAm6S5n5UlYCpffkScR1LJ+ASh8G0fbOs=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7PR01MB14818.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(376014)(1800799024)(366016)(11063799006)(56012099006)(10067099003)(6133799003)(18002099003)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?WTA0WDVOREY3cW84Qlc3bXZaN3dhNTlnVG9POE9vTFNYSnNmUXdPcUkz?=
- =?iso-2022-jp?B?VnRiQ1VqOHZBWXltejA3M3JRaDkybXpHaEZTOEdyOWpFWGNNcVlxS2Iy?=
- =?iso-2022-jp?B?SVRZajlWc01UMEw0QThxYUZEZGc0ZjlTR2Q4ZHdBRnZxaUxtUHozOTBE?=
- =?iso-2022-jp?B?bWtZVVpCMHg3aDBBUUNKblVkWTR2RXd0M0lqSE82UXFGSXJWMFhHRGo2?=
- =?iso-2022-jp?B?UHNuTDFiSm9FTC9xb3ZSRVpjMTlyeVV5SmVHWWhHbmRySFhWRGYzclMy?=
- =?iso-2022-jp?B?UnR1eXI2TDdCSGVoMUhFR0J6dVo0OUdTLzVjUER1V05OdkxGa0FDcmpp?=
- =?iso-2022-jp?B?L0MvdzZWT1dlWEZoYWxIK1ZuSlJRSUp2NXF5Z2hOY0lJc0RWazlrTWZt?=
- =?iso-2022-jp?B?OEZKSnVxMXU1cXJUbUd6NDZFS3NHdlhsYjZWZGVKMjZTZVZnc2RkU1BC?=
- =?iso-2022-jp?B?UFV5N0tFcnc0c29nQW5rUlMrNXZYdEtSTTE0M2UyMHg2YlpNYzJDaENy?=
- =?iso-2022-jp?B?b0JwT3V2UTY0ZjZRNTBrVVpzVzZXVTRldWw4UmgzVWc5N2pQN0dVb0pL?=
- =?iso-2022-jp?B?T25uNFZWL0Z4dTlFM1llUXVZM2YvVk1IdGdjVWlGUThtZVZiVmh1cHl2?=
- =?iso-2022-jp?B?QTY1U0YxZG1kaG55dHRSOENZbFpuUjVFeUhPRXJrNVF4eUdzQWtRajg5?=
- =?iso-2022-jp?B?cm9PU1lsckE2L0lpclpRRXEybU9DWWh2MXFQdVpzcGRUVmpBSkNUYTNF?=
- =?iso-2022-jp?B?M2pKSnQ0Vm9yMGhnVzhmUG9yOUo2R1lMZzVvZU00dFMxVk1nclpXcWVl?=
- =?iso-2022-jp?B?ZmFDVTQvQW56VTVwdldnQ1lCSkZrYUpCMkdOL1NVSkw4UW56eWpRbzVZ?=
- =?iso-2022-jp?B?SnlvRHl1cHJsR1M5RCtiOGs5alNQaGlTTXZZZ2doQ09wYkNSditONGht?=
- =?iso-2022-jp?B?eng3LytNOEVXdDBCTktoNExvalh2aXlQaWROcDBsb2g3T2YwSEVsdkE5?=
- =?iso-2022-jp?B?ZXJRYmIwa1ZzUTZqOXFmZTE0VmlyOUxJYkd5Tk5Vek9MUmEvR01GNWI4?=
- =?iso-2022-jp?B?RFhzRXV2T3JlUlhtSmczQ1VnTUw4ckNyUloyUGRkbTFadGxwclBweHAz?=
- =?iso-2022-jp?B?UU1weXNqVlQ0S3hUMGMxREdNOFRpcVoxSDJoSE5qaGZoK3ExUVBjcnVU?=
- =?iso-2022-jp?B?ekM0V1pMSi9vYjMxcm9wa0tHOVFZd1JzcUQ0dGZwa1hGRnBic2J5b1E2?=
- =?iso-2022-jp?B?bm5peXQvOGg0Vkx4ZHQ3V0lNd1dJK2xramVWOUhvTjFsWjlaYnVmejVG?=
- =?iso-2022-jp?B?eUJwUG83c3ZFbVBHYklaanFkblJDWHNDU1dPWU40Uk81UjQ0VXFCdm5S?=
- =?iso-2022-jp?B?KzRnMjJYTDlpdXFEb1hIdG9sdFNXT1I0aW9aTDdzTGxtOFM1NDR4VnZq?=
- =?iso-2022-jp?B?ODdsVDNYT29wUmNPelQvVldEWHdaRUtqNTdhUzFCTDg0TUVPWmFsVUds?=
- =?iso-2022-jp?B?aGdtK081WTF6Wmx0dU90bTZGUHg0Y2hmRFVHdVhodjgwQTByZEtkc3pv?=
- =?iso-2022-jp?B?bHdpQ09UWlM4WVVDb3QreGltQ3U0QVZCa2MxYVl0SHBZbUJsUHB0eHdG?=
- =?iso-2022-jp?B?SDRvS0RNTVA1cGR6VTU5ZzF2VHgzL3dGbGxFRjJySmNoVk1XSGxXOFI5?=
- =?iso-2022-jp?B?R2RxZDVudzlwR1AxaXQ2Y2RpaU0xZFNTa0l6WE9VWGFNRDdmbG51aU9n?=
- =?iso-2022-jp?B?d0sxNXFZK1JKSWx1TElJLzJEbGh5b0g3b2xDZzhoNDNWZDdSb2RkcXhI?=
- =?iso-2022-jp?B?VWdiUlpocjJ3QmVLT2lFSlFoU3ErVjZzVXlJSG84R0lHbkx6bnRVSmJF?=
- =?iso-2022-jp?B?RGd2ZnU0V09HN25uSVd6RWNvTlhTNEd4aVQ2bnZWeUhaMTVhT1VHRFpK?=
- =?iso-2022-jp?B?SG1kelVOWjhhUmdJMHMwc2VrSjZkcGZMV0EvS0w5ck5kaDV5YzViNDdP?=
- =?iso-2022-jp?B?T21VUDZNdVZXeE5VRWF4QjdEcXNHcFVjWVZjQlAxSUxjTCtlTThib00z?=
- =?iso-2022-jp?B?ZTZWbmJxMW9sMS9kV05wcHAzZDJudmdDV0pmTGZIU05YdXdJQ0x3R3V6?=
- =?iso-2022-jp?B?SThOVFFwSXBoaXNPbzZhaGh4b1JJV0xoL1JOUHE1WFhoSFNreWNhYTBz?=
- =?iso-2022-jp?B?d1BYbjIyVnBvZ1dQeGlHVGJZRUJSNStHQWozMEJScGUyYUVnV0owQlZy?=
- =?iso-2022-jp?B?dXBqZXFkNmxpVTZ4dFF3NXZTOW12T3h4Tm90bWREQUhmRmE1M1BUM0Mr?=
- =?iso-2022-jp?B?dGV4Y1ZncnFTWEgzbnl4WENHL2R4aFZYaG5XUkVFZ3VBRUEwN1l0VHN1?=
- =?iso-2022-jp?B?dTcwdEtnZW42TGx4bytDMHo4WTY0YlEvY0tpVGZOYW5IU0t6c2dCalNl?=
- =?iso-2022-jp?B?MjBGbVpxMmRYSmY0YUdDc0dVZ2xJR25TMElKRy9UYWlOczlCL2t5UFFq?=
- =?iso-2022-jp?B?TmZpTDVJVjhxOTQzREptU2FEdzZyUjROS05ZYUFpalc5WmVPdWZkbjlk?=
- =?iso-2022-jp?B?cW15bTZmbz0=?=
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lQygGGAJJfVsiNjUDwFndaFR7tdFnqfkL/U7BVhy42M=;
+ b=nFOZ02Sypr78lgoc3YIHa3YJqBSd008DCnkvGKJf+iTOHZmAKfFIs/7wnsQfYl43EjgLHJOfg0wKDyyb0kTYf4QLj2qdiY3FRz494r4eqqCs8V3MY/gFvBo2UGbwRrSRMfHokt2NbQ47QPON9Bb8EsBbf0wQcUAffbgH/9IUN+V7YJ2JgWfOEiYEz2vIn8C4jE50B/6C9zY1BL5rqzmObrUVHW5sIbmhCMt4ChZBxGDUywdrXvQSbZFN0Haqlli7fN6ARxQc3E1YXKVtg91WEGUXdPb2Rgtv7Rv8VZeQr08oa4I26qZ5SlW7ZllVbHJuN6ha6cndCsQ3gKOzI1luyQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:113::12)
+ by PAWPR10MB8185.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:37f::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.223.18; Tue, 21 Jul
+ 2026 12:33:27 +0000
+Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::ae26:d131:7cff:4001]) by DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::ae26:d131:7cff:4001%5]) with mapi id 15.21.0223.017; Tue, 21 Jul 2026
+ 12:33:27 +0000
+Message-ID: <4db6bf49-db59-46c2-a627-2567ae26058a@siemens.com>
+Date: Tue, 21 Jul 2026 14:33:26 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [cip-dev] [isar-cip-core][PATCH v3 1/2] Add support for Renesas
+ rzt2h-evk platform
+To: cip-dev@lists.cip-project.org
+References: <20260721114828.1390-1-hung.tran.jy@renesas.com>
+ <20260721114828.1390-2-hung.tran.jy@renesas.com>
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+Content-Language: en-US
+Autocrypt: addr=quirin.gylstorff@siemens.com; keydata=
+ xsFNBGhxJPIBEADH6a6idt3FEJo4DFxeRRX2ZUHJjOSPTpBN4vK2FbvDJjBVLs1/xzNpOE/N
+ CxDcH0nd4BApJeGzxjJpsHW9gm9w80oIG2HAZl4es79JdRt6H5GTdFaux1J8tLVTCS3bzeuu
+ ydAUTesliWxSiEb4vqpmcduI42edmJF9E43jjLXDyJcXJa0qYXA0qvChJr7gbkGmWc7iR8A5
+ ZX1CrJJbwUBtzXGGThDPycgPYB1eR9OcFWJ2E6dBcLQiNxyOvxfpTKf09eZi2hBrZESpjMKo
+ U/t9LX9SbyRwzpIeXQe8LQgyhppENmGSjc+Lm0YIreIU4ODbt1takxHTIpin1Po7lFiDMQmW
+ aZrfNFKNQoffVyHq1gpV5BGIbnm8yJixpEueL2oygnN/evyNPQV7NzSoQaJy2lJRGjo4YrQy
+ dfpJyaajNeO1njSttdWC30q28ZUorPzBPfLwt7B/BXyiMiY6/SZunfKQDAY+g835YTjEhBgl
+ KtXEamOfypEvYfvzQUpLrFgK55yrDSndtNm71APD4oVNeV1I0KqbuBQk4o3TkR6ZYb4RLp9O
+ dKGEnKCBaBaWJgf/1v4BLJ/ge8k135R1JLiyK/FylJbnsABE9k7/lELFKrwW22qgspkQAf13
+ h2+T65+637hkxhGRYnrtmxjOUk4EbYbAA+rtj0mpBxnziWojQQARAQABzS9RdWlyaW4gR3ls
+ c3RvcmZmIDxxdWlyaW4uZ3lsc3RvcmZmQHNpZW1lbnMuY29tPsLBkQQTAQoAOwIbAwULCQgH
+ AgYVCgkICwIEFgIDAQIeAQIXgBYhBBvkezJSXuvL6yeVgtxQXbgz0zl1BQJocSb5AhkBAAoJ
+ ENxQXbgz0zl1vv8QAMVze9Jevd0Qe9iYY64RX1rQfGv0xI094u9+4fOsIOXUjX70cbRgOZzk
+ muPuEj96pBh77vGWb19dyWmzlRL0tTGg4ACcbHXgy93l6HaUTlVLUFpEKx1ufo2StSPPZ1i9
+ 4PBTfnyAhQqYH6dibaFpCHvhrNvLIidA/C3qBx2b5k7H9k/Hta/lhNPkJTSqLnUl2sU36ihb
+ QFGvEOUnJjFVo7eUBDNjEDGXETfI2tfHuER7GxZZINFpzf1mnvgobaai0pt26XUrt0cdONGR
+ slIv6hEQ4BcyuYEN5wZz68eMMQtaTXRoCGYPYpTEYu23BKYTPebIUAbM+CiEVHTkH2TSeDwM
+ kc25z0ydFbA2D8I8J+atdBsmHlGCq1gMnSMZ/TtOrlL6OHFoVlaq95Z55a5cq72DF1BQBk1t
+ jaPgiI3Frzn/ZLFfldakTbkd2vsZjBJEkcUtnc+Rm7x1Sn3X855zJmvYRzdLAPMsi/zVMsy6
+ tvoIcJozan1CQE/vC1S5V8BXoE0PRointtfTxPDuX2//sSzlRgBVWIQJHuQ0asb+gzptVZT+
+ naNdi+fexKfoSv6bxbsG2Bg7Pm3OZNASmaUodGNixZ3/y/VdzvvSaPPULYPuUCdZrTtX4wML
+ ae1/UjUw7jUoEXOalGior+tSEUpvhfa9y8kzJswmtZW90lFYNuCtzsFNBGhxJPIBEACi38/X
+ QWBviWYBLlk2czd15VQFpsfYFKzgO010e300DAL1D+CWatD7yiEK30m3vvHkOkyHaOz/DB18
+ ksr1czcbQLYSpdC4JKlsUu75tf9EI32QBPRMms7mJ+qewti4xj1sjrBpuczzLC0CG+dkxTD2
+ 38AbgGW3m/o8zBsPGhVnJlRVGsYU/YiYxaE6MC/l5bzmb0ay58ySnSS32zALKBfXGpWmk1td
+ KbcHNeEBuZu2W3ZYB5cTkDEE/3ycnWwqWh5u24SSLC/83rIeAjeyJ/wQ9+oSIHLlcl296sqM
+ 1wYKVCjwAXfA7vcEBsANUFL6NkdP+Y+HJPRT/EODKZsjqWjoi/5v5GKBLrScLxA9cpjTCYMj
+ +1slg6T9FgUMQ+7GtbGI+/3WA/8ZE8emq4EweLzYT7I6hLB/dnoqRZFmRkLZ8q81r3Oc+xIc
+ PJEnEpQIN/Ky0YelyPY4j+GH+NOlLvv9pH16I46O5PsTCkyhcfgfYUOJgP1BRQrnRmVn6586
+ R86jfLLhtaagvg4Mb4NtR+ZAO8rF8xmrEv5q0YZBkRmMlRENwHWiCyvDzU7mTsyYvVweGgdL
+ bak4VTz/Bm2kvnJyHAWOhWJk6BAgmQhM1c0eYG/vmyhS6O+omYIyDJFVp0ui71CazCFn7dDI
+ +uzg6o6fHygmWDn43e4mu3WKEXCajwARAQABwsF8BBgBCgAmFiEEG+R7MlJe68vrJ5WC3FBd
+ uDPTOXUFAmhxJPICGwwFCQPCZwAACgkQ3FBduDPTOXXrfw//Rc/CskZYHeM06zTK0NQKTt3+
+ hgME6rUQh9y4iDF1KjEvmVDGyDma8AQ45WNP5EbWgMFWGtlTYwn3CbFuYlDLMtCYHkth1itN
+ SoUdOttJkQ5ULq8DW+MFrP4xlG0zAx+CWeug6VhujVBro9xK57zgYs+LsCK3nlsYR91ZtZ8E
+ 73Bi58iGZL/DLRFws5ut9hGUE0HoxXAhUZ6de0QxXNmfApzK+rLUye+JYcEVWEfVCCofFy8X
+ lk+r2OzCvMt43xu9OgV1Pg37ez4HVu+ZoPJ94NKteQr9QMR9PIOBXGlOuweKiR1IcYBjQHzL
+ aptU47KTf+lJxZhy8H3l1ySuyQqxbFoPNUuAT9Fu2s7Mg7QzjLVkoIrkZ+YJ+CmgvZT4sPZe
+ YAMMbi+ENwLUg7aYqCy1RHcit2jeoEMyJJ9PFcsbxcqIPaCG3xOurgMdwlGeGdaxSFvq1T4V
+ Z50bOHQvqT4TbOxbxv8RLLtaNfIvudV3J+Xx3QyKY1sySFcCtCB/b4zoKqc73B5B0nXBw931
+ qIxmFqiZiwfFB91OCCqRFtm2LcfwR1fLrUtSrhmENjdBhZljfJKjxAfFOWXngfT10Sin9h20
+ 4A7NrVMzatAJLl79L0PdJIVpGUDQHU9K7rIs2MoQKzmAvyUSJB4sAChft5wz7JbvFKqY2fW4
+ Z2NBPBZUysw=
+In-Reply-To: <20260721114828.1390-2-hung.tran.jy@renesas.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P123CA0458.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:1aa::13) To DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:10:113::12)
 MIME-Version: 1.0
-X-Exchange-RoutingPolicyChecked: 
-	ZB/hrCm32+obVY7aEasEQpr+FJzJReECdTVf7KabZQd8RqK02UHtcgQWsQdz9JO8of+fA/+z5OkGyANFpCK1gVPK61yjXi59ZB65PtgxDVLAHRQUSpun3FmTlN3VfU66S1doR1Vw65KRsXtp1Hy+5f0RlKJliePor9bl86kYj9FiMtHe62fslCX++pOu4VkA0oPEgPtk0w3kjNYvH24XS7YHMrlM4xW/qxL587/oBecG1n180j6d+Ua43j8PnA5stzGlA3Mbvs9moWN9+/K1gUwmwSMOfCJXxIPlkP1+ZwI9acDT5unBsAGfL3Lrw1uWVILGRtN+P8CVMDGc4+yo3g==
-X-OriginatorOrg: mail.toshiba
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB8PR10MB3178:EE_|PAWPR10MB8185:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8066f2f9-ed5f-42d7-894e-08dee72443be
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: 
+	BCL:0;ARA:13230040|4022899009|376014|366016|23010399003|1800799024|55112099003|22082099003|18002099003|56012099006|11063799006|10067099003|4143699003;
+X-Microsoft-Antispam-Message-Info: 
+	wTQrTBHCw4K4uGQebCpTnZ8+le8RvPc2hmzBKK/dJX+Vfo2jGCIWDF7LznVOrs4Ro7zdR7Gvf/qHHmXs05luLSvt3l2rCLJNdbzuLMvERMCt28UBorpPHMXzBzmKSjtMXi1V8Iy4iRN5we37uMrFvQyAE5DtoRQvoRuV8zacS9C157yabUoOohqjTEqpav7v1hm5zObDtgvJWf3CCIsvRSKZdxbUMXcaing6t7JyICHU5lmtEaI1KgZKKwcpV38hohmbonaqsQZ2Tj7Par10J2IuVcYcB6HeRJ4hr4LSrlEY4Wpgmynhyp98SH8/ge8HPlz8upXXQrGVev0WZ7uZCfHGbhEvzCgnphF9D6SXc6oFbttlVng6V64GWy94Yi4F5SUwILXrnjNZZptjjv7b6N41G7+ugKDY5YHaZGrBgegkQQJViuj79SOlirqko4spqKTF+mKcMBCJ1jlHZ72GLxiuH9fVpS6s+VujgMnGwi/YzIbS5293FO6/9B3DmqNNpj5VVjrn2IIckPeOHFFfQ3Yp3cjyF13nM3Y+cqMSove/ECHI8gcotr1hoK9pM5dk9OIDhE6qmUx2K16z0c1r1VVsf76CI+P95rEiW0/xn5jjpHnDjO8lvowTugo90OJY
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(4022899009)(376014)(366016)(23010399003)(1800799024)(55112099003)(22082099003)(18002099003)(56012099006)(11063799006)(10067099003)(4143699003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?T21xbVFVRWpXTWplNmNYREFCVE8zUU4xZ3Q2WDI0NncwQ3g3emRaYkkyNTdP?=
+ =?utf-8?B?Y3lKbnFOQmZOKzNDeld5enNKUVRObVVFOG5VUWVFdEJVUENlSC9NMGdFTzc0?=
+ =?utf-8?B?ZmpkZ1dJQjV1dUQwaEhmY0FsaWQySDI2Nm9ML3dPK2s1Qjk5cXdtQ3NVVnda?=
+ =?utf-8?B?Uy8wUjU3dlJWbFlJTWtlNUJlV0xrbWJyYlc5RE84S1VuQlVSbmRuUjVSRGx2?=
+ =?utf-8?B?WGsvNFdxZGpNNm5YYnFBOGVqQnFVdy9MN0dDa3k2MTJnYUlpdFQ4eVJKQ2lH?=
+ =?utf-8?B?R1ZlbFFsUzQwYjAwWVgrUmVCYjE1dmZGS05DdXhGWXJGbWttcUxIMnF0ekZz?=
+ =?utf-8?B?UEdSUm1Bc3ROSXA5RnJXUG12b0hCMzA0cDZER2JFYjl1QmducTRGKzJsMDhR?=
+ =?utf-8?B?b0ZlM01FWWVOc3V5MHJ3NzRVNDhHaDVuajlYVERxWDQ1T01QeDVYaDNmakJP?=
+ =?utf-8?B?T3diam1PRzRxNWQ0Ly9GSmdoL0UvYVYrR3NOU2FiYzNwZ25NeDFndmxhZmxC?=
+ =?utf-8?B?dGNnRUlLY3pxWm1ueDQwQTVac3F2czVJNElSUmE0bXVYbURKWFBUOGd4U05U?=
+ =?utf-8?B?RUJOVW1kZXgrV25DbWJPdmNxVzJQaW5LZzNmcDhiZ1RISmIrMTNrRmtFMUpw?=
+ =?utf-8?B?Lzh4b2FSN2dMNXFLR2pUcWJOMGlJank3OFBYTzZqRTZjQkp6VEdVTTZ4aUFB?=
+ =?utf-8?B?c2txVDBPbTEwaUhZL3JzeEVvNFJ6NlM3Tk53ZXRwWUZMTkFRNkFXZkMxSjVp?=
+ =?utf-8?B?c1d2bFZKVll2VEQ2aC93aTN0VEpoQ1pOd00xVVZTMGN6Y1hNY1ZNcTd0UXg1?=
+ =?utf-8?B?S2xUZFFTby8rTlFXY1p0TGRicG9PcWVVMmduNUhzWXhTRWhudUNQMGJQTnRi?=
+ =?utf-8?B?THgxRkRJSUNuZUlvM0drQXpleFB3cGtpZllsSmRvN1dZT09hL3VscEg2K21v?=
+ =?utf-8?B?QjdRK2xwV0tYWFR3S3Y2bWg3VFpsejY2RDJ2aE1BeTFxVzBGd1FUbXNOcGlt?=
+ =?utf-8?B?R2tkY2ZzVlhkZ3VZVzBLZGtrRUExQThDMnNVaERTSXhjclgrcEtleWx3ZW9W?=
+ =?utf-8?B?MzZtUGE3SVpRQ1o4bTFSYlpYWWpINUIway9GeDdLSVEvamltUXBncFFVSFNx?=
+ =?utf-8?B?djkrUm1maTRTTFU1MEhZWGNwOFp3a0xCT21Ld3Q0Um40QUlqUU5zRG1xZUs3?=
+ =?utf-8?B?NGhJY0dQK0V6V3dlL0c2a1k1T2UrcnJpdUNCS0NBQVhwV2xOWVpxVkFaRjR5?=
+ =?utf-8?B?U2w0MHhpQi9zV0x5aXF4OHFXbG1veGhDRitUeHJTY2ZQUEMwN2U4bDh2czNw?=
+ =?utf-8?B?Z29jeXVJQ2txRzlSbjhQRnovbEN4dFBtTU5JZGFhckV6QWh2QlFUNVFiVHUz?=
+ =?utf-8?B?YW5DUjlHSk8zaWhEZUFwcy9ma2xaM0cyK1pBUHdaTG42VkVQRW1BMjBWNldt?=
+ =?utf-8?B?cXowbDdSRlJCbmFjeHlxTUoxNjhnaGFKMDVHL0hUQzZMSFFNMWpocTBseFpY?=
+ =?utf-8?B?aGRhK2hvZHNTNU1jcWlnVk9sZWt5Z0Rzc09JZjRNZytBVFZwYUVyUWQwUmxo?=
+ =?utf-8?B?MFlXVnVHQzMxTmh2MUZJb1JVRStLNzJ3K3RXbkJQV0hGZWwwcG5sUUd5YnlZ?=
+ =?utf-8?B?UlgvUDhURjkwSU9IanJNTGprNW1nZ0lVOTJnZDAyUkQxRlhZNU5vOUhhY0tB?=
+ =?utf-8?B?eFFJNUhWdzJiYXQzL00wMkJUZnkvNmo3VkxSTnNjTS96Ny9tQlg1SDdwMEd3?=
+ =?utf-8?B?SzNDSnlkM2tBai9Oa1N1NVNsdFBzN0c1YlRvcDRYK1ZzTEwzeXV2bERQalJz?=
+ =?utf-8?B?L3lrbVkrazB5OGhBVWNvdlU2RERsaFh2OWJVQmNBWFdHMGtEcmpJbjJzS2Nu?=
+ =?utf-8?B?TDllWGZnVm5Zd1FuTjQ5Ykp5Z2pzY01BUktVT0Q4YnMyREFVamJ2ZWQrZE9r?=
+ =?utf-8?B?RjBLcmFKNVlzbUdCRDBxUE1IcGdVR0tLM21EMXowSk90eloxOG9oK1NqeCty?=
+ =?utf-8?B?VUQycXoyRVN0bnBGZ3BiWDNUN1FPczNyZjAwVktuR0FwN3JMTjEzMktkd0RZ?=
+ =?utf-8?B?R3hSMmhMb2NZYzR1dTA0WWM1Y21YL1U0Q2huYXZOSGVOU0JhL2xzZnB6aktu?=
+ =?utf-8?B?SzFscDltcWsrTG9NRFpTdUptSVhXcGRiSUxWSW05ZWhWSlBuc25UWmxURlR2?=
+ =?utf-8?B?MnFXMXFEU3BoSHMyd0xqdnliWGpqak1xWUR4ZTZxTGF1c05VVHdJanJZdEJB?=
+ =?utf-8?B?TmFocyt3Q2EyaXZzUHYwK3pZNTMxSFRGeEVEUVo5enBjSmorb2V6SmZ6L2ht?=
+ =?utf-8?B?UTlsWDBGTUNyYmc3YmNrajhjNlVTSFN2MlY4N3JLTEJFcitQRDRjaUwwdVR4?=
+ =?utf-8?Q?Q40LsKwOQDHWWhJ0=3D?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8066f2f9-ed5f-42d7-894e-08dee72443be
+X-MS-Exchange-CrossTenant-AuthSource: DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY7PR01MB14818.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9928bff7-53d9-404d-314a-08dee7226fff
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jul 2026 12:20:22.7021
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2026 12:33:27.5555
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: u6BnyvKlnJeA1SFzcBgMoR7bv4pdwtnecjMx467ZmytGqbKimiC8cgJ4PepywJWmz8pIcsZrI6g3TfgueZVDV6XXuTSdffxdO4tK9SVEV10Ns5N3w5J+zIs03tCzmnVM
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSCPR01MB15962
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Nq1CQoKlThtykIHNK0dEzlpQ4H46W/WJmwU5n5ubdwOsm5TDAHQCD9Tm3m3ghgMlHLOe9t1P+20KABdh71kpw7tpmcujz5JXFdcaay2dgiY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR10MB8185
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 21 Jul 2026 12:20:50 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23700
+ <cip-dev@lists.cip-project.org>; Tue, 21 Jul 2026 12:33:40 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23701
 
-Hi all,
 
-CIP kernel team has released Linux kernel v6.1.177-cip58.
-The linux-6.1.y-cip tree has been updated base version from v6.1.175 to v6.=
-1.177.
-In this release, we added DMA and multi-SoC support to the Renesas rzv2h-rs=
-pi
-driver and enabled PCIe/SDHI in the device tree.
 
-Information about this release is as follows:
+On 7/21/26 1:48 PM, Hung Tran via lists.cip-project.org wrote:
+> rzt2h-evk is the new reference platform for CIP project.
+> It uses Renesas RZ/T2H SoC, based on armv8.2 architecture.
+> This platform is only supported from CIP Linux 6.12.
+> 
+> Signed-off-by: Hung Tran <hung.tran.jy@renesas.com>
+> ---
+>   Kconfig                           | 12 +++++++++---
+>   conf/machine/rzt2h-evk.conf       | 18 ++++++++++++++++++
+>   kas/board/rzt2h-evk.yml           | 15 +++++++++++++++
+>   wic/rzt2h-evk-efibootguard.wks.in | 14 ++++++++++++++
+>   wic/rzt2h-evk.wks                 | 17 +++++++++++++++++
+>   5 files changed, 73 insertions(+), 3 deletions(-)
+>   create mode 100644 conf/machine/rzt2h-evk.conf
+>   create mode 100644 kas/board/rzt2h-evk.yml
+>   create mode 100644 wic/rzt2h-evk-efibootguard.wks.in
+>   create mode 100644 wic/rzt2h-evk.wks
+> 
+> diff --git a/Kconfig b/Kconfig
+> index 438234c..6894e87 100644
+> --- a/Kconfig
+> +++ b/Kconfig
+> @@ -119,6 +119,11 @@ config TARGET_BEAGLEV_FIRE
+>   	select ARCH_RISCV64
+>   	select HAS_SWUPDATE
+>   
+> +config TARGET_RZT2H
+> +	bool "RZ/T2H EVK"
+> +	select ARCH_ARM64
+> +	select HAS_SWUPDATE
+> +
+>   endchoice
+>   
+>   config KAS_INCLUDE_BOARD
+> @@ -134,6 +139,7 @@ config KAS_INCLUDE_BOARD
+>   	default "kas/board/iwg20m.yml" if TARGET_IWG20D
+>   	default "kas/board/qemu-riscv64.yml" if TARGET_QEMU_RISCV64
+>   	default "kas/board/beaglev-fire.yml" if TARGET_BEAGLEV_FIRE
+> +	default "kas/board/rzt2h-evk.yml" if TARGET_RZT2H
+>   
+>   comment "Kernel options"
+>   
+> @@ -149,15 +155,15 @@ config KERNEL_4_4
+>   config KERNEL_4_19
+>   	bool "Kernel 4.19.x-cip"
+>   	depends on !ARCH_RISCV64
+> -	depends on !TARGET_TI_AM62PX_SK
+> +	depends on !TARGET_TI_AM62PX_SK && !TARGET_RZT2H
+>   
+>   config KERNEL_5_10
+>   	bool "Kernel 5.10.x-cip"
+> -	depends on !TARGET_TI_AM62PX_SK && !TARGET_BEAGLEV_FIRE
+> +	depends on !TARGET_TI_AM62PX_SK && !TARGET_BEAGLEV_FIRE && !TARGET_RZT2H
+>   
+>   config KERNEL_6_1
+>   	bool "Kernel 6.1.x-cip"
+> -	depends on !TARGET_TI_AM62PX_SK && !TARGET_BEAGLEV_FIRE
+> +	depends on !TARGET_TI_AM62PX_SK && !TARGET_BEAGLEV_FIRE && !TARGET_RZT2H
+>   
+>   config KERNEL_6_12
+>   	bool "Kernel 6.12.x-cip"
+> diff --git a/conf/machine/rzt2h-evk.conf b/conf/machine/rzt2h-evk.conf
+> new file mode 100644
+> index 0000000..5cfbfa5
+> --- /dev/null
+> +++ b/conf/machine/rzt2h-evk.conf
+> @@ -0,0 +1,18 @@
+> +#
+> +# CIP Core, generic profile
+> +#
+> +# Copyright (c) 2026 Renesas Electronics Corporation
+> +#
+> +# Authors:
+> +#  Hung Tran <hung.tran.jy@renesas.com>
+> +#
+> +# SPDX-License-Identifier: MIT
+> +#
+> +
+> +DISTRO_ARCH = "arm64"
+> +
+> +IMAGE_FSTYPES ?= "wic"
+> +
+> +USE_CIP_KERNEL_CONFIG = "1"
+> +DTB_FILES = "r9a09g077m44-rzt2h-evk.dtb"
+> +IMAGE_BOOT_FILES = "${KERNEL_IMAGE} ${DTB_FILES}"
+> diff --git a/kas/board/rzt2h-evk.yml b/kas/board/rzt2h-evk.yml
+> new file mode 100644
+> index 0000000..90261dc
+> --- /dev/null
+> +++ b/kas/board/rzt2h-evk.yml
+> @@ -0,0 +1,15 @@
+> +#
+> +# CIP Core, generic profile
+> +#
+> +# Copyright (c) 2026 Renesas Electronics Corporation
+> +#
+> +# Authors:
+> +#  Hung Tran <hung.tran.jy@renesas.com>
+> +#
+> +# SPDX-License-Identifier: MIT
+> +#
+> +
+> +header:
+> +  version: 14
+> +
+> +machine: rzt2h-evk
+> diff --git a/wic/rzt2h-evk-efibootguard.wks.in b/wic/rzt2h-evk-efibootguard.wks.in
+> new file mode 100644
+> index 0000000..ca18bec
+> --- /dev/null
+> +++ b/wic/rzt2h-evk-efibootguard.wks.in
+> @@ -0,0 +1,14 @@
+> +# Copyright (c) 2026 Renesas Electronics Corporation
+> +#
+> +# SPDX-License-Identifier: MIT
+> +
+> +include ebg-sysparts.inc
+> +
+> +part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${RO_ROOTFS_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
+> +part --source empty --sourceparams "${ABROOTFS_SOURCEPARAMS_B}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
+> +
+> +# var and optional home are extra partitions
+> +${WIC_HOME_PARTITION}
+> +${WIC_VAR_PARTITION}
+> +
+> +bootloader --ptable gpt
 
-  v6.1.177-cip58:
-    repository:
-      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-    branch:
-      linux-6.1.y-cip
-    commit hash:
-      fc5e5c9987657c209a948e82e24f138430909af2
-    fixed CVEs:
-      CVE-2023-54125: fs/ntfs3: Return error for inconsistent extended attr=
-ibutes
-      CVE-2023-54271: blk-cgroup: Fix NULL deref caused by blkg_policy_data=
- being installed before init
-      CVE-2024-27012: netfilter: nf_tables: restore set elements when delet=
-e set fails
-      CVE-2025-10263: TLBI errata in some Arm-based CPUs may allow writes t=
-o resources owned by a higher exception level, potentially allowing privile=
-ge escalation
-      CVE-2026-23310: bpf/bonding: reject vlan+srcmac xmit_hash_policy chan=
-ge when XDP is loaded
-      CVE-2026-31700: net/packet: fix TOCTOU race on mmap'd vnet_hdr in tpa=
-cket_snd()
-      CVE-2026-31709: smb: client: validate the whole DACL before rewriting=
- it in cifsacl
-      CVE-2026-31712: ksmbd: require minimum ACE size in smb_check_perm_dac=
-l()
-      CVE-2026-31715: f2fs: fix UAF caused by decrementing sbi->nr_pages[] =
-in f2fs_write_end_io()
-      CVE-2026-31727: usb: gadget: u_ether: Fix NULL pointer deref in eth_g=
-et_drvinfo
-      CVE-2026-43116: netfilter: ctnetlink: ensure safe access to master co=
-nntrack
-      CVE-2026-43219: net: cpsw_new: Fix potential unregister of netdev tha=
-t has not been registered yet
-      CVE-2026-43303: mm/page_alloc: clear page->private in free_pages_prep=
-are()
-      CVE-2026-43421: usb: gadget: f_ncm: Fix net_device lifecycle with dev=
-ice_move
-      CVE-2026-43492: lib/crypto: mpi: Fix integer underflow in mpi_read_ra=
-w_from_sgl()
-      CVE-2026-43495: net: wwan: t7xx: validate port_count against message =
-length in t7xx_port_enum_msg_handler
-      CVE-2026-45850: ipvs: skip ipv6 extension headers for csum checks
-      CVE-2026-45930: net: mctp: ensure our nlmsg responses are initialised
-      CVE-2026-45991: udf: fix partition descriptor append bookkeeping
-      CVE-2026-45993: LoongArch: Add spectre boundry for syscall dispatch t=
-able
-      CVE-2026-45996: spi: imx: fix use-after-free on unbind
-      CVE-2026-45999: erofs: fix unsigned underflow in z_erofs_lz4_handle_o=
-verlap()
-      CVE-2026-46003: net: qrtr: ns: Limit the total number of nodes
-      CVE-2026-46005: xfs: fix a resource leak in xfs_alloc_buftarg()
-      CVE-2026-46021: thermal: core: Fix thermal zone governor cleanup issu=
-es
-      CVE-2026-46026: net: qrtr: ns: Limit the maximum number of lookups
-      CVE-2026-46038: net: qrtr: ns: Free the node during ctrl_cmd_bye()
-      CVE-2026-46044: ipmi:ssif: Clean up kthread on errors
-      CVE-2026-46052: ceph: only d_add() negative dentries when they are un=
-hashed
-      CVE-2026-46065: fbdev: defio: Disconnect deferred I/O from the lifeti=
-me of struct fb_info
-      CVE-2026-46069: wifi: mwifiex: fix use-after-free in mwifiex_adapter_=
-cleanup()
-      CVE-2026-46083: spi: fix resource leaks on device setup failure
-      CVE-2026-46086: net: bridge: use a stable FDB dst snapshot in RCU rea=
-ders
-      CVE-2026-46091: media: rc: igorplugusb: heed coherency rules
-      CVE-2026-46110: net: stmmac: Prevent NULL deref when RX memory exhaus=
-ted
-      CVE-2026-46116: xfrm: defensively unhash xfrm_state lists in __xfrm_s=
-tate_delete
-      CVE-2026-46125: wifi: mac80211: remove station if connection prep fai=
-ls
-      CVE-2026-46137: mptcp: pm: ADD_ADDR rtx: fix potential data-race
-      CVE-2026-46159: btrfs: fix btrfs_ioctl_space_info() slot_count TOCTOU=
- which can lead to info-leak
-      CVE-2026-46160: btrfs: fix missing last_unlink_trans update when remo=
-ving a directory
-      CVE-2026-46164: btrfs: fix double free in create_space_info_sub_group=
-() error path
-      CVE-2026-46169: hfsplus: fix uninit-value by validating catalog recor=
-d size
-      CVE-2026-46180: wifi: brcmfmac: Fix potential use-after-free issue wh=
-en stopping watchdog task
-      CVE-2026-46190: mtd: spi-nor: debugfs: fix out-of-bounds read in spi_=
-nor_params_show()
-      CVE-2026-46191: fbcon: Avoid OOB font access if console rotation fail=
-s
-      CVE-2026-46193: xfrm: ah: account for ESN high bits in async callback=
-s
-      CVE-2026-46195: smb: client: validate dacloffset before building DACL=
- pointers
-      CVE-2026-46196: tracepoint: balance regfunc() on func_add() failure i=
-n tracepoint_add_func()
-      CVE-2026-46208: batman-adv: stop tp_meter sessions during mesh teardo=
-wn
-      CVE-2026-46280: lib: test_hmm: evict device pages on file close to av=
-oid use-after-free
-      CVE-2026-46291: crypto: caam - guard HMAC key hex dumps in hash_diges=
-t_key
-      CVE-2026-46292: pmdomain: core: Fix detach procedure for virtual devi=
-ces in genpd
-      CVE-2026-46296: spi: s3c64xx: fix NULL-deref on driver unbind
-      CVE-2026-46299: hfsplus: fix held lock freed on hfsplus_fill_super()
-      CVE-2026-46314: drm/v3d: Reject empty multisync extension to prevent =
-infinite loop
-      CVE-2026-46320: tap: free page on error paths in tap_get_user_xdp()
-      CVE-2026-46321: tun: free page on short-frame rejection in tun_xdp_on=
-e()
-      CVE-2026-46322: tun: free page on build_skb failure in tun_xdp_one()
-      CVE-2026-46323: net: gro: don't merge zcopy skbs
-      CVE-2026-52910: bpf: Free reuseport cBPF prog after RCU grace period.
-      CVE-2026-52913: batman-adv: v: stop OGMv2 on disabled interface
-      CVE-2026-52917: sctp: diag: reject stale associations in dump_one pat=
-h
-      CVE-2026-52918: Bluetooth: serialize accept_q access
-      CVE-2026-52923: ipc: limit next_id allocation to the valid ID range
-      CVE-2026-52924: sctp: purge outqueue on stale COOKIE-ECHO handling
-      CVE-2026-52927: netfilter: ebtables: fix OOB read in compat_mtw_from_=
-user
-      CVE-2026-52929: sctp: stream: fully roll back denied add-stream state
-      CVE-2026-52930: ipc/shm: serialize orphan cleanup with shm_nattch upd=
-ates
-      CVE-2026-52934: batman-adv: tvlv: reject oversized TVLV packets
-      CVE-2026-52935: xfrm: espintcp: do not reuse an in-progress partial s=
-end
-      CVE-2026-52939: net/rds: fix NULL deref in rds_ib_send_cqe_handler() =
-on masked atomic completion
-      CVE-2026-52942: netfilter: nf_log: validate MAC header was set before=
- dumping it
-      CVE-2026-52943: net: skbuff: fix missing zerocopy reference in pskb_c=
-arve helpers
-      CVE-2026-52946: fs/fcntl: fix SOFTIRQ-unsafe lock order in fasync sig=
-naling
-      CVE-2026-52947: net: qrtr: fix refcount saturation and potential UAF =
-in qrtr_port_remove
-      CVE-2026-52948: i2c: dev: prevent integer overflow in I2C_TIMEOUT ioc=
-tl
-      CVE-2026-53080: net/sched: cls_fw: fix NULL dereference of "old" filt=
-ers before change()
-      CVE-2026-53131: netfilter: require Ethernet MAC header before using e=
-th_hdr()
-      CVE-2026-53133: RDMA/umem: Fix truncation for block sizes >=3D 4G
-      CVE-2026-53134: netfilter: nft_fib: fix stale stack leak via the OIFN=
-AME register
-      CVE-2026-53135: drm/amd/display: Fix NULL deref and buffer over-read =
-in SDP debugfs
-      CVE-2026-53136: drm/amd/display: Clamp VBIOS HDMI retimer register co=
-unt to array size
-      CVE-2026-53137: drm/amd/display: Clamp HDMI HDCP2 rx_id_list read to =
-buffer size
-      CVE-2026-53146: thunderbolt: Limit XDomain response copy to actual fr=
-ame size
-      CVE-2026-53147: thunderbolt: Validate XDomain request packet size bef=
-ore type cast
-      CVE-2026-53148: thunderbolt: Clamp XDomain response data copy to allo=
-cation size
-      CVE-2026-53149: thunderbolt: Bound root directory content to block si=
-ze
-      CVE-2026-53150: thunderbolt: Reject zero-length property entries in v=
-alidator
-      CVE-2026-53159: misc: fastrpc: fix DMA address corruption due to find=
-_vma misuse
-      CVE-2026-53160: misc: fastrpc: fix use-after-free race in fastrpc_map=
-_create
-      CVE-2026-53161: misc: fastrpc: fix use-after-free of fastrpc_user in =
-workqueue context
-      CVE-2026-53168: fuse: reject fuse_notify() pagecache ops on directori=
-es
-      CVE-2026-53176: IB/isert: Reject login PDUs shorter than ISER_HEADERS=
-_LEN
-      CVE-2026-53177: bnxt_en: Fix NULL pointer dereference
-      CVE-2026-53181: vsock/vmci: fix sk_ack_backlog leak on failed handsha=
-ke
-      CVE-2026-53182: wifi: nl80211: reject oversized EMA RNR lists
-      CVE-2026-53183: mptcp: allow subflow rcv wnd to shrink
-      CVE-2026-53184: udp: clear skb->dev before running a sockmap verdict
-      CVE-2026-53186: RDMA/srp: bound SRP_RSP sense copy by the received le=
-ngth
-      CVE-2026-53189: mm/huge_memory: update file PMD counter before folio_=
-put()
-      CVE-2026-53192: ALSA: timer: Fix UAF at snd_timer_user_params()
-      CVE-2026-53194: USB: serial: kl5kusb105: fix bulk-out buffer overflow
-      CVE-2026-53195: USB: serial: io_ti: fix heap overflow in build_i2c_fw=
-_hdr()
-      CVE-2026-53196: USB: serial: io_ti: fix heap overflow in get_manuf_in=
-fo()
-      CVE-2026-53198: ksmbd: fix use-after-free of a deferred file_lock on =
-double SMB2_CANCEL
-      CVE-2026-53199: hv_netvsc: use kmap_local_page in netvsc_copy_to_send=
-_buf
-      CVE-2026-53207: mm/memory-failure: fix hugetlb_lock AA deadlock in ge=
-t_huge_page_for_hwpoison
-      CVE-2026-53208: Bluetooth: L2CAP: reject BR/EDR signaling packets ove=
-r MTUsig
-      CVE-2026-53209: Bluetooth: hci_sync: reject oversized Broadcast Annou=
-ncement prepend
-      CVE-2026-53212: netfilter: nft_tunnel: fix use-after-free on object d=
-estroy
-      CVE-2026-53213: drm/vc4: fix krealloc() memory leak
-      CVE-2026-53215: net: mvpp2: refill RX buffers before XDP or skb use
-      CVE-2026-53216: net: mvpp2: limit XDP frame size to the RX buffer
-      CVE-2026-53217: net: mvpp2: sync RX data at the hardware packet offse=
-t
-      CVE-2026-53218: netfilter: nft_exthdr: fix register tracking for F_PR=
-ESENT flag
-      CVE-2026-53219: netfilter: x_tables: avoid leaking percpu counter poi=
-nters
-      CVE-2026-53221: ip6_vti: fix incorrect tunnel matching in vti6_tnl_lo=
-okup()
-      CVE-2026-53223: net: guard timestamp cmsgs to real error queue skbs
-      CVE-2026-53225: sctp: fix uninit-value in __sctp_rcv_asconf_lookup()
-      CVE-2026-53227: net: openvswitch: fix possible kfree_skb of ERR_PTR
-      CVE-2026-53228: ipv6: sit: reload inner IPv6 header after GSO offload=
-s
-      CVE-2026-53236: tcp: restrict SO_ATTACH_FILTER to priv users
-      CVE-2026-53238: netlabel: validate unlabeled address and mask attribu=
-te lengths
-      CVE-2026-53239: xfrm: policy: fix use-after-free on inexact bin in xf=
-rm_policy_bysel_ctx()
-      CVE-2026-53242: ALSA: PCM: Fix wait queue list corruption in snd_pcm_=
-drain() on linked streams
-      CVE-2026-53245: net/802/mrp: fix vector attribute parsing in mrp_pdu_=
-parse_vecattr
-      CVE-2026-53249: ipv4: restrict IPOPT_SSRR and IPOPT_LSRR options
-      CVE-2026-53252: Bluetooth: fix memory leak in error path of hci_alloc=
-_dev()
-      CVE-2026-53253: Bluetooth: bnep: reject short frames before parsing
-      CVE-2026-53254: Bluetooth: RFCOMM: validate skb length in MCC handler=
-s
-      CVE-2026-53255: Bluetooth: MGMT: validate advertising TLV before type=
- checks
-      CVE-2026-53256: Bluetooth: RFCOMM: hold listener socket in rfcomm_con=
-nect_ind()
-      CVE-2026-53263: 6lowpan: fix off-by-one in multicast context address =
-compression
-      CVE-2026-53264: net/sched: act_api: use RCU with deferred freeing for=
- action lifecycle
-      CVE-2026-53265: dm cache policy smq: check allocation under invalidat=
-e lock
-      CVE-2026-53266: netfilter: bridge: make ebt_snat ARP rewrite writable
-      CVE-2026-53268: netfilter: conntrack_irc: fix possible out-of-bounds =
-read
-      CVE-2026-53269: netfilter: synproxy: add mutex to guard hook referenc=
-e counting
-      CVE-2026-53270: ipvs: clear the svc scheduler ptr early on edit
-      CVE-2026-53273: tee: optee: prevent use-after-free when the client ex=
-its before the supplicant
-      CVE-2026-53274: net/smc: fix sleep-inside-lock in __smc_setsockopt() =
-causing local DoS
-      CVE-2026-53275: ipv6: mcast: Fix use-after-free when processing MLD q=
-ueries
-      CVE-2026-53329: drm/amd/display: Use krealloc_array() in dal_vector_r=
-eserve()
-      CVE-2026-53331: slimbus: qcom-ngd-ctrl: Avoid ABBA on tx_lock/ctrl->l=
-ock
-      CVE-2026-53337: net: bonding: fix NULL pointer dereference in bond_do=
-_ioctl()
-      CVE-2026-53339: i2c: qcom-cci: Fix NULL pointer dereference in cci_re=
-move()
-      CVE-2026-53343: ARM: 9475/1: entry: use byte load for KASAN VMAP stac=
-k shadow
-      CVE-2026-53349: netfilter: nf_conntrack: destroy stale expectfn expec=
-tations on unregister
-      CVE-2026-53350: ASoC: wm_adsp: Fix NULL dereference when removing fir=
-mware controls
-      CVE-2026-53352: signal: clear JOBCTL_PENDING_MASK for caller in zap_o=
-ther_threads()
-      CVE-2026-53354: arm64: errata: Mitigate TLBI errata on various Arm CP=
-Us
-      CVE-2026-53355: net: rds: clear i_sends on setup unwind
-      CVE-2026-53356: drm/i915/gem: Fix phys BO pread/pwrite with offset
-      CVE-2026-53358: Bluetooth: L2CAP: use chan timer to close channels in=
- cleanup_listen()
-      CVE-2025-23131: dlm: prevent NPD when writing a positive value to eve=
-nt_done
-      CVE-2026-23272: netfilter: nf_tables: unconditionally bump set->nelem=
-s before insertion
-      CVE-2026-23278: netfilter: nf_tables: always walk all pending catchal=
-l elements
-      CVE-2026-23302: net: annotate data-races around sk->sk_{data_ready,wr=
-ite_space}
-      CVE-2026-31451: ext4: replace BUG_ON with proper error handling in ex=
-t4_read_inline_folio
-      CVE-2026-46252: regulator: core: fix locking in regulator_resolve_sup=
-ply() error path
-      CVE-2026-46331: net/sched: fix pedit partial COW leading to page cach=
-e corruption
-      CVE-2026-52909: ip6_vti: set netns_immutable on the fallback device.
-      CVE-2026-52928: af_unix: Reject SIOCATMARK on non-stream sockets
-      CVE-2026-53138: drm/amd/display: Bound VBIOS record-chain walk loops
-      CVE-2026-53139: drm/v3d: Skip CSD when it has zeroed workgroups
-      CVE-2026-53157: net: phonet: free phonet_device after RCU grace perio=
-d
-      CVE-2026-53158: misc: fastrpc: Fix NULL pointer dereference in rpmsg =
-callback
-      CVE-2026-53163: locking/rtmutex: Skip remove_waiter() when waiter is =
-not enqueued
-      CVE-2026-53167: fuse: limit FUSE_NOTIFY_RETRIEVE to uptodate folios
-      CVE-2026-53325: agp/amd64: Fix broken error propagation in agp_amd64_=
-probe()
-      CVE-2026-53326: debugobjects: Don't call fill_pool() in early boot ha=
-rdirq context
-      CVE-2026-53327: debugobjects: Do not fill_pool() if pi_blocked_on
-      CVE-2026-53359: KVM: x86: Fix shadow paging use-after-free due to une=
-xpected role
-      CVE-2026-53362: ipv6: account for fraggap on the paged allocation pat=
-h
-    added commits:
-      CIP: Bump version suffix to -cip58 after merge from stable
-      i3c: master: dw: stop hardcoding initial speed
-      arm64: dts: renesas: r9a09g047e57-smarc: Enable RSPI0
-      arm64: dts: renesas: r9a09g047: Add RSPI nodes
-      spi: rzv2h-rspi: Fix silent failure in clock setup error path
-      spi: rzv2h-rspi: Simplify clock rate search function signatures
-      spi: rzv2h-rspi: Fix invalid SPR=3D0/BRDV=3D0 clock configuration
-      spi: rzv2h-rspi: Fix max_speed_hz advertising prohibited bit rate
-      spi: rzv2h-rspi: add support for DMA mode
-      spi: rzv2h-rspi: split out PIO transfer
-      spi: rzv2h-rspi: enable TX buffer empty interrupt
-      spi: rzv2h-rspi: set TX FIFO threshold to 0
-      spi: rzv2h-rspi: set MUST_RX/MUST_TX
-      spi: rzv2h-rspi: store RX interrupt in state
-      spi: rzv2h-rspi: use device-managed APIs
-      spi: rzv2h-rspi: remove call to spi_finalize_current_transfer()
-      spi: rzv2h-rspi: fix rzv2h_rspi_transfer_one() indentation
-      spi: rzv2h-rspi: add support for RZ/T2H and RZ/N2H
-      spi: rzv2h-rspi: add support for loopback mode
-      spi: rzv2h-rspi: add support for variable transfer clock
-      spi: rzv2h-rspi: add support for using PCLK for transfer clock
-      spi: rzv2h-rspi: make transfer clock rate finding chip-specific
-      spi: rzv2h-rspi: avoid recomputing transfer frequency
-      spi: rzv2h-rspi: move register writes out of rzv2h_rspi_setup_clock()
-      spi: rzv2h-rspi: make clocks chip-specific
-      spi: rzv2h-rspi: make FIFO size chip-specific
-      spi: rzv2h-rspi: make resets optional
-      spi: dt-bindings: renesas,rzv2h-rspi: Document RZ/G3E SoC support
-      spi: dt-bindings: renesas,rzv2h-rspi: Document dmas property
-      spi: dt-bindings: renesas,rzv2h-rspi: allow multiple DMAs
-      spi: dt-bindings: renesas,rzv2h-rspi: document optional support for D=
-MA
-      clk: renesas: r9a09g047: Add entries for the RSPIs
-      spi: Introduce internal spi_xfer_is_dma_mapped() helper
-      dmaengine: Add devm_dma_request_chan()
-      arm64: dts: renesas: r9a07g054: Add max-frequency to SDHI nodes
-      arm64: dts: renesas: r9a07g044: Add max-frequency to SDHI nodes
-      arm64: dts: renesas: r9a07g043: Add max-frequency to SDHI nodes
-      arm64: dts: renesas: r9a09g056n48-rzv2n-evk: Enable PCIe
-      arm64: dts: renesas: r9a09g056: Add PCIe node
-      dt-bindings: PCI: renesas,r9a08g045-pcie: Add RZ/V2N support
-      clk: renesas: r9a09g056: Add PCIe clocks and reset
+This looks like a generic ab-update wks file. Can we reuse some of the 
+other wks files?
 
-Best regards,
-  Nobuhiro
+Quirin
+> diff --git a/wic/rzt2h-evk.wks b/wic/rzt2h-evk.wks
+> new file mode 100644
+> index 0000000..4a4af6c
+> --- /dev/null
+> +++ b/wic/rzt2h-evk.wks
+> @@ -0,0 +1,17 @@
+> +#
+> +# CIP Core, generic profile
+> +#
+> +# Copyright (c) 2026 Renesas Electronics Corporation
+> +#
+> +# Authors:
+> +#  Hung Tran <hung.tran.jy@renesas.com>
+> +#
+> +# SPDX-License-Identifier: MIT
+> +#
+> +
+> +part /boot --source bootimg-partition --ondisk mmcblk0 --fstype vfat --label boot --align 1 --size 32M --extra-space 0 --fsuuid 0x4321dcba --use-uuid
+> +
+> +# Rootfs partition
+> +part / --source rootfs --ondisk mmcblk0 --fstype ext4 --label root --align 1024 --size 2G --active --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --use-uuid
+> +
+> +bootloader --ptable gpt
+> 
+> 
+> 
+> -=-=-=-=-=-=-=-=-=-=-=-
+> Links: You receive all messages sent to this group.
+> View/Reply Online (#23699): https://lists.cip-project.org/g/cip-dev/message/23699
+> Mute This Topic: https://lists.cip-project.org/mt/120374883/1753640
+> Group Owner: cip-dev+owner@lists.cip-project.org
+> Unsubscribe: https://lists.cip-project.org/g/cip-dev/unsub [quirin.gylstorff@siemens.com]
+> -=-=-=-=-=-=-=-=-=-=-=-
+> 
 
 
