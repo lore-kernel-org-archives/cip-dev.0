@@ -2,67 +2,59 @@ Return-Path: <Shivanand.Kunijadar@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 268FDC44536
-	for <webhook@archiver.kernel.org>; Wed, 22 Jul 2026 14:54:16 +0000 (UTC)
-Subject: Re: [isar-cip-core][PATCH v2 1/3] swupdate-handler-roundrobin: Keep default lua version as 5.5
-To: cip-dev@lists.cip-project.org
-From: "Kunijadar Shivanand" <Shivanand.Kunijadar@toshiba-tsip.com>
-X-Originating-Location: Hyderabad, Telangana, IN (151.186.148.44)
-X-Originating-Platform: Windows Chrome 149
-User-Agent: GROUPS.IO Web Poster
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4037C4453C
+	for <webhook@archiver.kernel.org>; Wed, 22 Jul 2026 15:11:16 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.2319.1784733074162664890
+ for <cip-dev@lists.cip-project.org>;
+ Wed, 22 Jul 2026 08:11:14 -0700
+Authentication-Results: mx.groups.io;
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.158, mailfrom: shivanand.kunijadar@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1122) id 66MFBBuE3678392; Thu, 23 Jul 2026 00:11:12 +0900
+X-Iguazu-Qid: 2rWhDvWdS0FZ3CIzKb
+X-Iguazu-QSIG: v=2; s=1; t=1784733071; q=2rWhDvWdS0FZ3CIzKb; m=RjZelzKcTEN6q1UH+Gv0SaiTYaP5vbelTCeAniUzB2Y=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	 id 4h4yPq25xvz4vym; Thu, 23 Jul 2026 00:11:11 +0900 (JST)
+From: Shivanand.Kunijadar@toshiba-tsip.com
+To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
+Cc: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>,
+        kazuhiro.hayashi.f74@mail.toshiba, kumar.dinesh.h95@mail.toshiba
+Subject: [isar-cip-core][PATCH v3 0/3] Enable swupdate support for debian sid
+Date: Wed, 22 Jul 2026 20:27:52 +0530
+X-TSB-HOP2: ON
+Message-Id: <20260722145755.641375-1-Shivanand.Kunijadar@toshiba-tsip.com>
+X-Mailer: git-send-email 2.39.5
 MIME-Version: 1.0
-Date: Wed, 22 Jul 2026 07:54:10 -0700
-References: <20260722114753.627244-1-Shivanand.Kunijadar@toshiba-tsip.com> <20260722114753.627244-2-Shivanand.Kunijadar@toshiba-tsip.com> <63c02a0f-7f97-45c5-aadd-f189e8e5e089@siemens.com>
-In-Reply-To: <63c02a0f-7f97-45c5-aadd-f189e8e5e089@siemens.com>
-Message-ID: <909582.1784732050874988880@lists.cip-project.org>
-Content-Type: multipart/alternative; boundary="uKEYFcM57SxqPtECRwb7"
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 22 Jul 2026 15:11:08.0369 (UTC) FILETIME=[52D59C10:01DD19EC]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 22 Jul 2026 14:54:16 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23716
+ <cip-dev@lists.cip-project.org>; Wed, 22 Jul 2026 15:11:16 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23717
 
---uKEYFcM57SxqPtECRwb7
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+From: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
 
-On Wed, Jul 22, 2026 at 07:36 AM, Jan Kiszka wrote:
+This patch series enables the swupdate support for debian sid. 
 
->=20
-> On 22.07.26 13:47, Shivanand.Kunijadar@toshiba-tsip.com wrote:
->=20
->> From: Shivanand Kunijadar <shivanand.kunijadar.v45@mail.toshiba>
->>=20
->> Keep default lua version as 5.5 which will be used by forky/sid and
->> add debian version specific variables for defining other lua versions.
->>=20
->> Signed-off-by: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com=
->
->=20
-> Signed and author address differ - what is the right one to use
-> consistently?
+Shivanand Kunijadar (3):
+  swupdate-handler-roundrobin: Keep default lua version as 5.5
+  swupdate-handler-roundrobin: Remove adding additional lua version
+    paths
+  swupdate.cfg.tmpl: Add digest-provider option for signature
+    verification
 
-Apologies, it is due recent change in email id.
-I'll correct it in v3 patch, please wait.
+ .../files/{swupdate.cfg => swupdate.cfg.tmpl}        |  3 ++-
+ recipes-core/swupdate-config/swupdate-config_0.2.bb  | 12 +++++++++---
+ .../swupdate-handler-roundrobin_0.1.bb               | 12 +++++-------
+ 3 files changed, 16 insertions(+), 11 deletions(-)
+ rename recipes-core/swupdate-config/files/{swupdate.cfg => swupdate.cfg.tmpl} (72%)
 
---uKEYFcM57SxqPtECRwb7
-Content-Type: text/html; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+-- 
+2.39.5
 
-<div>On Wed, Jul 22, 2026 at 07:36 AM, Jan Kiszka wrote:</div>
-<div>
-<blockquote>On 22.07.26 13:47, Shivanand.Kunijadar@toshiba-tsip.com wrote:<=
-br />
-<blockquote>From: Shivanand Kunijadar &lt;shivanand.kunijadar.v45@mail.tosh=
-iba&gt;<br /><br />Keep default lua version as 5.5 which will be used by fo=
-rky/sid and<br />add debian version specific variables for defining other l=
-ua versions.<br /><br />Signed-off-by: Shivanand Kunijadar &lt;Shivanand.Ku=
-nijadar@toshiba-tsip.com&gt;</blockquote>
-Signed and author address differ - what is the right one to use<br />consis=
-tently?</blockquote>
-</div>
-<div>Apologies, it is due recent change in email id.&nbsp;</div>
-<div>I'll correct it in v3 patch, please wait.&nbsp;</div>
 
---uKEYFcM57SxqPtECRwb7--
 
