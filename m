@@ -2,44 +2,44 @@ Return-Path: <Shivanand.Kunijadar@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3734DC44524
-	for <webhook@archiver.kernel.org>; Thu, 23 Jul 2026 05:19:57 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.132])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.17372.1784783994593958354
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20500C44524
+	for <webhook@archiver.kernel.org>; Thu, 23 Jul 2026 05:23:08 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.131])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.17349.1784784178056023894
  for <cip-dev@lists.cip-project.org>;
- Wed, 22 Jul 2026 22:19:55 -0700
+ Wed, 22 Jul 2026 22:22:58 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.132, mailfrom: shivanand.kunijadar@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1121) id 66N5Jpch3941046; Thu, 23 Jul 2026 14:19:52 +0900
-X-Iguazu-Qid: 2rWh1q7vhFRlAEALo2
-X-Iguazu-QSIG: v=2; s=1; t=1784783991; q=2rWh1q7vhFRlAEALo2; m=AAfiqTO3rFuqPbBbCapm+qNgQX/r1Lzec+4ns6jLB2g=
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.131, mailfrom: shivanand.kunijadar@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1120) id 66N5Mu2N3398132; Thu, 23 Jul 2026 14:22:56 +0900
+X-Iguazu-Qid: 2rWhJyGIBq07WH7zhI
+X-Iguazu-QSIG: v=2; s=1; t=1784784175; q=2rWhJyGIBq07WH7zhI; m=ESIrUbUXgNNw8sHtOGgiVbFKCIVHXgpXXnWP8d+pUfA=
 Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	 id 4h5KF31WJRz4vys; Thu, 23 Jul 2026 14:19:50 +0900 (JST)
+	 id 4h5KJb5lyfz4vyn; Thu, 23 Jul 2026 14:22:55 +0900 (JST)
 From: Shivanand.Kunijadar@toshiba-tsip.com
 To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
 Cc: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>,
         kazuhiro.hayashi.f74@mail.toshiba, kumar.dinesh.h95@mail.toshiba
-Subject: [isar-cip-core][PATCH] .gitlab-ci.yml: Override default release with sid
-Date: Thu, 23 Jul 2026 10:36:34 +0530
+Subject: [isar-cip-core][PATCH v2] .gitlab-ci.yml: Override default release with sid
+Date: Thu, 23 Jul 2026 10:39:40 +0530
 X-TSB-HOP2: ON
-Message-Id: <20260723050634.2447684-1-Shivanand.Kunijadar@toshiba-tsip.com>
+Message-Id: <20260723050940.2447738-1-Shivanand.Kunijadar@toshiba-tsip.com>
 X-Mailer: git-send-email 2.39.5
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 23 Jul 2026 05:19:48.0124 (UTC) FILETIME=[E15F9DC0:01DD1A62]
+X-OriginalArrivalTime: 23 Jul 2026 05:22:53.0306 (UTC) FILETIME=[4FC025A0:01DD1A63]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 23 Jul 2026 05:19:57 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23722
+ <cip-dev@lists.cip-project.org>; Thu, 23 Jul 2026 05:23:08 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23723
 
 From: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
 
 By default, the release is set to trixie, pass release as sid to
-override it for trixie based test targets.
+override it for sid based test targets.
 
 Signed-off-by: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
 ---
