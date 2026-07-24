@@ -2,36 +2,36 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1925BC53215
-	for <webhook@archiver.kernel.org>; Fri, 24 Jul 2026 12:40:50 +0000 (UTC)
-Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.18376.1784896844247059719
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA03C5321A
+	for <webhook@archiver.kernel.org>; Fri, 24 Jul 2026 12:40:49 +0000 (UTC)
+Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.18265.1784896844892105859
  for <cip-dev@lists.cip-project.org>;
- Fri, 24 Jul 2026 05:40:44 -0700
+ Fri, 24 Jul 2026 05:40:45 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=f1Xw+IUX;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-51332-20260724124042fee291f22d00020747-t3xfdf@rts-flowmailer.siemens.com)
-Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 20260724124042fee291f22d00020747
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=IfntfKW8;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.225, mailfrom: fm-51332-20260724124043c52b31ad460002079d-kblh3u@rts-flowmailer.siemens.com)
+Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 20260724124043c52b31ad460002079d
         for <cip-dev@lists.cip-project.org>;
-        Fri, 24 Jul 2026 14:40:42 +0200
+        Fri, 24 Jul 2026 14:40:43 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=Quirin.Gylstorff@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=angXJ60g2WOi7yAY5fa1nnWGVUXvVQ3Sjsu7Y2jRads=;
- b=f1Xw+IUXAAZX/Z4mrVCLOz7Qdm+PAPE1Tcxf7kYhfEDMTsMLBf+5CFDNjBYr4NEhymq2dd
- zcEIn9PudiNUKZK1YuX2ZwwvCStA7vUQBzdjaK8dRX+RdU+SlbMVxuGYDbJDrmwl+FiqNNZq
- YOtspuFYc7lBlcPelCITiarqoZr5nxUtRKYPiaL6NpC0SIVjqSdINbunmmY2ueBxofAAfpYO
- 2ggOjlFNhc1v0nhGm8l4uz/1U5VmA+llIu+1mHF2dOtBwloqFUYru99wfFVmZNWcUYCP5EZA
- MeUOFVjsawOGLU2S6UPBBZv1LkhlZF0OYU+yGFNdP3prqkEDLATrsakw==;
+ bh=44jQBr5rHf2YhnXoe7FNSxhS/VF+0HYrllvN/DLarWA=;
+ b=IfntfKW8At3iAyhSKUD9qLsnYpqtC+gGzBDZnYAWb9Kx+YZ+tB8g4/qdiRP9PlY6nHfnja
+ Sy32DjeX/f5hpAYddB6IeB2zjkPM01ZkZ1HDPRjUwCG5mo1poRL1MGO39aytFPDIX5gCZumL
+ fvYH99EWVBBtRIGAtXdQ7D4se1jrcYLdlymMmk1O6vngnjcGgTsFS9Dvd64mi9HfgInKZGyj
+ cjcBVKp9lJ11AZSm6AuCb0ziyDoSKMOBrzUnaRuv8ilj514jplPoV3gAk9p3tOQol19b6oN+
+ m1plaoW5olrFrYt6M98i15u8NpFm0a3T5HJooU22xnvbxevUq6+OcYjQ==;
 From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org,
 	jan.kiszka@siemens.com,
 	felix.moessbauer@siemens.com,
 	christoph.steiger@siemens.com,
 	clara.kowalsky@siemens.com
-Subject: [RFC cip-dev][isar-cip-core][PATCH 06/14] Apply hardening configuration to the kernel
-Date: Fri, 24 Jul 2026 14:39:08 +0200
-Message-ID: <20260724124038.3633611-7-Quirin.Gylstorff@siemens.com>
+Subject: [RFC cip-dev][isar-cip-core][PATCH 07/14] Add kernel hardening to cip kernel build
+Date: Fri, 24 Jul 2026 14:39:09 +0200
+Message-ID: <20260724124038.3633611-8-Quirin.Gylstorff@siemens.com>
 In-Reply-To: <20260724124038.3633611-1-Quirin.Gylstorff@siemens.com>
 References: <20260724124038.3633611-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
@@ -41,44 +41,32 @@ Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 24 Jul 2026 12:40:50 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23742
+ <cip-dev@lists.cip-project.org>; Fri, 24 Jul 2026 12:40:49 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23744
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-Use the provided kernel hardening configuration options in the kernel
-build.
+This enables the use of the hardening kernel config snippet in the
+linux-cip build.
 
-Co-Authored-by: Felix Moessbauer <felix.moessbauer@siemens.com>
 Co-Authored-by: Christoph Steiger <christoph.steiger@siemens.com>
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- recipes-kernel/linux/kernel-hardening.inc | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
- create mode 100644 recipes-kernel/linux/kernel-hardening.inc
+ recipes-kernel/linux/linux-cip-common.inc | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/recipes-kernel/linux/kernel-hardening.inc b/recipes-kernel/linux/kernel-hardening.inc
-new file mode 100644
-index 0000000..2b22fca
---- /dev/null
-+++ b/recipes-kernel/linux/kernel-hardening.inc
-@@ -0,0 +1,16 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2026
-+#
-+# SPDX-License-Identifier: MIT
-+
-+OVERRIDES:append = "${@'kernel-hardening' if bb.utils.to_boolean(d.getVar('CIP_CIS_HARDENING')) else ''}"
-+
-+KERNEL_CONFIG_FRAGMENTS:kernel-hardening += "hardening.kernel.cfg"
-+
-+do_dpkg_source[depends] += "${@'cip-cis-rules-config:do_deploy_hardening' if bb.utils.to_boolean(d.getVar('CIP_CIS_HARDENING')) else ''}"
-+
-+do_dpkg_source:prepend:kernel-hardening() {
-+    cp ${DEPLOY_DIR_IMAGE}/${DISTRO}-hardening.kernel.cfg ${WORKDIR}/hardening.kernel.cfg
-+}
+diff --git a/recipes-kernel/linux/linux-cip-common.inc b/recipes-kernel/linux/linux-cip-common.inc
+index 6533523..2519791 100644
+--- a/recipes-kernel/linux/linux-cip-common.inc
++++ b/recipes-kernel/linux/linux-cip-common.inc
+@@ -16,6 +16,7 @@ inherit linux-kernel
+ MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
+ 
+ require recipes-kernel/linux/cip-kernel-config.inc
++require recipes-kernel/linux/kernel-hardening.inc
+ 
+ KERNEL_CONFIG_FRAGMENTS:append = "${@(' ' + d.getVar('RT_FRAGMENT')) if d.getVar('KERNEL_NAME') == 'cip-rt' else ''}"
+ 
 -- 
 2.53.0
 
