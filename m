@@ -2,49 +2,49 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FFDAC531D0
-	for <webhook@archiver.kernel.org>; Mon, 27 Jul 2026 06:07:41 +0000 (UTC)
-Received: from MRWPR03CU001.outbound.protection.outlook.com (MRWPR03CU001.outbound.protection.outlook.com [40.107.130.63])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.25085.1785132451540424364
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 838FCC531D0
+	for <webhook@archiver.kernel.org>; Mon, 27 Jul 2026 06:11:21 +0000 (UTC)
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (DB3PR0202CU003.outbound.protection.outlook.com [52.101.84.70])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.24830.1785132675806585160
  for <cip-dev@lists.cip-project.org>;
- Sun, 26 Jul 2026 23:07:32 -0700
+ Sun, 26 Jul 2026 23:11:16 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=elbeBCgM;
- spf=pass (domain: siemens.com, ip: 40.107.130.63, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=el83EHDQ;
+ spf=pass (domain: siemens.com, ip: 52.101.84.70, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CxqdlZy/NBWFgh18LZ+cG9lAAcGkhiG0eFstSXqJ+hMf9trwmRjblv5SOhvQvp+4QUMN87xAtqfQGPBkKMt+lZRvWoHjGg0ZlJgbOzXEAFPLOHopzWmKb21IBhpWZnFkVPMtsZzTRiINiRbIwguWxFu+Sj4rArTUPhyQ24SLhPnKhaO4xVpgpEaG7SJilvE9lMuVxrCTUV6z7Z0/+fPWgrhSfW8Es0g8D4J80JbE1IuKt9wVhUQA964HfeCjyIP/JowC4ywXUMBGfSH/1ZVjAeXmHKjzjJNmW+8aV4lEPo9UQi7p+RQULMs/Ky2MDVFu5AGKYOVRSc/KSWM3QdcCdg==
+ b=RiKCGGRW0KtSmWkKIMFCM8SJA8lLwvq3YV+Ztd2lE7bVgTin3ploiXkmUPKmunpzGSqyx4YSaV/+naIJp9O8Q3j1+9ynScc+MP0JlK7pEQK0D6rBgccF0YMQI3Ek8fXVBfnoUCUfQJ4Lpfbx93MScdtTDxZNHl884qLeJoTCVAgciOxAKbcdWt8sa05g4XCJ7X2re96+GlRJk/wAeat9ziybjkrUJK3BR6wV1N2BWoI0RcB7/RzhNHDQ+RcSLneaPw77+k6su9lQa/FthYJ2fPOHYwfmW8egvO7/kA0G4kWZhfXOF7c5u3oMCYbRt75XENz82/uywGBjjRfBr/Qo4w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dEMSXY7yZKSchGVBuSh0hxyD9X5hU50jTZaB16bGjyQ=;
- b=n5OYxAoxtJ7DeRDrTI2LKsJkdMLQCX2Q5TZJZ6ioPebeDGP73vatQXCxgrkwEUCjb+l49+onJ8C3WZ9boqgMGCQ7EK7Ni8tgkHoEnhf7rzkGGlwB9WY3+fCpqNTifFfq+HLCS2MBnYczmfxDlvDbxIu9uO0mhe97UQtvNE8nO0w84TnxyTFucGKn/BrjJQqJUlO4wx5uF7FGvUAs258d/0Qdoa0fpZNMCZQqjw7+Pb7+P7XpdoJE9kT/IPSzB8nELjHUNusHI4CRuWv8xr1fmydNOoG2bYtwL0/gbcigD0s89YVQiQw2uDF2ExXhOkOHDdrPvix7XdSp8C/LogUxpg==
+ bh=aj0xrbI5DbM/kasTqyS7aGsyB8Q20OT8yg2modGKoYs=;
+ b=e8hxlYHa1y3TfTixMkFQoODjW60LJCFGdp82Y0OiKr52eSkp+4syjKsGTx8Yqo1Q5V9TqmfnYdM49V2TeEZhqE4aS/UAXOLhetFpkhWiSnuEjEo218idTFcCFz5ADjlizBsgwGmdRM6A8hS7jAzIkoV7pdRhlURMmaMWgC9XgGutmmTtMgQF5YG8NUl1PXueI0Ygbu2GQYq+lIwMWGXvEjdmK5Czr7Iq+xq2nDgJpyG86x+PQiCxjVVFp3A+iHrrVGHam4xxPtMH66yNHnwc414bX+aQhEy2d5xLzwtP6tQhs6tnwoENIiMelq5KJt4wWRImXRKB0uTVhV8mCRS7Zg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dEMSXY7yZKSchGVBuSh0hxyD9X5hU50jTZaB16bGjyQ=;
- b=elbeBCgMJv8/FGmECAQCNG7ujOnfKCNWBdbUMR5LwcNYmn9hu4ht/RszOpMQQpGQ34gII/DrivMd1R2umy4nfVC2+op/lvJD01xO2S9sxLW64sKTi21VLJhvtC4yFg2LkasE2Psvhw4WldmF7UmhTvLSwqVM93+AgT7oX1Ru/prb8nOGMaFQTD6NUP4/h1Gab7mkl6zoPgmYnwfuYW2Hu99nrCTZ81uccV2k1yuPASyhHIAscf+a9amrrcGczOQtCJjPK5spITWwJaZVPCjRH2T7Rk2EauO1s+88lkEkxzmw6RbuNwGOhQklfM5vqsRjrmVF0fzoO3wEZ/8qzMnLcg==
+ bh=aj0xrbI5DbM/kasTqyS7aGsyB8Q20OT8yg2modGKoYs=;
+ b=el83EHDQXA0ih/k/mbFodMseMxMVnZuyrPxPHxoMOWngBOV+JIrtKxLyGyfTh3SuJuiFB7oSehbJzDx67FaNQ9bia/mJONCm7SXfxX9v5IVEGN5P7cF9Vlmqq92Tnt0JzeFY6YY50Q/DwXNpa9Y+BuE2XmUb12G7TMTutnw/eWNZiW45FhER5qg9XWlvIDWQNXuGH/FcJWYXNYNU8Y8fIzHEHEbMg5fQHeSKxx00NqyQU/EzjScycZ3w7IiATLVxACoHCv8CcfZaN8EHa0gIES1uLRMQz/sCQg5UKkaHtp/69UdG4AM3ZmzSDMbFpmt337ZVzAEA6tk0vVd7jPiYiQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
  by AM0PR10MB3554.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:15f::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.13; Mon, 27 Jul
- 2026 06:07:26 +0000
+ 2026 06:11:12 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::be9f:e8ca:ee9:83e1]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::be9f:e8ca:ee9:83e1%3]) with mapi id 15.21.0245.012; Mon, 27 Jul 2026
- 06:07:25 +0000
-Message-ID: <ccbb8f6a-216a-4546-ae7a-8ac13a785d2e@siemens.com>
-Date: Mon, 27 Jul 2026 08:07:24 +0200
+ 06:11:11 +0000
+Message-ID: <5084bce8-426a-48d7-bbfb-66535442e68e@siemens.com>
+Date: Mon, 27 Jul 2026 08:11:10 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC cip-dev][isar-cip-core][PATCH 1/4] update to kas 5.4
+Subject: Re: [RFC cip-dev][isar-cip-core][PATCH 4/4] switch to isar-rootless
 To: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>,
  cip-dev@lists.cip-project.org, felix.moessbauer@siemens.com
 References: <20260724105116.3575045-1-Quirin.Gylstorff@siemens.com>
- <20260724105116.3575045-2-Quirin.Gylstorff@siemens.com>
+ <20260724105116.3575045-5-Quirin.Gylstorff@siemens.com>
 From: Jan Kiszka <jan.kiszka@siemens.com>
 Content-Language: en-US
 Autocrypt: addr=jan.kiszka@siemens.com; keydata=
@@ -90,659 +90,128 @@ Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  qH4kDzsqKX8zzTzfAWFxrkXA/kFpR3JsMzNmvextkN2kOLCCHkym0zz5Y3vxaYtbXG2wTrqJ
  8WpkWIE8STUhQa9AkezgucXN7r6uSrzW8IQXxBInZwFIyBgM0f/fzyNqzThFT15QMrYUqhhW
  ZffO4PeNJOUYfXdH13A6rbU0y6xE7Okuoa01EqNi9yqyLA8gPgg/DhOpGtK8KokCsdYsTbk=
-In-Reply-To: <20260724105116.3575045-2-Quirin.Gylstorff@siemens.com>
+In-Reply-To: <20260724105116.3575045-5-Quirin.Gylstorff@siemens.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR3P281CA0119.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a3::19) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: FR2P281CA0003.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a::13) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AM0PR10MB3554:EE_
-X-MS-Office365-Filtering-Correlation-Id: 52055a27-63f6-42b9-7df9-08deeba554a5
+X-MS-Office365-Filtering-Correlation-Id: f9ccaba9-20b2-4fe6-beef-08deeba5db5e
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
 	BCL:0;ARA:13230040|366016|1800799024|23010399003|376014|4143699003|11063799006|56012099006|10067099003|6133799003|18002099003|22082099003|55112099003;
 X-Microsoft-Antispam-Message-Info: 
-	kb8ITAOGjZxT+spce5EgC9vUJu/uBe34HL5QeorbOiB7PmiNEZhb3k6Hjj6QQ6WyXBlZkOulzygPsVBURMhq+imyPBcTU4s+MIDZRulL4MX/l/GEJ6fM3w3RuvDY7v0QCq7YTsOp4qKLSSmlG1EgZzC4DFlxbUqlMvm8/V3r04V7gAvgjqMy0ZWxHqkZ6l8XaSn1mR8XE1RE8ZJWRACyVbd/0NS5H2yJXJzCfpSFLJUPBvIjWvryBSNbaBHD+dBtLsGGZBP3QzbhKrkP4QvR/EVsdVYjA3jUpofwZaIpn0wEgmLejCk+uvtItyYubHO8P8Uytm1Et8RPXa1nFxhVBPV7lH8VK98+tMs3x6mISh1JiLiIVSgLZtY11IgiJXaWbSLUAr13VsuEOurO1QQpeB/dI4Gkbd8DyCXtQul7hIgFDK5BTYuIGmCVHwJ17/eiX5PZEHtz8de7cx91mUBYJymqg4iSTkdxpCQvytb2JZH4RyG84wip2arhzO+7jaBmCDumpOMpdXhRA1CIWnniFAsrZ7sL85WkKqLFt0/6G9lNQQf1AIklGl9nfjWNIWYqUgaXwZV6ya49x1GF+ecwMi51dCY2aOgylsCcjYbaermo5h8bIZURXCFx1I5AQ7k3
+	laZGjx519iRCdJ7M9a1xJYysD+RpLtFzVT2hYNgbIxg1P/ktWXhNvs1Os2p7SyevBkrVOFlRmAAquZp4g29IncsmbgRyqKbLKwjDcrLElg83rXUklpAQSrQ19CXbaod36Mm03PUt9yoLJYHjO+PFoqwwj7b0sTajxzDK5pNfjjfaJ98FGAdu6BNt5MSg9DWd02OtAirSFuIBa13jgZvu95pbnEdA8Q9P+Ox+4exdpyHy0fHMt0CiVGoCMbOTN2ZtEs9GeNTuHr93NSQ/IgPv5TdZPTWxnxEhvWgEc1YM78hm8vm1zTFaSYe1PYqmtcyN7t8GSnV8eqeOkhdc19Y1bBEgxog3ho2lG3/P5q10YI/53tGrjRk9tarntX10p3InDBVBLbX1mFqLwXW/fCfQXqEMQEb52uCsPgq5TcrOGf3J+hs4n9J24M/UBSxjD39baSQU9Q0xGh4ukXEhlWxMgP6O9FlWON+MuSfrCXh92AqJYWbMV+om1bDxViZ62Rm6cIDR7PIx1ouffo6Er5jIsyal/zoRr7AFxc8ZPym4YkByZuEAczLZ/TAbigNkuO7vIK+Sf1f9AJdAXY8xKZc001JY+xxN0LOYNeyJETCY4fcF4oi2NEQRr4NfngHSZzeS6ThrjKUZXWgG8U4OoCu9Zsd4Szoa9Ep7HLDKY0RUxgU=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(23010399003)(376014)(4143699003)(11063799006)(56012099006)(10067099003)(6133799003)(18002099003)(22082099003)(55112099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?bE11dmRYRlFiZGNzNXk1N1FRVGxaeGZrSFZORTVpTC9nbG53ZDc2RjQ0NTEy?=
- =?utf-8?B?V1J5UWpKdXljdUJBVE1Ka1dKUDBoNWxCMEl4QjBSWlA5V1c1ZzluMDU3RXk3?=
- =?utf-8?B?cDNsS0NqbDV4RkhKazlYSFdabkRnblB5TzdNSkRuRlZVaTBUTkdRYndUUVBi?=
- =?utf-8?B?alRhS3hKVzdFNzdNUUtpRmNKaytzSVpNREhpSDZmYmhCOW1GeldPUGZ4bFlP?=
- =?utf-8?B?UXVMYWtMT04wQ2x3WHRjQ2gxVVpDN2pFSkN2Zi9vZEUvUjYzdEk5YjNtSGpn?=
- =?utf-8?B?ZWRtMzJ2MlMvVTEzSUl6UFJvSzJTSnJwczM0b1c5aVU3Q1RIY0FzaGZWZElG?=
- =?utf-8?B?VDJBQnBFbEFPbjRoZGdqa0crY0xwRG9aR1pnak03d2NsdkZzblJ5T1N4YVQ4?=
- =?utf-8?B?THV4V0hwV3lZNTJVektHVjZ2SXEzREJvdldDODZNMUszUEl6a3M1eWR0UFpo?=
- =?utf-8?B?VXJzektUNEhHMFRocE5KNGJqTVdBTk1xTURxS1lLQkZkUlpwOFZaZWNUdC9N?=
- =?utf-8?B?dGovSzlJUjd2L0VxWUlGN3U0d1doL3hBRVBISXhUak9oUGlkUkRQanFVN041?=
- =?utf-8?B?RnRzMzNHcC9jK0FZNWZZMkRjZDRwK3dRSXNRQTQ3blNCRHJnS0FhRWdRR0JZ?=
- =?utf-8?B?ODJFbCs5dlFUMDdVejBzZFFaK2hjTmNNSVlHYnQzZ2R3UUtoT0pCVlk1aStV?=
- =?utf-8?B?ZmZhb1VabUx5S0tmcGc4L3RKVmVCQ3VMV2FSZythanhoT2g0Uk9BUHFjVWpk?=
- =?utf-8?B?d2lWem5oNTd4blJnUVpJRmJVMDkyVWtXUmYzNnFZb1BGYXZoNGllYUpYcDlT?=
- =?utf-8?B?TUZoNXl5K0JvNW9tSWRMQVlFZE5xZzlIOW04TzBxMVE4dW1lT3ZhZmJHMytl?=
- =?utf-8?B?OGR1cVJTbXFmeXlQeHZLSkFMRFh0Z3laRjdIckV1MlFZQnlpUHh2VWUyQ2ZG?=
- =?utf-8?B?eEJiOVBDb1FmbW0vbDZseGtjL0tVZmZOcFlsNlVUWmtsYU82cGlsVlQ4Q3dY?=
- =?utf-8?B?dUdnaFg1YWxOekN4TGp3RzFZTTdXREprdFRqTTdhVUNrc1dtTHRvcXVFNHIw?=
- =?utf-8?B?bmV3eFFlN3V6TkxmRUpJLzVIVEczdnhBZ2liSFN0dkRLc21JcVNEWUQ2Nkpt?=
- =?utf-8?B?SytCY0d2TU0ySTJjWmFaaEpLU0xpMjNXa3A3ajY2TlJpK3VmazJhMk1GUDhE?=
- =?utf-8?B?d08xSXk4cEtWaVpyZE5TZlJZM3loeFRGaDZrMXltWWgxc2ZHN1c1TnJqNUJG?=
- =?utf-8?B?TjZybm1zNFowOStkWWVBL0hteGJHNjNwZTlmcEVXQ0dIUUpqUWQ5SGJaenJr?=
- =?utf-8?B?cGpuWk1ZZ2FQK01iNzlEVzVwVTZDWmhTbk5wVklCS0VSdnpncXJJckl5d2l3?=
- =?utf-8?B?Zml4M0txMGRCa2JPVVJpT09PNGw0SHRJbFFPVDJ5a29vZG1ITlhCOExueHY0?=
- =?utf-8?B?bW15RnNJSXNYMUlYek54YzVZZDUrZjQ2YUQ2bHV3WDBGSjRrTXFaYytNVEVL?=
- =?utf-8?B?YUswMzY4a0huU1FJbU8zNiszTzBqNGV6QTREd0RES2hTU2J2Wm82aGpBejZz?=
- =?utf-8?B?WWZ0YVFNYXJHazZqN0NyREo2a1ZDck5VSUhCSzV2SFdmQi9ndlBBTHBtSjg2?=
- =?utf-8?B?MEQrSGNEelh0S1hzQTVoZzRDZ2s4YVZQck54K1RLOE41amEzRjhSeHkxa2pL?=
- =?utf-8?B?SlhHMnJKSWJFT3pCLzIwMUJjMWtuMnpqcnRiM2NNL3RyOUFRRGQxbUUrdTNZ?=
- =?utf-8?B?eG54OFVoSmZRbWpvUFlnbHRRRFRkUElXNGtEc0dYUUxiNVJOM1RoMlVyOFM0?=
- =?utf-8?B?QmxjR1RiaHNsYzZOWjNyWGZzRmJDSUNySW9MUVEwK2JUcy96aU9peVVoSGZo?=
- =?utf-8?B?MGJFOVBkRW42M0tNam9wWXllWklKVWtWSDhLVkhEYTNXQUJBcTFGSEttN2hu?=
- =?utf-8?B?cUhNYk9ybTJOdHFJWGEweDRRejk5aFdsM20ycXhDakx2SzA1NFNXQllWbEhO?=
- =?utf-8?B?TEpQdy9DQVRpSWcvMGRFMC9sbXc0S3BGUDUxekx6ZUgrU0lpdjF4SUdpN0p5?=
- =?utf-8?B?SFMyMU5LL3NLTngzcGRGbEJ0UEMwd0VOU2Y3WlVmUmY3b3N0cDhPbW5UWnZX?=
- =?utf-8?B?ZVNVdGJJNVFXUUhoOG9EM3lqejBsZ1ZQZk96OXlaTVhoS3pUbDA2bW1GMzhz?=
- =?utf-8?B?cXNEVjFtRUthNVBHdTVrTUc1TUpkeWdic3NnOGZZWXU5Y0lEZlNwbWxWRzRW?=
- =?utf-8?B?RmZyNEJ4TUUwaHhMTFF6dDdPOTNsaWxYWlpjRGV4ZVBXanVFMWJEWHBzeGhq?=
- =?utf-8?B?b2NCdlJPZm1oRk5SZHB6VWs3cDFFb2lTZ3R1eDl3U1FNaUtvMTZidz09?=
+	=?utf-8?B?clBNbW9BalhqSnVKNWZaT0tvRnluMkZFbEt1cVN6SnI2SzNTSzk4NnJHYmY3?=
+ =?utf-8?B?UUV3ak13RWlVV21wYUdqMktzbjl6YXhlckFwVzVsVDRoeXpLYjkvdDFJRUo3?=
+ =?utf-8?B?U3g1T1NXSWppb0xQdGJTSjdiQmRobjNpRUlpcFhrMTBCbDB5STZsRmh0aU94?=
+ =?utf-8?B?UDF5ZmRyd1FyQno1V0pTd2pTdVU4L0dpd1BNcytacmVycjlrVFNESFdkdUtO?=
+ =?utf-8?B?MjJleE1sMTFHR01iSnFvdHNrU1kxNGFGMlZxek9Vb044NmFuSmpYNVZBQVZP?=
+ =?utf-8?B?RDF4NDZGbDk0cnk2VHdway80bEZSOFRWdG9BZ1J0L0JKb2VOMGswaStZcDVm?=
+ =?utf-8?B?bE1jRHZPU2RLM255ZFVXK2kxalpDK2tsWENpZUpDVHMwZ2xadFdOVWFaenFU?=
+ =?utf-8?B?R3FuMnE2d1A4SVBOY2dwdnBoVlRLVmlOMk9NdWlmeEk3T1dqaldDMGNINEYx?=
+ =?utf-8?B?UkpmQnEwNGJHY0dMZWhUZDVNQVVTbHFHMWR5TEJpelNVa25MVEFEQkFvUDVE?=
+ =?utf-8?B?ZlN0Y3U5ZDlyKzl5K0ttV0tOZmI3VzNhbVBXRlRuZkhKTUJrT2ZScjUzT0JY?=
+ =?utf-8?B?YUluNno4Q1dyZ1l2MnR1UUF3U2M3a1lHMXVyeE5KN1FRc0EzVzB1cnJwVW9H?=
+ =?utf-8?B?M1hUQkdpUmx5ZE9ycUNCbWVDQytxT2txdVR1V3FnYmlJMmNyNHpmeDJiejA3?=
+ =?utf-8?B?VXRSaktZS011L3NHU09UdEtpc2x6ZGkzRlBkRzBBZ0RoNldacVAzemoxU3ky?=
+ =?utf-8?B?T203Sk11eENtVW90UjFlR0hHeG9IVy9xMnB3N3gyN0xXUXhLcnl5WUlyd0ZO?=
+ =?utf-8?B?TkFra1ZBRTlBdDkvSU5DaDAvU29HaWZvZ1RWQW1DVlVMV2JpUlY4YmNIZE81?=
+ =?utf-8?B?QTlqVlVUcEp4NGVWZ01VVERiOUlPL1dKMzZrUXh5VXAwMEhncVhYN2paZjV5?=
+ =?utf-8?B?a0Y1SzdKbWVCRHRLWG1HU2tINC9HTzE3dTlYdTRDbW9wRFMwdXkxd3pKUGhY?=
+ =?utf-8?B?M1VYWFBPUFI4MzRCQWVhZ0F1NTMwbVo2MmM3ZzhjYkljOWtkZmRwWWs0MXh3?=
+ =?utf-8?B?M3YxbkdJUHFSVDJOcW51L3NzdU1tUElpazVUazBNeTJRSXdLa1FONFJON0lW?=
+ =?utf-8?B?MzJla3ZnaFNqOENHcDdTTjJtajVSL0FQL0oycnhVL0EzcXFYdVdJYS9SamE4?=
+ =?utf-8?B?SEFmRXhFOXB3ZW5SSUZIU3lIa1NCUW41d0ViVHlBSzc1MDZQeUpENjMyM3kx?=
+ =?utf-8?B?dm00dU9LdWJENnNPRHhMdTJqaVJsdU5nNlVJY0p3eEFGNmJZczIzZm50dHQr?=
+ =?utf-8?B?ZjFjM0NHZEROQ0laTnVWV29lSE5SQmsrK0xTakRRZU42N2NmeEFROU1Ob1Z3?=
+ =?utf-8?B?SFlaWDFLZDRHNzMyUFBOMC9JS0ZBY1VDTTNkQUVPcko0TjZCQno2UWw2RXlD?=
+ =?utf-8?B?OUFkNDJWY3hUSjZMTHRZMjVhcFZqWnhtYlRwcjc3YjZIUFFON1ozUzF4Vk9C?=
+ =?utf-8?B?akxOeG80dEMyTHBNK0NDVVZUaTVHaElmVE5YV2c3WTYyRzhTdTB2V3hXdmdX?=
+ =?utf-8?B?SmM5K096aHkzajNWMUxkemxzekNFb0Y1R3ZRbE1UVFNObmYxd2g0N2h1U21y?=
+ =?utf-8?B?K2RSWFlXU3pZZkhtWGJhS1hNaVRQRXRtYWQvYWI5UTVTQVE5UlduWmVaRzZ0?=
+ =?utf-8?B?MnVXd2ZpZ3ZibzZVRzhTOUJtVENaWC9MQ1R2azRqOW9JbXI1RnhSeVRTQTB1?=
+ =?utf-8?B?elAvSEpiLy9GNGc3SkhJU250alFNUmdtZEV6dlFNQXlUQ3hyRVUvOEtlTldK?=
+ =?utf-8?B?ZjVtZjkvMzF1NTA0RWRQWFVyeGJCdkgycXJvSmFoT3NOZ2grUm9pRlBBTUhO?=
+ =?utf-8?B?dkJROEJjejlZSkQwVUhMdFJQd0lMYVpzNk9pSjI0bHdwU0hqek5ZbmJwSUNt?=
+ =?utf-8?B?bnhoNzJyWEl3eWxuY2d1WGE0Yks0K2VoU3MrWTlFWm04VTJGZEZxenV1N3pj?=
+ =?utf-8?B?TVpPY1pzZnl3TlRxYVd1NkxvNC82eDJnclVCcERJNDBNZksva2d3ckNLZmtB?=
+ =?utf-8?B?SXdKVDU0bEhzSDJyVE5mTlpmTGJ0U09ORE5pdDR5ajlmMXFha2Z3bE92b0hD?=
+ =?utf-8?B?cmFKYzJMTlVQVE5rbE1JSEFaVUVXYktuWWNKZS94L1ZTYnVSMHE3dURSRnN5?=
+ =?utf-8?B?ZHgwaHFBOUdJdDNGT05WM2h2ZDkzWnpBSVBOTVNIdTREZjFkSGt0NVhYazJQ?=
+ =?utf-8?B?Z2gwSDUrR3d1Q3dvTFl6eVpvaTNOQnJMY0pmOGtYRXE2TjBhSk9ERDU4dGJK?=
+ =?utf-8?B?ZUxBUFBkTG5pN2kvL0JURFhZaFRCSzlMdWZPWFJyMjNGdVBHd1lUZz09?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 52055a27-63f6-42b9-7df9-08deeba554a5
+X-MS-Exchange-CrossTenant-Network-Message-Id: f9ccaba9-20b2-4fe6-beef-08deeba5db5e
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jul 2026 06:07:25.7901
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jul 2026 06:11:11.7537
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: C7hI3InwasPfBQZd8oflVCj+4D7OM0ZQTHMyW2mCjLIbG8OCm1m0kh1PQW5J6UWFR4qEJg3SQdVMsLJmjxIk/A==
+X-MS-Exchange-CrossTenant-UserPrincipalName: OOoIXkkkwkpA1sxwZi05dIIWULB1G14Bah12hTsJEZC/w0kFEvPT/lVtqhFG9PMNE6apQKkRCQxuHIvDH7mpdw==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR10MB3554
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 27 Jul 2026 06:07:41 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23750
+ <cip-dev@lists.cip-project.org>; Mon, 27 Jul 2026 06:11:21 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23751
 
 On 24.07.26 12:51, Quirin Gylstorff wrote:
 > From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 > 
 > Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 > ---
->  .gitlab-ci.yml |   2 +-
->  kas-cip.yml    |   2 +-
->  kas-container  | 311 ++++++++++++++++++++++++++-----------------------
->  3 files changed, 170 insertions(+), 145 deletions(-)
+>  Kconfig     | 2 +-
+>  kas-cip.yml | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
-> index b53def4..1e61cb0 100644
-> --- a/.gitlab-ci.yml
-> +++ b/.gitlab-ci.yml
-> @@ -33,7 +33,7 @@ stages:
->    - cve-check
+> diff --git a/Kconfig b/Kconfig
+> index 438234c..abf9aaf 100644
+> --- a/Kconfig
+> +++ b/Kconfig
+> @@ -17,7 +17,7 @@ config KAS_INCLUDE_MAIN
 >  
->  default:
-> -  image: ghcr.io/siemens/kas/kas-isar:5.2
-> +  image: ghcr.io/siemens/kas/kas-isar:5.4
->    before_script:
->      - export http_proxy=$HTTP_PROXY
->      - export https_proxy=$HTTPS_PROXY
+>  config KAS_BUILD_SYSTEM
+>  	string
+> -	default "isar"
+> +	default "isar-rootless"
+>  
+>  config ARCH_AMD64
+>  	bool
 > diff --git a/kas-cip.yml b/kas-cip.yml
-> index 23bbba4..6badc7d 100644
+> index cbccf63..eb26716 100644
 > --- a/kas-cip.yml
 > +++ b/kas-cip.yml
 > @@ -15,7 +15,7 @@ header:
 >  distro: cip-core-trixie
 >  target: cip-core-image
 >  
-> -build_system: isar
-> +build_system: isar-privileged
+> -build_system: isar-privileged
+> +build_system: isar-rootless
 >  
 >  repos:
 >    cip-core:
-> diff --git a/kas-container b/kas-container
-> index 993f0bb..55bdcfc 100755
-> --- a/kas-container
-> +++ b/kas-container
-> @@ -27,7 +27,7 @@
->  
->  set -e
->  
-> -KAS_CONTAINER_SCRIPT_VERSION="5.2"
-> +KAS_CONTAINER_SCRIPT_VERSION="5.4"
->  KAS_IMAGE_VERSION_DEFAULT="${KAS_CONTAINER_SCRIPT_VERSION}"
->  KAS_CONTAINER_IMAGE_DISTRO_DEFAULT=""
->  KAS_CONTAINER_IMAGE_PATH_DEFAULT="ghcr.io/siemens/kas"
-> @@ -49,9 +49,10 @@ usage()
->  	printf "%b" "\nPositional arguments:\n"
->  	printf "%b" "build\t\t\tCheck out repositories and build target.\n"
->  	printf "%b" "checkout\t\tCheck out repositories but do not build.\n"
-> +	printf "%b" "diff\t\t\tCompare two kas configurations.\n"
->  	printf "%b" "dump\t\t\tCheck out repositories and write flat version\n"
->  	printf "%b" "    \t\t\tof config to stdout.\n"
-> -	printf "%b" "lock\t\t\tCreate and update kas project lockfiles\n"
-> +	printf "%b" "lock\t\t\tCreate and update kas project lockfiles.\n"
->  	printf "%b" "shell\t\t\tRun a shell in the build environment.\n"
->  	printf "%b" "for-all-repos\t\tRun specified command in each repository.\n"
->  	printf "%b" "clean\t\t\tClean build artifacts, keep sstate cache and " \
-> @@ -61,20 +62,19 @@ usage()
->  	printf "%b" "cleanall\t\tClean build artifacts, sstate cache and " \
->  		    "downloads.\n"
->  	printf "%b" "purge\t\t\tRemove all data managed by kas. Run with '--dry-run'\n"
-> -	printf "%b" "     \t\t\tto check what would be removed\n"
-> +	printf "%b" "     \t\t\tto check what would be removed.\n"
->  	printf "%b" "menu\t\t\tProvide configuration menu and trigger " \
->  		    "configured build.\n"
->  	printf "%b" "\nOptional arguments:\n"
-> -	printf "%b" "--isar\t\t\tUse kas-isar container to build Isar image. To force\n"
-> -	printf "%b" "      \t\t\tthe use of run0 over sudo, set KAS_SUDO_CMD=run0.\n"
-> -	printf "%b" "--with-loop-dev		Pass a loop device to the " \
-> -		    "container. Only required if\n"
-> -	printf "%b" "\t\t\tloop-mounting is used by recipes.\n"
-> +	printf "%b" "--isar-privileged\tRun an Isar build in privileged mode. " \
-> +	            "To force the use\n"
-> +	printf "%b" "\t\t\tof run0 over sudo, set KAS_SUDO_CMD=run0.\n"
-> +	printf "%b" "--isar-rootless\t\tRun an Isar build in rootless mode.\n"
->  	printf "%b" "--runtime-args\t\tAdditional arguments to pass to the " \
-> -			"container runtime\n"
-> +			"container runtime.\n"
->  	printf "%b" "\t\t\tfor running the build.\n"
->  	printf "%b" "-l, --log-level\t\tSet log level (default=info).\n"
-> -	printf "%b" "--version\t\tprint program version.\n"
-> +	printf "%b" "--version\t\tPrint program version.\n"
->  	printf "%b" "--ssh-dir\t\tDirectory containing SSH configurations.\n"
->  	printf "%b" "\t\t\tAvoid \$HOME/.ssh unless you fully trust the " \
->  		    "container.\n"
-> @@ -83,13 +83,15 @@ usage()
->  	printf "%b" "\t\t\tAvoid \$HOME/.aws unless you fully trust the " \
->  		    "container.\n"
->  	printf "%b" "--git-credential-store\tFile path to the git credential " \
-> -		    "store\n"
-> +		    "store.\n"
-> +	printf "%b" "--git-credential-socket\tPath to the git credential cache " \
-> +	       "socket.\n"
->  	printf "%b" "--no-proxy-from-env\tDo not inherit proxy settings from " \
->  		    "environment.\n"
->  	printf "%b" "--repo-ro\t\tMount current repository read-only\n" \
-> -		    "\t\t\t(default for build command)\n"
-> +		    "\t\t\t(default for build command).\n"
->  	printf "%b" "--repo-rw\t\tMount current repository writable\n" \
-> -		    "\t\t\t(default for shell command)\n"
-> +		    "\t\t\t(default for shell command).\n"
->  	printf "%b" "-h, --help\t\tShow this help message and exit.\n"
->  	printf "%b" "\n"
->  	printf "%b" "You can force the use of podman over docker using " \
-> @@ -143,11 +145,6 @@ prepare_sudo_cmd()
->  
->  enable_isar_mode()
->  {
-> -	if [ -n "${ISAR_MODE}" ]; then
-> -		return
-> -	fi
-> -	ISAR_MODE=1
-> -
->  	KAS_CONTAINER_IMAGE_NAME_DEFAULT="kas-isar"
->  	KAS_ISAR_ARGS="--privileged"
->  
-> @@ -159,14 +156,38 @@ enable_isar_mode()
->  		export PATH="${PATH}:/usr/sbin"
->  	elif [ "${KAS_DOCKER_ROOTLESS}" = "1" ]; then
->  		prepare_sudo_cmd
-> -		export DOCKER_HOST="${DOCKER_HOST:-unix:///var/run/docker.sock}"
-> -		debug "kas-isar does not support rootless docker. Using system docker"
-> +		DOCKER_HOST_DEFAULT="$(docker context inspect default --format '{{.Endpoints.docker.Host}}')"
-> +		export DOCKER_HOST="${DOCKER_HOST:-$DOCKER_HOST_DEFAULT}"
-> +		debug "kas-isar does not support rootless docker. Using system docker in $DOCKER_HOST"
->  		# force use of well-known system docker socket
->  		KAS_CONTAINER_COMMAND="${_KAS_SUDO_CMD} ${KAS_CONTAINER_COMMAND}"
->  		KAS_DOCKER_ROOTLESS=0
->  	fi
->  }
->  
-> +enable_isar_rootless_mode()
-> +{
-> +	KAS_CONTAINER_IMAGE_NAME_DEFAULT="kas-isar"
-> +
-> +	# Use --privileged to pass the ambient capabilities into the container.
-> +	# When calling from the user session (podman or docker-rootless), this
-> +	# is fundamentally different from the system docker run --privileged
-> +	if [ "${KAS_CONTAINER_ENGINE}" = "podman" ]; then
-> +		KAS_RUNTIME_ARGS="${KAS_RUNTIME_ARGS} --userns=keep-id --privileged"
-> +	elif [ "${KAS_DOCKER_ROOTLESS}" = "1" ]; then
-> +		KAS_ISAR_ARGS="--privileged"
-> +	else
-> +		# we don't need --privileged, but we need to run with SYS_ADMIN
-> +		# to be able to unshare.
-> +		KAS_ISAR_ARGS=" \
-> +			--security-opt seccomp=unconfined \
-> +			--security-opt apparmor=unconfined \
-> +			--security-opt systempaths=unconfined \
-> +			--cap-add=SYS_ADMIN \
-> +		"
-> +	fi
-> +}
-> +
->  enable_oe_mode()
->  {
->  	if [ "${KAS_CONTAINER_ENGINE}" = "podman" ]; then
-> @@ -174,6 +195,7 @@ enable_oe_mode()
->  		# calling "podman run" has a 1:1 mapping
->  		KAS_RUNTIME_ARGS="${KAS_RUNTIME_ARGS} --userns=keep-id"
->  	fi
-> +	BUILD_SYSTEM="openembedded"
->  }
->  
->  enable_unpriv_userns_docker()
-> @@ -210,6 +232,20 @@ check_and_expand()
->  	realpath -e "$_varval"
->  }
->  
-> +# SC2034: DIR appears unused (ignore, as they are used inside eval)
-> +# shellcheck disable=2034
-> +setup_kas_dirs()
-> +{
-> +	KAS_WORK_DIR="${KAS_WORK_DIR:-$(pwd)}"
-> +	KAS_WORK_DIR="$(check_and_expand KAS_WORK_DIR required)"
-> +	KAS_BUILD_DIR="$(check_and_expand KAS_BUILD_DIR create)"
-> +	KAS_REPO_REF_DIR="$(check_and_expand KAS_REPO_REF_DIR required)"
-> +	DL_DIR="$(check_and_expand DL_DIR createrec)"
-> +	SSTATE_DIR="$(check_and_expand SSTATE_DIR createrec)"
-> +	BB_HASHSERVE_DB_DIR="$(check_and_expand BB_HASHSERVE_DB_DIR createrec)"
-> +	KAS_BUILDTOOLS_DIR="$(check_and_expand KAS_BUILDTOOLS_DIR createrec)"
-> +}
-> +
->  # Params: FILE
->  # Returns: root repo dir of file
->  repo_path_of_file()
-> @@ -260,14 +296,6 @@ forward_dir()
->  	fi
->  }
->  
-> -check_docker_rootless()
-> -{
-> -	KAS_DOCKER_ROOTLESS=0
-> -	if [ "$(docker context show)" = "rootless" ]; then
-> -		KAS_DOCKER_ROOTLESS=1
-> -	fi
-> -}
-> -
->  enable_docker_rootless()
->  {
->  	warning "Rootless docker used, only limited functionality available."
-> @@ -281,122 +309,48 @@ enable_docker_rootless()
->  	KAS_RUNTIME_ARGS="${KAS_RUNTIME_ARGS} -e KAS_DOCKER_ROOTLESS=1"
->  }
->  
-> -KAS_GIT_OVERLAY_FILE=""
-> -kas_container_cleanup()
-> -{
-> -	if [ -f "${KAS_GIT_OVERLAY_FILE}" ]; then
-> -		trace rm -f "${KAS_GIT_OVERLAY_FILE}"
-> -	fi
-> -}
-> -trap kas_container_cleanup EXIT INT TERM
-> -
->  set_container_image_var()
->  {
-> +	# if the image is explicitly set, use that
-> +	if [ -n "${KAS_CONTAINER_IMAGE}" ]; then
-> +		return
-> +	fi
->  	KAS_IMAGE_VERSION="${KAS_IMAGE_VERSION:-${KAS_IMAGE_VERSION_DEFAULT}}"
->  	KAS_CONTAINER_IMAGE_DISTRO="${KAS_CONTAINER_IMAGE_DISTRO:-${KAS_CONTAINER_IMAGE_DISTRO_DEFAULT}}"
->  	KAS_CONTAINER_IMAGE_NAME="${KAS_CONTAINER_IMAGE_NAME:-${KAS_CONTAINER_IMAGE_NAME_DEFAULT}}"
->  	KAS_CONTAINER_IMAGE_PATH="${KAS_CONTAINER_IMAGE_PATH:-${KAS_CONTAINER_IMAGE_PATH_DEFAULT}}"
-> -	KAS_CONTAINER_IMAGE_DEFAULT="${KAS_CONTAINER_IMAGE_PATH}/${KAS_CONTAINER_IMAGE_NAME}:${KAS_IMAGE_VERSION}"
-> -	KAS_CONTAINER_IMAGE="${KAS_CONTAINER_IMAGE:-${KAS_CONTAINER_IMAGE_DEFAULT}}"
-> +	KAS_CONTAINER_IMAGE="${KAS_CONTAINER_IMAGE_PATH}/${KAS_CONTAINER_IMAGE_NAME}:${KAS_IMAGE_VERSION}"
->  	if [ -n "${KAS_CONTAINER_IMAGE_DISTRO}" ]; then
->  		KAS_CONTAINER_IMAGE="${KAS_CONTAINER_IMAGE}-${KAS_CONTAINER_IMAGE_DISTRO}"
->  	fi
->  }
->  
-> -# SC2034: DIR appears unused (ignore, as they are used inside eval)
-> -# shellcheck disable=2034
-> -setup_kas_dirs()
-> -{
-> -	KAS_WORK_DIR="${KAS_WORK_DIR:-$(pwd)}"
-> -	KAS_WORK_DIR="$(check_and_expand KAS_WORK_DIR required)"
-> -	KAS_BUILD_DIR="$(check_and_expand KAS_BUILD_DIR create)"
-> -	KAS_REPO_REF_DIR="$(check_and_expand KAS_REPO_REF_DIR required)"
-> -	DL_DIR="$(check_and_expand DL_DIR createrec)"
-> -	SSTATE_DIR="$(check_and_expand SSTATE_DIR createrec)"
-> -	KAS_BUILDTOOLS_DIR="$(check_and_expand KAS_BUILDTOOLS_DIR createrec)"
-> -}
-> -setup_kas_dirs
-> -
-> -KAS_CONTAINER_ENGINE="${KAS_CONTAINER_ENGINE:-${KAS_DOCKER_ENGINE}}"
-> -if [ -z "${KAS_CONTAINER_ENGINE}" ]; then
-> -	# Try to auto-detect a container engine
-> -	if command -v docker >/dev/null; then
-> -		case $(docker -v 2>/dev/null) in
-> -		podman*)
-> -			# The docker command is an alias for podman
-> -			KAS_CONTAINER_ENGINE=podman
-> -			;;
-> -		Docker*)
-> -			# The docker command is the real docker
-> -			KAS_CONTAINER_ENGINE=docker
-> -			;;
-> -		*)
-> -			# The docker command is an unknown engine
-> -			fatal_error "docker command found, but unknown engine detected"
-> -		esac
-> -	elif command -v podman >/dev/null; then
-> -		KAS_CONTAINER_ENGINE=podman
-> -	else
-> -		fatal_error "no container engine found, need docker or podman"
-> -	fi
-> -fi
-> -
-> -KAS_RUNTIME_ARGS="--log-driver=none --user=root"
-> -
-> -case "${KAS_CONTAINER_ENGINE}" in
-> -docker)
-> -	KAS_CONTAINER_COMMAND="docker"
-> -	enable_unpriv_userns_docker
-> -	check_docker_rootless
-> -	;;
-> -podman)
-> -	KAS_CONTAINER_COMMAND="podman"
-> -	KAS_RUNTIME_ARGS="${KAS_RUNTIME_ARGS} --security-opt label=disable"
-> -	;;
-> -*)
-> -	fatal_error "unknown container engine '${KAS_CONTAINER_ENGINE}'"
-> -	;;
-> -esac
-> -
-> -# parse kas-container options
-> +# parse kas-container options, leave build system empty to distinguish between
-> +# explicitly set via flag and implicitly via config.
-> +BUILD_SYSTEM=""
-> +KAS_OPTIONS_DIRECT=""
-> +KAS_EXTRA_RUNTIME_ARGS=""
->  while [ $# -gt 0 ]; do
->  	case "$1" in
-> -	--isar)
-> -		enable_isar_mode
-> +	--isar | --isar-privileged)
-> +		if [ "$1" = "--isar" ]; then
-> +			warning "The semantic of '--isar' might change in the" \
-> +				"future. Please use '--isar-privileged' instead."
-> +		fi
-> +		BUILD_SYSTEM="isar-privileged"
->  		shift 1
->  		;;
-> -	--with-loop-dev)
-> -		if ! KAS_LOOP_DEV=$(/sbin/losetup -f 2>/dev/null); then
-> -			if [ "$(id -u)" -eq 0 ]; then
-> -				fatal_error "loop device not available!"
-> -			fi
-> -			prepare_sudo_cmd
-> -			if ! [ "$KAS_SUDO_CMD" = "sudo" ]; then
-> -				fatal_error '--with-loop-dev requires sudo for device setup.'
-> -			fi
-> -			sudo_command="/sbin/losetup -f"
-> -			sudo_message="[sudo] enter password to setup loop"
-> -			sudo_message="$sudo_message devices by calling"
-> -			sudo_message="$sudo_message '$sudo_command': "
-> -			# SC2086: Double quote to prevent globbing and word splitting.
-> -			# shellcheck disable=2086
-> -			if ! KAS_LOOP_DEV=$(sudo -p "$sudo_message" $sudo_command \
-> -				2>/dev/null); then
-> -				fatal_error "loop device setup unsuccessful!" \
-> -				            "try calling '$sudo_command' with root" \
-> -				            "permissions manually."
-> -			fi
-> -		fi
-> -		KAS_WITH_LOOP_DEV="--device ${KAS_LOOP_DEV}"
-> +	--isar-rootless)
-> +		BUILD_SYSTEM="isar-rootless"
->  		shift 1
->  		;;
-> -	--runtime-args|--docker-args)
-> -		[ $# -gt 0 ] || usage
-> -		KAS_RUNTIME_ARGS="${KAS_RUNTIME_ARGS} $2"
-> +	--runtime-args | --docker-args)
-> +		[ $# -gt 1 ] || usage
-> +		KAS_EXTRA_RUNTIME_ARGS="${KAS_EXTRA_RUNTIME_ARGS} $2"
->  		shift 2
->  		;;
->  	--ssh-dir)
-> -		[ $# -gt 2 ] || usage
-> +		[ $# -gt 1 ] || usage
->  		KAS_SSH_DIR="$2"
->  		shift 2
->  		;;
-> @@ -408,15 +362,22 @@ while [ $# -gt 0 ]; do
->  		shift 1
->  		;;
->  	--aws-dir)
-> -		[ $# -gt 2 ] || usage
-> +		[ $# -gt 1 ] || usage
->  		KAS_AWS_DIR="$2"
->  		shift 2
->  		;;
->  	--git-credential-store)
-> -		[ $# -gt 2 ] || usage
-> +		[ $# -gt 1 ] || usage
->  		KAS_GIT_CREDENTIAL_STORE="$2"
->  		shift 2
->  		;;
-> +
-> +	--git-credential-socket)
-> +		[ $# -gt 1 ] || usage
-> +		KAS_GIT_CREDENTIAL_SOCKET="$2"
-> +		shift 2
-> +		;;
-> +
->  	--no-proxy-from-env)
->  		KAS_NO_PROXY_FROM_ENV=1
->  		shift 1
-> @@ -446,19 +407,19 @@ while [ $# -gt 0 ]; do
->  	--*)
->  		usage
->  		;;
-> -	clean|cleansstate|cleanall|purge)
-> +	clean | cleansstate | cleanall | purge)
->  		KAS_REPO_MOUNT_OPT_DEFAULT="ro"
->  		KAS_CMD=$1
->  		shift 1
->  		break
->  		;;
-> -	shell|lock)
-> +	shell | lock)
->  		KAS_REPO_MOUNT_OPT_DEFAULT="rw"
->  		KAS_CMD=$1
->  		shift 1
->  		break
->  		;;
-> -	build|checkout|for-all-repos|menu)
-> +	build | checkout | for-all-repos | menu)
->  		KAS_REPO_MOUNT_OPT_DEFAULT="ro"
->  		KAS_CMD=$1
->  		shift 1
-> @@ -486,6 +447,10 @@ while [ $# -gt 0 ]; do
->  	esac
->  done
->  
-> +KAS_RUNTIME_ARGS="--log-driver=none --user=root"
-> +
-> +setup_kas_dirs
-> +
->  [ -n "${KAS_CMD}" ] || usage
->  
->  KAS_EXTRA_BITBAKE_ARGS=0
-> @@ -494,17 +459,17 @@ KAS_FILES=
->  # parse kas sub-command options
->  while [ $# -gt 0 ] && [ $KAS_EXTRA_BITBAKE_ARGS -eq 0 ]; do
->  	case "$1" in
-> -	--format|--indent|--provenance|--skip|--target|--task)
-> +	--format | --indent | --provenance | --skip | --target | --task)
->  		KAS_OPTIONS="${KAS_OPTIONS} $1 $2"
->  		shift 1
->  		shift 1 || KAS_OPTIONS="--help"
->  		;;
-> -	-c|--cmd|--command)
-> +	-c | --cmd | --command)
->  		KAS_BITBAKE_C_OPTION_ARGS="$2"
->  		shift 1
->  		shift 1 || KAS_OPTIONS="--help"
->  		;;
-> -	-E|--preserve-env)
-> +	-E | --preserve-env)
->  		fatal_error "$1 is not supported with ${KAS_CONTAINER_SELF_NAME}"
->  		;;
->  	--)
-> @@ -563,10 +528,10 @@ if [ "${KAS_CMD}" = "menu" ]; then
->  	if [ "$(echo "${KAS_FIRST_FILES}" | wc -w)" -ne "1" ]; then
->  		fatal_error "menu plugin only supports a single Kconfig file"
->  	fi
-> -	BUILD_SYSTEM=$(tr '\n' '\f' 2>/dev/null < "${KAS_FIRST_FILES}" | \
-> +	BUILD_SYSTEM=${BUILD_SYSTEM:-$(tr '\n' '\f' 2>/dev/null < "${KAS_FIRST_FILES}" |
->  		sed -e 's/\(.*\fconfig KAS_BUILD_SYSTEM\f\(.*\)\|.*\)/\2/' \
->  		    -e 's/\f\([[:alpha:]].*\|$\)//' \
-> -		    -e 's/.*default \"\(.*\)\".*/\1/')
-> +		    -e 's/.*default \"\(.*\)\".*/\1/')}
->  else
->  	if [ -z "${KAS_FIRST_FILES}" ]; then
->  		KAS_FIRST_FILES="${KAS_WORK_DIR}/.config.yaml"
-> @@ -574,20 +539,60 @@ else
->  
->  	# We only get the first build system and let kas check if mixed
->  	_KAS_FIRST_FILE=$(echo "${KAS_FIRST_FILES}" | awk '{print $1}')
-> -	BUILD_SYSTEM=$(grep -e "^build_system: " "${_KAS_FIRST_FILE}" 2>/dev/null | \
-> -		sed 's/build_system:[ ]\+//')
-> +	BUILD_SYSTEM=${BUILD_SYSTEM:-$(grep -e "^build_system: " "${_KAS_FIRST_FILE}" 2>/dev/null |
-> +		sed 's/build_system:[ ]\+//')}
->  fi
->  
-> -if [ "${BUILD_SYSTEM}" = "isar" ]; then
-> +KAS_CONTAINER_ENGINE="${KAS_CONTAINER_ENGINE:-${KAS_DOCKER_ENGINE}}"
-> +if [ -z "${KAS_CONTAINER_ENGINE}" ]; then
-> +	# Try to auto-detect a container engine
-> +	# Defaults if there are multiple options:
-> +	# podman if build system is isar-rootless, docker otherwise
-> +	if [ "${BUILD_SYSTEM}" = "isar-rootless" ] && command -v podman >/dev/null 2>&1; then
-> +		KAS_CONTAINER_ENGINE=podman
-> +	elif command -v docker >/dev/null 2>&1 && docker -v 2>/dev/null | grep -q '^Docker'; then
-> +		KAS_CONTAINER_ENGINE=docker
-> +	elif command -v podman >/dev/null 2>&1; then
-> +		KAS_CONTAINER_ENGINE=podman
-> +	else
-> +		fatal_error "no container engine found, need docker or podman"
-> +	fi
-> +fi
-> +
-> +KAS_DOCKER_ROOTLESS=0
-> +case "${KAS_CONTAINER_ENGINE}" in
-> +docker)
-> +	KAS_CONTAINER_COMMAND="docker"
-> +	enable_unpriv_userns_docker
-> +	if [ "$(docker context show)" = "rootless" ]; then
-> +		KAS_DOCKER_ROOTLESS=1
-> +	fi
-> +	;;
-> +podman)
-> +	KAS_CONTAINER_COMMAND="podman"
-> +	KAS_RUNTIME_ARGS="${KAS_RUNTIME_ARGS} --security-opt label=disable"
-> +	;;
-> +*)
-> +	fatal_error "unknown container engine '${KAS_CONTAINER_ENGINE}'"
-> +	;;
-> +esac
-> +
-> +if [ "${BUILD_SYSTEM}" = "isar" ] || [ "${BUILD_SYSTEM}" = "isar-privileged" ]; then
->  	enable_isar_mode
-> -elif [ -z "${ISAR_MODE}" ]; then
-> +elif [ "${BUILD_SYSTEM}" = "isar-rootless" ]; then
-> +	enable_isar_rootless_mode
-> +else
->  	enable_oe_mode
->  fi
->  
->  # clean can be executed without config, hence manually forward the build system
-> -if [ "${ISAR_MODE}" = "1" ] && echo "${KAS_CMD}" | grep -qe "^clean\|purge"; then
-> -	KAS_OPTIONS="${KAS_OPTIONS} --isar"
-> -fi
-> +case "${BUILD_SYSTEM}" in
-> +isar*)
-> +	if echo "${KAS_CMD}" | grep -qe "^clean\|purge"; then
-> +		KAS_OPTIONS="${KAS_OPTIONS} --${BUILD_SYSTEM}"
-> +	fi
-> +	;;
-> +esac
->  
->  set_container_image_var
->  
-> @@ -628,10 +633,21 @@ forward_dir KAS_BUILD_DIR "/build" "rw"
->  forward_dir DL_DIR "/downloads" "rw"
->  forward_dir KAS_REPO_REF_DIR "/repo-ref" "rw"
->  forward_dir SSTATE_DIR "/sstate" "rw"
-> +forward_dir BB_HASHSERVE_DB_DIR "/bb-hashserve-db" "rw"
->  forward_dir KAS_BUILDTOOLS_DIR "/buildtools" "rw"
->  
->  if git_com_dir=$(git -C "${KAS_REPO_DIR}" rev-parse --git-common-dir 2>/dev/null) \
->  	&& [ "$git_com_dir" != "$(git -C "${KAS_REPO_DIR}" rev-parse --git-dir)" ]; then
-> +
-> +	KAS_GIT_OVERLAY_FILE=""
-> +	kas_container_cleanup()
-> +	{
-> +		if [ -f "${KAS_GIT_OVERLAY_FILE}" ]; then
-> +			trace rm -f "${KAS_GIT_OVERLAY_FILE}"
-> +		fi
-> +	}
-> +	trap kas_container_cleanup EXIT INT TERM
-> +
->  	# If (it's a git repo) and the common dir isn't the git-dir, it is shared worktree and
->  	# we have to mount the common dir in the container to make git work
->  	# The mount path inside the container is different from the host path. Hence, we over-mount
-> @@ -685,6 +701,14 @@ if [ -n "${KAS_GIT_CREDENTIAL_STORE}" ] ; then
->  	set -- "$@" -v "$(realpath -e "${KAS_GIT_CREDENTIAL_STORE}")":/var/kas/userdata/.git-credentials:ro
->  fi
->  
-> +if [ -n "${KAS_GIT_CREDENTIAL_SOCKET}" ] ; then
-> +	if [ ! -S "${KAS_GIT_CREDENTIAL_SOCKET}" ]; then
-> +		fatal_error "passed KAS_GIT_CREDENTIAL_SOCKET '${KAS_GIT_CREDENTIAL_SOCKET}' is not a socket"
-> +	fi
-> +	KAS_GIT_CREDENTIAL_HELPER_DEFAULT="cache --socket=/var/kas/userdata/.git-cache-socket"
-> +	set -- "$@" -v "$(realpath -e "${KAS_GIT_CREDENTIAL_SOCKET}")":/var/kas/userdata/.git-cache-socket
-> +fi
-> +
->  GIT_CREDENTIAL_HELPER="${GIT_CREDENTIAL_HELPER:-${KAS_GIT_CREDENTIAL_HELPER_DEFAULT}}"
->  
->  if [ -n "${GIT_CREDENTIAL_HELPER}" ] ; then
-> @@ -731,6 +755,7 @@ fi
->  for var in TERM KAS_DISTRO KAS_MACHINE KAS_TARGET KAS_TASK KAS_CLONE_DEPTH \
->             KAS_PREMIRRORS DISTRO_APT_PREMIRRORS BB_NUMBER_THREADS PARALLEL_MAKE \
->             GIT_CREDENTIAL_USEHTTPPATH \
-> +           BB_HASHSERVE BB_HASHSERVE_UPSTREAM \
->             TZ; do
->  	if [ -n "$(eval echo \$${var})" ]; then
->  		set -- "$@" -e "${var}=$(eval echo \"\$${var}\")"
-> @@ -739,7 +764,7 @@ done
->  
->  # propagate only supported SHELL settings
->  case "$SHELL" in
-> -/bin/sh|/bin/bash|/bin/dash)
-> +/bin/sh | /bin/bash | /bin/dash)
->  	set -- "$@" -e "SHELL=$SHELL"
->  	;;
->  *)
-> @@ -757,7 +782,7 @@ fi
->  
->  # SC2086: Double quote to prevent globbing and word splitting.
->  # shellcheck disable=2086
-> -set -- "$@" ${KAS_ISAR_ARGS} ${KAS_WITH_LOOP_DEV} ${KAS_RUNTIME_ARGS} \
-> +set -- "$@" ${KAS_ISAR_ARGS} ${KAS_RUNTIME_ARGS} ${KAS_EXTRA_RUNTIME_ARGS} \
->      ${KAS_CONTAINER_IMAGE} ${KAS_OPTIONS_DIRECT} ${KAS_CMD} ${KAS_OPTIONS}
->  if [ -n "${KAS_BITBAKE_C_OPTION_ARGS}" ]; then
->  	set -- "$@" -c "${KAS_BITBAKE_C_OPTION_ARGS}"
 
-This is not kas-container from the 5.4 release.
+Please update the README.md accordingly as well.
+
+And then there is .reproducible-check-ci.yml:
+
+    # clean
+    - sudo rm -rf build/tmp
+    - sudo rm -rf build/sstate-cache
+
+I suppose this also needs updating.
 
 Jan
 
