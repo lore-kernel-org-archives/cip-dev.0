@@ -2,90 +2,77 @@ Return-Path: <pavel@nabladev.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F328AC531D0
-	for <webhook@archiver.kernel.org>; Mon, 27 Jul 2026 12:34:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB369C53219
+	for <webhook@archiver.kernel.org>; Mon, 27 Jul 2026 12:37:50 +0000 (UTC)
 Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.30058.1785155662680921700
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.29714.1785155860291173619
  for <cip-dev@lists.cip-project.org>;
- Mon, 27 Jul 2026 05:34:23 -0700
+ Mon, 27 Jul 2026 05:37:40 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=VZl2aGmc;
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=WLrdxcUt;
  spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 09129118E6A;
-	Mon, 27 Jul 2026 14:34:13 +0200 (CEST)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 585C5118FBC;
+	Mon, 27 Jul 2026 14:37:34 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1785155656;
+	s=dkim; t=1785155854;
 	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=L/FXoi9i0DqbphZdnOWSKakMDdRUgDZoOVfg1hLAyus=;
-	b=VZl2aGmc/cr/enaxrpIfNWN1cIjdsfxIUvcfoc1UVGhNWtGY2yqf7OxQ1BCLWcLZ56863x
-	Hh46yaa3wDgC9QGUsMs5n97DI2UdNaWjrOA2gmn5SNkwxbiTwJBzamOkV+81MEAroYcFHS
-	dRsS+PPatowkqdBdAVyJuEODkqXIShA2HH8eCKyWQM1i1lVB55H6XGwTHduK9lQlU+kw3x
-	qCi41s6Q0Ao+njKhVg0rCXZnBMxuVBaSm5/ayqnnhIMFZkLSfVYhpCeGyMndk4TY9Q9LAW
-	kOQrlLwBxRhHl1GyLh4ZW6CWGyJQSQLUvrdVICst0IV2GJ9faQ4DaT1DGAgErg==
-Date: Mon, 27 Jul 2026 14:34:12 +0200
+	 in-reply-to:references; bh=QtmG/r3cC+L8Iybmdj/AfNNmZbBTKLA0ZuZuhDJVimc=;
+	b=WLrdxcUtX7S/vF5affysfeouNuBVTvWY6hy7XFfs6nDr3m1Rmj0BVSOPDRH6ayI8mQuty9
+	GaYuscXLB50Y97JS4G6ZRjleEG/7H8WfBqEKovdF4viI1stcvaGi9fjqBEneD8Gku13nob
+	RnSoFX8IMSRLh2Cfm/N7nQozAqhEIWLMt8cqd7b7QOVITvL6xMoTeJJCDRGfJKATefoEzn
+	E0SO0+pkpxeytBAypMc13MQ2fCrGbW3mi1KqMQsTwNHM7SXv6A9HHF0KvcyUy9xN3YsAzn
+	xokjneGUxhjVn0z1MN3AxINxYLRlyZF1msAc6OL3Ele+cL5RhWbEYvGlUI6TOw==
+Date: Mon, 27 Jul 2026 14:37:33 +0200
 From: Pavel Machek <pavel@nabladev.com>
 To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Cc: nobuhiro.iwamatsu.x90@mail.toshiba, pavel@nabladev.com,
 	cip-dev@lists.cip-project.org
-Subject: Re: [PATCH 6.12.y-cip v2 01/17] reset: rzg2l-usbphy-ctrl: Add
- support for USB PWRRDY
-Message-ID: <amdQRLUjIExW0mJ3@duo.ucw.cz>
+Subject: Re: [PATCH 6.12.y-cip v2 00/17] Backport RZ/G3S USB support
+Message-ID: <amdRDRxJSeiQI1Ql@duo.ucw.cz>
 References: <20260708081237.3882574-1-claudiu.beznea@tuxon.dev>
- <20260708081237.3882574-2-claudiu.beznea@tuxon.dev>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="PdUnmmLzFh1oz5jN"
+	protocol="application/pgp-signature"; boundary="RsWdMBh3SyWcLMHf"
 Content-Disposition: inline
-In-Reply-To: <20260708081237.3882574-2-claudiu.beznea@tuxon.dev>
+In-Reply-To: <20260708081237.3882574-1-claudiu.beznea@tuxon.dev>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 27 Jul 2026 12:34:30 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23758
+ <cip-dev@lists.cip-project.org>; Mon, 27 Jul 2026 12:37:50 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23759
 
 
---PdUnmmLzFh1oz5jN
+--RsWdMBh3SyWcLMHf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->=20
-> commit 78f2d64e484753bfede6a0e9eab0ef35830c34fb upstream.
->=20
-> On the Renesas RZ/G3S SoC, the USB PHY block has an input signal called
-> PWRRDY. This signal is managed by the system controller and must be
-> de-asserted after powering on the area where USB PHY resides and asserted
-> before powering it off.
+> Patches backport the Renesas RZ/G3S USB support.
 
-> +++ b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
-> =20
-> +static void rzg2l_usbphy_ctrl_set_pwrrdy(struct regmap_field *pwrrdy,
-> +					 bool power_on)
-> +{
-> +	u32 val =3D power_on ? 0 : 1;
+I had a minor comment here, but that should be fixed in mainline,
+first.
 
-This probably should be !power_on... for readability.
+This looks okay to me.
 
-> +	/* The initialization path guarantees that the mask is 1 bit long. */
-> +	regmap_field_update_bits(pwrrdy, 1, val);
-> +}
+Reviewed-by: Pavel Machek <pavel@nabladev.com>
+
+I can apply the series if it passes testing and there are no other
+comments.
 
 Best regards,
-									Pavel
+                                                                Pavel
 
---PdUnmmLzFh1oz5jN
+--RsWdMBh3SyWcLMHf
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCamdQRAAKCRAw5/Bqldv6
-8nMkAJ0au+2xSY1UZWvXNQuLHkRE0ODPiACfQYnXnCQOctDdoeQ9jzrUtUB1AOM=
-=jBtK
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCamdRDQAKCRAw5/Bqldv6
+8uo1AJ4uPwhtG4BNWq1hs6sohuYVnII6igCgsZDXfQ2zXtLYFwJ1U3+8u14a4Iw=
+=gEWd
 -----END PGP SIGNATURE-----
 
---PdUnmmLzFh1oz5jN--
+--RsWdMBh3SyWcLMHf--
 
