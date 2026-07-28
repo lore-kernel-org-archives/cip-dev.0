@@ -1,391 +1,171 @@
-Return-Path: <Shivanand.Kunijadar@toshiba-tsip.com>
+Return-Path: <nobuhiro.iwamatsu.x90@mail.toshiba>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A0DAC53219
-	for <webhook@archiver.kernel.org>; Tue, 28 Jul 2026 04:54:58 +0000 (UTC)
-Subject: Re: [isar-cip-core][PATCH v1 1/2] Enable the support of Debian forky based builds
-To: cip-dev@lists.cip-project.org
-From: "Kunijadar Shivanand" <Shivanand.Kunijadar@toshiba-tsip.com>
-X-Originating-Location: Hyderabad, Telangana, IN (151.186.148.44)
-X-Originating-Platform: Windows Chrome 150
-User-Agent: GROUPS.IO Web Poster
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F3D2C53219
+	for <webhook@archiver.kernel.org>; Tue, 28 Jul 2026 05:23:08 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.5184.1785216178651026451
+ for <cip-dev@lists.cip-project.org>;
+ Mon, 27 Jul 2026 22:23:00 -0700
+Authentication-Results: mx.groups.io;
+ dkim=pass header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.s=key2.smx header.b=L6ZS5TCv;
+ spf=pass (domain: mail.toshiba, ip: 210.130.202.158, mailfrom: nobuhiro.iwamatsu.x90@mail.toshiba)
+DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=mail.toshiba;h=From:To:CC:
+	Subject:Date:Message-ID:References:In-Reply-To:Content-Type:
+	Content-Transfer-Encoding:MIME-Version;i=nobuhiro.iwamatsu.x90@mail.toshiba;
+	s=key2.smx;t=1785216175;x=1786425775;bh=Mlk6uDWnp7EBnaKO1InlXWFQYswzyrzz/RQSI
+	/GlCQw=;b=L6ZS5TCvL5Kujj9XXC2TRlVYmg7Sirfw1kn6P4DmkcYiwlg3E0JYyivYc/ORCS/VBuQ
+	qNz2JXQPrHd702j/s/bVrBSkDkOG9cHXWjEhhpGifMfo6RipTxdRW0gN+H77ANH3OZAzZwUblZkRY
+	qm5lu5PV8ZUYwwNCe8mg7LnI188fi62pAzDuDQHK7zjlyv3CIslfZ+tPFYP/xFaOfC4i/UVybqQrw
+	2Uxq39V74e33EV2uzud7kNW5ksmB5NE/qj6r4rRGaToErj7f1e4IW7R7KcD3jNXeupSlWM9lH31GY
+	eAjwMf0tf+k2lm+JtL+4QewutJ9mUF/eyFuglpX1Lqyw==;
+Received: by mo-csw.securemx.jp (mx-mo-csw1122) id 66S5Mt3g406653; Tue, 28 Jul 2026 14:22:55 +0900
+X-Iguazu-Qid: 2rWhc6Lor6mTYcj0bJ
+X-Iguazu-QSIG: v=2; s=1; t=1785216174; q=2rWhc6Lor6mTYcj0bJ; m=Yx2d8cx0WpJk8h+6zzR3UG9w71m0oDdbmqMgABIn4zI=
+Received: from imx12-a.toshiba.co.jp (unknown [38.106.60.135])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	 id 4h8P4G2Wjvz4vyn; Tue, 28 Jul 2026 14:22:54 +0900 (JST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cW3yCVyHH+lBNnYHATMaNcgrErB4AqkZJQYuIgIF7RzD5GjuaHTgMVuRBJtRH1M/vnuHSA3yP5pro3dZ27vqm1zD/YhNTCXlWaCwU/CmCmrNej3zZkiKqKlFmZUfSNbmj99zS+vBPgpuB3fYwMTPBrw4UDD4Z+zZX+6Gzcy4At1pgK1vXsf9A56+LfaPmaY6SxML3VOHn0Dgl1k7KtyheQNYry/SJafvX5tTNiXgSVjNti9QLhN69M0Srmf+ahL8wH983kYYVamjNGbJnrLAUfRJ9izQnRbfRF1rX8l4inNkTLvHCoMHJ52Y4NzxitNWlpoaGD19Ge6w5yV504z++g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OvqZOg6Pv1CTzIIi8IPy8oQIyUQ4qi8s6HozvE7TaHU=;
+ b=CqRX63K5Ktb5MY/Egw0rmkB9C1slB/m4Cs4P3QOERMfWZyDT/5wDmCmDL8PsytxmAeR7v5HskG54zWT8GnDTNybQHT2Kl1MD3mK0YlXz1rrAqLboffG7NDjUUqmzYUdjIfrZXb/gvCgMuGP4pg2R5OF6B0TYrhtfBZIo7t6nMSdmnfSApyhAtFtgdboAfBcpLFyHYcqzt1SRN7kP+6M0E/rs5WHygT0OQ4z2/5QX4pvMajtSjqAln2PR/7+dPrAEBMgAaAcl2Fc75YmJTg7sk3J1oYECZxE/GJ4EfS3z8Qh+JJ4XCTuXi59gcPr2rn4/K89amd83SdbH9Gei0Ibu1Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mail.toshiba; dmarc=pass action=none header.from=mail.toshiba;
+ dkim=pass header.d=mail.toshiba; arc=none
+From: <nobuhiro.iwamatsu.x90@mail.toshiba>
+To: <pavel@nabladev.com>, <claudiu.beznea@tuxon.dev>
+CC: <cip-dev@lists.cip-project.org>
+Subject: RE: [PATCH 6.1.y-cip v2 00/22] Backport RZ/G3S USB support
+Thread-Topic: [PATCH 6.1.y-cip v2 00/22] Backport RZ/G3S USB support
+Thread-Index: AQHdDrF8cvOCwNefEE+eBDZeGCCRb7aBbMKAgAETJHA=
+Date: Tue, 28 Jul 2026 05:22:51 +0000
+X-TSB-HOP2: ON
+Message-ID: 
+ <TY7PR01MB14818C57D19F20E8B600E225DCDCB2@TY7PR01MB14818.jpnprd01.prod.outlook.com>
+References: <20260708081159.3882514-1-claudiu.beznea@tuxon.dev>
+ <amdRr8AyS5v6aAob@duo.ucw.cz>
+In-Reply-To: <amdRr8AyS5v6aAob@duo.ucw.cz>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mail.toshiba;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY7PR01MB14818:EE_|OSCPR01MB13503:EE_
+x-ms-office365-filtering-correlation-id: e08887de-dce4-4e06-e5be-08deec684549
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|376014|366016|23010399003|1800799024|18002099003|22082099003|38070700021|56012099006|4143699003|11063799006|10067099003;
+x-microsoft-antispam-message-info: 
+ lqAU7gm5K+cHAe2eDM+UkbyKzRa/Jo0nEZ5xF6UcYJXUBSqKWEgBzEgd+lSaHZPvFMFIHg+8O/MnkchFtTLVBJYM3RU07FnzJed77y9Yn/kTrkZpSiUGHgxMNYLcO23UDNqUhFhj7YrWOnZ5Fa5QOX2iZROZA6Iv5KgZtMlTX9mGOnLH29TaZM759YauOb0Q0vjGt1LPaTcYzVx9AyfE4Y2Z6Drl1JCuPbLb6UaicKEQJa0ZTiP87auKOv+TCgYv9/IkKKzf99Xb0ZIEyeQ1Ou5Tr3xpmAkI+AyaHhzzgCg3XvaD4IEpAoI9rvgAfRP5N9hdYNAYRW17s6Q/0XVHvwIYTm+HHourhiMUwkbAo2zwL2EWVum6fyGg+RTm+Ut/Gz/mPx5qHfbXqDS/zPnsoxSQvVU+jTqjqy1CcmV/8AowiQASPOaqZweGEpIzDecCwb+cV7QYnhzRHpqXI2qw5KQ8h4b0wT1ESa65ecxp5eyP/YFYOvJ4isUS/GsNAYoSgjiyzlGtoVbSGu/ajbcoL9yK007y8vS4XuUMcISnE7sLiZxzL+YOgzfagApapRwRvWJg+Ko2prP3xBP4IMMAe5L1cvGVOyGfyyZ5LYiaDTuOWYNS4Nh2FtW7yXhNfj5zwwASTy7RAc4QdZQFguoD01gL3u6s0WrLwcdn7Yzlr33FX2zCHd3YeKrJbNoNYhqF5an1MywI81yi0pt7MOjTmA==
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7PR01MB14818.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(23010399003)(1800799024)(18002099003)(22082099003)(38070700021)(56012099006)(4143699003)(11063799006)(10067099003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?TDFTWHlPcXBhWTFSNXU4RTlYTEFPMzF1bGNHRmRvS3p1OFdZNUthanZR?=
+ =?iso-2022-jp?B?S054NmN1SWxDMUxiaVRQMDdpQ3Y1Zlp2dHFvR3NzSktWUGtjVmFVSzV5?=
+ =?iso-2022-jp?B?UUVnUDNURmJmb0htRHNoR3J4Z0xYODk1MEhYdzM4eGt5aktxQVI1S2hy?=
+ =?iso-2022-jp?B?UWFDSEZON0FabEl3Y1d1dUxhbFB0ZGRPRUJ3TDhDUzBMOEhBemwrQUxC?=
+ =?iso-2022-jp?B?VDZ3QU5xdkpEa25VbWhNR05ia2xOMXJobVJOMHU4U2Z4bjJtUnhGTjIv?=
+ =?iso-2022-jp?B?YmxmSEd0bnFtY21ESk12MVk1eDdGVFB0NEFTd1RaQTUyd1I5RGFqdWdz?=
+ =?iso-2022-jp?B?blg2eEw3Q3IrK0VCSzh4KzYxOUpzSjlkY0wwd240MG5EZ2tMQnBnc21z?=
+ =?iso-2022-jp?B?QTJNNGs2TUVjQWRXdm4yelpLY1dxSnVKOVR2UHJhNjcxZHpKWjJLaklP?=
+ =?iso-2022-jp?B?QmdZalhRRFIwaFBUMEtoV1dkaEdLdS9GWGlzV0pQZkNqUWU3dEZiUUdB?=
+ =?iso-2022-jp?B?YnVBTkkxNW9EdkJ5bGNWQk5ySWlhS25lWDlNSHM1b1pzM3V6Zm5mTU4v?=
+ =?iso-2022-jp?B?Ykx1N0VsdVEyOG1VU1d5ZHo4b1ptS3lDalpibU1YVW44aDcrQlNVSktr?=
+ =?iso-2022-jp?B?YXpJYlpOUU1iQStYNVJnbk1UZnZ0NHZvVE4ycSthZGR1QjY5VS9Ha1Zw?=
+ =?iso-2022-jp?B?L2hVOWhBYWRjdXZoRTNnaGgxUHZXQmcrakhRSzEyNndYTHp3NDU2c3hn?=
+ =?iso-2022-jp?B?bUNNU21vclhZYXlrMXBYdXJKaTYvZzBhNkZQNTFOTlBLcldLdjl4ejhJ?=
+ =?iso-2022-jp?B?d0xoZkcycjVwdE9hbFBHbXNYSndDNTZET1lFRUJTTmx6UWNPcDNJQlBM?=
+ =?iso-2022-jp?B?YjUyeDNnUWhlSTkvVzdNaEg3OHk3UitZTHN4SDA3b1lWZXc4d2haVk9O?=
+ =?iso-2022-jp?B?S3ZSL2djQTRDcWFpYUJuOExQSVcrZDh0R2tMcDdQY0xVMkFXRktMQW05?=
+ =?iso-2022-jp?B?cGR5cnRkWG5pMDdMUm0vMVd4RmtWeVVGQmtsL3M4MklINTQvbmEyS2tu?=
+ =?iso-2022-jp?B?UCtQc2E4SmlkNlpYRVdWVWdNNUhlbk1xY3FtMUp4KzVMejM3UVBMS1V4?=
+ =?iso-2022-jp?B?bXY3dUljV21Yb1FKU2xQUnlPOE1qZGkxWHNqd0daSFdTTmx2MktZSXAv?=
+ =?iso-2022-jp?B?UzVYamNQcHUwOW5lbVhyUTZzcTUvUkYyc3M2cGhDSnluaEEwblNlaEM0?=
+ =?iso-2022-jp?B?bGllNFFtaUhJYU5wSFJJMngvTWN3STFJZGF6NkN5Q3pKZHo2a2o2Zm1p?=
+ =?iso-2022-jp?B?cUpnSmtJYStZSnhkckFrUUFHd1c5cU9KY2Y0bWl6eHRncmMzSlpNeW9h?=
+ =?iso-2022-jp?B?UGhaM09TUi9DM1VLY1FkTW1wdndMaStML2dORlBrNVB5RzRLczFGNVJO?=
+ =?iso-2022-jp?B?Tk5VMVVlcWNPQnZQNkhlekZGMUZxNUM4UFJEU3BpVmpBa0UxdjMzSWRo?=
+ =?iso-2022-jp?B?WXI0VTk1MGlEYWNIa1YrN1ZNaFNMOTk5NjRJR3F2MVp3ZzJwbVBqWVUw?=
+ =?iso-2022-jp?B?bTNqSXdxY0RPMjkvNnBmTlRva0Z5Kzd3VnR4UlFNWWJ2T0hzOE1XaEpO?=
+ =?iso-2022-jp?B?YnR3UW9JNEY3NDY5bDhFT1k2amNuZWR2WkNONEJvRUdCTVFSUXVhMVdx?=
+ =?iso-2022-jp?B?R3lZcXZpbjd3WllFVkgxM0F1Y0J1TUZubFNCK21Ra1NSU3JJWXpBVnVT?=
+ =?iso-2022-jp?B?NEFUZW5WNDdXTHVlYStBOEVtM3BKblJVd1hVdW1DVlJKZ1lIUU1LQXEw?=
+ =?iso-2022-jp?B?ZW9RSkNJZ1FCREJDcXFCNnlnY2ZGVWtmSkZEZHJJaG0yczZxU0Z5YUhH?=
+ =?iso-2022-jp?B?Q1c1elN1MDN4NW1TdDZseUxiT0xXbkFYdEhZZ0hyZmJwMlhDcVk3ZHl4?=
+ =?iso-2022-jp?B?WWVyaVI5SmNQNW1pR2xMdHllRDRoVXY5Z2RodjJLdVFoWk0wU2ZwWE9O?=
+ =?iso-2022-jp?B?SktxdjdtQ0lSaVdMNEVnUTQzRUlZTUtZdnhkcFRTVGwwZHlkYitXTU0r?=
+ =?iso-2022-jp?B?NlA2ZlVNL2ovOHN6Q01HM2ZNUGdsUlRaZlJFczFNcllyWXIrSUNVTzFp?=
+ =?iso-2022-jp?B?S2FDbGRuWUhwMVgxTkZ2Rklud0ZqKzU3V3duSExuaTFXc3kyUGVYMVQ4?=
+ =?iso-2022-jp?B?djMrc1k2amlRMWVidDZtV3R0azFIcXliZklvVVBhZjVEcTIxN1hnbDBa?=
+ =?iso-2022-jp?B?bjhpTTNnOXkxcmRTSG1tejg3VU5zVjBhR3lkNkN3YTJhUWNZTlNDSnNi?=
+ =?iso-2022-jp?B?a0VubFhVQ0dKanhXcEM3UCtqT2xmejlmMFdMd0ZFcE1waldpY1RPRitr?=
+ =?iso-2022-jp?B?d1Jqb2tNSkovOUJTbGNaWVJhR21iRHhweG0yRDRHcDBoemZZMHpxazR1?=
+ =?iso-2022-jp?B?VGZmdWlVYVd2LzNKUmFrUWJQUmxUSDRoZXAwRGY5Rkxhb3AyOTBDTmwr?=
+ =?iso-2022-jp?B?T2x4MUdiMSs4ZkxtVEVtK2wvckNYRERiUUpQWlNabytqTW5MSzlQeHFt?=
+ =?iso-2022-jp?B?QXc0THNvQT0=?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Date: Mon, 27 Jul 2026 21:54:50 -0700
-References: <20260727141136.1773671-1-Shivanand.Kunijadar@toshiba-tsip.com> <20260727141136.1773671-2-Shivanand.Kunijadar@toshiba-tsip.com> <e7db87cb-3908-4b4e-804f-a6cfd8c2e246@siemens.com>
-In-Reply-To: <e7db87cb-3908-4b4e-804f-a6cfd8c2e246@siemens.com>
-Message-ID: <1092128.1785214490802252393@lists.cip-project.org>
-Content-Type: multipart/alternative; boundary="R8NFs6z3ozuEu5J89ruz"
+X-Exchange-RoutingPolicyChecked: 
+	FPWdRj3x2gUDfYtEId0PjpWRXf9b2/Ppr5NCnVCk5voA0hXs6yRDqy89fJKqCGest9+BCdu+84BQt0DpUzeNZ6ri0lHAxxy2YKdPCaO4TIlmjQl1+rl3uI0j5KFqzHO34LI2AfVCmkuO3lQYPB95vtL/UIMX16PCZ7yXZfn7wIlfZBjdbdrIJr0x4pY1vr7ujbPwkU5IGTBjSrj0HufwL7AnXH23KUS9BU2xBjEnZg1Vm5I+alNxKqNM66PMO/1if3cNuNBaabJHnscOw3f86fgZIqmGeCcu7MLEj+LGJw8QNEQdk0Iqjcn4WHlRKQY1NhY7jpKdHUfTKSzjZbHm3Q==
+X-OriginatorOrg: mail.toshiba
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY7PR01MB14818.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e08887de-dce4-4e06-e5be-08deec684549
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jul 2026 05:22:51.6098
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Km2cGBlFcQYJFc4I7HftDlfwddR99S4GKtyybZhS0Uupn7Zcx5/UuYFBn5ZX2dUjQX6hzu+bHUbbQVUKZ5GUvTfB99VzDK23gWwwsmgyqX/dO0q/f/fDO57uNI+OITf1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSCPR01MB13503
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 28 Jul 2026 04:54:58 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23787
+ <cip-dev@lists.cip-project.org>; Tue, 28 Jul 2026 05:23:08 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23788
 
---R8NFs6z3ozuEu5J89ruz
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-On Mon, Jul 27, 2026 at 10:05 AM, Jan Kiszka wrote:
-
+> -----Original Message-----
+> From: Pavel Machek <pavel@nabladev.com>
+> Sent: Monday, July 27, 2026 9:40 PM
+> To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+> Cc: iwamatsu nobuhiro(=1B$B4d>>=1B(B =1B$B?.MN=1B(B =1B$B""#D#I#T#C!{#C#P=
+#T=1B(B)
+> <nobuhiro.iwamatsu.x90@mail.toshiba>; pavel@nabladev.com;
+> cip-dev@lists.cip-project.org
+> Subject: Re: [PATCH 6.1.y-cip v2 00/22] Backport RZ/G3S USB support
 >=20
-> On 27.07.26 16:11, Shivanand.Kunijadar@toshiba-tsip.com wrote:
+> Hi!
 >=20
->> From: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
->>=20
->> The .key & .pem files are addded using below .deb package,
->> https://snapshot.debian.org/file/d32d11a5aacbf5685b81e8176a27a6918e9b55f=
-b/ovmf-generic_2025.11-5_all.deb
->>=20
->>=20
->> Signed-off-by: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com=
->
->> ---
->> Kconfig | 4 +++
->> conf/distro/cip-core-forky.conf | 13 ++++++++
->> kas/opt/forky.yml | 15 ++++++++++
->> .../files/forky/PkKek-1-snakeoil.key | 30 +++++++++++++++++++
->> .../files/forky/PkKek-1-snakeoil.pem | 23 ++++++++++++++
+> > Patches backport the Renesas RZ/G3S USB support.
 >=20
-> So, current sid uses different keys that forky? Is that always the case?
-
-The ovmf package version in both forky & sid are same now[1], so the keys s=
-hould be same.
-I'll send a separate patch to create symlink to forky for sid keys. please =
-note the sid keys were added long back and pointing to trixie.
-
-[1] https://packages.debian.org/sid/ovmf-generic
-
+> This looks okay to me.
 >=20
+> Reviewed-by: Pavel Machek <pavel@nabladev.com>
 >=20
->> .../swupdate-certificates/files/forky | 1 +
->> start-qemu.sh | 2 ++
->> 7 files changed, 88 insertions(+)
->> create mode 100644 conf/distro/cip-core-forky.conf
->> create mode 100644 kas/opt/forky.yml
->> create mode 100644
->> recipes-devtools/secure-boot-secrets/files/forky/PkKek-1-snakeoil.key
->> create mode 100644
->> recipes-devtools/secure-boot-secrets/files/forky/PkKek-1-snakeoil.pem
->> create mode 120000 recipes-devtools/swupdate-certificates/files/forky
->>=20
->> diff --git a/Kconfig b/Kconfig
->> index 438234c..14cd677 100644
->> --- a/Kconfig
->> +++ b/Kconfig
->> @@ -241,6 +241,9 @@ config DEBIAN_TRIXIE
->> config DEBIAN_SID
->> bool "Sid (Unstable)"
->>=20
->> +config DEBIAN_FORKY
->> + bool "forky (14)"
->> +
+> I can apply the series if it passes testing and there are no other commen=
+ts.
 >=20
-> Let's sort forky before sid.
 
-Ok, sure.
+I reviewed this series, looks good to me too.
+I applied with Pavel's Reviewed-by tag and pushed.=20
 
->=20
->=20
->> endchoice
->>=20
->> config KAS_INCLUDE_DEBIAN
->> @@ -250,6 +253,7 @@ config KAS_INCLUDE_DEBIAN
->> default "kas/opt/bookworm.yml" if DEBIAN_BOOKWORM
->> default "kas/opt/trixie.yml" if DEBIAN_TRIXIE
->> default "kas/opt/sid.yml" if DEBIAN_SID
->> + default "kas/opt/forky.yml" if DEBIAN_FORKY
->=20
-> Here as well.
+> Best regards,
+>                                                                 Pavel
 
-Ok.
+Best regards,
+  Nobuhiro
 
->=20
->=20
->> comment "Image features"
->>=20
->> diff --git a/conf/distro/cip-core-forky.conf
->> b/conf/distro/cip-core-forky.conf
->> new file mode 100644
->> index 0000000..7a868ce
->> --- /dev/null
->> +++ b/conf/distro/cip-core-forky.conf
->> @@ -0,0 +1,13 @@
->> +#
->> +# CIP Core, generic profile
->> +#
->> +# Copyright (c) Toshiba Corporation, 2026
->> +#
->> +# Authors:
->> +# Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
->> +#
->> +# SPDX-License-Identifier: MIT
->> +#
->> +
->> +require conf/distro/debian-forky.conf
->> +require cip-core-common.inc
->> diff --git a/kas/opt/forky.yml b/kas/opt/forky.yml
->> new file mode 100644
->> index 0000000..6c4fcdc
->> --- /dev/null
->> +++ b/kas/opt/forky.yml
->> @@ -0,0 +1,15 @@
->> +#
->> +# CIP Core, generic profile
->> +#
->> +# Copyright (c) Toshiba Corporation, 2026
->> +#
->> +# Authors:
->> +# Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
->> +#
->> +# SPDX-License-Identifier: MIT
->> +#
->> +
->> +header:
->> + version: 14
->> +
->> +distro: cip-core-forky
->> diff --git
->> a/recipes-devtools/secure-boot-secrets/files/forky/PkKek-1-snakeoil.key
->> b/recipes-devtools/secure-boot-secrets/files/forky/PkKek-1-snakeoil.key
->> new file mode 100644
->> index 0000000..dd7f492
->> --- /dev/null
->> +++
->> b/recipes-devtools/secure-boot-secrets/files/forky/PkKek-1-snakeoil.key
->> @@ -0,0 +1,30 @@
->> +-----BEGIN ENCRYPTED PRIVATE KEY-----
->> +MIIFHDBOBgkqhkiG9w0BBQ0wQTApBgkqhkiG9w0BBQwwHAQIs4RXCLmGLJgCAggA
->> +MAwGCCqGSIb3DQIJBQAwFAYIKoZIhvcNAwcECHer6014IEhGBIIEyO8O2zL8CJwV
->> +auQpWLJsMMWxu2aSh1WadX9+rg+O61mukuS4rQSH5shMQ2krZZKzyXx0q8+2AySD
->> +EtDXwhLvep60gUxOoNqK1+l3AxSFfIGOY8NC6yW67VX+G09ajWpgHj3ox63VRW8v
->> +6mA8TFWYbOIwB8J7ScF4NszVwyiUnW13oKi7svoBM3LYYG2IMvre+gOvyMGfM8uv
->> +X3txcYqAjhRV6n7vGo9LRLIIRSPKzaJbm/W7nT38LRUJP8JMSQUOPKgeEwQvOTVZ
->> ++1kd7WeaGZrjagTDM4yhBjpOmB3D8aeT6xkjBlUwuddPzbdi0N7GrU520RcJMjxt
->> +JMyOgabHKUKmPTX4m0ZCKi2jSILi7/6fBF+TZDxpakLwAwpTzm6kXArXb6AYtTEX
->> +GPihB4O69ZgEc90jp3EnZt7HtKZn1HTbPNQAlWgvESgJ7hWHnTlM5Obqnyb78tj5
->> +VdcOfTSQRYmw4Rh/lSUX0vQLhdmYSVLiMFFvT4IepXZgQ6McIdcvqoVrPgr0HoVz
->> +5YILZdmbs80VcgYL853lMfQ84kRwUcw8jNyz7mBK7V7rE5QhaF5lunZ/R41ZRXRy
->> +1ys1rNvLPvtOq/K51+A9U+h5lLM9LjeoOR+IUk2Vg4aIap+Z+lxbImH0gcJTrpem
->> +ctA/2sBjLN7w811EjB/Tlu2awzbsKLpIDFVGHiGBI2zb41gtPd2RkijmiZab6nuM
->> +ETg4ad3GscMoa++01oX/lrnVe386ECSjurmThb7I01eTNZrBlNsLyBeFzlEIEoBR
->> +TqUXHLiDACxzL6U4vWzdnvVrCOW9fwvJJqChj7Wy822w2LXxVhOryNujBmZCmOht
->> +mgDaJ15QiF+DACcX6VoBbm/462z+9Skxa0DqGwGzMOD5HldwvQSyZSykk/BzGFWP
->> +rXfLYoMjN+dgA/yNfem64ayGsmoPUAjnsE4YasD58UVO0XwwtdMGJSOVmkdyWMcM
->> +t+lN74kX/gmIvciK06N6prBfowgBEIJ6ev2dzlydSN8rGORmQ+OFzjP14rT0O+1Q
->> +O48yR2ZZ9jl4YPUKSFJ3EUc/Qt9vO+chNiNYSy6TABGXur0WWiDvGURG9K5fWTqq
->> +U2KydSRoYD5iF0caOgMZecNhZV+4CX927j3XuuKKx49qTAt3WMtmJ/UQFHMtQ833
->> +XDFWHpEKDImfHfyiB1f8bOmqYmPuE6Shup0UMJsMFel4QVJM0Jn9+wHw/0qqPiS3
->> +a769S/u9U2dfyZY5PfymY8UjFRMDtLaUoJSRaGp6RNc6LynuMMKdzho0GwvL3+m9
->> +xKLDbbks8hVdmtcxxDKiio+F0hp3yc/2PyA/VGAlARiGp7876WTCZox9Bwnf6lkS
->> +k9eYLSabe/r3Ag1SbWEGpFk3VO37qCyfp2xTfrHXK1ZJlvFwj3FFSprUaMrV+81K
->> +FCEcSozXpVsQ7e7d11A7S8rTbtp09Q/J2oxyR0A9lk/ia5Qd/xwbPl4QJcWK2Jar
->> +K3yFK8VrUNib7CjI1kdB479KIllD8oK6druBkzwGzFxDtcl47RlfkqW96XSQT7x/
->> +h/YKSLcpMx9x9TJd2GDKj2t4oE9eGTBC0YbdH+HJNSrjEsWkjgY6Uw++S6VzKvQZ
->> +DDsMJfxwcChc2zKRou+BFA=3D=3D
->> +-----END ENCRYPTED PRIVATE KEY-----
->> diff --git
->> a/recipes-devtools/secure-boot-secrets/files/forky/PkKek-1-snakeoil.pem
->> b/recipes-devtools/secure-boot-secrets/files/forky/PkKek-1-snakeoil.pem
->> new file mode 100644
->> index 0000000..7cd2487
->> --- /dev/null
->> +++
->> b/recipes-devtools/secure-boot-secrets/files/forky/PkKek-1-snakeoil.pem
->> @@ -0,0 +1,23 @@
->> +-----BEGIN CERTIFICATE-----
->> +MIID1zCCAr+gAwIBAgIUDMG7xGGEPj+ABvbflim0PNb/loowDQYJKoZIhvcNAQEL
->> +BQAwejELMAkGA1UEBhMCVVMxETAPBgNVBAgMCENvbG9yYWRvMRUwEwYDVQQHDAxG
->> +b3J0IENvbGxpbnMxETAPBgNVBAoMCFNuYWtlT2lsMS4wLAYDVQQDDCVTbmFrZU9p
->> +bCBUZXN0IEtleSBmb3IgRUZJIFNlY3VyZSBCb290MCAXDTIzMDUxOTIzMTE0NVoY
->> +DzIwNTMwNTE3MjMxMTQ1WjB6MQswCQYDVQQGEwJVUzERMA8GA1UECAwIQ29sb3Jh
->> +ZG8xFTATBgNVBAcMDEZvcnQgQ29sbGluczERMA8GA1UECgwIU25ha2VPaWwxLjAs
->> +BgNVBAMMJVNuYWtlT2lsIFRlc3QgS2V5IGZvciBFRkkgU2VjdXJlIEJvb3QwggEi
->> +MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDIi65d6LmojD5S9q8vE/LI2HHQ
->> +boiO5/1KrFVc6kpxD6XdkJwpBoItYIfSls9CPnzvNWOAxR3hIeBd1U/prAPPxvQ1
->> +wuDLMXfWkcGaYHfPnme/YluAjnpuLH1MQcumgOzj5xYBvZZk+RbytX/phH7FW4Tx
->> ++L1oBYnsfh3BSE/NTtEEHV1nXAXpa/dvyefWMlrlbwjfM5362lZzM6yrJGcOcWEy
->> +I66UYCIVO2Yhe/ZVF5B/tPGtd2oACz11xLeqLPM1WBjlekAG2Zi7UCPIvDCpdn5u
->> +Vna2ZRQmJyDDdh0Ja2VMC19dkMd/5nOAI21O+FvYPOkBWYX8f4DzDyVQlmIFAgMB
->> +AAGjUzBRMB0GA1UdDgQWBBRjuNXuXfh7mi8I3eTboeYGyFTa2zAfBgNVHSMEGDAW
->> +gBRjuNXuXfh7mi8I3eTboeYGyFTa2zAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3
->> +DQEBCwUAA4IBAQBBxlfo6MxBN44mXBIhE/QUbJZ+bo/Vrqv2DIZqOlV5+Sk6KnK8
->> +X9Rz2IJwoqLjB6cW9yInk5P/QS45880K1fDT/lu5/2U64i3l1ZFK75qLDCn4/khF
->> +birV2U6LBZpxLe3UvXk3xZMoUPzvT2rhrsf78G0pSmAnP8li8Co8F6hTjQzB8IgC
->> +DpYVATCoWBH6GhudtjUp+CJSyGApdL+HKX6i6oD7vutvWYBf0Hx5r1NrqIv31Y4V
->> +bhwvK5zajFamj/VYeVy7/roqD06hNF1ImhsuBOqoJlKu+cHMGN9DOJqjGup1T9aI
->> +2dpEOK5vbKXFrox/yCLgXmUkdwZ3BK4lcxCq
->> +-----END CERTIFICATE-----
->> diff --git a/recipes-devtools/swupdate-certificates/files/forky
->> b/recipes-devtools/swupdate-certificates/files/forky
->> new file mode 120000
->> index 0000000..2719d00
->> --- /dev/null
->> +++ b/recipes-devtools/swupdate-certificates/files/forky
->> @@ -0,0 +1 @@
->> +../../secure-boot-secrets/files/forky
->> \ No newline at end of file
->> diff --git a/start-qemu.sh b/start-qemu.sh
->> index d12fa23..0b783d6 100755
->> --- a/start-qemu.sh
->> +++ b/start-qemu.sh
->> @@ -47,6 +47,8 @@ if [ -z "${DISTRO_RELEASE}" ]; then
->> DISTRO_RELEASE=3D"trixie"
->> elif grep -s -q "DEBIAN_SID: true" .config.yaml; then
->> DISTRO_RELEASE=3D"sid"
->> + elif grep -s -q "DEBIAN_FORKY: true" .config.yaml; then
->> + DISTRO_RELEASE=3D"forky"
->=20
-> ..and here.
-
-Ok.
-
-Thanks & Regards
-Shivanand K
-
---R8NFs6z3ozuEu5J89ruz
-Content-Type: text/html; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div>On Mon, Jul 27, 2026 at 10:05 AM, Jan Kiszka wrote:</div>
-<div>
-<blockquote>On 27.07.26 16:11, Shivanand.Kunijadar@toshiba-tsip.com wrote:<=
-br />
-<blockquote>From: Shivanand Kunijadar &lt;Shivanand.Kunijadar@toshiba-tsip.=
-com&gt;<br /><br />The .key &amp; .pem files are addded using below .deb pa=
-ckage,<br /><a href=3D"https://snapshot.debian.org/file/d32d11a5aacbf5685b8=
-1e8176a27a6918e9b55fb/ovmf-generic_2025.11-5_all.deb" target=3D"_blank" rel=
-=3D"noopener">https://snapshot.debian.org/file/d32d11a5aacbf5685b81e8176a27=
-a6918e9b55fb/ovmf-generic_2025.11-5_all.deb</a><br /><br />Signed-off-by: S=
-hivanand Kunijadar &lt;Shivanand.Kunijadar@toshiba-tsip.com&gt;<br />---<br=
- />Kconfig | 4 +++<br />conf/distro/cip-core-forky.conf | 13 ++++++++<br />=
-kas/opt/forky.yml | 15 ++++++++++<br />.../files/forky/PkKek-1-snakeoil.key=
- | 30 +++++++++++++++++++<br />.../files/forky/PkKek-1-snakeoil.pem | 23 ++=
-++++++++++++</blockquote>
-So, current sid uses different keys that forky? Is that always the case?</b=
-lockquote>
-</div>
-<div>&nbsp;</div>
-<div>The ovmf package version in both forky &amp; sid are same now[1], so t=
-he keys should be same.&nbsp;</div>
-<div>I'll send a separate patch to create symlink to forky for sid keys. pl=
-ease note the sid keys were added long back and pointing to trixie.&nbsp; &=
-nbsp;</div>
-<div>&nbsp;</div>
-<div>[1] https://packages.debian.org/sid/ovmf-generic</div>
-<div><br />
-<blockquote>
-<blockquote>.../swupdate-certificates/files/forky | 1 +<br />start-qemu.sh =
-| 2 ++<br />7 files changed, 88 insertions(+)<br />create mode 100644 conf/=
-distro/cip-core-forky.conf<br />create mode 100644 kas/opt/forky.yml<br />c=
-reate mode 100644 recipes-devtools/secure-boot-secrets/files/forky/PkKek-1-=
-snakeoil.key<br />create mode 100644 recipes-devtools/secure-boot-secrets/f=
-iles/forky/PkKek-1-snakeoil.pem<br />create mode 120000 recipes-devtools/sw=
-update-certificates/files/forky<br /><br />diff --git a/Kconfig b/Kconfig<b=
-r />index 438234c..14cd677 100644<br />--- a/Kconfig<br />+++ b/Kconfig<br =
-/>@@ -241,6 +241,9 @@ config DEBIAN_TRIXIE<br />config DEBIAN_SID<br />bool=
- "Sid (Unstable)"<br /><br />+config DEBIAN_FORKY<br />+ bool "forky (14)"<=
-br />+</blockquote>
-Let's sort forky before sid.</blockquote>
-</div>
-<div>Ok, sure.<br />
-<blockquote>
-<blockquote>endchoice<br /><br />config KAS_INCLUDE_DEBIAN<br />@@ -250,6 +=
-253,7 @@ config KAS_INCLUDE_DEBIAN<br />default "kas/opt/bookworm.yml" if D=
-EBIAN_BOOKWORM<br />default "kas/opt/trixie.yml" if DEBIAN_TRIXIE<br />defa=
-ult "kas/opt/sid.yml" if DEBIAN_SID<br />+ default "kas/opt/forky.yml" if D=
-EBIAN_FORKY</blockquote>
-Here as well.</blockquote>
-Ok.<br />
-<blockquote>
-<blockquote>comment "Image features"<br /><br />diff --git a/conf/distro/ci=
-p-core-forky.conf b/conf/distro/cip-core-forky.conf<br />new file mode 1006=
-44<br />index 0000000..7a868ce<br />--- /dev/null<br />+++ b/conf/distro/ci=
-p-core-forky.conf<br />@@ -0,0 +1,13 @@<br />+#<br />+# CIP Core, generic p=
-rofile<br />+#<br />+# Copyright (c) Toshiba Corporation, 2026<br />+#<br /=
->+# Authors:<br />+# Shivanand Kunijadar &lt;Shivanand.Kunijadar@toshiba-ts=
-ip.com&gt;<br />+#<br />+# SPDX-License-Identifier: MIT<br />+#<br />+<br /=
->+require conf/distro/debian-forky.conf<br />+require cip-core-common.inc<b=
-r />diff --git a/kas/opt/forky.yml b/kas/opt/forky.yml<br />new file mode 1=
-00644<br />index 0000000..6c4fcdc<br />--- /dev/null<br />+++ b/kas/opt/for=
-ky.yml<br />@@ -0,0 +1,15 @@<br />+#<br />+# CIP Core, generic profile<br /=
->+#<br />+# Copyright (c) Toshiba Corporation, 2026<br />+#<br />+# Authors=
-:<br />+# Shivanand Kunijadar &lt;Shivanand.Kunijadar@toshiba-tsip.com&gt;<=
-br />+#<br />+# SPDX-License-Identifier: MIT<br />+#<br />+<br />+header:<b=
-r />+ version: 14<br />+<br />+distro: cip-core-forky<br />diff --git a/rec=
-ipes-devtools/secure-boot-secrets/files/forky/PkKek-1-snakeoil.key b/recipe=
-s-devtools/secure-boot-secrets/files/forky/PkKek-1-snakeoil.key<br />new fi=
-le mode 100644<br />index 0000000..dd7f492<br />--- /dev/null<br />+++ b/re=
-cipes-devtools/secure-boot-secrets/files/forky/PkKek-1-snakeoil.key<br />@@=
- -0,0 +1,30 @@<br />+-----BEGIN ENCRYPTED PRIVATE KEY-----<br />+MIIFHDBOBg=
-kqhkiG9w0BBQ0wQTApBgkqhkiG9w0BBQwwHAQIs4RXCLmGLJgCAggA<br />+MAwGCCqGSIb3DQ=
-IJBQAwFAYIKoZIhvcNAwcECHer6014IEhGBIIEyO8O2zL8CJwV<br />+auQpWLJsMMWxu2aSh1=
-WadX9+rg+O61mukuS4rQSH5shMQ2krZZKzyXx0q8+2AySD<br />+EtDXwhLvep60gUxOoNqK1+=
-l3AxSFfIGOY8NC6yW67VX+G09ajWpgHj3ox63VRW8v<br />+6mA8TFWYbOIwB8J7ScF4NszVwy=
-iUnW13oKi7svoBM3LYYG2IMvre+gOvyMGfM8uv<br />+X3txcYqAjhRV6n7vGo9LRLIIRSPKza=
-Jbm/W7nT38LRUJP8JMSQUOPKgeEwQvOTVZ<br />++1kd7WeaGZrjagTDM4yhBjpOmB3D8aeT6x=
-kjBlUwuddPzbdi0N7GrU520RcJMjxt<br />+JMyOgabHKUKmPTX4m0ZCKi2jSILi7/6fBF+TZD=
-xpakLwAwpTzm6kXArXb6AYtTEX<br />+GPihB4O69ZgEc90jp3EnZt7HtKZn1HTbPNQAlWgvES=
-gJ7hWHnTlM5Obqnyb78tj5<br />+VdcOfTSQRYmw4Rh/lSUX0vQLhdmYSVLiMFFvT4IepXZgQ6=
-McIdcvqoVrPgr0HoVz<br />+5YILZdmbs80VcgYL853lMfQ84kRwUcw8jNyz7mBK7V7rE5QhaF=
-5lunZ/R41ZRXRy<br />+1ys1rNvLPvtOq/K51+A9U+h5lLM9LjeoOR+IUk2Vg4aIap+Z+lxbIm=
-H0gcJTrpem<br />+ctA/2sBjLN7w811EjB/Tlu2awzbsKLpIDFVGHiGBI2zb41gtPd2RkijmiZ=
-ab6nuM<br />+ETg4ad3GscMoa++01oX/lrnVe386ECSjurmThb7I01eTNZrBlNsLyBeFzlEIEo=
-BR<br />+TqUXHLiDACxzL6U4vWzdnvVrCOW9fwvJJqChj7Wy822w2LXxVhOryNujBmZCmOht<b=
-r />+mgDaJ15QiF+DACcX6VoBbm/462z+9Skxa0DqGwGzMOD5HldwvQSyZSykk/BzGFWP<br />=
-+rXfLYoMjN+dgA/yNfem64ayGsmoPUAjnsE4YasD58UVO0XwwtdMGJSOVmkdyWMcM<br />+t+l=
-N74kX/gmIvciK06N6prBfowgBEIJ6ev2dzlydSN8rGORmQ+OFzjP14rT0O+1Q<br />+O48yR2Z=
-Z9jl4YPUKSFJ3EUc/Qt9vO+chNiNYSy6TABGXur0WWiDvGURG9K5fWTqq<br />+U2KydSRoYD5=
-iF0caOgMZecNhZV+4CX927j3XuuKKx49qTAt3WMtmJ/UQFHMtQ833<br />+XDFWHpEKDImfHfy=
-iB1f8bOmqYmPuE6Shup0UMJsMFel4QVJM0Jn9+wHw/0qqPiS3<br />+a769S/u9U2dfyZY5Pfy=
-mY8UjFRMDtLaUoJSRaGp6RNc6LynuMMKdzho0GwvL3+m9<br />+xKLDbbks8hVdmtcxxDKiio+=
-F0hp3yc/2PyA/VGAlARiGp7876WTCZox9Bwnf6lkS<br />+k9eYLSabe/r3Ag1SbWEGpFk3VO3=
-7qCyfp2xTfrHXK1ZJlvFwj3FFSprUaMrV+81K<br />+FCEcSozXpVsQ7e7d11A7S8rTbtp09Q/=
-J2oxyR0A9lk/ia5Qd/xwbPl4QJcWK2Jar<br />+K3yFK8VrUNib7CjI1kdB479KIllD8oK6dru=
-BkzwGzFxDtcl47RlfkqW96XSQT7x/<br />+h/YKSLcpMx9x9TJd2GDKj2t4oE9eGTBC0YbdH+H=
-JNSrjEsWkjgY6Uw++S6VzKvQZ<br />+DDsMJfxwcChc2zKRou+BFA=3D=3D<br />+-----END=
- ENCRYPTED PRIVATE KEY-----<br />diff --git a/recipes-devtools/secure-boot-=
-secrets/files/forky/PkKek-1-snakeoil.pem b/recipes-devtools/secure-boot-sec=
-rets/files/forky/PkKek-1-snakeoil.pem<br />new file mode 100644<br />index =
-0000000..7cd2487<br />--- /dev/null<br />+++ b/recipes-devtools/secure-boot=
--secrets/files/forky/PkKek-1-snakeoil.pem<br />@@ -0,0 +1,23 @@<br />+-----=
-BEGIN CERTIFICATE-----<br />+MIID1zCCAr+gAwIBAgIUDMG7xGGEPj+ABvbflim0PNb/lo=
-owDQYJKoZIhvcNAQEL<br />+BQAwejELMAkGA1UEBhMCVVMxETAPBgNVBAgMCENvbG9yYWRvMR=
-UwEwYDVQQHDAxG<br />+b3J0IENvbGxpbnMxETAPBgNVBAoMCFNuYWtlT2lsMS4wLAYDVQQDDC=
-VTbmFrZU9p<br />+bCBUZXN0IEtleSBmb3IgRUZJIFNlY3VyZSBCb290MCAXDTIzMDUxOTIzMT=
-E0NVoY<br />+DzIwNTMwNTE3MjMxMTQ1WjB6MQswCQYDVQQGEwJVUzERMA8GA1UECAwIQ29sb3=
-Jh<br />+ZG8xFTATBgNVBAcMDEZvcnQgQ29sbGluczERMA8GA1UECgwIU25ha2VPaWwxLjAs<b=
-r />+BgNVBAMMJVNuYWtlT2lsIFRlc3QgS2V5IGZvciBFRkkgU2VjdXJlIEJvb3QwggEi<br />=
-+MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDIi65d6LmojD5S9q8vE/LI2HHQ<br />+boi=
-O5/1KrFVc6kpxD6XdkJwpBoItYIfSls9CPnzvNWOAxR3hIeBd1U/prAPPxvQ1<br />+wuDLMXf=
-WkcGaYHfPnme/YluAjnpuLH1MQcumgOzj5xYBvZZk+RbytX/phH7FW4Tx<br />++L1oBYnsfh3=
-BSE/NTtEEHV1nXAXpa/dvyefWMlrlbwjfM5362lZzM6yrJGcOcWEy<br />+I66UYCIVO2Yhe/Z=
-VF5B/tPGtd2oACz11xLeqLPM1WBjlekAG2Zi7UCPIvDCpdn5u<br />+Vna2ZRQmJyDDdh0Ja2V=
-MC19dkMd/5nOAI21O+FvYPOkBWYX8f4DzDyVQlmIFAgMB<br />+AAGjUzBRMB0GA1UdDgQWBBR=
-juNXuXfh7mi8I3eTboeYGyFTa2zAfBgNVHSMEGDAW<br />+gBRjuNXuXfh7mi8I3eTboeYGyFT=
-a2zAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3<br />+DQEBCwUAA4IBAQBBxlfo6MxBN44mXBI=
-hE/QUbJZ+bo/Vrqv2DIZqOlV5+Sk6KnK8<br />+X9Rz2IJwoqLjB6cW9yInk5P/QS45880K1fD=
-T/lu5/2U64i3l1ZFK75qLDCn4/khF<br />+birV2U6LBZpxLe3UvXk3xZMoUPzvT2rhrsf78G0=
-pSmAnP8li8Co8F6hTjQzB8IgC<br />+DpYVATCoWBH6GhudtjUp+CJSyGApdL+HKX6i6oD7vut=
-vWYBf0Hx5r1NrqIv31Y4V<br />+bhwvK5zajFamj/VYeVy7/roqD06hNF1ImhsuBOqoJlKu+cH=
-MGN9DOJqjGup1T9aI<br />+2dpEOK5vbKXFrox/yCLgXmUkdwZ3BK4lcxCq<br />+-----END=
- CERTIFICATE-----<br />diff --git a/recipes-devtools/swupdate-certificates/=
-files/forky b/recipes-devtools/swupdate-certificates/files/forky<br />new f=
-ile mode 120000<br />index 0000000..2719d00<br />--- /dev/null<br />+++ b/r=
-ecipes-devtools/swupdate-certificates/files/forky<br />@@ -0,0 +1 @@<br />+=
-../../secure-boot-secrets/files/forky<br />\ No newline at end of file<br /=
->diff --git a/start-qemu.sh b/start-qemu.sh<br />index d12fa23..0b783d6 100=
-755<br />--- a/start-qemu.sh<br />+++ b/start-qemu.sh<br />@@ -47,6 +47,8 @=
-@ if [ -z "${DISTRO_RELEASE}" ]; then<br />DISTRO_RELEASE=3D"trixie"<br />e=
-lif grep -s -q "DEBIAN_SID: true" .config.yaml; then<br />DISTRO_RELEASE=3D=
-"sid"<br />+ elif grep -s -q "DEBIAN_FORKY: true" .config.yaml; then<br />+=
- DISTRO_RELEASE=3D"forky"</blockquote>
-..and here.</blockquote>
-</div>
-<div>Ok.</div>
-<div>&nbsp;</div>
-<div>Thanks &amp; Regards</div>
-<div>Shivanand K</div>
-
---R8NFs6z3ozuEu5J89ruz--
 
