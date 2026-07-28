@@ -1,311 +1,184 @@
-Return-Path: <Shivanand.Kunijadar@toshiba-tsip.com>
+Return-Path: <nobuhiro.iwamatsu.x90@mail.toshiba>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0184C54F4C
-	for <webhook@archiver.kernel.org>; Tue, 28 Jul 2026 05:47:28 +0000 (UTC)
-Subject: Re: [isar-cip-core][PATCH v1 2/2] Enable CI image build and test support for forky
-To: cip-dev@lists.cip-project.org
-From: "Kunijadar Shivanand" <Shivanand.Kunijadar@toshiba-tsip.com>
-X-Originating-Location: Hyderabad, Telangana, IN (151.186.148.44)
-X-Originating-Platform: Windows Chrome 150
-User-Agent: GROUPS.IO Web Poster
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EED97C54F4C
+	for <webhook@archiver.kernel.org>; Tue, 28 Jul 2026 07:45:12 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.132])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.6623.1785224708603861500
+ for <cip-dev@lists.cip-project.org>;
+ Tue, 28 Jul 2026 00:45:09 -0700
+Authentication-Results: mx.groups.io;
+ dkim=pass header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.s=key2.smx header.b=AwxKpPCg;
+ spf=pass (domain: mail.toshiba, ip: 210.130.202.132, mailfrom: nobuhiro.iwamatsu.x90@mail.toshiba)
+DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=mail.toshiba;h=From:To:CC:
+	Subject:Date:Message-ID:References:In-Reply-To:Content-Type:
+	Content-Transfer-Encoding:MIME-Version;i=nobuhiro.iwamatsu.x90@mail.toshiba;
+	s=key2.smx;t=1785224704;x=1786434304;bh=JEPpBzGeOpMSls5Gw4ZdSp5H0F3PiDZfCsqeR
+	S/IXvc=;b=AwxKpPCgNS6qRhPpf6X0jTK2yUGK0zA4oZbe52845TWWx5X4T50ukCJk/vqp3vnDo6G
+	rizYTBhBJScpgaoSQNgsOcEoLzZLtLwR0i+lV9FlpsqXTHLpMed5RIqyfE8vfu2QkCgKRkJpdYG6w
+	k0oz5Xv7LDj2yjZe4SqSqaY2/18Bqen4aMaRsp68mWO+D7pIvWuzC/M3QxaDt06P7Zt6Pvpf25tf7
+	8PLOCJwrO2E8bm9itEyI/12bLKazRQLKsK93nH2tmV60a+Q8kImVewfzbayu0F0LsBq7AywJgxeWS
+	yU9amTcSH/04CSXNPTaYuBH/6PV7O6r2OVXdjLn3E+2g==;
+Received: by mo-csw.securemx.jp (mx-mo-csw1121) id 66S7j3Ih1064117; Tue, 28 Jul 2026 16:45:03 +0900
+X-Iguazu-Qid: 2rWhi97bT1OaoLogei
+X-Iguazu-QSIG: v=2; s=1; t=1785224703; q=2rWhi97bT1OaoLogei; m=ro1D8H5U4E7z1PUuslNYWNORlpmL1Mmv0l1pbfe98rg=
+Received: from imx12-a.toshiba.co.jp (unknown [38.106.60.135])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	 id 4h8SDG4FYVz4vym; Tue, 28 Jul 2026 16:45:02 +0900 (JST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=zUF09I1ogXoNNYL/7gbJgSeHNbE3PkR56DZMZ7DfUMw8iJASqu3EO7F4LwinP+iEoeEJ91JE47l7AtklVyqZCb48v6prkZSI8Czpa3s1a4YcoKqnrvnzgyct7BktVuL4xd6U58+PXHy2ixEpOXSbYWGZgfT4Kl+5zat+aLwQuwYvMxRq1Qz1hbZRx8o5YwqxHz4sgqXX3iCxQzURer9ykwaRI1xfQm3ZTZ/f0Tf/+y1zGHX5oilwH/UL2bo1UjRebMAn4lfbBQQhNB9V8lAMFA7PSddL66JkXaMPcpB+/uRbMBhZWI4debIQ+zjd9IKLFnhw0FhAV99FxSNRcffwtw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qlwmsw3O1ZM4YqU6kSOgV9j8FxTv+uWRPrk9n2TzEf0=;
+ b=TU4FTzm9Pj850buZfruCaQ00m9+wAsAAuV4fSjpnGKXxXKsS8mbJ3Z7LgEm6DTt2rE/SlM/QyGLQWxlmULXJCmO8aIzA83o9s/Hp/NBocxJAJfETjMQTaN1DK3xSVwQCBR1zkNX3UPnBUAXQv7l+8lTwZ1VkCdhd4aExT3+88Uv9iyy6CJaivtShdDIGiKDmozEr6HVYf6u/nxsjVtE2TlAXZKQHHFORSw+CniZV+e1sjBfZ+4jDHaSaktqqjIRmXmdia5TCnz/1LUD7NDHjQyRV4hVyJBtDxA7zK5+imKUbnlEKRUW0DFgQWAcpPg1JM1khtoBdoGa1iWk322z0qQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mail.toshiba; dmarc=pass action=none header.from=mail.toshiba;
+ dkim=pass header.d=mail.toshiba; arc=none
+From: <nobuhiro.iwamatsu.x90@mail.toshiba>
+To: <pavel@nabladev.com>
+CC: <prabhakar.mahadev-lad.rj@bp.renesas.com>, <cip-dev@lists.cip-project.org>,
+        <biju.das.jz@bp.renesas.com>
+Subject: RE: [cip-dev] [PATCH 6.12.y-cip 0/8] Add xSPI support to RZ/T2H and
+ RZ/N2H SoCs
+Thread-Topic: [cip-dev] [PATCH 6.12.y-cip 0/8] Add xSPI support to RZ/T2H and
+ RZ/N2H SoCs
+Thread-Index: AQHdDXSU3U96EU15T06lJtQ4i0GQ6LZvzqaAgAA4nwCAEqetsA==
+Date: Tue, 28 Jul 2026 07:44:58 +0000
+X-TSB-HOP2: ON
+Message-ID: 
+ <TY7PR01MB148185984781EE99AB66F2FF6CDCB2@TY7PR01MB14818.jpnprd01.prod.outlook.com>
+References: <20260706182328.5237-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <TY7PR01MB14818D949B2AB9210CF312A6ECDC72@TY7PR01MB14818.jpnprd01.prod.outlook.com>
+ <ali3wExG4j1r02cS@duo.ucw.cz>
+In-Reply-To: <ali3wExG4j1r02cS@duo.ucw.cz>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mail.toshiba;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY7PR01MB14818:EE_|TY4PR01MB15501:EE_
+x-ms-office365-filtering-correlation-id: bb41f3b7-8699-4d2f-d959-08deec7c1fa2
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|376014|23010399003|366016|1800799024|38070700021|56012099006|4143699003|11063799006|10067099003|18002099003|22082099003;
+x-microsoft-antispam-message-info: 
+ oPZ8dr7KSrDYwjyZwGLoobaNrUW+hoH+v2ujxWlyBSwjVdp4VGn+63byFcQRljos1t9Wu+jRMQidk3LG/x6hm4c4VcNFD5VsMsirHqM1HudF8FPb3tQ1b3IWH5vgAa6o7Ld/0xpL7/Ii7Ay/NpPJApL4QA3vOKeXQQBKxO/9TBsdYyaB/FPnJcK31GOdXk7TlJBajDAiyvKRTGLljyN0GFI8ozuWQHI6PwBkozaTEGyuqNrwjnYga777X91p9uB9ULg4qow6qIk1D9IDGfielM96YSlSx2OD/TxkkV2OiV3yDjtbXJxitzrJKxBAzScSsCijdXYxOWOsnHSQXNZ6HUUsCE8qdP1Q2q5S087Kc16nRuzEw4NvxO08VdgRbmp0eb4VK95Ejuf4KD25MVn+WjF4QelRkj/2eDMCPnnPWg2+UUGKmPN52dyXE72FYSPlGUrYtw+LkxmArW897lFZ3lo8nja0GDB59bU2V6EZZxbvSL0AFa8dNE4WvSu/HzJuWtfQsgkxZ8CuHX01IsxmwS+BleagCyf/U+AxkgnO7MrLdJv6P4aWtkZJUGxuJS9OnsfsrLsHvsP6RoiE2+eqIkDV9k2S8cHsgqVD6ZdIIJNnYEng7vZm/6rOeRccdSZQTny8mW2Xyn1YLYN/aM6jnIH5TjVXTj8LozAk3rpbFEKqKcigiD248jMO22+hcyRqi3qnYy+8pCvK/bItDUP5fF9G4p5JXjBH6VmEQKyGGqw=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7PR01MB14818.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(23010399003)(366016)(1800799024)(38070700021)(56012099006)(4143699003)(11063799006)(10067099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?cmVpNmtBajMvdU9uZTNwVDhrZ25sck1hdU40OGtHVU52TXlWNUhYK05N?=
+ =?iso-2022-jp?B?WjljZVhSQ29nb2RrRGdxc2pmTjFtMkxTbHR2M1RWZHlWbXhLU1NVblpP?=
+ =?iso-2022-jp?B?cVNkUnp1R1NSWUxYb0lyRis2Y09YMGhSS0hrU1VNZmRETGc0YU13QUpK?=
+ =?iso-2022-jp?B?OUUvbHYxS3k4NmRZbnhtZHhZcGVDbmpoVjlWTVE1MHNvZ1dwUkN3bDla?=
+ =?iso-2022-jp?B?TCtXL01VSDhaZytUVVVDNjRpVEF2VllScU92b1hyL0tmOGxWbFRPWStQ?=
+ =?iso-2022-jp?B?Q2lOR3ZmNmZpZWJuNVNCTlJ6ZTdRU3RrUUNiY3lVNW9yTk5GU252czhp?=
+ =?iso-2022-jp?B?Ty9lNmtFeXRETlVKM20xNDlwNUorVnlNdUswYTFoZldiSWVWYmxRQzEw?=
+ =?iso-2022-jp?B?bFRDeWFYaHFrd3FlWHp5bTRQV25SRzEzc0UyVEM2NlluVDkwdk05YUdp?=
+ =?iso-2022-jp?B?aHJSd2ZVVHY0QURlbWdmVno4bGtzZFV5aWNBUW9SV0h4VXk2TEpEbG9M?=
+ =?iso-2022-jp?B?K01Ub3Rrd2M5M1JnZnBWTXBtV1Q5V3d2dUxTODNBcnVRQjYyNzlXK0sv?=
+ =?iso-2022-jp?B?MGtULzJZM2cwbFMxLzhUOTJNdW1xVU9hTWp1M2JDa0phcm9lUjBML1dr?=
+ =?iso-2022-jp?B?aGk5WEI5RklLOEdONWpNbktYL1pURDk5eTAvV3lIUkgyT0dLN0VEV0kr?=
+ =?iso-2022-jp?B?MlQ4WmJXRmpYbnI5czlkTTNrZ3d1YTJhTWNLMEZ4aG9ubit4NkU1L2VU?=
+ =?iso-2022-jp?B?bjlNYWJzclV1NS82Y20zYmtVWFFXZUR6bDlLVDI1eitaMitYSjRYZUJD?=
+ =?iso-2022-jp?B?aEtNTlFMMUFlUzVYd1V3Zld4akJWVFE2RmhiRWUzdVN2OERGK2pkUEVl?=
+ =?iso-2022-jp?B?TTlBRTRrMEk0NTJoQ21yVU9KVWZwdGIxeXhEZVd4eUFHN0pOUEE1bmRC?=
+ =?iso-2022-jp?B?TFVGNW5ieGcxcjhiUmp1U1duT2NqSGpDcGdFSXZueHluT3cvRzNoY0Jv?=
+ =?iso-2022-jp?B?NE56Mzk5dS9WS2dhSmVCbVprWVoxWmE0dEFIVC9XK1N1bEIzTmlhU0lq?=
+ =?iso-2022-jp?B?ZVVHUHlsMkV3OC9nTVJ1dFZqMjc1Y1ptcno4blNUMTUwVTRnaEF6RktB?=
+ =?iso-2022-jp?B?RTcyMWRWd0g2ckRxVnJtOEhyZ2dEODJBWFZPOEFMSGN4RlY4cDlKcDVX?=
+ =?iso-2022-jp?B?YVJjZnpuTjA0NmJOeUhnUXRwUWk0Z1NuTEN1TGtHd0ljUEN4YzFKcFd0?=
+ =?iso-2022-jp?B?ajF5MXlid0VtRFczcXpsT0VLbDE0b3RSeHdsaEVwcGM1aWVwekFsY1lF?=
+ =?iso-2022-jp?B?TEI2cHZuWE8xeHIzR3A4ejNiV1psU24zcjZsdEZYVHhoK2MzeElGcm9F?=
+ =?iso-2022-jp?B?ajJMUTY5a2VsWHRpeEtic0txYkpDYWZnVWpwNDAxQ2FpMXJpSzh6Nlhv?=
+ =?iso-2022-jp?B?VkRGSUxEdUhRcGdPRlR0SkcwNGNyM2NackFNbXdtRzFGN2xxZG5EZ1N2?=
+ =?iso-2022-jp?B?SDIrYWxudmlsSmFsUkE1S2o0cWVueVEvREVRQkZQUDFVSk5nemVDRXJx?=
+ =?iso-2022-jp?B?VDRPQnlhSEZIQVNXTGk2eDlyaG9NeWxhR1NJUXU4YjBuTVVRbVU5OWtP?=
+ =?iso-2022-jp?B?SGVjWm1KTENwTS9leHZVNS9zRWtrdWlWU2I0bXN2TnVOKzFKWUVCV0lm?=
+ =?iso-2022-jp?B?MmNPUSsrY3EvSmFnVTlvb21WNW1Zb0cvRVlqdUFGNndMSHI4N0QxeFR2?=
+ =?iso-2022-jp?B?QUJRNnNLcE5CM0dod1VOckI3bkprbWtlU29pa3Z0UEY0UW1qbWs1azVx?=
+ =?iso-2022-jp?B?d1JQc2ZKdVo5K29XdmxyL1VCZzlkQkZSYm52VGJ1WHFUMmgxWVhaQkpq?=
+ =?iso-2022-jp?B?RUNWVmE1WVBvNkFBb3FUTDFCN0ZrRHNoQ1gxQWZlckNORE9JQjlDaTF2?=
+ =?iso-2022-jp?B?VmhvcHUzRitNTnZLNllXdVVVTWtKYVNMdk5nQUUvRTd5TkhmVHdrVllK?=
+ =?iso-2022-jp?B?TkVFYTJUN1N0WCtXNS9FMDAxeE5ySUg1L25OSFpqWWdmWFVmaHlTZDZR?=
+ =?iso-2022-jp?B?dmloUlNtaURDUkxTdUxHZUp3b1NUaFJNNWljeUUwdjlzTEE0eGxkOFNq?=
+ =?iso-2022-jp?B?SnpxRnNsbjFjcjlWVmFSTmRRbmg5ZmpsN0czTEJLQUxCL2lVWE9sKzdY?=
+ =?iso-2022-jp?B?WnJldDFwN21MMGVBMitPS1RCNklHSTI2RS9xS1lXbEhqSHNqdUo2U3B3?=
+ =?iso-2022-jp?B?UFR6WFhMRTUxNWY4ZGxrSlpyRHI1bFpMWDczUGdCSGZ6K1BYdnhaS2FB?=
+ =?iso-2022-jp?B?aGd6K2dvY1I5Y1JGV01NTXR5TVBJRGRtemxzWVJ3d3YxMmVYQ1NuNkIy?=
+ =?iso-2022-jp?B?N3k5YUZsMXNzUHlBUWliODgzQ0JXdEE4OUQ5TVE2eWh2MGtrWHJxOTNP?=
+ =?iso-2022-jp?B?YWF3YlplNnlPcHdveWpEbk1VdlJITDlkZGZTa1pRcE84Zk44MDk4Z0Uy?=
+ =?iso-2022-jp?B?d3RIZzg0ell4bDhOcFNPV3d4K2lHSDQzRjdPZ3BrditDbkoxcHJqLzFa?=
+ =?iso-2022-jp?B?M01BMkdtND0=?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Date: Mon, 27 Jul 2026 22:47:24 -0700
-References: <20260727141136.1773671-1-Shivanand.Kunijadar@toshiba-tsip.com> <20260727141136.1773671-3-Shivanand.Kunijadar@toshiba-tsip.com> <8630a39b-ab0f-4754-a7ba-364be3cd6bc8@siemens.com>
-In-Reply-To: <8630a39b-ab0f-4754-a7ba-364be3cd6bc8@siemens.com>
-Message-ID: <1092128.1785217644697002949@lists.cip-project.org>
-Content-Type: multipart/alternative; boundary="MwjK7mcTqjK8p3dRhb3F"
+X-Exchange-RoutingPolicyChecked: 
+	OciA2MGi9JlT6BFDljCa2Tf0Gk2FS9WQgPqvnbBPFsw0mnyk7ZnMzks/kmq8Kio6vUy/iuwiIBEJgqqLA7ynWLctNo+lcb4jNdsmqRvmiuJvbng+cMywF1eeJgoy6Z0Zbx4L7wsrOAoP8hF883JkvxaD3l6biEkRPswrDhMkBe4Lxj+B0ONrXkOIztb/tm7TFHvC5w8XxTs2QlDjuvGSVX52u+jaIdVgB1w1SqZO7gImRhXLadcewL9kAsIKLxm7hw+ciaGLSdBjcyb6j3Yj+InsVHJvxcBOouLvq5nIHQ9Q+g5SxPrd52M6LD3/bAJ5Mpx0E8SetqM2jlAk60A+cQ==
+X-OriginatorOrg: mail.toshiba
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY7PR01MB14818.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb41f3b7-8699-4d2f-d959-08deec7c1fa2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jul 2026 07:44:58.3463
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: wyeVl4C1zwqftj9ef4fETcoPe9xTWeSZOcMF0Eb/4nwescQVlYp5JEkuSKvui/geWNIfX1k5VhGPqgkGZr6GPGUuLl1T5CRR/AOhNGdDmOnjf8V3cko1LNyWWqM4pjVR
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB15501
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 28 Jul 2026 05:47:28 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23790
+ <cip-dev@lists.cip-project.org>; Tue, 28 Jul 2026 07:45:12 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23791
 
---MwjK7mcTqjK8p3dRhb3F
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-On Mon, Jul 27, 2026 at 10:10 AM, Jan Kiszka wrote:
-
+> -----Original Message-----
+> From: Pavel Machek <pavel@nabladev.com>
+> Sent: Thursday, July 16, 2026 7:52 PM
+> To: iwamatsu nobuhiro(=1B$B4d>>=1B(B =1B$B?.MN=1B(B =1B$B""#D#I#T#C!{#C#P=
+#T=1B(B)
+> <nobuhiro.iwamatsu.x90@mail.toshiba>
+> Cc: prabhakar.mahadev-lad.rj@bp.renesas.com; cip-dev@lists.cip-project.or=
+g;
+> pavel@nabladev.com; biju.das.jz@bp.renesas.com
+> Subject: Re: [cip-dev] [PATCH 6.12.y-cip 0/8] Add xSPI support to RZ/T2H =
+and
+> RZ/N2H SoCs
 >=20
-> On 27.07.26 16:11, Shivanand.Kunijadar@toshiba-tsip.com wrote:
+> Hi!
 >=20
->> From: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
->>=20
->> Keep these jobs as scheduled and can be scheduled to run every week
->> just to monitor and fix if there are any issues.
->> Also set allow_failure:true for these jobs as forky is not officially
->> released and there will always be some build & test issues.
->>=20
->> Signed-off-by: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com=
->
->> ---
->> .gitlab-ci.yml | 93 ++++++++++++++++++++++++++++++++++++++++++++++++++
->> 1 file changed, 93 insertions(+)
->>=20
->> diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
->> index b53def4..977ae01 100644
->> --- a/.gitlab-ci.yml
->> +++ b/.gitlab-ci.yml
->> @@ -64,6 +64,7 @@ default:
->> - if [ "${release}" =3D "bookworm" ]; then
->> base_yaml=3D"${base_yaml}:kas/opt/bookworm.yml"; fi
->> - if [ "${release}" =3D "trixie" ]; then
->> base_yaml=3D"${base_yaml}:kas/opt/trixie.yml"; fi
->> - if [ "${release}" =3D "sid" ]; then
->> base_yaml=3D"${base_yaml}:kas/opt/sid.yml"; fi
->> + - if [ "${release}" =3D "forky" ]; then
->> base_yaml=3D"${base_yaml}:kas/opt/forky.yml"; fi
+> > >   arm64: dts: renesas: r9a09g077: Add xSPI nodes
+> > >   arm64: dts: renesas: r9a09g087: Add xSPI nodes
+> > >   arm64: dts: renesas: rzt2h-n2h-evk: Enable xSPI nodes
+> >
+> > I reviewed this series, looks good to me.
+> > I can apply this if tests are OK and there are no other comments.
+> >   Reviewed-by: Nobuhiro Iwamatsu
+> > >   <nobuhiro.iwamatsu.x90@mail.toshiba>
 >=20
-> ordering
-
-Thanks, I'll fix it.
-
+> I had some minor comments here, but those should be fixed in mainline, fi=
+rst,
+> so they should not block the merge.
 >=20
+> This looks okay to me.
 >=20
->> - if [ "${encrypt}" =3D "enable" ]; then
->> base_yaml=3D"${base_yaml}:kas/opt/encrypt-data.yml"; fi
->> - if [ "${factory_reset}" =3D "enable" ]; then
->> base_yaml=3D"${base_yaml}:kas/opt/factory-reset.yml"; fi
->> - if [ "${watchdog}" =3D "disable" ]; then
->> base_yaml=3D"${base_yaml}:kas/opt/disable-watchdog.yml"; fi
->> @@ -399,6 +400,57 @@ build:qemu-arm-base-sid:
->> separate_home_partition: enable
->> deploy: enable
->>=20
->> +# forky image builds
->> +.build_base_forky:
->> + extends:
->> + - .build_base
->> + rules:
->> + - if: $CI_COMMIT_TAG
->> + when: never
->> + - if: '$CI_PIPELINE_SOURCE =3D=3D "schedule" && $CI_RUN_UNSTABLE_FORKY=
-'
+> Reviewed-by: Pavel Machek <pavel@nabladev.com>
 >=20
-> We should handle forky and sid identical for now, thus should likely use
-> generic CI_RUN_UNSTABLE for both. Forky can then be moved out of this
-> mode somewhere next year and become another regular test target in the
-> pipeline, sid will always remain there.
+> Best regards,
+>                                                                 Pavel
 
-Sure, will change it to CI_RUN_UNSTABLE for both forky & sid.
+I applied and pushed, thanks!
 
->=20
->=20
->> + - if: $CI_COMMIT_BRANCH !=3D "master"
->> + when: never
->> + allow_failure: true
->> +
->> +build:qemu-amd64-base-forky:
->> + extends:
->> + - .build_base_forky
->> + variables:
->> + target: qemu-amd64
->> + use_rt: disable
->> + release: forky
->> + extension: security
->> + security_test: enable
->> + build_updates: enable
->> + separate_home_partition: enable
->> + deploy: enable
->> +
->> +build:qemu-arm64-base-forky:
->> + extends:
->> + - .build_base_forky
->> + variables:
->> + target: qemu-arm64
->> + use_rt: disable
->> + release: forky
->> + extension: security
->> + security_test: enable
->> + build_updates: enable
->> + separate_home_partition: enable
->> + deploy: enable
->> +
->> +build:qemu-arm-base-forky:
->> + extends:
->> + - .build_base_forky
->> + variables:
->> + target: qemu-arm
->> + extension: security
->> + security_test: enable
->> + use_rt: disable
->> + release: forky
->> + build_updates: enable
->> + separate_home_partition: enable
->> + deploy: enable
->> +
->> .test-cip-core:
->> stage: test
->> image: $CI_REGISTRY_IMAGE/lavacli
->> @@ -764,6 +816,47 @@ test:qemu-arm-IEC-sid:
->> test_function: IEC
->> iec_test_timeout: 40
->>=20
->> +# Tests for forky images
->> +.test-cip-core-forky:
->> + extends:
->> + - .test-cip-core
->> + rules:
->> + - if: $CI_COMMIT_TAG
->> + when: never
->> + - if: '$CI_PIPELINE_SOURCE =3D=3D "schedule" && $CI_RUN_UNSTABLE_FORKY=
-'
->> + - if: $CI_COMMIT_BRANCH !=3D "master"
->> + when: never
->> + allow_failure: true
->> +
->> +test:qemu-amd64-IEC-forky:
->> + extends:
->> + - .test-cip-core-forky
->> + variables:
->> + target: qemu-amd64
->> + release: forky
->> + test_function: IEC
->> + iec_test_timeout: 40
->> +
->> +test:qemu-arm64-IEC-forky:
->> + extends:
->> + - .test-cip-core-forky
->> + needs: ["build:qemu-arm64-base-forky"]
->> + variables:
->> + target: qemu-arm64
->> + release: forky
->> + test_function: IEC
->> + iec_test_timeout: 40
->> +
->> +test:qemu-arm-IEC-forky:
->> + extends:
->> + - .test-cip-core-forky
->> + needs: ["build:qemu-arm-base-forky"]
->> + variables:
->> + target: qemu-arm
->> + release: forky
->> + test_function: IEC
->> + iec_test_timeout: 40
->> +
->> cve-checks:
->> stage: cve-check
->> needs: []
->=20
-> I'm still wondering what the added value of testing sid for us is. I
-> would rather consider to invest our CI time into running more tests with
-> forky, like some more SWUpdate checks and/or reproducibility.
+Best regards,
+  Nobuhiro
 
-Understood, we can add more tests like SWUpdate, secure boot and RB builds =
-for forky. I will include them in v2 patch.
-
-considering the value of testing for sid,
-- The latest updates/fixes to any package will appear in sid before forky.=
-=C2=A0As a community we can test early and report issues and also contribut=
-e to Debian to fix the issues if required.
-
-please note we have only minimal tests for sid now and also running it week=
-ly. if required we can still remove the sid testing from CI, kindly let me =
-know.
-
-Thanks & Regards
-Shivanand K
-
---MwjK7mcTqjK8p3dRhb3F
-Content-Type: text/html; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div>On Mon, Jul 27, 2026 at 10:10 AM, Jan Kiszka wrote:</div>
-<div>
-<blockquote>On 27.07.26 16:11, Shivanand.Kunijadar@toshiba-tsip.com wrote:<=
-br />
-<blockquote>From: Shivanand Kunijadar &lt;Shivanand.Kunijadar@toshiba-tsip.=
-com&gt;<br /><br />Keep these jobs as scheduled and can be scheduled to run=
- every week<br />just to monitor and fix if there are any issues.<br />Also=
- set allow_failure:true for these jobs as forky is not officially<br />rele=
-ased and there will always be some build &amp; test issues.<br /><br />Sign=
-ed-off-by: Shivanand Kunijadar &lt;Shivanand.Kunijadar@toshiba-tsip.com&gt;=
-<br />---<br />.gitlab-ci.yml | 93 ++++++++++++++++++++++++++++++++++++++++=
-++++++++++<br />1 file changed, 93 insertions(+)<br /><br />diff --git a/.g=
-itlab-ci.yml b/.gitlab-ci.yml<br />index b53def4..977ae01 100644<br />--- a=
-/.gitlab-ci.yml<br />+++ b/.gitlab-ci.yml<br />@@ -64,6 +64,7 @@ default:<b=
-r />- if [ "${release}" =3D "bookworm" ]; then base_yaml=3D"${base_yaml}:ka=
-s/opt/bookworm.yml"; fi<br />- if [ "${release}" =3D "trixie" ]; then base_=
-yaml=3D"${base_yaml}:kas/opt/trixie.yml"; fi<br />- if [ "${release}" =3D "=
-sid" ]; then base_yaml=3D"${base_yaml}:kas/opt/sid.yml"; fi<br />+ - if [ "=
-${release}" =3D "forky" ]; then base_yaml=3D"${base_yaml}:kas/opt/forky.yml=
-"; fi</blockquote>
-ordering</blockquote>
-Thanks, I'll fix it.&nbsp;<br />
-<blockquote>
-<blockquote>- if [ "${encrypt}" =3D "enable" ]; then base_yaml=3D"${base_ya=
-ml}:kas/opt/encrypt-data.yml"; fi<br />- if [ "${factory_reset}" =3D "enabl=
-e" ]; then base_yaml=3D"${base_yaml}:kas/opt/factory-reset.yml"; fi<br />- =
-if [ "${watchdog}" =3D "disable" ]; then base_yaml=3D"${base_yaml}:kas/opt/=
-disable-watchdog.yml"; fi<br />@@ -399,6 +400,57 @@ build:qemu-arm-base-sid=
-:<br />separate_home_partition: enable<br />deploy: enable<br /><br />+# fo=
-rky image builds<br />+.build_base_forky:<br />+ extends:<br />+ - .build_b=
-ase<br />+ rules:<br />+ - if: $CI_COMMIT_TAG<br />+ when: never<br />+ - i=
-f: '$CI_PIPELINE_SOURCE =3D=3D "schedule" &amp;&amp; $CI_RUN_UNSTABLE_FORKY=
-'</blockquote>
-We should handle forky and sid identical for now, thus should likely use<br=
- />generic CI_RUN_UNSTABLE for both. Forky can then be moved out of this<br=
- />mode somewhere next year and become another regular test target in the<b=
-r />pipeline, sid will always remain there.</blockquote>
-</div>
-<div>&nbsp;</div>
-<div>Sure, will change it to CI_RUN_UNSTABLE for both forky &amp; sid.&nbsp=
-;</div>
-<div><br />
-<blockquote>
-<blockquote>+ - if: $CI_COMMIT_BRANCH !=3D "master"<br />+ when: never<br /=
->+ allow_failure: true<br />+<br />+build:qemu-amd64-base-forky:<br />+ ext=
-ends:<br />+ - .build_base_forky<br />+ variables:<br />+ target: qemu-amd6=
-4<br />+ use_rt: disable<br />+ release: forky<br />+ extension: security<b=
-r />+ security_test: enable<br />+ build_updates: enable<br />+ separate_ho=
-me_partition: enable<br />+ deploy: enable<br />+<br />+build:qemu-arm64-ba=
-se-forky:<br />+ extends:<br />+ - .build_base_forky<br />+ variables:<br /=
->+ target: qemu-arm64<br />+ use_rt: disable<br />+ release: forky<br />+ e=
-xtension: security<br />+ security_test: enable<br />+ build_updates: enabl=
-e<br />+ separate_home_partition: enable<br />+ deploy: enable<br />+<br />=
-+build:qemu-arm-base-forky:<br />+ extends:<br />+ - .build_base_forky<br /=
->+ variables:<br />+ target: qemu-arm<br />+ extension: security<br />+ sec=
-urity_test: enable<br />+ use_rt: disable<br />+ release: forky<br />+ buil=
-d_updates: enable<br />+ separate_home_partition: enable<br />+ deploy: ena=
-ble<br />+<br />.test-cip-core:<br />stage: test<br />image: $CI_REGISTRY_I=
-MAGE/lavacli<br />@@ -764,6 +816,47 @@ test:qemu-arm-IEC-sid:<br />test_fun=
-ction: IEC<br />iec_test_timeout: 40<br /><br />+# Tests for forky images<b=
-r />+.test-cip-core-forky:<br />+ extends:<br />+ - .test-cip-core<br />+ r=
-ules:<br />+ - if: $CI_COMMIT_TAG<br />+ when: never<br />+ - if: '$CI_PIPE=
-LINE_SOURCE =3D=3D "schedule" &amp;&amp; $CI_RUN_UNSTABLE_FORKY'<br />+ - i=
-f: $CI_COMMIT_BRANCH !=3D "master"<br />+ when: never<br />+ allow_failure:=
- true<br />+<br />+test:qemu-amd64-IEC-forky:<br />+ extends:<br />+ - .tes=
-t-cip-core-forky<br />+ variables:<br />+ target: qemu-amd64<br />+ release=
-: forky<br />+ test_function: IEC<br />+ iec_test_timeout: 40<br />+<br />+=
-test:qemu-arm64-IEC-forky:<br />+ extends:<br />+ - .test-cip-core-forky<br=
- />+ needs: ["build:qemu-arm64-base-forky"]<br />+ variables:<br />+ target=
-: qemu-arm64<br />+ release: forky<br />+ test_function: IEC<br />+ iec_tes=
-t_timeout: 40<br />+<br />+test:qemu-arm-IEC-forky:<br />+ extends:<br />+ =
-- .test-cip-core-forky<br />+ needs: ["build:qemu-arm-base-forky"]<br />+ v=
-ariables:<br />+ target: qemu-arm<br />+ release: forky<br />+ test_functio=
-n: IEC<br />+ iec_test_timeout: 40<br />+<br />cve-checks:<br />stage: cve-=
-check<br />needs: []</blockquote>
-I'm still wondering what the added value of testing sid for us is. I<br />w=
-ould rather consider to invest our CI time into running more tests with<br =
-/>forky, like some more SWUpdate checks and/or reproducibility.</blockquote=
->
-</div>
-<div>Understood, we can add more tests like SWUpdate, secure boot and RB bu=
-ilds for forky. I will include them in v2 patch.</div>
-<div>&nbsp;</div>
-<div>considering the value of testing for sid,&nbsp;</div>
-<div>- The latest updates/fixes to any package will appear in sid before fo=
-rky.&nbsp;As a community we can test early and report issues and also contr=
-ibute to Debian to fix the issues if required.</div>
-<div>&nbsp;</div>
-<div>please note we have only minimal tests for sid now and also running it=
- weekly. if required we can still remove the sid testing from CI, kindly le=
-t me know.&nbsp;</div>
-<div>&nbsp;</div>
-<div>Thanks &amp; Regards</div>
-<div>Shivanand K</div>
-
---MwjK7mcTqjK8p3dRhb3F--
 
