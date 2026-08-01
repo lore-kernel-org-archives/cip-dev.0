@@ -2,57 +2,57 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDDDDC55182
-	for <webhook@archiver.kernel.org>; Sat,  1 Aug 2026 09:15:12 +0000 (UTC)
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.2477.1785575706855744738
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21804C55181
+	for <webhook@archiver.kernel.org>; Sat,  1 Aug 2026 09:15:13 +0000 (UTC)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.2454.1785575704230943580
  for <cip-dev@lists.cip-project.org>;
- Sat, 01 Aug 2026 02:15:07 -0700
+ Sat, 01 Aug 2026 02:15:04 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=eA+BYKLT;
- spf=pass (domain: gmail.com, ip: 209.85.128.49, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-498028b3d5eso6333725e9.1
-        for <cip-dev@lists.cip-project.org>; Sat, 01 Aug 2026 02:15:06 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=NyjcRdc1;
+ spf=pass (domain: gmail.com, ip: 209.85.128.44, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-495757ccbc1so5263165e9.2
+        for <cip-dev@lists.cip-project.org>; Sat, 01 Aug 2026 02:15:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785575705; x=1786180505; darn=lists.cip-project.org;
+        d=gmail.com; s=20251104; t=1785575702; x=1786180502; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=MZDjyUQIjfnSBuc1kNDjK7QK9hy0MxgIaqzqXMYomww=;
-        b=eA+BYKLTiKttMGnyhspJ3f00cZCz4fOblv4GBEN0F+ufA49y8ZdNWy9mGh0ffqhj6L
-         6sMQb6wyFBRDPyrolH3Uwwp5KrD2n46Py3RqGbWgD8b71Q0g2X/46+/JOVxqP+nvrOxi
-         4vcMqTd690i05lUkAoW8VPlGSG3PTDyQMVAJI1szzrZFc63j03mp5DVyjvYWir65KwW6
-         0C9pqzKyAV4YlnBHNZnx/i0WmHQA12G8iH487bkDxMlR4nadUK/wedAy3QqQ0zveSSfF
-         f9GNxaU/Jb2UFpTY/V8g97KYoMGOmIiw9vB7OZVNpUffyMiCgnUiGLni2BfMM9jpLQX0
-         PAQw==
+        bh=0JVz8QfeGJLS5vudk8RGaMjEHJwgG9hzgNsUtp87R64=;
+        b=NyjcRdc14EvhUU2WcSgMmVDifZG7iMrDFqcoM3kaaHFAh52VPAwVM/MCtTKrKS29tN
+         ooPwk0mHhKVecNSGMpE1TR3osd9jDoYcfneLAi+seTTrE5u22PiKKIkkxbEwsOYmfEuo
+         470f93ZzI2HK2qn0132A4herl3wEphLrdZnZdb05hwHNgjzyvfd0JkeoO0WkUrfCtbL1
+         DGs3jkr+QdYkWl809Wie0bURrbMYCbOunhnt8j16WNsOfsEQMT1PkUnVRHVre6BxzMaq
+         n5gs7biKFK7UcYVF1/9LD47Ts4FxTg0bEROR1JMWvOR8lnf+o3k2WnDHWUfwTFWD7SBe
+         p7OA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785575705; x=1786180505;
+        d=1e100.net; s=20251104; t=1785575702; x=1786180502;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=MZDjyUQIjfnSBuc1kNDjK7QK9hy0MxgIaqzqXMYomww=;
-        b=bE1lHrxeoXz6AMnfbEHuuvLE8oB8M3E/Pn/qQN9v99Us3rfutIvzhCpW9yaAhThFs4
-         wsUnLDsbXLaem9F//0FlwHi0mF4gb/DwiJ1TAubQInve7KTX3TBr89qBCCNrPuipRb5V
-         jLNqVoCH1lBxl1Ob96t9LsX0obqIJEswc2WtWfRyg1OJbBwT4UX7+Eo+SobXPaFKvvWD
-         ys7KfvGiHMjHUhPdKMOSG1Ooa2/B6B8JVHNWwbF4oC2VCIetJegeMmrY1ltVFir6QIDJ
-         L1qzTsEyXVg4sytY+cdRxahKP78SkpOYu6oq2rPskj+v2CiaFOi6xJd3Ft89S9LLdRBa
-         vriQ==
-X-Gm-Message-State: AOJu0Yzbc+BEBbNk/HWaRUdCE8ouObJDrBNZgEfcHmTemtkLE3jpjsq6
-	eyjBiYVZ7W14H72reP2dDQm5GyHbnU+mYrNx9BlRLh0VH1YkFkYRmHHFtvYqhg==
-X-Gm-Gg: AR+sD10sRyRoRrWhac+tpuLtCqIGdQ1BUSIk7NMxxWta2YPoFediyFkVR0yQGkhVYz8
-	eAGFQCWRVd54O+Pj+uIRt5xhtFhlvHhNfb3+LPReF6qHee+7cW3NPtUqo+ysC7PVCynqZHQZWel
-	YnHtWoG3f1YWVAnTntefKcwjMsM0q/lriw3SA4RnsB+Q34kUKVP3NSPrDuoKwKm0iIysMcLl2cS
-	wUFxENgRzhmmOYden7zf6vvXj/OOecaFvJ5Idu6vaAMSdHAg80qK80o/5jvrrce6K7iXs0EZ0A7
-	mijfBNllS//OwGn6NrY5DAEA6Ido4N976eISPAuv9ISMQoNC22IGeW5P8TVRpNEoIoXgIeT9UCl
-	RABSk89/iPvbetmAV+5nIkHGgIkFT83rjR/wSoYsuaXzUvHKIcN2VE4wzE8PqAnPfT7UgSlLnnv
-	uldjASEAcTpKZ4R3MbmnYqFazR76CM1qfJnGZhnumorVOidEt/LDxha9I+f99o+/duLdxtQ8Ois
-	U8kj8ZDNXA4qQ==
-X-Received: by 2002:a05:600c:c113:b0:495:4689:1e98 with SMTP id 5b1f17b1804b1-4980c674e1dmr29961875e9.10.1785575705061;
-        Sat, 01 Aug 2026 02:15:05 -0700 (PDT)
+        bh=0JVz8QfeGJLS5vudk8RGaMjEHJwgG9hzgNsUtp87R64=;
+        b=LyQcQ6LCBL7ccB0Bk2c3uOf92VJDR/IEijRKb/JJyokWrl7Ts2IHRHTg5cUmxdF3vY
+         bAqq8qqlTIsmBeJeihp7FbsnGvJPTc0IrxmKDPE+nuqXMytW8eKIbvokY272UCub2gGN
+         LJ37mmeFQJD9XRKT3PFrsRaEIiRZ1GQpgP3gvuf2qtXVf+PMcvg16X22B6bsPaqoZwBP
+         8QPefWDIzGY1QYQOi0FL1AGaUVU5iCXe4QD2f7picAaK0ra9Ogyovu8/uefMjr4CtTeR
+         gN5DW0iBa4dkDt3HKKq33qv6vrdB3xtXujtiDwaXl9SWQe+57+HzJgPat1m7UX3PZOXK
+         K4/g==
+X-Gm-Message-State: AOJu0YzpktKGIEpfenabzqxcaZ7UMLaFzlakzRUA2P7GYhRwbaqUirfb
+	SK+0XerCkLi3Nge01rxHETKx1c6kjFFB3q1mlX/YvZ+aOIVsJY+sz0IbQrpahQ==
+X-Gm-Gg: AR+sD10UuB1HVN9CFvvpic62jp0FAD8EXE5xyK0bf72cFhHSTFBP0FlNUdo+r1VTDSj
+	kg/r/e+MttM4DwIn6uyvYwHV3kacHjCxSMIoFUlsl7Qvo3hRLNuv4MK3sI8nwPwF6DM6AQFW/UJ
+	w5H59HjpLLR0BfFTaNq1uvjgqF8mOJkiRT04K6MNaQ6Su4F/Gtydnm9kt3V5tPucOzeD+JZgN5C
+	vx/Tx8diNCCJExnUSRq3SZuD7PxQpct+lHecXQ2NwzompX3M+c1/ureG93oB60IRUHkuKnwdBQ5
+	/7UCvRGkzA3tS+WLQTeotbHFyDx4ztCtsZREUNrNNNoJ2CfNCkontXks1tIXTQw3ETe/topPqQI
+	gTXdP3eQ6A4w7rrm5GoBqokhK9fS14McbpuijJVFc1kTUWDYxI0KH16wV8a/wu7eZVzXokmZltV
+	exn0w3vbHUl4FrAVxsRra9lQUScPP1Js6Qver4jSyj3vM8FrqM60GzyjrYtJ3AVkUQtFLi+qtIn
+	E9625Bb7hQLRg==
+X-Received: by 2002:a05:600c:3b03:b0:493:f262:b8 with SMTP id 5b1f17b1804b1-4980c66d884mr34363485e9.1.1785575702193;
+        Sat, 01 Aug 2026 02:15:02 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a702:d301:c3e4:203e:a11f:3195])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49807b5f007sm36171565e9.6.2026.08.01.02.15.04
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49807b5f007sm36171565e9.6.2026.08.01.02.15.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Aug 2026 02:15:04 -0700 (PDT)
+        Sat, 01 Aug 2026 02:15:01 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -60,9 +60,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 07/19] clk: renesas: rzg2l: Rename RZG3L-prefixed PLL macros to CPG-prefixed ones
-Date: Sat,  1 Aug 2026 10:14:38 +0100
-Message-ID: <20260801091458.14026-8-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 03/19] clk: renesas: r9a08g046: Add SSIF-2 clocks and resets
+Date: Sat,  1 Aug 2026 10:14:34 +0100
+Message-ID: <20260801091458.14026-4-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260801091458.14026-1-biju.das.jz@bp.renesas.com>
 References: <20260801091458.14026-1-biju.das.jz@bp.renesas.com>
@@ -71,91 +71,62 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Sat, 01 Aug 2026 09:15:12 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23834
+ <cip-dev@lists.cip-project.org>; Sat, 01 Aug 2026 09:15:13 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23830
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[ Upstream commit c94433be057ba23071215a4cd6f743cb2757431c ]
+[ Upstream commit 29c46057d55648d88805e0412deb8729d806bf97 ]
 
-Rename RZG3L_PLL_STBY_OFFSET(), RZG3L_PLL_STBY_RESETB,
-RZG3L_PLL_STBY_RESETB_WEN, RZG3L_PLL_MON_OFFSET(), RZG3L_PLL_MON_RESETB,
-and RZG3L_PLL_MON_LOCK to their CPG_PLL_* equivalents to reflect that
-these macros are not RZG3L-specific and are shared across SoCs.
+Add SSIF-2 clock and reset entries on the RZ/G3L SoC.
 
-Also fold CPG_PLL_MON_OFFSET() into rzg2l-cpg.c alongside the other
-CPG_PLL_*_OFFSET() helpers introduced in previous patches.
-
-No functional changes.
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://patch.msgid.link/20260519141518.389670-4-biju.das.jz@bp.renesas.com
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://patch.msgid.link/20260505071544.8965-3-biju.das.jz@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/clk/renesas/rzg2l-cpg.c | 26 ++++++++++++--------------
- 1 file changed, 12 insertions(+), 14 deletions(-)
+ drivers/clk/renesas/r9a08g046-cpg.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index bb63404922e5..cfa7aa82d4bc 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -60,15 +60,13 @@
- 
- #define CPG_PLL1_SETTING_OFFSET(conf)	FIELD_GET(GENMASK(11, 0), (conf))
- #define CPG_PLL_STBY_OFFSET(conf)	FIELD_GET(GENMASK(23, 12), (conf))
-+#define CPG_PLL_STBY_RESETB_WEN		BIT(16)
-+#define CPG_PLL_STBY_RESETB		BIT(0)
- #define CPG_PLL_CLK1_OFFSET(x)		(CPG_PLL_STBY_OFFSET(x) + 0x4)
- #define CPG_PLL_CLK2_OFFSET(x)		(CPG_PLL_STBY_OFFSET(x) + 0x8)
--
--#define RZG3L_PLL_STBY_OFFSET(x)	(CPG_PLL_STBY_OFFSET(x))
--#define RZG3L_PLL_STBY_RESETB		BIT(0)
--#define RZG3L_PLL_STBY_RESETB_WEN	BIT(16)
--#define RZG3L_PLL_MON_OFFSET(x)		(CPG_PLL_STBY_OFFSET(x) + 0xc)
--#define RZG3L_PLL_MON_RESETB		BIT(0)
--#define RZG3L_PLL_MON_LOCK		BIT(4)
-+#define CPG_PLL_MON_OFFSET(x)		(CPG_PLL_STBY_OFFSET(x) + 0xc)
-+#define CPG_PLL_MON_LOCK		BIT(4)
-+#define CPG_PLL_MON_RESETB		BIT(0)
- 
- #define CLK_ON_R(reg)		(reg)
- #define CLK_MON_R(reg)		(0x180 + (reg))
-@@ -1189,8 +1187,8 @@ static int rzg3l_cpg_pll_clk_is_enabled(struct clk_hw *hw)
- {
- 	struct pll_clk *pll_clk = to_pll(hw);
- 	struct rzg2l_cpg_priv *priv = pll_clk->priv;
--	u32 val = readl(priv->base + RZG3L_PLL_MON_OFFSET(pll_clk->conf));
--	u32 mon_val = RZG3L_PLL_MON_RESETB | RZG3L_PLL_MON_LOCK;
-+	u32 val = readl(priv->base + CPG_PLL_MON_OFFSET(pll_clk->conf));
-+	u32 mon_val = CPG_PLL_MON_RESETB | CPG_PLL_MON_LOCK;
- 
- 	/* Ensure both RESETB and LOCK bits are set */
- 	return (mon_val == (val & mon_val));
-@@ -1200,17 +1198,17 @@ static int rzg3l_cpg_pll_clk_endisable(struct clk_hw *hw, bool enable)
- {
- 	struct pll_clk *pll_clk = to_pll(hw);
- 	struct rzg2l_cpg_priv *priv = pll_clk->priv;
--	u32 mon_mask = RZG3L_PLL_MON_RESETB | RZG3L_PLL_MON_LOCK;
--	u32 val = RZG3L_PLL_STBY_RESETB_WEN;
-+	u32 mon_mask = CPG_PLL_MON_RESETB | CPG_PLL_MON_LOCK;
-+	u32 val = CPG_PLL_STBY_RESETB_WEN;
- 	u32 stby_offset, mon_offset;
- 	u32 mon_val = 0;
- 	int ret;
- 
--	stby_offset = RZG3L_PLL_STBY_OFFSET(pll_clk->conf);
--	mon_offset = RZG3L_PLL_MON_OFFSET(pll_clk->conf);
-+	stby_offset = CPG_PLL_STBY_OFFSET(pll_clk->conf);
-+	mon_offset = CPG_PLL_MON_OFFSET(pll_clk->conf);
- 
- 	if (enable) {
--		val |= RZG3L_PLL_STBY_RESETB;
-+		val |= CPG_PLL_STBY_RESETB;
- 		mon_val = mon_mask;
- 	}
- 
+diff --git a/drivers/clk/renesas/r9a08g046-cpg.c b/drivers/clk/renesas/r9a08g046-cpg.c
+index 0cb681358642..fe3cb9a4f0ec 100644
+--- a/drivers/clk/renesas/r9a08g046-cpg.c
++++ b/drivers/clk/renesas/r9a08g046-cpg.c
+@@ -269,6 +269,22 @@ static const struct rzg2l_mod_clk r9a08g046_mod_clks[] = {
+ 					MSTOP(BUS_REG0, BIT(0))),
+ 	DEF_MOD("wdt0_clk",		R9A08G046_WDT0_CLK, R9A08G046_OSCCLK, 0x548, 1,
+ 					MSTOP(BUS_REG0, BIT(0))),
++	DEF_MOD("ssi0_pclk2",		R9A08G046_SSI0_PCLK2, R9A08G046_CLK_P0,	0x570, 0,
++					MSTOP(BUS_MCPU1, BIT(10))),
++	DEF_MOD("ssi0_pclk_sfr",	R9A08G046_SSI0_PCLK_SFR, R9A08G046_CLK_P0, 0x570, 1,
++					MSTOP(BUS_MCPU1, BIT(10))),
++	DEF_MOD("ssi1_pclk2",		R9A08G046_SSI1_PCLK2, R9A08G046_CLK_P0, 0x570, 2,
++					MSTOP(BUS_MCPU1, BIT(11))),
++	DEF_MOD("ssi1_pclk_sfr",	R9A08G046_SSI1_PCLK_SFR, R9A08G046_CLK_P0, 0x570, 3,
++					MSTOP(BUS_MCPU1, BIT(11))),
++	DEF_MOD("ssi2_pclk2",		R9A08G046_SSI2_PCLK2, R9A08G046_CLK_P0,	0x570, 4,
++					MSTOP(BUS_MCPU1, BIT(12))),
++	DEF_MOD("ssi2_pclk_sfr",	R9A08G046_SSI2_PCLK_SFR, R9A08G046_CLK_P0, 0x570, 5,
++					MSTOP(BUS_MCPU1, BIT(12))),
++	DEF_MOD("ssi3_pclk2",		R9A08G046_SSI3_PCLK2, R9A08G046_CLK_P0,	0x570, 6,
++					MSTOP(BUS_MCPU1, BIT(13))),
++	DEF_MOD("ssi3_pclk_sfr",	R9A08G046_SSI3_PCLK_SFR, R9A08G046_CLK_P0, 0x570, 7,
++					MSTOP(BUS_MCPU1, BIT(13))),
+ 	DEF_MOD("eth0_clk_axi",		R9A08G046_ETH0_CLK_AXI, R9A08G046_CLK_P1, 0x57c, 0,
+ 					MSTOP(BUS_PERI_COM, BIT(2))),
+ 	DEF_MOD("eth1_clk_axi",		R9A08G046_ETH1_CLK_AXI, R9A08G046_CLK_P1, 0x57c, 1,
+@@ -356,6 +372,10 @@ static const struct rzg2l_reset r9a08g046_resets[] = {
+ 	DEF_RST(R9A08G046_DMAC_ARESETN, 0x82c, 0),
+ 	DEF_RST(R9A08G046_DMAC_RST_ASYNC, 0x82c, 1),
+ 	DEF_RST(R9A08G046_WDT0_PRESETN, 0x848, 0),
++	DEF_RST(R9A08G046_SSI0_RST_M2_REG, 0x870, 0),
++	DEF_RST(R9A08G046_SSI1_RST_M2_REG, 0x870, 1),
++	DEF_RST(R9A08G046_SSI2_RST_M2_REG, 0x870, 2),
++	DEF_RST(R9A08G046_SSI3_RST_M2_REG, 0x870, 3),
+ 	DEF_RST(R9A08G046_ETH0_ARESET_N, 0x87c, 0),
+ 	DEF_RST(R9A08G046_ETH1_ARESET_N, 0x87c, 1),
+ 	DEF_RST(R9A08G046_I2C0_MRST, 0x880, 0),
 -- 
 2.43.0
 
