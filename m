@@ -2,57 +2,57 @@ Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21804C55181
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7995C55184
 	for <webhook@archiver.kernel.org>; Sat,  1 Aug 2026 09:15:13 +0000 (UTC)
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.2454.1785575704230943580
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.2478.1785575709140103261
  for <cip-dev@lists.cip-project.org>;
- Sat, 01 Aug 2026 02:15:04 -0700
+ Sat, 01 Aug 2026 02:15:09 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=NyjcRdc1;
- spf=pass (domain: gmail.com, ip: 209.85.128.44, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-495757ccbc1so5263165e9.2
-        for <cip-dev@lists.cip-project.org>; Sat, 01 Aug 2026 02:15:04 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=A2rxwOSz;
+ spf=pass (domain: gmail.com, ip: 209.85.128.41, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4954f5e8020so2265035e9.2
+        for <cip-dev@lists.cip-project.org>; Sat, 01 Aug 2026 02:15:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785575702; x=1786180502; darn=lists.cip-project.org;
+        d=gmail.com; s=20251104; t=1785575707; x=1786180507; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=0JVz8QfeGJLS5vudk8RGaMjEHJwgG9hzgNsUtp87R64=;
-        b=NyjcRdc14EvhUU2WcSgMmVDifZG7iMrDFqcoM3kaaHFAh52VPAwVM/MCtTKrKS29tN
-         ooPwk0mHhKVecNSGMpE1TR3osd9jDoYcfneLAi+seTTrE5u22PiKKIkkxbEwsOYmfEuo
-         470f93ZzI2HK2qn0132A4herl3wEphLrdZnZdb05hwHNgjzyvfd0JkeoO0WkUrfCtbL1
-         DGs3jkr+QdYkWl809Wie0bURrbMYCbOunhnt8j16WNsOfsEQMT1PkUnVRHVre6BxzMaq
-         n5gs7biKFK7UcYVF1/9LD47Ts4FxTg0bEROR1JMWvOR8lnf+o3k2WnDHWUfwTFWD7SBe
-         p7OA==
+        bh=iKMvCsFLiK/jnGZlsmh9rqAHtFfcT+CyFLq0OJ8lZJ8=;
+        b=A2rxwOSz19vMervCn68LxPnGryrIT0UBwrhClX2xgIvIoYOBIDsAgb/J6cj7m0m4k5
+         QB5pv/u0pZ5zLSj6qKfYhnpSARdKHxviYLYQGCvumS4CCBi2dVV2V16V/kHlki8UAsVf
+         R2tJ5A+i2kGOhE5Ni7GaIRIpGhbF+w3dBquciwKuOxraT+o3jM386QvzzhF3Eq29KoDn
+         ggKcm3BlA5z0fgD/qhFZOq+cdXM7rSl5Uou9DsJXUG3S9bl5nEgw6Z2HDM8RuUvSiv5p
+         K3oJ8rn6CtHDF3TwhGwWNJw06yL+O5Kih4ZSM1xJLGBlpASODXFdg6EJsohYSzmuVwvz
+         cLeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785575702; x=1786180502;
+        d=1e100.net; s=20251104; t=1785575707; x=1786180507;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=0JVz8QfeGJLS5vudk8RGaMjEHJwgG9hzgNsUtp87R64=;
-        b=LyQcQ6LCBL7ccB0Bk2c3uOf92VJDR/IEijRKb/JJyokWrl7Ts2IHRHTg5cUmxdF3vY
-         bAqq8qqlTIsmBeJeihp7FbsnGvJPTc0IrxmKDPE+nuqXMytW8eKIbvokY272UCub2gGN
-         LJ37mmeFQJD9XRKT3PFrsRaEIiRZ1GQpgP3gvuf2qtXVf+PMcvg16X22B6bsPaqoZwBP
-         8QPefWDIzGY1QYQOi0FL1AGaUVU5iCXe4QD2f7picAaK0ra9Ogyovu8/uefMjr4CtTeR
-         gN5DW0iBa4dkDt3HKKq33qv6vrdB3xtXujtiDwaXl9SWQe+57+HzJgPat1m7UX3PZOXK
-         K4/g==
-X-Gm-Message-State: AOJu0YzpktKGIEpfenabzqxcaZ7UMLaFzlakzRUA2P7GYhRwbaqUirfb
-	SK+0XerCkLi3Nge01rxHETKx1c6kjFFB3q1mlX/YvZ+aOIVsJY+sz0IbQrpahQ==
-X-Gm-Gg: AR+sD10UuB1HVN9CFvvpic62jp0FAD8EXE5xyK0bf72cFhHSTFBP0FlNUdo+r1VTDSj
-	kg/r/e+MttM4DwIn6uyvYwHV3kacHjCxSMIoFUlsl7Qvo3hRLNuv4MK3sI8nwPwF6DM6AQFW/UJ
-	w5H59HjpLLR0BfFTaNq1uvjgqF8mOJkiRT04K6MNaQ6Su4F/Gtydnm9kt3V5tPucOzeD+JZgN5C
-	vx/Tx8diNCCJExnUSRq3SZuD7PxQpct+lHecXQ2NwzompX3M+c1/ureG93oB60IRUHkuKnwdBQ5
-	/7UCvRGkzA3tS+WLQTeotbHFyDx4ztCtsZREUNrNNNoJ2CfNCkontXks1tIXTQw3ETe/topPqQI
-	gTXdP3eQ6A4w7rrm5GoBqokhK9fS14McbpuijJVFc1kTUWDYxI0KH16wV8a/wu7eZVzXokmZltV
-	exn0w3vbHUl4FrAVxsRra9lQUScPP1Js6Qver4jSyj3vM8FrqM60GzyjrYtJ3AVkUQtFLi+qtIn
-	E9625Bb7hQLRg==
-X-Received: by 2002:a05:600c:3b03:b0:493:f262:b8 with SMTP id 5b1f17b1804b1-4980c66d884mr34363485e9.1.1785575702193;
-        Sat, 01 Aug 2026 02:15:02 -0700 (PDT)
+        bh=iKMvCsFLiK/jnGZlsmh9rqAHtFfcT+CyFLq0OJ8lZJ8=;
+        b=pEYiAzywLNdg1NrtNawj3sH5IoSDJnvGWq6ei75a1E1RNZnWMBmNf0/Qh6FHwHQlK4
+         o4xpJWN0gQWjVLiv9BfuJH/2ZohGd1NEdUVLu8A91dSkCcZoDtTeydLAZi1klR6os26S
+         nbRij9//AZPh6CgiyHYrer9DlbVFFAKmhXD4vp0OtCGyof8tbyMQHP5kZ5LvWIrFNbcz
+         VO7oI8fu8Iz88JWilAWe+PB4g53WXgvj9idyQljklB6Qi5fiLuNDrv7TxkQfYl/AK8eX
+         fnQiGKTjhmQR2hZfaZ7UViL89RH/QryVtO/r6kQS4Ie7S4SMh5ZaaNBYSQLfsO9vDqGf
+         CxeA==
+X-Gm-Message-State: AOJu0YxRChBFY5mPEeRs4nHM/bypPV6QHuY1NQv3EYdSTpVxm8Ovr/f+
+	UC0dQI+CYFXURPwhiUxXraOqdLHzegb9tJr4kzUKP4sTSzgxaFd0uo8i/4clhA==
+X-Gm-Gg: AR+sD12Ty/o0HrmnChuinvOmeLBlGQ8eGUT3kQANGfTicBOxvHIh5F3YhwkBKcOogqf
+	qY749vJcqQuEayePMBN8uN57LCTvjJIJqTzZxDMPxTuNmGmLDsMwyMMlr2p73zTD21AuYjvSdG2
+	EUFyFxWw43inqDMXiPLWxjimeDaLnvWYDnpx4eySUrFdq9oU+GWEdBhEditlAsK2qRuJK7VgJ1z
+	c00NuytqA4jpKOM8jpnh0aINiOVFGDUG1CipUn0/3Ihq8a63RiwFD4l0Nn5BPZzSuvp7ne/BuzM
+	P6gN7NTFzgR/w9sUEczTnK0udvitPQlcHWv1T+eH1a7aG8pzesStFFc9HRLflcQZCBy9H0Gx2EH
+	xCNTOuE0T+iR76bXJFs4qlVVTotS4BlGXbiGz3G5bGb+xAJf2QOApD43nRpmSbg2yQ9+EJN5SE5
+	nYxe1K/EgV92U1sc+WMM4jOb5Cb2BIsd788g/gv3e/M2Gtg9+tD1m/kKbNNrzx24moDwLTCdFe+
+	EQoR6RbB/76Mw==
+X-Received: by 2002:a05:600c:12c8:b0:495:63e6:5fb8 with SMTP id 5b1f17b1804b1-4980c653e58mr19784425e9.12.1785575707315;
+        Sat, 01 Aug 2026 02:15:07 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a702:d301:c3e4:203e:a11f:3195])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49807b5f007sm36171565e9.6.2026.08.01.02.15.01
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49807b5f007sm36171565e9.6.2026.08.01.02.15.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Aug 2026 02:15:01 -0700 (PDT)
+        Sat, 01 Aug 2026 02:15:07 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
@@ -60,9 +60,9 @@ To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 03/19] clk: renesas: r9a08g046: Add SSIF-2 clocks and resets
-Date: Sat,  1 Aug 2026 10:14:34 +0100
-Message-ID: <20260801091458.14026-4-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 10/19] arm64: dts: renesas: rzg3l-smarc-som: Enable watchdog
+Date: Sat,  1 Aug 2026 10:14:41 +0100
+Message-ID: <20260801091458.14026-11-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260801091458.14026-1-biju.das.jz@bp.renesas.com>
 References: <20260801091458.14026-1-biju.das.jz@bp.renesas.com>
@@ -72,61 +72,36 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Sat, 01 Aug 2026 09:15:13 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23830
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23837
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[ Upstream commit 29c46057d55648d88805e0412deb8729d806bf97 ]
+[ Upstream commit 5a5dcb6a52feeef07bc6ad4e32f8276b1093b8f6 ]
 
-Add SSIF-2 clock and reset entries on the RZ/G3L SoC.
+Enable watchdog timer channel0 on RZ/G3L SoM DTSI.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20260505071544.8965-3-biju.das.jz@bp.renesas.com
+Link: https://patch.msgid.link/20260505125921.149682-3-biju.das.jz@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/clk/renesas/r9a08g046-cpg.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/clk/renesas/r9a08g046-cpg.c b/drivers/clk/renesas/r9a08g046-cpg.c
-index 0cb681358642..fe3cb9a4f0ec 100644
---- a/drivers/clk/renesas/r9a08g046-cpg.c
-+++ b/drivers/clk/renesas/r9a08g046-cpg.c
-@@ -269,6 +269,22 @@ static const struct rzg2l_mod_clk r9a08g046_mod_clks[] = {
- 					MSTOP(BUS_REG0, BIT(0))),
- 	DEF_MOD("wdt0_clk",		R9A08G046_WDT0_CLK, R9A08G046_OSCCLK, 0x548, 1,
- 					MSTOP(BUS_REG0, BIT(0))),
-+	DEF_MOD("ssi0_pclk2",		R9A08G046_SSI0_PCLK2, R9A08G046_CLK_P0,	0x570, 0,
-+					MSTOP(BUS_MCPU1, BIT(10))),
-+	DEF_MOD("ssi0_pclk_sfr",	R9A08G046_SSI0_PCLK_SFR, R9A08G046_CLK_P0, 0x570, 1,
-+					MSTOP(BUS_MCPU1, BIT(10))),
-+	DEF_MOD("ssi1_pclk2",		R9A08G046_SSI1_PCLK2, R9A08G046_CLK_P0, 0x570, 2,
-+					MSTOP(BUS_MCPU1, BIT(11))),
-+	DEF_MOD("ssi1_pclk_sfr",	R9A08G046_SSI1_PCLK_SFR, R9A08G046_CLK_P0, 0x570, 3,
-+					MSTOP(BUS_MCPU1, BIT(11))),
-+	DEF_MOD("ssi2_pclk2",		R9A08G046_SSI2_PCLK2, R9A08G046_CLK_P0,	0x570, 4,
-+					MSTOP(BUS_MCPU1, BIT(12))),
-+	DEF_MOD("ssi2_pclk_sfr",	R9A08G046_SSI2_PCLK_SFR, R9A08G046_CLK_P0, 0x570, 5,
-+					MSTOP(BUS_MCPU1, BIT(12))),
-+	DEF_MOD("ssi3_pclk2",		R9A08G046_SSI3_PCLK2, R9A08G046_CLK_P0,	0x570, 6,
-+					MSTOP(BUS_MCPU1, BIT(13))),
-+	DEF_MOD("ssi3_pclk_sfr",	R9A08G046_SSI3_PCLK_SFR, R9A08G046_CLK_P0, 0x570, 7,
-+					MSTOP(BUS_MCPU1, BIT(13))),
- 	DEF_MOD("eth0_clk_axi",		R9A08G046_ETH0_CLK_AXI, R9A08G046_CLK_P1, 0x57c, 0,
- 					MSTOP(BUS_PERI_COM, BIT(2))),
- 	DEF_MOD("eth1_clk_axi",		R9A08G046_ETH1_CLK_AXI, R9A08G046_CLK_P1, 0x57c, 1,
-@@ -356,6 +372,10 @@ static const struct rzg2l_reset r9a08g046_resets[] = {
- 	DEF_RST(R9A08G046_DMAC_ARESETN, 0x82c, 0),
- 	DEF_RST(R9A08G046_DMAC_RST_ASYNC, 0x82c, 1),
- 	DEF_RST(R9A08G046_WDT0_PRESETN, 0x848, 0),
-+	DEF_RST(R9A08G046_SSI0_RST_M2_REG, 0x870, 0),
-+	DEF_RST(R9A08G046_SSI1_RST_M2_REG, 0x870, 1),
-+	DEF_RST(R9A08G046_SSI2_RST_M2_REG, 0x870, 2),
-+	DEF_RST(R9A08G046_SSI3_RST_M2_REG, 0x870, 3),
- 	DEF_RST(R9A08G046_ETH0_ARESET_N, 0x87c, 0),
- 	DEF_RST(R9A08G046_ETH1_ARESET_N, 0x87c, 1),
- 	DEF_RST(R9A08G046_I2C0_MRST, 0x880, 0),
+diff --git a/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi
+index 1e4c929d7081..6ced094d9f6e 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi
+@@ -162,3 +162,8 @@ ctrl {
+ 		};
+ 	};
+ };
++
++&wdt0 {
++	timeout-sec = <60>;
++	status = "okay";
++};
 -- 
 2.43.0
 
