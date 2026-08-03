@@ -1,217 +1,108 @@
-Return-Path: <Shivanand.Kunijadar@toshiba-tsip.com>
+Return-Path: <biju.das.au@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11843C5518E
-	for <webhook@archiver.kernel.org>; Mon,  3 Aug 2026 09:47:32 +0000 (UTC)
-Subject: Re: [isar-cip-core][PATCH v2 2/2] Enable CI image build and test support for forky
-To: cip-dev@lists.cip-project.org
-From: "Kunijadar Shivanand" <Shivanand.Kunijadar@toshiba-tsip.com>
-X-Originating-Location: Hyderabad, Telangana, IN (151.186.148.44)
-X-Originating-Platform: Windows Chrome 150
-User-Agent: GROUPS.IO Web Poster
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15685C55179
+	for <webhook@archiver.kernel.org>; Mon,  3 Aug 2026 14:58:39 +0000 (UTC)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.45077.1785769116640221915
+ for <cip-dev@lists.cip-project.org>;
+ Mon, 03 Aug 2026 07:58:36 -0700
+Authentication-Results: mx.groups.io;
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=lyl80Ixc;
+ spf=pass (domain: gmail.com, ip: 209.85.128.44, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-496b7622a83so14508255e9.2
+        for <cip-dev@lists.cip-project.org>; Mon, 03 Aug 2026 07:58:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1785769115; x=1786373915; darn=lists.cip-project.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=Lor6yB4eGzJ0qUlHKOtA9P3a/FZ4zMAqkqDpFbG20YE=;
+        b=lyl80IxczA+tpL34ir2n/zuBYZv+s27PsHOs4sVy2dQv3qHG4prm+36ddRgJmGanKY
+         IxGdSgOtodS2VdnDDX/JmDCxwEJRSK4Z90ho8a7IhADLf5QZEaQ9ZDd+RrK1flDis4mT
+         PF/Nqh61d2aEylTHuXed++Ga2aXa2sWnuEk9pT2sCyzli0ctdr2wPWv7ZJi0mbsIuE5g
+         hEhVM9EWliNUW2h9zez4z2Yc5s8nkPIiE760Wo0t5sUhWWjZIxrNhwnN+PEYs7mF4OLL
+         EkyeWnaupmdTnWRWfFrSu6IMyTZn6iZwVnPhgjHT6eYvIsYcBUHOmS1JMaT1amXXo4B3
+         Mt0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785769115; x=1786373915;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=Lor6yB4eGzJ0qUlHKOtA9P3a/FZ4zMAqkqDpFbG20YE=;
+        b=CExgka9a/cFkITFLVNS5JrS0KoyQoMGy5ACT+kc/lVPuQZlpb4dsjehgSdxV6lTXJQ
+         9bh8QS3i8LQax76A83JtqqOoLjZhv+BGs+Ghclxswg/pKGZFCckoRRiAu8L2nNMMGdC+
+         WV73ceGW1Hegk6aOYDMUHMfxYdg+1ny/scos5/ihQ6DK5PGBAkKLpQMJj2+rC3mR3ahb
+         oqJJLA/YtUwX+FXbXQh1BexD0IIwznlopoyc0Asf00KzIb27QlC0WgicqybvzHE7+kVh
+         WtF/KTxfdwCDwcdM3siGK6Rqo6NvbXO5EYiMv/l2ylFb/64AUoN66PlwUb7xlB0Rh7T2
+         inlA==
+X-Gm-Message-State: AOJu0YxhbSV2dHGauT/3VBMiPCeqe13Jt5cbK6yqNi9JywP7pta7pV37
+	D9ZBDqtkJHZUfPnC0/nXTWgqSaVUZX3gMP9wueYtbcFiXWU+Y/rQCglGVrobhw==
+X-Gm-Gg: AR+sD12IG0qxR2yCSadfGXcAMXdr38j+n69gGmm3BDZv4V1QMWRMoQAbhAVMDnGTENv
+	rGclnJhLAWW7YzXVaKOixwUxt/+/UG5306hobxuN9Vt2vfnOlg8exHuAInbcknZHF2SgJ6eo9dQ
+	bYvZ+1iFiKxrWinQrAgIcBTPi5ZDt5QWb52HK/+p512qhR0o/T9yeqcJpSd9WnKBfDG0ptYuC4F
+	I/Wryu+8TKv8wW1CqVpxbNbkNarJOmA3SBSfmhnRNGx21R5mSZ5xvW5w88bYxL8/WFwF7BulFXG
+	uKmC5N2si6Va6cqNEFi9y3VlP8LTpr3/uTJb2plTMUDs04QSqxnmZJXacBf0n4TMceZBR1XBqnl
+	k2t57HHC2g4YFOlrsS3u6W0JVeDiAdSpBns4BOSzhAUOlEnkE9QkUtjeKP3AYWjyrjBcYZZLTRP
+	CTfZd+Sb/otE4LuC16C9bTMznwqmfyBG84LGwzNdNycblIn3uWQCDEmmNMjVhQMWwzKeiS
+X-Received: by 2002:a05:600c:3550:b0:495:607e:5ee7 with SMTP id 5b1f17b1804b1-4980c679513mr231719765e9.17.1785769114697;
+        Mon, 03 Aug 2026 07:58:34 -0700 (PDT)
+Received: from biju.lan ([2a00:23c4:a702:d301:ff9b:eff9:a8e1:4fd8])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49807b7afe6sm224754315e9.0.2026.08.03.07.58.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Aug 2026 07:58:34 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: cip-dev@lists.cip-project.org,
+	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
+	Pavel Machek <pavel@nabladev.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 7/7] dt-bindings: watchdog: renesas,wdt: Document RZ/G3L support
+Date: Mon,  3 Aug 2026 15:58:23 +0100
+Message-ID: <20260803145831.91924-8-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260803145831.91924-1-biju.das.jz@bp.renesas.com>
+References: <20260803145831.91924-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-Date: Mon, 03 Aug 2026 02:47:24 -0700
-References: <20260728085519.3615499-1-Shivanand.Kunijadar@toshiba-tsip.com> <20260728085519.3615499-3-Shivanand.Kunijadar@toshiba-tsip.com> <1fc13594-a7c6-421c-82fc-e8953bd07458@siemens.com> <1113502.1785299204099110509@lists.cip-project.org>
-In-Reply-To: <1113502.1785299204099110509@lists.cip-project.org>
-Message-ID: <1187398.1785750444675558966@lists.cip-project.org>
-Content-Type: multipart/alternative; boundary="lSRfHyARIEp7cY4WKtoL"
+Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 03 Aug 2026 09:47:32 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23853
+ <cip-dev@lists.cip-project.org>; Mon, 03 Aug 2026 14:58:39 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23861
 
---lSRfHyARIEp7cY4WKtoL
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Hi Jan,
+[ Upstream commit 587d5a3778e9fd25e327435b58b609487a692115 ]
 
-On Tue, Jul 28, 2026 at 09:26 PM, Kunijadar Shivanand wrote:
+Document the support for the watchdog IP available on RZ/G3L SoC. The
+watchdog IP available on RZ/G3L SoC is identical to the one found on
+RZ/G2L SoC.
 
->=20
-> On Tue, Jul 28, 2026 at 08:29 AM, Jan Kiszka wrote:
->=20
->> On 28.07.26 10:55, Shivanand.Kunijadar@toshiba-tsip.com wrote:
->>=20
->>> From: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
->>>=20
->>> Keep these jobs as scheduled and can be scheduled to run every week
->>> just to monitor and fix if there are any issues.
->>> Also set allow_failure:true for these jobs as forky is not officially
->>> released and there will always be some build & test issues.
->>>=20
->>> It includes SWUpdate, secure boot & RB tests.
->>>=20
->>> Signed-off-by: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.co=
-m>
->>> ---
->>> .gitlab-ci.yml | 148 +++++++++++++++++++++++++++++++++++++
->>> .reproducible-check-ci.yml | 72 ++++++++++++++++++
->>> 2 files changed, 220 insertions(+)
->>>=20
->>> diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
->>> index b53def4..b15c5da 100644
->>> --- a/.gitlab-ci.yml
->>> +++ b/.gitlab-ci.yml
->>> @@ -8,6 +8,7 @@
->>> # Jan Kiszka <jan.kiszka@siemens.com>
->>> # Quirin Gylstorff <quirin.gylstorff@siemens.com>
->>> # Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
->>> +# Shivanand Kunijadar <shivanand.kunijadar@toshiba-tsip.com>
->>> #
->>> # SPDX-License-Identifier: MIT
->>> #
->>> @@ -63,6 +64,7 @@ default:
->>> - if [ "${release}" =3D "bullseye" ]; then
->>> base_yaml=3D"${base_yaml}:kas/opt/bullseye.yml"; fi
->>> - if [ "${release}" =3D "bookworm" ]; then
->>> base_yaml=3D"${base_yaml}:kas/opt/bookworm.yml"; fi
->>> - if [ "${release}" =3D "trixie" ]; then
->>> base_yaml=3D"${base_yaml}:kas/opt/trixie.yml"; fi
->>> + - if [ "${release}" =3D "forky" ]; then
->>> base_yaml=3D"${base_yaml}:kas/opt/forky.yml"; fi
->>> - if [ "${release}" =3D "sid" ]; then
->>> base_yaml=3D"${base_yaml}:kas/opt/sid.yml"; fi
->>> - if [ "${encrypt}" =3D "enable" ]; then
->>> base_yaml=3D"${base_yaml}:kas/opt/encrypt-data.yml"; fi
->>> - if [ "${factory_reset}" =3D "enable" ]; then
->>> base_yaml=3D"${base_yaml}:kas/opt/factory-reset.yml"; fi
->>> @@ -399,6 +401,57 @@ build:qemu-arm-base-sid:
->>> separate_home_partition: enable
->>> deploy: enable
->>>=20
->>> +# forky image builds
->>> +.build_base_forky:
->>> + extends:
->>> + - .build_base
->>> + rules:
->>> + - if: $CI_COMMIT_TAG
->>> + when: never
->>> + - if: '$CI_PIPELINE_SOURCE =3D=3D "schedule" && $CI_RUN_UNSTABLE'
->>=20
->> I meant we should migrate both forky and sid under this one
->> CI_RUN_UNSTABLE variable. Now we would still have two of them and would
->> need to set them both in the pipeline schedule.
->=20
->=20
-> My idea was as below,
->=20
->=20
-> - The CI variable CI_RUN_UNSTABLE_FORKY is changed to CI_RUN_UNSTABLE,
->=20
->=20
->=20
-> however CI_RUN_UNSTABLE_SID is not changed in this patch series, will
->=20
->=20
->=20
-> update in a separate patch as it is not related to this series.
->=20
->=20
->=20
->=20
->=20
->=20
->=20
-> And it was mentioned in the v2 patch series cover letter, I think you
-> would have missed that.
->=20
->=20
->=20
-> let me know if required I will change CI_RUN_UNSTABLE_SID to
-> CI_RUN_UNSTABLE in this series only.
->=20
->=20
->=20
->=20
->=20
->=20
->=20
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Link: https://lore.kernel.org/r/20260206112227.233229-1-biju.das.jz@bp.renesas.com
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ .../devicetree/bindings/watchdog/renesas,rzg2l-wdt.yaml          | 1 +
+ 1 file changed, 1 insertion(+)
 
-Any comments on this? Shall i include the above change in this patch series=
-?
+diff --git a/Documentation/devicetree/bindings/watchdog/renesas,rzg2l-wdt.yaml b/Documentation/devicetree/bindings/watchdog/renesas,rzg2l-wdt.yaml
+index a4d06c9c8b86..40b4fb26d9c5 100644
+--- a/Documentation/devicetree/bindings/watchdog/renesas,rzg2l-wdt.yaml
++++ b/Documentation/devicetree/bindings/watchdog/renesas,rzg2l-wdt.yaml
+@@ -18,6 +18,7 @@ properties:
+               - renesas,r9a07g044-wdt    # RZ/G2{L,LC}
+               - renesas,r9a07g054-wdt    # RZ/V2L
+               - renesas,r9a08g045-wdt    # RZ/G3S
++              - renesas,r9a08g046-wdt    # RZ/G3L
+           - const: renesas,rzg2l-wdt
+ 
+       - items:
+-- 
+2.43.0
 
-please let me know, will send v3 patch series accordingly.
-
-Thanks & Regards
-
-Shivanand K
-
---lSRfHyARIEp7cY4WKtoL
-Content-Type: text/html; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div>Hi Jan,&nbsp;</div>
-<div>&nbsp;</div>
-<div>On Tue, Jul 28, 2026 at 09:26 PM, Kunijadar Shivanand wrote:</div>
-<div>
-<blockquote>
-<div>On Tue, Jul 28, 2026 at 08:29 AM, Jan Kiszka wrote:</div>
-<div>
-<blockquote>On 28.07.26 10:55, Shivanand.Kunijadar@toshiba-tsip.com wrote:<=
-br />
-<blockquote>From: Shivanand Kunijadar &lt;Shivanand.Kunijadar@toshiba-tsip.=
-com&gt;<br /><br />Keep these jobs as scheduled and can be scheduled to run=
- every week<br />just to monitor and fix if there are any issues.<br />Also=
- set allow_failure:true for these jobs as forky is not officially<br />rele=
-ased and there will always be some build &amp; test issues.<br /><br />It i=
-ncludes SWUpdate, secure boot &amp; RB tests.<br /><br />Signed-off-by: Shi=
-vanand Kunijadar &lt;Shivanand.Kunijadar@toshiba-tsip.com&gt;<br />---<br /=
->.gitlab-ci.yml | 148 +++++++++++++++++++++++++++++++++++++<br />.reproduci=
-ble-check-ci.yml | 72 ++++++++++++++++++<br />2 files changed, 220 insertio=
-ns(+)<br /><br />diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml<br />index b5=
-3def4..b15c5da 100644<br />--- a/.gitlab-ci.yml<br />+++ b/.gitlab-ci.yml<b=
-r />@@ -8,6 +8,7 @@<br /># Jan Kiszka &lt;jan.kiszka@siemens.com&gt;<br />#=
- Quirin Gylstorff &lt;quirin.gylstorff@siemens.com&gt;<br /># Nobuhiro Iwam=
-atsu &lt;nobuhiro1.iwamatsu@toshiba.co.jp&gt;<br />+# Shivanand Kunijadar &=
-lt;shivanand.kunijadar@toshiba-tsip.com&gt;<br />#<br /># SPDX-License-Iden=
-tifier: MIT<br />#<br />@@ -63,6 +64,7 @@ default:<br />- if [ "${release}"=
- =3D "bullseye" ]; then base_yaml=3D"${base_yaml}:kas/opt/bullseye.yml"; fi=
-<br />- if [ "${release}" =3D "bookworm" ]; then base_yaml=3D"${base_yaml}:=
-kas/opt/bookworm.yml"; fi<br />- if [ "${release}" =3D "trixie" ]; then bas=
-e_yaml=3D"${base_yaml}:kas/opt/trixie.yml"; fi<br />+ - if [ "${release}" =
-=3D "forky" ]; then base_yaml=3D"${base_yaml}:kas/opt/forky.yml"; fi<br />-=
- if [ "${release}" =3D "sid" ]; then base_yaml=3D"${base_yaml}:kas/opt/sid.=
-yml"; fi<br />- if [ "${encrypt}" =3D "enable" ]; then base_yaml=3D"${base_=
-yaml}:kas/opt/encrypt-data.yml"; fi<br />- if [ "${factory_reset}" =3D "ena=
-ble" ]; then base_yaml=3D"${base_yaml}:kas/opt/factory-reset.yml"; fi<br />=
-@@ -399,6 +401,57 @@ build:qemu-arm-base-sid:<br />separate_home_partition:=
- enable<br />deploy: enable<br /><br />+# forky image builds<br />+.build_b=
-ase_forky:<br />+ extends:<br />+ - .build_base<br />+ rules:<br />+ - if: =
-$CI_COMMIT_TAG<br />+ when: never<br />+ - if: '$CI_PIPELINE_SOURCE =3D=3D =
-"schedule" &amp;&amp; $CI_RUN_UNSTABLE'</blockquote>
-I meant we should migrate both forky and sid under this one<br />CI_RUN_UNS=
-TABLE variable. Now we would still have two of them and would<br />need to =
-set them both in the pipeline schedule.</blockquote>
-</div>
-<div>My idea was as below,&nbsp;</div>
-<div>
-<p class=3D"MsoPlainText">- The CI variable CI_RUN_UNSTABLE_FORKY is change=
-d to CI_RUN_UNSTABLE,</p>
-<p class=3D"MsoPlainText"><span style=3D"mso-spacerun: yes;">&nbsp; </span>=
-however CI_RUN_UNSTABLE_SID is not changed in this patch series, will</p>
-<p class=3D"MsoPlainText"><span style=3D"mso-spacerun: yes;">&nbsp; </span>=
-update in a separate patch as it is not related to this series.</p>
-<p class=3D"MsoPlainText">&nbsp;</p>
-<p class=3D"MsoPlainText">And it was mentioned in the v2 patch series cover=
- letter, I think you would have missed that.&nbsp;</p>
-<p class=3D"MsoPlainText">let me know if required I will change CI_RUN_UNST=
-ABLE_SID to CI_RUN_UNSTABLE in this series only.</p>
-<p class=3D"MsoPlainText">&nbsp;</p>
-</div>
-</blockquote>
-<div>
-<p class=3D"MsoPlainText">Any comments on this? Shall i include the above c=
-hange in this patch series?&nbsp;</p>
-<p class=3D"MsoPlainText">please let me know, will send v3 patch series acc=
-ordingly.&nbsp;</p>
-<p class=3D"MsoPlainText">&nbsp;</p>
-<p class=3D"MsoPlainText">Thanks &amp; Regards</p>
-<p class=3D"MsoPlainText">Shivanand K&nbsp;</p>
-</div>
-</div>
-
---lSRfHyARIEp7cY4WKtoL--
 
