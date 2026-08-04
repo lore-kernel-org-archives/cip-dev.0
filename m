@@ -1,82 +1,102 @@
-Return-Path: <pavel@nabladev.com>
+Return-Path: <uli@fpond.eu>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E055EC55822
-	for <webhook@archiver.kernel.org>; Mon,  3 Aug 2026 17:27:40 +0000 (UTC)
-Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.1637.1785778055200742490
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B323C55822
+	for <webhook@archiver.kernel.org>; Tue,  4 Aug 2026 13:42:46 +0000 (UTC)
+Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [81.169.146.220])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.16587.1785850965203028575
  for <cip-dev@lists.cip-project.org>;
- Mon, 03 Aug 2026 10:27:35 -0700
+ Tue, 04 Aug 2026 06:42:45 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=FNSFhIBi;
- spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 08191118B1C;
-	Mon, 03 Aug 2026 19:27:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1785778048;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=bEhPNEt3OWkd29wXHtO0+etDxCwIYTr36GpI7CRy4XU=;
-	b=FNSFhIBiYOJXGHTuue3ar+lALWoHCDYhCuwIm5ZrWbnZ2TTKxEvrvQKh282TSNFpVNcw+I
-	9BRuW5rkWnKtvR1MwhkjWIcS78GFvcyrYVeY3XOPx5kGPIuinsWqJcBFlCS5ONKB5+HroC
-	A6rN49cumjB5LcjhaTvfK9tMM+5yKLSQm88G/mbR309ehAVc37phG+I61Wo1KG0NYbGWxO
-	z8AEWmnJ9NNqJXuoSvE395q6E9r1mqG1sh6MXcratQZahQFf1+sVpm2k5RPwmUBUhNHVGZ
-	dQLJbgvv0k8SSsO8wewUvekuM+T8IhQPl5TLst4IvQJZ9mK/jh7S3lnF5wfggA==
-Date: Mon, 3 Aug 2026 19:27:23 +0200
-From: Pavel Machek <pavel@nabladev.com>
-To: Biju <biju.das.au@gmail.com>
-Cc: cip-dev@lists.cip-project.org,
-	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
-	Pavel Machek <pavel@nabladev.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 6.12.y-cip 0/7] Document RZ/G3L I2C, WDT and SSI
-Message-ID: <anDPe9GgbIhwB78Y@duo.ucw.cz>
-References: <20260803145831.91924-1-biju.das.jz@bp.renesas.com>
+ dkim=pass header.i=@fpond.eu header.s=strato-dkim-0002 header.b=Jf1Xz0UH;
+ dkim=pass header.i=@fpond.eu header.s=strato-dkim-0003 header.b=3oJX8tvV;
+ spf=none, err=permanent DNS error (domain: fpond.eu, ip: 81.169.146.220, mailfrom: uli@fpond.eu)
+ARC-Seal: i=1; a=rsa-sha256; t=1785850958; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=TdIcxU8nI6le4edCm+xWKWjdJg22EhgYfGeE2d7HgW16rqNfGs2vbFodJDRc+X76KG
+    Nx42OXNNlBrJysWikcryro1OYhAorY56NtFwAF2uJii9VYSTou1NqipSQZ4rSMZ3QQ8o
+    VRchRd19AatUC1cuHVv1QLeik/Zsaw0c3EvflydGe7nNifaNn0rxGTziSKvrUltZC5Sq
+    gLWW96M9xIaP5LJNdPgglhV82llLgcCUcHWEA5OPB3E3dhNKXhqrndhWlJtwAQ0LpGPm
+    vi6gAbM2klbZ5GLxSUgOQOVF0n9Y+ByS44EiPDRR4i2uj+ilheIIAA+voMNoICR81CgU
+    BDZg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1785850958;
+    s=strato-dkim-0002; d=strato.com;
+    h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=4Y+a9P6uNSxVUkoNnA+X64uI90c8mHa/oseTs5NMyHI=;
+    b=WCa7hHnhHcP2OdLurhV2QG6Og/0pXodwoXGA/G7HAGI7eDBGBa6TM/WMBVedgtoQzO
+    4wNz0YGlYlIuRc0Ubx056hzcd7AZ+/x+qBOZyPdKYe+VTEX8A5I5NIDVX5QfOYIYP0ar
+    5zXP9MNudPCYsrp+FZ5JUQmMN4k0iRNi5/QsCVMyVJVf/FpRS9EjEW4cz+yuoE8UIm1D
+    hBYHolgM85reVMcmNt7qXQHGb1aLZdqqyNgJsUh+TRgNUgFBE8BqrohnSoRYXrFU/XfH
+    hrbz28gDBl6VTDC6WSZkOqLODKW5SVa9vauT1Z4RAdmDLFw5ORBkOWl6egHgo0JzHQPU
+    9yjQ==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo00
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1785850958;
+    s=strato-dkim-0002; d=fpond.eu;
+    h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=4Y+a9P6uNSxVUkoNnA+X64uI90c8mHa/oseTs5NMyHI=;
+    b=Jf1Xz0UHV5xawYgvr0HrRj9e45r0zcwPZA6SH5n78hz7prThtwQ8/JWoArhE/b7h41
+    BddzuYZDs4IxcSDnOfzFEnjAZlQTIP6H9Y3B3HeMiKCist4HENUveMKJQUhM2p1tREjv
+    JqKZLBurY3EdNtAM0xwo0VR5gi878BfE9ykkpj/GRWWZMPO4dpQoWV1gBv/ax+TJVye7
+    F9u3n980+SuCoRhCAVic53m6w/Z5aomP5fAvL6P0isyanNatSBkjm6I96EYZ3LVgNZnO
+    WMkIHvYsiVCbEKiXtLM+8eCB7U5Oj4zBcpkwfRwzckl5UEyPVHDYnqDdMh/p1LpGu32h
+    XB7g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1785850958;
+    s=strato-dkim-0003; d=fpond.eu;
+    h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=4Y+a9P6uNSxVUkoNnA+X64uI90c8mHa/oseTs5NMyHI=;
+    b=3oJX8tvV2ACnqZZvNyHgMGnexVWfV0zDxsd0vVFsYdudTOnWeyRijjClme/MjKMfqR
+    T6FHUZGZBU/MJbJeeJCQ==
+X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzvv30UF1hexKfF+CjmMA=="
+Received: from open-xchange-core-mw-gw-16.open-xchange-core-mw-hazelcast-headless.open-xchange.svc.cluster.local
+    by smtp-ox.front (RZmta 55.5.6 AUTH)
+    with ESMTPSA id zec9ec274DgcBED
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256 bits))
+	(Client did not present a certificate);
+    Tue, 4 Aug 2026 15:42:38 +0200 (CEST)
+Date: Tue, 4 Aug 2026 15:42:38 +0200 (CEST)
+From: Ulrich Hecht <uli@fpond.eu>
+To: Pavel Machek <pavel@nabladev.com>
+Cc: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+	"nobuhiro.iwamatsu.x90@mail.toshiba" <nobuhiro.iwamatsu.x90@mail.toshiba>
+Message-ID: <481365448.888319.1785850958066@webmail.strato.de>
+In-Reply-To: <amyxAb4e3E7u7EzE@duo.ucw.cz>
+References: <527172097.345263.1785165473174@webmail.strato.de>
+ <amyxAb4e3E7u7EzE@duo.ucw.cz>
+Subject: Re: Request for review for 4.19-st19, 4.19-cip135
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="f7gM4M+fGixxXVmL"
-Content-Disposition: inline
-In-Reply-To: <20260803145831.91924-1-biju.das.jz@bp.renesas.com>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
+X-Mailer: Open-Xchange Mailer v8.46.152
+X-Originating-Port: 45944
+X-Originating-Client: open-xchange-appsuite
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 03 Aug 2026 17:27:40 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23862
+ <cip-dev@lists.cip-project.org>; Tue, 04 Aug 2026 13:42:46 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23864
 
 
---f7gM4M+fGixxXVmL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On 07/31/2026 4:28 PM CEST Pavel Machek <pavel@nabladev.com> wrote:
+> > Here are the manual backports for the upcoming 4.19 kernel release. As always they can be found in https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-4.19.y-st-rc
+> 
+> a > 9f05da0b8dcfb Bluetooth: serialize accept_q access
+> 
+> I can see nothing wrong here, but ... this is quite complex and redoes
+> locking. I see quite a lot of bluetooth changes in stable, and we are
+> not really testing Bluetooth.
 
-Hi!
+I ran this through a new LLM, and it found two issues, one of which was introduced by me...
+Considering everything I think dropping this one is the safest option.
 
-> From: Biju Das <biju.das.jz@bp.renesas.com>
->=20
-> This patch series document I2C, WDT and SSI IP found on Renesas RZ/G3L
-> SoC. All the patches in this series are cherry-picked from mainline.
-
-This is just a documentation, and looks okay to me.
-
-Reviewed-by: Pavel Machek <pavel@nabladev.com>
-
-I can apply the series if it passes testing and there are no other
-comments.
-
-Best regards,
-                                                                Pavel
-
---f7gM4M+fGixxXVmL
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCanDPewAKCRAw5/Bqldv6
-8pLKAJ0Y5J6fmkauIHEu/f/PdsF/8CzlmgCgltgiycI7SOpt7Ln7vIBVoubqEeA=
-=nNW5
------END PGP SIGNATURE-----
-
---f7gM4M+fGixxXVmL--
+CU
+Uli
 
