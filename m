@@ -1,145 +1,205 @@
-Return-Path: <yoshitake.kobayashi.x25@mail.toshiba>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 950ACC5AC82
-	for <webhook@archiver.kernel.org>; Mon, 10 Aug 2026 05:10:12 +0000 (UTC)
-Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.6294.1786266188441019665
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66C5AC5AC82
+	for <webhook@archiver.kernel.org>; Mon, 10 Aug 2026 06:56:03 +0000 (UTC)
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (DB3PR0202CU003.outbound.protection.outlook.com [52.101.84.27])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.24434.1786344961103511813
  for <cip-dev@lists.cip-project.org>;
- Sun, 09 Aug 2026 02:03:09 -0700
+ Sun, 09 Aug 2026 23:56:01 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=badrikesh.prusty@siemens.com header.s=fm1 header.b=S7jIXBLu;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.226, mailfrom: fm-1328765-2026080908525994514798c3000207d3-ihdbye@rts-flowmailer.siemens.com)
-Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 2026080908525994514798c3000207d3
-        for <cip-dev@lists.cip-project.org>;
-        Sun, 09 Aug 2026 10:53:00 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=badrikesh.prusty@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=e1dTunhelE7Sh3QswrbNsWOhNnQt/0OgC09Zb3wdt1Y=;
- b=S7jIXBLu7MEvV4cQm8oOpffJ4xgjO67M+7K1+gr5ZvGhKx8od9fWMN2MYW5u1V0yGFhC3r
- gtWN+NEq0Xo+FDP7NhttMPN/hjztVBK3kiIgzMceJZV/3KxNQeQSJ74m7Zyhr5iJ+dPwn4le
- Yzc4heNZWFe+bO/7/Vl6SRZ4zuuVG9kl36hNjYw9/cTOxA9YlE7wJr1Gztkzg4LBxjdppeuR
- sKowivIjaBbqeXTMaCzbPjOMhOr/KO7vp0Gi/PAYmFwSNZ4zAZGTQjwrANhrqieio+1Y4VZk
- PtO6afEI7+T9LD/bGIG2boczMTyP/6unVujYIJpUGjb2A4nrFcITp9fQ==;
-From: Badrikesh Prusty <badrikesh.prusty@siemens.com>
-To: cip-dev@lists.cip-project.org
-Cc: jan.kiszka@siemens.com,
-	Badrikesh Prusty <badrikesh.prusty@siemens.com>
-Subject: [isar-cip-core][PATCH] linux-cip: Update to 4.4.302-cip113-rt62, 4.19.325-cip135, 5.10.263-cip76, 6.1.182-cip59, 6.12.101-cip29
-Date: Sun,  9 Aug 2026 04:52:35 -0400
-Message-ID: <20260809085235.525338-1-badrikesh.prusty@siemens.com>
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=nI7/7k43;
+ spf=pass (domain: siemens.com, ip: 52.101.84.27, mailfrom: quirin.gylstorff@siemens.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=r6qO0fam4z75MizWTNeMfCX2JkPlvuqs2O/2BhYxNrT3tWVXUoS7ZjpC3L3WXN+Ut6s3ABn1LRcGXUQxACBfWd//l0t+qNuZ/yOOFPFIIRMkOaXwuBIQaCXsTufzxQzBBq62nX2OXHeK+f0kxIp3a+HyiFB1K5u8uf2ppVUuSkQFgvF9Tcu1vpp5Gvt8SIu0gKUVDVtr6n2VOWZnj62KfwPSdTjcPz0Ym+BoE9PdebRMUIqYLUWSV0acNqB3BRSZJ3WTCstvyzBLURSA5Ld69MBnBaoGnPZV1k+UWPePvzQLc2i+Hqw5ybO7kn2LwSaZky9vt5zLJjCgxOLbih9Oxw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YeXZi+r8c7a3y1TwFpZNxAHP7AEAGFm5gaHojx+r6i4=;
+ b=pdr9nQJOWI0LSexTi6q9KZRNON26oSKOdxk8X0PgTbx5UjFtW/FACxHtc0rV8zcP13VYjBMAdavohGjrF9sGtA8HDHk6pnaJiUKMAWnYSKNVzyuX2xEuKRF8dpk/foJ6HmcN+orHlfPy2mS9K3P56kBK4LD+aqHwtyn5GQ76E2MK4WfYVCMAIA3bSoWhqaRKo0YuBrvpzcpZUlxNL8QRAPrUgURqbe8BDu03B1Zukux6ZpKgpzH+mEc2Xjv2z9saKCjQMF3gGZM99tTzDrb24LnLTi/X9a5wT+qPkzHtGfSYtii2Sm2sFXQCOQdjYC7EgKJH6eAwK2WjPyg23g3tFA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YeXZi+r8c7a3y1TwFpZNxAHP7AEAGFm5gaHojx+r6i4=;
+ b=nI7/7k43FDVixXwZO4F1fXgAjpXBGxVix6v5R2yKg5NGFw7JOhTilBWmTdAeIORThjFEAjhuenB24XHm+TM75J+irNPs0XoGebm1T78fy4/iqM4J6BQC9K69l36bSONRvvI+Y7GZO4nanfY7Au1GgqAWKM0nHn7M09qmyMXqMnzqTPk6BiHo5VpBypruHIltP5zCavqaY0LHzOn4irXA7/5wIP3CrKO83OIR4QkGytpvWFMDKpC8STEGQ75O5/GqrE2bB75gshPemPLBa+DwW4QsbZxoP3KCaHPc1X7/1UNWqkyye9s9DQGDYjqTByhZIlXbzPIiyb7PMKUXMWnvZA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:113::12)
+ by GV2PR10MB9772.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:355::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.292.25; Mon, 10 Aug
+ 2026 06:55:56 +0000
+Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::ae26:d131:7cff:4001]) by DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::ae26:d131:7cff:4001%5]) with mapi id 15.21.0292.024; Mon, 10 Aug 2026
+ 06:55:56 +0000
+Message-ID: <31174e6a-78c9-4fce-8d1f-dff403e1f6aa@siemens.com>
+Date: Mon, 10 Aug 2026 08:55:55 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [isar-cip-core][PATCH 0/2] Remove unsupported combinations for
+ factory-reset from Kconfig and document them explicitly
+To: alexander.heinisch@siemens.com, cip-dev@lists.cip-project.org
+Cc: jan.kiszka@siemens.com
+References: <20260807154439.625212-1-alexander.heinisch@siemens.com>
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+Content-Language: en-US
+Autocrypt: addr=quirin.gylstorff@siemens.com; keydata=
+ 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
+ Z2NBPBZUysw=
+In-Reply-To: <20260807154439.625212-1-alexander.heinisch@siemens.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR3P281CA0132.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:94::12) To DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:10:113::12)
 MIME-Version: 1.0
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-1328765:519-21489:flowmailer
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB8PR10MB3178:EE_|GV2PR10MB9772:EE_
+X-MS-Office365-Filtering-Correlation-Id: 222b0d0d-747c-406c-5157-08def6ac6d73
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: 
+	BCL:0;ARA:13230040|366016|1800799024|23010399003|376014|10067099003|56012099006|5023799004|11063799006|55112099003|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info: 
+	KZ/NN7fnySJSmDs0DpETiI+JWWiJmIu6m+dW9c65GInkNez9BSxBZAJ64jI9O9A+ZezqfWXeIFmFAckmfZYPunas18bLEiZjmSLHRcDHOHd7ca8w7aCxuhbbe5Eiv5LSJ8dnTl3gPR9RCGTnhPJg4Lx8LGZiA6+sKaIdGnW/lkow+cZaJbTtL0zyXsoQpwtxIT+vBLRY1rjCUtr8pXarfRl+wKHqfGg0/QkzdFbpBK+HIcWmy+UyyLFazCCLrJKLbv5nQTgKnsEvXOrCXwFJFUSJY/WRsZN3LHKOL7pRE0Gz0Z6cjTNOV6OuETOUA624WEh28rQGmn8BhMZfIUV4Y7GFV8q1kbobMXyi0FSr6HdzNZLeP5PSVkuHko8YPAH2sdkBtDzp12elXcBbT6hkwdHUMQ3PcHRTxcuVHpvX3jWufRKbfPnUe2e70tdWzHGJLk0VFl+mConoA9Gif55otAOfoodR0RBBt2SUxjjTzFrwuXz/DfSxKRznyTLxcjAuEwCQGWctAuswAkImddq71ZnO/bn97CLMhqWUIjTGb0DSK/FFYp0pt/lKrG322wZE1vq8f0fzgAEAwgKg8lm6jZaHIQkbC9iNap324cG4HeTfXEFpC0VjaSKu4ib1VfUUKeisxysycwDi8Q68zuaUn7/TiD0TVGNH7UAdkxASvt8=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(23010399003)(376014)(10067099003)(56012099006)(5023799004)(11063799006)(55112099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?eEIrK1h5MkdpUng4MEVLaHZ2bUd1MWtqaWZhVlZRTEM3M0c0YUNEekpDNXVJ?=
+ =?utf-8?B?SWw0bDBXU2RKbXBHT3pCZXI1NjRyZkNranlwRS9zYStQWUR4d0NmcU50VEVV?=
+ =?utf-8?B?Q09iMThXbHFnZUVRekd1QVpROE9qVVJVNGppa0hEbmllVEtsdDVOeUdPbFBC?=
+ =?utf-8?B?QUZlQUhoVCt4b1FsamJXdUJ5THFxTkNSR2U4YzZyOUVLakFjY3dhZ01nNzRI?=
+ =?utf-8?B?TXd6YnNJSzhoRlZFLzZjYVJ0UjNNV25ZdGozQWF4aVRCUUpFcGYwc1lHSTV3?=
+ =?utf-8?B?eWE3N2xla2hjNDhsYWxibnJJNEF0dDRTcVp0eWM1MXVlV1RXRHFTcjVJR2RN?=
+ =?utf-8?B?Q3NQMmJ0c0hSejhHRkc1SDBQcnpLQzZNbHA1ejVqdU03clRKcWFiRG02L3JG?=
+ =?utf-8?B?Y0Rib1I2bHg2UnVvMEZhY2tjbWtiVUZWZWZ3S01TWEtKK3NkcjRLR1VKaXVK?=
+ =?utf-8?B?RGU0TWpjdUMvUmdwZlZjS2tLbHZpRFQ3N3JReW5Dai9vQmllZERyalk1UkZ6?=
+ =?utf-8?B?TzVST2lBREVDQXNTdHVNQTdKUktKRWYvWUVyaExFU0ljb2F5MlNPaXA5UFpP?=
+ =?utf-8?B?OFIxYTk2YVBSYmdKdngvOFhlNHpiMW9DcGE2YnF6WU5rall5YUEzYnlza2li?=
+ =?utf-8?B?a0hIUWNrUlF3SFFVdGRUaHphekxpS0Zvc0ZVck13L2Z2Mi8yQXhZRGlkYmpw?=
+ =?utf-8?B?UzBLeUlHMk4rM2tyS0VDV3BvUXcvNWdRanNnaHZIZ1Q0d3I5UXErQ3IxbzBO?=
+ =?utf-8?B?SkpsVWpOeGdiOGpveXp1SDQ4NDBUMkQ3RWJTdUtFZzlUUWYzMTFiMjRNdENH?=
+ =?utf-8?B?Sk1ZMENwMlRaamdxbDl3b2x4K3p6TEpEOU9ENnFaSzdNVVh3SkdVTDZKdzlF?=
+ =?utf-8?B?YmhsQzd6NUZad0RWelNJYVdSdC9zRldPUUFucXhwMUpPTGdUMjdWdDNmT2or?=
+ =?utf-8?B?WWJTVE5CRllReVYwSytUdUUvZC9PdUVPbWtCcHIwREFUVnIreGNZVUNjM1J4?=
+ =?utf-8?B?Ym5OTkZ6dWlodkhkQVlvNnpOUnhUMVhKcjJRQU9iYThIcDRnY0VYWjhJaS9o?=
+ =?utf-8?B?d1VNeVk1QjdhU1p1OW10UUgvNUhpa3doQ0RLcWZLV1NEMFRtWXp5dDhWaG4r?=
+ =?utf-8?B?TFV0N1ZNZFhVK2RERUYzK0lHa2xZb25oQllTUFdBUFpSRlByWkZHcVN4SGQz?=
+ =?utf-8?B?NjV1SHhuZ3M2TUJhRlBpSGRTMUJLZ2VGaVJzM2Q3Vkk0SlNtc1hjU2NnVUxO?=
+ =?utf-8?B?ZWswd3N2QXZYekNHakN2Z1BFYmZab2xFRmo2RUsxWlNlaWd3ZFdaYlpFcUgw?=
+ =?utf-8?B?RDRMQUlhSVlWRldOeHBjQU5PUmpaZ2wrUXNDN1VuMDRNQXBiZ3c5dm9LbkpX?=
+ =?utf-8?B?Wndqb09aYkFhZytSUVo3dFhXUWUwWDNwcytOMHZOUDJ2WGFYQXU3YWZlTnpm?=
+ =?utf-8?B?L1VTVVhORm5SL3dNcTc3bEMzbFdEbVlEQnc5R3hyNU54Ym5XVnptY3lQVDRm?=
+ =?utf-8?B?WHJ5WTJmRlIwTUhxZERlcmlmSWg0eVNMZWhVREtTVzgyK1c2T0tWaE9aVGtE?=
+ =?utf-8?B?S0YrQlJPZndIUWwycXRySDRGRGkrTytUa254Wnh1WHNidWJSaFJ2R3dnU2dm?=
+ =?utf-8?B?UC9HMzZUNDNZNmZyRjRCRzBzNGFCRm1aalZja1l1UG9Xd2ZXM0lTZmo0V2Iz?=
+ =?utf-8?B?Ky9RbTNPMWFHSkJQK25rTTVJMmN1Z0dITm5CcHBTeEtROUt2MlZ6WWErRXZo?=
+ =?utf-8?B?MzVyS1JaRjVyY0JJMVlrR2pZMUk1dGxET0hOd0V4SnZBaHgrRTA3enQ3eFhJ?=
+ =?utf-8?B?MWxiSW4vUS9VTWJWUmdoTXhmYkJ1RjhUNjNUMy9OSjJUbjRLTnpMWnNmZWVT?=
+ =?utf-8?B?YVlTcllRMXlQZmNzZlQ0ckZJSStCU1JoWkQ2Nno1UUxobDBpbmJjbnZnRFpu?=
+ =?utf-8?B?bXU5Y0tUbnp4Mjc3ektpdngyTHZUWXdoZWtWSFZpU1BnZlBORUd1VUk5Q2xX?=
+ =?utf-8?B?RGhNTFpJUVFJSUwyRHFzMm1BY0x4Q2RsMHVXeGZlNmRWYnVSYkdkcjdMTmhH?=
+ =?utf-8?B?WjlFamxCV0UzaUVIUk91WFd3U1RYUmZLWDEycmE0ZFUvUThlTkh2L01wMjNG?=
+ =?utf-8?B?bE1jUjdzQmNVdTE1TzhOTTU0SEZod2ZZcWtseSt2NnBCbjJiMSs4d2xDMjZU?=
+ =?utf-8?B?c3dNN2lUZm85QVRTOCtlWVNmMEZCL0lPVXQxSDlHWEMwRzZLSWtTQkZOQllQ?=
+ =?utf-8?B?ckhKblMyeDRnZjA2eHE0Z0xiMmhITzAwN1VWNHdob0FaTzBCNnduNWQ3dzBi?=
+ =?utf-8?B?cWg4ZmxqOUhtV3NrWndXNHI1N0VVVU54eHFHTHNST1BlbXdKVWM0UUpEenRM?=
+ =?utf-8?Q?G5+02WpwGUffZfRg=3D?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 222b0d0d-747c-406c-5157-08def6ac6d73
+X-MS-Exchange-CrossTenant-AuthSource: DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Aug 2026 06:55:56.6223
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9oqm2LRzigbWJkz74yfN63GDpbZlRDrzu/WnRcYFk/NmqcQG4pDlbpBAJ+vqi7b2/43yk5BWBuXbIkSV6ZFOGrjWfr2MmqxCwBABTOVloo4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR10MB9772
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 10 Aug 2026 05:10:12 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23879
+ <cip-dev@lists.cip-project.org>; Mon, 10 Aug 2026 06:56:03 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23880
 
-Signed-off-by: Badrikesh Prusty <badrikesh.prusty@siemens.com>
----
- ...4.302-cip111-rt61.bb => linux-cip-rt_4.4.302-cip113-rt62.bb} | 2 +-
- recipes-kernel/linux/linux-cip-rt_6.12.101-cip29.bb             | 1 +
- recipes-kernel/linux/linux-cip-rt_6.12.95-cip27.bb              | 1 -
- ...inux-cip_4.19.325-cip134.bb => linux-cip_4.19.325-cip135.bb} | 2 +-
- ...{linux-cip_5.10.260-cip75.bb => linux-cip_5.10.263-cip76.bb} | 2 +-
- .../{linux-cip_6.12.95-cip27.bb => linux-cip_6.1.182-cip59.bb}  | 2 +-
- .../{linux-cip_6.1.177-cip58.bb => linux-cip_6.12.101-cip29.bb} | 2 +-
- 7 files changed, 6 insertions(+), 6 deletions(-)
- rename recipes-kernel/linux/{linux-cip-rt_4.4.302-cip111-rt61.bb => linux-cip-rt_4.4.302-cip113-rt62.bb} (68%)
- create mode 120000 recipes-kernel/linux/linux-cip-rt_6.12.101-cip29.bb
- delete mode 120000 recipes-kernel/linux/linux-cip-rt_6.12.95-cip27.bb
- rename recipes-kernel/linux/{linux-cip_4.19.325-cip134.bb => linux-cip_4.19.325-cip135.bb} (68%)
- rename recipes-kernel/linux/{linux-cip_5.10.260-cip75.bb => linux-cip_5.10.263-cip76.bb} (68%)
- rename recipes-kernel/linux/{linux-cip_6.12.95-cip27.bb => linux-cip_6.1.182-cip59.bb} (59%)
- rename recipes-kernel/linux/{linux-cip_6.1.177-cip58.bb => linux-cip_6.12.101-cip29.bb} (59%)
 
-diff --git a/recipes-kernel/linux/linux-cip-rt_4.4.302-cip111-rt61.bb b/recipes-kernel/linux/linux-cip-rt_4.4.302-cip113-rt62.bb
-similarity index 68%
-rename from recipes-kernel/linux/linux-cip-rt_4.4.302-cip111-rt61.bb
-rename to recipes-kernel/linux/linux-cip-rt_4.4.302-cip113-rt62.bb
-index af553fd..039d5d0 100644
---- a/recipes-kernel/linux/linux-cip-rt_4.4.302-cip111-rt61.bb
-+++ b/recipes-kernel/linux/linux-cip-rt_4.4.302-cip113-rt62.bb
-@@ -11,4 +11,4 @@
- 
- require linux-cip-release.inc
- 
--SRC_URI[sha256sum] = "d82994372165c85e4de9bd76b8d785beb9590c0f96404e47de92e917c408193e"
-+SRC_URI[sha256sum] = "1e3e83a7dd31b9043849089e982f95a1158de530c31cb74b32c6362989fe0453"
-diff --git a/recipes-kernel/linux/linux-cip-rt_6.12.101-cip29.bb b/recipes-kernel/linux/linux-cip-rt_6.12.101-cip29.bb
-new file mode 120000
-index 0000000..82a1b15
---- /dev/null
-+++ b/recipes-kernel/linux/linux-cip-rt_6.12.101-cip29.bb
-@@ -0,0 +1 @@
-+linux-cip_6.12.101-cip29.bb
-\ No newline at end of file
-diff --git a/recipes-kernel/linux/linux-cip-rt_6.12.95-cip27.bb b/recipes-kernel/linux/linux-cip-rt_6.12.95-cip27.bb
-deleted file mode 120000
-index 4280432..0000000
---- a/recipes-kernel/linux/linux-cip-rt_6.12.95-cip27.bb
-+++ /dev/null
-@@ -1 +0,0 @@
--linux-cip_6.12.95-cip27.bb
-\ No newline at end of file
-diff --git a/recipes-kernel/linux/linux-cip_4.19.325-cip134.bb b/recipes-kernel/linux/linux-cip_4.19.325-cip135.bb
-similarity index 68%
-rename from recipes-kernel/linux/linux-cip_4.19.325-cip134.bb
-rename to recipes-kernel/linux/linux-cip_4.19.325-cip135.bb
-index 0d60731..4ac075e 100644
---- a/recipes-kernel/linux/linux-cip_4.19.325-cip134.bb
-+++ b/recipes-kernel/linux/linux-cip_4.19.325-cip135.bb
-@@ -11,4 +11,4 @@
- 
- require linux-cip-release.inc
- 
--SRC_URI[sha256sum] = "5a5a9570fb597f77229b7fc5ed0926e354cd0ed337bdf07099f53b8d71c31293"
-+SRC_URI[sha256sum] = "6e3e5003854bd28e7f3b4880ab5f779e4e31ac7d4770f2fd1035a9b51c0d53e9"
-diff --git a/recipes-kernel/linux/linux-cip_5.10.260-cip75.bb b/recipes-kernel/linux/linux-cip_5.10.263-cip76.bb
-similarity index 68%
-rename from recipes-kernel/linux/linux-cip_5.10.260-cip75.bb
-rename to recipes-kernel/linux/linux-cip_5.10.263-cip76.bb
-index 45ae236..a5fd834 100644
---- a/recipes-kernel/linux/linux-cip_5.10.260-cip75.bb
-+++ b/recipes-kernel/linux/linux-cip_5.10.263-cip76.bb
-@@ -11,4 +11,4 @@
- 
- require linux-cip-release.inc
- 
--SRC_URI[sha256sum] = "8b6200b2820ed0dee04bb3824b797e77e010f586fb3195cc5965b2b8316b6482"
-+SRC_URI[sha256sum] = "bd235da3e82d643c4ef0bc71a6d21a11c6ad1c6e644ff625c72ba74daeeb96eb"
-diff --git a/recipes-kernel/linux/linux-cip_6.12.95-cip27.bb b/recipes-kernel/linux/linux-cip_6.1.182-cip59.bb
-similarity index 59%
-rename from recipes-kernel/linux/linux-cip_6.12.95-cip27.bb
-rename to recipes-kernel/linux/linux-cip_6.1.182-cip59.bb
-index e10e788..28391df 100644
---- a/recipes-kernel/linux/linux-cip_6.12.95-cip27.bb
-+++ b/recipes-kernel/linux/linux-cip_6.1.182-cip59.bb
-@@ -7,4 +7,4 @@
- 
- require linux-cip-release.inc
- 
--SRC_URI[sha256sum] = "4b396f0d3505a3c119e16cc67d53f9c71d9da652b07ffe96a9c150c80aad783e"
-+SRC_URI[sha256sum] = "d69fded945b0e9e905e3301918802ffbade6d8f3342c571accfe12a066370005"
-diff --git a/recipes-kernel/linux/linux-cip_6.1.177-cip58.bb b/recipes-kernel/linux/linux-cip_6.12.101-cip29.bb
-similarity index 59%
-rename from recipes-kernel/linux/linux-cip_6.1.177-cip58.bb
-rename to recipes-kernel/linux/linux-cip_6.12.101-cip29.bb
-index 3e1da8f..29268b0 100644
---- a/recipes-kernel/linux/linux-cip_6.1.177-cip58.bb
-+++ b/recipes-kernel/linux/linux-cip_6.12.101-cip29.bb
-@@ -7,4 +7,4 @@
- 
- require linux-cip-release.inc
- 
--SRC_URI[sha256sum] = "6b22d939962adfe33a036016ea93089e4982d931c711109b1b1268ec2a59e03a"
-+SRC_URI[sha256sum] = "b4f48eb4a0212bb308ac9e01f090c19ca3798281548d8778c4c9df80c18b7bed"
--- 
-2.39.5
+
+On 8/7/26 5:44 PM, alexander.heinisch@siemens.com wrote:
+> From: Alexander Heinisch <alexander.heinisch@siemens.com>
+> 
+> By default factory reset clears the tpm. Therefore, keys needed to
+> decrypt the immutable A/B rootfs in full disk encryption setups
+> cannot be retrieved anymore. Thus, the boot fails and the device
+> cannot be recovered.
+> 
+> This patch series removes such combination from the kconfig and documents
+> the issue explicitly.
+
+This was never in scope of the factory reset. You could implement it by 
+moving the keys into the boot partition. But this move will create 
+another can of worms.
+
+ACK.
+Quirin
+> 
+> Alexander Heinisch (2):
+>    doc/README.factory-reset: Explicitly document full disk encryption is
+>      not supported with factory reset tpm clearing enabled.
+>    Kconfig: Do not offer factory reset with full disk encryption enabled.
+> 
+>   Kconfig                     | 2 +-
+>   doc/README.factory-reset.md | 4 +++-
+>   2 files changed, 4 insertions(+), 2 deletions(-)
+> 
+> --
+> 2.47.3
+> 
 
 
