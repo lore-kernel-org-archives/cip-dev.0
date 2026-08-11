@@ -2,213 +2,203 @@ Return-Path: <Shivanand.Kunijadar@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37BCCC5CFD9
-	for <webhook@archiver.kernel.org>; Tue, 11 Aug 2026 09:18:06 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.135])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.50431.1786439879337650997
- for <cip-dev@lists.cip-project.org>;
- Tue, 11 Aug 2026 02:17:59 -0700
-Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.135, mailfrom: shivanand.kunijadar@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1801) id 67B9Hv1U1710025; Tue, 11 Aug 2026 18:17:57 +0900
-X-Iguazu-Qid: 2yAbeCtgwZi0WHgy1I
-X-Iguazu-QSIG: v=2; s=1; t=1786439877; q=2yAbeCtgwZi0WHgy1I; m=go+iK5FMY8NeOTkx/pi84uXei59NxhYv88A6Xz72AE4=
-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	 id 4hK5d13GfpzyPQ; Tue, 11 Aug 2026 18:17:57 +0900 (JST)
-From: Shivanand.Kunijadar@toshiba-tsip.com
-To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
-Cc: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>,
-        kumar.dinesh.h95@mail.toshiba, kazuhiro.hayashi.f74@mail.toshiba
-Subject: [isar-cip-core][PATCH v3 2/3] Enable the support of Debian forky based builds
-Date: Tue, 11 Aug 2026 14:34:20 +0530
-X-TSB-HOP2: ON
-Message-Id: <20260811090421.3547180-3-Shivanand.Kunijadar@toshiba-tsip.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20260811090421.3547180-1-Shivanand.Kunijadar@toshiba-tsip.com>
-References: <20260811090421.3547180-1-Shivanand.Kunijadar@toshiba-tsip.com>
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F6FCC5AC67
+	for <webhook@archiver.kernel.org>; Tue, 11 Aug 2026 09:21:06 +0000 (UTC)
+Subject: Re: [isar-cip-core][PATCH v2 2/2] Enable CI image build and test support for forky
+To: cip-dev@lists.cip-project.org
+From: "Kunijadar Shivanand" <Shivanand.Kunijadar@toshiba-tsip.com>
+X-Originating-Location: Hyderabad, Telangana, IN (151.186.148.44)
+X-Originating-Platform: Windows Chrome 151
+User-Agent: GROUPS.IO Web Poster
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 11 Aug 2026 09:17:53.0754 (UTC) FILETIME=[4A1F03A0:01DD2972]
+Date: Tue, 11 Aug 2026 02:20:56 -0700
+References: <20260728085519.3615499-1-Shivanand.Kunijadar@toshiba-tsip.com> <20260728085519.3615499-3-Shivanand.Kunijadar@toshiba-tsip.com> <1fc13594-a7c6-421c-82fc-e8953bd07458@siemens.com> <1113502.1785299204099110509@lists.cip-project.org> <1187398.1785750444675558966@lists.cip-project.org> <c703b275-cd05-456a-8aa0-724dfee32911@siemens.com>
+In-Reply-To: <c703b275-cd05-456a-8aa0-724dfee32911@siemens.com>
+Message-ID: <1399990.1786440056585870002@lists.cip-project.org>
+Content-Type: multipart/alternative; boundary="npUuK3zpKi4p53pAaKi7"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 11 Aug 2026 09:18:06 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23892
+ <cip-dev@lists.cip-project.org>; Tue, 11 Aug 2026 09:21:06 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23895
 
-From: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
+--npUuK3zpKi4p53pAaKi7
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-The .key & .pem files are addded using below .deb package,
-https://snapshot.debian.org/file/d32d11a5aacbf5685b81e8176a27a6918e9b55fb/ovmf-generic_2025.11-5_all.deb
+Hi Jan,
 
-Signed-off-by: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
----
- Kconfig                                       |  4 +++
- conf/distro/cip-core-forky.conf               | 13 ++++++++
- kas/opt/forky.yml                             | 15 ++++++++++
- .../files/forky/PkKek-1-snakeoil.key          | 30 +++++++++++++++++++
- .../files/forky/PkKek-1-snakeoil.pem          | 23 ++++++++++++++
- .../swupdate-certificates/files/forky         |  1 +
- start-qemu.sh                                 |  2 ++
- 7 files changed, 88 insertions(+)
- create mode 100644 conf/distro/cip-core-forky.conf
- create mode 100644 kas/opt/forky.yml
- create mode 100644 recipes-devtools/secure-boot-secrets/files/forky/PkKek-1-snakeoil.key
- create mode 100644 recipes-devtools/secure-boot-secrets/files/forky/PkKek-1-snakeoil.pem
- create mode 120000 recipes-devtools/swupdate-certificates/files/forky
+On Mon, Aug 10, 2026 at 07:46 AM, Jan Kiszka wrote:
 
-diff --git a/Kconfig b/Kconfig
-index 438234c..19f8e24 100644
---- a/Kconfig
-+++ b/Kconfig
-@@ -238,6 +238,9 @@ config DEBIAN_BOOKWORM
- config DEBIAN_TRIXIE
- 	bool "trixie (13)"
- 
-+config DEBIAN_FORKY
-+	bool "forky (14)"
-+
- config DEBIAN_SID
- 	bool "Sid (Unstable)"
- 
-@@ -249,6 +252,7 @@ config KAS_INCLUDE_DEBIAN
- 	default "kas/opt/bullseye.yml" if DEBIAN_BULLSEYE
- 	default "kas/opt/bookworm.yml" if DEBIAN_BOOKWORM
- 	default "kas/opt/trixie.yml" if DEBIAN_TRIXIE
-+	default "kas/opt/forky.yml" if DEBIAN_FORKY
- 	default "kas/opt/sid.yml" if DEBIAN_SID
- 
- comment "Image features"
-diff --git a/conf/distro/cip-core-forky.conf b/conf/distro/cip-core-forky.conf
-new file mode 100644
-index 0000000..7a868ce
---- /dev/null
-+++ b/conf/distro/cip-core-forky.conf
-@@ -0,0 +1,13 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Toshiba Corporation, 2026
-+#
-+# Authors:
-+#  Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
-+#
-+# SPDX-License-Identifier: MIT
-+#
-+
-+require conf/distro/debian-forky.conf
-+require cip-core-common.inc
-diff --git a/kas/opt/forky.yml b/kas/opt/forky.yml
-new file mode 100644
-index 0000000..6c4fcdc
---- /dev/null
-+++ b/kas/opt/forky.yml
-@@ -0,0 +1,15 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Toshiba Corporation, 2026
-+#
-+# Authors:
-+#  Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
-+#
-+# SPDX-License-Identifier: MIT
-+#
-+
-+header:
-+  version: 14
-+
-+distro: cip-core-forky
-diff --git a/recipes-devtools/secure-boot-secrets/files/forky/PkKek-1-snakeoil.key b/recipes-devtools/secure-boot-secrets/files/forky/PkKek-1-snakeoil.key
-new file mode 100644
-index 0000000..dd7f492
---- /dev/null
-+++ b/recipes-devtools/secure-boot-secrets/files/forky/PkKek-1-snakeoil.key
-@@ -0,0 +1,30 @@
-+-----BEGIN ENCRYPTED PRIVATE KEY-----
-+MIIFHDBOBgkqhkiG9w0BBQ0wQTApBgkqhkiG9w0BBQwwHAQIs4RXCLmGLJgCAggA
-+MAwGCCqGSIb3DQIJBQAwFAYIKoZIhvcNAwcECHer6014IEhGBIIEyO8O2zL8CJwV
-+auQpWLJsMMWxu2aSh1WadX9+rg+O61mukuS4rQSH5shMQ2krZZKzyXx0q8+2AySD
-+EtDXwhLvep60gUxOoNqK1+l3AxSFfIGOY8NC6yW67VX+G09ajWpgHj3ox63VRW8v
-+6mA8TFWYbOIwB8J7ScF4NszVwyiUnW13oKi7svoBM3LYYG2IMvre+gOvyMGfM8uv
-+X3txcYqAjhRV6n7vGo9LRLIIRSPKzaJbm/W7nT38LRUJP8JMSQUOPKgeEwQvOTVZ
-++1kd7WeaGZrjagTDM4yhBjpOmB3D8aeT6xkjBlUwuddPzbdi0N7GrU520RcJMjxt
-+JMyOgabHKUKmPTX4m0ZCKi2jSILi7/6fBF+TZDxpakLwAwpTzm6kXArXb6AYtTEX
-+GPihB4O69ZgEc90jp3EnZt7HtKZn1HTbPNQAlWgvESgJ7hWHnTlM5Obqnyb78tj5
-+VdcOfTSQRYmw4Rh/lSUX0vQLhdmYSVLiMFFvT4IepXZgQ6McIdcvqoVrPgr0HoVz
-+5YILZdmbs80VcgYL853lMfQ84kRwUcw8jNyz7mBK7V7rE5QhaF5lunZ/R41ZRXRy
-+1ys1rNvLPvtOq/K51+A9U+h5lLM9LjeoOR+IUk2Vg4aIap+Z+lxbImH0gcJTrpem
-+ctA/2sBjLN7w811EjB/Tlu2awzbsKLpIDFVGHiGBI2zb41gtPd2RkijmiZab6nuM
-+ETg4ad3GscMoa++01oX/lrnVe386ECSjurmThb7I01eTNZrBlNsLyBeFzlEIEoBR
-+TqUXHLiDACxzL6U4vWzdnvVrCOW9fwvJJqChj7Wy822w2LXxVhOryNujBmZCmOht
-+mgDaJ15QiF+DACcX6VoBbm/462z+9Skxa0DqGwGzMOD5HldwvQSyZSykk/BzGFWP
-+rXfLYoMjN+dgA/yNfem64ayGsmoPUAjnsE4YasD58UVO0XwwtdMGJSOVmkdyWMcM
-+t+lN74kX/gmIvciK06N6prBfowgBEIJ6ev2dzlydSN8rGORmQ+OFzjP14rT0O+1Q
-+O48yR2ZZ9jl4YPUKSFJ3EUc/Qt9vO+chNiNYSy6TABGXur0WWiDvGURG9K5fWTqq
-+U2KydSRoYD5iF0caOgMZecNhZV+4CX927j3XuuKKx49qTAt3WMtmJ/UQFHMtQ833
-+XDFWHpEKDImfHfyiB1f8bOmqYmPuE6Shup0UMJsMFel4QVJM0Jn9+wHw/0qqPiS3
-+a769S/u9U2dfyZY5PfymY8UjFRMDtLaUoJSRaGp6RNc6LynuMMKdzho0GwvL3+m9
-+xKLDbbks8hVdmtcxxDKiio+F0hp3yc/2PyA/VGAlARiGp7876WTCZox9Bwnf6lkS
-+k9eYLSabe/r3Ag1SbWEGpFk3VO37qCyfp2xTfrHXK1ZJlvFwj3FFSprUaMrV+81K
-+FCEcSozXpVsQ7e7d11A7S8rTbtp09Q/J2oxyR0A9lk/ia5Qd/xwbPl4QJcWK2Jar
-+K3yFK8VrUNib7CjI1kdB479KIllD8oK6druBkzwGzFxDtcl47RlfkqW96XSQT7x/
-+h/YKSLcpMx9x9TJd2GDKj2t4oE9eGTBC0YbdH+HJNSrjEsWkjgY6Uw++S6VzKvQZ
-+DDsMJfxwcChc2zKRou+BFA==
-+-----END ENCRYPTED PRIVATE KEY-----
-diff --git a/recipes-devtools/secure-boot-secrets/files/forky/PkKek-1-snakeoil.pem b/recipes-devtools/secure-boot-secrets/files/forky/PkKek-1-snakeoil.pem
-new file mode 100644
-index 0000000..7cd2487
---- /dev/null
-+++ b/recipes-devtools/secure-boot-secrets/files/forky/PkKek-1-snakeoil.pem
-@@ -0,0 +1,23 @@
-+-----BEGIN CERTIFICATE-----
-+MIID1zCCAr+gAwIBAgIUDMG7xGGEPj+ABvbflim0PNb/loowDQYJKoZIhvcNAQEL
-+BQAwejELMAkGA1UEBhMCVVMxETAPBgNVBAgMCENvbG9yYWRvMRUwEwYDVQQHDAxG
-+b3J0IENvbGxpbnMxETAPBgNVBAoMCFNuYWtlT2lsMS4wLAYDVQQDDCVTbmFrZU9p
-+bCBUZXN0IEtleSBmb3IgRUZJIFNlY3VyZSBCb290MCAXDTIzMDUxOTIzMTE0NVoY
-+DzIwNTMwNTE3MjMxMTQ1WjB6MQswCQYDVQQGEwJVUzERMA8GA1UECAwIQ29sb3Jh
-+ZG8xFTATBgNVBAcMDEZvcnQgQ29sbGluczERMA8GA1UECgwIU25ha2VPaWwxLjAs
-+BgNVBAMMJVNuYWtlT2lsIFRlc3QgS2V5IGZvciBFRkkgU2VjdXJlIEJvb3QwggEi
-+MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDIi65d6LmojD5S9q8vE/LI2HHQ
-+boiO5/1KrFVc6kpxD6XdkJwpBoItYIfSls9CPnzvNWOAxR3hIeBd1U/prAPPxvQ1
-+wuDLMXfWkcGaYHfPnme/YluAjnpuLH1MQcumgOzj5xYBvZZk+RbytX/phH7FW4Tx
-++L1oBYnsfh3BSE/NTtEEHV1nXAXpa/dvyefWMlrlbwjfM5362lZzM6yrJGcOcWEy
-+I66UYCIVO2Yhe/ZVF5B/tPGtd2oACz11xLeqLPM1WBjlekAG2Zi7UCPIvDCpdn5u
-+Vna2ZRQmJyDDdh0Ja2VMC19dkMd/5nOAI21O+FvYPOkBWYX8f4DzDyVQlmIFAgMB
-+AAGjUzBRMB0GA1UdDgQWBBRjuNXuXfh7mi8I3eTboeYGyFTa2zAfBgNVHSMEGDAW
-+gBRjuNXuXfh7mi8I3eTboeYGyFTa2zAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3
-+DQEBCwUAA4IBAQBBxlfo6MxBN44mXBIhE/QUbJZ+bo/Vrqv2DIZqOlV5+Sk6KnK8
-+X9Rz2IJwoqLjB6cW9yInk5P/QS45880K1fDT/lu5/2U64i3l1ZFK75qLDCn4/khF
-+birV2U6LBZpxLe3UvXk3xZMoUPzvT2rhrsf78G0pSmAnP8li8Co8F6hTjQzB8IgC
-+DpYVATCoWBH6GhudtjUp+CJSyGApdL+HKX6i6oD7vutvWYBf0Hx5r1NrqIv31Y4V
-+bhwvK5zajFamj/VYeVy7/roqD06hNF1ImhsuBOqoJlKu+cHMGN9DOJqjGup1T9aI
-+2dpEOK5vbKXFrox/yCLgXmUkdwZ3BK4lcxCq
-+-----END CERTIFICATE-----
-diff --git a/recipes-devtools/swupdate-certificates/files/forky b/recipes-devtools/swupdate-certificates/files/forky
-new file mode 120000
-index 0000000..2719d00
---- /dev/null
-+++ b/recipes-devtools/swupdate-certificates/files/forky
-@@ -0,0 +1 @@
-+../../secure-boot-secrets/files/forky
-\ No newline at end of file
-diff --git a/start-qemu.sh b/start-qemu.sh
-index d12fa23..2fb9c9c 100755
---- a/start-qemu.sh
-+++ b/start-qemu.sh
-@@ -45,6 +45,8 @@ if [ -z "${DISTRO_RELEASE}" ]; then
- 		DISTRO_RELEASE="bookworm"
- 	elif grep -s -q "DEBIAN_TRIXIE: true" .config.yaml; then
- 		DISTRO_RELEASE="trixie"
-+	elif grep -s -q "DEBIAN_FORKY: true" .config.yaml; then
-+		DISTRO_RELEASE="forky"
- 	elif grep -s -q "DEBIAN_SID: true" .config.yaml; then
- 		DISTRO_RELEASE="sid"
- 	else
--- 
-2.39.5
+>=20
+> On 03.08.26 11:47, Kunijadar Shivanand wrote:
+>=20
+>> Hi Jan,
+>>=20
+>> On Tue, Jul 28, 2026 at 09:26 PM, Kunijadar Shivanand wrote:
+>>=20
+>> On Tue, Jul 28, 2026 at 08:29 AM, Jan Kiszka wrote:
+>>=20
+>> On 28.07.26 10:55, Shivanand.Kunijadar@toshiba-tsip.com wrote:
+>>=20
+>> From: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
+>>=20
+>> Keep these jobs as scheduled and can be scheduled to run
+>> every week
+>> just to monitor and fix if there are any issues.
+>> Also set allow_failure:true for these jobs as forky is not
+>> officially
+>> released and there will always be some build & test issues.
+>>=20
+>> It includes SWUpdate, secure boot & RB tests.
+>>=20
+>> Signed-off-by: Shivanand Kunijadar
+>> <Shivanand.Kunijadar@toshiba-tsip.com>
+>> ---
+>> .gitlab-ci.yml | 148 +++++++++++++++++++++++++++++++++++++
+>> .reproducible-check-ci.yml | 72 ++++++++++++++++++
+>> 2 files changed, 220 insertions(+)
+>>=20
+>> diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+>> index b53def4..b15c5da 100644
+>> --- a/.gitlab-ci.yml
+>> +++ b/.gitlab-ci.yml
+>> @@ -8,6 +8,7 @@
+>> # Jan Kiszka <jan.kiszka@siemens.com>
+>> # Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>> # Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+>> +# Shivanand Kunijadar <shivanand.kunijadar@toshiba-tsip.com>
+>> #
+>> # SPDX-License-Identifier: MIT
+>> #
+>> @@ -63,6 +64,7 @@ default:
+>> - if [ "${release}" =3D "bullseye" ]; then
+>> base_yaml=3D"${base_yaml}:kas/opt/bullseye.yml"; fi
+>> - if [ "${release}" =3D "bookworm" ]; then
+>> base_yaml=3D"${base_yaml}:kas/opt/bookworm.yml"; fi
+>> - if [ "${release}" =3D "trixie" ]; then
+>> base_yaml=3D"${base_yaml}:kas/opt/trixie.yml"; fi
+>> + - if [ "${release}" =3D "forky" ]; then
+>> base_yaml=3D"${base_yaml}:kas/opt/forky.yml"; fi
+>> - if [ "${release}" =3D "sid" ]; then
+>> base_yaml=3D"${base_yaml}:kas/opt/sid.yml"; fi
+>> - if [ "${encrypt}" =3D "enable" ]; then
+>> base_yaml=3D"${base_yaml}:kas/opt/encrypt-data.yml"; fi
+>> - if [ "${factory_reset}" =3D "enable" ]; then
+>> base_yaml=3D"${base_yaml}:kas/opt/factory-reset.yml"; fi
+>> @@ -399,6 +401,57 @@ build:qemu-arm-base-sid:
+>> separate_home_partition: enable
+>> deploy: enable
+>>=20
+>> +# forky image builds
+>> +.build_base_forky:
+>> + extends:
+>> + - .build_base
+>> + rules:
+>> + - if: $CI_COMMIT_TAG
+>> + when: never
+>> + - if: '$CI_PIPELINE_SOURCE =3D=3D "schedule" && $CI_RUN_UNSTABLE'
+>>=20
+>> I meant we should migrate both forky and sid under this one
+>> CI_RUN_UNSTABLE variable. Now we would still have two of them
+>> and would
+>> need to set them both in the pipeline schedule.
+>>=20
+>> My idea was as below,
+>>=20
+>> - The CI variable CI_RUN_UNSTABLE_FORKY is changed to CI_RUN_UNSTABLE,
+>>=20
+>> however CI_RUN_UNSTABLE_SID is not changed in this patch series, will
+>>=20
+>> update in a separate patch as it is not related to this series.
+>>=20
+>>=20
+>>=20
+>> And it was mentioned in the v2 patch series cover letter, I think
+>> you would have missed that.
+>>=20
+>> let me know if required I will change CI_RUN_UNSTABLE_SID to
+>> CI_RUN_UNSTABLE in this series only.
+>>=20
+>>=20
+>>=20
+>> Any comments on this? Shall i include the above change in this patch
+>> series?
+>>=20
+>> please let me know, will send v3 patch series accordingly.
+>=20
+> Please rename CI_RUN_UNSTABLE_SID to CI_RUN_UNSTABLE before introducing
+> forky as another user. Will easy to pipeline maintenance.
 
+Thanks, fixed in v3 patch series.
+please check it.
 
+Thanks & Regards
+Shivanand K
+
+--npUuK3zpKi4p53pAaKi7
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div>Hi Jan,</div>
+<div>&nbsp;</div>
+<div>On Mon, Aug 10, 2026 at 07:46 AM, Jan Kiszka wrote:</div>
+<div>
+<blockquote>On 03.08.26 11:47, Kunijadar Shivanand wrote:<br />
+<blockquote>Hi Jan,&nbsp;<br />&nbsp;<br />On Tue, Jul 28, 2026 at 09:26 PM=
+, Kunijadar Shivanand wrote:<br /><br />On Tue, Jul 28, 2026 at 08:29 AM, J=
+an Kiszka wrote:<br /><br />On 28.07.26 10:55, Shivanand.Kunijadar@toshiba-=
+tsip.com wrote:<br /><br />From: Shivanand Kunijadar &lt;Shivanand.Kunijada=
+r@toshiba-tsip.com&gt;<br /><br />Keep these jobs as scheduled and can be s=
+cheduled to run<br />every week<br />just to monitor and fix if there are a=
+ny issues.<br />Also set allow_failure:true for these jobs as forky is not<=
+br />officially<br />released and there will always be some build &amp; tes=
+t issues.<br /><br />It includes SWUpdate, secure boot &amp; RB tests.<br /=
+><br />Signed-off-by: Shivanand Kunijadar<br />&lt;Shivanand.Kunijadar@tosh=
+iba-tsip.com&gt;<br />---<br />.gitlab-ci.yml | 148 +++++++++++++++++++++++=
+++++++++++++++<br />.reproducible-check-ci.yml | 72 ++++++++++++++++++<br /=
+>2 files changed, 220 insertions(+)<br /><br />diff --git a/.gitlab-ci.yml =
+b/.gitlab-ci.yml<br />index b53def4..b15c5da 100644<br />--- a/.gitlab-ci.y=
+ml<br />+++ b/.gitlab-ci.yml<br />@@ -8,6 +8,7 @@<br /># Jan Kiszka &lt;jan=
+.kiszka@siemens.com&gt;<br /># Quirin Gylstorff &lt;quirin.gylstorff@siemen=
+s.com&gt;<br /># Nobuhiro Iwamatsu &lt;nobuhiro1.iwamatsu@toshiba.co.jp&gt;=
+<br />+# Shivanand Kunijadar &lt;shivanand.kunijadar@toshiba-tsip.com&gt;<b=
+r />#<br /># SPDX-License-Identifier: MIT<br />#<br />@@ -63,6 +64,7 @@ def=
+ault:<br />- if [ "${release}" =3D "bullseye" ]; then<br />base_yaml=3D"${b=
+ase_yaml}:kas/opt/bullseye.yml"; fi<br />- if [ "${release}" =3D "bookworm"=
+ ]; then<br />base_yaml=3D"${base_yaml}:kas/opt/bookworm.yml"; fi<br />- if=
+ [ "${release}" =3D "trixie" ]; then<br />base_yaml=3D"${base_yaml}:kas/opt=
+/trixie.yml"; fi<br />+ - if [ "${release}" =3D "forky" ]; then<br />base_y=
+aml=3D"${base_yaml}:kas/opt/forky.yml"; fi<br />- if [ "${release}" =3D "si=
+d" ]; then<br />base_yaml=3D"${base_yaml}:kas/opt/sid.yml"; fi<br />- if [ =
+"${encrypt}" =3D "enable" ]; then<br />base_yaml=3D"${base_yaml}:kas/opt/en=
+crypt-data.yml"; fi<br />- if [ "${factory_reset}" =3D "enable" ]; then<br =
+/>base_yaml=3D"${base_yaml}:kas/opt/factory-reset.yml"; fi<br />@@ -399,6 +=
+401,57 @@ build:qemu-arm-base-sid:<br />separate_home_partition: enable<br =
+/>deploy: enable<br /><br />+# forky image builds<br />+.build_base_forky:<=
+br />+ extends:<br />+ - .build_base<br />+ rules:<br />+ - if: $CI_COMMIT_=
+TAG<br />+ when: never<br />+ - if: '$CI_PIPELINE_SOURCE =3D=3D "schedule" =
+&amp;&amp; $CI_RUN_UNSTABLE'<br /><br />I meant we should migrate both fork=
+y and sid under this one<br />CI_RUN_UNSTABLE variable. Now we would still =
+have two of them<br />and would<br />need to set them both in the pipeline =
+schedule.<br /><br />My idea was as below,&nbsp;<br /><br />- The CI variab=
+le CI_RUN_UNSTABLE_FORKY is changed to CI_RUN_UNSTABLE,<br /><br />&nbsp; h=
+owever CI_RUN_UNSTABLE_SID is not changed in this patch series, will<br /><=
+br />&nbsp; update in a separate patch as it is not related to this series.=
+<br /><br />&nbsp;<br /><br />And it was mentioned in the v2 patch series c=
+over letter, I think<br />you would have missed that.&nbsp;<br /><br />let =
+me know if required I will change CI_RUN_UNSTABLE_SID to<br />CI_RUN_UNSTAB=
+LE in this series only.<br /><br />&nbsp;<br /><br />Any comments on this? =
+Shall i include the above change in this patch<br />series?&nbsp;<br /><br =
+/>please let me know, will send v3 patch series accordingly.&nbsp;</blockqu=
+ote>
+Please rename CI_RUN_UNSTABLE_SID to CI_RUN_UNSTABLE before introducing<br =
+/>forky as another user. Will easy to pipeline maintenance.</blockquote>
+Thanks, fixed in v3 patch series.&nbsp;</div>
+<div>please check it.&nbsp;</div>
+<div>&nbsp;</div>
+<div>Thanks &amp; Regards</div>
+<div>Shivanand K</div>
+
+--npUuK3zpKi4p53pAaKi7--
 
