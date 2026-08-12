@@ -1,223 +1,276 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <yoshitake.kobayashi.x25@mail.toshiba>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBECAC5CFDB
-	for <webhook@archiver.kernel.org>; Fri, 14 Aug 2026 13:20:27 +0000 (UTC)
-Received: from MRWPR03CU001.outbound.protection.outlook.com (MRWPR03CU001.outbound.protection.outlook.com [40.107.130.0])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.12822.1786713621001131703
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E5D2C5DF66
+	for <webhook@archiver.kernel.org>; Sun, 16 Aug 2026 07:47:51 +0000 (UTC)
+Received: from mta-64-228.siemens.flowmailer.net (mta-64-228.siemens.flowmailer.net [185.136.64.228])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.2589.1786519739667357317
  for <cip-dev@lists.cip-project.org>;
- Fri, 14 Aug 2026 06:20:21 -0700
+ Wed, 12 Aug 2026 00:29:01 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=RIRPAD6y;
- spf=pass (domain: siemens.com, ip: 40.107.130.0, mailfrom: jan.kiszka@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZhnPPc+9kKnijfkebmItTxjm5SHxZ/3rjQ4FU80+3FmKz889f+BxuGCzfGShZLqrS7vrZMNyUEvtSuYO6yHcO9WnAeLf4eXJGzSoOFWF0X1/yWWSMo1iwl4yYRC4rmeE2il6u/RBPF2qKCSk8N4/jmkawEoMkuDuByyh/2pxN+u6LUgjjRiA4Co4u4GqY+bkM3iY1EHXynS8wQQ5pzsIPhLVBIgejEOub38eO4dV7uiVbq6yXTdK7zqOoIE9I1e2W5h4vzUzuSSR6B4KDHGmGRyYXP6cLJIlQVNfSKMVMHdjZ4I0ASgYrrqO1Ry1Z8jhEtKUDcn2DrxKzd1mxIG4/A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kjL9CxFOhSp1z4dSczv0hRZ7gi4pkLt+zbOqaB5TjO8=;
- b=o/iuMM2yuykHgBT2Z6SEuaOK9EG5RgHUGxwQFSL7e63qkcWFlZL89q43Lw3f4TGl+uynLwGLfXkoWuQDQxdSLcVnOTwWEPgoWov3542WWvpQzE9o/TMrTQ2X0KPC3m9Zc7IjxkIMfypb8sur4m5taKCRAUvLuRY32tdg5icbLxQ1tMCeNd/x5WQasmJ7O60U9HjZRLEDHevcf3DVokq0D9VkJalCQuGjhKmP+xOasNcDZ4vr5Uubb0KRzDFh0koeFRSCyfnyIHCmZNgelvoQCm4T7najyAywXTiBtYA6pMq+sctb7KDq95egGcxRO86PpwF9IMAIAB1XN/GCOvOi8g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kjL9CxFOhSp1z4dSczv0hRZ7gi4pkLt+zbOqaB5TjO8=;
- b=RIRPAD6yUBfBPmmzQgyHQZa2AmC8p5EX3TA8Z3bC+kQmtJiRGPAqhufkcjr/bP8gHnHzjL3vKk/jWA/SjLZrsa5hKpBYyNRZXxETTaw/pXAvgHjfuKz9Q7rZevVEEf2G5h8/PiePIJkpeAScfistny9CXt/rfyyHO+GMl/ELL6EWcJo4v7p6kZsj71EJ2tRgOruHwMf4vwqZE8ROMCfMUIygzzvuHK2AbVtjsQu+Zn+WIrmdWYbZu+LpeRPUq+2I6B1vFtpfp3GbMc36YCAI7xBeIpugjVwC3lp+vs569ajLXOCC/ZQWbMD3w/j4/uro7Mt2ut22Dtgjuvi4hr7oXw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by GV4PR10MB9594.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:2ec::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.315.15; Fri, 14 Aug
- 2026 13:20:16 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::be9f:e8ca:ee9:83e1]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::be9f:e8ca:ee9:83e1%2]) with mapi id 15.21.0315.012; Fri, 14 Aug 2026
- 13:20:16 +0000
-Message-ID: <a6bfc8d0-3f12-4a14-986f-3d09aacc6b02@siemens.com>
-Date: Fri, 14 Aug 2026 15:20:14 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [cip-dev][isar-cip-core][PATCH v2 0/5] switch to rootless build
-From: Jan Kiszka <jan.kiszka@siemens.com>
-To: Quirin Gylstorff <quirin.gylstorff@siemens.com>,
- cip-dev@lists.cip-project.org, felix.moessbauer@siemens.com,
- Michael Adler <michael.adler@siemens.com>
-References: <20260728131231.117214-1-quirin.gylstorff@siemens.com>
- <592f75fa-e569-4d21-abd6-0bdca1cfb5fc@siemens.com>
- <ff66fca2-4e47-42c1-b88c-7e736fd68114@siemens.com>
-Content-Language: en-US
-Autocrypt: addr=jan.kiszka@siemens.com; keydata=
- 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
-In-Reply-To: <ff66fca2-4e47-42c1-b88c-7e736fd68114@siemens.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR2P281CA0030.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:14::17) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+ dkim=pass header.i=gouravsingh@siemens.com header.s=fm2 header.b=AnMa70Fc;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.228, mailfrom: fm-1333022-202608120718513ac32e9bea0002070a-bkiyaq@rts-flowmailer.siemens.com)
+Received: by mta-64-228.siemens.flowmailer.net with ESMTPSA id 202608120718513ac32e9bea0002070a
+        for <cip-dev@lists.cip-project.org>;
+        Wed, 12 Aug 2026 09:18:51 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
+ d=siemens.com; i=gouravsingh@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=GxjunHlL3cDb+q254tSipnKLR7heDwguUGZrswYgdjA=;
+ b=AnMa70Fcf6f4KIYf+Fe36AAlSErZSfM1kdSdpMPnL5mXEo7kXcztcM6zGG+w1+lvPi0YRS
+ p59UlMgfh1jf4IWB0HlV7iY7d5dif6F+ok3kQDYoaxxDS7IiaZOsJpbGbmZWP8Ikli+FW4JO
+ x42y249ZCaSsYPXZADftIFvCJzDC9Xr+ra0zFgmGacRmo5o29HNcHDaGuA1NagdOkO7diSAe
+ WpjYtcvt4xyHsGSI9nVDk64RQFsxxSqlOnj1NYLv3D3Hp1Hsivxt8LUqjPpkEeDlpMeeeusq
+ 3UuMUwD04ukaMwacfSHikTrSVJLpR1SoQ4h+aZMpJc5s1fhvQG/Gzizg==;
+From: Gourav Singh <gouravsingh@siemens.com>
+To: cip-dev@lists.cip-project.org
+Cc: jan.kiszka@siemens.com,
+	Gourav Singh <gouravsingh@siemens.com>
+Subject: [isar-cip-core][PATCH] recipes-core: ltp: Update to 20260529
+Date: Wed, 12 Aug 2026 12:48:42 +0530
+Message-Id: <20260812071842.844364-1-gouravsingh@siemens.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|GV4PR10MB9594:EE_
-X-MS-Office365-Filtering-Correlation-Id: e24c715f-23f9-4c54-192d-08defa06c79a
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|376014|1800799024|23010399003|366016|6133799003|56012099006|10067099003|4143699003|5023799004|22082099003|55112099003|18002099003|11063799006;
-X-Microsoft-Antispam-Message-Info: 
-	kZ7c09aA3AsEDcx4lYr4hOL79bJx8hcCgmAMj4K2auVaU9iX/kb0slyEI50o85v2ztZSP77yQAYfACozgvvlSBTE3Q9Y7oFkMJAlY7I7DcPcea4mwaQs2JqM3oX581fRo8fNeFNRhzEeCjh/lL1Wf6JQmluvkE+GNN13iMZGIDnHJvN5Ja2Zb3DQpdPE/rhnFMjSYNFl1KIMKkIa3LGFQej1F/V0hJd6J456qY8S9qYnXoggzieL1NAU5P53e94wcWDk6s/Gy2HQDnlsy7ygZxBZ0mB9sbzocl1bXPwE1/aciYmdVCQC1bxYO6OZyfmskzUuos/NN5n9KbVjmIDZXwjDd0NAhEbuf4rs1uG/u9HJx7oUVn7Lq2ZKG5v2KvGe7Qdpis7bx5/86ZoAdcTvORSpBf/l4PoGXk/bkw2amXdj2MD4oBLmF6pO1ywjrnHU7XSNYMHio7pNB1S5j2SPV5pQZYBHnLn0hMq25h2m/Qw7xe9vKpNWZm2Dt/7ocY8USCop6OdyKNff3yXG4/XbJGUX0mvSYjP4UdF04xIgIVNBDkYg9h8ehKnLj2qL57j3HfvS+1x3GIiklPMPt7FpwXg9tSHGwUbwWd/Zqhb9vBBcc2QHd3hqUYbF8aOwkRYUxOsa/Th6l3hH8mfNBsLAQCzzK0k7q4OdzACPe/1T2O8=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(23010399003)(366016)(6133799003)(56012099006)(10067099003)(4143699003)(5023799004)(22082099003)(55112099003)(18002099003)(11063799006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?U21ndnlwWWFlYVo5WVZSN05kQjFjakFCY2ptRWF6UXVxc0RpMnExK3ZtR3FL?=
- =?utf-8?B?MDNpc0xQNUpuODkxM1hjc25XeHBiUE02YTY5U1pGMElqcjNNalMzY2V3M295?=
- =?utf-8?B?Vzh6OU5zaTNlSUl2QkZGTzBDelFXZU5uVEZ3WXMrMGVnSEJiYXVvM3VpSno4?=
- =?utf-8?B?MDBScmNkV0lDdUt6R0VWTDJrdkxxenhXdElIWFJSQjZMOE5lanJiWldaNDc2?=
- =?utf-8?B?OE5GaHdHbVFCWlBML3hUZWdmVUZ2U2pXZng4NVF5Q3VNemhLTWprTDVSSTM3?=
- =?utf-8?B?Y2xZaXhlVlUyb1B5NDVnQjVEWkdKRDExK1FqT0VVVHpJZnVWZ1UwMG9Tdisy?=
- =?utf-8?B?aVVwbkY5SUloNWFhakpCRXAxdjhMM0F2aVlraDl4TTNlSWFjZ2hHUG1mN3Bu?=
- =?utf-8?B?WGJQaXIzc2V1TFlnYVU0NnAxSU94ZG8wMmQ4WmJKSkZIQm5GWjhHaGVuWFFm?=
- =?utf-8?B?WWhQYTk1NDlIUWc5UWJwWUFBOTllbTBMcXdYSWozOUdFc3pkeUdValNmMHZl?=
- =?utf-8?B?S1M4Z0hRMjZ0YVJGeHZVTy9vbGt3NzI5SWdzVVgvb3l3TTNmcWVuUlBpSnFG?=
- =?utf-8?B?RWJ5dFZHUmRrTDlycFU0T2FheG13RHVvZGVINWU0MmdOWmxZS0tSQmtjQWhL?=
- =?utf-8?B?cE5pWk1ZRVRUS09QY1ZJTFdZaXQxZnRlWEJRd1lQVml2UnVnSjFHNEwxUFFN?=
- =?utf-8?B?eEZMN3ZFeWlWTkR1WkJockd5QXZ6Uit5SWlnczJsTldTVElGSEM0UTg0SlpF?=
- =?utf-8?B?TVI3Z3ZvaEtZOVl6cTBLbDVpWlVHZ3ZkV1NPTU11VDBISFE4ZFd0c3JkTVVP?=
- =?utf-8?B?cXZpQ216MGhRb3FOOW5WSlpRRmgrQUJkdFZaMlFVYXpyWXFrM0plWjhTN25i?=
- =?utf-8?B?dWxMWitDYU5IcTNhWXNxNnowUzBML0VDaEwwUnljV0JvUmVmeU8wWGM3M1JT?=
- =?utf-8?B?YXZqRllxNnVlRlRzSEV2cmhDeWNIRUhvWjk2dkpONVBoR2tjNllaS0RtTk9v?=
- =?utf-8?B?d1N5aW8wbFlQN1d1Nm1JV2lIK2hadE1ONFE5Z08vakdabGRDTDhJLzR6R0N2?=
- =?utf-8?B?VkEwTWpnQWFWdEJiUnNlRVZRejlPQzBPQSt4WnhQc2Fpa1ppNDdYSUtEdkdB?=
- =?utf-8?B?dVY4MHo3dDNvM3JHbmc3VWVsVUdFYlovaTZYL2wxamdoYnV4T1ZxZytrSnNY?=
- =?utf-8?B?cEZSUFEzd0s3VlZFemE2ZkJ4MzdUUVBneTRQNVNVdDc5cUlqMzZZeGo4amly?=
- =?utf-8?B?bGZLeE5PRXgvcVV3Y1FlWDhBeHFndDh0bFNIT1M2QTczVURFMnB3L1B0eGR3?=
- =?utf-8?B?UFlXbldyNWVzK1Fkb0h0UUNnZFNQRU9EUGtSWGh2UWplanhqNng1bFk1VEQ5?=
- =?utf-8?B?TnZjdEh1bUtlWVptNjh6U0dub1Y0eGk2RXNQU0RmUlB4eWtCZ3pNUFNmSXFW?=
- =?utf-8?B?RDA4ZjIzTHR5RlBWSzloMUU5a215MDNPNmFQQXNvNXd0d0FYOCtmeFFhSnA1?=
- =?utf-8?B?eTdncVBzcjdCaFF6cTNMUUU5emRGWmxXYkpmNlVsVk5MOG9pWUg2NnNWODAr?=
- =?utf-8?B?Nzl5WUNZUGZqU0I3SjdmOEkxRkZjZGZESDkrZ0RmUUxHMCswVnJxM3NQdU1v?=
- =?utf-8?B?OWJWK3luZW1qdjdqUE1jNHJIamhhYjFBUU9CTDZ4anVrd2xMVDNNN2NlQTNq?=
- =?utf-8?B?UHlBY0dqKzZUdUhrNmZjUFBLQVV6NGFyUnRETkJxbGlZT1B4TXNpQThFZlRq?=
- =?utf-8?B?NzhGanBwdW5JTmhQVVczMllsS01Zc0tnbFVyQ0RBOS9Rb2VsV0VTSWUzMGU4?=
- =?utf-8?B?aXBya1liNDRqNDAxSnkwcUYxVHZpd0ppZ0hsU2haTnVDVTY4eUw3ZTRJWEdD?=
- =?utf-8?B?a2JiSGoxeGhRSEpCQ1piTXNkS2VBOHRpRk1IdXgvdlgvOGVTdE9Xc3RtRlJv?=
- =?utf-8?B?MXVZUVVJaTNUeWtsVXVpOCsrb21SOGplWEY1WnZTK2pxeG5hQjhjdGlmeE0w?=
- =?utf-8?B?L1FVdWRIRmlnVmw4N3JrVnJvNDJGZDlIdlFnQkhmaUEyb2w1aFVzblRjYVN3?=
- =?utf-8?B?T0xoV29vWkxBNHBoSks0K081aG1vL0RIT2NDUC9heTFFMlVHcSs3Mm40azB3?=
- =?utf-8?B?RW12Tzh2UE9JR0xqOWpLMFpaWWxPQ3JmbE1vcUJrVk9WTTFlOUNrTS9DVzJL?=
- =?utf-8?B?K1FSMVBhRW9sZDVwODBETzkzRHdJN3JqZWdCS2c1aTNLTVFyek1TT2h5L3BB?=
- =?utf-8?B?elc3ZHNKejBzQlA4d24xZ0ZGY1pZRXdQZVUyczliTHJrWm5scVFDVEV3TWxt?=
- =?utf-8?B?elo4RnRKVU45d3RXNEpTRFdkdnRRSFZVWmtjRStQNk4xSzc1ak9la08rZmcr?=
- =?utf-8?Q?qtpcSv1NyvQ79bdg=3D?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e24c715f-23f9-4c54-192d-08defa06c79a
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2026 13:20:16.0511
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xk9q/K4r/c6TRfMK0wCVmVA8Ab7TwIDB2vQ7Cg0jDBRoWmHvKHEjODcWdS1+vHUvlNANYmsc53cCg54C3D7QpA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV4PR10MB9594
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1333022:519-21489:flowmailer
+Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 14 Aug 2026 13:20:27 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23943
+ <cip-dev@lists.cip-project.org>; Sun, 16 Aug 2026 07:47:51 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23944
 
-On 13.08.26 16:10, Jan Kiszka wrote:
-> On 28.07.26 18:55, Jan Kiszka wrote:
->> On 28.07.26 15:12, Quirin Gylstorff wrote:
->>> This patchset contains the necessary changes to switch
->>> isar-cip-core to the new rootless build.
->>>
->>> Changes v2:
->>>  - add Debian release requirement for rootless builds
->>>  - use kas purge in .reproducible-check-ci.yml
->>>  - use correct kas-container
->>>
->>> Quirin Gylstorff (5):
->>>   update to kas 5.4
->>>   update Isar to contain rootless changes
->>>   use run_priviledged instead of sudo
->>>   switch to isar-rootless
->>>   update README.md for rootless build
->>>
->>>  .gitlab-ci.yml                          |   2 +-
->>>  .reproducible-check-ci.yml              |   3 +-
->>>  Kconfig                                 |   2 +-
->>>  README.md                               |   8 +-
->>>  classes-recipe/image_uuid.bbclass       |   4 +-
->>>  classes-recipe/read-only-rootfs.bbclass |   8 +-
->>>  kas-cip.yml                             |   4 +-
->>>  kas-container                           | 300 +++++++++++++-----------
->>>  8 files changed, 176 insertions(+), 155 deletions(-)
->>>
->>
->> Thanks, merged with the mentioned changes.
->>
-> 
-> Michael AI identified remaining issues in kas that currently prevent us
+Drop the local listmount04 compatibility patch since the fix is now
+included in upstream LTP 20260529.
 
-Haha, I wanted to write "Michael and AI" here, not suggesting that
-Michael is an AI.
+The patch was originally added in:
+2647471156b128bf8b0fb1d726bd05099fbbe1bd
 
-Jan
+Signed-off-by: Gourav Singh <gouravsingh@siemens.com>
+---
+ ...date-struct-mnt_id_req-support-for-k.patch | 195 ------------------
+ ...-full_20250930.bb => ltp-full_20260529.bb} |   4 +-
+ 2 files changed, 1 insertion(+), 198 deletions(-)
+ delete mode 100644 recipes-core/ltp/files/0001-listmount04.c-Update-struct-mnt_id_req-support-for-k.patch
+ rename recipes-core/ltp/{ltp-full_20250930.bb => ltp-full_20260529.bb} (54%)
 
-> from moving forward with rootless in CI - local single builds are fine.
-> I will move certain patches from next to a wip/rootless branch for now
-> until we have a new kas release with those issues fixed. Some backward
-> compatible patches may stay in next, though, still need to check.
-> 
-> Jan
-> 
+diff --git a/recipes-core/ltp/files/0001-listmount04.c-Update-struct-mnt_id_req-support-for-k.patch b/recipes-core/ltp/files/0001-listmount04.c-Update-struct-mnt_id_req-support-for-k.patch
+deleted file mode 100644
+index aecfe54..0000000
+--- a/recipes-core/ltp/files/0001-listmount04.c-Update-struct-mnt_id_req-support-for-k.patch
++++ /dev/null
+@@ -1,195 +0,0 @@
+-From 2d066ead3d6ef504c82551b12306e751d23ddb45 Mon Sep 17 00:00:00 2001
+-From: Wei Gao <wegao@suse.com>
+-Date: Sun, 14 Dec 2025 02:15:20 +0000
+-Subject: [PATCH] listmount04.c: Update struct mnt_id_req support for kernel >=
+- 6.18
+-
+-Kernel change from v6.18-rc7
+-78f0e33cd6c93 ("fs/namespace: correctly handle errors returned by grab_requested_mnt_ns")
+-causes the test failure with following error message:
+-listmount04.c:128: TFAIL: invalid mnt_id_req.spare expected EINVAL: EBADF (9)
+-
+-The fix require following changes:
+-
+-* struct mnt_id_req got new member mnt_ns_fd in v6.18-rc7.  That is
+-fixed in a fallback defintion in lapi/. If the fallback is used is now
+-done via typedef (that requires also update in statmount.h).
+-
+-* New kernels (>= 6.18) have also different errno. This is fixed by
+-runtime check.
+-
+-Link: https://lore.kernel.org/ltp/20251214021541.3256-1-wegao@suse.com/
+-Reviewed-by: Petr Vorel <pvorel@suse.cz>
+-Reviewed-by: Li Wang <liwang@redhat.com>
+-Reviewed-by: Cyril Hrubis <chrubis@suse.cz>
+-Signed-off-by: Wei Gao <wegao@suse.com>
+-[ pvorel: Shorten TCONF, rewrite commit message ]
+-Signed-off-by: Petr Vorel <pvorel@suse.cz>
+----
+- configure.ac                                  |  2 +-
+- include/lapi/mount.h                          | 10 +++--
+- .../kernel/syscalls/listmount/listmount.h     |  2 +-
+- .../kernel/syscalls/listmount/listmount04.c   | 37 +++++++++++++++++--
+- .../kernel/syscalls/statmount/statmount.h     |  2 +-
+- 5 files changed, 44 insertions(+), 9 deletions(-)
+-
+-diff --git a/configure.ac b/configure.ac
+-index 0480f46ca..a0ebbb34d 100644
+---- a/configure.ac
+-+++ b/configure.ac
+-@@ -262,7 +262,7 @@ AC_CHECK_TYPES([struct cachestat_range],,,[#include <sys/mman.h>])
+- AC_CHECK_TYPES([struct cachestat],,,[#include <sys/mman.h>])
+-
+- # Defined in <linux/mount.h>, but include/lapi/mount.h includes <sys/mount.h> */
+--AC_CHECK_TYPES([struct mnt_id_req],,,[#include <sys/mount.h>])
+-+AC_CHECK_MEMBERS([struct mnt_id_req.mnt_ns_fd],,,[#include <sys/mount.h>])
+- AC_CHECK_TYPES([struct statmount],,,[#include <sys/mount.h>])
+- AC_CHECK_MEMBERS([struct statmount.mnt_ns_id],,,[#include <unistd.h>
+- #include <linux/mount.h>])
+-diff --git a/include/lapi/mount.h b/include/lapi/mount.h
+-index 0f7bb5e43..3b296fc9c 100644
+---- a/include/lapi/mount.h
+-+++ b/include/lapi/mount.h
+-@@ -45,14 +45,18 @@
+- # define MS_NOSYMFOLLOW 256
+- #endif
+-
+--#ifndef HAVE_STRUCT_MNT_ID_REQ
+--struct mnt_id_req {
+-+struct mnt_id_req_fallback {
+- 	uint32_t size;
+--	uint32_t spare;
+-+	uint32_t mnt_ns_fd;
+- 	uint64_t mnt_id;
+- 	uint64_t param;
+- 	uint64_t mnt_ns_id;
+- };
+-+
+-+#ifndef HAVE_STRUCT_MNT_ID_REQ_MNT_NS_FD
+-+typedef struct mnt_id_req_fallback mnt_id_req;
+-+#else
+-+typedef struct mnt_id_req mnt_id_req;
+- #endif
+-
+- #ifndef HAVE_STRUCT_STATMOUNT
+-diff --git a/testcases/kernel/syscalls/listmount/listmount.h b/testcases/kernel/syscalls/listmount/listmount.h
+-index aad927f71..e7ef375d7 100644
+---- a/testcases/kernel/syscalls/listmount/listmount.h
+-+++ b/testcases/kernel/syscalls/listmount/listmount.h
+-@@ -15,7 +15,7 @@
+- static inline ssize_t listmount(uint64_t mnt_id, uint64_t last_mnt_id,
+- 			 uint64_t list[], size_t num, unsigned int flags)
+- {
+--	struct mnt_id_req req = {
+-+	mnt_id_req req = {
+- 		.size = MNT_ID_REQ_SIZE_VER0,
+- 		.mnt_id = mnt_id,
+- 		.param = last_mnt_id,
+-diff --git a/testcases/kernel/syscalls/listmount/listmount04.c b/testcases/kernel/syscalls/listmount/listmount04.c
+-index a6921a249..2b8b49101 100644
+---- a/testcases/kernel/syscalls/listmount/listmount04.c
+-+++ b/testcases/kernel/syscalls/listmount/listmount04.c
+-@@ -14,14 +14,18 @@
+-
+- #define _GNU_SOURCE
+-
+-+#include "config.h"
+- #include "tst_test.h"
+- #include "lapi/mount.h"
+- #include "lapi/syscalls.h"
+-
+- #define MNT_SIZE 32
+-+#define BEFORE_6_18 1
+-+#define AFTER_6_18 2
+-
+--static struct mnt_id_req *request;
+-+static mnt_id_req *request;
+- static uint64_t mnt_ids[MNT_SIZE];
+-+static int kver;
+-
+- static struct tcase {
+- 	int req_usage;
+-@@ -34,6 +38,7 @@ static struct tcase {
+- 	uint64_t flags;
+- 	int exp_errno;
+- 	char *msg;
+-+	int kver;
+- } tcases[] = {
+- 	{
+- 		.req_usage = 0,
+-@@ -79,6 +84,18 @@ static struct tcase {
+- 		.nr_mnt_ids = MNT_SIZE,
+- 		.exp_errno = EINVAL,
+- 		.msg = "invalid mnt_id_req.spare",
+-+		.kver = BEFORE_6_18,
+-+	},
+-+	{
+-+		.req_usage = 1,
+-+		.size = MNT_ID_REQ_SIZE_VER0,
+-+		.spare = -1,
+-+		.mnt_id = LSMT_ROOT,
+-+		.mnt_ids = mnt_ids,
+-+		.nr_mnt_ids = MNT_SIZE,
+-+		.exp_errno = EBADF,
+-+		.msg = "invalid mnt_id_req.mnt_ns_fd",
+-+		.kver = AFTER_6_18,
+- 	},
+- 	{
+- 		.req_usage = 1,
+-@@ -113,7 +130,12 @@ static struct tcase {
+- static void run(unsigned int n)
+- {
+- 	struct tcase *tc = &tcases[n];
+--	struct mnt_id_req *req = NULL;
+-+	mnt_id_req *req = NULL;
+-+
+-+	if (tc->kver && tc->kver != kver) {
+-+		tst_res(TCONF, "Test not suitable for current kernel version");
+-+		return;
+-+	}
+-
+- 	memset(mnt_ids, 0, sizeof(mnt_ids));
+-
+-@@ -122,7 +144,7 @@ static void run(unsigned int n)
+- 		req->mnt_id = tc->mnt_id;
+- 		req->param = tc->param;
+- 		req->size = tc->size;
+--		req->spare = tc->spare;
+-+		req->mnt_ns_fd = tc->spare;
+- 	}
+-
+- 	TST_EXP_FAIL(tst_syscall(__NR_listmount, req, tc->mnt_ids,
+-@@ -130,8 +152,17 @@ static void run(unsigned int n)
+- 		"%s", tc->msg);
+- }
+-
+-+static void setup(void)
+-+{
+-+	if (tst_kvercmp(6, 18, 0) >= 0)
+-+		kver = AFTER_6_18;
+-+	else
+-+		kver = BEFORE_6_18;
+-+}
+-+
+- static struct tst_test test = {
+- 	.test = run,
+-+	.setup = setup,
+- 	.tcnt = ARRAY_SIZE(tcases),
+- 	.min_kver = "6.11",
+- 	.bufs = (struct tst_buffers []) {
+-diff --git a/testcases/kernel/syscalls/statmount/statmount.h b/testcases/kernel/syscalls/statmount/statmount.h
+-index d21d7f8da..4217a82d8 100644
+---- a/testcases/kernel/syscalls/statmount/statmount.h
+-+++ b/testcases/kernel/syscalls/statmount/statmount.h
+-@@ -16,7 +16,7 @@
+- static inline int statmount(uint64_t mnt_id, uint64_t mask, struct statmount *buf,
+- 		     size_t bufsize, unsigned int flags)
+- {
+--	struct mnt_id_req req = {
+-+	mnt_id_req req = {
+- 		.size = MNT_ID_REQ_SIZE_VER0,
+- 		.mnt_id = mnt_id,
+- 		.param = mask,
+---
+-2.51.0
+-
+diff --git a/recipes-core/ltp/ltp-full_20250930.bb b/recipes-core/ltp/ltp-full_20260529.bb
+similarity index 54%
+rename from recipes-core/ltp/ltp-full_20250930.bb
+rename to recipes-core/ltp/ltp-full_20260529.bb
+index 42a9632..994bd73 100644
+--- a/recipes-core/ltp/ltp-full_20250930.bb
++++ b/recipes-core/ltp/ltp-full_20260529.bb
+@@ -11,6 +11,4 @@
 
--- 
-Siemens AG, Foundational Technologies
-Linux Expert Center
+ require recipes-core/ltp/ltp.inc
+
+-SRC_URI += "file://0001-listmount04.c-Update-struct-mnt_id_req-support-for-k.patch"
+-
+-SRC_URI[sha256sum] = "048fa4d69ddbe8a94aa15da9bdc85713ab07a0abbc3de2b8bdd9757644aef1e4"
++SRC_URI[sha256sum] = "685d83c6e370ac09201fb79593412f868fe031ee2890e204b5727fedcf51fb47"
+--
+2.39.5
+
 
