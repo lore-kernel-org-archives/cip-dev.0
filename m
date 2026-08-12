@@ -2,58 +2,47 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B830C5CFDB
-	for <webhook@archiver.kernel.org>; Wed, 12 Aug 2026 11:25:05 +0000 (UTC)
-Received: from OSPPR02CU001.outbound.protection.outlook.com (OSPPR02CU001.outbound.protection.outlook.com [40.107.159.6])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.5825.1786533901733060933
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BABAC5B56A
+	for <webhook@archiver.kernel.org>; Wed, 12 Aug 2026 12:10:45 +0000 (UTC)
+Received: from AM0PR02CU008.outbound.protection.outlook.com (AM0PR02CU008.outbound.protection.outlook.com [52.101.72.63])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.6427.1786536638368426645
  for <cip-dev@lists.cip-project.org>;
- Wed, 12 Aug 2026 04:25:02 -0700
+ Wed, 12 Aug 2026 05:10:38 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=Ciu8/O6r;
- spf=pass (domain: siemens.com, ip: 40.107.159.6, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=TWrHHILZ;
+ spf=pass (domain: siemens.com, ip: 52.101.72.63, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xSDAYezpUWgJHF3Ox8he9opIWnWdp2/LK9B1QC/dakLNMKu1SqkUVW8KUwI5L+TuyPDdirm5bWZmCxsc88hHO0Cds2qfDZj+Flavuxl8lqHZz2uwfKMyFHbQSlcw3nREBDaLvvlPA5rhm+3ce5aINqnD8UoFfbbvVUZuL2px/F/7xJcNpEa2y9u5P3cDh9nesvi3qR2VVp4YRCDqN+fSgaQTVijuh0D1MtGktZ3jWvVp+Pspz+iNxl4Vs3EAq24+AmhcVrdb4hvF4SNhSCD9TH4kSTmIrYg8mzzgFJd4obdGKsrMxtwHd+Gw6l1I+HjXSbm7gJ4TOa7lexqI8qr66w==
+ b=eBPvsUrdRNOI5XWSeZmGr7oTE/fUvhXQ4x1gejCt8xWNslnIEprFaLCShNK6A89113TqbimR4AApm/G8CqH1ozxhJJw/CnUHR0pNy/LRjqg1pYtAP7CghyNXALcg3xmhHkk2UQWHyFe/UXgQAVzjJczZOdsDRTT+lsaHhfk1wSIVWLON5E1XxsTBXvojMB6SihnsSaPMGF8P/AK2Teyn8Wn0eRVoi3o2Mm5etnTa1XqQHD/WmZvYAbk5gUDUChGKrNnhZOFIVNGsuCZxN9/xeWinHR/YCFzpMAOD4KHoxvujUFA7srAWdHypNrxwDdvvFy2ttD43qm40xhdG1UI9+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=K7RSI0ENAyRx9Y3lLrWjV5LDoqCsBJr09KVaZPbTMs8=;
- b=nqXn4FDKStb4zTLi0oPtSACiOWrYVyxJ8U64uLE2tZVuvB11QjV67K5SZcJnXOC5wmlpr2L0vzMdQgnXQx2ojXrDlKqFtDKuUlGlMrWXlH1JECc6+lQBTcR3iqdiorTOd6dbPmo24NybzIqLdLExq06aCCxe8z/nqR892Sl+D2po0uuynebIzbaYU/cv8XkS86uMBLzX9M4+zX12CYcRxzLeSF17lbiHgKvsNFI/AZbeE4cEMawvwzOLMMhRtC67ksDSODeWlm4Xj57jSVRzQNCRC8FhjDC8ygtwZR1WC8cFmd+HoAxmhK2GlW0l8zAvRcRa7TaLT1hPtHJGDikTMQ==
+ bh=n490xzFnWvW5Vg/DcK80nfvnHDt3A/E7LMUhHKXVCkk=;
+ b=p85NFNyHqpNQk2H1HwA/tq5Ngennsao+4rYgs0qpQMWLiaYj9WSNQ6V2i5srzprOoBbX/JXkis6flvsy+lgvbIVJePdNBbt9bxEG4pzs5P124FQdVOa/XXbWPTgND1kHLWnwVHvpQMD1bsXg0fDa+5MkfIT1ehvYLRc9t8D+yLDGe9p1WXOHO2k5DT0MYgux3yzje5EHLYWQmiR1lvcDPxZlM8p2YUc4RTLAKuMqkcXpvABM0kt7TwLFfbqhxoACL17xZi8v3Lq6jbZQc1O0xpKFv0486YUiQeF8W9NgWEiZzayozHgZLpk1xTjZSCa7vq2oCO2TXGoGOQRecJ2NIA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=K7RSI0ENAyRx9Y3lLrWjV5LDoqCsBJr09KVaZPbTMs8=;
- b=Ciu8/O6r2mNdFI2OqVob6EB9aQ/pb3kn27Jb+537OZVb8fA6hHwwkcH90BTxQjhOibxNEWRTUeCHvWucnYRF7BBhAXKcqXCCZfkVBLQdfD0YvSRle2g+e5BMlfDOso2e3H2EHPj9D3ALszOyxGbxVVVFhDoHGYYiyGc4UHtwusCooFv6UiQKXCu4WOaQQNYLoSy8E67Dot8WEegOmgorc6mUwvdp4Kr3nJQnHvEyh0qdtdcargzorEXnI01rXMkREfhtSkV2RLFWjVaFxY3m5u5dI52R3VI9jBUFFVIbp1C83MxoWwNxNp3FA/Y5n2IzXbo46JHrpLH74QnRtoOcKg==
+ bh=n490xzFnWvW5Vg/DcK80nfvnHDt3A/E7LMUhHKXVCkk=;
+ b=TWrHHILZSokrLEBJ0O9Z5MzJMjm5/+18K+06vfEZ2EfaE4bySIBU8o+zCzOsro2OtpJ8EARLuaz45iRbyjw4/u8uy1S4kYmbVd9893eLyoELMJBETjiL4FpU8vxC3UsYkofvwQo4QNdc8PkZLKS3QN4DtH5vFLIsLiUt+Fl22/z2oTl71CUYwQnx2InWpRU8TUvgYFYB8oXbQWwN2x1e/COmj0j6vepJvpZT+o7eDRp4h9SIaCwWdpkFYfg5+NLqoUnPXpsXp688dxjd4R/zIFdcN8k3fn+FxEs4xg2fyjRWysNc9EBSkdyUD45C58fJNM0zXceZKyXiB18uVzulYA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by PA1PR10MB8596.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:453::15) with
+ by DU0PR10MB6252.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:3ef::11) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.315.11; Wed, 12 Aug
- 2026 11:24:47 +0000
+ 2026 12:10:32 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::be9f:e8ca:ee9:83e1]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::be9f:e8ca:ee9:83e1%2]) with mapi id 15.21.0315.012; Wed, 12 Aug 2026
- 11:24:47 +0000
-Message-ID: <73dc6b91-cef2-4e88-b5f4-c4435dc78b21@siemens.com>
-Date: Wed, 12 Aug 2026 13:24:44 +0200
+ 12:10:31 +0000
+Message-ID: <0f8dfe37-8856-4895-8cef-b40342339c66@siemens.com>
+Date: Wed, 12 Aug 2026 14:10:30 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [isar-cip-core][PATCH 0/2] Remove unsupported combinations for
- factory-reset from Kconfig and document them explicitly
-To: "Heinisch, Alexander (FT RPD CED SES-AT)"
- <alexander.heinisch@siemens.com>,
- "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
- "Gylstorff, Quirin (FT RPD CED OES-DE)" <quirin.gylstorff@siemens.com>
-References: <20260807154439.625212-1-alexander.heinisch@siemens.com>
- <31174e6a-78c9-4fce-8d1f-dff403e1f6aa@siemens.com>
- <b45b4dd0-03cc-4df8-94e5-ca3405e2732b@siemens.com>
- <4400621d4db82ea3313ff1907d4ef664ca0cdaab.camel@siemens.com>
- <5eedc605-7ae1-425d-876a-62c183e3a79e@siemens.com>
- <caf1c704548f130911b872587c82d15441ff88d0.camel@siemens.com>
- <5dd841d3-abe7-4167-866f-9f84bfc25758@siemens.com>
- <0b32da8016d7314c67aa5a5de4b57e112439880a.camel@siemens.com>
+Subject: Re: [isar-cip-core][PATCH] recipes-core: ltp: Update to 20260529
+To: Gourav Singh <gouravsingh@siemens.com>, cip-dev@lists.cip-project.org
+References: <20260812071842.844364-1-gouravsingh@siemens.com>
 From: Jan Kiszka <jan.kiszka@siemens.com>
 Content-Language: en-US
 Autocrypt: addr=jan.kiszka@siemens.com; keydata=
@@ -99,228 +88,324 @@ Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  qH4kDzsqKX8zzTzfAWFxrkXA/kFpR3JsMzNmvextkN2kOLCCHkym0zz5Y3vxaYtbXG2wTrqJ
  8WpkWIE8STUhQa9AkezgucXN7r6uSrzW8IQXxBInZwFIyBgM0f/fzyNqzThFT15QMrYUqhhW
  ZffO4PeNJOUYfXdH13A6rbU0y6xE7Okuoa01EqNi9yqyLA8gPgg/DhOpGtK8KokCsdYsTbk=
-In-Reply-To: <0b32da8016d7314c67aa5a5de4b57e112439880a.camel@siemens.com>
+In-Reply-To: <20260812071842.844364-1-gouravsingh@siemens.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: DUZPR01CA0099.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4bb::24) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR3P281CA0049.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:4a::22) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|PA1PR10MB8596:EE_
-X-MS-Office365-Filtering-Correlation-Id: f3524e6e-5677-4ebd-4382-08def86450e5
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DU0PR10MB6252:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1e8897e1-d37f-4178-02ea-08def86ab4a6
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|23010399003|366016|1800799024|376014|6133799003|5023799004|11063799006|10067099003|56012099006|4143699003|55112099003|18002099003|22082099003;
+	BCL:0;ARA:13230040|23010399003|366016|376014|1800799024|56012099006|11063799006|6133799003|10067099003|55112099003|18002099003|22082099003;
 X-Microsoft-Antispam-Message-Info: 
-	3IruOVOEMNxFrpjReZFynUV+0pF+t9dfq4ilyz9y7SfkdpxjrtU2JtK6Gb9ADDmuOYUaSTcgqXbcrxlFoHh9uRdnXHBKTRJoo2ztrp17QqYmVhGztfGRQQ1adyqTIMhhsah9syfmfd3ctPLITrIXlgC/I7GkWYJSawhb01ZK0R+HR2kABIzfi2SMQMFdiUVSFEHuJYl3QUQUIXHTCU+UXaC5DVQMhaLpUk5AN9LeCmNdWKLm6AjITsMUBbo33uSMCZbCVZfaXaod9ptGQcwtgz0kuse07GE7NZRsV9lJMb8ZP9ioNpBMlvZZp0L9iCaF0f5uCwEE19xmSoIS7PoaAIOmxPeShP9wx8NTxrSCz1jQeDet2IB12kouKdNHDa1YTy21v02hsae7q0cUzAFm8MRbDgbgPIvxofsgP55Foz6UJYCpza7NgSoK4X0kDmcoHroR3v1MLOZ5zo138ZytTagG9s7bpRZ0te+u1plvDpOScgmsDf2FU4XfKvGCY/UqVLBq5Gpy6P0J49J3ppLhazRjFRBuKdRda7qbKqfXS923SxvLEBsAmfYSqrnsZvaUtoINRboq9NZQkMTZpyNQxQKUUhOqaLEyHZeXM5TU1TWFycytGX9ZDdy5wmPBPiQhVrGHd+MM7HzeiBBjKzrxtFXD1/6u2Ig9ZlZ9GvK8KFo=
+	xGPgzkjvsUtuvNGIKzuwVXaH41ASHMrJCls1QwwyjhusOD5CNdWFyl4v8m778AK5SVEC9k0hNPG1W1JDdI29pwB2dQnK2D8u09KlAFlc4bM32pPVqSSeF1NaoVwu+GZAZI4IQsRe/QLqdJaX6zYB3mX+noFwwGOvAlwQDn0JQ9/k+L38AqwVNICeKoAVc0rpeT+OgqjAU+MMAmyrceX7vxcBV6nqc5hICFhIRkTE+0v/2ac/qJWsLracHaJ5qDuQ4HtG5F/qwwM9DXkjM8q/qZi5BPDRK9k9vMj5lV4vGlOPUyPD7+SO/vdKch/+bxjYnHGkHSeKC+BWxImZJsKlj119ZB3cVObSxt73oMkh7SYzQVkat4ptySGYvhc0hKoysPR+/hZc8boTBjGn+cbdPVLuRDoE9Qfd+ZsVqA/0qvWzR/8wROJ7iUkSgVxlrLDIKGqAYQcf/OINn8MDoJyU+/kSiS7D7iutyBMH/4w9Y/zpUbSL2aNahDdaSKRe2y1K0lozigiXJS9SRfuINqBLBESeLwFh/j42DPOfiwvSClxB5jRPQSqgOWuq7jk4y35JK4fhpiHct+JLjAvH1LAMuwcK9Dh9LXM9RVvZzF7wwECOS9aUGN1DkGlLIZZr0FELREg7m1RcwRoNisrxA5KZR15wCALm0KidXYj4DnyqJY8=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(1800799024)(376014)(6133799003)(5023799004)(11063799006)(10067099003)(56012099006)(4143699003)(55112099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(376014)(1800799024)(56012099006)(11063799006)(6133799003)(10067099003)(55112099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?xNBZ87OciPdoD/agssOvXIV3m4VZMG9B7knIlglipCiwUNQFLXLLXrfy99zg?=
- =?us-ascii?Q?vfDxelYCQZTt/ceJgHvWMGMsLrTWhUh1Fz8mngeYmoWm7c3LTqs9lFJlLWSK?=
- =?us-ascii?Q?uGVNYYHpgeI0LDJL/9VlC9cTE1Ixia9v3KvJhGMz/c5JijCILul4VKeQJrh3?=
- =?us-ascii?Q?tRAQK1uHnkMMk1l8V/86k03P278hUz3cHFOp/kscx7eA5CjR6XBXAmDUaQmj?=
- =?us-ascii?Q?i/4rmRlExOQTijCcelWoTz1kGtUlKf6a/u6TVj5q2f+m1daIWiDlmOl480o7?=
- =?us-ascii?Q?9bX8Cfj2IagpIndKmhUB95+DsIC6dYA3vrZHkCoe535ePGPLi99DiQdVOMNE?=
- =?us-ascii?Q?tDzSJY1MCNX4UgEvFg/DBnzQDgsH2Qta6AvvDddXeBdurFHvjE33348sBL00?=
- =?us-ascii?Q?YtvM2a0bumLdWVbF33YiRC0apifd8ZJ07QM8JdizLsu4xi3GZ16BfkfFnPo1?=
- =?us-ascii?Q?H15wuBTHCHqQy3E2T9GY2mo/yL9TLsmu67Ev7IPhEAR09SCHcxljgFwzMatW?=
- =?us-ascii?Q?BkSir7x5NACsPPbpWHRa2B9e5IajH/UboI791Bq7hz/3ryPromotqwBfpB7s?=
- =?us-ascii?Q?JXvgOWUM7ALa01ME4kBEGFTx+xSGGF4o3mriUMqKmnawXaD8phlduhEadIOC?=
- =?us-ascii?Q?q0zlH0uxhNjYQt4bNE2f3tGrgjiCY+8jQw9NaPRGJY5hDcsVGggSP1yqFP6I?=
- =?us-ascii?Q?N5RomgHS5qYOlSYurtbF/V4QQTTAE4WBYz3kv1OOLI+tkmL/9ebOQscgw3Ls?=
- =?us-ascii?Q?5dTy3APlIOAWCGZp2tn19BXLKPCfyOpNNcgY+iBOwoj8Zl1C2LLrt+dpyWbF?=
- =?us-ascii?Q?g3/Yf/QQW3BQFGqlRjJLc2BJlSO94iZAQAr8o8rACLZcrdot/y4jVjfTRjAz?=
- =?us-ascii?Q?yIa+ghtxL9tRG9mP+3w67nEOTYqHoZbBGTA6/NF3RgHV1CUXYNh2JjyQ3O/r?=
- =?us-ascii?Q?N8HrvlzUC36aS41s0GAWLOo7KnNI7h0ResWE2Jp9GPqpM0tkdo3V4aqDxAxc?=
- =?us-ascii?Q?6Bou2WQqiRbTervlE4t1GdRqfsiv95yy/jGMLk9P1JLa7+LEoHdhpFak0uVT?=
- =?us-ascii?Q?M1dhD+9BnhTT/5qZEYK6MT0WM9LEIgFuFNl5CdyXAuQNzzQqWPIo6Gl8/zqF?=
- =?us-ascii?Q?mOW7BfLXaoO2cB7w2RMmKQoUdk51+pdYrtuvzZXeaFEorDZS1E9LDGifN8Wo?=
- =?us-ascii?Q?C3Lie0Wyl6xgk+ykPWnZsFytudSrEdYTWnzI3sOY/03pOPd4Del2ezYE7x0G?=
- =?us-ascii?Q?tLG3D2juchnewPt2K4u7SrqFoxnhsulOhsekvZa907gVI/n4yjBI+GW/wSCq?=
- =?us-ascii?Q?ri390ofWw9YSAFACM5enWwoq7aEdh8FLGttSAqmeKxlPi+iuN5fi91i2BZof?=
- =?us-ascii?Q?JCbZRl2uEgKYngZuQKJ2pE7tpNnz9cFQpg5M3Wixy8RJsF8Bjsogio4ooYE1?=
- =?us-ascii?Q?LU1xieePdy77froUEkc+NiGgFSaQQ7sHr30HLDEGyMq4bFRkAXDLXNr6z54Q?=
- =?us-ascii?Q?eduFPzUJXFobQLU59QIlXFvdXTLiySbBp6jbeLdAE4M5HGwl353SeFUzGOkS?=
- =?us-ascii?Q?qUkie1vBvK7DlH2jEqYlv+m5/QgDx2t4IXhNf/KoLBwvCHkSzjtNYo53NkMf?=
- =?us-ascii?Q?vb2vaq9FFFuaFp2nmogztc7FxdKQAYDgHIlfthUQzZRlB8Pa/nITI6J8uO81?=
- =?us-ascii?Q?ky29IfTinGCVzY2PaFT9n0x5XsPDjUfKi8mtm/VDZYDCYdvqWRAVczj25oLo?=
- =?us-ascii?Q?8ReToDabBA=3D=3D?=
+	=?utf-8?B?aXdmTkJySHpjNDJLWHF6aW1BQnIzRHRhNklmOE9tdmdhVU81aEhHTGdubFhT?=
+ =?utf-8?B?bmk5V2ZIQnBDZ1plVGlDdEFpNlcrY0VubnYvbFJRSmg0NTRmWEtpbVRtRWUr?=
+ =?utf-8?B?SkxzYlE5S2xpVFhqakpNZ3dJMVUxYXJ0KytMN1FsZVlnL0IxMjIxcU1INElV?=
+ =?utf-8?B?d1I4RXRBSmltUy9LZURPZGVWcUpHU05mM3krekNzN24xUFFqcDBOREFmS0wr?=
+ =?utf-8?B?SmtTNmxST3JyNTYvYVI5ZkpMNUpYeHBxc2dUSldlRnFORUZDd1c3Y0pjdWQ2?=
+ =?utf-8?B?YXRRV3ZQMDFadFRqRENLRkdpaEZ3V0Z4b0U0a2pGS1RKM1RpVHNQVnBUSkhE?=
+ =?utf-8?B?Yng5YTZZRmJFZk5SQXVXYlVnS2VBdEozdHcvVDRmbFBtSzV3dW5QZ0pQWFFm?=
+ =?utf-8?B?R3ZwUEJ3Yi82SGU4K0w5a3VwV1c0eVFwQ1ZkQmJQUkU5VFkzTHEzNy8zb0Rt?=
+ =?utf-8?B?TFJ3dlRLYkUvaC9uL2p2TThLT1YrM2l2L0EvdkI4dUxodmVBTGJQbnBMczB6?=
+ =?utf-8?B?Vk05SlhQdHFjcUdJV1I4K1dMV3MzU2VSVkxNRHZUWlNwQTZYWlZOdktJSnpm?=
+ =?utf-8?B?UkdMUVR5L2JuWnJEKzJjVXJIemZ0Wk5RRjZRNklMeDhTNzlHS0FXb1VnWGZo?=
+ =?utf-8?B?TkkzekV3MTgvTnJleEx1VVJnK1dzUWljdkUyV3FJbmZ3YTBweGhDR3ltbm1q?=
+ =?utf-8?B?NWpvbUhSQUQ3Wmp1S0NIb0VscFg4OWtISmJjaElSMStaTXc3ZitUWDBCMURL?=
+ =?utf-8?B?SWdnWXZxalFKV0lJcnJkS0ZDdE5YTHF1TVJKMjdOOVNMRWtkM3EwQ2I4aVVa?=
+ =?utf-8?B?Q3BDMkQ1TmgraXh2MGp2UE84dmdoSGRtelFXbWpKZ1cvWUUxQ01LTFlVd3hR?=
+ =?utf-8?B?RlBVYUpkRjMzS1JLS2l6U1lrcXZFeFdSYVBKYnowTnF1S2IrRmdqT2Jrclpx?=
+ =?utf-8?B?TmZDNHF4eXZWYlFrY3hSVFRkK3lSbmxnQWlabVJnSUlRWjBXM1NRaVpUQ0pN?=
+ =?utf-8?B?MW40aytmNnUxM056cWJsUU12L1VHbkdneU9OaDVzZUQvdFJ3QTlKT0pQYjMx?=
+ =?utf-8?B?MzliMmFLd3EvQy85ekI0MHhhaWpPUUJabTh2MEN2cEhnWThQQnNyc1MrMnMx?=
+ =?utf-8?B?SHNkaGlla1E3UlkwR3hGREdPN0xNTXhuYnJ2aW9MR0IzL251enlDb0ZqcitB?=
+ =?utf-8?B?bnMvQnE4MDBhcTdoT1dnazNwL3NtQjNkL0lVVkk5ZkpHZm9uVVVPRUlUMjNq?=
+ =?utf-8?B?c3duMjVLMldJOUFwV3NZRHM4K0xJU1BxMXVkcVNaRUZZOEVMdlY0VStnNVJL?=
+ =?utf-8?B?ZzZwb3NxZmRsUGp0dFFVUC9mWlZWd1E3akh4U3hQMVZmRldwOXFPMzZCZjZE?=
+ =?utf-8?B?L3F5dndrd1VtR0ZlTHkyUWgyVUJSaXpaOHBRem9rOC9YWllBV0JEQkxtS096?=
+ =?utf-8?B?WmhMTjQ5bFJFS0JMektjR21Hd3M0bDdDKzQxaUNMNXRCY3JWdUlkSXNKdUM0?=
+ =?utf-8?B?NjV4d3NYbkd2bmd1cGJFMi9mQ0pyWEFlNEhsN0QwVkFVeUVVeVg5MXA3QUhS?=
+ =?utf-8?B?MkhKcXo3VWhQM3pLK20wTmJxWGVzaldaUTZMTGNnNDlXYnFnNUJud3owSGFQ?=
+ =?utf-8?B?TTZYbGdOajcwa2xreE9hbjlIVzU3UkFGbFQvb3NzaGswODJpb3UwTjRyK3JZ?=
+ =?utf-8?B?c1NGeVlUNldXeGhGRmhNMk5FRG1EbUxGQ0lGd21JMkZjTkxId3FYYUdnZi82?=
+ =?utf-8?B?dmhuVnlPdXIrTExXV0UzaDBxcVlQbWFrNGhGdlR6MEtLVnE2UnJVSUhMOE41?=
+ =?utf-8?B?R3FLeUpuRWc1YjBpTzd2YzIzZWxxb05OZ1hydmwxNEVEZzlhMmJndW1jQUNX?=
+ =?utf-8?B?MHF5R1RlM0FOYkpJci83TEVMTkpETXE1cDlaMks5d1NsLzkzQ3hHWWYvZ2RD?=
+ =?utf-8?B?WWlVM2twUXN3ZmJlZ0txaU0vR1MvbzJkR1NndW11cTBRVVk2eDd2bkdub1V3?=
+ =?utf-8?B?aUNWUzBIemFQZ25CRDUxa2NmSitZbHpwR1F4dWw4RXZOaHZ6aU9IWVprK08z?=
+ =?utf-8?B?dWpTbUxtRjVValNNeHJxekhZckVwMVRxNkFDb2psVnpwbDBKVk9jOCtSZUor?=
+ =?utf-8?B?YXd1OVJwZm9EVWZvUk4vdHA5ZWczTzNocnJILzk1QkVTSFRHMDFxSlBlRHY1?=
+ =?utf-8?B?NS9DU0tXVmxRenBZWXZOMlFFUE5ta0tKbDhVQW4rSllTSGJrZFhLcWdLa1N3?=
+ =?utf-8?B?OTYyVHduR1gySlhkNVlNZDlVd1orZ2NlOU4zTEhCN1M1L2k5Rll6S1BYZkFx?=
+ =?utf-8?B?amRIL0hHeDdYc1YyMVU5bUFNVXNydnJVVVB6ZkJmR3RycHR6ZWNoQT09?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f3524e6e-5677-4ebd-4382-08def86450e5
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1e8897e1-d37f-4178-02ea-08def86ab4a6
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2026 11:24:47.2384
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2026 12:10:31.6330
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: M8in8sgywNXy324uElHAEDgFlFIUq0qd9Lnehch4zVLWiVUNos3w+QgKAPH/OI9+96Q/HD8STW++foDxANGTDQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR10MB8596
+X-MS-Exchange-CrossTenant-UserPrincipalName: SbnqwRL7fbyLMY4iW4utzJcxmO5pUX7UNzzj6aNIK6/svnyLfWI/XcnaDnirY/t2hClnUQJ0wsIagdl4ZSBIlg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB6252
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 12 Aug 2026 11:25:05 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23904
+ <cip-dev@lists.cip-project.org>; Wed, 12 Aug 2026 12:10:45 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23905
 
-On 12.08.26 11:25, Heinisch, Alexander (FT RPD CED SES-AT) wrote:
-> On Tue, 2026-08-11 at 09:37 +0200, Jan Kiszka wrote:
->> On 11.08.26 08:58, Heinisch, Alexander (FT RPD CED SES-AT) wrote:
->>> On Mon, 2026-08-10 at 15:06 +0200, Jan Kiszka wrote:
->>>> On 10.08.26 14:02, Heinisch, Alexander (FT RPD CED SES-AT) wrote:
->>>>> On Mon, 2026-08-10 at 12:39 +0200, Jan Kiszka wrote:
->>>>>> On 10.08.26 08:55, Quirin Gylstorff wrote:
->>>>>>>
->>>>>>>
->>>>>>> On 8/7/26 5:44 PM, alexander.heinisch@siemens.com=C2=A0wrote:
->>>>>>>> From: Alexander Heinisch <alexander.heinisch@siemens.com>
->>>>>>>>
->>>>>>>> By default factory reset clears the tpm. Therefore, keys
->>>>>>>> needed
->>>>>>>> to
->>>>>>>> decrypt the immutable A/B rootfs in full disk encryption
->>>>>>>> setups
->>>>>>>> cannot be retrieved anymore. Thus, the boot fails and the
->>>>>>>> device
->>>>>>>> cannot be recovered.
->>>>>>>>
->>>>>>>> This patch series removes such combination from the
->>>>>>>> kconfig
->>>>>>>> and
->>>>>>>> documents
->>>>>>>> the issue explicitly.
->>>>>>>
->>>>>>> This was never in scope of the factory reset. You could
->>>>>>> implement
->>>>>
->>>>> Probably, but it was part of the configuration options. Imo,
->>>>> those
->>>>> shall serve as a demo for isar-cip-core functionality, and only
->>>>> include
->>>>> valid/supported scenarios.
->>>>>
->>>>>>> it by
->>>>>>> moving the keys into the boot partition. But this move will
->>>>>>> create
->>>>>>> another can of worms.
->>>>>
->>>>> Temporarily moving the keys to boot partition, is not an
->>>>> option.
->>>>> How are they secured there?
->>>>>
->>>>> A reencrypt with new keys stored in TPM after TPM clearing of
->>>>> the
->>>>> partitions holding the rootfs after they got unsealed could be
->>>>> an
->>>>> option. But yes, that implies major rework of the factory-reset
->>>>> workflow in initramfs and potentially has side effects /
->>>>> dependencies
->>>>> on crypt hook local-top. And yes, there may be a small chance
->>>>> to
->>>>> brick
->>>>> the device when the device powercycles at the wrong time.
->>>>> Else, a more graceful removal of keys from TPM could also be an
->>>>> option.
->>>>>
->>>>> All things, we need to think about in much more detail, also
->>>>> considering the number of use cases for a true factory reset
->>>>> support
->>>>> with full disk encryption in place.
->>>>>
->>>>>>>
->>>>>>
->>>>>> We already have an option to skip TPM reset if not desired or
->>>>>> problematic. Why not use that, or build smarter on top of it?
->>>>>
->>>>> Yes,=C2=A0there is an option to bypass TPM clearing. That's also
->>>>> documented.
->>>>>
->>>>> The patchset is only about to document that the default
->>>>> factory-
->>>>> reset
->>>>> config does not support full disk encryption setups and not to
->>>>> offer a
->>>>> demo config option for this non-supported case.
->>>>>
->>>>>>
->>>>>> Factory reset has already way too many limitations. I would
->>>>>> rather
->>>>>> likto
->>>>>> work in more cases than in less.
->>>>>
->>>>> Without major rework, the only option is to disable TPM-
->>>>> clearing
->>>>> for
->>>>> factory-reset in FDE setups, but that hides the fact, that it
->>>>> is no
->>>>> complete factory reset. So either Kconfig shall be explicit
->>>>> about
->>>>> that,
->>>>> or not offer the option for FDE + factory-reset at all (what I
->>>>> did).
->>>>>
->>>>
->>>> Resetting the TPM is the poor-man's approach to factory reset
->>>> anyway.
->>> Yes, but without TPM reset current disk wiping strategy is to weak.
->>>
->>
->> One of the limitations of the current approach. Let's fix it so that
->> TPM-wiping-off will not cause too many surprises.
->>
->>>> It
->>>> is not needed to reset the disk encryption keys, also for the
->>>> data
->>>> partition, and we are so far too lazy to identify and delete
->>>> other
->>>> resources in the TPM in a more targeted manner. Or was there
->>>> anything
->>>> technically preventing an "all-objects-except-for" TPM reset?
->>>>
->>>
->>> Is it a reset so one can hand off the device to someone else? Is it
->>> a
->>> reset so same customer can start over again cleanly? Or is it a
->>> decommissioning without device reuse?
->>>
->>> Currently, the key exposure is not limited to the initramfs hook
->>> implementing the crypt setup. So depending on the system, users may
->>> retrieve the keys of their system. If such device is recycled and
->>> potentially shipped to another customer, either a key exchange for
->>> the
->>> disk encryption is needed or the key stored in TPM must be sealed
->>> so it
->>> cannot be used after the crypt setup.
->>>
->>> Not sure about the actual requirements that led to the factory-
->>> reset
->>> implementation. If keeping TPM keys for disk-encryption is ok, a
->>> clean
->>> wipe of the contents would simplify things.
->>> Do we even want to support FDE use cases for factory-reset? systemd
->>> (which served as a blueprint for the API afaik) does not.
->>>
->>
->> All valid questions...
->=20
-> How to proceed with this patch set?
->=20
-> Currently, FDE + factory-reset is broken =3D> shouldn't be included in
-> Kconfig and should be documented until fixed.
->=20
+On 12.08.26 09:18, Gourav Singh wrote:
+> Drop the local listmount04 compatibility patch since the fix is now
+> included in upstream LTP 20260529.
+> 
+> The patch was originally added in:
+> 2647471156b128bf8b0fb1d726bd05099fbbe1bd
+> 
+> Signed-off-by: Gourav Singh <gouravsingh@siemens.com>
+> ---
+>  ...date-struct-mnt_id_req-support-for-k.patch | 195 ------------------
+>  ...-full_20250930.bb => ltp-full_20260529.bb} |   4 +-
+>  2 files changed, 1 insertion(+), 198 deletions(-)
+>  delete mode 100644 recipes-core/ltp/files/0001-listmount04.c-Update-struct-mnt_id_req-support-for-k.patch
+>  rename recipes-core/ltp/{ltp-full_20250930.bb => ltp-full_20260529.bb} (54%)
+> 
+> diff --git a/recipes-core/ltp/files/0001-listmount04.c-Update-struct-mnt_id_req-support-for-k.patch b/recipes-core/ltp/files/0001-listmount04.c-Update-struct-mnt_id_req-support-for-k.patch
+> deleted file mode 100644
+> index aecfe54..0000000
+> --- a/recipes-core/ltp/files/0001-listmount04.c-Update-struct-mnt_id_req-support-for-k.patch
+> +++ /dev/null
+> @@ -1,195 +0,0 @@
+> -From 2d066ead3d6ef504c82551b12306e751d23ddb45 Mon Sep 17 00:00:00 2001
+> -From: Wei Gao <wegao@suse.com>
+> -Date: Sun, 14 Dec 2025 02:15:20 +0000
+> -Subject: [PATCH] listmount04.c: Update struct mnt_id_req support for kernel >=
+> - 6.18
+> -
+> -Kernel change from v6.18-rc7
+> -78f0e33cd6c93 ("fs/namespace: correctly handle errors returned by grab_requested_mnt_ns")
+> -causes the test failure with following error message:
+> -listmount04.c:128: TFAIL: invalid mnt_id_req.spare expected EINVAL: EBADF (9)
+> -
+> -The fix require following changes:
+> -
+> -* struct mnt_id_req got new member mnt_ns_fd in v6.18-rc7.  That is
+> -fixed in a fallback defintion in lapi/. If the fallback is used is now
+> -done via typedef (that requires also update in statmount.h).
+> -
+> -* New kernels (>= 6.18) have also different errno. This is fixed by
+> -runtime check.
+> -
+> -Link: https://lore.kernel.org/ltp/20251214021541.3256-1-wegao@suse.com/
+> -Reviewed-by: Petr Vorel <pvorel@suse.cz>
+> -Reviewed-by: Li Wang <liwang@redhat.com>
+> -Reviewed-by: Cyril Hrubis <chrubis@suse.cz>
+> -Signed-off-by: Wei Gao <wegao@suse.com>
+> -[ pvorel: Shorten TCONF, rewrite commit message ]
+> -Signed-off-by: Petr Vorel <pvorel@suse.cz>
+> ----
+> - configure.ac                                  |  2 +-
+> - include/lapi/mount.h                          | 10 +++--
+> - .../kernel/syscalls/listmount/listmount.h     |  2 +-
+> - .../kernel/syscalls/listmount/listmount04.c   | 37 +++++++++++++++++--
+> - .../kernel/syscalls/statmount/statmount.h     |  2 +-
+> - 5 files changed, 44 insertions(+), 9 deletions(-)
+> -
+> -diff --git a/configure.ac b/configure.ac
+> -index 0480f46ca..a0ebbb34d 100644
+> ---- a/configure.ac
+> -+++ b/configure.ac
+> -@@ -262,7 +262,7 @@ AC_CHECK_TYPES([struct cachestat_range],,,[#include <sys/mman.h>])
+> - AC_CHECK_TYPES([struct cachestat],,,[#include <sys/mman.h>])
+> -
+> - # Defined in <linux/mount.h>, but include/lapi/mount.h includes <sys/mount.h> */
+> --AC_CHECK_TYPES([struct mnt_id_req],,,[#include <sys/mount.h>])
+> -+AC_CHECK_MEMBERS([struct mnt_id_req.mnt_ns_fd],,,[#include <sys/mount.h>])
+> - AC_CHECK_TYPES([struct statmount],,,[#include <sys/mount.h>])
+> - AC_CHECK_MEMBERS([struct statmount.mnt_ns_id],,,[#include <unistd.h>
+> - #include <linux/mount.h>])
+> -diff --git a/include/lapi/mount.h b/include/lapi/mount.h
+> -index 0f7bb5e43..3b296fc9c 100644
+> ---- a/include/lapi/mount.h
+> -+++ b/include/lapi/mount.h
+> -@@ -45,14 +45,18 @@
+> - # define MS_NOSYMFOLLOW 256
+> - #endif
+> -
+> --#ifndef HAVE_STRUCT_MNT_ID_REQ
+> --struct mnt_id_req {
+> -+struct mnt_id_req_fallback {
+> - 	uint32_t size;
+> --	uint32_t spare;
+> -+	uint32_t mnt_ns_fd;
+> - 	uint64_t mnt_id;
+> - 	uint64_t param;
+> - 	uint64_t mnt_ns_id;
+> - };
+> -+
+> -+#ifndef HAVE_STRUCT_MNT_ID_REQ_MNT_NS_FD
+> -+typedef struct mnt_id_req_fallback mnt_id_req;
+> -+#else
+> -+typedef struct mnt_id_req mnt_id_req;
+> - #endif
+> -
+> - #ifndef HAVE_STRUCT_STATMOUNT
+> -diff --git a/testcases/kernel/syscalls/listmount/listmount.h b/testcases/kernel/syscalls/listmount/listmount.h
+> -index aad927f71..e7ef375d7 100644
+> ---- a/testcases/kernel/syscalls/listmount/listmount.h
+> -+++ b/testcases/kernel/syscalls/listmount/listmount.h
+> -@@ -15,7 +15,7 @@
+> - static inline ssize_t listmount(uint64_t mnt_id, uint64_t last_mnt_id,
+> - 			 uint64_t list[], size_t num, unsigned int flags)
+> - {
+> --	struct mnt_id_req req = {
+> -+	mnt_id_req req = {
+> - 		.size = MNT_ID_REQ_SIZE_VER0,
+> - 		.mnt_id = mnt_id,
+> - 		.param = last_mnt_id,
+> -diff --git a/testcases/kernel/syscalls/listmount/listmount04.c b/testcases/kernel/syscalls/listmount/listmount04.c
+> -index a6921a249..2b8b49101 100644
+> ---- a/testcases/kernel/syscalls/listmount/listmount04.c
+> -+++ b/testcases/kernel/syscalls/listmount/listmount04.c
+> -@@ -14,14 +14,18 @@
+> -
+> - #define _GNU_SOURCE
+> -
+> -+#include "config.h"
+> - #include "tst_test.h"
+> - #include "lapi/mount.h"
+> - #include "lapi/syscalls.h"
+> -
+> - #define MNT_SIZE 32
+> -+#define BEFORE_6_18 1
+> -+#define AFTER_6_18 2
+> -
+> --static struct mnt_id_req *request;
+> -+static mnt_id_req *request;
+> - static uint64_t mnt_ids[MNT_SIZE];
+> -+static int kver;
+> -
+> - static struct tcase {
+> - 	int req_usage;
+> -@@ -34,6 +38,7 @@ static struct tcase {
+> - 	uint64_t flags;
+> - 	int exp_errno;
+> - 	char *msg;
+> -+	int kver;
+> - } tcases[] = {
+> - 	{
+> - 		.req_usage = 0,
+> -@@ -79,6 +84,18 @@ static struct tcase {
+> - 		.nr_mnt_ids = MNT_SIZE,
+> - 		.exp_errno = EINVAL,
+> - 		.msg = "invalid mnt_id_req.spare",
+> -+		.kver = BEFORE_6_18,
+> -+	},
+> -+	{
+> -+		.req_usage = 1,
+> -+		.size = MNT_ID_REQ_SIZE_VER0,
+> -+		.spare = -1,
+> -+		.mnt_id = LSMT_ROOT,
+> -+		.mnt_ids = mnt_ids,
+> -+		.nr_mnt_ids = MNT_SIZE,
+> -+		.exp_errno = EBADF,
+> -+		.msg = "invalid mnt_id_req.mnt_ns_fd",
+> -+		.kver = AFTER_6_18,
+> - 	},
+> - 	{
+> - 		.req_usage = 1,
+> -@@ -113,7 +130,12 @@ static struct tcase {
+> - static void run(unsigned int n)
+> - {
+> - 	struct tcase *tc = &tcases[n];
+> --	struct mnt_id_req *req = NULL;
+> -+	mnt_id_req *req = NULL;
+> -+
+> -+	if (tc->kver && tc->kver != kver) {
+> -+		tst_res(TCONF, "Test not suitable for current kernel version");
+> -+		return;
+> -+	}
+> -
+> - 	memset(mnt_ids, 0, sizeof(mnt_ids));
+> -
+> -@@ -122,7 +144,7 @@ static void run(unsigned int n)
+> - 		req->mnt_id = tc->mnt_id;
+> - 		req->param = tc->param;
+> - 		req->size = tc->size;
+> --		req->spare = tc->spare;
+> -+		req->mnt_ns_fd = tc->spare;
+> - 	}
+> -
+> - 	TST_EXP_FAIL(tst_syscall(__NR_listmount, req, tc->mnt_ids,
+> -@@ -130,8 +152,17 @@ static void run(unsigned int n)
+> - 		"%s", tc->msg);
+> - }
+> -
+> -+static void setup(void)
+> -+{
+> -+	if (tst_kvercmp(6, 18, 0) >= 0)
+> -+		kver = AFTER_6_18;
+> -+	else
+> -+		kver = BEFORE_6_18;
+> -+}
+> -+
+> - static struct tst_test test = {
+> - 	.test = run,
+> -+	.setup = setup,
+> - 	.tcnt = ARRAY_SIZE(tcases),
+> - 	.min_kver = "6.11",
+> - 	.bufs = (struct tst_buffers []) {
+> -diff --git a/testcases/kernel/syscalls/statmount/statmount.h b/testcases/kernel/syscalls/statmount/statmount.h
+> -index d21d7f8da..4217a82d8 100644
+> ---- a/testcases/kernel/syscalls/statmount/statmount.h
+> -+++ b/testcases/kernel/syscalls/statmount/statmount.h
+> -@@ -16,7 +16,7 @@
+> - static inline int statmount(uint64_t mnt_id, uint64_t mask, struct statmount *buf,
+> - 		     size_t bufsize, unsigned int flags)
+> - {
+> --	struct mnt_id_req req = {
+> -+	mnt_id_req req = {
+> - 		.size = MNT_ID_REQ_SIZE_VER0,
+> - 		.mnt_id = mnt_id,
+> - 		.param = mask,
+> ---
+> -2.51.0
+> -
+> diff --git a/recipes-core/ltp/ltp-full_20250930.bb b/recipes-core/ltp/ltp-full_20260529.bb
+> similarity index 54%
+> rename from recipes-core/ltp/ltp-full_20250930.bb
+> rename to recipes-core/ltp/ltp-full_20260529.bb
+> index 42a9632..994bd73 100644
+> --- a/recipes-core/ltp/ltp-full_20250930.bb
+> +++ b/recipes-core/ltp/ltp-full_20260529.bb
+> @@ -11,6 +11,4 @@
+> 
+>  require recipes-core/ltp/ltp.inc
+> 
+> -SRC_URI += "file://0001-listmount04.c-Update-struct-mnt_id_req-support-for-k.patch"
+> -
+> -SRC_URI[sha256sum] = "048fa4d69ddbe8a94aa15da9bdc85713ab07a0abbc3de2b8bdd9757644aef1e4"
+> +SRC_URI[sha256sum] = "685d83c6e370ac09201fb79593412f868fe031ee2890e204b5727fedcf51fb47"
+> --
+> 2.39.5
+> 
 
-...and I would like it to be fixed. At least factory-resetting without
-TPM clearing should work, and then we could use that path for now. And
-we would also fix the currently borken combination of data-encryption +
-factory-reset + TPM-reset-off.
+Thanks for taking care! For unknown reasons, the patch-removal part did
+not apply for me, so I merged manually. Maybe a local tooling issue.
 
 Jan
 
---=20
+-- 
 Siemens AG, Foundational Technologies
 Linux Expert Center
 
