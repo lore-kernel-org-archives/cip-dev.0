@@ -2,37 +2,35 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CF67C5DF69
-	for <webhook@archiver.kernel.org>; Fri, 14 Aug 2026 13:01:47 +0000 (UTC)
-Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.12238.1786712503256607902
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBDE1C5CFC1
+	for <webhook@archiver.kernel.org>; Fri, 14 Aug 2026 13:01:46 +0000 (UTC)
+Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.12239.1786712503256736533
  for <cip-dev@lists.cip-project.org>;
  Fri, 14 Aug 2026 06:01:45 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=jan.kiszka@siemens.com header.s=fm2 header.b=FDYZ51lT;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.225, mailfrom: fm-294854-20260814130139777e9e77940002071d-lenruj@rts-flowmailer.siemens.com)
-Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 20260814130139777e9e77940002071d
+ dkim=pass header.i=jan.kiszka@siemens.com header.s=fm2 header.b=gu4wKnKK;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.226, mailfrom: fm-294854-20260814130139aca2d1194c0002075f-ca_h84@rts-flowmailer.siemens.com)
+Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20260814130139aca2d1194c0002075f
         for <cip-dev@lists.cip-project.org>;
         Fri, 14 Aug 2026 15:01:40 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
  d=siemens.com; i=jan.kiszka@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=2iBcmmSkEDkxvju/I1yMMR0Nt+whLMmQCiljtdL9cks=;
- b=FDYZ51lTQseaV+MKSThJ0NunyzegIyNVbXFI3bAKPnvswy5v4Cx/gx8niMtFi+pljMFg6k
- W+eKLUNpVwQp5GWiC9GU/n/PsL2zcfLl9AkS1IZVGiESoYLupxLkgKaOj4BpvvBhnISigcWN
- NHeM4fT3qG8P3XyQOZguIuEZPZC7VE7dVZ2RtlzrpF+MyYvyssIN0WfYu5CsHbB/neaUcarC
- LsXi7KWk3QjjnwFZEhY3iUuqEWLfKJTddR9+XcnfLOvJxW+syIiIIwLxysXreGxo80y5JWRR
- oEHMCXNhCDCJHX9XHBEgCFmenFi0jYrqvzo+lIdRFgQkwOsRNZOgt1Ig==;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=psW6ckyKXF8WcxUIyt9OVMhjiVCByxVCdXTUieu9z44=;
+ b=gu4wKnKKS/UlKtASiaCiFOuJQEn+7BYOOS/BiPj6zOaM0uXu0bYsDP+/v88vB/plj13otO
+ DCMUgalTEaPrbP4AK8Id65xDX75VqCK6cYjBaIIrVL1Sn45FR8dfcnaLpDMObYYAq1BkuZCs
+ v8p7z5SNrBNQ5Sp14DIs9bnyxtbinq2ENdvWdfyaXBsegghVDFNkjovnX4M1iOr4EYBRS6jG
+ FspGHFChq7lbwYVUovo0+sl4I4za4oxdgH5dZxkWf5eAl6NPbKewED0pQ/9JUrErbaGnbD6L
+ S5nUuTP3WWUf0d0TO7pZ4wDZJh5XSF/SY7/5aP01o1qpixFZDEDTkSrQ==;
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: cip-dev@lists.cip-project.org
 Cc: Sai Sree Kartheek Adivi <s-adivi@ti.com>,
 	Sven Bauer <svenbauer@siemens.com>,
 	Benedikt Niedermayr <benedikt.niedermayr@siemens.com>
-Subject: [isar-cip-core][PATCH 2/4] optee-ftpm: Factor out common recipe bits of qemu-arm64 and ti-k3 targets
-Date: Fri, 14 Aug 2026 15:01:37 +0200
-Message-ID: <a6cba1d1cbe1d691eda7c651a9872216f5a533ba.1786712498.git.jan.kiszka@siemens.com>
-In-Reply-To: <cover.1786712498.git.jan.kiszka@siemens.com>
-References: <cover.1786712498.git.jan.kiszka@siemens.com>
+Subject: [isar-cip-core][PATCH 0/4] OP-TEE and fTPM updates
+Date: Fri, 14 Aug 2026 15:01:35 +0200
+Message-ID: <cover.1786712498.git.jan.kiszka@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Flowmailer-Platform: Siemens
@@ -40,93 +38,69 @@ Feedback-ID: 519:519-294854:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 14 Aug 2026 13:01:47 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23940
+ <cip-dev@lists.cip-project.org>; Fri, 14 Aug 2026 13:01:46 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23939
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+This is bumping the version of our OP-TEE integration, primarily to
+refresh the optee_ftpm feed so that recently published CVEs [1] and [2]
+can be addressed. The updates take place for both qemu-arm64 and the
+ti-k3 (used for AM62Px SK).
 
-As long as both are in sync, it's easier to maintain this way.
+While firmware is not a delivery CIP has committed to maintain, we know
+some downstream consumers of the bits we have here. Furthermore, the
+current TPM provider to optee_ftpm imposes certain challenges on
+integrators that became specifically visible in the light of these two
+CVEs. We therefore think it is more efficient to share common bits here,
+rather than waiting for the ecosystem to improve further first.
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
- ...-ftpm-qemu-arm64_4.10+v1.62r1-48-ge9fc7b8.bb | 17 +----------------
- ...optee-ftpm-ti-k3_4.10+v1.62r1-48-ge9fc7b8.bb | 17 +----------------
- ... => optee-ftpm_4.10+v1.62r1-48-ge9fc7b8.inc} |  5 -----
- 3 files changed, 2 insertions(+), 37 deletions(-)
- copy recipes-bsp/optee-ftpm/{optee-ftpm-qemu-arm64_4.10+v1.62r1-48-ge9fc7b8.bb => optee-ftpm_4.10+v1.62r1-48-ge9fc7b8.inc} (88%)
+For further details on fTPM updates, see also [3] and [4].
 
-diff --git a/recipes-bsp/optee-ftpm/optee-ftpm-qemu-arm64_4.10+v1.62r1-48-ge9fc7b8.bb b/recipes-bsp/optee-ftpm/optee-ftpm-qemu-arm64_4.10+v1.62r1-48-ge9fc7b8.bb
-index 7c6b2b1d..da832475 100644
---- a/recipes-bsp/optee-ftpm/optee-ftpm-qemu-arm64_4.10+v1.62r1-48-ge9fc7b8.bb
-+++ b/recipes-bsp/optee-ftpm/optee-ftpm-qemu-arm64_4.10+v1.62r1-48-ge9fc7b8.bb
-@@ -9,22 +9,7 @@
- # SPDX-License-Identifier: MIT
- #
- 
--inherit optee-ftpm
--
--MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
--
--SRC_URI += " \
--    https://github.com/OP-TEE/optee_ftpm/archive/${SRCREV}.tar.gz;downloadfilename=optee_ftpm-${SRCREV}.tar.gz \
--    https://github.com/microsoft/ms-tpm-20-ref/archive/${SRCREV_ms-tpm}.tar.gz;name=ms-tpm;downloadfilename=ms-tpm-20-ref-${SRCREV_ms-tpm}.tar.gz \
--    "
--SRCREV = "a09269b15de635e1816fe832e26adfbfb44c5455"
--SRCREV_ms-tpm = "e9fc7b89d865536c46deb63f9c7d0121a3ded49c"
--
--SRC_URI[sha256sum] = "1ad448048fa8e507459fb24cc1e7e1a42099303a272c8804f8d62894090d047b"
--SRC_URI[ms-tpm.sha256sum] = "b77d092c0dde362adf6bc88a580ca7c8abe124d69bb734bf28f8904ae30494a4"
--
--S = "${WORKDIR}/optee_ftpm-${SRCREV}"
--MS_TPM_20_REF_DIR = "ms-tpm-20-ref-${SRCREV_ms-tpm}"
-+require optee-ftpm_${PV}.inc
- 
- OPTEE_NAME = "qemu-arm64"
- 
-diff --git a/recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_4.10+v1.62r1-48-ge9fc7b8.bb b/recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_4.10+v1.62r1-48-ge9fc7b8.bb
-index b43d6b44..7e7921a0 100644
---- a/recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_4.10+v1.62r1-48-ge9fc7b8.bb
-+++ b/recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_4.10+v1.62r1-48-ge9fc7b8.bb
-@@ -7,22 +7,7 @@
- # SPDX-License-Identifier: MIT
- #
- 
--inherit optee-ftpm
--
--MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
--
--SRC_URI += " \
--    https://github.com/OP-TEE/optee_ftpm/archive/${SRCREV}.tar.gz;downloadfilename=optee_ftpm-${SRCREV}.tar.gz \
--    https://github.com/microsoft/ms-tpm-20-ref/archive/${SRCREV_ms-tpm}.tar.gz;name=ms-tpm;downloadfilename=ms-tpm-20-ref-${SRCREV_ms-tpm}.tar.gz \
--    "
--SRCREV = "a09269b15de635e1816fe832e26adfbfb44c5455"
--SRCREV_ms-tpm = "e9fc7b89d865536c46deb63f9c7d0121a3ded49c"
--
--SRC_URI[sha256sum] = "1ad448048fa8e507459fb24cc1e7e1a42099303a272c8804f8d62894090d047b"
--SRC_URI[ms-tpm.sha256sum] = "b77d092c0dde362adf6bc88a580ca7c8abe124d69bb734bf28f8904ae30494a4"
--
--S = "${WORKDIR}/optee_ftpm-${SRCREV}"
--MS_TPM_20_REF_DIR = "ms-tpm-20-ref-${SRCREV_ms-tpm}"
-+require recipes-bsp/optee-ftpm/optee-ftpm_${PV}.inc
- 
- OPTEE_NAME = "ti-k3"
- 
-diff --git a/recipes-bsp/optee-ftpm/optee-ftpm-qemu-arm64_4.10+v1.62r1-48-ge9fc7b8.bb b/recipes-bsp/optee-ftpm/optee-ftpm_4.10+v1.62r1-48-ge9fc7b8.inc
-similarity index 88%
-copy from recipes-bsp/optee-ftpm/optee-ftpm-qemu-arm64_4.10+v1.62r1-48-ge9fc7b8.bb
-copy to recipes-bsp/optee-ftpm/optee-ftpm_4.10+v1.62r1-48-ge9fc7b8.inc
-index 7c6b2b1d..232508f6 100644
---- a/recipes-bsp/optee-ftpm/optee-ftpm-qemu-arm64_4.10+v1.62r1-48-ge9fc7b8.bb
-+++ b/recipes-bsp/optee-ftpm/optee-ftpm_4.10+v1.62r1-48-ge9fc7b8.inc
-@@ -25,8 +25,3 @@ SRC_URI[ms-tpm.sha256sum] = "b77d092c0dde362adf6bc88a580ca7c8abe124d69bb734bf28f
- 
- S = "${WORKDIR}/optee_ftpm-${SRCREV}"
- MS_TPM_20_REF_DIR = "ms-tpm-20-ref-${SRCREV_ms-tpm}"
--
--OPTEE_NAME = "qemu-arm64"
--
--TA_CPU = "cortex-a53"
--TA_DEV_KIT_DIR = "/usr/lib/optee-os/${OPTEE_NAME}/export-ta_arm64"
+Jan
+
+[1] https://www.cve.org/CVERecord?id=CVE-2026-6726
+[2] https://www.cve.org/CVERecord?id=CVE-2026-6727
+[3] https://github.com/OP-TEE/optee_ftpm/issues/29
+[4] https://github.com/OP-TEE/optee_ftpm/pull/25
+
+Jan Kiszka (4):
+  optee: Update to 4.10.0
+  optee-ftpm: Factor out common recipe bits of qemu-arm64 and ti-k3
+    targets
+  optee-ftpm: Update to TPM reference implementation V184
+  optee-ftpm: Apply security fixes for V184
+
+ ...1-Address-improper-object-slot-reuse.patch |   95 +
+ ...PM-2.0-Reference-Implementation-v184.patch | 3885 +++++++++++++++++
+ ...EP-timing-side-channel-vulnerability.patch |   46 +
+ ...002-Disable-command-TPM2_CertifyX509.patch |   29 +
+ .../optee-ftpm-qemu-arm64_4.10+V184.bb        |   17 +
+ ...ftpm-qemu-arm64_4.8+v1.62r1-48-ge9fc7b8.bb |   32 -
+ .../optee-ftpm/optee-ftpm-ti-k3_4.10+V184.bb  |   15 +
+ ...ptee-ftpm-ti-k3_4.8+v1.62r1-48-ge9fc7b8.bb |   30 -
+ .../optee-ftpm/optee-ftpm_4.10+V184.inc       |   31 +
+ ...4.8.0.bb => optee-os-qemu-arm64_4.10.0.bb} |    0
+ ...8.0.inc => optee-os-qemu-arm64_4.10.0.inc} |    2 +-
+ ...=> optee-os-tadevkit-qemu-arm64_4.10.0.bb} |    0
+ ...0.bb => optee-os-tadevkit-ti-k3_4.10.0.bb} |    0
+ ...i-k3_4.8.0.bb => optee-os-ti-k3_4.10.0.bb} |    0
+ ...k3_4.8.0.inc => optee-os-ti-k3_4.10.0.inc} |    2 +-
+ 15 files changed, 4120 insertions(+), 64 deletions(-)
+ create mode 100644 recipes-bsp/optee-ftpm/files/0001-Address-improper-object-slot-reuse.patch
+ create mode 100644 recipes-bsp/optee-ftpm/files/0001-Update-to-TPM-2.0-Reference-Implementation-v184.patch
+ create mode 100644 recipes-bsp/optee-ftpm/files/0002-Address-RSA-OAEP-timing-side-channel-vulnerability.patch
+ create mode 100644 recipes-bsp/optee-ftpm/files/0002-Disable-command-TPM2_CertifyX509.patch
+ create mode 100644 recipes-bsp/optee-ftpm/optee-ftpm-qemu-arm64_4.10+V184.bb
+ delete mode 100644 recipes-bsp/optee-ftpm/optee-ftpm-qemu-arm64_4.8+v1.62r1-48-ge9fc7b8.bb
+ create mode 100644 recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_4.10+V184.bb
+ delete mode 100644 recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_4.8+v1.62r1-48-ge9fc7b8.bb
+ create mode 100644 recipes-bsp/optee-ftpm/optee-ftpm_4.10+V184.inc
+ rename recipes-bsp/optee-os/{optee-os-qemu-arm64_4.8.0.bb => optee-os-qemu-arm64_4.10.0.bb} (100%)
+ rename recipes-bsp/optee-os/{optee-os-qemu-arm64_4.8.0.inc => optee-os-qemu-arm64_4.10.0.inc} (78%)
+ rename recipes-bsp/optee-os/{optee-os-tadevkit-qemu-arm64_4.8.0.bb => optee-os-tadevkit-qemu-arm64_4.10.0.bb} (100%)
+ rename recipes-bsp/optee-os/{optee-os-tadevkit-ti-k3_4.8.0.bb => optee-os-tadevkit-ti-k3_4.10.0.bb} (100%)
+ rename recipes-bsp/optee-os/{optee-os-ti-k3_4.8.0.bb => optee-os-ti-k3_4.10.0.bb} (100%)
+ rename recipes-bsp/optee-os/{optee-os-ti-k3_4.8.0.inc => optee-os-ti-k3_4.10.0.inc} (90%)
+
 -- 
 2.47.3
 
