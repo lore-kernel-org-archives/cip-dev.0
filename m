@@ -2,67 +2,76 @@ Return-Path: <gouravsingh@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D7C2C5B572
-	for <webhook@archiver.kernel.org>; Thu, 13 Aug 2026 17:44:56 +0000 (UTC)
-Subject: Re: [isar-cip-core][PATCH] recipes-core: ltp: add python3 and jq runtime dependencies
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C42EC5CFC1
+	for <webhook@archiver.kernel.org>; Fri, 14 Aug 2026 07:16:08 +0000 (UTC)
+Received: from mta-65-228.siemens.flowmailer.net (mta-65-228.siemens.flowmailer.net [185.136.65.228])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.7924.1786691758512476598
+ for <cip-dev@lists.cip-project.org>;
+ Fri, 14 Aug 2026 00:16:00 -0700
+Authentication-Results: mx.groups.io;
+ dkim=pass header.i=gouravsingh@siemens.com header.s=fm2 header.b=bq5FMGeh;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.228, mailfrom: fm-1333022-20260814070423196395fc1a00020706-oyq1ro@rts-flowmailer.siemens.com)
+Received: by mta-65-228.siemens.flowmailer.net with ESMTPSA id 20260814070423196395fc1a00020706
+        for <cip-dev@lists.cip-project.org>;
+        Fri, 14 Aug 2026 09:15:54 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
+ d=siemens.com; i=gouravsingh@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=3E9/BYCbS02GZIBzoP0nAl8qYSAN63zU4uMsgS6IPNA=;
+ b=bq5FMGeheCrItc4KOVm7VuHRkPCSxlKI5lLBaO7mAW8NNtCRBiGbDQb39rM9rdQf3hpKOi
+ +vbvlKDd3ECoNeVWww5X1nilsTFc5JxW90em6efrdplXo9xxJSpNZCok8f89DeWaVwp0Lef6
+ 2v5+CtqmC+KeNyMjjDD8T4mpLrCvNQunP0BVWLmg03BSl3+60vtbLQ1d26t9GG31I7YZXruc
+ 7GeLwFnoGb81xdOVow5BRIfNDp1f0/PZIsa6TycfKzeuBJM4e+8m7Q2E8WsRM42SfJ8aKcKh
+ ZeNGWHB5CxfF95fy67go3JwmkuMFLZKXPSOh23j342GQifN3Pm7W7VJQ==;
+From: Gourav Singh <gouravsingh@siemens.com>
 To: cip-dev@lists.cip-project.org
-From: "Gourav Singh" <gouravsingh@siemens.com>
-X-Originating-Location: Chennai, Tamil Nadu, IN (167.103.7.17)
-X-Originating-Platform: Windows Edge 151
-User-Agent: GROUPS.IO Web Poster
+Cc: jan.kiszka@siemens.com,
+	Gourav Singh <gouravsingh@siemens.com>
+Subject: [isar-cip-core][PATCH v2] recipes-core: ltp: add python3 and jq runtime dependencies
+Date: Fri, 14 Aug 2026 12:34:13 +0530
+Message-Id: <20260814070413.899289-1-gouravsingh@siemens.com>
 MIME-Version: 1.0
-Date: Thu, 13 Aug 2026 10:44:54 -0700
-References: <20260813125157.877874-1-gouravsingh@siemens.com> <a14d818d-2cf6-45cc-9b10-8287842bfc9e@siemens.com>
-In-Reply-To: <a14d818d-2cf6-45cc-9b10-8287842bfc9e@siemens.com>
-Message-ID: <1489334.1786643066406456029@lists.cip-project.org>
-X-Old-Date: Thu, 13 Aug 2026 10:44:26 -0700
-Content-Type: multipart/alternative; boundary="lB3ej9mrKUX2Z0E20Wrq"
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1333022:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 13 Aug 2026 17:44:56 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23932
-Message-ID: <20260813174454.czr6XI0-Y2Ns_MxqS6t10t8gnKM8eQc5COzysI_lvK4@z>
+ <cip-dev@lists.cip-project.org>; Fri, 14 Aug 2026 07:16:08 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23933
 
---lB3ej9mrKUX2Z0E20Wrq
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+With LTP 20260529, runltp is deprecated and kirk is the recommended runner.
+Ensure ltp-full runtime includes tools needed by the bundled kirk runner
+and report parsing/inspection workflow.
 
-Hi Jan,
+- python3: required to execute /opt/ltp/kirk.
+- jq: required for parsing/inspection of JSON reports produced by kirk.
 
-Thanks for the review.
+This avoids manual package installation on targets and makes LTP/kirk usage
+reproducible.
 
-This is not a long-pending generic issue.
+Debian buster compatibility is preserved: buster provides Python 3.7, while
+kirk requires Python >= 3.6.
 
-With the latest LTP version (20260529), runltp is deprecated and the recomm=
-ended LTP runner is kirk [1]. Since kirk is Python-based, python3 is requir=
-ed to execute it. jq is needed for parsing/inspection of JSON reports produ=
-ced by kirk, so this patch adds both as runtime dependencies.
-[1]: Release LTP 20260529 =C2=B7 linux-test-project/ltp ( https://github.co=
-m/linux-test-project/ltp/releases/tag/20260529 )
+Signed-off-by: Gourav Singh <gouravsingh@siemens.com>
+---
+ recipes-core/ltp/files/debian/control.tmpl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Also, thanks for pointing out the list delivery issue. I=E2=80=99ll check m=
-y send-email setup/logs and resend so it properly reaches cip-dev.
+diff --git a/recipes-core/ltp/files/debian/control.tmpl b/recipes-core/ltp/files/debian/control.tmpl
+index a7d0087..039c6d0 100644
+--- a/recipes-core/ltp/files/debian/control.tmpl
++++ b/recipes-core/ltp/files/debian/control.tmpl
+@@ -11,7 +11,7 @@ Homepage: https://linux-test-project.github.io/
+ 
+ Package: ltp-full
+ Architecture: any
+-Depends: ${shlibs:Depends}, ${misc:Depends}
++Depends: ${shlibs:Depends}, ${misc:Depends}, python3, jq
+ Description: A collection of tools for testing the Linux kernel
+  The Linux Test Project is a joint project started by SGI,
+  developed and maintained by IBM, Cisco, Fujitsu, SUSE,
+-- 
+2.39.5
 
-Best regards,
-Gourav
-
---lB3ej9mrKUX2Z0E20Wrq
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-<div>Hi Jan,<br /><br />Thanks for the review.<br /><br />This is not a lon=
-g-pending generic issue.<br /><br />With the latest LTP version (20260529),=
- runltp is deprecated and the recommended LTP runner is kirk [1]. Since kir=
-k is Python-based, python3 is required to execute it. jq is needed for pars=
-ing/inspection of JSON reports produced by kirk, so this patch adds both as=
- runtime dependencies.<br />[1]: &nbsp;<a href=3D"https://github.com/linux-=
-test-project/ltp/releases/tag/20260529" target=3D"_blank" rel=3D"nofollow n=
-oopener">Release LTP 20260529 &middot; linux-test-project/ltp</a><br /><br =
-/>Also, thanks for pointing out the list delivery issue. I&rsquo;ll check m=
-y send-email setup/logs and resend so it properly reaches cip-dev.<br /><br=
- />Best regards,</div>
-<div>Gourav</div>
-
---lB3ej9mrKUX2Z0E20Wrq--
 
