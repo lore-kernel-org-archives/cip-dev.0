@@ -2,22 +2,22 @@ Return-Path: <cosmin-gabriel.tanislav.xa@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72E9CC5DF8E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB1A2C5DF95
 	for <webhook@archiver.kernel.org>; Fri, 21 Aug 2026 13:17:12 +0000 (UTC)
-Received: from OS0P286CU010.outbound.protection.outlook.com (OS0P286CU010.outbound.protection.outlook.com [40.107.74.35])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.7139.1787318231496562572
+Received: from OS0P286CU011.outbound.protection.outlook.com (OS0P286CU011.outbound.protection.outlook.com [52.101.228.21])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.7132.1787318225950137508
  for <cip-dev@lists.cip-project.org>;
- Fri, 21 Aug 2026 06:17:11 -0700
+ Fri, 21 Aug 2026 06:17:06 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@renesas.com header.s=selector1 header.b=iXgY0L27;
- spf=pass (domain: renesas.com, ip: 40.107.74.35, mailfrom: cosmin-gabriel.tanislav.xa@renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@renesas.com header.s=selector1 header.b=ZzZqzp3S;
+ spf=pass (domain: renesas.com, ip: 52.101.228.21, mailfrom: cosmin-gabriel.tanislav.xa@renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IvPRekfKjkplF2RmnCgNywTUPSYrBe5kpRQsk09m9Newn8O3f5COJ++ulc0N7IKg+hA5tEr0ikAmoTHMubpWzNyv5nEUdgDwFP3BncWIz2ZICTSX5oH3ldi/IwWJBQRejxpcrhY7v1PsRCghsvr/wpTFJEn5/yMM04YCAS3BkaJJ2nWuugTVfRlc1/HnigCoagCmU6U+bPL+1xqF9jZFwkhkSMjA5MM+ZAduodAoLFWnVV7p4/Ejvju24HJfO5PpoqPS2PsvQ8bk3+KlGcOnUxCncSIK1EKnn/ekfXrN/idfoYWcfsaakEMRWfyWbmIlMY/PBgexfozjzVobcfzy0A==
+ b=xiLYysDwP5KyyU17af9mviYN8Dfjfq8VVKY4SPFk3oMf4d3ssMrsessW7+oyp9dNZkNzip0vPUUigjZLW1DaX5tc3gR0rEAXEafgPCzHCGLAOK7I1Qcta06vHpTD+i6VO4gZPv4kWrrVUuHUodn9q1OQ4CjRE/nZp1nEN0ciOUMFyQhAzaadMa2HOCyQ3K5SXLeHnM8sRq9fUhlcGLfN0Nia3rfmqhCNv+LkVOPnrloXh4cG4bxgv2V5iGOMt0Gkydr0od40rooNt/08TIQkQFvDWkeUMZIQ9XsBivkLKZvM9YQ4briZwaW+Bymi33HdtLxapi0CZ0jid4MaH/Cscw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=E4bgI1Jc600UiKjthnVbmBWywBaEsF13nJsyJzbnWXk=;
- b=XX6rjxmCgbHHl69l7G290rPEnpdN2OKTlSePl7yQOQpmYqmn413unqqV+KfL4kohJeDb9+xhgFlW46aaSxE4RUO5MlJF0N7MNNY9+IdkbseYDwyYYe9pkc6r90V5lF2x+xr1uUhU/s9whbf3TugjUvSklLqRJZu/6ICBWas54REeM51nZAv7JdHB8tLTebYEwulf93y4Ko+TXDU8XyHaqjdne+mxTHBQPpzpqmJTSvmPKl8WxKURDPaXGqvQ/JFpFHLLuRY9rppK4WDfOr83bPh37FUTEAPOetwCufGJRYdwzThmS77KbtHaunBSis4UujpF6R7LgBGwsPQfszbfvg==
+ bh=PxbpdwWLRS2TyX29yfDpcq6OlGC6R8i4wBIKZjl+f3I=;
+ b=FCCTWpGHtDiNjXUMz6pi3jAvuZbm+YQL/lpjMztByU3+XqYVHWg0KX7z1eB52I8WSOFNaeQwIreW0H/gB1srytA8D3KNSqGHoCpLQn6WmZfM2EksTemAA6qQZI11dz5nzaC9JuhUKTR+4lse4bI6YPhI1Dof+1IjvoGOzcGiAgYigZT8CeeqVbVxBTJ/PvpXylXhoi4ou2d0GAm1a99jg8RV5dnleZxMRtlXYrTX/CrSMz3yKhzMbr18+uvuawp/fcN07t5QewOBk/dsZjr0FFmE7ugRTjB8V8/FDLwGO143O0DAns/WKoiSuchBCy5ORTxDR0CYygv/HG0byCA5tQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  8.62.32.50) smtp.rcpttodomain=lists.cip-project.org
  smtp.mailfrom=renesas.com; dmarc=pass (p=none sp=none pct=100) action=none
@@ -25,18 +25,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=E4bgI1Jc600UiKjthnVbmBWywBaEsF13nJsyJzbnWXk=;
- b=iXgY0L27pWlT9zrU2/Cpm6QnVOgX9LTDJ1Fhx+R+SS2mB6MK6nJF3M7N1bmnFI3aqBSEoIWVwkvGKJx/350aCUQK7s13ii9dgGmftNhEqaP5E4PrUlAxFLVakXjQpiM0I1urhnwRGdxDESOma/7PBS3xnHC8sbqKODKsbmAahqM=
-Received: from OS7PR01CA0247.jpnprd01.prod.outlook.com (2603:1096:604:24b::11)
- by OS9PR01MB16061.jpnprd01.prod.outlook.com (2603:1096:604:3dc::11) with
+ bh=PxbpdwWLRS2TyX29yfDpcq6OlGC6R8i4wBIKZjl+f3I=;
+ b=ZzZqzp3SP+sFKR1rSADLOhg+Ul/CKQ3p8mgAvW/WiBOjIxwxpZ+aSe+NIFzJcrp6I7HPkHDPopoGO0JZRUo0cvq24xWuOiFSBk2R9kFx1Vx91Lki+H4Qyoo5pNDb7NAM75G42EroqjjidJPMfFoon4QFCsmpi29jrYTrijBvmZo=
+Received: from TY6P286CA0001.JPNP286.PROD.OUTLOOK.COM (2603:1096:405:3b8::18)
+ by OS9PR01MB15459.jpnprd01.prod.outlook.com (2603:1096:604:3c0::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.339.11; Fri, 21 Aug
- 2026 13:17:06 +0000
-Received: from OS3PEPF0000003D.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:604:24b:cafe::64) by OS7PR01CA0247.outlook.office365.com
- (2603:1096:604:24b::11) with Microsoft SMTP Server (version=TLS1_3,
+ 2026 13:17:00 +0000
+Received: from TYO1EPF00005023.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:405:3b8:cafe::3d) by TY6P286CA0001.outlook.office365.com
+ (2603:1096:405:3b8::18) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.21.339.10 via Frontend Transport; Fri,
- 21 Aug 2026 13:17:06 +0000
+ 21 Aug 2026 13:16:59 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
  smtp.mailfrom=renesas.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=renesas.com;
@@ -44,19 +44,19 @@ Received-SPF: Pass (protection.outlook.com: domain of renesas.com designates
  8.62.32.50 as permitted sender) receiver=protection.outlook.com;
  client-ip=8.62.32.50; helo=ejcrelay004p.adwin.renesas.com; pr=E
 Received: from ejcrelay004p.adwin.renesas.com (8.62.32.50) by
- OS3PEPF0000003D.mail.protection.outlook.com (10.167.240.6) with Microsoft
+ TYO1EPF00005023.mail.protection.outlook.com (10.167.240.20) with Microsoft
  SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.360.3
- via Frontend Transport; Fri, 21 Aug 2026 13:17:06 +0000
+ via Frontend Transport; Fri, 21 Aug 2026 13:16:59 +0000
 Received: from demon-pc.localdomain (DEU-5CG5050QD0.adwin.renesas.com [10.226.92.179])
-	by ejcrelay004p.adwin.renesas.com (Postfix) with ESMTP id D0EAC3000374;
-	Fri, 21 Aug 2026 22:17:04 +0900 (JST)
+	by ejcrelay004p.adwin.renesas.com (Postfix) with ESMTP id 0083D3000374;
+	Fri, 21 Aug 2026 22:16:57 +0900 (JST)
 From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.12.y-cip 11/18] irqchip/renesas-rzt2h: Add software-triggered interrupts support
-Date: Fri, 21 Aug 2026 16:15:47 +0300
-Message-ID: <20260821131554.638741-12-cosmin-gabriel.tanislav.xa@renesas.com>
+Subject: [PATCH 6.12.y-cip 07/18] dt-bindings: pinctrl: renesas,r9a09g077-pinctrl: Document GPIO IRQ
+Date: Fri, 21 Aug 2026 16:15:43 +0300
+Message-ID: <20260821131554.638741-8-cosmin-gabriel.tanislav.xa@renesas.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20260821131554.638741-1-cosmin-gabriel.tanislav.xa@renesas.com>
 References: <20260821131554.638741-1-cosmin-gabriel.tanislav.xa@renesas.com>
@@ -64,274 +64,96 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OS3PEPF0000003D:EE_|OS9PR01MB16061:EE_
+X-MS-TrafficTypeDiagnostic: TYO1EPF00005023:EE_|OS9PR01MB15459:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: e7a9fefd-1844-4c8c-867c-08deff867f75
+X-MS-Office365-Filtering-Correlation-Id: 7b078452-5473-4845-4efd-08deff867b7a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|82310400026|23010399003|1800799024|36860700016|376014|56012099006|10067099003|6133799003|22082099003|18002099003|11063799006|13003099007;
+	BCL:0;ARA:13230040|23010399003|82310400026|376014|1800799024|36860700016|13003099007|10067099003|5023799004|11063799006|56012099006|18002099003|22082099003;
 X-Microsoft-Antispam-Message-Info: 
-	Gx63tJB4zonCIZt3hJH0N59lQuUh88DdeIkRvRosnkZHaCeiNp5gev8gmtsYWvu9Y8SIjpb16PL43tt1VbtOuIJA/77PVOOS8gwfyP79cDZt0JHgQbGsUtWvMCvilWd1guxl0FXoreyRR7ziZSae7xb55vF6f9jaQVxf9uhz1UNZ1F2tKLzrP6ddxnoV1XFVxLrfWEe8+luxyyi6k9mQ+ZO9HU1PSajFmHkYXOYq/7xn3ZrGrU+9KBg2LoM1x9NAZaAS8anC2CEmxkbcsysHbADgsHd496x/7l8J45V1BofLkAhYbFvt3q/E2ruJVYyqjDVMhZBdzgU5oJTd4kNgFa1P+UPcRx3NONd4HF6x7CebjjMoY/KVkL9SiM2yGb1gKy4lrApS06I3aJa2ZiRC50OqeZD1oHzA7Vsa2j80PsgrR6VMBhKhGyUqXA62qSCEZv5s7lgIacRDweKoztxr/CC6E4IcJYzRMqziQKCHtGfS5v+PQ3t0/Vgk/q8hNyn4h7yGx/DYY1ajoL9weYy5dcy9KjXPhmaUNWaoH7cO9zMWueiyISVaCX4BqILDguUb51sjzFAA8nSLFncf74/nJPi0uTH5uu8/0BMx19yc+TF7gXdn6FoUc2C66xxujYdJvKdArtZTffPurCG3K3BvX0X8dJp8W9wZBdbwPw+VJpU=
+	ocdftfpUfci2Q06T6tneKVLz1nsDL8OB8QkVtYnqzzDNHmz6CWwULz2L5lvz5FE74gbVddovI7CEBDVJw3JZa2BpICqh+GSZkgcqNp0TNTBHfZ0t8X/Xzu9AyuqJpk6BY9lPonTKfDIxrZ+pA62YSrStvwjnu1FgUvx2vvks7Ntwnwn5Meco54pa2P1p6Dju2JCJxcM2t+0kkd95ZAcjPTx5MB7IKPQSANcNYmUAZandltYkWVRIcmwUTAMgkMTZWJ2wWN4f/bdePsMk3JxLqZqkz5z5VXl2a26tl4XikTg0nDzY76VKagp9N0OBgaX9Q4ij1lKg0hnEdGe1YedldHm/E/6qp+YrcknGT1MgFIJ4td6ckHWoGgUu4RBUSTp8o4J9GAGBRVqq70vlBIsRNg/EXGqee91blwCWRdj9lrngKN7XppfYVwiv+ZZpI/fUaQs4PUSUnTUUxJ8Q6TwRFUjgSAhRSkhfu5xT91enJ+2Q6I/fAdPazacJemjB+oRguw33C0L4gQ1MMdNI1DKq+Va4kwk7M0do77kM5KzdA2Nt6T7gNUX2xyKmwhAgur3J3HEZidaYlfp4Km9HFMxQc6cMnwbQrlF3h2r8oM3Nro40VnKESvYeLo9H0IUUaR4Ya2l3nsDDGSJVWGg1iPZfDVxC3q7xrt1EsYKBd60VPpY=
 X-Forefront-Antispam-Report: 
-	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay004p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(23010399003)(1800799024)(36860700016)(376014)(56012099006)(10067099003)(6133799003)(22082099003)(18002099003)(11063799006)(13003099007);DIR:OUT;SFP:1101;
+	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay004p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(23010399003)(82310400026)(376014)(1800799024)(36860700016)(13003099007)(10067099003)(5023799004)(11063799006)(56012099006)(18002099003)(22082099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	WXWs2iIjH8ANq7RC9+p+BB4mw+Wq5ruyN5fP0Mtc5YcUeeJNTl4tD+n7G8a/VaZ/Du1dd8SQbNmPniUmv0wPUVrwjc7T03H2loox91J70suYSmqcSck+gn4bLOx1kActk9zA36A+1Vt/nLHrcIxLHOzPBERuJfCmRy+GFbXPelh3hRH4GAjkQPh47zMEN5r1SixfETZGXqjRFJf8Rlwr1MFjkI1AsS+jHWWmKs+qrGj4hVLr5Dtak9kUWmE5gU8HosBwKM7mPqRXcg7YciNspQfsCo+tO4FlWyK8I2+q2epQ/7C3thcDAjLAv3wU4nDRWceouLprRBa94Nm9Ynhdy1fYYouOVD0NR1pygOBdcOYWCooNrs1n0K+rhpn9JNTcUkJ56A6DzbuCQo1KqGI3uz8MC1hDwRwOC7hjL8Ay8Hhv9QHGUa5dZak1mij3OYkS
+	kPTb+UT0lrfdO7cHI8Z+6N5tiv/YwCOlAPVTcoyprhBzdeSD02FxOo8Wg3ghluF+8ookkUbWBTMlLkPAcxH4QCL7UMXYCYWi9qHzcf1Ue3ndV+EeNESRs51a7PjpVdQzfVh3xeoaXTbZ6OD2LZ0oUCK6JLGU4PJGQaWKuCyDp7bYHzGJSkVfQJYKBeTmALQGy6Jjs/q3buJWSsIWsb67c5xAafeySD7TrqYtHJ8PIdyvQ5MQWqjMv+C9qggSjR2+fh2mWz2UN6ZiciUo9gBfFVQSGK/nee/BCl4x0S5DpTIMS5i2A52hP5idiYIMmLS+i2c/eeMnonbAEMa7pATO+559jMMT5KsR0hpuZHVilEniGlS5qQ7TgxMvpsU0/z1dZ6/z3VSu8VXbG1oMUh9WvuCUn4M2lo+ePUOYG76KjGXdSu43EkuVtiydY1+7rdbV
 X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2026 13:17:06.1646
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2026 13:16:59.4818
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e7a9fefd-1844-4c8c-867c-08deff867f75
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b078452-5473-4845-4efd-08deff867b7a
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay004p.adwin.renesas.com]
-X-MS-Exchange-CrossTenant-AuthSource: OS3PEPF0000003D.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthSource: TYO1EPF00005023.JPNP286.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB16061
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB15459
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 21 Aug 2026 13:17:12 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23968
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23964
 
-commit a964dabc28a18fe62ff79e734cf54167ed322134 upstream.
+commit 8b12070746854a70bd43d5763562561efc1840de upstream.
 
-The Renesas RZ/T2H ICU supports software-triggerable interrupts.
+The Renesas RZ/T2H (R9A09G077) and Renesas RZ/N2H (R9A09G087) SoCs have
+IRQ-capable pins handled by the ICU, which forwards them to the GIC.
 
-Add a dedicated rzt2h_icu_intcpu_chip irq_chip which implements
-rzt2h_icu_intcpu_set_irqchip_state() to allow injecting these
-interrupts.
+The ICU supports 16 IRQ lines, the pins map to these lines arbitrarily,
+and the mapping is not configurable.
 
-Request the INTCPU IRQs when IRQ injection is enabled to report them
-when they occur.
+Document the required properties to handle GPIO IRQ.
 
 Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Signed-off-by: Thomas Gleixner <tglx@kernel.org>
-Link: https://patch.msgid.link/20260520203117.1516442-3-cosmin-gabriel.tani=
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Linus Walleij <linusw@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://patch.msgid.link/20251205150234.2958140-4-cosmin-gabriel.tani=
 slav.xa@renesas.com
-[ctani: fix conflict caused by changed rzt2h_icu_init() prototype ]
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 ---
- drivers/irqchip/irq-renesas-rzt2h.c | 124 +++++++++++++++++++++++++++-
- 1 file changed, 121 insertions(+), 3 deletions(-)
+ .../bindings/pinctrl/renesas,r9a09g077-pinctrl.yaml | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/irqchip/irq-renesas-rzt2h.c b/drivers/irqchip/irq-rene=
-sas-rzt2h.c
-index e03eb9f86ef4..54d9e82e5de5 100644
---- a/drivers/irqchip/irq-renesas-rzt2h.c
-+++ b/drivers/irqchip/irq-renesas-rzt2h.c
-@@ -3,6 +3,7 @@
- #include <linux/bitfield.h>
- #include <linux/cleanup.h>
- #include <linux/err.h>
-+#include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/irqchip.h>
- #include <linux/irqchip/irq-renesas-rzt2h.h>
-@@ -41,6 +42,9 @@
- 	((n) >=3D RZT2H_ICU_##type##_START &&					\
- 	 (n) <  RZT2H_ICU_##type##_START + RZT2H_ICU_##type##_COUNT)
+diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,r9a09g077-pi=
+nctrl.yaml b/Documentation/devicetree/bindings/pinctrl/renesas,r9a09g077-pi=
+nctrl.yaml
+index d622cd94340a..63993b20524f 100644
+--- a/Documentation/devicetree/bindings/pinctrl/renesas,r9a09g077-pinctrl.y=
+aml
++++ b/Documentation/devicetree/bindings/pinctrl/renesas,r9a09g077-pinctrl.y=
+aml
+@@ -49,6 +49,17 @@ properties:
+   gpio-ranges:
+     maxItems: 1
 =20
-+#define RZT2H_ICU_SWINT				0x0
-+#define RZT2H_ICU_SWINT_IC_MASK(i)		BIT(i)
++  interrupt-controller: true
 +
- #define RZT2H_ICU_PORTNF_MD			0xc
- #define RZT2H_ICU_PORTNF_MDi_MASK(i)		(GENMASK(1, 0) << ((i) * 2))
- #define RZT2H_ICU_PORTNF_MDi_PREP(i, val)	(FIELD_PREP(GENMASK(1, 0), val) =
-<< ((i) * 2))
-@@ -100,6 +104,12 @@ static inline int rzt2h_icu_irq_to_offset(struct irq_d=
-ata *d, void __iomem **bas
- 	} else if (RZT2H_ICU_IRQ_IN_RANGE(hwirq, IRQ_S) || RZT2H_ICU_IRQ_IN_RANGE=
-(hwirq, SEI)) {
- 		*offset =3D hwirq - RZT2H_ICU_IRQ_S_START;
- 		*base =3D priv->base_s;
-+	} else if (RZT2H_ICU_IRQ_IN_RANGE(hwirq, INTCPU_NS)) {
-+		*offset =3D hwirq - RZT2H_ICU_INTCPU_NS_START;
-+		*base =3D priv->base_ns;
-+	} else if (RZT2H_ICU_IRQ_IN_RANGE(hwirq, INTCPU_S)) {
-+		*offset =3D hwirq - RZT2H_ICU_INTCPU_S_START;
-+		*base =3D priv->base_s;
- 	} else {
- 		return -EINVAL;
- 	}
-@@ -165,6 +175,28 @@ static int rzt2h_icu_set_type(struct irq_data *d, unsi=
-gned int type)
- 	return irq_chip_set_type_parent(d, IRQ_TYPE_EDGE_RISING);
- }
++  '#interrupt-cells':
++    const: 2
++    description:
++      The first cell contains the global GPIO port index, constructed usin=
+g the
++      RZT2H_GPIO() helper macro from <dt-bindings/pinctrl/renesas,r9a09g07=
+7-pinctrl.h>
++      and the second cell is used to specify the flag.
++      E.g. "interrupts =3D <RZT2H_GPIO(8, 6) IRQ_TYPE_EDGE_FALLING>;" if P=
+08_6 is
++      being used as an interrupt.
++
+   clocks:
+     maxItems: 1
 =20
-+static int rzt2h_icu_intcpu_set_irqchip_state(struct irq_data *d, enum irq=
-chip_irq_state which,
-+					      bool state)
-+{
-+	unsigned int offset;
-+	void __iomem *base;
-+	int ret;
-+
-+	if (which !=3D IRQCHIP_STATE_PENDING)
-+		return irq_chip_set_parent_state(d, which, state);
-+
-+	if (!state)
-+		return 0;
-+
-+	ret =3D rzt2h_icu_irq_to_offset(d, &base, &offset);
-+	if (ret)
-+		return ret;
-+
-+	writel_relaxed(RZT2H_ICU_SWINT_IC_MASK(offset), base + RZT2H_ICU_SWINT);
-+
-+	return 0;
-+}
-+
- static const struct irq_chip rzt2h_icu_chip =3D {
- 	.name			=3D "rzt2h-icu",
- 	.irq_mask		=3D irq_chip_mask_parent,
-@@ -181,10 +213,27 @@ static const struct irq_chip rzt2h_icu_chip =3D {
- 				  IRQCHIP_SKIP_SET_WAKE,
- };
+@@ -156,6 +167,8 @@ examples:
+         gpio-controller;
+         #gpio-cells =3D <2>;
+         gpio-ranges =3D <&pinctrl 0 0 288>;
++        interrupt-controller;
++        #interrupt-cells =3D <2>;
+         power-domains =3D <&cpg>;
 =20
-+static const struct irq_chip rzt2h_icu_intcpu_chip =3D {
-+	.name			=3D "rzt2h-icu",
-+	.irq_mask		=3D irq_chip_mask_parent,
-+	.irq_unmask		=3D irq_chip_unmask_parent,
-+	.irq_eoi		=3D irq_chip_eoi_parent,
-+	.irq_set_type		=3D irq_chip_set_type_parent,
-+	.irq_set_wake		=3D irq_chip_set_wake_parent,
-+	.irq_set_affinity	=3D irq_chip_set_affinity_parent,
-+	.irq_retrigger		=3D irq_chip_retrigger_hierarchy,
-+	.irq_get_irqchip_state	=3D irq_chip_get_parent_state,
-+	.irq_set_irqchip_state	=3D rzt2h_icu_intcpu_set_irqchip_state,
-+	.flags			=3D IRQCHIP_MASK_ON_SUSPEND |
-+				  IRQCHIP_SET_TYPE_MASKED |
-+				  IRQCHIP_SKIP_SET_WAKE,
-+};
-+
- static int rzt2h_icu_alloc(struct irq_domain *domain, unsigned int virq, u=
-nsigned int nr_irqs,
- 			   void *arg)
- {
- 	struct rzt2h_icu_priv *priv =3D domain->host_data;
-+	const struct irq_chip *chip;
- 	irq_hw_number_t hwirq;
- 	unsigned int type;
- 	int ret;
-@@ -193,7 +242,12 @@ static int rzt2h_icu_alloc(struct irq_domain *domain, =
-unsigned int virq, unsigne
- 	if (ret)
- 		return ret;
-=20
--	ret =3D irq_domain_set_hwirq_and_chip(domain, virq, hwirq, &rzt2h_icu_chi=
-p, NULL);
-+	if (RZT2H_ICU_IRQ_IN_RANGE(hwirq, INTCPU_NS) || RZT2H_ICU_IRQ_IN_RANGE(hw=
-irq, INTCPU_S))
-+		chip =3D &rzt2h_icu_intcpu_chip;
-+	else
-+		chip =3D &rzt2h_icu_chip;
-+
-+	ret =3D irq_domain_set_hwirq_and_chip(domain, virq, hwirq, chip, NULL);
- 	if (ret)
- 		return ret;
-=20
-@@ -223,6 +277,60 @@ static int rzt2h_icu_parse_interrupts(struct rzt2h_icu=
-_priv *priv, struct device
- 	return 0;
- }
-=20
-+static irqreturn_t rzt2h_icu_intcpu_irq(int irq, void *data)
-+{
-+	unsigned int intcpu =3D (uintptr_t)data;
-+
-+	pr_info("INTCPU%u software interrupt\n", intcpu);
-+	return IRQ_HANDLED;
-+}
-+
-+static int rzt2h_icu_request_irqs(struct platform_device *pdev, struct irq=
-_domain *irq_domain,
-+				  unsigned int start, unsigned int count, irq_handler_t handler,
-+				  void *data)
-+{
-+	struct device *dev =3D &pdev->dev;
-+	unsigned int offset, virq;
-+	struct irq_fwspec fwspec;
-+	int ret;
-+
-+	for (offset =3D start; offset < start + count; offset++) {
-+		fwspec.fwnode =3D irq_domain->fwnode;
-+		fwspec.param_count =3D 2;
-+		fwspec.param[0] =3D offset;
-+		fwspec.param[1] =3D IRQ_TYPE_EDGE_RISING;
-+
-+		virq =3D irq_create_fwspec_mapping(&fwspec);
-+		if (!virq)
-+			return dev_err_probe(dev, -EINVAL, "Failed to create IRQ %u mapping\n",=
- offset);
-+
-+		ret =3D devm_request_irq(dev, virq, handler, 0, dev_name(dev),
-+				       data ?: (void *)(uintptr_t)offset);
-+		if (ret)
-+			return dev_err_probe(dev, ret, "Failed to request IRQ %u\n", offset);
-+	}
-+
-+	return 0;
-+}
-+
-+static int rzt2h_icu_setup_irqs(struct platform_device *pdev, struct irq_d=
-omain *irq_domain)
-+{
-+	if (IS_ENABLED(CONFIG_GENERIC_IRQ_INJECTION)) {
-+		int ret =3D rzt2h_icu_request_irqs(pdev, irq_domain, RZT2H_ICU_INTCPU_NS=
-_START,
-+						 RZT2H_ICU_INTCPU_NS_COUNT, rzt2h_icu_intcpu_irq,
-+						 NULL);
-+		if (ret)
-+			return ret;
-+
-+		ret =3D rzt2h_icu_request_irqs(pdev, irq_domain, RZT2H_ICU_INTCPU_S_STAR=
-T,
-+					     RZT2H_ICU_INTCPU_S_COUNT, rzt2h_icu_intcpu_irq, NULL);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
- static int rzt2h_icu_init(struct device_node *node, struct device_node *pa=
-rent)
- {
- 	struct platform_device *pdev =3D of_find_device_by_node(node);
-@@ -269,10 +377,14 @@ static int rzt2h_icu_init(struct device_node *node, s=
-truct device_node *parent)
- 	irq_domain =3D irq_domain_create_hierarchy(parent_domain, 0, RZT2H_ICU_NU=
-M_IRQ,
- 						 dev_fwnode(dev), &rzt2h_icu_domain_ops, priv);
- 	if (!irq_domain) {
--		pm_runtime_put_sync(dev);
--		return -ENOMEM;
-+		ret =3D -ENOMEM;
-+		goto err_pm_put;
- 	}
-=20
-+	ret =3D rzt2h_icu_setup_irqs(pdev, irq_domain);
-+	if (ret)
-+		goto err_irq_domain_free;
-+
- 	/*
- 	 * Prevent the cleanup function from invoking put_device by assigning
- 	 * NULL to dev.
-@@ -285,6 +397,12 @@ static int rzt2h_icu_init(struct device_node *node, st=
-ruct device_node *parent)
- 	dev =3D NULL;
-=20
- 	return 0;
-+
-+err_irq_domain_free:
-+	irq_domain_remove(irq_domain);
-+err_pm_put:
-+	pm_runtime_put_sync(dev);
-+	return ret;
- }
-=20
- IRQCHIP_PLATFORM_DRIVER_BEGIN(rzt2h_icu)
+         serial0-pins {
 --=20
 2.55.0
 
