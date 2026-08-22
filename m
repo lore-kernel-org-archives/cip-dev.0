@@ -1,204 +1,78 @@
-Return-Path: <cosmin-gabriel.tanislav.xa@renesas.com>
+Return-Path: <pavel@nabladev.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F82EC5DF98
-	for <webhook@archiver.kernel.org>; Fri, 21 Aug 2026 13:17:23 +0000 (UTC)
-Received: from TYVP286CU001.outbound.protection.outlook.com (TYVP286CU001.outbound.protection.outlook.com [52.101.125.13])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.7170.1787318236098418159
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9BA4C5DF8C
+	for <webhook@archiver.kernel.org>; Sat, 22 Aug 2026 08:11:41 +0000 (UTC)
+Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.2961.1787386294051383044
  for <cip-dev@lists.cip-project.org>;
- Fri, 21 Aug 2026 06:17:16 -0700
+ Sat, 22 Aug 2026 01:11:34 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@renesas.com header.s=selector1 header.b=QYrR2Fvk;
- spf=pass (domain: renesas.com, ip: 52.101.125.13, mailfrom: cosmin-gabriel.tanislav.xa@renesas.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VCJl1eg5UhSxkO9oDfNKQlCJQFrymbAAmL5aTctbJX8O44msOJOwrBr+gOnXcTLDZLySPjhdLwmPhl7MleTHoFhkfWYJ9cdBOJMsJbS5mUe2pmmr9aGW6ZuJ9FcM1RYkTnj8ZGYu8Em69hjYuvsYOhHrgrOHBiJcCvpSi0SipabS8di1HZfRWzgtpJNDNmLrayUHTy99yWlwMKJ9Yf1IvnVQ4LXf9YLhernZwTTnLD+MMwZOhiyChMMowXf82DsFojgn3RggS3cdEK2KLVm4/qdDxYx9Ov3jmbYDckXN92g3/1TEizax129Dkau+K1lheARWbJYxef2y6Cn0EZlLDQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jPN1S4t3ZxK6R5ehCrgOw8Hf36lvY9zBH4vM733ClKI=;
- b=QUG5s09uiqMTgLEsCdq0abtzIa0knQh6ui1RkoQ/V2khzGkwNar22eFAxiqkcD1SqosE5bL0Wcqw2g8gYmdB7BbxNNeOnJoGzHCWf4h11zCuwCOHYbPJgUcYAVBlALl6JFbviqS4GTl1nZ65uyazr4YjBtgOlYIUdUhR5BO5t5jxRGArbIc6ndB8bsyZK0bNQP8Z6SfwRsbspIHNO/V+A2WALbxkdEcWkRMHCR1b30xwDS5uPhkA0GihzMBhggSnPT9yz+wCeqoEK162GSEXpU7oIskFJB48gPBBQYl1Gml4MWQ4CrZD+qu8AP0767BisT+4CRUAeeU1SSgvj7yp5Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 8.62.32.50) smtp.rcpttodomain=lists.cip-project.org
- smtp.mailfrom=renesas.com; dmarc=pass (p=none sp=none pct=100) action=none
- header.from=renesas.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jPN1S4t3ZxK6R5ehCrgOw8Hf36lvY9zBH4vM733ClKI=;
- b=QYrR2FvkmgUevrPJyOo+J/L63PCUGaz/jrVWJ+cy4xXXy8k4IrcBt8YZZFOldq/cQYHjU8R5Jm0+EzyocR00qU6A6TTom99yJse2QQQ0yEhBjhlGlZN/WRmrpXiNXQKnIVE/0jijxF7iRNzyi9KoA9KnQxi1Y9OXeIXFbhGsXRo=
-Received: from OS0PR01CA0011.jpnprd01.prod.outlook.com (2603:1096:604:24::16)
- by TYCPR01MB7268.jpnprd01.prod.outlook.com (2603:1096:400:f3::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.339.11; Fri, 21 Aug
- 2026 13:17:11 +0000
-Received: from OS1PEPF0000D210.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:604:24:cafe::49) by OS0PR01CA0011.outlook.office365.com
- (2603:1096:604:24::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.339.11 via Frontend Transport; Fri,
- 21 Aug 2026 13:17:11 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
- smtp.mailfrom=renesas.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=renesas.com;
-Received-SPF: Pass (protection.outlook.com: domain of renesas.com designates
- 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
- client-ip=8.62.32.50; helo=ejcrelay004p.adwin.renesas.com; pr=E
-Received: from ejcrelay004p.adwin.renesas.com (8.62.32.50) by
- OS1PEPF0000D210.mail.protection.outlook.com (10.167.240.39) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.360.3
- via Frontend Transport; Fri, 21 Aug 2026 13:17:11 +0000
-Received: from demon-pc.localdomain (DEU-5CG5050QD0.adwin.renesas.com [10.226.92.179])
-	by ejcrelay004p.adwin.renesas.com (Postfix) with ESMTP id 09CD33000374;
-	Fri, 21 Aug 2026 22:17:09 +0900 (JST)
-From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-To: cip-dev@lists.cip-project.org,
-	pavel@nabladev.com,
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=K3KUciRb;
+ spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E770611C00C;
+	Sat, 22 Aug 2026 10:11:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
+	s=dkim; t=1787386287;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=Z02VWeCjN0F5KbzcFzE+8ak/8k8TV1RbDnGXZT9Ifh0=;
+	b=K3KUciRbL2+cLyjjC/x0FZRPRH6VxfVPZ2gz1upKZEVro6SxsX29AAzf0kzudX35HrhAle
+	8Zkz8mn5C/abb1MEic6QEQZ0Op0yHY5X82smNV+L/lc6fvlsSj57/ZLbCzC79U1Y/rhRXs
+	7Zb4i/TOHLvwa4rEi/3Ljh44ZyDY2CyBfZbeVflnuebi9Qx3kCMMKthoc4KcGqFCBEOjRP
+	/O5bRF3OXD5gzbyVoIaApmgX7PIJ4V3un446WIyL+8m212vRvvY98wM7sX92X6qLQ14NHG
+	ja005H81BFySj7rVebprlRxQRiJpfDWmteMILFrA+wLxdbSa1ba9irUcbB/LUw==
+Date: Sat, 22 Aug 2026 10:11:23 +0200
+From: Pavel Machek <pavel@nabladev.com>
+To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Cc: cip-dev@lists.cip-project.org, pavel@nabladev.com,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.12.y-cip 14/18] arm64: dts: renesas: r9a09g087: Add ICU support
-Date: Fri, 21 Aug 2026 16:15:50 +0300
-Message-ID: <20260821131554.638741-15-cosmin-gabriel.tanislav.xa@renesas.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260821131554.638741-1-cosmin-gabriel.tanislav.xa@renesas.com>
+Subject: Re: [PATCH 6.12.y-cip 00/18] Add ICU support for RZ/T2H and RZ/N2H
+ SoCs
+Message-ID: <aolZq2gonRLG4U4k@duo.ucw.cz>
 References: <20260821131554.638741-1-cosmin-gabriel.tanislav.xa@renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OS1PEPF0000D210:EE_|TYCPR01MB7268:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: c7233d91-7bc4-4ed8-a2c3-08deff86828b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|36860700016|376014|82310400026|1800799024|23010399003|13003099007|56012099006|10067099003|11063799006|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info: 
-	KeLQG5fN2+ZAsV4ZhntuI9Cc7wqnMZEavNG6UHC01h4AANFAOr83mQESNZfErKQPjexlSVzr0b10yvlFrEGjphzS1zN2z9r6FzX0nasvdgIyj3UPUe07N+YA6cxS7uIbakD8g0+I0iNy678cUbFb+a8VfyWTJWvfActE/DerALDY/n1lvQejpm/cLXCRLtVYkdF5Hk3golubTfxP+QA2PTv9BPbJE6OtirqhfYCSxKjkxznrPgJLDRe3vqlD6J5ij9kwHA733D7AkiaqzQBDc+i1BVQDX1Fk/yqpKTjUgAQ4aknkqGjH8lBrhnvnnhipt31NPLXipIqysmjXgfDbj95AsQQCdGbyvt6X/vH3iGg5zn/n0/oJ2ExQO5VJpLM9MtTJ7J9EslRksrmloDi8P65TVPJbQuRC3Frm/Tj1yEwWjfWApIMAL34oiBWEpWjoe0I8MqbGhSqpkfKRGRePpZ2ZF8/tGSVDGmkWUWBeVVZSgvxua0jEEfE9ow7Cd1pHVwCGZZBgl4oafX9KkSC5G+xQGnKScyfkqm9YeOJI6HgEJY36Eg1CFXSfrfPFYgy7onyQHnxOZLsinME/MfGwUuzu5w7g943d9dco/5AWjsYKHUvldzeTvFKzdrZsZ9U4jpCl1lz+7Z0OtKCSQcfGjakT4Dkp60gk1C3hOzSEa9Y=
-X-Forefront-Antispam-Report: 
-	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay004p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(376014)(82310400026)(1800799024)(23010399003)(13003099007)(56012099006)(10067099003)(11063799006)(18002099003)(22082099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	uZfOw9RtqGdvMDgT+WAYWkl0LzJWfPc6OhxInKQb1/9xXtBtZDb9xySjpJwFe546P/jrGA7JokFKbjLlUsa56D5muAgQA1vb2zhDYODbUAPBdkOHehysZbtZLEJPOjxdtmlPFpvRMVFSen1xmnB7a3wtBAUpAtpPnAmaaDj9i1/MTe0ezkBCT9GKCZCgNm4cNkbiny4kQPUfugUDY3RHpaQJnUEW3kR0tpI8Z242br55WPtlhSsKiUj7r6+sCKsi0Nh9KAHOUZL2xucnQMr4NqmxnISD8LkpjAtAOea0t8Vrl6yLOhIg3YAlGIWlKtYrv0D2UoEDqg2deA9Mdyt2IzOz+JlTbL1Ic3nhWxBSErPVL+MGCfgROgMZkweKuG8333sfYloarjLe6tOHzvBSx3ihyoEXOD8E1uR9OSAJzZCu12Wgbt3ZzwzgMS+1kDyw
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2026 13:17:11.3455
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c7233d91-7bc4-4ed8-a2c3-08deff86828b
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay004p.adwin.renesas.com]
-X-MS-Exchange-CrossTenant-AuthSource: OS1PEPF0000D210.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB7268
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="YjvsGpg+EkZqs7fv"
+Content-Disposition: inline
+In-Reply-To: <20260821131554.638741-1-cosmin-gabriel.tanislav.xa@renesas.com>
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 21 Aug 2026 13:17:23 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23970
+ <cip-dev@lists.cip-project.org>; Sat, 22 Aug 2026 08:11:41 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23976
 
-commit d42c64cf161644929de081e541afbab33acb231a upstream.
 
-The Renesas RZ/N2H (R9A09G087) SoC has an Interrupt Controller (ICU)
-block that routes external interrupts to the GIC's SPIs, with the
-ability of level-translation, and can also produce software and
-aggregate error interrupts.
+--YjvsGpg+EkZqs7fv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Add support for it.
+Hi!
 
-Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20251201112933.488801-5-cosmin-gabriel.tanis=
-lav.xa@renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
----
- arch/arm64/boot/dts/renesas/r9a09g087.dtsi | 73 ++++++++++++++++++++++
- 1 file changed, 73 insertions(+)
+> This patch series adds support for the ICU block, including
+> software-triggered interrupts and error interrupts, as found in the
+> Renesas RZ/T2H and RZ/N2H SoCs.
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi b/arch/arm64/boot/d=
-ts/renesas/r9a09g087.dtsi
-index 64886ab95bc3..48b56a196929 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-@@ -931,6 +931,79 @@ cpg: clock-controller@80280000 {
- 			#power-domain-cells =3D <0>;
- 		};
-=20
-+		icu: interrupt-controller@802a0000 {
-+			compatible =3D "renesas,r9a09g087-icu", "renesas,r9a09g077-icu";
-+			reg =3D <0 0x802a0000 0 0x10000>,
-+			      <0 0x812a0000 0 0x10000>;
-+			#interrupt-cells =3D <2>;
-+			#address-cells =3D <0>;
-+			interrupt-controller;
-+			interrupts =3D <GIC_SPI 0 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 1 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 2 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 3 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 4 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 5 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 6 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 7 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 8 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 9 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 10 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 11 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 12 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 13 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 14 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 15 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 16 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 17 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 18 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 19 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 20 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 21 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 22 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 23 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 24 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 25 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 26 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 27 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 28 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 29 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 30 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 31 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 406 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 407 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 408 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 409 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 410 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 411 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 412 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 413 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 414 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 415 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 416 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 417 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 418 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names =3D "intcpu0", "intcpu1", "intcpu2",
-+					  "intcpu3", "intcpu4", "intcpu5",
-+					  "intcpu6", "intcpu7", "intcpu8",
-+					  "intcpu9", "intcpu10", "intcpu11",
-+					  "intcpu12", "intcpu13", "intcpu14",
-+					  "intcpu15",
-+					  "irq0", "irq1", "irq2", "irq3",
-+					  "irq4", "irq5", "irq6", "irq7",
-+					  "irq8", "irq9", "irq10", "irq11",
-+					  "irq12", "irq13", "irq14", "irq15",
-+					  "sei",
-+					  "ca55-err0", "ca55-err1",
-+					  "cr520-err0", "cr520-err1",
-+					  "cr521-err0", "cr521-err1",
-+					  "peri-err0", "peri-err1",
-+					  "dsmif-err0", "dsmif-err1",
-+					  "encif-err0", "encif-err1";
-+			clocks =3D <&cpg CPG_CORE R9A09G087_CLK_PCLKM>;
-+			power-domains =3D <&cpg>;
-+		};
-+
- 		pinctrl: pinctrl@802c0000 {
- 			compatible =3D "renesas,r9a09g087-pinctrl";
- 			reg =3D <0 0x802c0000 0 0x10000>,
---=20
-2.55.0
+This looks okay to me.
 
+Reviewed-by: Pavel Machek <pavel@nabladev.com>
+
+I can apply the series if it passes testing and there are no other
+comments.
+
+Best regards,
+                                                                Pavel
+
+--YjvsGpg+EkZqs7fv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaolZqwAKCRAw5/Bqldv6
+8qKaAKCxAP9OgAV9nw7cKS5sKgoKDk5w/wCaAih7/yPqfXggK+lq9+H/9GkY5Qw=
+=Yd58
+-----END PGP SIGNATURE-----
+
+--YjvsGpg+EkZqs7fv--
 
