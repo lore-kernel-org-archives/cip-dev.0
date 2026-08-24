@@ -2,41 +2,41 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9385C61DBC
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26301C61CE4
 	for <webhook@archiver.kernel.org>; Mon, 24 Aug 2026 09:47:51 +0000 (UTC)
-Received: from DU2PR03CU002.outbound.protection.outlook.com (DU2PR03CU002.outbound.protection.outlook.com [52.101.65.55])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.13172.1787564853370840972
+Received: from AM0PR83CU005.outbound.protection.outlook.com (AM0PR83CU005.outbound.protection.outlook.com [52.101.69.10])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.13174.1787564857848105859
  for <cip-dev@lists.cip-project.org>;
- Mon, 24 Aug 2026 02:47:33 -0700
+ Mon, 24 Aug 2026 02:47:39 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=vwY0tkTV;
- spf=pass (domain: siemens.com, ip: 52.101.65.55, mailfrom: quirin.gylstorff@siemens.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=s7z4+M1D;
+ spf=pass (domain: siemens.com, ip: 52.101.69.10, mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SFLn+sfUYTio4fMIhK6JZH+5GNqNszj9jkzje93DmlZDZOrX/YBT9Z/Csrad/Gdyq4/5u6s5xbDhJCIsPN4koroPvEA4/ZaDo4LDwyX/c39GRd4K33VOw8LSQNoFzRmWcUIgf6ZoIcvsuICc3NaPjr3yqdfiFiAFRmLMNJfQWfdzu/xScHMEp+O0mmtmeR+3ILlypNSqHOlBFTp0LqnRJAG5kLo5Pcfy88FXIDnO96B5d7qe+d7MxlBAFyuxF8QwzPS2qdPSUc2O/sZiadBWw5lBKvQxMjHlsAkQL/13vPIL+ztD1j0fp9kPzFkDGfLMoDTouz9ts5WMQZVhdNBTRg==
+ b=H8m4gOtJNlyrsS978gCWFwSR6zPRtsbp8MrGPTt/cwgtQuahUM9SGM74roNMn27VT6s93jIiglYoRuUVCzIsFtt5qDW+3r0KJmi43cTwPeJ6MDRcJqE/FG/6RwG298Azi+LS/PzfgTlXKDQUYs8OHIjcvqBToFR96/FM4jcrdiUyYGCOq16TEw1rKV3vlakcgGgabjHiQE0KGQFRwH/MiNfL+Dt6wM6d77qujYPEv2a+I/YUFGJizhHaaBZICd/lBGpo185ulHd/jqJRDBhrvQVpMMQzsLvFAoot+q3DeRKflI8yjrJDIOmsDgX5oTBf79Bk3JzwRCSLKufu0GbXQw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JB4nCE4rxZSxEI5h1iG+DguUVX/kmi+h6mBxBtIbuLo=;
- b=dwIQyOKYAK5kQ2q0v+AQx4VtbIl+2GzllbsrEcX9HCKY7AvnenueI3BgAq+C4ZA+oJ6yXOBswUYjkmfqaObKNK6S9cqYewZys5pOJkcUweWkB+AHSIu/wTxpZzNlBQOwiYu2zQOIDeqJYoLq9wwyGLKwaicRMY8pHgGxGw02pULau2DScatbsY7Kmc8thDCAsek3Q/gNmmVpDMcn9FFu2Ssb5uUNIgxknmuolfsZrRVsnFvAeh0Xnk/uYsAUsIlhdD3N53fNiAOnu7Klzyh+yCh3xN/Z6afLadp8VGC7Wu+vzxInHiM6bxRNXE4WHhS5ekJ1YoxIVQ3dR7/TNMkh0A==
+ bh=SRDKeXOtC/NlT8ZRowN9E0Fog745etuo5ZSw5xhScFM=;
+ b=Vy7CFWM+3UUqRYx8a0qi8oW6VPXdmKdI6i89MIuOLZJUIfPIxBLpvWBr+kLOd8okrpo3nG+EP7hxUpTYoj8QxGH2dJqg/W7Jck0OWEqa8NS4SQeDoi749zFKo1yyDjL/m2PH58SOTGard2dFVMzoJsvMnKeiBHKT1KwxBzsoNr+RJc47i/fG1RU5n3BJEw/UUoYpnEurXKfX8dh+D5+eblXVaIA04SqGXz8qULZ153tbo+XMAjuA70AcpV5hhfPH9CgiIUoPLE2K+j1buHc1TUqTM2dwXsQ3ZjVi6TcvIY5+DxoJP7Oio+YcNgC7DLfx0Xab9Z29go94NKY4TpPK9g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JB4nCE4rxZSxEI5h1iG+DguUVX/kmi+h6mBxBtIbuLo=;
- b=vwY0tkTVgAor8tmhuQndy3iui2SyMg0OCSXa7IT9CSDmkp4coju2d1tWcPFm+uTAtLrgWXLXGOgyjB7szESNf68bfxGToewFMd6bggkTo3zHd9izNnerapObT29UP9ItGyN3EJMKKrTGCWaDdddRcOgRZokNwTgyXmAPNFmXir4N9UbugsXViRig55UP5Ynug+R0lIxaKimaR+xXlxfvBV39V15VM1i2X0SKHoXbQlcIqwSNKxth9jnNiSQOdHsyx69by21hY6/Em9dsTqmdRSVqkX+oG1RGsOfe5a7rXRNLoIphck60tQR8tw6kUXc4CdMHXarzsNwYvkLU88MaAA==
+ bh=SRDKeXOtC/NlT8ZRowN9E0Fog745etuo5ZSw5xhScFM=;
+ b=s7z4+M1D6AIxqvjwef82D41bLbagz6ix/1nGyj0tC23QpPCxTAtLy3KhvfHlGKYuSPGOsdrPmz3uZCrAOwqIy78vtZ2pWS7tsaYWM0nlMZlPq0Q4GUM1CO/0D49zvzeOGvd1+FA8mcLzs9AG8zAzkl8Tz9fcIGxGyKStNiFeIf2vqk4cXdC8Fd+H+98c+dyGUtyZsZ+kLKij/fOA9NZJTLRBiib2v3MWxjXrVCo2ew0GmmMhflNVVTZoxpZuxkXPQOlFO1U14uuxntNJWFl+BBSPTCyyz4getT/DywrKkeKNjacVOelaSnBNBcim1Bx45eAMn+aISdh8dpquZCbB9Q==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:113::12)
- by PAXPR10MB5760.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:24a::22) with
+ by VI0PR10MB8521.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:800:216::14) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.339.12; Mon, 24 Aug
- 2026 09:47:29 +0000
+ 2026 09:47:32 +0000
 Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::ae26:d131:7cff:4001]) by DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::ae26:d131:7cff:4001%5]) with mapi id 15.21.0339.012; Mon, 24 Aug 2026
- 09:47:28 +0000
+ 09:47:32 +0000
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org,
 	jan.kiszka@siemens.com,
@@ -44,139 +44,104 @@ To: cip-dev@lists.cip-project.org,
 	clara.kowalsky@siemens.com,
 	christoph.steiger@siemens.com,
 	dinesh.kumar@toshiba-tsip.com
-Subject: [cip-dev][isar-cip-core][PATCH v3 00/12] Add recipes for image hardening
-Date: Mon, 24 Aug 2026 11:46:37 +0200
-Message-ID: <20260824094721.2636375-1-quirin.gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][PATCH v3 04/12] Add cip-cis-rules-config to configure the hardening according to CIS
+Date: Mon, 24 Aug 2026 11:46:41 +0200
+Message-ID: <20260824094721.2636375-5-quirin.gylstorff@siemens.com>
 X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260824094721.2636375-1-quirin.gylstorff@siemens.com>
+References: <20260824094721.2636375-1-quirin.gylstorff@siemens.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
 X-ClientProxiedBy: FR4P281CA0341.DEUP281.PROD.OUTLOOK.COM
  (2603:10a6:d10:ea::16) To DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:10:113::12)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB8PR10MB3178:EE_|PAXPR10MB5760:EE_
-X-MS-Office365-Filtering-Correlation-Id: a8dc37cd-6577-4d11-f557-08df01c4b5dd
+X-MS-TrafficTypeDiagnostic: DB8PR10MB3178:EE_|VI0PR10MB8521:EE_
+X-MS-Office365-Filtering-Correlation-Id: 73763d02-9055-468f-2a1f-08df01c4b81d
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|23010399003|376014|1800799024|366016|20046099003|55112099003|18002099003|5023799004|11063799006|3023799007|6133799003|56012099006|10067099003;
+	BCL:0;ARA:13230040|366016|23010399003|376014|1800799024|10067099003|6133799003|3023799007|20052099010|22082099003|18002099003|18092099006|17056099003|55112099003|5023799004|11063799006|56012099006;
 X-Microsoft-Antispam-Message-Info: 
-	iNHZh1eVfD/43WnBbM8wsiYmQzhnl0FCKtagvuc/bMitCkvBWgzYhfrW/7l8uNaoheutuUlBe1IfUfeGMu6fiuG0sVRXqBq+ACL3u4cLfEaAoy33sQ49dAGEJOwIGwpDpUwsnK6+/D9gVfhuthp6w2tEp8P82v9Gl54Xhy24dnH1i2qoV07lpaqDJ+9eIU4T4SpPZBpfHUKoLEkmnLWdJaL4gWA2lSLlGnZje791EiLXZwfQ0//q5FVyamt4YUOefIEmoH3Oc3VYS4b8UjgzlFgloVqwM7YR2rJhHiaSDkzG5Xf64qLZL2RJKVQrbjCjwKk7KaGibpJKnaHBnc8trhe7Uc8TRthKEaFVQgBiv87rdTOAKuJ+Q+4/S76bIcWT413b3U5IdysoGgwpNapj0GLme2e2BiDq+FPPHPlcJ3o9rSxQ27lVKqD4ZasVV60Ojts5X8DgcdB4STMTG100T5D2Rtq52Pj5aJDfPLVK7lIVIaje6m45HAH+84Mwm4AwxKDD+bJ9vtvW1S3+wh/TG+qnGNYGc6pFi9j/2VIOrb//IrsLjJ3rP7aJNm9GB/u4zRzRHveCFLxlxAdHkQ/R5JzmpbeQy0N0/BPM5bRSHQ4bJ1+KE9LoNmme84OCXkk7
+	MRDe6ptBI2HzB+6IPQq2V2sGfmyiop22X7ATswzd0M7/0jmIfQn5edXSxSSf9QySLJ9TUMucMGPYkDASYW/aagsv4UMZzihFbuDOG3d2DRwFBezSxbqVbPXztCT5dNv4tQVzQuRZQ3ikro5UvvZMtIYzM9hX4FCeyxvYspTOlZ7ILX+vwx4x10aX05M4ikyo8rBlNacmvWu5QTHh19hhnJinBHbizjtBdgJlwzwW79zNCSiq+Cb2SmMSW1E9CuqN7OXCIYovAQC+w+B7wlm+col2rhlBrLFboQHe0JXgW8IiJxL+hzhSM1pHm7ct2Mlyo4MLC8oI9unKzyGyWLsQf85COXX9LaE1AqyBCms1H0lXAnwLd2IOJHh7oDvhzRTamnBojNHHpkgIZBuEwaB0ZJ6W3z73SXXYsdCBcK8OsPC06DzKxxXtP0eB7EQf4G1pKB5FPKrKDwWzLzPH/6axmEzAFOBTn7SEfAueC/GoMoEWfEnz272BF0utOYH0NEREE4vDnYzVphwAS+HfdcPMvhLzQjfhhnPv38aa4e9nBCVl7qDEpfQo/lSuH1y13d8UxQGLUXhrD7Bq+u2+EulINrU1MHANYfuor8vRfVJKE4bqsWQN/I/9Lb3snM70sQe/
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(376014)(1800799024)(366016)(20046099003)(55112099003)(18002099003)(5023799004)(11063799006)(3023799007)(6133799003)(56012099006)(10067099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(23010399003)(376014)(1800799024)(10067099003)(6133799003)(3023799007)(20052099010)(22082099003)(18002099003)(18092099006)(17056099003)(55112099003)(5023799004)(11063799006)(56012099006);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?CWzJpz55aKg3owVuSeiHfvuf/lzQHJ4neLke2x9wraGHBl9Qcda77SJFN7Si?=
- =?us-ascii?Q?tp4I7cRWtyN/GfrpviEPuXBlIhQOvlg6Tz0VEeX7ApMAC3x5DxoQxgPG5pFP?=
- =?us-ascii?Q?qEGIKfPEt9nnIk6CN3oUahzdC3QwbkcrVvJXE+k3x4qLbHLG46CkG1XVmSsg?=
- =?us-ascii?Q?9aZ9IY3/nE1LddYM5QWT028n+gBquma2EvmgRJjG5ne9kTV2VIi4NYcb9Grz?=
- =?us-ascii?Q?NX/gsYu0GHimrd0dPXYOTiGeaXq0CCeg9GCdTdGIb8u61t54aSOXlogWkWcD?=
- =?us-ascii?Q?SqIIjcx/Lg9TkXtr0kWHXBUSgxqGr508uSjvuSAFyuQ+ZnPXYTamWb1XGYBE?=
- =?us-ascii?Q?Srlgbd75R/gVg/HMxHrj0xYoOkoa6fWaaLfte6hcE+k/swxJOhc1y0vDTdYz?=
- =?us-ascii?Q?pf9JW0VhQ5GKKPFIoTDtEOCNvSne/BDU/vX7GZXHX01HwPjdyAYmQdEIjea8?=
- =?us-ascii?Q?CPa1iKLbrSYVWqfuUACwb7n6roCCK3zprwBaqD5h5bxko7UwmMteQ5UvXqsK?=
- =?us-ascii?Q?6PB+JyKiZBC0MKKkMiabyNeQjqtyHGdNu39JT35jn16rvXCZX61IXqGSiI0t?=
- =?us-ascii?Q?EMlF/X6cHHe+HWncYc+D+MoJ+Z9oEHhmtSW5+dVUWD+DVD8UJjStkDdeyIj4?=
- =?us-ascii?Q?32KLeZ94yPkO4GG8ii6UGCnyi6tOlrtpAvx/hGdfgbgL/CfbH6XBhLRXDHdN?=
- =?us-ascii?Q?DV0sLcV7ndb1EmLRr9qLleeT3a7+fyvM+T14uy8tWtzzdVFa/LBBXxrdXrll?=
- =?us-ascii?Q?v26tisjnVqZKn4ddnupVshvLNMcG8+gm38crbuzDNWmxMxwsCzRzfN3CfdRB?=
- =?us-ascii?Q?1Vaw+QDzxxwMlk51xeu1ZI7AQpc3dGfP0kSa8tTVluP3+CY1PevD6ufna54V?=
- =?us-ascii?Q?/48NQS97zqhS93HQplcezXLRsI0aE41qFLDYOrw5eaeWE+k7lMSx/4yItKYx?=
- =?us-ascii?Q?APKfrTnBbOiOaL9uk6LBSMMlX0FGPE13962agGnUSfqmA59NUrAgNcphip0n?=
- =?us-ascii?Q?IQwQ/I6ZUi8COH4GuUmw7uwh0yzUI07HdiGWoR2hYy42qF2fj/EQhzA7CkQO?=
- =?us-ascii?Q?9huFpGRJspyD3EBL6ZiIE+Lz93c7bQk9zFh6g48+2RWlL5wdH0RYkEDaEY+f?=
- =?us-ascii?Q?yvb8SO7f5xqqHylf1Fcr86tYNsTisZuUTooJ6EUmFU9JksA5GSdsOrkoktJC?=
- =?us-ascii?Q?N2qvSjulyqUhl28M6CLThVq1lYmDK7QcD9pmsCO4W8gmBeUKjDBeFqOF6PqM?=
- =?us-ascii?Q?A/flXl0sqfLKYgI00h1F+j65HJwoq1m4ukJ1Dm8wqYvaeT9TJv6xf+Gq8W0T?=
- =?us-ascii?Q?HwInEzRapHQLSL+m4V+TDiuKAcm9wiYQR3lhvV393Tu5CaIrGJ4+vL5VttyJ?=
- =?us-ascii?Q?2pOC9055LI4ko0Bp9WqOPNoea42wNNA9IfTS1AFcBNl8VKteG0Gvayi51BRt?=
- =?us-ascii?Q?clGsndOKyO2h67du0QYaLrEMy/2ce2X1/w5iRx5hVSweYQ2I4WWloWHanfDH?=
- =?us-ascii?Q?sP72BJ8aE/DGVVAtbXojqWJwg0rOEZxeEUt0dHkFoek0KAIsOw/DocUmoZG+?=
- =?us-ascii?Q?556GE1tK98wvPCLdHnkMkaVclHEEkfX2xP30MOH8mtdoiwq5B+GvUru9kWxd?=
- =?us-ascii?Q?+ZnrX9AmDN261jDLWCKJVjdbPGRJKKV2MLhvmDZQgPhIO56v0p0XvYRIGZJA?=
- =?us-ascii?Q?sFNejRD5cGzBjIcb2kPt48AOPu2oxMUrY7v4PHyY+y7QYmlOddqG6v9bJ8la?=
- =?us-ascii?Q?2NpTwbk9ND1NmevJU+iDvCj9f56sK/Y=3D?=
+	=?us-ascii?Q?B49j2jmVNHoKe+QDTbbC52CruBFSUJh0AfeyUnPjK2li3xMAwaHYyK8R2Mzk?=
+ =?us-ascii?Q?rKF7zNXe4i1f/8jGkLxaSS3kyl58k8nI1F6gYUQsyCubzAc2rw2PdznAcPrQ?=
+ =?us-ascii?Q?/bn+fnAhaL7PkXhAyx0qh6Pv1becEDJO3gCtrpr3TDqCTs3kn/iarKIwsNgd?=
+ =?us-ascii?Q?kWDSSOI4ueQluzspDr0BgIY6byTjNnhaE0YeHO6yg/UmCUBOpuQy15s/YMmq?=
+ =?us-ascii?Q?17JVjA10cxES6Ki/pm/NQ3PU7YZJ7vTwzpUwmY9yImJkYSXfUE5iH8gaB46x?=
+ =?us-ascii?Q?BNJG3niV/V9Cwn21pKBn101t5UZosOKfwmCzEdvtaUAxL6fDvKUtvkE1nu7V?=
+ =?us-ascii?Q?yN4ZWI6JifmczcZH0duIZMkXXivlGuzx0PVt1LjhwNXM3p7gVyV9bRwEz0U4?=
+ =?us-ascii?Q?P/AkKX7rAaKy2IWzAVAxOdCWN3JMOwhtc/cjj57uRDeFMEv+vx2P2BYb6nNq?=
+ =?us-ascii?Q?6rlUaqhSv4TDQgaNiAqQZv+XcTdrfGK2/1xCo2Igzp8Dmt0wz73yBvc1k9gt?=
+ =?us-ascii?Q?LkBy+BhRI6TD3z82cX7vYQ9W/FXyc+3Ifzs++aeuaq3tq7HAckzQnngtD76+?=
+ =?us-ascii?Q?U4ymFvjLp6TFpoetPSirrPU2w3o/U4m7IYBde+9YfSehNO47NP+UjtmyKD5R?=
+ =?us-ascii?Q?zFYaWWwQ7U6G5RAm+hkQs0eulxi9qx3JsQu2XevjXrs4TAtTycJrryx03Hxx?=
+ =?us-ascii?Q?uFx9ePet9MUtpMN89JhcvhUb2ANhL8mfuEYXAOCkinBYwyY0Gz14FP4JwJsw?=
+ =?us-ascii?Q?54I1kFzwJ2Xj5P5kgXxMJ/bXHZdyasyICWumCvbYHn5U6PHoo1b8q9BFuww/?=
+ =?us-ascii?Q?E0GQzCTQdCCfzG6CccpZAzca9zVOJAR5TP3w2kaAheaFO3UrMqYZXFt3qAWh?=
+ =?us-ascii?Q?mXUbRobxQuNODhff68+1tVF8adIXi5Fznhi9kTxUr7qiFV6dcF1yAPbFTK3P?=
+ =?us-ascii?Q?7azXW0/EWujqxY+kKAjbGbi3vb8GH9Pyi7u/U50pOEYd0DKy/0z0t5vFDb7V?=
+ =?us-ascii?Q?SwFSQFuAh0Ta7RcPQggiIvkrZeGnFaT6j5EtbKb2WWc01UI2s9xvOeM9TxYf?=
+ =?us-ascii?Q?8uHY/mzZhAeD17gjmS4TdywK9nNaicnavIGq8uM3anJ8QljOGnnmJvcjhSi8?=
+ =?us-ascii?Q?vcHw1T7zDEa9FZjnzR3oIAFaB3Km8RgoCWlHp8MKCKWs6kHH09CddBp7xYL7?=
+ =?us-ascii?Q?624PBWQP2z+3iCd8TvmXzVeg+M3tFvBDMWGmT9EydvtMDnQg+drVT7dsJA3R?=
+ =?us-ascii?Q?xgesq841hECQ1Yw4rFgAssoFdZtJEL0TPkZkqdIRjXUPY9qK6G+MxGBdmERp?=
+ =?us-ascii?Q?MeWNzKSSV7ncrJHecBauKFLfTXbX98cXLghDjS44nlnOrOovab2b2N6a/z1z?=
+ =?us-ascii?Q?3KubBt7634BCKz+JWK7fRDvvHKvT7R2X5+mctEfeSRwnu6CBH1uc4BlywVL1?=
+ =?us-ascii?Q?nX0Y0Y8HHG78ODdGzwv+pg8jfQYWwDrflgVfTAblYTHjFNhr2ElF2XdbcZyJ?=
+ =?us-ascii?Q?sz0ztThjR9gjZWH8HrZ/OUXrFF64epDY4mZTWyStdHz27VZwRrjAofoFV2Z/?=
+ =?us-ascii?Q?bfFdJWGl40MEnh1SKwoPk0ycWncVvpl7FdrmijpTOG5M+FprfPBgHDY2mgT3?=
+ =?us-ascii?Q?J2j+eAYR70VzCBCBWrMpmorvJZ775Y3AbfPCpk8lr5Wg9WfGZDJqHJkmdT6T?=
+ =?us-ascii?Q?+iKmz+SOGqBF1r08cyr9PwUxPCEdFsULnAcd/7yDJhUkQIjU9yJsDHM4LeHh?=
+ =?us-ascii?Q?mqLxmRvYot9qhk2JWr0hXmzH0VljfFQ=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a8dc37cd-6577-4d11-f557-08df01c4b5dd
+X-MS-Exchange-CrossTenant-Network-Message-Id: 73763d02-9055-468f-2a1f-08df01c4b81d
 X-MS-Exchange-CrossTenant-AuthSource: DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Aug 2026 09:47:28.7846
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Aug 2026 09:47:32.8123
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RzzWNYCqJ2LsHhujAkY1O88cVSKr26JP3j0dyXsTN072SeDRruDQPH1dM4YNbrYT7MB3hoEzHLcwEs8fNMDPjfQgI4T7/C5LsXCBs4mp4U0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR10MB5760
+X-MS-Exchange-CrossTenant-UserPrincipalName: ShyVCE/vbA83oSsE+TV8fZO/gzpiC1say5coFcoaQvuDRxgR9ODfGEsGdyrGD7p4qqt0ypP+TzbPaLSDzx79sVYkS44F+kvR7OvPkXX/yEM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR10MB8521
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 24 Aug 2026 09:47:51 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23981
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23986
 
-This patch series adds the option to harden the build image according to th=
-e guidelines published by CIS.
-The patch introduces the following packages:
+The `cip-cis-rules-config` recipe allows to create a use-case specific
+hardening configuration based on the CIS hardening rules.
 
-cip-cis-rules-config: user-facing configuration, stored in .config.json and=
- configurable interactively via Kconfig.
-cip-cis-rules: uses the configuration from cip-cis-rules-config to generate=
- a custom Debian package containing the necessary hardening configuration.
-cis-validation: an optional package to validate the hardening rules.
+To tailor a hardening config the command `bitbake -c menuconfig cip-cis-rul=
+es`
+can be used to generate the hardening config interactively.
 
-Additionally, the kernel configuration is checked against the hardening rul=
-es.
-This patch set is currently developed and tested for hardening level 2.
+After the package build the generated config can be found at
+`${DEPLOYDIR_HARDENING}/${CIP_CIS_HARDENING_CONFIG}`.
 
-Changes v3:
- - switch cip-cis-rules-config to dpkg instead of dpkg-raw as it allows
-   better task dependency management
- - remove json schemata validation during menuconfig read to avoid a
-   issue were outdated config cannot be updated.
+The package also provides a kernel config snippet
+`${DEPLOYDIR_HARDENING}/${CIP_CIS_HARDENING_KCONFIG}`, which can be used
+to apply kernel hardening during compile instead of a runtime
+configuration. If the user changes the config.json all followup jobs are
+tainted. The code for this is from
+https://github.com/yoctoproject/poky/blob/077627338ac18aeca34bfe0c52777fab3=
+8e2e0c0/meta/classes-recipe/cml1.bbclass#L37 .
 
-Changes v2:
+This packages generates the Kconfig out of cis-debian.
 
-- rebased onto commit 73d8558efc2fb49436aafac36126564c6a725565
-- reorder patches
-  - README is now first to explain architecture
-  - layer.conf before arming
-  - kernel and image are armed together
-- use external repo for cip-cis-rules https://gitlab.com/cip-playground/cip=
--cis-rules
-- menuconfig now uses devshell to be independent from kas environment
-- generate config.json and kconfig on the fly
-- bugfixes
-- rename cip-cis-validation to cis-validation
-- remove CIP_ prefix from variables
-- rework readme
-
-Clara Kowalsky (2):
-  Add cis-validation to validate the hardening based on the CIS rules
-  Add kas file for hardening configuration
-
-Quirin Gylstorff (10):
-  Add doc/README.cis-hardening.md
-  Add cip-cis-rules to apply hardening configuration to the system
-  Add github.com/ovh/debian-cis for the hardening validation
-  Add cip-cis-rules-config to configure the hardening according to CIS
-  Apply hardening configuration to the kernel
-  Add class for validating the CIS options in the kernel config
-  Add class cis-hardening for post rootfs generation fixups
-  layer.conf: use variables to control path of hardening config
-  Integrate cis-hardening into cip-core-image
-  Add Kconfig option to select cis-validation
-
- Kconfig                                       |  10 +
- README.md                                     |   1 +
- classes-recipe/cis-hardening.bbclass          |  47 ++
- .../cis-kernel-hardening-validation.bbclass   | 110 ++++
- conf/layer.conf                               |   3 +
- doc/README.cis-hardening.md                   | 229 +++++++
- kas/opt/cis-hardening.yml                     |  19 +
- recipes-core/images/cip-core-image.inc        |   4 +
- recipes-kernel/linux/kernel-hardening.inc     |  16 +
- recipes-kernel/linux/linux-cip-common.inc     |   1 +
+Co-Authored-by: Clara Kowalsky <clara.kowalsky@siemens.com>
+Co-Authored-by: Felix Moessbauer <felix.moessbauer@siemens.com>
+Co-Authored-by: Christoph Steiger <christoph.steiger@siemens.com>
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+---
  .../cip-cis-rules-config.bb                   | 159 +++++
  .../cip-cis-rules-config/files/postinst       |  32 +
  .../cip-cis-rules-config/files/rules.tmpl     |  19 +
@@ -185,19 +150,7 @@ Quirin Gylstorff (10):
  .../files/scripts/enable-cis-rules.py         | 333 ++++++++++
  .../files/scripts/gen-kernel-config.py        | 165 +++++
  .../files/scripts/select-hardenings.py        | 616 ++++++++++++++++++
- .../cip-cis-rules/cip-cis-rules_1.0.0.bb      |  23 +
- .../cis-hardening/cis-hardening_4.1-6.bb      |  17 +
- .../cis-validation/cis-validation_1.0.bb      |  51 ++
- .../files/cis-validation.service              |  13 +
- .../cis-validation/files/cis-validation.tmpl  |  65 ++
- .../files/generate-overrides.py               | 103 +++
- .../cis-validation/files/postinst             |  52 ++
- 25 files changed, 2562 insertions(+)
- create mode 100644 classes-recipe/cis-hardening.bbclass
- create mode 100644 classes-recipe/cis-kernel-hardening-validation.bbclass
- create mode 100644 doc/README.cis-hardening.md
- create mode 100644 kas/opt/cis-hardening.yml
- create mode 100644 recipes-kernel/linux/kernel-hardening.inc
+ 8 files changed, 1798 insertions(+)
  create mode 100644 recipes-security/cip-cis-rules-config/cip-cis-rules-con=
 fig.bb
  create mode 100644 recipes-security/cip-cis-rules-config/files/postinst
@@ -212,17 +165,2017 @@ ble-cis-rules.py
 -kernel-config.py
  create mode 100755 recipes-security/cip-cis-rules-config/files/scripts/sel=
 ect-hardenings.py
- create mode 100644 recipes-security/cip-cis-rules/cip-cis-rules_1.0.0.bb
- create mode 100644 recipes-security/cis-hardening/cis-hardening_4.1-6.bb
- create mode 100644 recipes-security/cis-validation/cis-validation_1.0.bb
- create mode 100644 recipes-security/cis-validation/files/cis-validation.se=
-rvice
- create mode 100644 recipes-security/cis-validation/files/cis-validation.tm=
-pl
- create mode 100755 recipes-security/cis-validation/files/generate-override=
-s.py
- create mode 100644 recipes-security/cis-validation/files/postinst
 
+diff --git a/recipes-security/cip-cis-rules-config/cip-cis-rules-config.bb =
+b/recipes-security/cip-cis-rules-config/cip-cis-rules-config.bb
+new file mode 100644
+index 00000000..686fbfdd
+--- /dev/null
++++ b/recipes-security/cip-cis-rules-config/cip-cis-rules-config.bb
+@@ -0,0 +1,159 @@
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2026
++#
++# Authors:
++#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
++#
++# SPDX-License-Identifier: MIT
++#
++inherit dpkg
++
++MAINTAINER =3D "Christoph Steiger <christoph.steiger@siemens.com>"
++DESCRIPTION =3D "Configuration files for CIS hardening"
++
++PROVIDES :=3D "${PN}"
++DEBIAN_PROVIDES :=3D "${PN}"
++
++DEPENDS =3D "cip-cis-rules cis-hardening"
++DEBIAN_BUILD_DEPENDS =3D "cip-cis-rules, cis-hardening, python3, python3-k=
+configlib, python3-newt, python3-jsonschema"
++
++PN .=3D "-${MACHINE}"
++
++S =3D "${WORKDIR}/${BPN}"
++
++DEPLOYDIR_HARDENING =3D "${WORKDIR}/deploy-hardening"
++SSTATETASKS +=3D "do_deploy_hardening"
++
++HARDENING_CFG ?=3D ""
++HARDENING_CFG_NAME =3D "${@ d.getVar('HARDENING_CFG') if d.getVar('HARDENI=
+NG_CFG') else 'config.json'}"
++
++SRC_URI +=3D " \
++    file://scripts;subdir=3D${S} \
++    file://rules.tmpl \
++    file://postinst \
++    "
++SRC_URI +=3D "${@ 'file://' + d.getVar('HARDENING_CFG') if d.getVar('HARDE=
+NING_CFG') else ''}"
++
++TEMPLATE_VARS +=3D "HARDENING_CFG_NAME"
++TEMPLATE_FILES +=3D "rules.tmpl"
++
++do_deploy_hardening[cleandirs] +=3D "${DEPLOYDIR_HARDENING}"
++do_deploy_hardening[sstate-inputdirs] =3D "${DEPLOYDIR_HARDENING}"
++do_deploy_hardening[sstate-outputdirs] =3D "${DEPLOY_DIR_IMAGE}"
++do_deploy_hardening() {
++    if [ -f "${S}/${HARDENING_CFG_NAME}" ]; then
++        cp "${S}/${HARDENING_CFG_NAME}" "${DEPLOYDIR_HARDENING}/${CIP_CIS_=
+HARDENING_CONFIG}"
++    fi
++    if [ -f "${WORKDIR}/hardening.cfg" ]; then
++        cp "${S}/hardening.cfg" "${DEPLOYDIR_HARDENING}/${CIP_CIS_HARDENIN=
+G_KCONFIG}"
++    fi
++}
++
++python do_deploy_hardening_setscene () {
++    sstate_setscene(d)
++}
++addtask deploy_hardening_setscene
++
++addtask deploy_hardening after do_dpkg_build before do_deploy_deb
++
++do_check_config() {
++    if [ ! -s "${S}/${HARDENING_CFG_NAME}" ]; then
++        bbfatal "Hardening configuration is missing. Please run 'bitbake c=
+ip-cis-rules-config -c menuconfig' and include the generated ${WORKDIR}/${H=
+ARDENING_CFG_NAME} in your SRC_URI and HARDENING_CFG_NAME."
++    fi
++}
++addtask check_config after do_unpack before do_generate_kernel_config
++
++do_generate_kernel_config() {
++    if [ -f "${S}/${HARDENING_CFG_NAME}" ]; then
++        "${S}/scripts/gen-kernel-config.py" --config "${S}/${HARDENING_CFG=
+_NAME}" --output "${S}/hardening.cfg"
++    fi
++}
++
++addtask generate_kernel_config before do_dpkg_build after do_transform_tem=
+plate
++
++do_prepare_build() {
++    deb_debianize
++
++    cat <<EOF > "${S}/debian/${BPN}.install"
++${HARDENING_CFG_NAME} /usr/share/cip-cis-rules/
++hardening.cfg /usr/share/cip-cis-rules/
++EOF
++    if [ -f "${WORKDIR}/${HARDENING_CFG_NAME}" ]; then
++        install "${WORKDIR}/${HARDENING_CFG_NAME}" "${S}/${HARDENING_CFG_N=
+AME}"
++    fi
++}
++addtask prepare_build after do_transform_template before do_dpkg_build
++
++do_menuconfig[nostamp] =3D "1"
++do_menuconfig[dirs] =3D "${DEVSHELL_STARTDIR}"
++do_menuconfig[network] =3D "${TASK_USE_SUDO}"
++do_menuconfig[depends] =3D "cip-cis-rules:do_deploy_deb cis-hardening:do_d=
+eploy_deb"
++python do_menuconfig() {
++    isar_export_proxies(d)
++    isar_export_ccache(d)
++    isar_export_build_settings(d)
++
++    bb.build.exec_func('devshell_chroot_prepare', d)
++
++    schroot =3D d.getVar('SBUILD_CHROOT')
++    pkg_arch =3D d.getVar('PACKAGE_ARCH')
++    build_arch =3D d.getVar('BUILD_ARCH')
++    pp_pps =3D os.path.join(d.getVar('PP'), d.getVar('PPS'))
++    srcdir =3D d.getVar('S')
++    config =3D d.getVar('HARDENING_CFG_NAME')
++    configfile =3D os.path.join(srcdir, config)
++
++    try:
++        mtime =3D os.path.getmtime(configfile)
++    except OSError:
++        mtime =3D 0
++
++    install_deps =3D ":" if d.getVar('BB_CURRENTTASK') =3D=3D "devshell_no=
+deps" else f"mk-build-deps -i \
++        --host-arch {pkg_arch} --build-arch {build_arch}  \
++        -t \"apt-get -y -q -o Debug::pkgProblemResolver=3Dyes --no-install=
+-recommends --allow-downgrades\" \
++        debian/control"
++
++    termcmd =3D "cd {0}; \
++        apt-get -y -q update -o Dir::Etc::SourceList=3D\"sources.list.d/is=
+ar-apt.list\" -o Dir::Etc::SourceParts=3D\"-\" -o APT::Get::List-Cleanup=3D=
+\"0\"; \
++        apt-get -y upgrade; \
++        {1}; \
++        if [ -n \"$PATH_PREPEND\" ]; then export PATH=3D$PATH_PREPEND:$PAT=
+H; fi; \
++        {0}/scripts/cis-hardening-to-kconfig.py /opt/cis-hardening/version=
+s/default > {0}/Kconfig; \
++        {0}/scripts/select-hardenings.py --output {0}/{2} {0}/Kconfig".for=
+mat(pp_pps, install_deps, config)
++
++    if d.getVar('ISAR_CHROOT_MODE') =3D=3D 'unshare':
++        mounts =3D d.getVar('SCHROOT_MOUNTS')
++        mounts +=3D ' {}:/home/builder/{}'.format(d.getVar('WORKDIR'), d.g=
+etVar('BPN'))
++
++        if bb.utils.to_boolean(d.getVar('USE_CCACHE')):
++            bb.build.exec_func('dpkg_prepare_unshare_ccache', d)
++            mounts +=3D ' {}:/ccache'.format(d.getVar('CCACHE_DIR'))
++
++        termcmd =3D """{0} \
++sh -c "{1};cp /etc/resolv.conf {2}/etc;chroot {2} sh -c '{3}'"
++""".format(
++        run_privileged_cmd(d),
++        insert_isar_mounts(d, d.getVar('DEVSHELL_UNSHARE_ROOTFS'), mounts)=
+,
++        d.getVar('DEVSHELL_UNSHARE_ROOTFS'),
++        termcmd.replace('"', "\\\""))
++    else:
++        termcmd =3D "schroot -d / -c {0} -u root -- sh -c '{1}'".format(sc=
+hroot, termcmd)
++    oe_terminal(termcmd, "Generate Kconfig", d)
++
++    bb.build.exec_func('devshell_chroot_finalize', d)
++
++    try:
++        newmtime =3D os.path.getmtime(configfile)
++    except OSError:
++        newmtime =3D 0
++
++    if newmtime > mtime:
++        bb.note("Configuration changed, recompile will be forced")
++        bb.build.write_taint('do_generate_kernel_config', d)
++        bb.build.write_taint('do_deploy_hardening', d)
++        bb.build.write_taint('do_install', d)
++        bb.build.write_taint('do_dpkg_build', d)
++
++}
++addtask menuconfig after do_prepare_build do_local_isarapt
+diff --git a/recipes-security/cip-cis-rules-config/files/postinst b/recipes=
+-security/cip-cis-rules-config/files/postinst
+new file mode 100644
+index 00000000..1768a539
+--- /dev/null
++++ b/recipes-security/cip-cis-rules-config/files/postinst
+@@ -0,0 +1,32 @@
++#!/bin/sh
++# Copyright (c) Siemens AG, 2026
++# SPDX-License-Identifier: MIT
++
++set -e
++
++CIP_CIS_CONF_DIR=3D/usr/share/cip-cis-rules/configuration
++
++case "$1" in
++    configure)
++        if [ -d "$CIP_CIS_CONF_DIR" ]; then
++            for script in "$CIP_CIS_CONF_DIR"/*.sh; do
++                [ -r "$script" ] || continue
++                if ! sh "$script"; then
++                    echo "cip-cis-rules: $(basename "$script") failed" >&2
++                    exit 1
++                fi
++            done
++        fi
++        ;;
++    abort-upgrade|abort-remove|abort-deconfigure)
++        ;;
++    *)
++        echo "postinst called with unknown argument '$1'" >&2
++        exit 1
++        ;;
++esac
++
++#DEBHELPER#
++
++exit 0
++
+diff --git a/recipes-security/cip-cis-rules-config/files/rules.tmpl b/recip=
+es-security/cip-cis-rules-config/files/rules.tmpl
+new file mode 100644
+index 00000000..f2afa40f
+--- /dev/null
++++ b/recipes-security/cip-cis-rules-config/files/rules.tmpl
+@@ -0,0 +1,19 @@
++#!/usr/bin/make -f
++# Copyright (c) Siemens AG, 2026
++# SPDX-License-Identifier: MIT
++PACKAGE	       :=3D ${PN}
++CONFIG_JSON    :=3D ${HARDENING_CFG_NAME}
++DESTDIR        :=3D debian/$(PACKAGE)
++
++%:
++	dh $@
++
++# Copy enabled config snippets into the main package staging tree.
++# Install the rule-selection config and kernel fragment into the dev packa=
+ge
++# so that build systems and validation tools can consume them.
++override_dh_auto_install:
++	python3 scripts/enable-cis-rules.py \
++		--config $(CONFIG_JSON) \
++		--snippets-dir /usr/share/cip-cis-rules \
++		--output-dir $(DESTDIR)
++	dh_auto_install
+diff --git a/recipes-security/cip-cis-rules-config/files/scripts/cis-harden=
+ing-to-kconfig.py b/recipes-security/cip-cis-rules-config/files/scripts/cis=
+-hardening-to-kconfig.py
+new file mode 100755
+index 00000000..cb579f6a
+--- /dev/null
++++ b/recipes-security/cip-cis-rules-config/files/scripts/cis-hardening-to-=
+kconfig.py
+@@ -0,0 +1,350 @@
++#!/usr/bin/env python3
++#
++# SPDX-FileCopyrightText: 2026 Siemens AG
++# SPDX-License-Identifier: MIT
++#
++
++import argparse
++from pathlib import Path
++import re
++
++SECTIONS =3D {
++    "1 Initial Setup": {
++        "1.1 Filesystem Configuration": {},
++        "1.2 Software Updates": {},
++        "1.3 Filesystem Integrity Checking": {},
++        "1.4 Secure Boot Settings": {},
++        "1.5 Additional Process Hardening": {},
++        "1.6 Mandatory Access Control": {},
++        "1.7 CLI Warning Banners": {},
++        "1.8 Gnome Display Manager": {},
++    },
++    "2 Services": {
++        "2.1 Time Synchronization": {},
++        "2.2 Special Purpose Services": {},
++        "2.3 Service Clients": {},
++    },
++    "3 Network Configuration": {
++        "3.1 Protocols and Devices": {},
++        "3.2 Parameters (Host Only)": {},
++        "3.3 Parameters (Host and Router)": {},
++        "3.5 Firewall": {},
++    },
++    "4 Logging and Auditing": {
++        "4.1 System Accounting (auditd)": {},
++        "4.2 Logging": {},
++        "4.4 Ensure logrotate assigns appropriate permissions": {},
++    },
++    "5 Access and Auth": {
++        "5.1 Time-based Job Schedulers": {},
++        "5.2 SSH Server": {},
++        "5.3 Privilege Escalation": {},
++        "5.4 PAM": {},
++        "5.5 User Accounts and Environment": {},
++        "5.6 Restrict Access to su": {}
++    },
++    "6 System Maintenance": {
++        "6.1 System File Permissions": {},
++        "6.2 Local User and Group Settings": {},
++    },
++}
++
++# Maps ID of a rule and the additional Kconfig dependencies that it requir=
+es
++SPECIAL_RULES =3D {
++    "1.1.6": "CIP_VAR_PART",
++    "1.1.6.1": "CIP_VAR_PART",
++    "1.1.6.2": "CIP_VAR_PART",
++    "1.1.7": "CIP_VAR_TMP_PART",
++    "1.1.8": "CIP_VAR_TMP_PART",
++    "1.1.9": "CIP_VAR_TMP_PART",
++    "1.1.10": "CIP_VAR_TMP_PART",
++    "1.1.11": "CIP_VAR_LOG_PART",
++    "1.1.11.1": "CIP_VAR_LOG_PART",
++    "1.1.11.2": "CIP_VAR_LOG_PART",
++    "1.1.11.3": "CIP_VAR_LOG_PART",
++    "1.1.12": "CIP_VAR_LOG_AUDIT_PART",
++    "1.1.12.1": "CIP_VAR_LOG_AUDIT_PART",
++    "1.1.12.2": "CIP_VAR_LOG_AUDIT_PART",
++    "1.1.12.3": "CIP_VAR_LOG_AUDIT_PART",
++    "1.1.13": "CIP_HOME_PART",
++    "1.1.14": "CIP_HOME_PART",
++    "1.1.14.1": "CIP_HOME_PART",
++    "1.5.1": "CIP_GRUB_BOOTLOADER",
++    "5.1.2": "CIP_CRON",
++    "5.1.3": "CIP_CRON",
++    "5.1.4": "CIP_CRON",
++    "5.1.5": "CIP_CRON",
++    "5.1.6": "CIP_CRON",
++    "5.1.7": "CIP_CRON",
++    "5.1.8": "CIP_CRON",
++}
++
++SPECIAL_RULE_JUSTIFICATIONS =3D {
++    "CIP_VAR_PART": "Not applicable: no separate /var partition is configu=
+red.",
++    "CIP_VAR_TMP_PART": "Not applicable: no separate /var/tmp partition is=
+ configured.",
++    "CIP_VAR_LOG_PART": "Not applicable: no separate /var/log partition is=
+ configured.",
++    "CIP_VAR_LOG_AUDIT_PART": "Not applicable: no separate /var/log/audit =
+partition is configured.",
++    "CIP_HOME_PART": "Not applicable: no separate /home partition is confi=
+gured.",
++    "CIP_GRUB_BOOTLOADER": "Not applicable: the GRUB bootloader is not use=
+d.",
++    "CIP_CRON": "Not applicable: cron is not used on this system.",
++}
++
++
++class Rule:
++    def __init__(self, rule: Path):
++        if "_" not in rule.name:
++            raise ValueError(
++                f"Rule filename '{rule.name}' does not match expected '<id=
+>_<name>' format"
++            )
++        id, name =3D rule.name.split("_", 1)
++        self.id =3D [int(i) for i in id.split(".")]
++        self.name =3D name.split(".")[0].replace("_", " ")
++        self.description =3D None
++        self.hardening_level =3D 5
++        with open(rule, "r") as f:
++            for line in f:
++                line =3D line.strip()
++                if line.startswith("DESCRIPTION=3D"):
++                    self.description =3D line.split("=3D", 1)[1].strip('"'=
+)
++                elif line.startswith("HARDENING_LEVEL=3D"):
++                    raw =3D line.split("=3D", 1)[1].strip()
++                    try:
++                        self.hardening_level =3D int(raw)
++                    except ValueError:
++                        raise ValueError(
++                            f"Rule '{rule.name}' has non-integer HARDENING=
+_LEVEL=3D{raw!r}"
++                        )
++
++
++def setup_parser():
++    parser =3D argparse.ArgumentParser(
++        prog=3D"cis-hardening-to-kconfig",
++        description=3D"Convert the OVH CIS hardening rules to a KConfig",
++    )
++    parser.add_argument("rules-dir", type=3DPath)
++    return parser
++
++
++def rule_to_kconfig_entry(r: Rule, parent_symbol: str, levels: list[int]) =
+-> str:
++    id_str =3D "_".join(str(i) for i in r.id)
++    id_dotted =3D ".".join(str(i) for i in r.id)
++    symbol =3D f"CIS_{id_str}"
++    applicable =3D [l for l in levels if l >=3D r.hardening_level]
++    default_cond =3D " || ".join(f"CIS_LEVEL_{l}" for l in applicable)
++    additional_cond =3D SPECIAL_RULES.get(id_dotted)
++    if additional_cond:
++        default_cond =3D f"({default_cond}) && {additional_cond}"
++    lines =3D [
++        f"config {symbol}",
++        f'\tbool "{id_dotted} - {r.name} ({r.hardening_level})"',
++        f"\tdefault y if {default_cond}",
++    ]
++    if r.description:
++        lines.append(f"\thelp")
++        lines.append(f"\t  {r.description}")
++    return "\n".join(lines) + "\n"
++
++
++def transform_prompt(bool_prompt):
++    """
++    Turn the bool prompt into a justification string prompt.
++    e.g. "1.1.1.1 - disable freevxfs (2)"
++      -> "justification to enable freevxfs (2)"
++    We strip the leading number and dash, remove leading verb, keep the re=
+st.
++    """
++    # Remove the CIS rule number prefix  "X.X.X - "
++    m =3D re.match(r"^[\d.]+ - (.+)$", bool_prompt)
++    if m:
++        rest =3D m.group(1)
++    else:
++        rest =3D bool_prompt
++
++    # Drop leading verb ("disable", "enable", "install", "restrict", etc.)
++    rest_stripped =3D re.sub(
++        r"^(disable|enable|install|restrict|configure|use|set|remove|find|=
+check|limit|lock|freeze|enforce|log|record|halt|keep|make|update)\s+",
++        "",
++        rest,
++        flags=3Dre.IGNORECASE,
++    )
++
++    return f"justification to enable {rest_stripped}"
++
++
++def transform_help(help_text):
++    """
++    Build a generic justification help line from the parent help text.
++    Strip leading verb (same list as transform_prompt) before composing.
++    """
++    # Strip trailing period
++    stripped =3D help_text.rstrip(".")
++    # Drop leading verb
++    stripped =3D re.sub(
++        r"^(disable|enable|install|restrict|configure|use|set|remove|find|=
+check|"
++        r"limit|lock|freeze|enforce|log|record|halt|keep|make|update|colle=
+ct|"
++        r"ensure|verify|deactivate|activate|implement|implemet|create|"
++        r"checking|allow|disallow|do not allow)\s+",
++        "",
++        stripped,
++        flags=3Dre.IGNORECASE,
++    )
++    return f"Provide a reason for enabling {stripped} for the current hard=
+ening level."
++
++
++def rule_to_justification_entry(r: Rule, parent_symbol: str, levels: list[=
+int]) -> str:
++    id_str =3D "_".join(str(i) for i in r.id)
++    id_dotted =3D ".".join(str(i) for i in r.id)
++    symbol =3D f"CIS_{id_str}_JUSTIFICATION"
++    applicable =3D [l for l in levels if l >=3D r.hardening_level]
++    level_cond =3D " || ".join(f"CIS_LEVEL_{l}" for l in applicable)
++    additional_cond =3D SPECIAL_RULES.get(id_dotted)
++    depends_cond =3D f"!CIS_{id_str} && ({level_cond})"
++    prompt =3D transform_prompt(f"{id_dotted} - {r.name} ({r.hardening_lev=
+el})")
++    lines =3D [
++        f"config {symbol}",
++        f'\tstring "{prompt}"',
++        f"\tdepends on {depends_cond}",
++    ]
++    if additional_cond:
++        preset =3D SPECIAL_RULE_JUSTIFICATIONS.get(additional_cond)
++        if preset:
++            lines.append(f'\tdefault "{preset}" if !{additional_cond}')
++    help_text =3D transform_help(r.description) if r.description else None
++    if r.description:
++        lines.append("\thelp")
++        lines.append(f"\t  {help_text}")
++    return "\n".join(lines) + "\n"
++
++
++def section_symbol(section_key: str) -> str:
++    num =3D section_key.split(" ", 1)[0]
++    return "CIS_SEC_" + num.replace(".", "_")
++
++
++def generate_kconfig(rules: list[Rule]) -> str:
++    # Collect all hardening levels used
++    levels =3D sorted({r.hardening_level for r in rules if r.hardening_lev=
+el is not None})
++    if not levels:
++        raise ValueError("No rules with a hardening level found; cannot ge=
+nerate Kconfig")
++
++    # Build lookup: subsection number -> list of rules
++    subsection_rules: dict[str, list[Rule]] =3D {}
++    for rule in rules:
++        key =3D ".".join(str(i) for i in rule.id[:2])
++        subsection_rules.setdefault(key, []).append(rule)
++
++    output =3D []
++
++    # Hardening level selection
++    output.append('menu "Default hardening level"')
++    output.append("")
++    output.append("choice")
++    output.append('\tprompt "Hardening level"')
++    default_level =3D 2 if 2 in levels else levels[0]
++    output.append(f"\tdefault CIS_LEVEL_{default_level}")
++    output.append("")
++
++    for level in levels:
++        output.append(f"config CIS_LEVEL_{level}")
++        output.append(f'\tbool "Level {level}"')
++        output.append("")
++
++    output.append("endchoice")
++    output.append("")
++    output.append("endmenu")
++    output.append("")
++
++    # Other special rule menus
++    output.append('menu "Partitioning layout"')
++    output.append("")
++    output.append("config CIP_HOME_PART")
++    output.append('\tbool "Separate /home partition"')
++    output.append("\tdefault n")
++    output.append("\thelp")
++    output.append("\t  Enable this if you have a separate /home partition"=
+)
++    output.append("")
++    output.append("config CIP_VAR_PART")
++    output.append('\tbool "Separate /var partition"')
++    output.append("\tdefault n")
++    output.append("\thelp")
++    output.append("\t  Enable this if you have a separate /var partition")
++    output.append("")
++    output.append("config CIP_VAR_TMP_PART")
++    output.append('\tbool "Separate /var/tmp partition"')
++    output.append("\tdepends on CIP_VAR_PART")
++    output.append("\tdefault n")
++    output.append("\thelp")
++    output.append("\t  Enable this if you have a separate /var/tmp partiti=
+on")
++    output.append("")
++    output.append("config CIP_VAR_LOG_PART")
++    output.append('\tbool "Separate /var/log partition"')
++    output.append("\tdepends on CIP_VAR_PART")
++    output.append("\tdefault n")
++    output.append("\thelp")
++    output.append("\t  Enable this if you have a separate /var/log partiti=
+on")
++    output.append("")
++    output.append("config CIP_VAR_LOG_AUDIT_PART")
++    output.append('\tbool "Separate /var/log/audit partition"')
++    output.append("\tdepends on CIP_VAR_PART && CIP_VAR_LOG_PART")
++    output.append("\tdefault n")
++    output.append("\thelp")
++    output.append("\t  Enable this if you have a separate /var/log/audit p=
+artition")
++    output.append("")
++    output.append("endmenu")
++    output.append("")
++    output.append('menu "Additional options"')
++    output.append("config CIP_GRUB_BOOTLOADER")
++    output.append('\tbool "GRUB Bootloader"')
++    output.append("\tdefault n")
++    output.append("\thelp")
++    output.append("\t  Enable this if you use the GRUB bootloader")
++    output.append("")
++    output.append("config CIP_CRON")
++    output.append('\tbool "CRON"')
++    output.append("\tdefault n")
++    output.append("\thelp")
++    output.append("\t  Enable this if you use CRON")
++    output.append("")
++    output.append("endmenu")
++    output.append("")
++
++    for section_key, subsections in SECTIONS.items():
++        output.append(f'menu "{section_key}"')
++        output.append("")
++
++        for subsection_key in subsections:
++            sub_num =3D subsection_key.split(" ", 1)[0]
++            matching =3D subsection_rules.get(sub_num, [])
++            if not matching:
++                continue
++
++            output.append(f'menu "{subsection_key}"')
++            output.append("")
++
++            for rule in matching:
++                output.append(rule_to_kconfig_entry(rule, None, levels))
++                output.append(rule_to_justification_entry(rule, None, leve=
+ls))
++
++            output.append("endmenu")
++            output.append("")
++
++        output.append("endmenu")
++        output.append("")
++
++    return "\n".join(output)
++
++
++def main():
++    parser =3D setup_parser()
++    args =3D parser.parse_args()
++    rulesdir: Path =3D getattr(args, "rules-dir")
++
++    rules =3D sorted(
++        (Rule(f) for f in rulesdir.iterdir() if f.is_file() and "_" in f.n=
+ame),
++        key=3Dlambda r: r.id,
++    )
++
++    print(generate_kconfig(rules))
++
++
++if __name__ =3D=3D "__main__":
++    main()
+diff --git a/recipes-security/cip-cis-rules-config/files/scripts/config.sch=
+ema.json b/recipes-security/cip-cis-rules-config/files/scripts/config.schem=
+a.json
+new file mode 100644
+index 00000000..74b020a7
+--- /dev/null
++++ b/recipes-security/cip-cis-rules-config/files/scripts/config.schema.jso=
+n
+@@ -0,0 +1,124 @@
++{
++  "$schema": "https://json-schema.org/draft/2020-12/schema",
++  "$id": "config.schema.json",
++  "title": "CIP CIS Hardening Rules",
++  "description": "Schema for the config.json file produced by select-harde=
+nings.py",
++  "type": "object",
++  "required": ["level", "rules"],
++  "additionalProperties": false,
++  "properties": {
++    "level": {
++      "type": "integer",
++      "description": "The selected CIS hardening level",
++      "enum": [1, 2, 3, 4, 5]
++    },
++    "rules": {
++      "type": "array",
++      "minItems": 1,
++      "items": { "$ref": "#/$defs/ruleWrapper" }
++    }
++  },
++  "$comment": "For each possible selected level L, when the selected level=
+ =3D=3D L every rule whose minimum level is <=3D L must carry a justificati=
+on if it is not applied (apply =3D=3D false).",
++  "allOf": [
++    { "$ref": "#/$defs/requireJustificationL1" },
++    { "$ref": "#/$defs/requireJustificationL2" },
++    { "$ref": "#/$defs/requireJustificationL3" },
++    { "$ref": "#/$defs/requireJustificationL4" },
++    { "$ref": "#/$defs/requireJustificationL5" }
++  ],
++  "$defs": {
++    "ruleWrapper": {
++      "type": "object",
++      "required": ["rule"],
++      "additionalProperties": false,
++      "properties": {
++        "rule": {
++          "type": "object",
++          "required": ["name", "description", "level", "apply"],
++          "additionalProperties": false,
++          "properties": {
++            "name": {
++              "type": "string",
++              "description": "CIS rule identifier, e.g. '1.1.1.1'",
++              "pattern": "^[0-9]+(\\.[0-9]+)*$"
++            },
++            "description": {
++              "type": "string",
++              "description": "Short description of the hardening rule",
++              "minLength": 1
++            },
++            "level": {
++              "type": "integer",
++              "description": "Minimum CIS hardening level at which this ru=
+le is required",
++              "enum": [1, 2, 3, 4, 5]
++            },
++            "apply": {
++              "type": "boolean",
++              "description": "Whether the rule is currently enabled in the=
+ configuration"
++            },
++            "justification": {
++              "type": "string",
++              "description": "Reason for not applying a rule that is requi=
+red by the selected hardening level",
++              "minLength": 1
++            },
++            "value": {
++              "type": "string",
++              "description": "Optional parameter value for rules that requ=
+ire site-specific configuration (e.g. group names)",
++              "minLength": 1
++            }
++          }
++        }
++      }
++    },
++    "requireJustificationL1": {
++      "if": { "required": ["level"], "properties": { "level": { "const": 1=
+ } } },
++      "then": { "properties": { "rules": { "items": { "properties": { "rul=
+e": {
++        "if": {
++          "required": ["level", "apply"],
++          "properties": { "level": { "enum": [1] }, "apply": { "const": fa=
+lse } }
++        },
++        "then": { "required": ["justification"] }
++      } } } } } }
++    },
++    "requireJustificationL2": {
++      "if": { "required": ["level"], "properties": { "level": { "const": 2=
+ } } },
++      "then": { "properties": { "rules": { "items": { "properties": { "rul=
+e": {
++        "if": {
++          "required": ["level", "apply"],
++          "properties": { "level": { "enum": [1, 2] }, "apply": { "const":=
+ false } }
++        },
++        "then": { "required": ["justification"] }
++      } } } } } }
++    },
++    "requireJustificationL3": {
++      "if": { "required": ["level"], "properties": { "level": { "const": 3=
+ } } },
++      "then": { "properties": { "rules": { "items": { "properties": { "rul=
+e": {
++        "if": {
++          "required": ["level", "apply"],
++          "properties": { "level": { "enum": [1, 2, 3] }, "apply": { "cons=
+t": false } }
++        },
++        "then": { "required": ["justification"] }
++      } } } } } }
++    },
++    "requireJustificationL4": {
++      "if": { "required": ["level"], "properties": { "level": { "const": 4=
+ } } },
++      "then": { "properties": { "rules": { "items": { "properties": { "rul=
+e": {
++        "if": {
++          "required": ["level", "apply"],
++          "properties": { "level": { "enum": [1, 2, 3, 4] }, "apply": { "c=
+onst": false } }
++        },
++        "then": { "required": ["justification"] }
++      } } } } } }
++    },
++    "requireJustificationL5": {
++      "if": { "required": ["level"], "properties": { "level": { "const": 5=
+ } } },
++      "then": { "properties": { "rules": { "items": { "properties": { "rul=
+e": {
++        "if": {
++          "required": ["level", "apply"],
++          "properties": { "level": { "enum": [1, 2, 3, 4, 5] }, "apply": {=
+ "const": false } }
++        },
++        "then": { "required": ["justification"] }
++      } } } } } }
++    }
++  }
++}
+diff --git a/recipes-security/cip-cis-rules-config/files/scripts/enable-cis=
+-rules.py b/recipes-security/cip-cis-rules-config/files/scripts/enable-cis-=
+rules.py
+new file mode 100644
+index 00000000..4d33bf21
+--- /dev/null
++++ b/recipes-security/cip-cis-rules-config/files/scripts/enable-cis-rules.=
+py
+@@ -0,0 +1,333 @@
++#!/usr/bin/env python3
++# SPDX-FileCopyrightText: 2026 Siemens AG
++# SPDX-License-Identifier: MIT
++"""
++Package enabled CIS hardening configuration snippets into a partial root d=
+irectory
++for Debian package creation.
++
++This script:
++1. Parses a .config.json file to find rules with apply=3Dtrue
++2. Maps rule names to generated config file snippets =20
++3. Copies enabled config files to the correct locations in a partial root =
+directory
++4. Creates the directory structure that dpkg-raw expects for package build=
+ing
++
++Usage:
++    python3 package-enabled-configs.py \\
++        --config /path/to/.config.json \\
++        --snippets-dir /path/to/cis-config-snippets \\
++        --output-dir /path/to/partial/root
++"""
++
++import argparse
++import logging
++import json
++import re
++import sys
++from pathlib import Path
++from typing import Dict, List, Set
++
++logger =3D logging.getLogger(__name__)
++
++
++def load_json(path: Path, logger: logging.Logger) -> dict:
++    """Load a JSON file. On error, log to stderr and exit with status 1.""=
+"
++    try:
++        with Path(path).open() as f:
++            return json.load(f)
++    except (json.JSONDecodeError, OSError) as exc:
++        logger.error(f"Error loading file '{path}': {exc}")
++        sys.exit(1)
++
++
++def get_enabled_rules(config: dict) -> set[str]:
++    """Return the set of rule names where rule.apply is true and the name =
+is non-empty."""
++    enabled: set[str] =3D set()
++    for entry in config.get("rules", []):
++        rule =3D entry.get("rule", {}) if isinstance(entry, dict) else {}
++        if rule.get("apply", False) and rule.get("name"):
++            enabled.add(rule["name"])
++    return enabled
++
++
++# ------------------------------------------------------------------------=
+---
++# Dynamic rule discovery
++# Discovers config files based on CIS rule IDs encoded in filenames
++# ------------------------------------------------------------------------=
+---
++
++# ------------------------------------------------------------------------=
+---
++# Destination path prefix overrides
++# By default snippets are placed under etc/ in the output root.
++# Entries here map a source subdirectory prefix to a different destination
++# prefix.  Keys are Path parts (as strings) relative to snippets_dir.
++# ------------------------------------------------------------------------=
+---
++DEST_PREFIX_OVERRIDES: Dict[str, str] =3D {
++    "pam-configs": "usr/share/pam-configs",
++    "chrony": "etc/chrony",
++    "configuration": "usr/share/cip-cis-rules/configuration",
++    "conf.d-overrides": "usr/share/cip-cis-rules/conf.d-overrides",
++    "sshd_config.d": "etc/ssh/sshd_config.d",
++}
++
++# ------------------------------------------------------------------------=
+---
++# Per-source-prefix file mode overrides.
++# By default snippets are written with the umask default (typically 0644).
++# Some destinations are rejected by the consuming tool unless mode is set
++# explicitly; in particular sudo refuses to read /etc/sudoers.d/* unless
++# mode is <=3D 0440 and owner is root.
++# Keys are the first component of the source path (relative to snippets_di=
+r).
++# ------------------------------------------------------------------------=
+---
++DEST_MODE_OVERRIDES: Dict[str, int] =3D {
++    "sudoers.d": 0o440,
++    "configuration": 0o755,
++}
++
++
++def dest_mode(source_rel: "Path") -> "int | None":
++    """
++    Return the explicit file mode for the destination of ``source_rel``,
++    or ``None`` if no override applies (caller should leave the file at th=
+e
++    umask default).
++    """
++    parts =3D source_rel.parts
++    first =3D parts[0] if parts else ""
++    return DEST_MODE_OVERRIDES.get(first)
++
++
++def dest_rel_path(source_rel: "Path") -> "Path":
++    """
++    Return the destination path relative to the output root for a given
++    source-relative path.
++
++    The first component of source_rel is matched against DEST_PREFIX_OVERR=
+IDES.
++    If found the first component is replaced with the mapped prefix.
++    Otherwise 'etc' is prepended (legacy behaviour).
++    """
++    parts =3D source_rel.parts
++    first =3D parts[0] if parts else ""
++    if first in DEST_PREFIX_OVERRIDES:
++        rest =3D parts[1:]
++        if not rest:
++            raise ValueError(
++                f"dest_rel_path: snippet '{source_rel}' sits at snippets r=
+oot "
++                f"with a prefix-override key as its name =E2=80=94 cannot =
+determine destination"
++            )
++        return Path(DEST_PREFIX_OVERRIDES[first]) / Path(*rest)
++    return Path("etc") / source_rel
++
++
++def discover_rule_files(
++    snippets_dir: Path, logger: logging.Logger
++) -> Dict[str, List[Path]]:
++    """
++    Dynamically discover config files by scanning snippets directory.
++
++    Looks for files matching pattern: cis-X.Y.Z-* or cis-X.Y.Z.W-* (dot-se=
+parated rule ID)
++
++    Returns a mapping of rule_id -> list of file paths relative to snippet=
+s_dir.
++    """
++    # Pattern to match CIS rule IDs in filenames (dot-separated)
++    pattern =3D re.compile(r"cis-(\d+)\.(\d+)\.(\d+)(?:\.(\d+))?")
++
++    rule_files: Dict[str, List[Path]] =3D {}
++
++    # Recursively find all files in snippets directory
++    for file_path in snippets_dir.rglob("*"):
++        if not file_path.is_file():
++            continue
++
++        filename =3D file_path.name
++
++        # Try to match pattern
++        match =3D pattern.search(filename)
++        if match:
++            groups =3D match.groups()
++
++            # Build rule ID (X.Y.Z or X.Y.Z.W format)
++            if groups[3]:  # 4-part rule ID
++                rule_id =3D f"{groups[0]}.{groups[1]}.{groups[2]}.{groups[=
+3]}"
++            else:  # 3-part rule ID
++                rule_id =3D f"{groups[0]}.{groups[1]}.{groups[2]}"
++
++            # Get relative path from snippets_dir
++            rel_path =3D file_path.relative_to(snippets_dir)
++
++            # Add to mapping
++            if rule_id not in rule_files:
++                rule_files[rule_id] =3D []
++            rule_files[rule_id].append(rel_path)
++
++            logger.debug(f"Discovered rule {rule_id}: {rel_path}")
++
++    logger.info(f"Discovered {len(rule_files)} rules with config files")
++    return rule_files
++
++
++def get_rule_values(config: dict) -> Dict[str, str]:
++    """Extract the optional value field for each rule."""
++    values =3D {}
++    for rule_entry in config.get("rules", []):
++        rule =3D rule_entry.get("rule", {})
++        name =3D rule.get("name", "")
++        value =3D rule.get("value")
++        if name and value is not None:
++            values[name] =3D value
++    return values
++
++
++def package_configs(
++    enabled_rules: Set[str],
++    rule_files: Dict[str, List[Path]],
++    rule_values: Dict[str, str],
++    snippets_dir: Path,
++    output_dir: Path,
++    logger: logging.Logger,
++) -> int:
++    """
++    Copy enabled config snippets to the partial root directory structure.
++    Returns the number of errors encountered.
++    """
++    errors =3D 0
++    processed_files =3D 0
++
++    for rule_name in sorted(enabled_rules):
++        if rule_name not in rule_files:
++            logger.debug(f"SKIP {rule_name}: no config files found for thi=
+s rule")
++            continue
++
++        file_paths =3D rule_files[rule_name]
++
++        for source_rel in file_paths:
++            source_path =3D snippets_dir / source_rel
++            # Use new dest_rel_path function to determine destination
++            dest_rel =3D dest_rel_path(source_rel)
++            dest_path =3D output_dir / dest_rel
++
++            if not source_path.exists():
++                logger.error(f"{rule_name}: config file '{source_path}' no=
+t found")
++                errors +=3D 1
++                continue
++
++            logger.debug(f"copy {rule_name}: {source_rel} =E2=86=92 {dest_=
+rel}")
++
++            # Create destination directory
++            dest_path.parent.mkdir(parents=3DTrue, exist_ok=3DTrue)
++            # Read source, substitute @@VALUE@@ if a value is configured
++            content =3D source_path.read_text()
++            if "@@VALUE@@" in content:
++                value =3D rule_values.get(rule_name)
++                if value is None:
++                    logger.error(
++                        f"{rule_name}: snippet contains @@VALUE@@ but no "
++                        f"'value' field is set in .config.json"
++                    )
++                    errors +=3D 1
++                    continue
++                content =3D content.replace("@@VALUE@@", value)
++                logger.debug(f"substituted @@VALUE@@=3D{value!r} in {sourc=
+e_rel}")
++            dest_path.write_text(content)
++            mode =3D dest_mode(source_rel)
++            if mode is not None:
++                dest_path.chmod(mode)
++                logger.debug(f"set mode {mode:#o} on {dest_rel}")
++
++            processed_files +=3D 1
++
++    skipped_rules =3D len(enabled_rules) - len(
++        [r for r in enabled_rules if r in rule_files]
++    )
++    logger.debug(
++        f"Summary: {processed_files} config files processed, "
++        f"{skipped_rules} rules skipped (no config files found)"
++    )
++
++    return errors
++
++
++def setup_parser() -> argparse.ArgumentParser:
++    parser =3D argparse.ArgumentParser(
++        prog=3D"package-enabled-configs",
++        description=3D(
++            "Package enabled CIS hardening configuration snippets into a p=
+artial "
++            "root directory for Debian package creation."
++        ),
++    )
++    parser.add_argument(
++        "--config",
++        type=3DPath,
++        required=3DTrue,
++        metavar=3D"FILE",
++        help=3D"Path to .config.json file containing rule selections",
++    )
++    parser.add_argument(
++        "--snippets-dir",
++        type=3DPath,
++        required=3DTrue,
++        metavar=3D"DIR",
++        help=3D"Directory containing generated config file snippets",
++    )
++    parser.add_argument(
++        "--output-dir",
++        type=3DPath,
++        required=3DTrue,
++        metavar=3D"DIR",
++        help=3D"Output directory for partial root filesystem structure",
++    )
++    return parser
++
++
++def main() -> None:
++    parser =3D setup_parser()
++    args =3D parser.parse_args()
++
++    logging.basicConfig(
++        level=3Dlogging.INFO,
++        format=3D"%(levelname)s: %(message)s",
++    )
++
++    # Validate inputs
++    if not args.config.is_file():
++        logger.error(f"config file '{args.config}' does not exist")
++        sys.exit(1)
++
++    if not args.snippets_dir.is_dir():
++        logger.error(f"snippets directory '{args.snippets_dir}' does not e=
+xist")
++        sys.exit(1)
++
++    args.output_dir.mkdir(parents=3DTrue, exist_ok=3DTrue)
++
++    # Discover available config files
++    logger.debug(f"Discovering config files in: {args.snippets_dir}")
++    rule_files =3D discover_rule_files(args.snippets_dir, logger)
++
++    # Load configuration and get enabled rules
++    config =3D load_json(args.config, logger)
++    enabled_rules =3D get_enabled_rules(config)
++    rule_values =3D get_rule_values(config)
++
++    logger.debug(f"Loaded configuration from: {args.config}")
++    logger.info(f"Found {len(enabled_rules)} enabled rules")
++    if enabled_rules:
++        implementable_rules =3D enabled_rules & set(rule_files.keys())
++        logger.debug(f"Rules with config files available: {len(implementab=
+le_rules)}")
++
++    if not enabled_rules:
++        logger.error("No rules are enabled (apply=3Dtrue) in the configura=
+tion")
++        sys.exit(1)
++
++    # Package the configs
++    errors =3D package_configs(
++        enabled_rules,
++        rule_files,
++        rule_values,
++        args.snippets_dir,
++        args.output_dir,
++        logger,
++    )
++
++    if errors:
++        logger.error(f"{errors} error(s) occurred during packaging")
++        sys.exit(1)
++
++
++if __name__ =3D=3D "__main__":
++    main()
+diff --git a/recipes-security/cip-cis-rules-config/files/scripts/gen-kernel=
+-config.py b/recipes-security/cip-cis-rules-config/files/scripts/gen-kernel=
+-config.py
+new file mode 100755
+index 00000000..285151dd
+--- /dev/null
++++ b/recipes-security/cip-cis-rules-config/files/scripts/gen-kernel-config=
+.py
+@@ -0,0 +1,165 @@
++#!/usr/bin/env python3
++# SPDX-FileCopyrightText: 2026 Siemens AG
++# SPDX-License-Identifier: MIT
++"""
++Generate a Linux kernel config fragment for enabled CIS hardening rules
++from .config.json.
++
++Each rule maps kernel CONFIG symbols to explicit targets:
++    - y: built-in
++    - n: disabled (rendered as "# CONFIG_FOO is not set")
++
++The fragment can be dropped into a kernel build tree (e.g. via
++KCONFIG_ALLCONFIG or merge_config.sh) to enforce kernel option values at
++compile time.
++
++Usage:
++    python3 gen-kernel-config.py \\
++        --config generator/.config.json \\
++        --output hardening.cfg
++"""
++
++import json
++import logging
++import argparse
++from pathlib import Path
++import sys
++
++logger =3D logging.getLogger(__name__)
++
++
++def load_json(path: Path, logger: logging.Logger) -> dict:
++    """Load a JSON file. On error, log to stderr and exit with status 1.""=
+"
++    try:
++        with Path(path).open() as f:
++            return json.load(f)
++    except (json.JSONDecodeError, OSError) as exc:
++        logger.error(f"Error loading file '{path}': {exc}")
++        sys.exit(1)
++
++
++def get_enabled_rules(config: dict) -> set[str]:
++    """Return the set of rule names where rule.apply is true and the name =
+is non-empty."""
++    enabled: set[str] =3D set()
++    for entry in config.get("rules", []):
++        rule =3D entry.get("rule", {}) if isinstance(entry, dict) else {}
++        if rule.get("apply", False) and rule.get("name"):
++            enabled.add(rule["name"])
++    return enabled
++
++# ------------------------------------------------------------------------=
+---
++# Mapping of CIS rule IDs to kernel CONFIG symbols and their target values=
+.
++# A rule may map to more than one symbol (e.g. FAT covers three options).
++# ------------------------------------------------------------------------=
+---
++RULE_KERNEL_OPTIONS: dict[str, dict] =3D {
++    "1.1.1.1": {
++        "description": "Disable Veritas VxFS filesystem",
++        "configs": {"CONFIG_VXFS_FS": "n"},
++    },
++    "1.1.1.2": {
++        "description": "Disable JFFS2 filesystem",
++        "configs": {"CONFIG_JFFS2_FS": "n"},
++    },
++    "1.1.1.3": {
++        "description": "Disable HFS filesystem",
++        "configs": {"CONFIG_HFS_FS": "n"},
++    },
++    "1.1.1.4": {
++        "description": "Disable HFS+ filesystem",
++        "configs": {"CONFIG_HFSPLUS_FS": "n"},
++    },
++    "1.1.1.5": {
++        "description": "Disable SquashFS filesystem",
++        "configs": {"CONFIG_SQUASHFS": "n"},
++    },
++    "1.1.1.6": {
++        "description": "Disable UDF filesystem",
++        "configs": {"CONFIG_UDF_FS": "n"},
++    },
++    "1.1.1.7": {
++        "description": "Disable FAT filesystems (FAT, MSDOS, VFAT)",
++        "configs": {
++            "CONFIG_FAT_FS": "n",
++            "CONFIG_MSDOS_FS": "n",
++            "CONFIG_VFAT_FS": "n",
++        },
++    },
++    "1.1.1.8": {
++        "description": "Disable cramfs filesystem",
++        "configs": {"CONFIG_CRAMFS": "n"},
++    },
++    "1.1.23": {
++        "description": "Disable USB storage",
++        "configs": {"CONFIG_USB_STORAGE": "n"},
++    },
++}
++
++
++def setup_parser():
++    parser =3D argparse.ArgumentParser(
++        description=3D"Generate a kernel config fragment for "
++                    "enabled CIS hardening rules."
++    )
++    parser.add_argument(
++        "--config",
++        type=3DPath,
++        required=3DTrue,
++        metavar=3D"FILE",
++        help=3D"Path to generator/.config.json",
++    )
++    parser.add_argument(
++        "--output",
++        type=3DPath,
++        required=3DTrue,
++        metavar=3D"FILE",
++        help=3D"Output kernel config fragment path",
++    )
++    return parser
++
++
++def main():
++    parser =3D setup_parser()
++    args =3D parser.parse_args()
++
++    logging.basicConfig(
++        level=3Dlogging.INFO,
++        format=3D"%(levelname)s: %(message)s",
++    )
++
++    config =3D load_json(args.config, logger)
++    enabled_rules =3D get_enabled_rules(config)
++
++    active =3D [
++        (rule_id, RULE_KERNEL_OPTIONS[rule_id])
++        for rule_id in sorted(RULE_KERNEL_OPTIONS)
++        if rule_id in enabled_rules
++    ]
++
++    args.output.parent.mkdir(parents=3DTrue, exist_ok=3DTrue)
++    with args.output.open("w") as f:
++        f.write(
++            "# CIS hardening kernel config fragment\n"
++            "# Generated by generator/gen-kernel-config.py - do not edit.\=
+n"
++            "# Values: y=3Dbuilt-in, n=3Ddisabled\n"
++            "\n"
++        )
++
++        for rule_id, entry in active:
++            f.write(f"# CIS {rule_id}: {entry['description']}\n")
++            for symbol, value in entry["configs"].items():
++                if value =3D=3D "n":
++                    f.write(f"# {symbol} is not set\n")
++                else:
++                    f.write(f"{symbol}=3D{value}\n")
++            f.write("\n")
++
++    logger.info(
++        f"Generated {args.output} with {len(active)} rule(s) "
++        f"({sum(len(e['configs']) for _, e in active)} CONFIG symbols)."
++    )
++    if not active:
++        logger.info("  No kernel-relevant rules are currently enabled.")
++
++
++if __name__ =3D=3D "__main__":
++    main()
+diff --git a/recipes-security/cip-cis-rules-config/files/scripts/select-har=
+denings.py b/recipes-security/cip-cis-rules-config/files/scripts/select-har=
+denings.py
+new file mode 100755
+index 00000000..1392767a
+--- /dev/null
++++ b/recipes-security/cip-cis-rules-config/files/scripts/select-hardenings=
+.py
+@@ -0,0 +1,616 @@
++#!/usr/bin/env python3
++#
++# Based on the kas menu plugin
++# Copyright (c) Siemens AG, 2021-2023
++# Copyright (c) 2011-2019, Ulf Magnusson <ulfalizer@gmail.com>
++# SPDX-License-Identifier: MIT
++#
++
++import argparse
++import json
++import logging
++import pathlib
++import re
++import sys
++import traceback
++
++from kconfiglib import (
++    Kconfig,
++    Symbol,
++    Choice,
++    expr_value,
++    TYPE_TO_STR,
++    MENU,
++    COMMENT,
++    STRING,
++    BOOL,
++    INT,
++    HEX,
++    UNKNOWN,
++)
++
++from snack import (
++    SnackScreen,
++    EntryWindow,
++    ButtonChoiceWindow,
++    ButtonBar,
++    Listbox,
++    GridFormHelp,
++)
++
++logger =3D logging.getLogger(__name__)
++
++
++class Menuconfig:
++    def __init__(self, kconf):
++        self.kconf =3D kconf
++        self.screen =3D None
++
++    @staticmethod
++    def value_str(sym):
++        if sym.type in (STRING, INT, HEX):
++            return f"({sym.str_value})"
++
++        if sym.choice and sym.visibility =3D=3D 2:
++            return "(*)" if sym.choice.selection is sym else "( )"
++
++        tri_val_str =3D (" ", None, "*")[sym.tri_value]
++
++        if len(sym.assignable) =3D=3D 1:
++            return f"-{tri_val_str}-"
++
++        if sym.type =3D=3D BOOL:
++            return f"[{tri_val_str}]"
++
++        raise RuntimeError()
++
++    @staticmethod
++    def node_str(node, indent):
++        if not node.prompt:
++            return ""
++
++        prompt, prompt_cond =3D node.prompt
++        if not expr_value(prompt_cond):
++            return ""
++
++        if node.item =3D=3D MENU:
++            return f"    {indent * ' '}{prompt}  --->"
++
++        if type(node.item) is Choice:
++            return f"    {indent * ' '}{prompt}"
++
++        if node.item =3D=3D COMMENT:
++            return f"    {indent * ' '}*** {prompt} ***"
++
++        sym =3D node.item
++
++        if sym.type =3D=3D UNKNOWN:
++            return ""
++
++        res =3D f"{Menuconfig.value_str(sym):3} {indent * ' '}{prompt}"
++
++        if node.is_menuconfig:
++            res +=3D f"  ---{'>' if sym.tri_value > 0 else '-'}"
++
++        return res
++
++    @staticmethod
++    def menu_node_strings(node, indent):
++        items =3D []
++
++        while node:
++            string =3D Menuconfig.node_str(node, indent)
++            if string:
++                items.append((string, node))
++
++            if (
++                node.list
++                and node.item !=3D MENU
++                and (type(node.item) is Choice or not node.is_menuconfig)
++            ):
++                items.extend(Menuconfig.menu_node_strings(node.list, inden=
+t + 2))
++
++            node =3D node.next
++
++        return items
++
++    def show_menu(self, title, top_node, is_submenu=3DFalse):
++        selection =3D 0
++
++        while True:
++            items =3D Menuconfig.menu_node_strings(top_node, 0)
++
++            height =3D len(items)
++            window_width =3D 60
++
++            scroll =3D 0
++            if height > self.screen.height - 13:
++                height =3D self.screen.height - 13
++                scroll =3D 1
++
++            buttons =3D [
++                ("Save & Exit", "save", "S"),
++                (" Exit ", "exit", "E"),
++                (" Help ", "help", "h"),
++            ]
++            if is_submenu:
++                buttons.insert(0, (" Return ", "return", "ESC"))
++            buttonbar =3D ButtonBar(self.screen, buttons)
++            if not is_submenu:
++                buttonbar.hotkeys["ESC"] =3D "exit"
++            listbox =3D Listbox(height, width=3Dwindow_width, scroll=3Dscr=
+oll, returnExit=3D1)
++            count =3D 0
++            for string, _ in items:
++                listbox.append(string, count)
++                if selection =3D=3D count:
++                    listbox.setCurrent(count)
++                count +=3D 1
++
++            grid =3D GridFormHelp(self.screen, title, None, 1, 2)
++            grid.add(listbox, 0, 0, padding=3D(0, 0, 0, 1))
++            grid.add(buttonbar, 0, 1, growx=3D1)
++            grid.addHotKey(" ")
++
++            # Snapshot the active CIS level so we can detect level changes
++            # caused by the user action below and re-derive rule defaults.
++            level_before =3D _selected_level(self.kconf)
++
++            rc =3D grid.runOnce()
++
++            action =3D buttonbar.buttonPressed(rc)
++            if action and action !=3D "help":
++                return action
++
++            if count =3D=3D 0:
++                continue
++
++            selection =3D listbox.current()
++            _, selected_node =3D items[selection]
++            sym =3D selected_node.item
++
++            if action =3D=3D "help":
++                prompt, _ =3D selected_node.prompt
++                if selected_node.help:
++                    help_text =3D selected_node.help
++                else:
++                    help_text =3D "No help available."
++                ButtonChoiceWindow(
++                    screen=3Dself.screen,
++                    title=3Df"Help on '{prompt}'",
++                    text=3Dhelp_text,
++                    width=3Dwindow_width,
++                    buttons=3D["  Ok  "],
++                )
++                continue
++
++            show_submenu =3D False
++
++            if type(sym) is Symbol:
++                if rc =3D=3D " ":
++                    if sym.type =3D=3D BOOL:
++                        sym.set_value("n" if sym.tri_value > 0 else "y")
++                else:
++                    if selected_node.is_menuconfig:
++                        show_submenu =3D True
++                    elif sym.type in (STRING, INT, HEX):
++                        action, values =3D EntryWindow(
++                            screen=3Dself.screen,
++                            title=3Dsym.name,
++                            text=3Df"Enter a {TYPE_TO_STR[sym.type]} value=
+:",
++                            prompts=3D[("", sym.str_value)],
++                            width=3D80,
++                            entryWidth=3D80,
++                            buttons=3D[("  Ok  ", "Ok"), ("Cancel", "", "E=
+SC")],
++                        )
++                        if action =3D=3D "Ok":
++                            self.kconf.warnings =3D []
++                            val =3D values[0]
++                            if sym.type =3D=3D HEX and not val.startswith(=
+"0x"):
++                                val =3D "0x" + val
++                            sym.set_value(val)
++                            sym.str_value
++                            if len(self.kconf.warnings) > 0:
++                                ButtonChoiceWindow(
++                                    screen=3Dself.screen,
++                                    title=3D"Invalid entry",
++                                    text=3D"\n".join(self.kconf.warnings),
++                                    width=3Dwindow_width,
++                                    buttons=3D["  Ok  "],
++                                )
++                                self.kconf.warnings =3D []
++            elif selected_node.is_menuconfig and type(sym) is not Choice:
++                show_submenu =3D True
++
++            if show_submenu:
++                submenu_title, _ =3D selected_node.prompt
++                action =3D self.show_menu(
++                    submenu_title, selected_node.list, is_submenu=3DTrue
++                )
++                if action !=3D "return":
++                    return action
++
++            # If the user just switched CIS_LEVEL_N, drop any user overrid=
+es
++            # on rule symbols so the new level's `default y if CIS_LEVEL_=
+=E2=80=A6`
++            # clauses take effect and every rule required by the new level
++            # is enabled by default.  Justifications and the level symbols
++            # themselves are preserved.
++            level_after =3D _selected_level(self.kconf)
++            if (
++                level_before is not None
++                and level_after is not None
++                and level_after !=3D level_before
++            ):
++                cleared =3D _reset_rule_overrides(self.kconf)
++                ButtonChoiceWindow(
++                    screen=3Dself.screen,
++                    title=3D"Hardening level changed",
++                    text=3D(
++                        f"Switched from level {level_before} to level "
++                        f"{level_after}.\n\n"
++                        f"All rule selections were reset to the level "
++                        f"{level_after} defaults ({cleared} prior override=
+"
++                        f"{'s' if cleared !=3D 1 else ''} discarded).\n\n"
++                        "Per-rule justifications were kept."
++                    ),
++                    width=3Dwindow_width,
++                    buttons=3D["  Ok  "],
++                )
++
++    def show(self):
++        self.screen =3D SnackScreen()
++
++        action =3D self.show_menu(self.kconf.mainmenu_text, self.kconf.top=
+_node.list)
++
++        self.screen.finish()
++        return action
++
++
++def _collect_level_numbers(expr):
++    """Return the set of integer level numbers for all CIS_LEVEL_N symbols=
+ in a kconfiglib expr."""
++    from kconfiglib import Symbol as _Symbol
++
++    levels =3D set()
++    if isinstance(expr, _Symbol):
++        m =3D re.match(r"^CIS_LEVEL_(\d+)$", expr.name)
++        if m:
++            levels.add(int(m.group(1)))
++    elif isinstance(expr, tuple):
++        for sub in expr[1:]:
++            levels |=3D _collect_level_numbers(sub)
++    return levels
++
++
++_LEVEL_RE =3D re.compile(r"^CIS_LEVEL_(\d+)$")
++
++
++def _selected_level(kconf):
++    """Return the integer N of the currently selected CIS_LEVEL_N choice, =
+or None."""
++    for n in range(1, 6):
++        sym =3D kconf.syms.get(f"CIS_LEVEL_{n}")
++        if sym is not None and sym.tri_value =3D=3D 2:
++            return n
++    return None
++
++
++def _reset_rule_overrides(kconf):
++    """Clear user-set values on every CIS_<id> rule symbol so that the
++    Kconfig ``default y if CIS_LEVEL_N || =E2=80=A6`` clauses take effect =
+again.
++
++    This is invoked whenever the user picks a different CIS_LEVEL_N in the
++    menu so that switching level immediately enables the rules required by
++    the newly-selected level (and disables any that the old level required
++    but the new one does not).
++
++    CIS_LEVEL_N symbols themselves and the *_JUSTIFICATION string symbols
++    are intentionally left alone:
++
++      * resetting the level symbols would re-trigger us recursively;
++      * justifications belong to the operator, not the level, and would be
++        lost on every level change.
++
++    Site-specific string symbols (e.g. ``CIS_2_2_1_3_SERVER``,
++    ``CIS_5_2_18_GROUPS``, ``CIS_5_3_3_REMEMBER``) are likewise preserved
++    so the operator does not lose typed-in values when bumping levels.
++
++    Returns the number of rule symbols whose override was cleared.
++    """
++    cleared =3D 0
++    for name, sym in kconf.syms.items():
++        if not name.startswith("CIS_"):
++            continue
++        if _LEVEL_RE.match(name):
++            continue
++        if name.endswith("_JUSTIFICATION"):
++            continue
++        # Preserve user-supplied site-specific values (e.g. NTP server,
++        # SSH allowed groups, password-history depth) =E2=80=94 these are =
+not
++        # tied to a particular hardening level.
++        if sym.type =3D=3D STRING:
++            continue
++        # ``user_value`` is None iff the symbol has no explicit user overr=
+ide.
++        if getattr(sym, "user_value", None) is not None:
++            sym.unset_value()
++            cleared +=3D 1
++    return cleared
++
++
++def _find_value_symbol(kconf, rule_sym_name):
++    """Return the user-tunable string symbol associated with rule
++    *rule_sym_name* (e.g. ``CIS_5_3_3``), or ``None`` if the rule has no
++    site-specific parameter.
++
++    The convention is that a rule ``CIS_<id>`` may have one companion
++    string symbol named ``CIS_<id>_<SUFFIX>`` (e.g. ``CIS_5_3_3_REMEMBER``=
+,
++    ``CIS_2_2_1_3_SERVER``, ``CIS_5_2_18_GROUPS``) whose value is
++    substituted for ``@@VALUE@@`` in the rule's snippet.  The
++    ``_JUSTIFICATION`` companion symbol is excluded =E2=80=94 it is operat=
+or
++    bookkeeping, not a snippet value.
++    """
++    prefix =3D rule_sym_name + "_"
++    for name, sym in kconf.syms.items():
++        if (
++            name.startswith(prefix)
++            and not name.endswith("_JUSTIFICATION")
++            and sym.type =3D=3D STRING
++        ):
++            return sym
++    return None
++
++
++_SCHEMA_PATH =3D pathlib.Path(__file__).parent / "config.schema.json"
++
++
++def _validate_json(rules):
++    """Validate *rules* against config.schema.json.
++
++    Requires the ``jsonschema`` package.  Raises ``ImportError`` when the
++    package is not installed, or ``jsonschema.ValidationError`` when the
++    data does not conform to the schema.
++    """
++    try:
++        import jsonschema
++    except ImportError as exc:
++        raise ImportError(
++            "jsonschema is required for schema validation: "
++            "install it with 'pip install jsonschema'"
++        ) from exc
++
++    with open(_SCHEMA_PATH) as f:
++        schema =3D json.load(f)
++
++    jsonschema.validate(instance=3Drules, schema=3Dschema)
++
++
++def save_as_json(kconf, path):
++    """Export the current Kconfig selection state to a JSON file.
++
++    The output is an object with two keys:
++
++    * ``level`` =E2=80=94 the currently selected CIS hardening level (1=E2=
+=80=935)
++    * ``rules`` =E2=80=94 list of rule objects::
++
++          {"rule": {"name": "1.1.1.1", "description": "...", "level": 2,
++                    "apply": true, "justification": "..."}}
++
++    The ``justification`` key is only present when the corresponding
++    ``CIS_<ID>_JUSTIFICATION`` symbol has a non-empty string value.
++
++    After writing, the file is validated against config.schema.json locate=
+d
++    in the same directory as this script.  A ``jsonschema.ValidationError`=
+`
++    is raised if the output does not conform to the schema.
++    """
++    selected_level =3D _selected_level(kconf)
++
++    rules =3D []
++    for name, sym in sorted(kconf.syms.items()):
++        if (
++            not name.startswith("CIS_")
++            or name.startswith("CIS_LEVEL_")
++            or name.endswith("_JUSTIFICATION")
++            or sym.type !=3D BOOL
++            or not sym.nodes
++        ):
++            continue
++
++        node =3D sym.nodes[0]
++        if not node.prompt:
++            continue
++        prompt_text =3D node.prompt[0]
++
++        # Parse "1.1.1.1 - disable freevxfs (2)" -> cis_number, descriptio=
+n
++        m =3D re.match(r"^([\d.]+)\s*-\s*(.+?)(?:\s*\(\d+\))?$", prompt_te=
+xt)
++        cis_number =3D m.group(1).strip() if m else name
++        description =3D m.group(2).strip() if m else prompt_text
++
++        # Minimum level from the first `default y if` condition
++        level =3D None
++        for _val, cond in sym.defaults:
++            nums =3D _collect_level_numbers(cond)
++            if nums:
++                level =3D min(nums)
++                break
++
++        if level is None:
++            logger.warning(
++                "save_as_json: could not determine CIS level for symbol '%=
+s', skipping",
++                name,
++            )
++            continue
++
++        rule =3D {
++            "name": cis_number,
++            "description": description,
++            "level": level,
++            "apply": sym.tri_value =3D=3D 2,
++        }
++
++        # justification: only when the symbol exists and has a non-empty v=
+alue
++        just_sym =3D kconf.syms.get(name + "_JUSTIFICATION")
++        if just_sym and just_sym.str_value:
++            rule["justification"] =3D just_sym.str_value
++
++        # value: only when the rule has a companion string symbol with a
++        # non-empty value =E2=80=94 used for snippets containing @@VALUE@@=
+.
++        val_sym =3D _find_value_symbol(kconf, name)
++        if val_sym and val_sym.str_value:
++            rule["value"] =3D val_sym.str_value
++
++        rules.append({"rule": rule})
++
++    if selected_level is None:
++        raise ValueError(
++            "save_as_json: no CIS level selected =E2=80=94 set one of the =
+CIS_LEVEL_N symbols"
++        )
++
++    output =3D {
++        "level": selected_level,
++        "rules": rules,
++    }
++
++    with open(path, "w") as f:
++        json.dump(output, f, indent=3D2)
++
++    _validate_json(output)
++
++
++def load_config_json(kconf, path):
++    """Load a previously saved JSON config file and apply it to *kconf*.
++
++    The file is validated against config.schema.json before any symbols ar=
+e
++    touched.  The following is applied from the file:
++
++    * ``level`` =E2=80=94 sets the matching ``CIS_LEVEL_N`` choice symbol =
+to ``y``.
++    * For each rule in ``rules``:
++
++      - The corresponding ``CIS_<id>`` bool symbol is set to ``y`` or ``n`=
+`
++        according to the ``apply`` field.
++      - When a non-empty ``justification`` value is present, it is written=
+ to
++        the matching ``CIS_<id>_JUSTIFICATION`` string symbol.
++      - Unknown rule names (no matching symbol in *kconf*) are logged as
++        warnings and skipped.
++
++    Raises ``FileNotFoundError`` when *path* does not exist,
++    ``jsonschema.ValidationError`` when the file fails schema validation, =
+and
++    ``json.JSONDecodeError`` when the file is not valid JSON.
++    """
++    with open(path) as f:
++        data =3D json.load(f)
++
++    # Apply selected level
++    level_sym =3D kconf.syms.get(f"CIS_LEVEL_{data['level']}")
++    if level_sym is not None:
++        level_sym.set_value("y")
++    else:
++        raise ValueError(
++            f"load_config_json: unknown CIS level '{data['level']}' in '{p=
+ath}'"
++        )
++
++    # Apply rules
++    for entry in data["rules"]:
++        rule =3D entry["rule"]
++        # "1.1.1.1" -> "CIS_1_1_1_1"
++        sym_name =3D "CIS_" + rule["name"].replace(".", "_")
++
++        sym =3D kconf.syms.get(sym_name)
++        if sym is None:
++            logger.warning("load_config_json: unknown rule '%s', skipping"=
+, sym_name)
++            continue
++
++        sym.set_value("y" if rule["apply"] else "n")
++
++        justification =3D rule.get("justification")
++        if justification:
++            just_sym =3D kconf.syms.get(sym_name + "_JUSTIFICATION")
++            if just_sym is not None:
++                just_sym.set_value(justification)
++            else:
++                logger.warning(
++                    "load_config_json: no JUSTIFICATION symbol for '%s', s=
+kipping",
++                    sym_name,
++                )
++
++        value =3D rule.get("value")
++        if value:
++            val_sym =3D _find_value_symbol(kconf, sym_name)
++            if val_sym is not None:
++                val_sym.set_value(value)
++            else:
++                logger.warning(
++                    "load_config_json: no value symbol for '%s', skipping"=
+,
++                    sym_name,
++                )
++
++    logger.info(
++        "Loaded level %d and %d rules from %s", data["level"], len(data["r=
+ules"]), path
++    )
++
++
++def setup_parser():
++    parser =3D argparse.ArgumentParser(
++        prog=3D"select-hardenings",
++        description=3D"Interactive menu for selecting CIS hardening rules"=
+,
++    )
++    parser.add_argument("kconfig", help=3D"Kconfig file", nargs=3D"?", def=
+ault=3D"Kconfig")
++    parser.add_argument(
++        "--output", help=3D"Output .config.json file", default=3D".config.=
+json"
++    )
++    parser.add_argument("--level", help=3D"set the hardening level", defau=
+lt=3D"2")
++    parser.add_argument(
++        "--non-interactive",
++        help=3D"skip the menu-config and generate a configuration for the =
+given level",
++        action=3D"store_true",
++    )
++    return parser
++
++
++def main():
++    parser =3D setup_parser()
++    args =3D parser.parse_args()
++
++    logging.basicConfig(
++        level=3Dlogging.INFO,
++        format=3D"%(levelname)s: %(message)s",
++    )
++
++    kconf =3D Kconfig(args.kconfig, warn=3DFalse)
++    json_path =3D args.output
++    try:
++        load_config_json(kconf, json_path)
++    except FileNotFoundError:
++        logger.warning("no configuration found")
++
++    save_config =3D False
++    if not args.non_interactive:
++        menu =3D Menuconfig(kconf)
++        action =3D menu.show()
++        if action !=3D "exit":
++            save_config =3D True
++    else:
++        save_config =3D True
++        try:
++            requested_level =3D int(args.level)
++        except (TypeError, ValueError):
++            logger.error("Invalid hardening level '%s'. Valid levels: 1-5.=
+", args.level)
++            sys.exit(1)
++        if _selected_level(kconf) !=3D requested_level:
++            level_sym =3D kconf.syms.get(f"CIS_LEVEL_{requested_level}")
++            if level_sym is None:
++                logger.error("Unknown hardening level '%s'. Valid levels: =
+1-5.", args.level)
++                sys.exit(1)
++            level_sym.set_value("y")
++
++    if save_config:
++        kconf.write_config(args.output)
++        try:
++            save_as_json(kconf, json_path)
++            logger.info("Hardening rules written to: %s", json_path)
++        except Exception:
++            error_path =3D json_path + ".error"
++            with open(error_path, "w") as f:
++                traceback.print_exc(file=3Df)
++            logger.error("save_as_json failed =E2=80=94 details in %s", er=
+ror_path)
++            sys.exit(1)
++
++
++if __name__ =3D=3D "__main__":
++    main()
 --=20
 2.55.0
 
