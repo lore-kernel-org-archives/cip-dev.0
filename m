@@ -1,341 +1,172 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <nobuhiro.iwamatsu.x90@mail.toshiba>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C517FC5DF81
-	for <webhook@archiver.kernel.org>; Mon, 24 Aug 2026 16:18:04 +0000 (UTC)
-Received: from MRWPR03CU001.outbound.protection.outlook.com (MRWPR03CU001.outbound.protection.outlook.com [40.107.130.19])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.1400.1787588281920339802
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D46CC5DF81
+	for <webhook@archiver.kernel.org>; Mon, 24 Aug 2026 22:34:18 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.152])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.9591.1787610848091334515
  for <cip-dev@lists.cip-project.org>;
- Mon, 24 Aug 2026 09:18:02 -0700
+ Mon, 24 Aug 2026 15:34:09 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=Katf+YKM;
- spf=pass (domain: siemens.com, ip: 40.107.130.19, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.s=key2.smx header.b=QyFpHrVC;
+ spf=pass (domain: mail.toshiba, ip: 210.130.202.152, mailfrom: nobuhiro.iwamatsu.x90@mail.toshiba)
+DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=mail.toshiba;h=From:To:CC:
+	Subject:Date:Message-ID:References:In-Reply-To:Content-Type:
+	Content-Transfer-Encoding:MIME-Version;i=nobuhiro.iwamatsu.x90@mail.toshiba;
+	s=key2.smx;t=1787610845;x=1788820445;bh=UNy3xy90cvTzUYAR6UonUnQQw70qk9oUmWCc1
+	4py2U4=;b=QyFpHrVCaW6Z9iDqhAw5twEHh+s6Mu05NNooc9/8J19hx5MjJoRVcGSQMsXm/mPyhWB
+	1D+atQdg4MWGfVFi8M/8q492CqLHH5NIHOXF8aEGXEKZW9zybd/Bo8u1qy7uPgPJOJw/XqkvifkJO
+	oStVAtq9Ms/0lpLsWZL8dx3xRTu/aDkuyKlpmbXt4WDJEbqCL1pQrwjATi8d1D9BxPuwxTnnV+Jqf
+	QtvuZ7zAeINEtYIQf+IGpZdtY3QMcTE3XGM8qzL+pbf4rJT/Tcl5bz/I7A4+H8nUZWnVWFygTlaQb
+	a3/9XDNjvsIr4n1Cv3KUtGCGo49rehTBT2QiO5ZdbsRg==;
+Received: by mo-csw.securemx.jp (mx-mo-csw1802) id 67OMY4tB1986855; Tue, 25 Aug 2026 07:34:04 +0900
+X-Iguazu-Qid: 2yAbeCtgwwk7Y9RYHY
+X-Iguazu-QSIG: v=2; s=1; t=1787610844; q=2yAbeCtgwwk7Y9RYHY; m=Js4vGthzOWHxKlskPLCTkVlzp2cq6ZAkT1eB5+Q6X6o=
+Received: from imx12-a.toshiba.co.jp (unknown [38.106.60.135])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	 id 4hTQgc1xDRz1xnh; Tue, 25 Aug 2026 07:34:04 +0900 (JST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XIGPf8evB0XMY3PSCylWAbpANMGm5nQ/rVEZZe1HdavCg9kpspoTL3gVj8SZlSzHtrBV5iZUoOs5wLi6ua8DjuP/n1BAlZYzQo6V0ebFOOwUbQ6+wmZT/R8ZT/ba0KZqjpBMso9reYdIrvs1n0vyUfqJGqRduBXYeEuIVVZOhH74ZK3N3WmFULIhznJvIxD/effWPNSlizUDuZ6bvzX5k/F6XZ/CxoF2oBseYpIDuTS6E8CUDKgXcL9I5qK5FVXeY0gehSSo1kAGc6I7ZTaHqVCCBba21OTlfKFYpdWnbPVkpK7VTKU3+mjlp6oELNZO+ed/6vWKMVykXrcpI+LeUA==
+ b=Nghm8rUMQGK1ku9/eudac9XRIK/8sQlj/WopKvy/b0jdE4zL0lzF2oxuofErrGR7jFIK9PP/u9Mh+YMISehQQvtkMUUYNrkdtBz+8mTcEWfiejRBRLcXLmsHMlgzltAN7RV3NYn//Fg1c2zEBMrg7RkfIZjk0X6tLY3N8I+sATluHBd5//enXXgWN7OgwB9j7uKG54TMmLp6+hYkzhWxzWn3uanwsMPQsTAzxOrFCu/xt/FDP8ADX2UST2uNG5A5oYS7LM4HB4Rpzqyouc9tqgwY5bpVEYfS/n9YoAunDMjD3T3hog+u/GYVUEA8cIBi1/1Qz1+nbxUWX8ALeovBHA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=G8mkPNDcWN5dlwBZtmF/Mh2yQ1utzTQ8hW1vqfeCxFc=;
- b=aarmy1gVXBKawZxDN6WBKY2L8AJN3ExE2kYZxCP1KwRfAIgjUjl/vhtfYmKk438GZoQW3rhktjpcdQMwy8Np7TLsTJYPlrRiIsJbnnJ6wQ25nc4pgtHN6fE8cDqqHERaFeRw/51n9U0o3w95Am8wPk54nRTbTx3oyleuefzNrJg0KlsgUFqLQXHs6CaHrCsJTBwYffF5yLCPPS/2kSXlTBxb8JYQW2p/TB3Xoqkr9MBd/cfhQYhLFW8TG/dEsacuJlvkJZUhA4MwTSVr7ZWPwAnj7Qwu7hb6jcqA/nJ2pBY8FzE2yvjaVcKJm9eAWsG7Vgrf1Acg/bHXPkaAKgPu0w==
+ bh=EddSEX6GCKNpQHlL1m0ZYhbdamxjqrkQclytlak34dE=;
+ b=J8wJyooZyYx+5qV/khs49bHvGa3ksC9hQwV8iBqs228lovUmp4tgZIXmFLWP/QZj4Gv4yEUmpiO4yE8kj1MKIDsXvG8UXP86FrmMDJvy+ufq69Yw6niq5la9PNDfjqyda66wPTJzQX8L70GfhqRvqC6L9uPTWJTdPpXTUFGyijM7ZyLiBUuvAkXlwiYIIvn1Lmw9XnITg5doqJpoXAJpqYtI3R7kBn7iSGNAkt+3sy2WCXXRNhsVDiFptVZ34aWJoUUlEjsFYqm288dQm5j8EII9yEYyPae+HtI5A1QtWUu1F/4hptYqE/jiGKBIikqywYxGKw4yD14A6gluWAXuMA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=G8mkPNDcWN5dlwBZtmF/Mh2yQ1utzTQ8hW1vqfeCxFc=;
- b=Katf+YKMpjDudh6L3NoEVLVCdj6OpLg0cgGpdVwPRWm+8JyQ2sbVgPQEdd5Rq2BZNs7MOp+3dcj/tqe1GBenKG4B++eDH4DOdSadWze931CSEEf1fO/u11S8nUtWFfRHNUpNPmTKkinUbyeQ3CROBzsCdApnVrJCtdfLi/thjoC1FV/cBz2ufgbX1wYir3Cj+1g9CBJVI0su5PATo3Osh8ZOb5Tgx95NDg84XvBUzSlUJjger+oQLi59/8uSoZ54+hjr7HnnJAbGY6rkXr5qzvFTNY3XMmzIF+qwKQR51bvwd9LaCFBrwkS1Tz+tJApXCXudzX9gLf9c3CHDM/K/Tw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by DB9PR10MB7145.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:459::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.339.12; Mon, 24 Aug
- 2026 16:17:54 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::be9f:e8ca:ee9:83e1]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::be9f:e8ca:ee9:83e1%2]) with mapi id 15.21.0339.012; Mon, 24 Aug 2026
- 16:17:54 +0000
-Message-ID: <fb8f6674-7d83-4fb3-891c-4dc6e10a263b@siemens.com>
-Date: Mon, 24 Aug 2026 18:17:53 +0200
-User-Agent: Mozilla Thunderbird
-From: Jan Kiszka <jan.kiszka@siemens.com>
-To: cip-dev <cip-dev@lists.cip-project.org>
-Subject: [isar-cip-core][PATCH] initramfs-crypt-hook: Use multi-call tpm2
-Content-Language: en-US
-Cc: Quirin Gylstorff <quirin.gylstorff@siemens.com>,
- Alexander Heinisch <alexander.heinisch@siemens.com>
-Autocrypt: addr=jan.kiszka@siemens.com; keydata=
- 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
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR2P281CA0009.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a::19) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+ smtp.mailfrom=mail.toshiba; dmarc=pass action=none header.from=mail.toshiba;
+ dkim=pass header.d=mail.toshiba; arc=none
+From: <nobuhiro.iwamatsu.x90@mail.toshiba>
+To: <pavel@nabladev.com>
+CC: <cosmin-gabriel.tanislav.xa@renesas.com>, <cip-dev@lists.cip-project.org>
+Subject: RE: [cip-dev] [PATCH 6.12.y-cip 00/18] Add ICU support for RZ/T2H and
+ RZ/N2H SoCs
+Thread-Topic: [cip-dev] [PATCH 6.12.y-cip 00/18] Add ICU support for RZ/T2H
+ and RZ/N2H SoCs
+Thread-Index: AQHdMW9bo/4wiqdVmkKQtP/RxxP0pbapuMWAgAK13SCAAIO6gIAA29ZA
+Date: Mon, 24 Aug 2026 22:34:01 +0000
+X-TSB-HOP2: ON
+Message-ID: 
+ <TY7PR01MB14818A7039C37C7449AF72E92CDA02@TY7PR01MB14818.jpnprd01.prod.outlook.com>
+References: <20260821131554.638741-1-cosmin-gabriel.tanislav.xa@renesas.com>
+ <aolZq2gonRLG4U4k@duo.ucw.cz>
+ <TY7PR01MB148186ABF5271325B7E7E7AD9CDA02@TY7PR01MB14818.jpnprd01.prod.outlook.com>
+ <aowOOePmsSk1I0ph@duo.ucw.cz>
+In-Reply-To: <aowOOePmsSk1I0ph@duo.ucw.cz>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mail.toshiba;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY7PR01MB14818:EE_|OS7PR01MB11792:EE_
+x-ms-office365-filtering-correlation-id: 3728855f-8cef-4480-a138-08df022fcba6
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|376014|1800799024|23010399003|366016|38070700021|6133799003|10067099003|56012099006|4143699003|11063799006|22082099003|18002099003;
+x-microsoft-antispam-message-info: 
+ pDEqx1RwC7OfMF+bvy3JX4loCW6xHYtOY7RpXpybx3dtnH2KqCM8x3fOZIEbuXSTEWP9oVtRKHNCIMCEsyZEF96Wxfc/w/Oc1LjysyVEEROKgBgRdszP+9qW/kJj0tCnffhecUPz6Wn07dVoG6w5mvwiQm238xjiRIVihdG+MRwxz3bHxysecSWPGs+r+Rqg9PQrVMoRSYAK7bTG+99HQZiyItCu7kECFpEjeNDV7M1CXon4OIqskBQOBB+YP5lPoUb5s/WvMADHLtTdPmS9zeRa9eNyvvvhTM+o/a9T4TfX5h8W0IdQjYROh/rGn6MmK+dG5eM4/AEujLQPDNqapvGazf4CaXcatp9ZXLPpoqf3ECzosZJK5gxd6FDgLtAMGt80kXpB4Ub+um6DGg9/+x3fcTR2taJ5s21VgwrydUtS3qXPGBSAic5+EaO01L1Wth4K3wUO7T6ZJ3a8o+YEBvq+acz6eN5RkZXAets3UkmIH8B5wywuVTJm3paCwU8cIIGLPzNclww2oUoF1IrA7wtIK4WmT3Osso5F+ygWZwfOtH8gHMXdvixXszcu78pkzuY6Xz4KniijOWZw0XxFzI7Be2Py4uOUI00KJOEBgOAIBjcKAcT3WxR52Y2MRTAS7ei4AK1oWvlGn5cTQ3PPWg2NQElOm5x0gI8CBxb4EoC3vH2igbdD2BnN/vSypx4rC+hFDXAfvE50aGbzOZWPnA==
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7PR01MB14818.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(23010399003)(366016)(38070700021)(6133799003)(10067099003)(56012099006)(4143699003)(11063799006)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?M1BONnRTbVEzUUJmZ0E2QzgrUXlEc0ozUWNFUGIrT1NKMzNMY0lLTW8r?=
+ =?iso-2022-jp?B?Y3JwWk1tTXh4NGNiUWg2NGtaczAyais2a2JudDJnZ0gxUzBSL2xaLzlX?=
+ =?iso-2022-jp?B?RTZWa1FPRFVWb0ptSFh2QWRnSjQ4a0JxRnBzTmRqeE1MaldhNDhFODVQ?=
+ =?iso-2022-jp?B?d21HQ1N4OVFBVC85QUR5b3lhOU44aUxRcFFGWm5MT2UrK0lleDU2UUFF?=
+ =?iso-2022-jp?B?Um95M3Y1dWhDMHhOdzkrTkZYTFZWK0tyZnBKejF3THk1azJrYmd2Y0hl?=
+ =?iso-2022-jp?B?R0JCaFNQQzV6dUxndUQ1K0JXSXBGYVE3Z09taFB5QStRR3FpRW05MENO?=
+ =?iso-2022-jp?B?L1RBaDZYdmE0emk2czhhYVFwVG1raGZCMldBejdMMG9CWGJaenpJVVkv?=
+ =?iso-2022-jp?B?MjFLT0pmMW1IQm1LS0hLbmRxYjl0aWVvYkJoRDVDcVdNU2dBU0p5aXpV?=
+ =?iso-2022-jp?B?a2wvNVAveWJuei9Fcy9BWHZ2MXZ1SVpnWUIwd0JjTjZjaHV5aFlvaVRh?=
+ =?iso-2022-jp?B?VWNZUkZ5aXlzRDdnOUE4RWM0R3d1MUhSZDBuMXc0a0wzV2R1WDF5bWxT?=
+ =?iso-2022-jp?B?WVp3R1M4YytWWFlTcFNIWXpPaURMZDJnTCsycFVEYWgremdITEZVZ3hR?=
+ =?iso-2022-jp?B?RFdoVEw4Um5sL2c5Q2lQajh4OE44MkdlTWFuS1RxZnZpVFNWZlRkZFlV?=
+ =?iso-2022-jp?B?U0ZBTk56QXB0VnJYbEdpQnVxNHRkeWJWeWZibmFEUkhEOXNiMXhsSjhM?=
+ =?iso-2022-jp?B?OFROYy90dy9VNTJMVG5ycXBkZHhFaXpuNElyTmlidUpwQ0xIQ09SS215?=
+ =?iso-2022-jp?B?SDFxdHN2eHAyUlB6U2oyS0E2MUFNL2g5cjJzbXdvTllPY21zSXlMUGxK?=
+ =?iso-2022-jp?B?Q0swQ1NtM3lHTXpRaVFvTFFZMWdjWVVjOVZtbkdSYU0wM2F3OHlsY2dm?=
+ =?iso-2022-jp?B?aFFLQlh3ZWhIWWd4Yi9uTG1rRDl6TEkrSDdhSnpKUW5DV2w0RmJmNFE5?=
+ =?iso-2022-jp?B?ZE5RY2N0bjc2OTFYZytJdGhnVEZOZnBOZ2V2enpOMEpOSHVLYjhlMzkr?=
+ =?iso-2022-jp?B?UEdwQ2t0RGh1YmdxbUpJN041M2xFbkIwSU9xbkZJTEtiZzJRNkx5S0oz?=
+ =?iso-2022-jp?B?NGRpR2RUTlB5Mm1VWXlNZGVNUko2RUd2Q1VWYnQ4WHhxelVlZ2dQM3Fw?=
+ =?iso-2022-jp?B?dzlhcGRmMU8wU2szUmluT3ZyYldrNktMcEI1bzFrYVVXdlRaTFJKZ0h4?=
+ =?iso-2022-jp?B?UW85ZmRNY3A4N0RvNVVHdVM3Y3Zkc3NkdDBBdFI0OE02NEg3K3c2ZnNi?=
+ =?iso-2022-jp?B?NElmUmE0dHpIV3RXK0l4Mk16WFVxQVNjVDllWjhyL0MvazJITVA4VUwr?=
+ =?iso-2022-jp?B?MGdRY0ZVbTVxRnRQMWxaL1d4REdUVGJDSVB0Rk0xcmpXVTZ0YitkK3du?=
+ =?iso-2022-jp?B?VEsrYmI1MlluMC9oRUFXUWVLNVI2cndkd0MzNW9GQkV4cDZLcHNVRy93?=
+ =?iso-2022-jp?B?RTZlUXN4QUxzRitjN0NuR0R2L1ZiejhpVVNXL2RzUXNSZG84ckxLaVpC?=
+ =?iso-2022-jp?B?ZTZRcWRtRmtxR0YzR29VNmZJcGgvb3I1bE1XWEdzbUZGYnB5ektjd2o4?=
+ =?iso-2022-jp?B?c0FEZWdZaWZhYXF5aTRtOFA1d0V4dkt2RjFqejFEL0ZmWXJFZmZqYlZk?=
+ =?iso-2022-jp?B?QzN4c3U1cTUxNGhCWWV3aFpUL3lEM0dyZ21PeGNNbkdYOEREWVQ0RERS?=
+ =?iso-2022-jp?B?dU5hTzBUUWdTWlNGcTg0Y1dkUEdvSHBHL3hYWFR4TEt6clg3amZabDE3?=
+ =?iso-2022-jp?B?ZFJBeVJZVDZLajB0YnlzNFF6ZG1MMGw5bnl3YkRIRThzYnlVdDU2c05J?=
+ =?iso-2022-jp?B?bkFJeEFBSDA2TmdZR3E0T1NSaGhWWFdqTGRUeTVibmhyNEdSWFE0dU42?=
+ =?iso-2022-jp?B?VzVmcFJrMzZvdnRTMFZFdENQd1VyWGJyWk1WMWoyVGdLblNBYm5uZjZW?=
+ =?iso-2022-jp?B?VjlHR0ZXNHU3akM5RUROQzgxK2JHc2U3TTdHL0o0bks5NE9qV05aVUhH?=
+ =?iso-2022-jp?B?aElUYmpTSTZlYWVhS0NsYVlYOHhCU2ZFUjhWOTZJdzhlWmxOWEt6WDNw?=
+ =?iso-2022-jp?B?aDNsQ3QxRXFvV3JvVmtBTFpGbE5CcTBRRnkyeUY4dGhlU2RiUk1iY2Uz?=
+ =?iso-2022-jp?B?QUl3aUx5VG1UM3VGQk11bllOU01acEljczJTZUtlMDJYcmx4SVNxM3o3?=
+ =?iso-2022-jp?B?d1EveXM3cnAwaU1aNFR0L2NyUUJNcDVZUlVoTi9qSmtKL0lONW9YVGZr?=
+ =?iso-2022-jp?B?TW5BVnJ0aFc5Znk0MEZXcC9WYkQ1c21JakhlL2t4VXo1OVdpekNJR2Ez?=
+ =?iso-2022-jp?B?MjQxQ1J1cGs2dEwwYlQzRURqRUhOVWkzOUY0cFlJMVBTRi9wWEhTbmFX?=
+ =?iso-2022-jp?B?VUFTc0xuWWFzcU13c0NIYUxwOVVDRzdFWTBWR1M1bWc4QVNwb2lvZlZ1?=
+ =?iso-2022-jp?B?T2JsSURXclNqK2xQSFU0cEVGdFhFY2JFWW5ERFJLNHNNSjhMUGNYWWNh?=
+ =?iso-2022-jp?B?cjg5VTNPUT0=?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DB9PR10MB7145:EE_
-X-MS-Office365-Filtering-Correlation-Id: bc831243-651c-4489-507e-08df01fb40ad
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|1800799024|23010399003|366016|376014|10067099003|6133799003|3023799007|18002099003|55112099003|56012099006|11063799006;
-X-Microsoft-Antispam-Message-Info: 
-	2j2A9YVil8qLrmAjprpUU2P1nlvoTugf0oqcMqaqVooKZLUWnYWJMQZIYQViHo//QPGC0CXi4RbrxITcVymLm7edP31qSMRwt00t7b+WIR9xjYVLC1EK/dFddX1WE7j9mqnFK/kh8/1cjrXoVHaFHlk+B60rN2XF4uVh8clE+ZjyY4Rwo3W+HDtuQJoPQ1uzrqt/sabwXUp08LZ+jGiXRMJ7UBosfCHo1XFcFoND3VXhfAstL8smZxjvNtDCO7aD/sbFsulyP1Ijh8/MdXqfBABKln/UPH84LNOGFnFPiQh8FJ+bWJIdCEwTtX6pXKcqjTqM4LYCuYbl4vrYeinusvRteay2IQtjzz+clP6MMyLMJXqpBzZSTWfBFV/xnbvOwCgtFZfqmOikZSdEXHGO98+ofZ8PQxH3mm+Rcy6DB+aGZr9iAXDAxII2o9yf3rS+NlSPia+8Jhje2pBfyr/Upop1BHNRMyerJVsEQV6jUaMkVEaYHrcGNv4SIvq/WxaWZ7b5aO/A6uKP09IL8KT3tjMvSGQImhlGZ5mI72zDBamLbISMeSMGY0eNNJ748exMHkSS2nZSmnJix/VL1PCymg4GEjqG6l1UrZFcX9oCeRR8DYzKLByKY/1jQcEvqNji5VFMkczSgvD23wlu2QRocXbYnBi+WQYcITlvVyY5Rys=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(366016)(376014)(10067099003)(6133799003)(3023799007)(18002099003)(55112099003)(56012099006)(11063799006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?ZUdDSlZGT3RSNkhOVTNTUUNGY0lnUk5vakRGMkl1bDlYOHFMSWhFN3lxWUlK?=
- =?utf-8?B?M2o4UTRjbmZZYmRvVS8wQnd1TTUxR09SbFJJeStnRTdUQno3V1lZR2hCeFhS?=
- =?utf-8?B?VnFJSnd2SXYwb1NZdm5YeVd1Mk00VDRpZ0dPdmpveTgvTUMxL3JJdHBlejBM?=
- =?utf-8?B?UHJtTy9KOEFwR2lUMjZVZzBzTUJKR0dlcUsvNmtCWWJDcHNoQ3Robk1SU052?=
- =?utf-8?B?d244c3NsZ0ZYN0JCR04xUEFVeklJUWZURWxtT0E2a3FneUlmWjBNNUdHOHVy?=
- =?utf-8?B?eWluUzBsYmRRT1gvZG9DdUh2a250RlJKWkdGSW5NUWRocWZNVnJTQkxlSHhw?=
- =?utf-8?B?ZHhRZzJCMVRib1VRRzcxZk00M2IrM0hnYmRnaGxZd0I2MXlqbVhtTUZWbWhH?=
- =?utf-8?B?ZzRZdGtCR0V2Wmp4VFZBUkVFNVRtNHNIOG14NzY1eEFQUEErV2FuMUJQaFQv?=
- =?utf-8?B?Uk9EMXJwZDZ4a21zcDlkcDcvYXAyREFYSVhYQ0ZmdmR6aEd5anozVkh6UnhH?=
- =?utf-8?B?Um9Tc0c0V0xGc3E1ZU5FdG1VOXJMLy85WGFoTEZleTFmSnlJbjB0Yys3UEVZ?=
- =?utf-8?B?bFF6V2Vtc1FLTlhKR0dGN2N1aEdmeGd3Tis2R3NrcGdlbmYzdWFtZ0pRbzJp?=
- =?utf-8?B?YU1PUGd6ekRHMFYvU2VKbGJDOHJUVlBkVmV0SGZIeXRpbmxJUHF6SlkxaHFN?=
- =?utf-8?B?bmhoeGVmNkxsbUZ1L2duNHZWMkl1REpGUjFnay9RelNjY3Y5Unl5aXIrMlNM?=
- =?utf-8?B?d2VYWmNRSDNzTkRRQVRLU1NQWHVlbnowTWtHYXVIMWlvYmljVVhvRHd3Uy9S?=
- =?utf-8?B?VHZYQm5XMHd4VGtzdjlPanNUaHpjZE9YOE5TMzEwdmNqSkpYVkMzeGZ4Y2cz?=
- =?utf-8?B?Tkd4U2U5V3ZzaTJkTE9yTmY3bU1HTFdyVVZEZGpmNHZKMGFidWxmMGJyWXNt?=
- =?utf-8?B?UEdlVGRhOW9wdHVaNDd6djJnNE5VQnhIL1owL2poRnAwUE10ZXpYb0hidHFY?=
- =?utf-8?B?VFBWVjBLMVJoTS9Kc2lUMGpDeFdmbXlBQVV1N1J2RjBCUUVrYWhBbWptZC9I?=
- =?utf-8?B?Z0JZWFdCNVEyYUxHVnIzVTkzWGk3aU8wMnR4VkpucXlqR3pWcFgvYTg1UUpQ?=
- =?utf-8?B?RXZxakNIRzNuWHdhU2hTbnFtbzZhSGhnMFBCaDhadkZOeG1oVTMyakRJZ0ov?=
- =?utf-8?B?NzE3UjkwREVsK3hxN284ZmxJLzZNc2NydW9DbHZQbmRvQzNMcE9zUHRQOXV3?=
- =?utf-8?B?MnkvOGlLRVZ4Y3NIQ3VicE9JRitpVlAxYmxBL1lycnRzTHh2ZkdtMUc4S3lw?=
- =?utf-8?B?Uk9ESHJ0R1JydkNzSlpCZFVKV2YwYStKUGZSbDFTU2RsLzVHUXp0M3F6Q0FH?=
- =?utf-8?B?QUlUWWJaSjh1akxqQ0FDNHh0M2tCMy92R3A2MnRCcFhWaTg5TlBHay9STzB0?=
- =?utf-8?B?NU54blV1M1htL2ljb0xiMks1VHoyb0xtSGZkZ1pYdGVXejJ2dEhMbklrK2Vz?=
- =?utf-8?B?WWlXZnVRVlVHbVN2cHpIazVHTXo4QU9qa1ZOQjJyM3lBak4xSWRYcGxyaFpQ?=
- =?utf-8?B?bTdoM1FRZnVsYkVROU40Rlk2TWllSUN3TlF4bFBlTU1ObWk4SHR2S3hYOW53?=
- =?utf-8?B?RUZkalJrUEFSaXJIUWVOclYvc3MxelJ4MzZmOUlPbHdNSTlydHJZeEs3VGZB?=
- =?utf-8?B?Sm84NUZvdDdJSUYwQjVCK2xtYXF6QlAvNVhTcnVlRWY1YmZ0SVRHcm9QRDN1?=
- =?utf-8?B?aGZOaG5UQTF4MEVsbWE2UjhCOUJiQmQ1L3NKeHg3dmJJdjZYWDlhaGE1NEMz?=
- =?utf-8?B?NDhWNUc1NnlXWEI1OE1jZFROK3J0NVJ4WEd2K0NsNWNxYXNaZEVDcWVoL1hi?=
- =?utf-8?B?SjdLeXpkK3RydG10WExUL3pKU1FucGxGVUs0TkZRaExoSVB5OWdKOUVJTTZV?=
- =?utf-8?B?NllJQ2dMeGpmb2IzeWwxN29vZHlVRkdocG9jNWlLa1ZkdElnOEpLQ1pZN25B?=
- =?utf-8?B?dGlZOHZJZlI3OWk2ZS9Ja3VzVkRGTWc4Q0RmM3FUeVhBMlRwdmJKKzVGeVYr?=
- =?utf-8?B?RmtCUmVaZ2UyWG9QdE1aaTlRUUVWZFV6U2hpU2lBYXRNcWFVNkp4UHR5aU53?=
- =?utf-8?B?aGdjLzBVb1VBUTZYVmNxVElxTUMyZGplSXVJdnMrdjg4elBJOUVub3h4VnJu?=
- =?utf-8?B?RHNTU3ZuTG11REFUSDJjZlR5cmVvMlIzZGtOZzhoNzlIdWErTHljZnhQKzR6?=
- =?utf-8?B?K2lTY3Q5M0JFbVdxc01weTdmT2FveENaMUh1Z01XOUdzNmQxb0oramhXb0dQ?=
- =?utf-8?B?M0Y0WUkyU0p5WG5yYWJkbFNXNExFNzMrazdBbEUzWFJITW1OU3RhUT09?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bc831243-651c-4489-507e-08df01fb40ad
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-Exchange-RoutingPolicyChecked: 
+	qjqNrDsiKdxjVUDo+34wlcMYFNST2MEnLp/zjmHKUn3lsjVSeZ2hWTf8K4VN9DI3gp3CXfm12aqb2u25PFPLMTc1xTklDAzNPQduzLZXr2imET+2Z2dZsAm9kronUR4zjB6gh19drww0uXBbazaBujQAbqfxn71e0on7tUatMLPHg3IT4O3U7+4vngKIwhMZ3+qKbcitqpypqjq8bQKTgRpupvENGwScxf4CMG3GvDhsepskzVAjQSz4OOONbdHC6BCbLy7dg6GAzNCrIDYIMfMN32K+vQoaVvdh9g/bHjVAy4g8N0Nvg5J6jJ0E/H8Kl6KHpsTejTeBUeMQae2MeQ==
+X-OriginatorOrg: mail.toshiba
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Aug 2026 16:17:54.5830
+X-MS-Exchange-CrossTenant-AuthSource: TY7PR01MB14818.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3728855f-8cef-4480-a138-08df022fcba6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Aug 2026 22:34:01.2794
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JAZUwhDmSamrx/X7zH5z4PyCDnxX1ANU0VuGWZCuhkxUIjyXi7k6B3ReAHIWNLViVdxiYzsjZExtHn0N1MoQqw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR10MB7145
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Q2W4ru6lgmqomYpOK24AKwgzx7OnDhD9GcTQmmoaQA8QvyKxyVOVBtuzED9pZK46I0bEa4x1vUjV8EnqR+5uTmOzit9MA0JR9zp2JAWabaCbn+NK06djkVfQHgPW3O4E
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS7PR01MB11792
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 24 Aug 2026 16:18:04 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23995
+ <cip-dev@lists.cip-project.org>; Mon, 24 Aug 2026 22:34:18 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23996
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+Hi Pavel,
 
-tpm2 is a multi-call binary, all the subcommands we currently install
-are just links to it. Avoid setting up those links and use tpm2 only to
-accelerate the installation procedure and simplify the recipe. The only
-exception is tpm2_shutdown which we continue to use as availability
-marker.
+> > > > This patch series adds support for the ICU block, including
+> > > > software-triggered interrupts and error interrupts, as found in
+> > > > the Renesas RZ/T2H and RZ/N2H SoCs.
+> > >
+> > > This looks okay to me.
+> > >
+> > > Reviewed-by: Pavel Machek <pavel@nabladev.com>
+> > >
+> > > I can apply the series if it passes testing and there are no other co=
+mments.
+> >
+> > I also reviewed this series, look good to me too.
+> > I applied with Pavel's reviewed-by tag.
+>=20
+> Sorry, we were working on the same thing at the same time.
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
+No problem. Thanks for your work!
 
-Please double-check that I didn't forget a conversion or otherwise mess 
-something up.
+>=20
+> It passed my testing, and I pushed the resulting tree before checking the
+> emails.
+>=20
 
- .../files/encrypt_partition.systemd.script    |  4 +--
- .../files/local-top-complete                  |  2 +-
- .../initramfs-crypt-hook/files/tpm2_functions | 30 +++++++++----------
- .../files/tpm2_functions.buster               |  2 +-
- .../initramfs-crypt-hook_0.11.bb              | 12 ++------
- 5 files changed, 22 insertions(+), 28 deletions(-)
+Great!
 
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.script b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.script
-index 94346a87..e1416946 100644
---- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.script
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.script
-@@ -29,8 +29,8 @@ enroll_tpm2_token() {
- 	# systemd-cryptenroll persists its TPM2 SRK at handle 0x81000001
- 	# evict any stale handle before enrollment to avoid
- 	# "Failed to seal to TPM2: State not recoverable".
--	if tpm2_getcap handles-persistent 2>/dev/null | grep -q "0x81000001"; then
--		if ! tpm2_evictcontrol -C o -c 0x81000001; then
-+	if tpm2 getcap handles-persistent 2>/dev/null | grep -q "0x81000001"; then
-+		if ! tpm2 evictcontrol -C o -c 0x81000001; then
- 			panic "Failed to evict stale TPM2 handle 0x81000001!"
- 		fi
- 	fi
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-index 7bc08e55..5aed1c06 100755
---- a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-@@ -367,7 +367,7 @@ done
- 
- if [ -x /usr/bin/tpm2_shutdown ]; then
- 	# shutdown the TPM to avoid DA lockout due to powerfailure
--	tpm2_shutdown -c
-+	tpm2 shutdown -c
- fi
- 
- if [ -n "$watchdog_pid" ]; then
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/tpm2_functions b/recipes-initramfs/initramfs-crypt-hook/files/tpm2_functions
-index 1c6bbff8..1ab9ea5d 100644
---- a/recipes-initramfs/initramfs-crypt-hook/files/tpm2_functions
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/tpm2_functions
-@@ -11,9 +11,9 @@
- # SPDX-License-Identifier: MIT
- 
- tpm2_check_device() {
--	tpm2_pcrread -T device:"$1" "$pcr_bank_hash_type":7 2>/dev/null \
-+	tpm2 pcrread -T device:"$1" "$pcr_bank_hash_type":7 2>/dev/null \
- 		| grep -qv "$pcr_bank_hash_type" &&
--		tpm2_testparms -T device:"$1" "$tpm_key_algorithm" --quiet 2>/dev/null
-+		tpm2 testparms -T device:"$1" "$tpm_key_algorithm" --quiet 2>/dev/null
- }
- 
- TPM2_HANDLE="0x81080001"
-@@ -24,44 +24,44 @@ tpm2_key_get() {
- 
- 	export TPM2TOOLS_TCTI="device:${tpm_device}"
- 
--	if ! tpm2_getcap handles-persistent | grep -q "$TPM2_HANDLE"; then
-+	if ! tpm2 getcap handles-persistent | grep -q "$TPM2_HANDLE"; then
- 		mkdir -p "${TPM2_WORKDIR}"
- 		# Open session:
--		tpm2_startauthsession -S "${TPM2_WORKDIR}/session.ctx"
--		tpm2_policypcr -Q -S "${TPM2_WORKDIR}/session.ctx" \
-+		tpm2 startauthsession -S "${TPM2_WORKDIR}/session.ctx"
-+		tpm2 policypcr -Q -S "${TPM2_WORKDIR}/session.ctx" \
- 			-l "${pcr_bank_hash_type}:7" \
- 			-L "${TPM2_WORKDIR}/pcr7.${pcr_bank_hash_type}.policy"
--		tpm2_flushcontext "${TPM2_WORKDIR}/session.ctx"
-+		tpm2 flushcontext "${TPM2_WORKDIR}/session.ctx"
- 
- 		# Add new key to tpm:
--		tpm2_createprimary -Q -C o -c "${TPM2_WORKDIR}/prim.ctx"
--		pwgen -s -1 32 | tpm2_create -Q -g sha256 \
-+		tpm2 createprimary -Q -C o -c "${TPM2_WORKDIR}/prim.ctx"
-+		pwgen -s -1 32 | tpm2 create -Q -g sha256 \
- 			-u "${TPM2_WORKDIR}/pcr_seal_key.pub" \
- 			-r "${TPM2_WORKDIR}/pcr_seal_key.priv" \
- 			-i - \
- 			-C "${TPM2_WORKDIR}/prim.ctx" \
- 			-L "${TPM2_WORKDIR}/pcr7.${pcr_bank_hash_type}.policy"
--		tpm2_load -Q \
-+		tpm2 load -Q \
- 			-C "${TPM2_WORKDIR}/prim.ctx" \
- 			-u "${TPM2_WORKDIR}/pcr_seal_key.pub" \
- 			-r "${TPM2_WORKDIR}/pcr_seal_key.priv" \
- 			-c "${TPM2_WORKDIR}/pcr_seal_key.ctx"
--		tpm2_evictcontrol -c "${TPM2_WORKDIR}/pcr_seal_key.ctx" \
-+		tpm2 evictcontrol -c "${TPM2_WORKDIR}/pcr_seal_key.ctx" \
- 			"$TPM2_HANDLE" -C o
- 
- 		rm -rf "${TPM2_WORKDIR}"
- 	fi
- 
- 	mkdir -p "${TPM2_WORKDIR}"
--	tpm2_startauthsession --policy-session -S "${TPM2_WORKDIR}/session.ctx"
--	tpm2_policypcr -Q -S "${TPM2_WORKDIR}/session.ctx" \
-+	tpm2 startauthsession --policy-session -S "${TPM2_WORKDIR}/session.ctx"
-+	tpm2 policypcr -Q -S "${TPM2_WORKDIR}/session.ctx" \
- 		-l "${pcr_bank_hash_type}:7"
--	tpm2_unseal -p "session:${TPM2_WORKDIR}/session.ctx" -c "$TPM2_HANDLE" \
-+	tpm2 unseal -p "session:${TPM2_WORKDIR}/session.ctx" -c "$TPM2_HANDLE" \
- 		-o "$key_file"
--	tpm2_flushcontext "${TPM2_WORKDIR}/session.ctx"
-+	tpm2 flushcontext "${TPM2_WORKDIR}/session.ctx"
- 	rm -rf "${TPM2_WORKDIR}"
- }
- 
- tpm2_key_del() {
--	tpm2_evictcontrol -C o -c "$TPM2_HANDLE"
-+	tpm2 evictcontrol -C o -c "$TPM2_HANDLE"
- }
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/tpm2_functions.buster b/recipes-initramfs/initramfs-crypt-hook/files/tpm2_functions.buster
-index 453ba977..37d0787f 100644
---- a/recipes-initramfs/initramfs-crypt-hook/files/tpm2_functions.buster
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/tpm2_functions.buster
-@@ -11,7 +11,7 @@
- 
- tpm2_check_device() {
- 	export TPM2TOOLS_DEVICE_FILE="$1"
--	tpm2_pcrlist -L "${pcr_bank_hash_type}:7" > /dev/null
-+	tpm2 pcrlist -L "${pcr_bank_hash_type}:7" > /dev/null
- }
- 
- tpm2_key_get() {
-diff --git a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.11.bb b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.11.bb
-index 49ccc076..2312a73c 100644
---- a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.11.bb
-+++ b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.11.bb
-@@ -52,27 +52,21 @@ HOOK_ADD_MODULES = " \
- 
- HOOK_COPY_EXECS = " \
-     pwgen mke2fs grep awk expr seq sleep basename uuidparse mountpoint \
--    e2fsck resize2fs cryptsetup rm cmp \
--    tpm2_pcrread tpm2_testparms tpm2_flushcontext tpm2_shutdown \
--    tpm2_startauthsession tpm2_policypcr tpm2_createprimary tpm2_create \
--    tpm2_load tpm2_evictcontrol tpm2_unseal tpm2_getcap \
-+    e2fsck resize2fs cryptsetup rm cmp tpm2 tpm2_shutdown \
-     /usr/lib/*/libgcc_s.so.1"
- 
- HOOK_COPY_EXECS:append:clevis = " \
-     clevis clevis-decrypt clevis-encrypt-tpm2 clevis-decrypt-tpm2 \
-     clevis-luks-bind clevis-luks-unlock \
-     clevis-luks-list clevis-luks-common-functions \
--    tpm2_createpolicy \
-     bash luksmeta jose sed tail sort rm mktemp pwmake file"
- HOOK_COPY_EXECS:append:systemd = " \
-     systemd-cryptenroll /usr/lib/systemd/systemd-cryptsetup \
-     /usr/lib/*/cryptsetup/libcryptsetup-token-systemd-tpm2.so"
- 
--HOOK_COPY_EXECS:append:buster = " cryptsetup-reencrypt tpm2_pcrlist"
-+HOOK_COPY_EXECS:append:buster = " cryptsetup-reencrypt"
- HOOK_COPY_EXECS:remove:buster = " \
--    tpm2_pcrread tpm2_testparms tpm2_flushcontext tpm2_shutdown \
--    tpm2_startauthsession tpm2_policypcr tpm2_evictcontrol tpm2_getcap \
--    clevis-luks-list clevis-luks-common-functions"
-+    tpm2_shutdown clevis-luks-list clevis-luks-common-functions"
- HOOK_COPY_EXECS:append:bullseye = " cryptsetup-reencrypt"
- 
- SRC_URI += "file://encrypt_partition.env.tmpl \
--- 
-2.47.3
+Best regards,
+  Nobuhiro
+
 
