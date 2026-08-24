@@ -2,49 +2,50 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 645C2C5DF94
-	for <webhook@archiver.kernel.org>; Mon, 24 Aug 2026 10:40:02 +0000 (UTC)
-Received: from AM0PR02CU008.outbound.protection.outlook.com (AM0PR02CU008.outbound.protection.outlook.com [52.101.72.5])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.13788.1787567995623084545
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C517FC5DF81
+	for <webhook@archiver.kernel.org>; Mon, 24 Aug 2026 16:18:04 +0000 (UTC)
+Received: from MRWPR03CU001.outbound.protection.outlook.com (MRWPR03CU001.outbound.protection.outlook.com [40.107.130.19])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.1400.1787588281920339802
  for <cip-dev@lists.cip-project.org>;
- Mon, 24 Aug 2026 03:39:56 -0700
+ Mon, 24 Aug 2026 09:18:02 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=Q1nIVyuH;
- spf=pass (domain: siemens.com, ip: 52.101.72.5, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=Katf+YKM;
+ spf=pass (domain: siemens.com, ip: 40.107.130.19, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cU4PEWhhEDd0wm08hvktwq516dWwyEZ8QoVmrWjpFY7QejdBF6M1C3Qb7a56eXxhDczrPNUgYkrHpDZ8w8NSkY9evI+3/7nXbNZ02SI3vSlawAtfqqxP14zXUnRLFmwihhXBPgakXdM8jYzgnGdH3inrnA9kMKcz/nXbV33ArfDuCidtVMtpDkFIzWJHgCG8GFrl5/Xq7VB8CoJWJoYfh3jURwydigZbKvcrJzOLVchecRHVcvzRNGS4Fsr96isxWpuQykm1DzrvSmotzMRQoZc1x778k4rGvHL5oJo5psim/cU7wFS1l7oUVGg0Gv6CmHu+T580tJQfJvQMXhF68w==
+ b=XIGPf8evB0XMY3PSCylWAbpANMGm5nQ/rVEZZe1HdavCg9kpspoTL3gVj8SZlSzHtrBV5iZUoOs5wLi6ua8DjuP/n1BAlZYzQo6V0ebFOOwUbQ6+wmZT/R8ZT/ba0KZqjpBMso9reYdIrvs1n0vyUfqJGqRduBXYeEuIVVZOhH74ZK3N3WmFULIhznJvIxD/effWPNSlizUDuZ6bvzX5k/F6XZ/CxoF2oBseYpIDuTS6E8CUDKgXcL9I5qK5FVXeY0gehSSo1kAGc6I7ZTaHqVCCBba21OTlfKFYpdWnbPVkpK7VTKU3+mjlp6oELNZO+ed/6vWKMVykXrcpI+LeUA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XctF3hn9dwBqi8QQI1D9fxVH3zd+/SV/1jmib44WV7w=;
- b=uRUps11yu+eX7raVtS61JDuB5oLUD1o6WfFkCkRmiUPaJEk6y5LUMc8ouCyPiM70KX393uQioQ1nCLwu8mkEKGH8YPqxOXyejZMO1d5mP9dqYAdPKi1oqUOlHiJQCvZvewifMaUdbLrifXTRVR9zxUfZqkpNSzFOxKMH8FtBdelIXPEUmy0G2q2ksIIPrRxvI7iAbNakQtcZarGH5dnic/gK2mrVBi6Poj2NhPvroznrdidlWyllTa05KJnb6LigM1+8cUAx64QsL4sJK+RktDjkgRxXUSksXMIBjpm27rs2pXiRcN+StjvzmhEfuwYTtVG1JXy1FQjQ75dMTUrEsA==
+ bh=G8mkPNDcWN5dlwBZtmF/Mh2yQ1utzTQ8hW1vqfeCxFc=;
+ b=aarmy1gVXBKawZxDN6WBKY2L8AJN3ExE2kYZxCP1KwRfAIgjUjl/vhtfYmKk438GZoQW3rhktjpcdQMwy8Np7TLsTJYPlrRiIsJbnnJ6wQ25nc4pgtHN6fE8cDqqHERaFeRw/51n9U0o3w95Am8wPk54nRTbTx3oyleuefzNrJg0KlsgUFqLQXHs6CaHrCsJTBwYffF5yLCPPS/2kSXlTBxb8JYQW2p/TB3Xoqkr9MBd/cfhQYhLFW8TG/dEsacuJlvkJZUhA4MwTSVr7ZWPwAnj7Qwu7hb6jcqA/nJ2pBY8FzE2yvjaVcKJm9eAWsG7Vgrf1Acg/bHXPkaAKgPu0w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XctF3hn9dwBqi8QQI1D9fxVH3zd+/SV/1jmib44WV7w=;
- b=Q1nIVyuHTsHZeOAy4NNrXkM2uZQmMWtI3ZQzYPjnHqqe5r+8DISvmT9HSKoQn4cxBagLmf3UX+YaH8xwhI7anSPUqYumqVQ4cnh9Kk3XYbzN7MsMkKlxE7L+oDaII1okcd6X/pT5QrTmGibWtiPNSDVLhZprIFUcsCFCGtXw55y9k3f1vb6kmVEzlAWC+JZ7LxCryrcowE/u7m0zhEIKgVqjw2YgS2lVzXCyGwsi/97rzztVskAgItZD84WRFy/Fh3uU8iIuoLbtUPy4zv0TUBEKGa2FeejQigPJZxEXRYO6EvU/xjy+otw+i7QQSPqSTyZkdUE35wnTQAbgSaWaWA==
+ bh=G8mkPNDcWN5dlwBZtmF/Mh2yQ1utzTQ8hW1vqfeCxFc=;
+ b=Katf+YKMpjDudh6L3NoEVLVCdj6OpLg0cgGpdVwPRWm+8JyQ2sbVgPQEdd5Rq2BZNs7MOp+3dcj/tqe1GBenKG4B++eDH4DOdSadWze931CSEEf1fO/u11S8nUtWFfRHNUpNPmTKkinUbyeQ3CROBzsCdApnVrJCtdfLi/thjoC1FV/cBz2ufgbX1wYir3Cj+1g9CBJVI0su5PATo3Osh8ZOb5Tgx95NDg84XvBUzSlUJjger+oQLi59/8uSoZ54+hjr7HnnJAbGY6rkXr5qzvFTNY3XMmzIF+qwKQR51bvwd9LaCFBrwkS1Tz+tJApXCXudzX9gLf9c3CHDM/K/Tw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by DU0PR10MB6177.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:3e8::20) with
+ by DB9PR10MB7145.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:459::14) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.339.12; Mon, 24 Aug
- 2026 10:39:50 +0000
+ 2026 16:17:54 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::be9f:e8ca:ee9:83e1]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::be9f:e8ca:ee9:83e1%2]) with mapi id 15.21.0339.012; Mon, 24 Aug 2026
- 10:39:50 +0000
-Message-ID: <4bf4add4-249f-4987-a148-2428e65dc1b8@siemens.com>
-Date: Mon, 24 Aug 2026 12:39:49 +0200
+ 16:17:54 +0000
+Message-ID: <fb8f6674-7d83-4fb3-891c-4dc6e10a263b@siemens.com>
+Date: Mon, 24 Aug 2026 18:17:53 +0200
 User-Agent: Mozilla Thunderbird
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: cip-dev <cip-dev@lists.cip-project.org>
-Subject: [isar-cip-core][PATCH] linux-cip: Update to 4.4.302-cip114,
- 6.1.182-cip59-rt31, and 6.12.104-cip30
+Subject: [isar-cip-core][PATCH] initramfs-crypt-hook: Use multi-call tpm2
 Content-Language: en-US
+Cc: Quirin Gylstorff <quirin.gylstorff@siemens.com>,
+ Alexander Heinisch <alexander.heinisch@siemens.com>
 Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  xsFNBGZY+hkBEACkdtFD81AUVtTVX+UEiUFs7ZQPQsdFpzVmr6R3D059f+lzr4Mlg6KKAcNZ
  uNUqthIkgLGWzKugodvkcCK8Wbyw+1vxcl4Lw56WezLsOTfu7oi7Z0vp1XkrLcM0tofTbClW
@@ -90,151 +91,251 @@ Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  ZffO4PeNJOUYfXdH13A6rbU0y6xE7Okuoa01EqNi9yqyLA8gPgg/DhOpGtK8KokCsdYsTbk=
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR2P281CA0150.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:98::11) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: FR2P281CA0009.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a::19) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DU0PR10MB6177:EE_
-X-MS-Office365-Filtering-Correlation-Id: fdf193ab-1943-4a05-a850-08df01cc0683
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DB9PR10MB7145:EE_
+X-MS-Office365-Filtering-Correlation-Id: bc831243-651c-4489-507e-08df01fb40ad
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|366016|1800799024|23010399003|376014|10067099003|56012099006|11063799006|18002099003|55112099003;
+	BCL:0;ARA:13230040|1800799024|23010399003|366016|376014|10067099003|6133799003|3023799007|18002099003|55112099003|56012099006|11063799006;
 X-Microsoft-Antispam-Message-Info: 
-	ZOHVQbdV2P4CeJLEZ+SjhuW4ZzIqhraPWOH58n7yLywwjKFrSAFCetH3M1vPnkdWzfecReaCv1FCeQyy00ZnV27cOqMD1acj7eK5WsFRDA+gNDwbC5ckilE80NEHX042aMUJwxJC26/WibJT2hxaDZpfE1soUr1rp24MP6fsmS9G+0Oos2royXzI5JRLsFGaxxCzJVz9DVf9JLUKj5mNBZS0fx+M61KycUAu7vWYm5tW34hekdW6DFQKJKy7JztzdxJhJSIjDZHX4U+bnAEd0newSDTlq63ip3L4meAny/b36Fb0GY55duxGPDmdkpHDfJOsp7payk2qCxwMBO9apiBEmsIflc6RQRVax6y/UdYSLGZd3RbPDwQl1/dCwIs6n8V63abZPh9Qdj8gxamvOCydWJPOearTU2dXE7c4GIoz2ky7aU5iFG1TMAQ47h4mmKgCwEvEPG2o72yXtKtBlAsqdOv5bRHaOCp3C4qSqU8Ztk6cTR0USoy4E1WNlzC751lkWiZ9z4hZ7dYqBJuZjpXo9DUIgvE6T6P1sANj45pRSpS8nSnomwIQEnmUc1oXBcvTQPClHcSYufNgmQ11/SA8oFsuBa2H22aCHNjlivINjRA888iVXcqPizIV8ZdyEwC+yMFTMoY6DbX2CnXik8NHiPiAXV9Q14eBXC3eMp8=
+	2j2A9YVil8qLrmAjprpUU2P1nlvoTugf0oqcMqaqVooKZLUWnYWJMQZIYQViHo//QPGC0CXi4RbrxITcVymLm7edP31qSMRwt00t7b+WIR9xjYVLC1EK/dFddX1WE7j9mqnFK/kh8/1cjrXoVHaFHlk+B60rN2XF4uVh8clE+ZjyY4Rwo3W+HDtuQJoPQ1uzrqt/sabwXUp08LZ+jGiXRMJ7UBosfCHo1XFcFoND3VXhfAstL8smZxjvNtDCO7aD/sbFsulyP1Ijh8/MdXqfBABKln/UPH84LNOGFnFPiQh8FJ+bWJIdCEwTtX6pXKcqjTqM4LYCuYbl4vrYeinusvRteay2IQtjzz+clP6MMyLMJXqpBzZSTWfBFV/xnbvOwCgtFZfqmOikZSdEXHGO98+ofZ8PQxH3mm+Rcy6DB+aGZr9iAXDAxII2o9yf3rS+NlSPia+8Jhje2pBfyr/Upop1BHNRMyerJVsEQV6jUaMkVEaYHrcGNv4SIvq/WxaWZ7b5aO/A6uKP09IL8KT3tjMvSGQImhlGZ5mI72zDBamLbISMeSMGY0eNNJ748exMHkSS2nZSmnJix/VL1PCymg4GEjqG6l1UrZFcX9oCeRR8DYzKLByKY/1jQcEvqNji5VFMkczSgvD23wlu2QRocXbYnBi+WQYcITlvVyY5Rys=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(23010399003)(376014)(10067099003)(56012099006)(11063799006)(18002099003)(55112099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(366016)(376014)(10067099003)(6133799003)(3023799007)(18002099003)(55112099003)(56012099006)(11063799006);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?T0gvZmpWaXNNRjhHMUI1bzZJY0FFS3pVT05WYmZSb1EvM29JSFhCYWdqODNJ?=
- =?utf-8?B?WS90NHRKQ1FCZ2Q0d2FDSHgwTVNvS3BxaWlXTzBqclZXU01ybzA2eXpDS2pQ?=
- =?utf-8?B?OXV6UzZkWjRSYjJKOHgyREl3a1plT1ZvSE5vYURQc1dxZnFaODJLUTZjRmRt?=
- =?utf-8?B?cW9wTVNkUEhYVU5GWnNzek5yRkovVWdMZmJETk1yNy9qYlg3cXU0MjNMaEpX?=
- =?utf-8?B?SW5LKzE4d000ZFlnRWtOeGVZeUdCY29YcFJxdldEODBGNGEyZExVaFl2dkhx?=
- =?utf-8?B?OTRzSktranlyd0o5VVFKeGNFM2xRV1hpeHMwS0drRVkrWWlsbGsyZFJNTUNl?=
- =?utf-8?B?bkZsV1psSmVZRjAycWFZNSttWnNUZGhjU2VxSncyamtPT0JkeVFua0FkUTk4?=
- =?utf-8?B?KzUxKzZBYktrY0pjd3VjWnlFb2lDODdwVjdSWkdldGF0cEdYT3NNcmNyVFg5?=
- =?utf-8?B?ZEFCR1FoTmxyRzlPL2tHOXdzcmJBaURKSWwxdjBsYmFqMVBiblNTZHlvM1VT?=
- =?utf-8?B?c3lNMjhwMXZZVlhhREZuc0tlTUZqV0xMeHhyVEQ0Q2M0UVRUUHNwOFQwRUw4?=
- =?utf-8?B?NmpiYkZOcjM4aTgzdlZpY1JrMGdpMDk0MnNHdjRZcVlqdmxGZXBxdyt5LzFj?=
- =?utf-8?B?QjRlWDloL0wwL2hvQlp1ZCtobWt6VmQ1MFV4dUdaOUtGRlVYQVR6d0NJM2RD?=
- =?utf-8?B?VnJsVzlUTzJVejNCYVFGdmJnSGhqaXFCaGthS2padWZkUDcraVhLaHBCb3B1?=
- =?utf-8?B?S3lBWThqeWZEUmNPSEdmQ1hqakFRWEEzQ1l1QjhGc2dGZlhnVTVMRW9YTlRU?=
- =?utf-8?B?ZmlFQ05xMVBHRkRXTGh4RzQyaXp2SmJyVzdLUGloOGR4SCt5WHM5elZUOHE4?=
- =?utf-8?B?WWpyeWl0ZFRzTHdVb1FLay8xVmFXOGhsY3d1QkUxKzRpeExWS2RaRDd2dHJM?=
- =?utf-8?B?am5nY1F2SW0xS3lpOG5EQWFsMDU5M3ZWZ1l2UDF2T3hIdk5RU3A4REZtbklY?=
- =?utf-8?B?UURiVlhxeDVmZVZGckFTTUtjb0M0eEptelBNRjA3UEptK0UwNzZ6RUU2YzNV?=
- =?utf-8?B?S0hRTEhyQmVJc25yZ3pPVFVHazQyUVptclRBbUcyL2p5cGQyQWx1OVBlVENP?=
- =?utf-8?B?WWppano2aE1LWDQxQkVuNTNFSGZzTitIbm9FaGkzVTBnbUwxME5kQVphWHBP?=
- =?utf-8?B?NlQ2clZvaFlyb25QYXFTSjk2NzVnUnJybU4yQS9yMkdETGE4OHQrOVZVVTA3?=
- =?utf-8?B?aHgwbGsvK1Rpa28rMjJ1NjFoSWNJdkFyYkp0Z3lnUTlic2hQbUYydkwvNFNw?=
- =?utf-8?B?a0RYRTFqWlEzbEFDR0JWU0lKSHNmY1p3dVJHMWtmNDdwS3JOa3ZNK0FrQkl3?=
- =?utf-8?B?VkpOU0dmRjNaZ05od2dCeFhWTHg2dkQ2c2hiRDRwZ01rMjFsOS9lcXVaVERU?=
- =?utf-8?B?Rlp0ckZBUm5pRUdoSzBvOXBkZGVMRWxBbEh0Tm1QRlQ4L1JaaDlkSGRSd09n?=
- =?utf-8?B?S05vQ05MM3RTTVBOTTRwZEdINm00OEM4dGl6ZysrZ25pUDJJdTRrd2JnL2hR?=
- =?utf-8?B?eStZditLY1p6azVsMnJ3dTVtT0JlZ01CbnNtMWw2UVpMU1UzUUZNM09YTm1L?=
- =?utf-8?B?WllkaXFWNUYvQk9CSUtKYzFWUFBEWStlOHdDeUZDbHdFSUlhb0lScXRKMTRX?=
- =?utf-8?B?dmxMMGpyenFuc3Z2U0Q1WmlvMFpNNzhhdTJDOGNsRlNNdE5ZcnJYeDJucXM1?=
- =?utf-8?B?eGl6dmVLNHBPRWplUU9mNGtpOE5mQ2F0Q0lLZkpvV2pSdzRrVDAxVmlwWE45?=
- =?utf-8?B?ZnoyNkRYZHR0RFdHbW5Zd1NQV1dmRVZtSVdZK1YvVUZhenhuQXFPOU9CbTFS?=
- =?utf-8?B?N01RcDI0U2szRUxZeXR1QzZxNUEyelY0TnJnMWx1cnBzK3BrZVNOYWtzalFq?=
- =?utf-8?B?RjdMTUpQQnlieG10YkFOMFh5b1lJQUY4RGdKeWxIM2FMaTRQUXhHN3BoTVY4?=
- =?utf-8?B?VUlzUlBQbDFjcVdEeUh1RlFxekJiNWFhL3JNL1hXNk5oRE1jTyswUkNFaVdQ?=
- =?utf-8?B?MFdtZmdZTFoveXkxTkNIRTNtd2hJTVNoY3JKMVpoT1h2UzlzR1FUSkxHY21a?=
- =?utf-8?B?anVWOHVCTDRVb0pBS3ZLSzh1TzgxR0xSZTFiUHByQUI3ZHU0bS9yV0syN3hu?=
- =?utf-8?B?LytSMCtZMHM4MjNYVHErLzM0RndCczBkb1YrWDVsYVBxdmFhWDhCZVp1U0gr?=
- =?utf-8?B?NDF5WFpFUFZ6SFUvQ216OXJXQUdKeEVtaTFjR0NjMHN6SG5ickZ6ODFUbXl4?=
- =?utf-8?B?WDFJdG9PdzI5dU1ZbEUycWpCaFRjYXZ2SUY2Y0c5V2o3ejdiaVhMUT09?=
+	=?utf-8?B?ZUdDSlZGT3RSNkhOVTNTUUNGY0lnUk5vakRGMkl1bDlYOHFMSWhFN3lxWUlK?=
+ =?utf-8?B?M2o4UTRjbmZZYmRvVS8wQnd1TTUxR09SbFJJeStnRTdUQno3V1lZR2hCeFhS?=
+ =?utf-8?B?VnFJSnd2SXYwb1NZdm5YeVd1Mk00VDRpZ0dPdmpveTgvTUMxL3JJdHBlejBM?=
+ =?utf-8?B?UHJtTy9KOEFwR2lUMjZVZzBzTUJKR0dlcUsvNmtCWWJDcHNoQ3Robk1SU052?=
+ =?utf-8?B?d244c3NsZ0ZYN0JCR04xUEFVeklJUWZURWxtT0E2a3FneUlmWjBNNUdHOHVy?=
+ =?utf-8?B?eWluUzBsYmRRT1gvZG9DdUh2a250RlJKWkdGSW5NUWRocWZNVnJTQkxlSHhw?=
+ =?utf-8?B?ZHhRZzJCMVRib1VRRzcxZk00M2IrM0hnYmRnaGxZd0I2MXlqbVhtTUZWbWhH?=
+ =?utf-8?B?ZzRZdGtCR0V2Wmp4VFZBUkVFNVRtNHNIOG14NzY1eEFQUEErV2FuMUJQaFQv?=
+ =?utf-8?B?Uk9EMXJwZDZ4a21zcDlkcDcvYXAyREFYSVhYQ0ZmdmR6aEd5anozVkh6UnhH?=
+ =?utf-8?B?Um9Tc0c0V0xGc3E1ZU5FdG1VOXJMLy85WGFoTEZleTFmSnlJbjB0Yys3UEVZ?=
+ =?utf-8?B?bFF6V2Vtc1FLTlhKR0dGN2N1aEdmeGd3Tis2R3NrcGdlbmYzdWFtZ0pRbzJp?=
+ =?utf-8?B?YU1PUGd6ekRHMFYvU2VKbGJDOHJUVlBkVmV0SGZIeXRpbmxJUHF6SlkxaHFN?=
+ =?utf-8?B?bmhoeGVmNkxsbUZ1L2duNHZWMkl1REpGUjFnay9RelNjY3Y5Unl5aXIrMlNM?=
+ =?utf-8?B?d2VYWmNRSDNzTkRRQVRLU1NQWHVlbnowTWtHYXVIMWlvYmljVVhvRHd3Uy9S?=
+ =?utf-8?B?VHZYQm5XMHd4VGtzdjlPanNUaHpjZE9YOE5TMzEwdmNqSkpYVkMzeGZ4Y2cz?=
+ =?utf-8?B?Tkd4U2U5V3ZzaTJkTE9yTmY3bU1HTFdyVVZEZGpmNHZKMGFidWxmMGJyWXNt?=
+ =?utf-8?B?UEdlVGRhOW9wdHVaNDd6djJnNE5VQnhIL1owL2poRnAwUE10ZXpYb0hidHFY?=
+ =?utf-8?B?VFBWVjBLMVJoTS9Kc2lUMGpDeFdmbXlBQVV1N1J2RjBCUUVrYWhBbWptZC9I?=
+ =?utf-8?B?Z0JZWFdCNVEyYUxHVnIzVTkzWGk3aU8wMnR4VkpucXlqR3pWcFgvYTg1UUpQ?=
+ =?utf-8?B?RXZxakNIRzNuWHdhU2hTbnFtbzZhSGhnMFBCaDhadkZOeG1oVTMyakRJZ0ov?=
+ =?utf-8?B?NzE3UjkwREVsK3hxN284ZmxJLzZNc2NydW9DbHZQbmRvQzNMcE9zUHRQOXV3?=
+ =?utf-8?B?MnkvOGlLRVZ4Y3NIQ3VicE9JRitpVlAxYmxBL1lycnRzTHh2ZkdtMUc4S3lw?=
+ =?utf-8?B?Uk9ESHJ0R1JydkNzSlpCZFVKV2YwYStKUGZSbDFTU2RsLzVHUXp0M3F6Q0FH?=
+ =?utf-8?B?QUlUWWJaSjh1akxqQ0FDNHh0M2tCMy92R3A2MnRCcFhWaTg5TlBHay9STzB0?=
+ =?utf-8?B?NU54blV1M1htL2ljb0xiMks1VHoyb0xtSGZkZ1pYdGVXejJ2dEhMbklrK2Vz?=
+ =?utf-8?B?WWlXZnVRVlVHbVN2cHpIazVHTXo4QU9qa1ZOQjJyM3lBak4xSWRYcGxyaFpQ?=
+ =?utf-8?B?bTdoM1FRZnVsYkVROU40Rlk2TWllSUN3TlF4bFBlTU1ObWk4SHR2S3hYOW53?=
+ =?utf-8?B?RUZkalJrUEFSaXJIUWVOclYvc3MxelJ4MzZmOUlPbHdNSTlydHJZeEs3VGZB?=
+ =?utf-8?B?Sm84NUZvdDdJSUYwQjVCK2xtYXF6QlAvNVhTcnVlRWY1YmZ0SVRHcm9QRDN1?=
+ =?utf-8?B?aGZOaG5UQTF4MEVsbWE2UjhCOUJiQmQ1L3NKeHg3dmJJdjZYWDlhaGE1NEMz?=
+ =?utf-8?B?NDhWNUc1NnlXWEI1OE1jZFROK3J0NVJ4WEd2K0NsNWNxYXNaZEVDcWVoL1hi?=
+ =?utf-8?B?SjdLeXpkK3RydG10WExUL3pKU1FucGxGVUs0TkZRaExoSVB5OWdKOUVJTTZV?=
+ =?utf-8?B?NllJQ2dMeGpmb2IzeWwxN29vZHlVRkdocG9jNWlLa1ZkdElnOEpLQ1pZN25B?=
+ =?utf-8?B?dGlZOHZJZlI3OWk2ZS9Ja3VzVkRGTWc4Q0RmM3FUeVhBMlRwdmJKKzVGeVYr?=
+ =?utf-8?B?RmtCUmVaZ2UyWG9QdE1aaTlRUUVWZFV6U2hpU2lBYXRNcWFVNkp4UHR5aU53?=
+ =?utf-8?B?aGdjLzBVb1VBUTZYVmNxVElxTUMyZGplSXVJdnMrdjg4elBJOUVub3h4VnJu?=
+ =?utf-8?B?RHNTU3ZuTG11REFUSDJjZlR5cmVvMlIzZGtOZzhoNzlIdWErTHljZnhQKzR6?=
+ =?utf-8?B?K2lTY3Q5M0JFbVdxc01weTdmT2FveENaMUh1Z01XOUdzNmQxb0oramhXb0dQ?=
+ =?utf-8?B?M0Y0WUkyU0p5WG5yYWJkbFNXNExFNzMrazdBbEUzWFJITW1OU3RhUT09?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fdf193ab-1943-4a05-a850-08df01cc0683
+X-MS-Exchange-CrossTenant-Network-Message-Id: bc831243-651c-4489-507e-08df01fb40ad
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Aug 2026 10:39:50.5888
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Aug 2026 16:17:54.5830
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gxLEsiNOiirGpF6bJ81pR/YXd6xPi0HMXyDeLKJIDfYXJp81bYHYDc6bXLr5nn17Wm+4CMzU3lLt7JI0yhHSLw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB6177
+X-MS-Exchange-CrossTenant-UserPrincipalName: JAZUwhDmSamrx/X7zH5z4PyCDnxX1ANU0VuGWZCuhkxUIjyXi7k6B3ReAHIWNLViVdxiYzsjZExtHn0N1MoQqw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR10MB7145
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 24 Aug 2026 10:40:02 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23994
+ <cip-dev@lists.cip-project.org>; Mon, 24 Aug 2026 16:18:04 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/23995
 
 From: Jan Kiszka <jan.kiszka@siemens.com>
 
+tpm2 is a multi-call binary, all the subcommands we currently install
+are just links to it. Avoid setting up those links and use tpm2 only to
+accelerate the installation procedure and simplify the recipe. The only
+exception is tpm2_shutdown which we continue to use as availability
+marker.
+
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 ---
- ...6.1.175-cip57-rt30.bb => linux-cip-rt_6.1.182-cip59-rt31.bb} | 2 +-
- recipes-kernel/linux/linux-cip-rt_6.12.101-cip29.bb             | 1 -
- recipes-kernel/linux/linux-cip-rt_6.12.104-cip30.bb             | 1 +
- ...{linux-cip_4.4.302-cip113.bb => linux-cip_4.4.302-cip114.bb} | 2 +-
- ...{linux-cip_6.12.101-cip29.bb => linux-cip_6.12.104-cip30.bb} | 2 +-
- 5 files changed, 4 insertions(+), 4 deletions(-)
- rename recipes-kernel/linux/{linux-cip-rt_6.1.175-cip57-rt30.bb => linux-cip-rt_6.1.182-cip59-rt31.bb} (59%)
- delete mode 120000 recipes-kernel/linux/linux-cip-rt_6.12.101-cip29.bb
- create mode 120000 recipes-kernel/linux/linux-cip-rt_6.12.104-cip30.bb
- rename recipes-kernel/linux/{linux-cip_4.4.302-cip113.bb => linux-cip_4.4.302-cip114.bb} (68%)
- rename recipes-kernel/linux/{linux-cip_6.12.101-cip29.bb => linux-cip_6.12.104-cip30.bb} (59%)
 
-diff --git a/recipes-kernel/linux/linux-cip-rt_6.1.175-cip57-rt30.bb b/recipes-kernel/linux/linux-cip-rt_6.1.182-cip59-rt31.bb
-similarity index 59%
-rename from recipes-kernel/linux/linux-cip-rt_6.1.175-cip57-rt30.bb
-rename to recipes-kernel/linux/linux-cip-rt_6.1.182-cip59-rt31.bb
-index 37d5a329..52fbe641 100644
---- a/recipes-kernel/linux/linux-cip-rt_6.1.175-cip57-rt30.bb
-+++ b/recipes-kernel/linux/linux-cip-rt_6.1.182-cip59-rt31.bb
-@@ -7,4 +7,4 @@
+Please double-check that I didn't forget a conversion or otherwise mess 
+something up.
+
+ .../files/encrypt_partition.systemd.script    |  4 +--
+ .../files/local-top-complete                  |  2 +-
+ .../initramfs-crypt-hook/files/tpm2_functions | 30 +++++++++----------
+ .../files/tpm2_functions.buster               |  2 +-
+ .../initramfs-crypt-hook_0.11.bb              | 12 ++------
+ 5 files changed, 22 insertions(+), 28 deletions(-)
+
+diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.script b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.script
+index 94346a87..e1416946 100644
+--- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.script
++++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.script
+@@ -29,8 +29,8 @@ enroll_tpm2_token() {
+ 	# systemd-cryptenroll persists its TPM2 SRK at handle 0x81000001
+ 	# evict any stale handle before enrollment to avoid
+ 	# "Failed to seal to TPM2: State not recoverable".
+-	if tpm2_getcap handles-persistent 2>/dev/null | grep -q "0x81000001"; then
+-		if ! tpm2_evictcontrol -C o -c 0x81000001; then
++	if tpm2 getcap handles-persistent 2>/dev/null | grep -q "0x81000001"; then
++		if ! tpm2 evictcontrol -C o -c 0x81000001; then
+ 			panic "Failed to evict stale TPM2 handle 0x81000001!"
+ 		fi
+ 	fi
+diff --git a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
+index 7bc08e55..5aed1c06 100755
+--- a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
++++ b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
+@@ -367,7 +367,7 @@ done
  
- require linux-cip-release.inc
+ if [ -x /usr/bin/tpm2_shutdown ]; then
+ 	# shutdown the TPM to avoid DA lockout due to powerfailure
+-	tpm2_shutdown -c
++	tpm2 shutdown -c
+ fi
  
--SRC_URI[sha256sum] = "a75064376eb4ec4c816ae11381ced89e0a8073bf90c30391cdbbceffd8f254cf"
-+SRC_URI[sha256sum] = "d66e63c93ec04fb51c32cedc97b1ad73998d58055bf3fa021e3d7bb1a2789ac1"
-diff --git a/recipes-kernel/linux/linux-cip-rt_6.12.101-cip29.bb b/recipes-kernel/linux/linux-cip-rt_6.12.101-cip29.bb
-deleted file mode 120000
-index 82a1b15f..00000000
---- a/recipes-kernel/linux/linux-cip-rt_6.12.101-cip29.bb
-+++ /dev/null
-@@ -1 +0,0 @@
--linux-cip_6.12.101-cip29.bb
-\ No newline at end of file
-diff --git a/recipes-kernel/linux/linux-cip-rt_6.12.104-cip30.bb b/recipes-kernel/linux/linux-cip-rt_6.12.104-cip30.bb
-new file mode 120000
-index 00000000..e767cba9
---- /dev/null
-+++ b/recipes-kernel/linux/linux-cip-rt_6.12.104-cip30.bb
-@@ -0,0 +1 @@
-+linux-cip_6.12.104-cip30.bb
-\ No newline at end of file
-diff --git a/recipes-kernel/linux/linux-cip_4.4.302-cip113.bb b/recipes-kernel/linux/linux-cip_4.4.302-cip114.bb
-similarity index 68%
-rename from recipes-kernel/linux/linux-cip_4.4.302-cip113.bb
-rename to recipes-kernel/linux/linux-cip_4.4.302-cip114.bb
-index c0dd7350..e92ec4fb 100644
---- a/recipes-kernel/linux/linux-cip_4.4.302-cip113.bb
-+++ b/recipes-kernel/linux/linux-cip_4.4.302-cip114.bb
-@@ -11,4 +11,4 @@
+ if [ -n "$watchdog_pid" ]; then
+diff --git a/recipes-initramfs/initramfs-crypt-hook/files/tpm2_functions b/recipes-initramfs/initramfs-crypt-hook/files/tpm2_functions
+index 1c6bbff8..1ab9ea5d 100644
+--- a/recipes-initramfs/initramfs-crypt-hook/files/tpm2_functions
++++ b/recipes-initramfs/initramfs-crypt-hook/files/tpm2_functions
+@@ -11,9 +11,9 @@
+ # SPDX-License-Identifier: MIT
  
- require linux-cip-release.inc
+ tpm2_check_device() {
+-	tpm2_pcrread -T device:"$1" "$pcr_bank_hash_type":7 2>/dev/null \
++	tpm2 pcrread -T device:"$1" "$pcr_bank_hash_type":7 2>/dev/null \
+ 		| grep -qv "$pcr_bank_hash_type" &&
+-		tpm2_testparms -T device:"$1" "$tpm_key_algorithm" --quiet 2>/dev/null
++		tpm2 testparms -T device:"$1" "$tpm_key_algorithm" --quiet 2>/dev/null
+ }
  
--SRC_URI[sha256sum] = "10f0ab5f95bb3351118b5b5fb2cf494e7d80a3e9d7d9157f36712c6acd434783"
-+SRC_URI[sha256sum] = "23060eba286be4c8723547d589d9c1a0d54627689a8b12b7a05151c4885b3cbf"
-diff --git a/recipes-kernel/linux/linux-cip_6.12.101-cip29.bb b/recipes-kernel/linux/linux-cip_6.12.104-cip30.bb
-similarity index 59%
-rename from recipes-kernel/linux/linux-cip_6.12.101-cip29.bb
-rename to recipes-kernel/linux/linux-cip_6.12.104-cip30.bb
-index 29268b0f..8b7671fa 100644
---- a/recipes-kernel/linux/linux-cip_6.12.101-cip29.bb
-+++ b/recipes-kernel/linux/linux-cip_6.12.104-cip30.bb
-@@ -7,4 +7,4 @@
+ TPM2_HANDLE="0x81080001"
+@@ -24,44 +24,44 @@ tpm2_key_get() {
  
- require linux-cip-release.inc
+ 	export TPM2TOOLS_TCTI="device:${tpm_device}"
  
--SRC_URI[sha256sum] = "b4f48eb4a0212bb308ac9e01f090c19ca3798281548d8778c4c9df80c18b7bed"
-+SRC_URI[sha256sum] = "d4fbae6f58c86c1a1da3c23e013eab54caf57aa11efb323b98150298cddcbb18"
+-	if ! tpm2_getcap handles-persistent | grep -q "$TPM2_HANDLE"; then
++	if ! tpm2 getcap handles-persistent | grep -q "$TPM2_HANDLE"; then
+ 		mkdir -p "${TPM2_WORKDIR}"
+ 		# Open session:
+-		tpm2_startauthsession -S "${TPM2_WORKDIR}/session.ctx"
+-		tpm2_policypcr -Q -S "${TPM2_WORKDIR}/session.ctx" \
++		tpm2 startauthsession -S "${TPM2_WORKDIR}/session.ctx"
++		tpm2 policypcr -Q -S "${TPM2_WORKDIR}/session.ctx" \
+ 			-l "${pcr_bank_hash_type}:7" \
+ 			-L "${TPM2_WORKDIR}/pcr7.${pcr_bank_hash_type}.policy"
+-		tpm2_flushcontext "${TPM2_WORKDIR}/session.ctx"
++		tpm2 flushcontext "${TPM2_WORKDIR}/session.ctx"
+ 
+ 		# Add new key to tpm:
+-		tpm2_createprimary -Q -C o -c "${TPM2_WORKDIR}/prim.ctx"
+-		pwgen -s -1 32 | tpm2_create -Q -g sha256 \
++		tpm2 createprimary -Q -C o -c "${TPM2_WORKDIR}/prim.ctx"
++		pwgen -s -1 32 | tpm2 create -Q -g sha256 \
+ 			-u "${TPM2_WORKDIR}/pcr_seal_key.pub" \
+ 			-r "${TPM2_WORKDIR}/pcr_seal_key.priv" \
+ 			-i - \
+ 			-C "${TPM2_WORKDIR}/prim.ctx" \
+ 			-L "${TPM2_WORKDIR}/pcr7.${pcr_bank_hash_type}.policy"
+-		tpm2_load -Q \
++		tpm2 load -Q \
+ 			-C "${TPM2_WORKDIR}/prim.ctx" \
+ 			-u "${TPM2_WORKDIR}/pcr_seal_key.pub" \
+ 			-r "${TPM2_WORKDIR}/pcr_seal_key.priv" \
+ 			-c "${TPM2_WORKDIR}/pcr_seal_key.ctx"
+-		tpm2_evictcontrol -c "${TPM2_WORKDIR}/pcr_seal_key.ctx" \
++		tpm2 evictcontrol -c "${TPM2_WORKDIR}/pcr_seal_key.ctx" \
+ 			"$TPM2_HANDLE" -C o
+ 
+ 		rm -rf "${TPM2_WORKDIR}"
+ 	fi
+ 
+ 	mkdir -p "${TPM2_WORKDIR}"
+-	tpm2_startauthsession --policy-session -S "${TPM2_WORKDIR}/session.ctx"
+-	tpm2_policypcr -Q -S "${TPM2_WORKDIR}/session.ctx" \
++	tpm2 startauthsession --policy-session -S "${TPM2_WORKDIR}/session.ctx"
++	tpm2 policypcr -Q -S "${TPM2_WORKDIR}/session.ctx" \
+ 		-l "${pcr_bank_hash_type}:7"
+-	tpm2_unseal -p "session:${TPM2_WORKDIR}/session.ctx" -c "$TPM2_HANDLE" \
++	tpm2 unseal -p "session:${TPM2_WORKDIR}/session.ctx" -c "$TPM2_HANDLE" \
+ 		-o "$key_file"
+-	tpm2_flushcontext "${TPM2_WORKDIR}/session.ctx"
++	tpm2 flushcontext "${TPM2_WORKDIR}/session.ctx"
+ 	rm -rf "${TPM2_WORKDIR}"
+ }
+ 
+ tpm2_key_del() {
+-	tpm2_evictcontrol -C o -c "$TPM2_HANDLE"
++	tpm2 evictcontrol -C o -c "$TPM2_HANDLE"
+ }
+diff --git a/recipes-initramfs/initramfs-crypt-hook/files/tpm2_functions.buster b/recipes-initramfs/initramfs-crypt-hook/files/tpm2_functions.buster
+index 453ba977..37d0787f 100644
+--- a/recipes-initramfs/initramfs-crypt-hook/files/tpm2_functions.buster
++++ b/recipes-initramfs/initramfs-crypt-hook/files/tpm2_functions.buster
+@@ -11,7 +11,7 @@
+ 
+ tpm2_check_device() {
+ 	export TPM2TOOLS_DEVICE_FILE="$1"
+-	tpm2_pcrlist -L "${pcr_bank_hash_type}:7" > /dev/null
++	tpm2 pcrlist -L "${pcr_bank_hash_type}:7" > /dev/null
+ }
+ 
+ tpm2_key_get() {
+diff --git a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.11.bb b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.11.bb
+index 49ccc076..2312a73c 100644
+--- a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.11.bb
++++ b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.11.bb
+@@ -52,27 +52,21 @@ HOOK_ADD_MODULES = " \
+ 
+ HOOK_COPY_EXECS = " \
+     pwgen mke2fs grep awk expr seq sleep basename uuidparse mountpoint \
+-    e2fsck resize2fs cryptsetup rm cmp \
+-    tpm2_pcrread tpm2_testparms tpm2_flushcontext tpm2_shutdown \
+-    tpm2_startauthsession tpm2_policypcr tpm2_createprimary tpm2_create \
+-    tpm2_load tpm2_evictcontrol tpm2_unseal tpm2_getcap \
++    e2fsck resize2fs cryptsetup rm cmp tpm2 tpm2_shutdown \
+     /usr/lib/*/libgcc_s.so.1"
+ 
+ HOOK_COPY_EXECS:append:clevis = " \
+     clevis clevis-decrypt clevis-encrypt-tpm2 clevis-decrypt-tpm2 \
+     clevis-luks-bind clevis-luks-unlock \
+     clevis-luks-list clevis-luks-common-functions \
+-    tpm2_createpolicy \
+     bash luksmeta jose sed tail sort rm mktemp pwmake file"
+ HOOK_COPY_EXECS:append:systemd = " \
+     systemd-cryptenroll /usr/lib/systemd/systemd-cryptsetup \
+     /usr/lib/*/cryptsetup/libcryptsetup-token-systemd-tpm2.so"
+ 
+-HOOK_COPY_EXECS:append:buster = " cryptsetup-reencrypt tpm2_pcrlist"
++HOOK_COPY_EXECS:append:buster = " cryptsetup-reencrypt"
+ HOOK_COPY_EXECS:remove:buster = " \
+-    tpm2_pcrread tpm2_testparms tpm2_flushcontext tpm2_shutdown \
+-    tpm2_startauthsession tpm2_policypcr tpm2_evictcontrol tpm2_getcap \
+-    clevis-luks-list clevis-luks-common-functions"
++    tpm2_shutdown clevis-luks-list clevis-luks-common-functions"
+ HOOK_COPY_EXECS:append:bullseye = " cryptsetup-reencrypt"
+ 
+ SRC_URI += "file://encrypt_partition.env.tmpl \
 -- 
 2.47.3
 
