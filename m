@@ -2,53 +2,53 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32379C61DBD
-	for <webhook@archiver.kernel.org>; Wed, 26 Aug 2026 08:43:31 +0000 (UTC)
-Received: from OSPPR02CU001.outbound.protection.outlook.com (OSPPR02CU001.outbound.protection.outlook.com [40.107.159.9])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.7945.1787733802360920401
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32082C61DBD
+	for <webhook@archiver.kernel.org>; Wed, 26 Aug 2026 08:44:21 +0000 (UTC)
+Received: from AM0PR02CU008.outbound.protection.outlook.com (AM0PR02CU008.outbound.protection.outlook.com [52.101.72.22])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.8013.1787733859177468461
  for <cip-dev@lists.cip-project.org>;
- Wed, 26 Aug 2026 01:43:22 -0700
+ Wed, 26 Aug 2026 01:44:19 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=yQ3ZQApg;
- spf=pass (domain: siemens.com, ip: 40.107.159.9, mailfrom: jan.kiszka@siemens.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=Hk8fudKn;
+ spf=pass (domain: siemens.com, ip: 52.101.72.22, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OpROzgN9tqxSsFhL6UlxPhHDBdTIA565rYiqAmEHCoq+Oia97/mEUuwPMFoHX55B5ZEhBsA9/8hjWYAiPhPPd6Laf6FL5ptxwIKsCxanxBkG1IQ3QLTsuYrXtCApJ1FqcjBfoaZQwWQNzJdY5anRm5Kq2PRRQsTJtA/+R/6hckOurYJTriJW2dxvmDA22yfzLSZPANuvJ5dMwkq7SEs1OUqUfIRvDL8evPYR8BApKndhSvbRSKqvOBx3tjce7ZQOxGF2BZot1uQepoi8QKvkUS1PoX1bgFZoGeoALZCW6Gq1BcH+SIlO5KHQggTeJXWIRGNEKuLr+f60cvawcP/pzg==
+ b=kWxSUrYUFyM1VJRI01v6bic1B17t/j7j3RtKguA72t6TdLkFk0py9sh2X6bw1F7+YYC6u2ZVlAJqT1P8FdODVf/Fqf5LHkMWCimOgfDHBpP6CxkRQTtiM+IJzTKMVSNqR0RHas3UUFZdmGJu/KZofyzoTjhqRD+0yfgQFZhY0CkdaaLve6AeGFbjelIuBc6ipkpPthwek3tMdHpb4aBF7aJNSRxW8fub3L6kVUX4LTcFzU2UYLrcW60LVT5UddGCmrFirGCG+HtsPGFc9e4jeWE06TMzLVAqoniFNt3CXPLxUXgILUs8dRghb6H9Xr5La901O2Uh+wk+0UB4nbSAPQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GXPrNN6clIo6zR7JskC5U5Cl5Az4aG5MWbKIHbYA0Ek=;
- b=PW4GUFNIQ6eMPHma596TUmipV+kbUirdOCZivcS1Jem7EU+8sMlo//gf1ZsmKbnaBXv0uJRFaF65BqbQu08GmtagcSejNiNLukFY9xdWYKuebR2x3tfpvqFvONfkLNNyh7Rs4cjN1BrQ5PVxm7NcTaUwHVo84ftINVHS3OXShD1U4hvH8ka3ZrZziXtz3evBPF7Nc9eusWblNTp08grcCqgNO37oDYo+ZgF1/+6pno/3+y63E0sX6ks7W4HGXxS6pyBTrHz71ekV7K4aWtTmmN1lz8eqTq5jqFb9rv2ChaQO+/DIANFKtMNMAT+kcdnjl8qHPnhXFBR7XBDsiwQY8w==
+ bh=FHNLm85a9VwW5+hTJMpkClm8b6SDSlQpfufKPghWV9o=;
+ b=wjDLZFoP9RlrPMV6987ZdcR4mQFxS54vG2W8Qqvf0tPfRyDcoH53Ff/sxngiyKRCwJBteEry35ERPIyNhR6ZerYfeXdA2w/229UKBbtafzk5tK+G74Km71kUIHyAqM/U/HPleJcHDwgT+Hi07zoHbhFQgC04rDJX1fcDoydJxBHhho/Y4vIqXiU8UrWALDbJGo2B+jHWepYvwD+vBUBDytzEwRP4QeKxm4vJKxlKxz0upF1M3QuxXAzKx2nFxxfZdYFGaz8Pxrp4ZXH15rpIamW9a7Uaw4Czai9TQaw0pqh9+EQ+Nrv5amrYeo8HMxAKxVw0wZeByw8oz3TUY5iizA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GXPrNN6clIo6zR7JskC5U5Cl5Az4aG5MWbKIHbYA0Ek=;
- b=yQ3ZQApgOBohYQVtNtqprAqPZTMFZEe7AfnnIY4/9BH3SEJhN4lOwd9uI8GsVql2ybojml+oWXvWpEIFdFGSYI4A93JHMoG/0WTr6y23UNv4n2MAAlDxI+vjDU4tJdVTRAeftYG2+3fFfHparbhKjhuKHaJLLXq0Ed2D3UqnOH8h1XMM6TK5p3x1+AoS9j+xJ/00iDeoT/6oliLf7FPuS1aSvDyMszXmPUFX58ZeRBf+0iIGxCRCWQA9m7qzlpo8XXCN7ZMekxtTg+8oIqnrvQgxoblgPHYi4qPKlbNWKRmrLFOCO49L0nZOs6FJDMQAzawkc1n8EAgrPw6TRNLzRg==
+ bh=FHNLm85a9VwW5+hTJMpkClm8b6SDSlQpfufKPghWV9o=;
+ b=Hk8fudKnuQW5x13oXuPajr6VzmauU7MnwacwGpKm72WVmt7Q91Oj1fFA/4a6fVZ6Wgqk0HSnEfrje8K7LUkPQCjRgMqi46FSxAbHHME1HCoEF0P8Us3KqBM+sH2Qh8nO0dydU52YLpkyYSeW/AKe9L939vu2azscQLnnoA2VfA8EAT05dL69qFLydpBQ9/Fs+y8mkC7JFVmCwL/Zd73Ho30DIZIQxMr0oQy4kNvCcIpD8I2UR1bJwQvOb/9LiTjTDK0q98HxM2n3chcCAtydbBj656jJyxt37lR5qdzBH8lKcAqvBKx1k8SQ/CXlm+VAkzCePTAxIaUgULUQZdoYGQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
  by AS2PR10MB7252.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:607::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.9; Wed, 26 Aug
- 2026 08:43:18 +0000
+ 2026 08:44:15 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::be9f:e8ca:ee9:83e1]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::be9f:e8ca:ee9:83e1%2]) with mapi id 15.21.0360.006; Wed, 26 Aug 2026
- 08:43:17 +0000
-Message-ID: <ec62bbb3-42ad-45d1-b80f-dd5bf8cb0861@siemens.com>
-Date: Wed, 26 Aug 2026 10:43:16 +0200
+ 08:44:15 +0000
+Message-ID: <9d3170b3-4d7a-4bae-aa1f-a1cefe25f08a@siemens.com>
+Date: Wed, 26 Aug 2026 10:44:14 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [isar-cip-core][PATCH 3/7] cip-core-initramfs: Automatically
- deploy secure boot keys on first boot
+Subject: Re: [isar-cip-core][PATCH 1/7] secure-boot-efi-keys: Add recipe to
+ create EFI keys
 To: "Heinisch, Alexander (FT RPD CED SES-AT)"
  <alexander.heinisch@siemens.com>, cip-dev@lists.cip-project.org
 CC: Sai Sree Kartheek Adivi <s-adivi@ti.com>,
  Quirin Gylstorff <quirin.gylstorff@siemens.com>
 References: <cover.1787722904.git.jan.kiszka@siemens.com>
- <abb609c5b84dcb501c10737f47fe3a903dc09630.1787722904.git.jan.kiszka@siemens.com>
- <6ac309bf-4031-4140-a91f-201364052d94@siemens.com>
+ <97dc63827a8f33a225a39b3884afd6e6933c048b.1787722904.git.jan.kiszka@siemens.com>
+ <51c1c773-6416-498e-81e6-48294b6cf80a@siemens.com>
 From: Jan Kiszka <jan.kiszka@siemens.com>
 Content-Language: en-US
 Autocrypt: addr=jan.kiszka@siemens.com; keydata=
@@ -94,138 +94,104 @@ Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  qH4kDzsqKX8zzTzfAWFxrkXA/kFpR3JsMzNmvextkN2kOLCCHkym0zz5Y3vxaYtbXG2wTrqJ
  8WpkWIE8STUhQa9AkezgucXN7r6uSrzW8IQXxBInZwFIyBgM0f/fzyNqzThFT15QMrYUqhhW
  ZffO4PeNJOUYfXdH13A6rbU0y6xE7Okuoa01EqNi9yqyLA8gPgg/DhOpGtK8KokCsdYsTbk=
-In-Reply-To: <6ac309bf-4031-4140-a91f-201364052d94@siemens.com>
+In-Reply-To: <51c1c773-6416-498e-81e6-48294b6cf80a@siemens.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: FR4P281CA0100.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:cb::14) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: FR4P281CA0092.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:cb::13) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AS2PR10MB7252:EE_
-X-MS-Office365-Filtering-Correlation-Id: f7e336de-8a02-4d62-4df1-08df034e1355
+X-MS-Office365-Filtering-Correlation-Id: 48e23873-6547-42a2-e98b-08df034e3568
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
 	BCL:0;ARA:13230040|1800799024|23010399003|376014|366016|6133799003|10067099003|4143699003|56012099006|11063799006|22082099003|55112099003|18002099003;
 X-Microsoft-Antispam-Message-Info: 
-	FqijeVgwNVgDplsfzxYBbtrlT8Y/Nnz8JpkjNr33qyRCnrk5R6KZuFxyKFtHianPo7DRnmor/w0BA91dYmSDH9FboOyHajxlq4vvoKjbt5P6ytx7ckTsLpgzWBcw8W1j5IXb/g6PpcZtHbPCuVnXXcKiG0GQpNWTDhtYTYT3y4gN1IVeYdqIleXjb+DlSMSEvMdhTxt8cQ8el+CzDtcDL6TdXo6Phm+wshDMH25d5hRdbceK1eFtDOnc+UGadR2Z8iFOQgYN0Ytx5mk0ivfcU17g9jhcZ++4iQxH85av9DCDAP8Go5PFip+Xyerlo1A/c77K/oKLK6BCbp+pYCHCqi0Adpv9UhYEEun/PYaca5sHyWGwFbu2HedG6ISx3aVSjq1W+0vPpzDvcFHiob8cccdddXRgKPbVCN8S8T3wFxJeRYlqGcpF/EAl16oq2o2LwMaRkxiZU2wkAwsMDJE2ZA9QyoVJGf20swPoTbzAtgYeBvy9W11RPr2pWC8rpm5Z8zhpgEkdxYR+mZeZTQHpvvY9+7ZTZ8aAEoCfh9Lz/gsr1ml/ed5KgWhvMpos53dsu6SjuMOtdZAnDAP7K4c/iHrsf9PGc4CjB5x+ARhdP36olreBvcfVPj1GNeNFXqry
+	jwXOmK1ZEICDQgFvmgOalIeqkvDlxZ9e1o5OF+6ra2HzfIMBpacJOwAbJHvHqJfhdsY52F1YbF94RM3NQwGeWQfkIlZSyl6ap6jeXN9UFJMWenrrLH3wEiDmBf/W5vJH2VahibJ88MF1ZFw9bNI6NyHERn+2VhcLjNY3uJ34oRT6LlK2ygFUxX6ZLTlMouNld+AG4RXHW3rgVGwhpYdYxj6Wcu3h79mTusrkYdP7nIgI1dLk0CD9AgjfFkMhOQffQdvle4I59L+5MwCouuG0kylTXxQvVBH+xMWiLZTApnVb0XCanHFJ3ahpCjA2Rt57mb9r7v/pdtVLYJ32NZziVL6Z0E5gXNqXSWIARoYQKpTteqVO1kRpGOe9KR4yolIJEaW5mOyP47jDF9nkhW2ceHxfhHya3MTN8EC9jXMCzEc+f5I+K5yarsJNOjF1hbpi4YlqxAmBWuFP4x7RgDVSY4VUPSMvjglT3kvPGgWkomdJ094nDDsLje8K7qIZ5sykVWDWZcXEFlYSGJwo1Ta7SM251CfhyJxl5qb6Iuc/fMTNDQEGmKTkGq8DDMX8YkLViohM8a5iJ2DhuEZVfvqkZdoRGghJ/Wh2AM27JbC7lJyI4LLotHdx8L1wQJBO8k/xcxbmC7C3HoVnB0nuMARpQj8lp7BhTUSeWDTLwfjHhK4=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(376014)(366016)(6133799003)(10067099003)(4143699003)(56012099006)(11063799006)(22082099003)(55112099003)(18002099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?Xj1ZfMbjKRI15/gysZdi1iVVdG6h51rPz3LLzXsPiCf+PvdiKbIV/wIvO6RH?=
- =?us-ascii?Q?vN129Gnz+dXgFzCpDTtf/+0rX2/710n2EhJK0aVzHVzb+ak8PW1EzSXqGxcV?=
- =?us-ascii?Q?XNxIDM32KEwcTXtiXbF87w+H3CtL2kFS+uTP+4cHTsQMjIuYpLHNSuSg8r60?=
- =?us-ascii?Q?Cl/zmLpH3Mb1gP+oioDcx/96Nm00yzCw5jOwNPYyKwEC83UKIylN48uTfAlK?=
- =?us-ascii?Q?5FbX4YyOzGbYRu57n2/hbmiEb2DtCG1B6Aqv82UDojyhoooOtz8qUqfTeapH?=
- =?us-ascii?Q?Nm19CjueDjIeCkB6DFyskvSGx4yjuBwCOu7WJPE0Xhd9IyNC8vLTYxXh+ARp?=
- =?us-ascii?Q?+Np1gprV1eHIxwCsVlwKv7EQVWQsCJb/o8QpVcMd+KrtgKZZstfvsI0+mDFA?=
- =?us-ascii?Q?YDWjAF11uhJEVh6hZS3xlR3fxZj8GLxZSideNbUb/8HTOODCaR/0zJVkXo/o?=
- =?us-ascii?Q?5n6S3bitdOiY6xwjwMc5ym+1ywE8oAMnPn7RWJrZWXmtH8ll7Ms9K6gK+7rU?=
- =?us-ascii?Q?do/cbTRfixPdjDLnfJ6B5KoVayC6GAbMcx0O1t0UfYvLjC8zXHT6lqAEsg89?=
- =?us-ascii?Q?O/WT15r52ZyM110Rh8H8TzM7UMPhgWUXFGutxzlhyJz7+RwCX+ajINH2ey4a?=
- =?us-ascii?Q?bn2pFbBqRorH9mXVbP0RHTqvBxkbbuAVnZCDeO9F0zSnkbFA6xyD51ZpvZQN?=
- =?us-ascii?Q?MiBdMIta3JxfFd1VhM4TQY/SOxToeM1kMa8ew+02dUlvXolKU52BkUq54+PD?=
- =?us-ascii?Q?kxj8bQTKimyqsKw8msXP9nkCNnhYOF0IhUsor98O/AHsZTobL/ptljdGgB8m?=
- =?us-ascii?Q?Jxt515EA50ZPz/DHuLZ+7HFMRJCSR2NKFPKfYki/sraDiK6PbihmRLHeVS65?=
- =?us-ascii?Q?0eID0IPKMT57sTQ4BiegL01sex7CRVLT0H15pDj1ckYjqayEbTx79uOZzWoL?=
- =?us-ascii?Q?jVkI7WlFxxK0qlvTYPXkI3LC44NazB79WXtsHFcd/B5/kPWGrwCLO5JTKFGS?=
- =?us-ascii?Q?Q5nNXXBs3Eazy9UJ8cYJAucOGVBWrbFnf1OmXm4pcmJjja6NDTjoiucpqtBP?=
- =?us-ascii?Q?xRT7ufHgiudwCM+c0eM5vN44jM5WmB6qWGSpknM+8Q4gGqpMOzSW/8OcDrAC?=
- =?us-ascii?Q?qVnnG5QtimNWPkN0c8lZLiEymTkh9/xFC2VWciU0FtJdqSSjp1wf/QZFk7Mt?=
- =?us-ascii?Q?GQ3UWwbV8wjU9VyJQB7Z2Y10gxZ5pyl1HzRSUo6wJTrgSpSE2zp5uWC8x6zW?=
- =?us-ascii?Q?+J5lzIORzdrFOZe7E4MB+lA5IFgNljgspHfpgnu8DsyafjmCH4fzipAhoxpp?=
- =?us-ascii?Q?TwCXIYFYhblFMb4BwX3GkBAoHyka2/Oc19BaQ4EVy6Uc+UFV78l1WbVQ+mzw?=
- =?us-ascii?Q?6R2NQzQ6dYuzzTi/qNBHIaxbBYpqPSZ7mUX0Jw1NDc5/E6oaNtggUHpmILn0?=
- =?us-ascii?Q?Hn7P5Rblf+7XumG0XyTojPZG4+uBtvOh+h5QZcj+64E22/8gVfEChvqKdQLe?=
- =?us-ascii?Q?L/bJCeKRMdqF70c80tSmwJNkudvlDSOanOw4rq81+Qg8y/wdxgpbTCoYKZpc?=
- =?us-ascii?Q?UV8Y6ZFDsbYcJKRMcBiYgxjX0w4BO94pEc2GJAjuKCAL8gFoWSGjAURwUIEe?=
- =?us-ascii?Q?4EFa7GG8ZhXomaWZNl74hcHWfvgAJKOW2bS2mT6wn0RBGQd0J3EutORJkyTU?=
- =?us-ascii?Q?lhLEQta3m85HWNbzVNX3hRJx5vjCPavWiSSUbRXSg0D1i5j+KhuAA98Y9JyZ?=
- =?us-ascii?Q?WYJ4j95erA=3D=3D?=
+	=?us-ascii?Q?B5DOOANd/OULFjtHAw7U0FdP1GzpfOmdYe5SY+Paez+QQW7jdXZPXv3dhBNT?=
+ =?us-ascii?Q?ge6ujq8GbquGJpARWYL9FlMJAVTieiXPh4NosvkV3Z7WMrJ+QAFqeMU14Qhf?=
+ =?us-ascii?Q?+2CQODmIG2CCMaJxKiml+mQIQe+elcJZQfNgIgRt73K9fo1U3Z+MEceMkgM4?=
+ =?us-ascii?Q?Lsp0JABwazlr6dOrHDs0REl1ZwpzuhtlRTKoWQs7OtprAWjZvjn2Kp1yOP1k?=
+ =?us-ascii?Q?6M+iGAafbSwpj5ts/UV5oTbu9xno7xaotMLth8UQE+VGEMa7XHKyDqt/+blK?=
+ =?us-ascii?Q?5lRR9udcam4yDEPqJrrX4d3pssYeIglTzg7xZSG/KOMZ8tT/M6V+eO5kXuDf?=
+ =?us-ascii?Q?MVtgk0nzb1sI2lmb75fu2+NK6S3vxM/z/dmqz+/ygDjBYh77C2jMn4pfkyt5?=
+ =?us-ascii?Q?G3vRqAE3VJEzQMa9XTb4VvUXyGUD6VKnZWK3ElhY/FONa+ZmnrvJ1dWfBr37?=
+ =?us-ascii?Q?AkgstvUxcDa3usVpnEnJYB13Nf7l+r/AMODls2YDO0/42k+JoGvhOWj1f9lP?=
+ =?us-ascii?Q?eViCjRsiwWNRY63zhP5GY+h5kkhsGGxjJr1s4RwKmL2KG1hMPEiZ3lrbo6YQ?=
+ =?us-ascii?Q?nSwbcO5Hph7B6vIpylHNSlOZWaZaZW8wgQBV+JhRmH3lYoZCqlt27CibpVIg?=
+ =?us-ascii?Q?MnipDA4ZFptpi2gaVgaWs/Apytu6Jv4BcxVJgCd2jg/8Jj/SomBCXkZJyACc?=
+ =?us-ascii?Q?5jhryplRR6tNuAF64VyGcycj+cHn9Ok1sWsOdnJSGSxjs8G4vxgpdbJlogCH?=
+ =?us-ascii?Q?enD8bfpzXFapIu60slfA9UdiSHhtRXYahTlS7zQ+lsUa90EFAtWtwymEOnxU?=
+ =?us-ascii?Q?COnYQZq26FXcGRrDJC1g+JZsFlQ34qu8CxXrZdSoC5VQWjI1mWsU5njM7Bnh?=
+ =?us-ascii?Q?/FL+7kEBlK8t/Xa2ynuFMKB46CPR5G9yenCji71LXdlmMdhM3oA1gCNHOref?=
+ =?us-ascii?Q?HU24gByM0HXcUFgdOsRDvfFRTEdW0mkKgGrjYvu8dBddO7BnKIhVyPLeNg8F?=
+ =?us-ascii?Q?RoVVFGMM23g/FthW5JK4mqTcwQqcgSRkpgg2upW24guCZCIY7LKpT4ELmWAT?=
+ =?us-ascii?Q?IVhw/Wn5ZV1bV92acklo10je3ukIUXhREio1/Ziq4pFwTfQk9NoiwSRfl1aU?=
+ =?us-ascii?Q?hI+TZjtmtuLrGZ1uJsG+pEz/EeXMTgosLZLiotW0yKl3REvSy7sdG0TAqsGI?=
+ =?us-ascii?Q?NQXVXFBJ0/CpbpkMMQZykyZlG5l031aYypt4wpu/0kqX3+lfIFiGo7X26UfG?=
+ =?us-ascii?Q?0WgtTMY1cXKN1QTfM/fk95upSjwhEJ80+vbfr9I2myMHKKFpD72J4G5UTJkD?=
+ =?us-ascii?Q?tK76bR/SYUveLEE4QynGQ2IbNNcdhhqpF6Y+6fTdKZwYXF5cueGi46zf7iJD?=
+ =?us-ascii?Q?HLO25fel9QfvM7/XmwACAKEW6CueDCBAarZn9spIWwW+HF438KwKSB5hMokz?=
+ =?us-ascii?Q?KkpaqTSxRedrcFR6sHOM1KFKAoOG8NO/mPxpnZdkFzae9kPptDNv83rQ8ljy?=
+ =?us-ascii?Q?RTNAc4gT/coa/4NIFRQn5Z87WJUsb4ZItbHggFPJ3z2+IbqGKlzHK191LF9b?=
+ =?us-ascii?Q?ZYI7fenmhskuuwKAeeCiAIPcDpm9n5KrUAl1CVoT2gDbUy23sjQt4z78Nk9v?=
+ =?us-ascii?Q?4Lsb7ieuAVK8stjWNze34qUg4T9eWpeB6Dksw9DYyaF7r/doRh6pln48SJ9B?=
+ =?us-ascii?Q?cNmqCshoDUucl7F1SQwOPIg+G3EeTKv84pYkq05+PFRR09dzV83u6+EcNR+v?=
+ =?us-ascii?Q?reKhVKBrCw=3D=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f7e336de-8a02-4d62-4df1-08df034e1355
+X-MS-Exchange-CrossTenant-Network-Message-Id: 48e23873-6547-42a2-e98b-08df034e3568
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2026 08:43:17.7823
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2026 08:44:14.9222
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HPrHOWblVUugNimUVOBOOc9fsKkiigt7a4xsSPEv+kjOYsciqxCRb0XAg4qVxP5ggupo3vDDUgwCiv38d+QPzA==
+X-MS-Exchange-CrossTenant-UserPrincipalName: SMZDyzomQvRlMqfgfI570Orv18TDwwK335Rvpsa0XL6G/Hst7nQNwkssb2zCAushWYnbE7zz0zqm/4VnB/6TWw==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR10MB7252
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 26 Aug 2026 08:43:31 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24018
+ <cip-dev@lists.cip-project.org>; Wed, 26 Aug 2026 08:44:21 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24019
 
-On 26.08.26 10:17, Heinisch, Alexander (FT RPD CED SES-AT) wrote:
+On 26.08.26 10:31, Heinisch, Alexander (FT RPD CED SES-AT) wrote:
 >=20
 >=20
 > Am 26.08.2026 um 07:41 schrieb Jan Kiszka:
 >> From: Jan Kiszka <jan.kiszka@siemens.com>
 >>
->> This both simplifies the initial deployment of secure boot to a device
->> as well as makes sure that we will always seal the disk encryption key
->> against the right state.
->>
->> We only deploy if secure boot is off and the db is found empty. So this
->> hook is not intended to be used for key exchange or key db extensions.
->> The former will be once handled via SWUpdate packages, the latter might
->> be considered given a concrete use case.
->>
->> Note that due to the primitive implementation of efivarfs detection in
->> efitools, we need to deploy a horrible hack to make it work against the
->> mount implementation of busybox in the initramfs. A patch to improve
->> that issue is pending upstream.
+>> This recipe allows to derive the PK, KEK and db values from a single
+>> signing key as we are using for demonstration/testing purposes and
+>> simple scenarios. The recipe provides abstract "secure-boot-efi-keys"
+>> which could also be offered by an alternative recipe/package that picks
+>> up differently generated keys and/or a proper key hierarchy.
 >>
 >> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 >> ---
->> =C2=A0 .../cip-core-initramfs/cip-core-initramfs.bb=C2=A0 |=C2=A0 1 +
->> =C2=A0 .../initramfs-sbkeys-hook/files/hook=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 16 +++++++++
->> =C2=A0 .../initramfs-sbkeys-hook/files/local-top=C2=A0=C2=A0=C2=A0=C2=A0=
- | 34 +++++++++++++++++++
->> =C2=A0 .../initramfs-sbkeys-hook/files/mount-stub=C2=A0=C2=A0=C2=A0 | 13=
- +++++++
->> =C2=A0 .../initramfs-sbkeys-hook_0.1.bb=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 32 +++++++++++++++++
->> =C2=A0 5 files changed, 96 insertions(+)
->> =C2=A0 create mode 100644 recipes-initramfs/initramfs-sbkeys-hook/files/=
-hook
->> =C2=A0 create mode 100644 recipes-initramfs/initramfs-sbkeys-hook/files/
->> local-top
->> =C2=A0 create mode 100755 recipes-initramfs/initramfs-sbkeys-hook/files/
->> mount-stub
->> =C2=A0 create mode 100644 recipes-initramfs/initramfs-sbkeys-hook/
->> initramfs-sbkeys-hook_0.1.bb
+>> =C2=A0 .../single-key-to-efi-keys_0.1.bb=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 41 +++++++++++++++++++
+>> =C2=A0 1 file changed, 41 insertions(+)
+>> =C2=A0 create mode 100644 recipes-devtools/secure-boot-efi-keys/single-k=
+ey-
+>> to-efi-keys_0.1.bb
 >>
->> diff --git a/recipes-initramfs/cip-core-initramfs/cip-core-
->> initramfs.bb b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.b=
+>> diff --git a/recipes-devtools/secure-boot-efi-keys/single-key-to-efi-
+>> keys_0.1.bb b/recipes-devtools/secure-boot-efi-keys/single-key-to-efi-
+>> keys_0.1.bb
+>> new file mode 100644
+>> index 00000000..cfa48b7f
+>> --- /dev/null
+>> +++ b/recipes-devtools/secure-boot-efi-keys/single-key-to-efi-keys_0.1.b=
 b
->> index b686185c..241e6af6 100644
->> --- a/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
->> +++ b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
->> @@ -22,6 +22,7 @@ INITRAMFS_INSTALL:append:factory-reset =3D "
->> initramfs-factory-reset-hook"
->> =C2=A0 INITRAMFS_INSTALL:append:ftpm-stmm =3D " initramfs-tee-ftpm-hook"
->> =C2=A0 INITRAMFS_INSTALL:append:swupdate =3D " initramfs-abrootfs-hook"
->> =C2=A0 INITRAMFS_INSTALL:append:swupdate =3D " initramfs-${RO_ROOTFS_TYP=
-E}-hook"
->> +INITRAMFS_INSTALL:append:secureboot =3D " initramfs-sbkeys-hook"
->> =C2=A0 INITRAMFS_INSTALL:append:secureboot =3D " initramfs-verity-hook"
->> =C2=A0 # abrootfs cannot be installed together with verity
->> =C2=A0 INITRAMFS_INSTALL:remove:secureboot =3D "initramfs-abrootfs-hook"
->> diff --git a/recipes-initramfs/initramfs-sbkeys-hook/files/hook b/
->> recipes-initramfs/initramfs-sbkeys-hook/files/hook
->> new file mode 100644
->> index 00000000..770d4454
->> --- /dev/null
->> +++ b/recipes-initramfs/initramfs-sbkeys-hook/files/hook
->> @@ -0,0 +1,16 @@
+>> @@ -0,0 +1,41 @@
 >> +#
 >> +# CIP Core, generic profile
 >> +#
@@ -237,81 +203,19 @@ E}-hook"
 >> +# SPDX-License-Identifier: MIT
 >> +#
 >> +
->> +copy_file binary /usr/share/secure-boot-efi-keys/db.auth
->> +copy_file binary /usr/share/secure-boot-efi-keys/KEK.auth
->> +copy_file binary /usr/share/secure-boot-efi-keys/PK.auth
+>> +inherit dpkg
 >> +
->> +copy_file binary /usr/share/initramfs-sbkeys-hook/mount
->> diff --git a/recipes-initramfs/initramfs-sbkeys-hook/files/local-top
->> b/recipes-initramfs/initramfs-sbkeys-hook/files/local-top
->> new file mode 100644
->> index 00000000..48fe45d4
->> --- /dev/null
->> +++ b/recipes-initramfs/initramfs-sbkeys-hook/files/local-top
->> @@ -0,0 +1,34 @@
->> +#
->> +# CIP Core, generic profile
->> +#
->> +# Copyright (c) Siemens AG, 2026
->> +#
->> +# Authors:
->> +#=C2=A0 Jan Kiszka <jan.kiszka@siemens.com>
->> +#
->> +# SPDX-License-Identifier: MIT
->> +#
+>> +MAINTAINER =3D "cip-dev <cip-dev@lists.cip-project.org>"
+>> +DESCRIPTION =3D "Generate EFI keys from single secure boot key"
 >> +
->> +. /scripts/cip-initramfs-functions
->> +
->> +if secure_boot_enabled; then
->> +=C2=A0=C2=A0=C2=A0 exit 0
->> +fi
->> +
->> +ORIG_PATH=3D"$PATH"
->> +export PATH=3D"/usr/share/initramfs-sbkeys-hook:$PATH"
->> +
->> +if ! efi-readvar -v db | grep -q "has no entries"; then
->> +=C2=A0=C2=A0=C2=A0 export PATH=3D"$ORIG_PATH"
->> +=C2=A0=C2=A0=C2=A0 log_warning_msg "Not securely booting, but keys alre=
-ady deployed"
->> +=C2=A0=C2=A0=C2=A0 exit 0
->> +fi
->> +
->> +log_begin_msg "Deploying EFI secure boot keys"
->> +efi-updatevar -f /usr/share/secure-boot-efi-keys/db.auth db
->> +efi-updatevar -f /usr/share/secure-boot-efi-keys/KEK.auth KEK
->> +efi-updatevar -f /usr/share/secure-boot-efi-keys/PK.auth PK
->> +log_end_msg
->> +
->> +log_success_msg "Rebooting after key deployment..."
->> +reboot
->> diff --git a/recipes-initramfs/initramfs-sbkeys-hook/files/mount-stub
->> b/recipes-initramfs/initramfs-sbkeys-hook/files/mount-stub
->> new file mode 100755
->> index 00000000..408b584e
->> --- /dev/null
->> +++ b/recipes-initramfs/initramfs-sbkeys-hook/files/mount-stub
->> @@ -0,0 +1,13 @@
->> +#!/bin/sh
->> +#
->> +# CIP Core, generic profile
->> +#
->> +# Copyright (c) Siemens AG, 2026
->> +#
->> +# Authors:
->> +#=C2=A0 Jan Kiszka <jan.kiszka@siemens.com>
->> +#
->> +# SPDX-License-Identifier: MIT
->> +#
->> +
->> +echo "none on /sys/firmware/efi/efivars type efivarfs"
-> what about "cat /proc/mounts" to get the actual systems mount points
-> instead of mocking expected behaviour?
+>> +PROVIDES +=3D "secure-boot-efi-keys"
+> The naming confuses actual keys (private portions) with authenticated
+> efi signature list) actually holding the secure-boot-certificates - so
+> maybe secure-boot-vars-auth, secure-boot-certificates-auth or even
+> secure-boot-certificates is more intuitive?
 >=20
 
-https://git.kernel.org/pub/scm/linux/kernel/git/jejb/efitools.git/tree/lib/=
-kernel_efivars.c#n69
-
-Was my first try as well, before reading that.
+Agree. How about secure-boot-efi-certs?
 
 Jan
 
