@@ -2,35 +2,35 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB234C61DC4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E801EC5DF9D
 	for <webhook@archiver.kernel.org>; Thu, 27 Aug 2026 06:23:05 +0000 (UTC)
-Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.30125.1787811781513335269
+Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.30490.1787811782195877314
  for <cip-dev@lists.cip-project.org>;
  Wed, 26 Aug 2026 23:23:03 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=jan.kiszka@siemens.com header.s=fm2 header.b=XSfWysoY;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227, mailfrom: fm-294854-202608270622596879a670b600020726-rvkoho@rts-flowmailer.siemens.com)
-Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 202608270622596879a670b600020726
+ dkim=pass header.i=jan.kiszka@siemens.com header.s=fm2 header.b=j9r8/PyI;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-294854-202608270622598119e84aea0002079d-0vc7b4@rts-flowmailer.siemens.com)
+Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 202608270622598119e84aea0002079d
         for <cip-dev@lists.cip-project.org>;
-        Thu, 27 Aug 2026 08:22:59 +0200
+        Thu, 27 Aug 2026 08:23:00 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
  d=siemens.com; i=jan.kiszka@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=is3LL3ZvKjpJeErsMIupXj2u+Qr7D2Brn4Wpg0TzfkQ=;
- b=XSfWysoYWdbWoibdPmZUFImJf2RGEojpjBlOf4/Ue3KWHQK5fbfIxR8ZHBVebNJPm+9yy2
- ROfVPPMpJIUZDXX6LYcgmj/bNFOUhqs/eK47DKuRKQkHanhJPjImym1S+08bzDKnni5W8H/u
- mgkPs+wMHig2vrBCnVfhtoUWK+Qm+/UcfeOqkTIJ+LVkNtBj2IgHqn+WHuswl22AnQf2xTJV
- 1hI0I/KdYE/Rgrqcyd5/WqTkOEQhhbeqnIShGeYhYWuzAtJS3GqOcIZYYu+VUD+Mc6CPPrVR
- WezHtpQKcF3s2BMZW9zFoK4uaAG3r9XQMYksp3SBEJivB4TuIa+FjPcg==;
+ bh=wlGH5kiCAWo88nePI5E88f18+B1oe8f/YzPUcrZ/Ork=;
+ b=j9r8/PyIUS+NEy1fiGCgXYNjOMOPgKWjrRMnulSinBwSjjkXXVloB5CYC/H2+aZHKTJiGB
+ xeAmFzksCCYcvabB+iEqjn+t1BVk0EmI71mBxaYTVqRNM5NEh8ASSpjQhmbEtMH5fYvSpU3w
+ iMl7UzMhcWzy/M9RD/4g9P2uiu8sqZZ7buLfd5U9je6eLE5d3O4Kana7XANFndOwKjkBjSmT
+ 12NCuHM/q23Q2EeeVrvdqFtqy8PvguMGn6FgZDQyXkTXwpELD3NrJoobYBc9KF+uC9JurBZQ
+ bDTX/s+Uik3bpA4kE3enOdSRijWGGwDIgr0yonYIr56C1H+eZySfuKwg==;
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: cip-dev@lists.cip-project.org
 Cc: Felix Moessbauer <felix.moessbauer@siemens.com>,
 	Quirin Gylstorff <quirin.gylstorff@siemens.com>,
 	Michael Adler <michael.adler@siemens.com>
-Subject: [isar-cip-core][PATCH v3 2/5] Update Isar revision
-Date: Thu, 27 Aug 2026 08:22:54 +0200
-Message-ID: <f820f8db5a93fde837ee9e85c9c6d3b2faa76c15.1787811777.git.jan.kiszka@siemens.com>
+Subject: [isar-cip-core][PATCH v3 5/5] ci: Select rootless runner
+Date: Thu, 27 Aug 2026 08:22:57 +0200
+Message-ID: <8ac169b99e9160cdf83333b2575a49867f834260.1787811777.git.jan.kiszka@siemens.com>
 In-Reply-To: <cover.1787811777.git.jan.kiszka@siemens.com>
 References: <cover.1787811777.git.jan.kiszka@siemens.com>
 MIME-Version: 1.0
@@ -41,113 +41,76 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 27 Aug 2026 06:23:05 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24038
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24033
 
 From: Jan Kiszka <jan.kiszka@siemens.com>
 
-One not-yet-merged patch is needed to make Isar compatible with
-gitlab-cloud-ci in rootless mode.
+We need to explicitly select a runner that is launching build containers
+in unprivileged mode. This is primarily due to the bug in kas 5.4 which
+breaks the parallel start of multiple kas-isar containers on the same
+host. At the same time, such tagging allows us to phase out the
+privileged runner at some point in way that would clearly block legacy
+jobs.
 
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 ---
- ...map-nobody-nogroup-as-dedicated-bloc.patch | 68 +++++++++++++++++++
- kas-cip.yml                                   |  6 +-
- 2 files changed, 73 insertions(+), 1 deletion(-)
- create mode 100644 isar-patches/0001-rootless-always-map-nobody-nogroup-as-dedicated-bloc.patch
+ .gitlab-ci.yml             | 8 ++++----
+ .reproducible-check-ci.yml | 2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/isar-patches/0001-rootless-always-map-nobody-nogroup-as-dedicated-bloc.patch b/isar-patches/0001-rootless-always-map-nobody-nogroup-as-dedicated-bloc.patch
-new file mode 100644
-index 00000000..6c58c194
---- /dev/null
-+++ b/isar-patches/0001-rootless-always-map-nobody-nogroup-as-dedicated-bloc.patch
-@@ -0,0 +1,68 @@
-+From ea8f6d883a494430ff7db4ee95a875edee23c020 Mon Sep 17 00:00:00 2001
-+From: Felix Moessbauer <felix.moessbauer@siemens.com>
-+Date: Thu, 20 Aug 2026 17:10:29 +0200
-+Subject: [PATCH] rootless: always map nobody/nogroup as dedicated block
-+
-+The nobody/nogroup ids were mapped as part of the linear id range,
-+with an extra single-id mapping added only if the range was too small
-+to contain them. The extra mapping was guarded by "uid_cnt < nobody_id",
-+but the linear range ends at uid_cnt-2, so it covers nobody only for
-+uid_cnt >= 65536. For a count of 65534 or 65535 neither the linear range
-+nor the guard mapped nobody.
-+
-+Relying on the linear range to cover nobody is unsafe in general. If that
-+range covers the outer id that --map-root-user maps to, unshare punches a
-+hole out of the mapping, and per unshare(1) this "may result in the
-+highest user ID of the mapping not being mapped". That highest id is
-+exactly nobody. This happens whenever the subid range overlaps the id of
-+the calling user, e.g. with
-+
-+  builder:0:65536
-+
-+where the mapped block 1..65534 contains the builder's own uid. The
-+resulting namespace then silently lacks a nobody mapping, while a range
-+like 100000:65536 is unaffected and hides the problem.
-+
-+Map nobody/nogroup as a separate block at the top of the range and cap
-+the linear range at nobody_id-1. The separate block does not overlap
-+--map-root-user, so it survives, and a hole now at most costs id 65533.
-+
-+Fixes: 4fedb1ae ("add support for fully rootless builds")
-+Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
-+---
-+ meta/classes-global/base.bbclass | 16 ++++++++++------
-+ 1 file changed, 10 insertions(+), 6 deletions(-)
-+
-+diff --git a/meta/classes-global/base.bbclass b/meta/classes-global/base.bbclass
-+index d96ebef4..8f81ab70 100644
-+--- a/meta/classes-global/base.bbclass
-++++ b/meta/classes-global/base.bbclass
-+@@ -470,15 +470,19 @@ def run_privileged_cmd(d):
-+         nobody_subid = uid_base + uid_cnt - 1
-+         gid_base, gid_cnt = get_subid_range('/etc/subgid', d)
-+         nogroup_subid = gid_base + gid_cnt - 1
-++        # nobody/nogroup need a dedicated block at the top of the range. As part
-++        # of the linear range they are lost whenever that range covers the outer
-++        # id of --map-root-user, because unshare then punches out a hole and
-++        # drops the highest id of the range.
-++        uid_linear_cnt = min(uid_cnt - 2, nobody_id - 1)
-++        gid_linear_cnt = min(gid_cnt - 2, nobody_id - 1)
-+         cmd = 'unshare --mount --pid --uts --ipc --user' \
-+               ' --kill-child' \
-+               ' --setuid 0 --setgid 0 --fork' \
-+-              f' --map-users  1:{uid_base+1}:{uid_cnt-2}' \
-+-              f' --map-groups 1:{gid_base+1}:{gid_cnt-2}'
-+-        if uid_cnt < nobody_id:
-+-            cmd += f' --map-users  {nobody_id}:{nobody_subid}:1'
-+-        if gid_cnt < nobody_id:
-+-            cmd += f' --map-groups {nobody_id}:{nogroup_subid}:1'
-++              f' --map-users  1:{uid_base+1}:{uid_linear_cnt}' \
-++              f' --map-groups 1:{gid_base+1}:{gid_linear_cnt}' \
-++              f' --map-users  {nobody_id}:{nobody_subid}:1' \
-++              f' --map-groups {nobody_id}:{nogroup_subid}:1'
-+         cmd += " --map-root-user"
-+     else:
-+         cmd = 'sudo -E'
-+-- 
-+2.47.3
-+
-diff --git a/kas-cip.yml b/kas-cip.yml
-index 97b333a1..61cc9225 100644
---- a/kas-cip.yml
-+++ b/kas-cip.yml
-@@ -22,9 +22,13 @@ repos:
- 
-   isar:
-     url: https://github.com/ilbers/isar.git
--    commit: 481db3b2e8949336576e50a78aaf5d101f52c8d2
-+    commit: 436bc96f3869b4a139357afbabb039caf4df7c5c
-     layers:
-       meta:
-+    patches:
-+      p1:
-+        path: isar-patches/0001-rootless-always-map-nobody-nogroup-as-dedicated-bloc.patch
-+        repo: cip-core
- 
- bblayers_conf_header:
-   standard: |
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+index 9aa186c6..8dbe62d2 100644
+--- a/.gitlab-ci.yml
++++ b/.gitlab-ci.yml
+@@ -1,7 +1,7 @@
+ #
+ # CIP Core, generic profile
+ #
+-# Copyright (c) Siemens AG, 2019-2025
++# Copyright (c) Siemens AG, 2019-2026
+ # Copyright (c) Toshiba Corporation, 2020
+ #
+ # Authors:
+@@ -53,7 +53,7 @@ default:
+       when: never
+     - if: $CI_COMMIT_BRANCH != "master"
+   tags:
+-    - large
++    - large-rootless
+   variables:
+     base_yaml: "kas-cip.yml:kas/board/${target}.yml"
+   script:
+@@ -917,7 +917,7 @@ cve-checks:
+   needs: []
+   image: registry.gitlab.com/cip-project/cip-core/debian-cve-checker:build-latest
+   tags:
+-    - large
++    - large-rootless
+   script:
+     - scripts/run-cve-checks.sh
+   rules:
+@@ -936,7 +936,7 @@ lavacli-container:
+   stage: build
+   image: quay.io/buildah/stable:v1.41.4
+   tags:
+-    - large
++    - large-rootless
+   before_script:
+     - buildah login -u $CI_REGISTRY_USER --password $CI_REGISTRY_PASSWORD $CI_REGISTRY
+   script:
+diff --git a/.reproducible-check-ci.yml b/.reproducible-check-ci.yml
+index 4f4649ee..de9f3fbd 100644
+--- a/.reproducible-check-ci.yml
++++ b/.reproducible-check-ci.yml
+@@ -21,7 +21,7 @@
+     extension: security
+   stage: build
+   tags:
+-    - large
++    - large-rootless
+   rules:
+     - if: $CI_PIPELINE_SOURCE == "schedule" && $REPRODUCIBLE_BUILDS
+   script:
 -- 
 2.47.3
 
