@@ -2,48 +2,50 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1BE9C61DD3
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3B64C624A5
 	for <webhook@archiver.kernel.org>; Mon, 31 Aug 2026 06:27:52 +0000 (UTC)
 Received: from PA4PR04CU001.outbound.protection.outlook.com (PA4PR04CU001.outbound.protection.outlook.com [40.107.162.22])
  by mx.groups.io with SMTP id smtpd.msgproc01-g2.23847.1788157668398178399
  for <cip-dev@lists.cip-project.org>;
  Sun, 30 Aug 2026 23:27:49 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=CGFjE8MY;
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=sZT7i1OT;
  spf=pass (domain: siemens.com, ip: 40.107.162.22, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uH99QNhTgcY/ux9yezGsUgCqgrXNKpmygYz7brUbB2YC17Kxk0Ov2jcrXNNRYb92NypQ9Hw66DGAcY67HeEHANTTODM5H51IZ4Qjd50Ynl12v3hD8QmcNQvj/DkK9Js9L47xGEnOjzRTaxuL+9gPfp+RCU/amFpbhnPt8EMJJQmsZKcaNijbXbybT3bkpbxdk8oeQfJqjy2B6UDnpMXRR9DaBcfkAeQvT7aRcLmmSiFVv3mdiVZAL0M28vwBLnk9wat8XqtX/H8GF0r2nISzXA4eXaVmEh5wdulzvxm5yaGXRh3vJ11jTCCYi1WD6MGEJAGEatxPL5aaoydq997Adw==
+ b=lpH2iZBRAlPl3Rr5Ee1CCAcrkC3KRCWPIDyY21oM1YelYIPF071aJBnMEETQJIb/PGshaDkw11OZzSafjbjAwZDq6aSoekE0V7WA7lBRBrhJawiEey0OhZFaNHJ3jDQ2aO0EuT+Zd7hB4vvR3eqIslJQ8OfhhtrSgBgBSjtUEHPALxd2V610R0gtUAkzNzGycEkSepPIAbpxtUZHqaZQEQJUUBg0mM6Dp7OS9h+iJjRzPxOo5jA45UuMYNdz1MFx9S9SwAPPSZa+Ttcza8WA9gq/eXnXF/5yUnk96guUBPpTmVr6SrHcblniInEqiovw9H+mRHVnnAj0/HoMX8+fCA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9vHD4T50GmHryRNHtO0RjopCmCjnXN6rhYorXronHqQ=;
- b=tkW92KDGIJ+Vh9vGp6LS1/zgUlkIvIffzRFnEdUOesDbI5RFdTcPfx3YpfPL1ZekeOw+FE/Fh9K43KKnfB5zbPOgTdPMsAoiE9yTGiqTMOXKLvITDTr5CSqPUBuxTaWRCVol5V2UCjPNqzZGPLxZrKd4DnfvukX1083/oSuiSHEjF31KEbmBmaxAidElrsw3vo+yt0OA0qdtso9sQCwcRyidnn9aQHvF1G+u/JEBOTniHtIS4ZI13gXhw5xuBf29rJEBkGU4vMEPdKXQJmUhlTH/mgu0dH9YmOJK+GJBgpJABKQA2rA8STKZrMeeMIL5YtkGn0Zhmlu4jNkJJq7fAw==
+ bh=6ZC4zuNT3ghA5SyQMt3cV5NMxNC1YjVFIC9yTtiaPDQ=;
+ b=LA+hhWrNvDCofD57o359mx9WHBj7tso4dCSJGXnElgN/Kj4VUWx0kWewNaXRC02Ba6CiAKj+Q+thc3RMtIBYgyNUfHGOcC2PByEF4z6kXylpsVPCZ6rv/GyDc30F222aLZ4vXCDezq/S8Vbc0ajNVUKbZOIqR6mgQg0hvK0LzQPmKqbwNxAR3SJE/TvU/5RnoVNujq7fbQFW93PLYpMcWOUXT4jaMBIoTViptAYDp83dedO57qMdKPPFSZi5hFhSYL+STQTcsvJaB+tfrCQgMHMzPIHvSxNApNLoJeYfi8yIXqdFygPE88JH5PNoBExRXwJ5InzbFNauCIaYzVn8Lw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9vHD4T50GmHryRNHtO0RjopCmCjnXN6rhYorXronHqQ=;
- b=CGFjE8MYrI/SuwSDalc+fgKktRd1bZXuJoSLUAGWgmcGbHe6rDmSkAQ91Jo3saGp9gmvNvnEIBo/BX26ohHMWkzQks7R6dpfav94C1Wu0Q4GEVYHZgb+Wtqub3YnRNWCP9JIqniLH58MDTgdfrhi4j7V8AoKf7kKcQ96cPtxCTFO+b3PXdAFof3jYyLMitZRbI7QQ1NUeVocs1eexyfsQSp7wSrLomkgPTZkKsdCpVlPqXdarjKng0lxuS2GpUFGokZIZAYAm6508ZRDkxG2DA7EVmUX36PhUBiJ0nTbMhUPG22P5OR9VsEZkGt9YiykuwnwUGpTQEQBKBxU6pd6Qg==
+ bh=6ZC4zuNT3ghA5SyQMt3cV5NMxNC1YjVFIC9yTtiaPDQ=;
+ b=sZT7i1OTuB/FBznGey2YsAIww0sBs+6DnnUePWm87fPukgk7OXcRHk1bbwRyTWlX0mSxYOdDxHWDaMB2ufEJhBF5bz1nxOl/y9P9zwhdeXp0LUhsfLVnWlosG3xqTr2KAzC8jmNgpONuNRhEZRmelGOHWjIhBOtPshsYKZRG9OUBMUG5eC0iSOkBFYPHzN+sbePXiuWvep8FXUHuvaYQJPsCduY+igKqyRmwDP11idALw8ahypJKkSTgYZWCwlxtd6lAyurR2wfjyesWT9v0nhVMGTdyXDyNt5yoI9MivDK2fSTg98XzHU76y9lLPZYcKZyjS/9eJbztzL4uKZy1Hw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
  by AM0PR10MB3140.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:208:189::15) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.13; Mon, 31 Aug
- 2026 06:27:42 +0000
+ 2026 06:27:47 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::be9f:e8ca:ee9:83e1]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::be9f:e8ca:ee9:83e1%2]) with mapi id 15.21.0360.008; Mon, 31 Aug 2026
- 06:27:42 +0000
-Message-ID: <47f921a3-f4b3-4a57-a700-14a0de6be278@siemens.com>
-Date: Mon, 31 Aug 2026 08:27:42 +0200
+ 06:27:47 +0000
+Message-ID: <e7dae4d2-5940-4945-900b-14e442977ab2@siemens.com>
+Date: Mon, 31 Aug 2026 08:27:47 +0200
 User-Agent: Mozilla Thunderbird
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: cip-dev <cip-dev@lists.cip-project.org>
-Subject: [isar-cip-core][PATCH 1/2] optee-os: Drop redundant CFG_EARLY_TA=y
+Subject: [isar-cip-core][PATCH 2/2] optee-os: Move common fTPM/StMM related
+ code into include
 Content-Language: en-US
+In-Reply-To: <cb867b1c-31ef-4764-ae18-6c49d35e3a22@siemens.com>
 Cc: "Adivi, Sai Sree Kartheek" <s-adivi@ti.com>
 Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  xsFNBGZY+hkBEACkdtFD81AUVtTVX+UEiUFs7ZQPQsdFpzVmr6R3D059f+lzr4Mlg6KKAcNZ
@@ -95,106 +97,226 @@ X-ClientProxiedBy: FRYP281CA0018.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10::28)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AM0PR10MB3140:EE_
-X-MS-Office365-Filtering-Correlation-Id: e09aa8e5-412e-452a-67ac-08df0728f654
+X-MS-Office365-Filtering-Correlation-Id: abb32458-b609-4596-6933-08df0728f927
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|376014|1800799024|23010399003|366016|11063799006|10067099003|18002099003|55112099003|56012099006;
+	BCL:0;ARA:13230040|376014|1800799024|23010399003|366016|11063799006|10067099003|18002099003|55112099003|22082099003|3023799007|56012099006;
 X-Microsoft-Antispam-Message-Info: 
-	YWKRf/7DNCoCCT6NFDWOY0YMQZJaAXxlx4RUYkPKar9O0x09nIOaoBbKralqFLjFKY/l6dZL060op0imqFBdI9o6Jk7xOjBE4YsefVZftOoEJnlLJFDN/U2OLo+X+5Et+6FjDDSVn3Cyh2yZv7QCih+UApteyFdGyimKYndVjPgkycPm5QsAskFH6Lvp07MWdwvoUIcNi/VZi4RCYSUY0Tj3k3jKk14IOp9Lx1olkOjxZ3var5BiBb4O86F5WAlOLE3/AvLWZrtEkcp3JSO+OKv2M7uqbYSTyRwGo7xb15NElbk9h1FaT4IS0jq/yWZAh0g1qRH3e+BpHNo458qbcw55B6Pz//xSLbEnKJ0tv+ROc5b+fJs+bGkwYPbktcLRV71ARt4b5hAcKxSDIm09yX1WVDAL4hl5uGXVwZ6fWs8SOttEx0xkDzNRCxVvvDhgnLFF3BQxQxV5lZvodEm/ojLUDz27sF2AXnSV5qIz48YRoKkKz6e0LjtlQlPgPHl5C2zgkFj5Tocgph5qfp1vLPP9O93OhuNj2aZVrRoInR4Fbnd/VLfuag1Dcw6vaMsPfV60w77d7bMPaSD/ZXiWqqKX03aVlP6gztJ/q1H0s43569PpS0NGLNU89bGfFV84Q+k/0PkBb+CS+ZqQULzUQBpBdh6Uq6d50yUKHKXgJiA=
+	wfkTPF2MBqQPv3izj+72i27J+4srR/qwBfbUfxzmhY0KZTLuINV2UAr/7mJBY9r/n0nP3BXvz6JPnUFHASmmJ3Vl8aNORuP0ALn0Ke+FFPyUfMPX0e4nq0G3HDshYBh3+FFXkNMgAL52/mSy7ZRzBBltogI003af6eElnEq7oD6xquvI01UvVYb0jPXWxkaibTAL1qrwQ3Z0VPX20mYhPNFDFYkARgTbKtVJeALb7OW6imx6Lv2U3tSEYBRAZ8OyiKZkjBIet9wTK1IYEbbXR8oSviQGxy9LLigSGmnXQ0p7dWgLloGoCwDvONwSTIFcykqLJ6KnptouPwcOWOYIIsxlnSXaJakwTfRBX4oHOBpHQF7Z/7Ok9ksUfkcpW/6xTTXqstPXNwuBfM105zlce3nM4n/CdANwi1NhuzUFarmqBM0Y00xg+LsQ40sZJqdFoj1QzNb9lC7hylfSEmciD/xcods8FdeWtawJbNwraUImL5FBHeI19deBP6ced/QapMHKSs/57m5bcCpwoB1IjspkleYfF+ZFzIMvdjsSzGp5emhQyRK4RupuJ+uKbwpNcgRVEeT70T221w4UZxq27YUqlsSbzK+uwCAmgOF70hkGDSrS1o/RdYg6ps8FlNCnSjjtknxisLS1+/QzVDQ3PYBS0LNpblsxCn/pRm2K1Fc=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(23010399003)(366016)(11063799006)(10067099003)(18002099003)(55112099003)(56012099006);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(23010399003)(366016)(11063799006)(10067099003)(18002099003)(55112099003)(22082099003)(3023799007)(56012099006);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?bnB4MzlLMmxXV0k0MFlKa29WY1dpVjlUTE1XT0xaSkN3Z2hZOW5hcnJKZEF3?=
- =?utf-8?B?N0tiZU95WTc2RTBNNldzcE9Qa0FrVld1N1NTVnpIZGZXbG1DK2xTYkZSK3RJ?=
- =?utf-8?B?a1oxdGFidjBzVm8xZHR3Umk4WVdxVllBWjlmQVNtQUNDQ2FtbUZnQTVuSXcr?=
- =?utf-8?B?UkF2eExoUTBRbEVKeXBBUE1BbENhMkFscjdvTzJ0WG1FSEQzQzhNSXAvaVJK?=
- =?utf-8?B?UlhQRzRqT1ZnVFcwYkhsVnJFWmtYc0RrT2NBMzBWdjlxZFJ4NUhrcXNITXRB?=
- =?utf-8?B?NHliVG4wY0lFUUloSkhHTFBHNFRmR2NETnN3OVRmeTVxbVlBMUphM2J3UTl4?=
- =?utf-8?B?OWNRN29iRURkOUQ3TlY0NmxYeWFaMThDQzBJTGhDdzhjWllDclltRmljb25v?=
- =?utf-8?B?bjVrWmxGT1JDVmwrdG5wMkpTQmFNUnVQTDRYS3ZTb1pYRmEvUWFVRlVWNWQ5?=
- =?utf-8?B?VzJZVERVd0twM0xrWjJiUkJlMFJkS1hBKzkwVEc1VFdMbjBTOElDTkl3clR0?=
- =?utf-8?B?MGhhekNOaHZXUXJYb01sMFUzTzY0dmJ3SDY0dlRMajdmMm5oQU4rcHZkWkdB?=
- =?utf-8?B?c1BTUVVCYnJkUCtYMHJIdDRvZ2p5NjlpODlrdjgwZEVmZXhKbXVIanU5N2Y5?=
- =?utf-8?B?UEtWYk9uWFYyRnJ4OEV0WmZERGNEaVJCdU12MnhUWXJRM2U1QkhLc2h2Ync1?=
- =?utf-8?B?VWdLYU5sV2phYVU5eTNzRWkybll5bFhhaUpidm02bnNoaVZjQTRGYVNRazFm?=
- =?utf-8?B?RmlHY2xkak5VNFFYOWVQcVgzMTRJWFJ6bFVsNkxicE8vdGx2eFRLZjBZbHQ3?=
- =?utf-8?B?Wm9teHhFYVJsZ2Fkd0hJbktTV2JsclozRGVvN21LM2MrZmlMUmMvOGtUNVAz?=
- =?utf-8?B?M1pvSHR1TXNodVM0alh1TE52SWJhOVJxM2huN0ZxQ3BGUkZUNnpwYWEwVCty?=
- =?utf-8?B?ODJGYmMxT2Jzd2NTbVBzK3ZiczIydG9DZ1ZsdVpuNXlBdUNoTVNXT1h2YmJE?=
- =?utf-8?B?OFhRMzQrUlNxYkprNEtTNTg1ZWtrKzV1b2NKK2ZBbHRTd3FjTHlFNG01ajBh?=
- =?utf-8?B?RGxhVVhDR2RENXg4RHRaRjZMS1ZQVGFVNGptWFBGZzhqSklyQU1mL3pFZjR1?=
- =?utf-8?B?aGpKdkk0WjQwYklrR1oxVUN5TWRxMFZwcXZQMjJlTzQvUHdvMEJVNTRLNFZm?=
- =?utf-8?B?Z1Q2SVB3Nlg2aEtpODNXby9Pd2N0Ui91N3haUktJaDRuWjdhaEcxb2pOMTRF?=
- =?utf-8?B?YjlBN2hIZDJPMWdCSllsL3AwbFlKR1FMdzl4dy94aXNtMWp3MTNlTVpEYlhh?=
- =?utf-8?B?cnpqVHFDMlJJbWtwQkR6ck9jMVFYQ3Z3YVQ3YkVSN1gvUE1JeHFLOTZneGNx?=
- =?utf-8?B?YmFuYVhZRUkwNVFIWk1IT2tEZGQ1OElaRjRaTTVhUk9LZVVpcXlDb0VSWldY?=
- =?utf-8?B?SzB4a3NCUlhoajNOTkkzci9KUjluZUIwWDJLNGVXZE1SdUVXODA5ejRCUXFu?=
- =?utf-8?B?REJISDl5czMxVnJuQ2dEOE9uVytTbXhKOE9FRDVLVXJ2dlNoWVllVzJORHJJ?=
- =?utf-8?B?eFI5TkdRdXdJb2FsRS91cUZPL3BjRVNoNWltWGZ0OElWNjEvZTBSQWRYVXZp?=
- =?utf-8?B?K1lrdWJuQlc4Z1FGVHZUNEZFMlJyV1JiSzRST2hpSWVxaUhxck1DWDZnc2tO?=
- =?utf-8?B?WVpNSFVBY3M3dGJhOFczZ2hmcGJ3WU1pQnJ5S3J3N3QzbWt6VHJvVUpibUcy?=
- =?utf-8?B?L0tldFR4eHo2UkNKQitsVDhaek82emFwbFRCbzdoQmk0WGhsKzR6dDY2OGx2?=
- =?utf-8?B?QU56YjVpVkJkZmdXVWJBMzA1YytYMld1dDY3SVhzM3RBalZjeXNCelc3M2dp?=
- =?utf-8?B?L2lTWGxsbnBIME1mT0w1S3hVaTN2Z2lIZXhJNW1TbVdNK3I1SWhSbDd4YmZ3?=
- =?utf-8?B?dkIwVllGb25DQWNhbmVabHBRWU9UbTJUU1RCSjlEOGNXVUtBUWxEelV0ZEtZ?=
- =?utf-8?B?cDN2QzZmbll2b05nNnBpVkVkV0ZIOWZnZ2FWRFFCOS95U21jSXlwTllxMFVj?=
- =?utf-8?B?MGZFMnc4RU42aUVKd3dEU1lVOWU0MFFLV3pDTmIwNnU1ZGNJSXVmYWtvS3Qw?=
- =?utf-8?B?R0FxTWhCeHV1bjdzRmlGb082Ly9FWDJFcnpxVGxGcHJTVnJzVTR3NThMQktV?=
- =?utf-8?B?RVowMWwrcm4wb2EwbHV0TXVtOVYwRkNwQTVTa1lYVTRFTTY0V2JvZFUzUHF6?=
- =?utf-8?B?NWZVYVdMcFZ5cS9ZMVZjOHNXS1IzQmNyZHUrK3crN285T3VUcjMxS1NQSjFw?=
- =?utf-8?B?T2g5SFJKdzRHd0huNnk3RkNpOG1EM0ZlMm9aZTF1VjdRQjYzRXFEdz09?=
+	=?utf-8?B?TWRrVHBha1JZYTdiVDAvUlZ6bTZzRWZqSjRIQ2RrOFdiNWFOVnh1Q2R0MnRY?=
+ =?utf-8?B?RzhTVjJrVS9YSVdLNjhnMjR1NUE5VERzdUFnTHdQcFJNN1R4d3NzdXhIQUNm?=
+ =?utf-8?B?NEg2QWNnZnUwamh6a2c1QlprYmt0UXVIZFY3dzlWWU1hQkYxU3ZHdVA0WS85?=
+ =?utf-8?B?RXBhY09mYUlYNFJsM3lGNFZJNXZpYW9sR2pWTUtMa08vUlcwV211bXpnOFJI?=
+ =?utf-8?B?cmNObWN4UWlwUFgxTkdEZzM2MHJ4ZXY2Z0xhOHhVdlVoRkM2TTdiZllHQWVX?=
+ =?utf-8?B?WUpSVTZKZHNsMEErZW9vNnVxcWVNS2ZUREhhZE41ek1YWUJoM0IvL2hSMDZO?=
+ =?utf-8?B?ODdJVUZXMDNkQ3pBUVVPNWIwWnU2bndLWGV6Ykh0L2J0WkxjcTdLckRURDB2?=
+ =?utf-8?B?TkF0VGxiS1hUQkRhNUxScUJnVDhaUlFZRCt1UkhiYWErMDBJV2NaOUZnQ2lN?=
+ =?utf-8?B?M1RpNVFwb3ZWbS80OXgyMitVbTV0VG9wbEI1Wkt2VkIwTXJVZ2pEWDJXeUJU?=
+ =?utf-8?B?amJVRTRLVXErM1BVdlVUTkpUM2ZsWERCbjdueWNUNC8rek8rVjdpYnpUcTdU?=
+ =?utf-8?B?bDlwYVJ0dXBRWkFXQ2RrZUF2K1RscGpXL3BRTm94YVpGRWJMNG15cFFDdWVE?=
+ =?utf-8?B?WVF2Rkg4MFhFZ1YzSTdmbUlhVElSSzVwcSt6dzJ3d3ROVDV6TnhGcWRuckk2?=
+ =?utf-8?B?SUMxWGJ4ZGo1cVFqajBHSWxKQUJqdmpHNWNManpHanlBVEh3WTJ5ZW5wZzFv?=
+ =?utf-8?B?Vk5HVjBhNFQ1NGNvVXFvNk5BdE5FTDVCM3BnMkZWU1JDekVOSkhaV0plV0JG?=
+ =?utf-8?B?MUtCenc0bkZPdGR6M0JLeGdYbEdpOVlUNUZQaE5QOVRONTZPaERreWRWOFFl?=
+ =?utf-8?B?MzZENmRWYXd0dmRIeEtMVzBDVG5hQkhKbEZ5SEJmclRlOG9SQ0hyY2xEUmlL?=
+ =?utf-8?B?VmoveHdwbUxkZTQxTnMrOW1DQlBsUFRtOXh5RmFueEhDMytJc0FXOVZNeW1J?=
+ =?utf-8?B?VnFvbXNVWTdMMGw0ZFpLMWlDdnA5U3UxYmZkQXVXV2pkZFdPT0ZzOUV5a0ds?=
+ =?utf-8?B?ZUtPL1Rwc2lrS1VQWExRZGd6aXcyeld1Tnp1K3IvY1lITWJUUU1ycE1sZnFK?=
+ =?utf-8?B?WEV3UXhyZk5SN2tOVTJnc3M1dUJMN0pBeVdNVGdSRHJaZm9Mck5KeUF4Z0dK?=
+ =?utf-8?B?NTNoQWhCMDNPMU5zTnZlSFJ3cWJpZUs1alhLcGhPaDBwdWdCY1J0RzhtNjQ1?=
+ =?utf-8?B?ZytidG02bDhyNnFWK1hHMEpWRXFJVlhHeDhhditRRWJjdkVCWUt4cmYxNHNS?=
+ =?utf-8?B?TDBESDllNC9hL09icURQditjTW1wZDNENHZoNTFvc1Z5S3JrTTdFMnpaUXQ4?=
+ =?utf-8?B?aUY2blYrZGcyNGtKWjV5UjRjSGF6QXl5c0pQOXNUVlgrOUw0cklEMUV1SjVx?=
+ =?utf-8?B?clNwZS9rRjBraWQ3Qy96eTltVGNvZ0pMREUzSFFsWFI5ZXFnaFlFNFcyOFlC?=
+ =?utf-8?B?WFQ0ZDJ6NzdGZVRVc0RJTnVOc0E0ZkFkTGk1THVZVjRIbmcwdjJvWFJaaSs5?=
+ =?utf-8?B?NFZiaTlKdSthckI2Zm9TVko3TU9CMmRCVWZmSGoweWJEQXhFVE9QU3llcmdU?=
+ =?utf-8?B?YlpHdjRYTDYvVXR2UDQ0ck1qSWxFck41MzFwN0IzSXVrWm1zZTYzZDhjYmla?=
+ =?utf-8?B?SnpqMUdweTM2dU5iYVZtZmtjM3N3SHF6aXBnYm5POFYyNFBwanlQUzVsSWRm?=
+ =?utf-8?B?Rysxd01WditXNnZXZUJjeWxIenNyME5reTM0cWl6UFRINEZ2eG9FRFNFK1Ny?=
+ =?utf-8?B?RWhPMWNXSGxYczZOV3BCendKSzdGN05RaHV0dHc1WVQwL3kyaE13c1d5T3ow?=
+ =?utf-8?B?MisyNmw1YW9RQXYwdm8vRlRROHJwZnFkV1BsRFR3WU14blk3Z2RsZjVHbzV1?=
+ =?utf-8?B?NWh6Y0tUQitkK0tVMFk4bFpMNkg2cWprY0l5S05jd0VKT0FyTmhpeXpuUGE1?=
+ =?utf-8?B?Y0EwSkthaDE0dFp4SEZYUCtvYWptQ090bVZHRmJQcTZoRGx0anFicldmK0hI?=
+ =?utf-8?B?U3AxdGtRTDJLV2xGREpUQWRyb1Q0aE9SV1BCSTBHZTBDNldtQkFndHhZL0V4?=
+ =?utf-8?B?dzR4cW5tSnhnODk2WlROblMyN09uZ25lUFh5MlFVNWs4YldXeE9VOU5Gc0hG?=
+ =?utf-8?B?b2lCVkwyV2lEci9XckFiNzNuS3NhUm15Ni9Eay9xYzVzMkNSaC9TclM4cXlW?=
+ =?utf-8?B?d1JZL1Z3KzQwUnI4RXNNanZOVExFZmV0YkxKcy96YVZyU2ZHckxqQVJadVZl?=
+ =?utf-8?B?cmRwNE9vOUd4ZkRqMG1YeVd1Y1RLOThqKzdlWFh0Ni9XM2Y0NExQdz09?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e09aa8e5-412e-452a-67ac-08df0728f654
+X-MS-Exchange-CrossTenant-Network-Message-Id: abb32458-b609-4596-6933-08df0728f927
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Aug 2026 06:27:42.4751
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Aug 2026 06:27:47.1855
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JR/BTFB2F7J3u8saB9KUkzUJy8BQmLjwV2vet7rLSP3W8p0yPfG90nzYq3sq3Th81ytmWd8Cjihe+Du4nqExcA==
+X-MS-Exchange-CrossTenant-UserPrincipalName: Q12m3bPw/APiKqxX+qQh7fuQCcnXEtKIVNs+kKtI9TvO+UkVYVaaijqW8gOWZrCUXaCQpyaGmk8grENTRL4row==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR10MB3140
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 31 Aug 2026 06:27:52 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24047
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24048
 
 From: Jan Kiszka <jan.kiszka@siemens.com>
 
-This is automatically set by optee-os when EARLY_TA_PATHS is none-empty.
+Before more boards might be added, better have the addition of fTPM and
+StMM TAs concentrated in a common include. We can also avoid the complex
+override logic by only including this file from the optee-os recipe,
+rather than the versioned optee-os include which is shared with the
+tadevkit.
 
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 ---
- recipes-bsp/optee-os/optee-os-qemu.inc        | 1 -
- recipes-bsp/optee-os/optee-os-ti-k3_4.10.0.bb | 1 -
- 2 files changed, 2 deletions(-)
+ recipes-bsp/optee-os/optee-os-ftpm-stmm.inc   | 25 +++++++++++++++++++
+ .../optee-os/optee-os-qemu-arm64_4.10.0.bb    |  3 ++-
+ recipes-bsp/optee-os/optee-os-qemu.inc        | 18 -------------
+ .../optee-os-tadevkit-qemu-arm64_4.10.0.bb    |  2 --
+ .../optee-os-tadevkit-ti-k3_4.10.0.bb         |  2 --
+ recipes-bsp/optee-os/optee-os-ti-k3_4.10.0.bb | 16 +-----------
+ .../optee-os/optee-os-ti-k3_4.10.0.inc        |  3 ---
+ 7 files changed, 28 insertions(+), 41 deletions(-)
+ create mode 100644 recipes-bsp/optee-os/optee-os-ftpm-stmm.inc
 
+diff --git a/recipes-bsp/optee-os/optee-os-ftpm-stmm.inc b/recipes-bsp/optee-os/optee-os-ftpm-stmm.inc
+new file mode 100644
+index 00000000..1d7b6334
+--- /dev/null
++++ b/recipes-bsp/optee-os/optee-os-ftpm-stmm.inc
+@@ -0,0 +1,25 @@
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2025-2026
++#
++# Authors:
++#  Jan Kiszka <jan.kiszka@siemens.com>
++#
++# SPDX-License-Identifier: MIT
++#
++
++# StMM integration, required by UEFI auth variable management
++DEPENDS:append = " edk2-standalonemm-rpmb"
++DEBIAN_BUILD_DEPENDS:append = ", edk2-standalonemm-rpmb"
++OPTEE_EXTRA_BUILDARGS:append = " \
++    CFG_STMM_PATH=/usr/lib/edk2/BL32_AP_MM.fd \
++    "
++
++# OP-TEE fTPM integration
++DEPENDS:append = " optee-ftpm-${OPTEE_NAME}"
++DEBIAN_BUILD_DEPENDS:append = ", optee-ftpm-${OPTEE_NAME}"
++FTPM_UUID = "bc50d971-d4c9-42c4-82cb-343fb7f37896"
++OPTEE_EXTRA_BUILDARGS:append = " \
++    EARLY_TA_PATHS=/usr/lib/optee-os/${OPTEE_NAME}/ta/${FTPM_UUID}.stripped.elf \
++    "
+diff --git a/recipes-bsp/optee-os/optee-os-qemu-arm64_4.10.0.bb b/recipes-bsp/optee-os/optee-os-qemu-arm64_4.10.0.bb
+index 881cbc77..a976638e 100644
+--- a/recipes-bsp/optee-os/optee-os-qemu-arm64_4.10.0.bb
++++ b/recipes-bsp/optee-os/optee-os-qemu-arm64_4.10.0.bb
+@@ -1,7 +1,7 @@
+ #
+ # CIP Core, generic profile
+ #
+-# Copyright (c) Siemens AG, 2025
++# Copyright (c) Siemens AG, 2025-2026
+ #
+ # Authors:
+ #  Jan Kiszka <jan.kiszka@siemens.com>
+@@ -12,3 +12,4 @@
+ inherit optee-os
+ 
+ require optee-os-qemu-arm64_${PV}.inc
++require optee-os-ftpm-stmm.inc
 diff --git a/recipes-bsp/optee-os/optee-os-qemu.inc b/recipes-bsp/optee-os/optee-os-qemu.inc
-index 3538d36a..48a51b8e 100644
+index 48a51b8e..2146f712 100644
 --- a/recipes-bsp/optee-os/optee-os-qemu.inc
 +++ b/recipes-bsp/optee-os/optee-os-qemu.inc
-@@ -41,6 +41,5 @@ DEPENDS:append:optee-with-apps = " optee-ftpm-${OPTEE_NAME}"
- DEBIAN_BUILD_DEPENDS:append:optee-with-apps = ", optee-ftpm-${OPTEE_NAME}"
- FTPM_UUID = "bc50d971-d4c9-42c4-82cb-343fb7f37896"
- OPTEE_EXTRA_BUILDARGS:append:optee-with-apps = " \
--    CFG_EARLY_TA=y \
-     EARLY_TA_PATHS=/usr/lib/optee-os/${OPTEE_NAME}/ta/${FTPM_UUID}.stripped.elf \
+@@ -25,21 +25,3 @@ OPTEE_EXTRA_BUILDARGS = " \
+     CFG_REE_FS=n CFG_CORE_HEAP_SIZE=524288 CFG_RPMB_FS=y \
+     CFG_RPMB_WRITE_KEY=y CFG_RPMB_TESTKEY=y \
      "
+-
+-OPTEE_ENABLE_APPS ?= "1"
+-OVERRIDES .= "${@':optee-with-apps' if bb.utils.to_boolean(d.getVar("OPTEE_ENABLE_APPS")) else ''}"
+-
+-# StMM integration, required by UEFI auth variable management
+-DEPENDS:append:optee-with-apps = " edk2-standalonemm-rpmb"
+-DEBIAN_BUILD_DEPENDS:append:optee-with-apps = ", edk2-standalonemm-rpmb"
+-OPTEE_EXTRA_BUILDARGS:append:optee-with-apps = " \
+-    CFG_STMM_PATH=/usr/lib/edk2/BL32_AP_MM.fd \
+-    "
+-
+-# OP-TEE fTPM integration
+-DEPENDS:append:optee-with-apps = " optee-ftpm-${OPTEE_NAME}"
+-DEBIAN_BUILD_DEPENDS:append:optee-with-apps = ", optee-ftpm-${OPTEE_NAME}"
+-FTPM_UUID = "bc50d971-d4c9-42c4-82cb-343fb7f37896"
+-OPTEE_EXTRA_BUILDARGS:append:optee-with-apps = " \
+-    EARLY_TA_PATHS=/usr/lib/optee-os/${OPTEE_NAME}/ta/${FTPM_UUID}.stripped.elf \
+-    "
+diff --git a/recipes-bsp/optee-os/optee-os-tadevkit-qemu-arm64_4.10.0.bb b/recipes-bsp/optee-os/optee-os-tadevkit-qemu-arm64_4.10.0.bb
+index 0bd7c22c..d752202b 100644
+--- a/recipes-bsp/optee-os/optee-os-tadevkit-qemu-arm64_4.10.0.bb
++++ b/recipes-bsp/optee-os/optee-os-tadevkit-qemu-arm64_4.10.0.bb
+@@ -11,6 +11,4 @@
+ 
+ inherit optee-os-tadevkit
+ 
+-OPTEE_ENABLE_APPS = "0"
+-
+ require optee-os-qemu-arm64_${PV}.inc
+diff --git a/recipes-bsp/optee-os/optee-os-tadevkit-ti-k3_4.10.0.bb b/recipes-bsp/optee-os/optee-os-tadevkit-ti-k3_4.10.0.bb
+index 158030aa..e81e10f4 100644
+--- a/recipes-bsp/optee-os/optee-os-tadevkit-ti-k3_4.10.0.bb
++++ b/recipes-bsp/optee-os/optee-os-tadevkit-ti-k3_4.10.0.bb
+@@ -9,6 +9,4 @@
+ 
+ inherit optee-os-tadevkit
+ 
+-OPTEE_ENABLE_APPS = "0"
+-
+ require optee-os-ti-k3_${PV}.inc
 diff --git a/recipes-bsp/optee-os/optee-os-ti-k3_4.10.0.bb b/recipes-bsp/optee-os/optee-os-ti-k3_4.10.0.bb
-index 82fbd53a..1090e081 100644
+index 1090e081..f89bbdde 100644
 --- a/recipes-bsp/optee-os/optee-os-ti-k3_4.10.0.bb
 +++ b/recipes-bsp/optee-os/optee-os-ti-k3_4.10.0.bb
-@@ -23,6 +23,5 @@ DEPENDS:append:optee-with-apps = " optee-ftpm-${OPTEE_NAME}"
- DEBIAN_BUILD_DEPENDS:append:optee-with-apps = ", optee-ftpm-${OPTEE_NAME}"
- FTPM_UUID = "bc50d971-d4c9-42c4-82cb-343fb7f37896"
- OPTEE_EXTRA_BUILDARGS:append:optee-with-apps = " \
--	CFG_EARLY_TA=y \
- 	EARLY_TA_PATHS=/usr/lib/optee-os/${OPTEE_NAME}/ta/${FTPM_UUID}.stripped.elf \
+@@ -10,18 +10,4 @@
+ inherit optee-os
+ 
+ require optee-os-ti-k3_${PV}.inc
+-
+-# StMM integration, required by UEFI auth variable management
+-DEPENDS:append:optee-with-apps = " edk2-standalonemm-rpmb"
+-DEBIAN_BUILD_DEPENDS:append:optee-with-apps = ", edk2-standalonemm-rpmb"
+-OPTEE_EXTRA_BUILDARGS:append:optee-with-apps = " \
+-	CFG_STMM_PATH=/usr/lib/edk2/BL32_AP_MM.fd \
+-	"
+-
+-# OP-TEE fTPM integration
+-DEPENDS:append:optee-with-apps = " optee-ftpm-${OPTEE_NAME}"
+-DEBIAN_BUILD_DEPENDS:append:optee-with-apps = ", optee-ftpm-${OPTEE_NAME}"
+-FTPM_UUID = "bc50d971-d4c9-42c4-82cb-343fb7f37896"
+-OPTEE_EXTRA_BUILDARGS:append:optee-with-apps = " \
+-	EARLY_TA_PATHS=/usr/lib/optee-os/${OPTEE_NAME}/ta/${FTPM_UUID}.stripped.elf \
+-	"
++require optee-os-ftpm-stmm.inc
+diff --git a/recipes-bsp/optee-os/optee-os-ti-k3_4.10.0.inc b/recipes-bsp/optee-os/optee-os-ti-k3_4.10.0.inc
+index a111364a..c77161d3 100644
+--- a/recipes-bsp/optee-os/optee-os-ti-k3_4.10.0.inc
++++ b/recipes-bsp/optee-os/optee-os-ti-k3_4.10.0.inc
+@@ -30,6 +30,3 @@ OPTEE_EXTRA_BUILDARGS += " \
  	"
+ 
+ DEBIAN_BUILD_DEPENDS += ", device-tree-compiler, python3-cryptography:native"
+-
+-OPTEE_ENABLE_APPS ?= "1"
+-OVERRIDES .= "${@':optee-with-apps' if bb.utils.to_boolean(d.getVar("OPTEE_ENABLE_APPS")) else ''}"
 -- 
 2.47.3
 
