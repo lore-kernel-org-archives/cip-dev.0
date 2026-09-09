@@ -2,50 +2,48 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F770C79F8C
-	for <webhook@archiver.kernel.org>; Wed,  9 Sep 2026 10:05:05 +0000 (UTC)
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (DB3PR0202CU003.outbound.protection.outlook.com [52.101.84.28])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.8159.1788948296231598405
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08698C79FAD
+	for <webhook@archiver.kernel.org>; Wed,  9 Sep 2026 11:57:06 +0000 (UTC)
+Received: from AS8PR04CU009.outbound.protection.outlook.com (AS8PR04CU009.outbound.protection.outlook.com [52.101.70.44])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.10350.1788955016687113099
  for <cip-dev@lists.cip-project.org>;
- Wed, 09 Sep 2026 03:04:56 -0700
+ Wed, 09 Sep 2026 04:56:57 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=eTutBz11;
- spf=pass (domain: siemens.com, ip: 52.101.84.28, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=OMPeZIaM;
+ spf=pass (domain: siemens.com, ip: 52.101.70.44, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=c2M0ivuG83dQEtHlCebrwKUH8a+n0mupXEg04gwXfvYL5kPFrk7RoIr21TkIRwC0JCHyPmqqTsmaaU/9xLFiTf55DA/CPRr/3NF6IwPY0tcC2+FZNS/uedxPvsjmquAxeg2CWYnoB0eola8Dws3GmWkKycLrBQGEGRR8I7ZGIlChQF/sYo94zUkbQrdLY/bfUfiCTB0bxlmbpwn8g0U4UtauIw+O2DF2VZC2En2hZF6Gj8PyMb/EZKM6xttWj2i3Aelev7LT/vfrc1gkMhJM2CF4EeRvGrWaFQwhLs1K5q971bGuw3lH/UKu2Pk2hAHZvE815Bny+Jl9+dyNuj/2SQ==
+ b=OX4gjiQQ2ZOLvlm0Vn7gdTod3/K+jAGVT/bcdgPnwbOn3G9ri/FzDWjmkbaMPGHnEMjEVfdImgMjuKU8qndBXlcdfd3gz16UsMluRrzCOVVO8vtdMK0Dw7mXJAEE7rNHv2Q1l9MvssJhVQeFaHtF3IP1azr6QbsOX2xh6udPWQhfx28UWiqj+Jkq0EEcOMg8NMGwBMnc8GHaZts3GM+Ib6heeNsiTfHQilUJUh37CQsXxf8qhiTb0MFPZqWgdzgrwCKLSSSQe5FMOj3OtCqb0+752/l6jQBcncVz6pprQKhIu2Z+SpEysZn8Gi9+V7JnNlPtJgKZ4GefR+ir1R6Jlw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OXscynHOYI6DxOYQyMRiIDIo9C+pknGV0SFhlVz0KwI=;
- b=hUIky2Caf4vErI6AeNtD1KHCzN3UEnb0GLoj6KpUsoHAPsbBqWLl9Ha6YPBQYZzZhQhzYHsj3rjqJNCBaIzcAHXzk91WygTvh7iBhS7EHkYwXw9lsTymJgLwkSd1srvJWlS9vBwz/PewgVy5yL3d3uL1Wg0O/Feikz+OXwfbw8hN5ZQP5vYsVovWUcIJvoRGd9G4fgBICADzfxFh0G6Q1jCyz9FE1s6Js2j4VB3JyZoIWuwIDIwxgv3OICdMVYpOEL1GN143ka+obMdQG4x8EGCZoOnUozsw0By0KvMiPNXv0uGSA5Q2I7X1JkHwatMWcempdp9CQAw0KxCHKpKBvA==
+ bh=c0OCfSfcT4qFQhriUgVKbm7V9ILogPBjh725IiRvCAI=;
+ b=seuQEbYJvS+pcYE71ry/CkW4cunrrCpsEqVow5MAk6D088Fk+CtwowVdbCDpnenA52+5mC77kIWYQlTPVZ80YdsyWJld0oYQxmcWxQzGtTiO4l3qXgun3yWWHNW3GscoRKdMZhMXU1PH/amm3Bol72GQ0R7O7gcqzy00AafjV/PbjARg6S1prpifGjMJWkcfXWfmpTExyZGy3pvzkEjGpPdXIDIXqUpNhGVHTS7mvUn/LAruaRMpsC0wlB7As0PDiraU/HNN8kygn6O9cLk/Lfq7NqzTjmHhbYmmmwDyJWxtEDitJJIf+HPDh1Twtf/r+W27TbPXuf2v5Plx+rnrdg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OXscynHOYI6DxOYQyMRiIDIo9C+pknGV0SFhlVz0KwI=;
- b=eTutBz11VPfJ2BWcdsyf3uKQ0gPI9aXQd8QL+TCEY+bQG1Dw5yXqljYwGzYRvGvqged2ZFRE0A4TUzwBn/VD4yVEpfcwNpwvIAJVY8wSQWaF+AMruzIWhJhfx4V2BLpLbE1cp2tj69bndOk6Frqg9NX/kKHPyK0T3L2//p1K+u9TDw450jjGabMg0dx2dTlI+ydhZptaYxhSyYPTtLcIFab7uAuPhuRcmwpf2uX1u31gOz0J4uUdnjxod9J0cTZ9LLUMg/s/qV9PtaXQzVhTRDihE5S3JFMCtHk0w0jab60g/9jwOnuk36OuKMRCoqtQFXgBCZx3b5VPVob/yyGpHQ==
+ bh=c0OCfSfcT4qFQhriUgVKbm7V9ILogPBjh725IiRvCAI=;
+ b=OMPeZIaM2xq9LZdlNLxTp9iZxHDegDURveTAMdKsNiTsKgR3HDQssL0JGI0WIBlCU9XlpqrX0creucP4pQSswcnl7ZSEyZv2PSUAFh/mb2+KMZx6CjRhtEXxPn0xwyDfwty9Ks67NC01S1rI0wEPrIBOjf62TdGzK2bz6ynXyRbZ5B4xrQOPEM2+gGtEGUzCUDW/8oXskx99YTVYd9RNpu1oLyrJTkw0L1XxI7htWm8yJtbXhn95aEVmGeEvfCrVcwhb/PRLjrdkpeTZLigHQlOe4I1NP/E+ZwPltXe2RBM5KDa+P7guSeaJHLbKc4oTXu6/X2Y92ZKluSdmz81P7w==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by DB9PR10MB9915.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:601::6) with
+ by AS8PR10MB7664.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:639::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.7; Wed, 9 Sep 2026
- 10:04:51 +0000
+ 11:56:45 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::be9f:e8ca:ee9:83e1]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::be9f:e8ca:ee9:83e1%2]) with mapi id 15.21.0406.007; Wed, 9 Sep 2026
- 10:04:51 +0000
-Message-ID: <5e44f53f-cfef-41f7-a943-25494c319978@siemens.com>
-Date: Wed, 9 Sep 2026 12:04:50 +0200
+ 11:56:43 +0000
+Message-ID: <50c38fc3-ffd7-4c2a-8884-f37f49709ea4@siemens.com>
+Date: Wed, 9 Sep 2026 13:56:42 +0200
 User-Agent: Mozilla Thunderbird
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: cip-dev <cip-dev@lists.cip-project.org>
-Subject: [isar-cip-core][PATCH] initramfs-crypt-hook: Also set watchdog when
- using u-boot-based firmware
+Subject: [isar-cip-core][PATCH] Update Isar revision
 Content-Language: en-US
-Cc: Enes Colpan <enes.colpan@siemens.com>
 Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  xsFNBGZY+hkBEACkdtFD81AUVtTVX+UEiUFs7ZQPQsdFpzVmr6R3D059f+lzr4Mlg6KKAcNZ
  uNUqthIkgLGWzKugodvkcCK8Wbyw+1vxcl4Lw56WezLsOTfu7oi7Z0vp1XkrLcM0tofTbClW
@@ -91,110 +89,185 @@ Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  ZffO4PeNJOUYfXdH13A6rbU0y6xE7Okuoa01EqNi9yqyLA8gPgg/DhOpGtK8KokCsdYsTbk=
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR2P281CA0060.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:93::16) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: FR2P281CA0034.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:14::21) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DB9PR10MB9915:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2ddc3eb2-d1b9-44e0-48d1-08df0e59ca3c
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AS8PR10MB7664:EE_
+X-MS-Office365-Filtering-Correlation-Id: 89051fb9-20ce-49cb-e3d7-08df0e696ab9
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|366016|23010399003|1800799024|376014|10067099003|3023799007|18002099003|55112099003|11063799006|56012099006;
+	BCL:0;ARA:13230040|376014|366016|23010399003|1800799024|10067099003|56012099006|11063799006|18002099003|55112099003;
 X-Microsoft-Antispam-Message-Info: 
-	TrxjoCkeQ6BI7SBeFc/bCjMDAX/esbrCC1RTnLyT2EwDfwgAc2IS0n0bDimlttOnXiXbBM6tcZPpCP3kply6e0hvBm8PHfq50mn6ebTQ0Eneqa/9/boqGLwMNFfW0cF5lJKgGDjh49WUg5Pgt3aU02pU1jwyxI5mrPShk8HQRAH6KhYRmdntmbHjtrrSX7dWyCK7zq0mGJfrJSo3ScEnF7XF9mtcdiLPvrAjwGfPfaLXa0WIZlB3V+2WMWv9xAhi8Rx/TDhmOjlfiSmI108ta2YlpmrDZbKLzG70YFLW6fN5UZhCp77rIQ3u2g9rlHD8EqCFLe9u3NtlaB0odGq3J0AkAdPHbYpEvFVeD7UzHB/aQB+SgrrGc1ycszqkFoR4oIzcczC5Z6PtJiDkzRQMBEUyyLI0+AlUBxaJUeTRBq0UgqdLBeSFO5YGmNXOuuQ7ixaTfpAbxTiIFf04onTkJk7ncswifCD2c9JkGGroi1LFfXx8GYazgL8BQHmJXqeRdUCEuxXwzuEzQRTMuA05HFdw55FIPFF7XkmQ+7FxtB8zjp3z7tptW9Mqq95hTsjhrOYTCL7vsyFruLbg2LPn56R3rZ/TGt6/5SRw3+jOxNIPI3xyt7SqjdzHfE/62xMH9yyLWqqlBBU5i076T8wrSSFOi/jLJinseAmZo+X0dJ0=
+	puKoSuCnQAYk4ncaD2zsGmOD4vBZHqJZbORqrOMEBgwJ+O5legsLgbZJfazVTRy/R3/upxfGWZ1fTmhOikThqaICQOJUy3M3UlACC+8d9eGBQQ5IAUFGKJRcOqSpiLabFlxIS1zQWXm+bIFjg2Wzc02iAEeDuHJbxGgx+6wi8z1GKqm4ziLkLTzFnBI+fN0DhsDU/RcSVuiCfdRzSNP06cuSxxsJjZxvM7GzbOMpKFpX9/xs7XGmxBqyzJGIBywOQ8rbp0I0D4TlR5IgbEiDTjX8pL/Er99EnOIEpGuLaC+a1lUt2h7OyEb9SmtArpbg/K2Y36EeSeIKDFt56w6Qas4yR4ypIaa4w2CWHJZxtTpMjmGxkbMG+Oa+fVaeoIA3fk9ddy5Pmp2T3A2c+WNf8iJTj4uXVdEMVvY/pVf2H+81+adfUkNWs9v/xb8OhUcR0GWu9EUtYCn3sCmy7WZNGs73XSlfg81yH8hZbZIOoc69uUSvIw/zw2LMA+9h/FfaNC6CjNTHs8MliUgZda1mxNAvfHK3eCNvcVx+PAwSXGcJ3c7BgNXr3vR3DBw+xHz+qIsB+1S4nH4oc5zYYs7+rdNtOT3MkrP8Ga1phjIkt0q9mvsM8sxC1SZPu4Z/5wBaGd9gMv7xAJEj5ora3fWd8iyeA3RMSmstBUM1uTJbBWM=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(23010399003)(1800799024)(376014)(10067099003)(3023799007)(18002099003)(55112099003)(11063799006)(56012099006);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(23010399003)(1800799024)(10067099003)(56012099006)(11063799006)(18002099003)(55112099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?ZUd3LzhKQ2Y3cGpPQTRnekVLbkZkdWZuNm84QUwvOFc5cFZUcnlRRE5WTGFR?=
- =?utf-8?B?QTJiZjVLTnNRclhoMXozaVZYRzMzUjVHMFd1dllKb0F2OXA3bzVXZStOZG5P?=
- =?utf-8?B?dTQrNmpwL2dJQk1RMEVackhyRnNwTEd0RmxPa0U5MS8wTmRqQlJjQnBQcDJ6?=
- =?utf-8?B?U2hLbzNmN2tEVG5tN3dFOHlieWhpLzBnZDBuZzhFRHYzQVQ1NG9taDlQRE55?=
- =?utf-8?B?b3FwdmFIV3ExR00rYXJvWVg5SVRpejB2MEs2UVlrbjBEVDRWMjFlMkNrREtp?=
- =?utf-8?B?NGlwM2ZLSmpSRTVpMFkySzkwQzFmdHBkcFhkSnFuSTVFbU5PQlhBejlPN2RL?=
- =?utf-8?B?KzhndE4wSmhvUWZyc2docldXN0lRNGNKV2tUbXlNc0kwYzJDRkEySU5XSnIy?=
- =?utf-8?B?SHhxK0UxNDJXRG1jL0xsZDdUOVpRWE5wb0FEQXZRbCtqUzdzY2JWMWE2SmR1?=
- =?utf-8?B?eTROSTlBS00wWDkvWnhJRlRUcGYyaFI2Z2lYU01wckpoYmw3RktFVlVKRVpx?=
- =?utf-8?B?T0VYaTlUUmtma3BYZzdEZlpYM0ZCbG50enAwUnRuZmN5WnlFcUY4eU9Dc3k5?=
- =?utf-8?B?OUYwbFRZWmUvVHBXK0ZucDdJbVRHTHBLZTNndUpsYnUzYXhrLzlzeXJxVEVh?=
- =?utf-8?B?L1ZjY0NKeTgrdnl2UVA2QTJIU1Eyd25yVjluMGVFcC9GNlpPeEtUTktNbDNO?=
- =?utf-8?B?VFkvOGJldmszcjdZSEJjK2tQNE1sVXJZckR4b3NPU3ZycVhhVVVRVHdEUGJa?=
- =?utf-8?B?VmswVVQ3bXpvcHJsZ3Z3UkJFTXEzTEh3OTZNenJIeUwybGc3cXNoNko0dzlT?=
- =?utf-8?B?ejhwTWQ1cUpFa0M0R2tJbzVGS2Y2NU92WkZSaENqMUsxWFc2WkFoV2tEZlZm?=
- =?utf-8?B?eXJWT0NGcjhvSGkvTWRQQmM0WVN0d3c2SzM5Si9BdTVaVStKdDdTMkUwaFhD?=
- =?utf-8?B?NG13alY2TGwzQXJtOXp4aTVORzJkdlZmYTNKSEV1UTdYcDlMRk40QmtpajN0?=
- =?utf-8?B?aXo2c2ptQWpzOHg4RzJZekVQc1A2YjhoSE1oN3lBbkVZRG1ubEE0VE83ZjlE?=
- =?utf-8?B?OVZhMlRLVjhySzc2U0dOYzIwRzVqSlliMXI4REQ2ZjIrWVo5WGRYTGVSNW50?=
- =?utf-8?B?SlQ0S0J5NFdyVjNoQkdjUW52N3M0Z1N3RFVVbDhSUWF2clBCZ20xdnZiZkg4?=
- =?utf-8?B?ZnhEZFg3R2hWT0NIb3BQenNjeU1PZ3dUbXppRiszcFVQTVFJUE1NbStHZTRW?=
- =?utf-8?B?QUtMR1VPZ3ZyVG41MmpDVUFGS04rS2l0QmE5QkFPeVFXQTN2cnVEREdINEto?=
- =?utf-8?B?NGpOVDhULzJDWXQvUWlTcDF3c3FaRWpmNSt0b1JvcTZjL3J3eVNSbVNJTXNt?=
- =?utf-8?B?L2N5OExSeGQ2MFBFa3VTREZaWEswNHhmS29STTM1TEJFQUhpb1dtZ1EwV1c4?=
- =?utf-8?B?WWMyZCsydmY4UkZJTDV5QUtQbzJoRU40bXpnN0VqVHFiK25XbC9qMkNhKytF?=
- =?utf-8?B?eExRYU11Zk5MRzBFd3lZdHlmQWRqRytlbkJKSzJZT0FLVjFZbDFBRGxXbllT?=
- =?utf-8?B?Y2lSa3hhM2M4c0c1RlhWZVlNYzM0YktIckhIbTdNOTBuQWNMSHJFb2MwQXBY?=
- =?utf-8?B?WjN5SXRQV2hDQTRSMjZSai83ZE1yeFd3WmhZYkV6Mmw3Z1lzV0V2azhFN1dZ?=
- =?utf-8?B?K3JNVXVZdkpMSmRyL2FYMGxYRzBQTERyeE9qYXdveDNUQVZmeDlrbmQrR0N5?=
- =?utf-8?B?UHk5S1p6SS9JL08rajlTL084ZngrM3hUYWNFdU5qbGREc3FmWXppaXgzV3Bz?=
- =?utf-8?B?aGdlM3pBNTdFRDFHRUpEdW9peU5aenNIWWtMN2xqRVRVRTZSU2R5WGw4Q2dV?=
- =?utf-8?B?MUQ3N0ttQldjTEk2RnBpTGdaWHQ2QWV1TlA4UnhsWnViQzNEbGxFSFpaVVRW?=
- =?utf-8?B?YUhLc3FmUHYxVWFGQVFnTmxVRjYvaTNIcG5pRW9WTmpxWFBtL2ZhZmRySzlP?=
- =?utf-8?B?aEFaUXFPQnpTbmxEU2ZiSlQvR0Uya3pmMHdxUStiS09ScUdVRkFxQW5xNkx4?=
- =?utf-8?B?QVJsV1p0SGlOQ0Q2SVl2dGVWS3BZTzZSQkVNT1A2cEw5T2htWlYxREtJNk9y?=
- =?utf-8?B?bE5tZkdscFpQQmQ5V2svazVzeEN4NUJJTDJZY09YK0VvNk5Lb0Y1MnFZQ1Rz?=
- =?utf-8?B?VytaZnZlWm1wSVllRUlWR2htT2FHZXBFMWxpQTNKV1pMdFpWZ0xuU3g1eEtV?=
- =?utf-8?B?Q2g1YjVoNnFVa2NLZTNSaXRMU2xRYytwR3ZwQTh3VWJ1THM2MFJ5N0NYK0lT?=
- =?utf-8?B?S1BkanQyakdZcHZqMDNNQS90R042Uzl2UVJNSlBnaW1oUW1RVno3Zz09?=
+	=?utf-8?B?aHhaMFNVdGZxUFNLbTFnWWhId1hRVzcxTTArd3lDWGt1VElYZmJtTWg0OGF1?=
+ =?utf-8?B?SVNVSkt4NW9jWW81aDhCSW5wZmNjWWZBaWZXaFdVd0RjeXViV2RyTFFzbnYr?=
+ =?utf-8?B?cG9uOXZyNm0zOXFZSllTR0FtTCtSd1pnVVZWMnJoN3o2OHl6c2NIdXZxcjFN?=
+ =?utf-8?B?T0o3bitQeVNBSFJ5MWxxcU5pQ2tpT25IcS9mK3Z1dlpheHpmcFFTMW5XVWdM?=
+ =?utf-8?B?dVhRSjU1SXNrVVlRZ3h5K3hOS0JsRmpaU1dvREJORkhkUUFZWmtBVUZYOXNm?=
+ =?utf-8?B?RUlNa0hNRTlaZHFaS3RzMGo1ZzBucFVXWWp3WVBtSE9OUlZIcFJUTHg4SklC?=
+ =?utf-8?B?UEs5V2oyQmRUUnlodkJ3cmJKRVJER1pQaTdSYzF2TjZYZVZ1ZDdkV2NDMVEy?=
+ =?utf-8?B?NGQwQmFnODRsTjFXa0x5ZnlzN3FvWGJvWVlvdkl2akRrSXpjUGN4UXVrOWVL?=
+ =?utf-8?B?d2kvdE51WEdMQ09MTElNU0lmdXRKUmFjTlFGNUZPVXBEdURIanlxODFwTmJZ?=
+ =?utf-8?B?dHc1NUE2UGl1M0Q5UnloOFhHTGpKWW10dUdGSXBORG92UVpRSW5lMEdoS2lB?=
+ =?utf-8?B?RW9TRnpMRE00RkYxclN4Wk8zOUlhMzUxRDNYSU1SMXFoeFdLcmFKY1NORG9U?=
+ =?utf-8?B?TDQyWU15TWp4RmE2WkV1MWpvV0N5SzExSGFGQUR2Mit3djFUSmw0b3JsQ0Vl?=
+ =?utf-8?B?UmNJRWd2aGtTcWZzN2ZZOG12Ry9ZbGp2NVl0U1k3Q0k2N3J6YVFSMmlSRXZy?=
+ =?utf-8?B?Tkt6OGxXb0FRSGkyZ2lDdGI3RDc1UnIzWTE2eUdDT2JPZzVlb0RDanRuOURk?=
+ =?utf-8?B?VkhTZWFoa0ptNEtaQmkxTlNyS3FoYVdDL3NmU2o2MlMwZUVLMmVVb2xwdXpm?=
+ =?utf-8?B?T25KbEdySlJSV2pnNlNhcHkwWEdLZGhVNysvU1J6N0dUZzQyNExBSzBVQ2xI?=
+ =?utf-8?B?UkdyWnlaY2lQM1pRdGtXVkxkZXY2S0tCLzh5OVVsSmJTZGJxZGNpSVdsR21M?=
+ =?utf-8?B?SUsvVGxUdHBJNyswTENKelRBeDlnMU8zajVLLys1a3lURlJHQU42dlVjSUd1?=
+ =?utf-8?B?UURBL0pzeFpNK2RmRzJGbG5TRXBIZnVmSU02cERBY3dBK053bFJsa2x6Q25R?=
+ =?utf-8?B?RjhmNkxDR0hxbUVWVXZWVjFjL3FjL3EyVHVNdmF3aTJIZTZEOTFFRXNWaWM2?=
+ =?utf-8?B?Zk4rN3BuQlNUSE1vWjJuRW10UjRLQitKNTlNZVdaWkwwZWc3elExUlNFdU9k?=
+ =?utf-8?B?Znh6RnFncGFmUnhJMUptcjZYZDVTUEdDNVcxTXpwMjhEajM2Y01uSVcrZEFv?=
+ =?utf-8?B?akJyRzcxUmtvWEtRMVc3SXRHRTQvWlVuWXcyaUFuaVlzNU8yc1l4S0o2OFQ0?=
+ =?utf-8?B?MU9EVVUwRjV1emY5Y1FoZHE1d0xOSHBUdzVHUWg0QStDN1NJdUlYblA3S0lB?=
+ =?utf-8?B?N0FXbmkvRlY5L280UXptZi9NSXNud1BTTm5wTTErWFFCZ1I5NVBCa0hmTFVj?=
+ =?utf-8?B?K1JOQlRreDJGR2ZORUJubE5acEFaOWQ2bUUrcGhBczQxbnAvdERTRFE4anJu?=
+ =?utf-8?B?bnhvWUx2cGRlbTlBY2ZYajVQNEpYM1cxcW1CZlJ6ZHlQOStKWmpyNzRmMmxH?=
+ =?utf-8?B?N0xMOG1icmo5UXhlTDBGbXM3VGhBcjFpdkl0VEJITmw0UXRxaVlycGY0KzJZ?=
+ =?utf-8?B?WmtvemtsUzBTUTBtcVhtSzd6ZTRiNFJtTGYyT2lKRitBWmp0M3pVYitlL2dW?=
+ =?utf-8?B?NGRKZEVuMG5Wb3psdDVMcEh5MFF1dERKSDJCM1luUUJhRVdRL0dRbGpOMy83?=
+ =?utf-8?B?YjN0dldnNjBiSklPMkVMRFIrbHRoSWNxSUUrejhNSmttdnRjUWRaWmRucnZz?=
+ =?utf-8?B?cDBSVTNKeDB6M25qcUZjSjVKODBTQ1NsejFhM3lGVzhqQ3ZEVTVpak4xYUhT?=
+ =?utf-8?B?cXpSaHFNUkN4VmhWVTRjWTNLK2kwdE9MNHl3bXVIYlNzenZDMmMrUFhPbnR4?=
+ =?utf-8?B?WDlBTjdZSmgyQXVxSUJSbmNTVDVFZk1wMHlnSlZDclpYR2MyRTBBUXE0cDc5?=
+ =?utf-8?B?WlNmL2lUQXUxa1V2am9GbjArU2Z4MlpqOW4vSXhkRVliazRYQ3RhSDE2MzQv?=
+ =?utf-8?B?d1NLK2xMZjVhZnVhYmllRm5QR2FqZjZhMENrcU9FUElpRmFmcHdqMWFWcEhM?=
+ =?utf-8?B?WGtwcW55RVZKYmdJUVppWEV5VTQwRURBTVF0dVF2K0l0NHR4V3hKTUNSNE1i?=
+ =?utf-8?B?NE8zYWFkMzVyc3FmRkpicTl0M0FOSHoxVFFLdlFJalZMTjhBM3ZTcEltM2xT?=
+ =?utf-8?B?d2c0RVVmSGh4c3BMMkNJWUpnOWFXcnMwS2ZBSzVLZ3hKZDBMV3RqUT09?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2ddc3eb2-d1b9-44e0-48d1-08df0e59ca3c
+X-MS-Exchange-CrossTenant-Network-Message-Id: 89051fb9-20ce-49cb-e3d7-08df0e696ab9
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2026 10:04:51.8611
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2026 11:56:43.5892
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: z9YjGuaULNbdyV/fM2NCvi8f5OiLZRIbbOPDXdQHbOmER795jPMWuq7c6ZOB+b82Jbl0sZDMQCnS66IU287mVA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR10MB9915
+X-MS-Exchange-CrossTenant-UserPrincipalName: Co//t5CMNXEEtCo1OfZXe9oSL1SXPnZdYjZCk3H5vj2jLWuLtAr9aibKxVDFRBnR1OLAKW1GZpI+EyilmPxVdA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB7664
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 09 Sep 2026 10:05:05 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24108
+ <cip-dev@lists.cip-project.org>; Wed, 09 Sep 2026 11:57:06 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24109
 
 From: Jan Kiszka <jan.kiszka@siemens.com>
 
-In our integration, enabling fTPM/StMM implies the usage of a
-U-Boot-based firmware which may enable a watchdog early. Make sure we
-are feeding it while encrypting partitions.
+Fixes the build issues of retired bullseye LTS and allows to drop a
+merged patch.
 
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 ---
+ ...map-nobody-nogroup-as-dedicated-bloc.patch | 68 -------------------
+ kas-cip.yml                                   |  6 +-
+ 2 files changed, 1 insertion(+), 73 deletions(-)
+ delete mode 100644 isar-patches/0001-rootless-always-map-nobody-nogroup-as-dedicated-bloc.patch
 
-Enes, you noticed this downstream already. We have the same issue here 
-as well, just not stressed yet.
-
- .../initramfs-crypt-hook/initramfs-crypt-hook_0.11.bb         | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.11.bb b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.11.bb
-index 49ccc076..7d198582 100644
---- a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.11.bb
-+++ b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.11.bb
-@@ -91,7 +91,9 @@ CRYPT_CREATE_FILE_SYSTEM_CMD ??= "/usr/sbin/mke2fs -t ext4"
- # Timeout for creating / re-encrypting partitions on first boot
- CRYPT_SETUP_TIMEOUT ??= "600"
- # Watchdog to service during the initial setup of the crypto partitions
--INITRAMFS_WATCHDOG_DEVICE ??= "${@'/dev/watchdog' if int(d.getVar('WDOG_TIMEOUT') or 0) > 0 else ''}"
-+INITRAMFS_WATCHDOG_DEVICE ??= "${@'/dev/watchdog' \
-+    if int(d.getVar('WDOG_TIMEOUT') or 0) > 0 \
-+        or 'ftpm-stmm' in d.getVar('OVERRIDES').split(':') else ''}"
- # clevis needs tpm hash algorithm type
- CRYPT_HASH_TYPE ??= "sha256"
- CRYPT_KEY_ALGORITHM ??= "ecc"
+diff --git a/isar-patches/0001-rootless-always-map-nobody-nogroup-as-dedicated-bloc.patch b/isar-patches/0001-rootless-always-map-nobody-nogroup-as-dedicated-bloc.patch
+deleted file mode 100644
+index 6c58c194..00000000
+--- a/isar-patches/0001-rootless-always-map-nobody-nogroup-as-dedicated-bloc.patch
++++ /dev/null
+@@ -1,68 +0,0 @@
+-From ea8f6d883a494430ff7db4ee95a875edee23c020 Mon Sep 17 00:00:00 2001
+-From: Felix Moessbauer <felix.moessbauer@siemens.com>
+-Date: Thu, 20 Aug 2026 17:10:29 +0200
+-Subject: [PATCH] rootless: always map nobody/nogroup as dedicated block
+-
+-The nobody/nogroup ids were mapped as part of the linear id range,
+-with an extra single-id mapping added only if the range was too small
+-to contain them. The extra mapping was guarded by "uid_cnt < nobody_id",
+-but the linear range ends at uid_cnt-2, so it covers nobody only for
+-uid_cnt >= 65536. For a count of 65534 or 65535 neither the linear range
+-nor the guard mapped nobody.
+-
+-Relying on the linear range to cover nobody is unsafe in general. If that
+-range covers the outer id that --map-root-user maps to, unshare punches a
+-hole out of the mapping, and per unshare(1) this "may result in the
+-highest user ID of the mapping not being mapped". That highest id is
+-exactly nobody. This happens whenever the subid range overlaps the id of
+-the calling user, e.g. with
+-
+-  builder:0:65536
+-
+-where the mapped block 1..65534 contains the builder's own uid. The
+-resulting namespace then silently lacks a nobody mapping, while a range
+-like 100000:65536 is unaffected and hides the problem.
+-
+-Map nobody/nogroup as a separate block at the top of the range and cap
+-the linear range at nobody_id-1. The separate block does not overlap
+---map-root-user, so it survives, and a hole now at most costs id 65533.
+-
+-Fixes: 4fedb1ae ("add support for fully rootless builds")
+-Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
+----
+- meta/classes-global/base.bbclass | 16 ++++++++++------
+- 1 file changed, 10 insertions(+), 6 deletions(-)
+-
+-diff --git a/meta/classes-global/base.bbclass b/meta/classes-global/base.bbclass
+-index d96ebef4..8f81ab70 100644
+---- a/meta/classes-global/base.bbclass
+-+++ b/meta/classes-global/base.bbclass
+-@@ -470,15 +470,19 @@ def run_privileged_cmd(d):
+-         nobody_subid = uid_base + uid_cnt - 1
+-         gid_base, gid_cnt = get_subid_range('/etc/subgid', d)
+-         nogroup_subid = gid_base + gid_cnt - 1
+-+        # nobody/nogroup need a dedicated block at the top of the range. As part
+-+        # of the linear range they are lost whenever that range covers the outer
+-+        # id of --map-root-user, because unshare then punches out a hole and
+-+        # drops the highest id of the range.
+-+        uid_linear_cnt = min(uid_cnt - 2, nobody_id - 1)
+-+        gid_linear_cnt = min(gid_cnt - 2, nobody_id - 1)
+-         cmd = 'unshare --mount --pid --uts --ipc --user' \
+-               ' --kill-child' \
+-               ' --setuid 0 --setgid 0 --fork' \
+--              f' --map-users  1:{uid_base+1}:{uid_cnt-2}' \
+--              f' --map-groups 1:{gid_base+1}:{gid_cnt-2}'
+--        if uid_cnt < nobody_id:
+--            cmd += f' --map-users  {nobody_id}:{nobody_subid}:1'
+--        if gid_cnt < nobody_id:
+--            cmd += f' --map-groups {nobody_id}:{nogroup_subid}:1'
+-+              f' --map-users  1:{uid_base+1}:{uid_linear_cnt}' \
+-+              f' --map-groups 1:{gid_base+1}:{gid_linear_cnt}' \
+-+              f' --map-users  {nobody_id}:{nobody_subid}:1' \
+-+              f' --map-groups {nobody_id}:{nogroup_subid}:1'
+-         cmd += " --map-root-user"
+-     else:
+-         cmd = 'sudo -E'
+--- 
+-2.47.3
+-
+diff --git a/kas-cip.yml b/kas-cip.yml
+index 43aeb2d6..53d61bb9 100644
+--- a/kas-cip.yml
++++ b/kas-cip.yml
+@@ -22,13 +22,9 @@ repos:
+ 
+   isar:
+     url: https://github.com/ilbers/isar.git
+-    commit: 436bc96f3869b4a139357afbabb039caf4df7c5c
++    commit: 589bee972846c1f88797465262d1efbbb254d4d0
+     layers:
+       meta:
+-    patches:
+-      p1:
+-        path: isar-patches/0001-rootless-always-map-nobody-nogroup-as-dedicated-bloc.patch
+-        repo: cip-core
+ 
+ bblayers_conf_header:
+   standard: |
 -- 
 2.47.3
 
