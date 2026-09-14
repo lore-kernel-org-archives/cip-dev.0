@@ -1,163 +1,175 @@
-Return-Path: <ovidiu.panait.rb@renesas.com>
+Return-Path: <nobuhiro.iwamatsu.x90@mail.toshiba>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFA81C88E69
-	for <webhook@archiver.kernel.org>; Sun, 13 Sep 2026 16:37:59 +0000 (UTC)
-Received: from TY3P286CU002.outbound.protection.outlook.com (TY3P286CU002.outbound.protection.outlook.com [52.101.229.51])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.2209.1789317473330318285
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49836C88E5C
+	for <webhook@archiver.kernel.org>; Mon, 14 Sep 2026 02:03:22 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.134])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.11325.1789351392780044260
  for <cip-dev@lists.cip-project.org>;
- Sun, 13 Sep 2026 09:37:53 -0700
+ Sun, 13 Sep 2026 19:03:13 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@renesas.com header.s=selector1 header.b=bdWZ63B3;
- spf=pass (domain: renesas.com, ip: 52.101.229.51, mailfrom: ovidiu.panait.rb@renesas.com)
+ dkim=pass header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.s=key2.smx header.b=sEbwma37;
+ spf=pass (domain: mail.toshiba, ip: 210.130.202.134, mailfrom: nobuhiro.iwamatsu.x90@mail.toshiba)
+DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=mail.toshiba;h=From:To:CC:
+	Subject:Date:Message-ID:References:In-Reply-To:Content-Type:
+	Content-Transfer-Encoding:MIME-Version;i=nobuhiro.iwamatsu.x90@mail.toshiba;
+	s=key2.smx;t=1789351390;x=1790560990;bh=zgRDZKuKyoLMVlYvExvhCRQVEKWpvKESL1DVO
+	Sjf+0k=;b=sEbwma37lMiPywXkfKhdTCNEX9s9sIcApyPOVErt9D78MR5iGJH0QuHEoOp/UNoOI84
+	M2oTRwjNVuUApBUiyxqLi+iGt+Nfb+EA02DzPJQmW2clrZRIpGNetkRNpMa/A5eUOFtxSuS/7BNQX
+	31epy971kVw0kidwXmDcBaec6oi8/UepvVEtkgf06FiA88o1G9foJ3PjisJkay5oKshc6pLz1e3Om
+	EGke84PkRkF8YhTVymjVv3JUkNWrCO+MOZG2rk4icPODSfJciFsaEUZzDX4oPkJ4LgrVW5YHqRI2c
+	CcUWzmg+re4aHMWFFiQ2SRpwU8aNzS3U+JTUFojZ37pg==;
+Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 68E2390R1572903; Mon, 14 Sep 2026 11:03:09 +0900
+X-Iguazu-Qid: 2yAaDenV1Dxw9ZvRHl
+X-Iguazu-QSIG: v=2; s=1; t=1789351389; q=2yAaDenV1Dxw9ZvRHl; m=EGmyTeKrmyFTzq+wSwaQAnnvIYl+/vFh+CJHkYV3tEI=
+Received: from imx12-a.toshiba.co.jp (unknown [38.106.60.135])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	 id 4hjpMd0T6rz1xnZ; Mon, 14 Sep 2026 11:03:09 +0900 (JST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dTduwetcATzTXT5ZJCWIST9KcuEP9CacDnsHR0ZhKe95IrGZyaGOm0fep5sd8+B6dik5v2ABpLCY5k3tTxv8VPjXxy4eO9JAdkz7wVTHuheFHxPCg9RGnkLbTatd9hDFL35frVzDE7Tz0zhKE7HMD0Xk2Z9fB0ccbovAMN8vAj55WvThG5BCYVWma3j5RNL29rkoShHYg+UL57cIqeuJWzJIXKp0i7uPajo3ZOCheQ9+QhNHbGYLIlBFvNvrKN2tG3pmB1lT2o/KFE2OgCIk3EfN5iyd/l1jsa1Q05xFlvHP4moW+QikOU44nkNaOEqk4EO/I2ZIwuhfmUfCmUrZDg==
+ b=Wl1xZ+Z9u+FqB253amRAbRSSO3KC2nEFRDlFAfnzZEjYrY/Wd9WeHuqP58uXG+5mEphN3FQy+CrHQb8EJwXsp4PZ5eytUCS74CBhF6o1LCkKgoDnIZvvEYjtkvRStkLdFfGTXzs3OIVcvEGcOvfjORcurFYLIBXCPHH/6dKlejPGCsCO9KGXGcJumwWtNfIj8EGs9b3IKu/FIDNQjLhJQBWhbpUUJKLfMKCwVdz3tegK0Skld0RHLrrBv5P378Ox5gBeSbi+jGAN+UkUctD/DK+HCs+lp4KnkhJb+fu7+gOFODDmTZwF8vSco3rI+WEnZVdN9asTkuimZIXCipPDsA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=87iVhLPDXtkuRhNe5RPCwfs/IA4zzYOlVH1GeFq0GHQ=;
- b=T5cxj36l/4So9J6qmU1k+hDeJYEYYa2c7PC5H7UBNjPcmcxlHWxVpXKDjyI2oRjU8oRZggtIogoWPDIqt15eSwol21QS/urS24kQ/4IxGKVfB/GxV0acWxH68dNH80AT1gXnQEFKuLTxu8yeMZDYE3oY4XajaykkBcRLvdwNcWBdaDy8yvK4ANvywBV8JwemLbBAaY1sBUXgfls8kiU2b1yJoPFkGA1XjF/GyPJy7SgBjm5LDD7N5CKmafBxiLkuUwHHMV6c7VzEaujs+T2n8cl67dgIXx9FCJ7wtRGdZ5gL/mTf15rRWjdgbicOg6N4ikWmCAUWbf5jBMOHYByrQw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 8.62.32.50) smtp.rcpttodomain=lists.cip-project.org
- smtp.mailfrom=renesas.com; dmarc=pass (p=none sp=none pct=100) action=none
- header.from=renesas.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=87iVhLPDXtkuRhNe5RPCwfs/IA4zzYOlVH1GeFq0GHQ=;
- b=bdWZ63B3iBhvT2TebJ0rOIA7N25us56+MLT3xWgHz2V9ejlhMkPMGZ4TJQQEliImH0hVkN9p3Ot+AZVs8JC5e6ZSJ2L5Gcoc4TtDasK/gogvEHYWZ0VvVVuaboAz5UUEhff1vMSFeg0QHoRlFduf/OznLQJOtLR5InlwHEF0TMM=
-Received: from OS3P286CA0079.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:1f6::6)
- by TYRPR01MB15855.jpnprd01.prod.outlook.com (2603:1096:405:2d6::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.12; Sun, 13 Sep
- 2026 16:37:47 +0000
-Received: from OS1PEPF0000D20F.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:604:1f6:cafe::2) by OS3P286CA0079.outlook.office365.com
- (2603:1096:604:1f6::6) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.406.12 via Frontend Transport; Sun,
- 13 Sep 2026 16:37:47 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
- smtp.mailfrom=renesas.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=renesas.com;
-Received-SPF: Pass (protection.outlook.com: domain of renesas.com designates
- 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
- client-ip=8.62.32.50; helo=ejcrelay005p.adwin.renesas.com; pr=E
-Received: from ejcrelay005p.adwin.renesas.com (8.62.32.50) by
- OS1PEPF0000D20F.mail.protection.outlook.com (10.167.240.38) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.428.7
- via Frontend Transport; Sun, 13 Sep 2026 16:37:47 +0000
-Received: from vm01.adwin.renesas.com (DEU-5CG20946WF.adwin.renesas.com [10.226.92.2])
-	by ejcrelay005p.adwin.renesas.com (Postfix) with ESMTP id 48C29300024B;
-	Mon, 14 Sep 2026 01:37:46 +0900 (JST)
-From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-To: cip-dev@lists.cip-project.org,
-	pavel@nabladev.com,
-	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.1.y-cip 1/2] arm64: dts: renesas: r9a09g056: Add DMA support for RSPI channels
-Date: Sun, 13 Sep 2026 16:37:26 +0000
-Message-ID: <20260913163727.77875-2-ovidiu.panait.rb@renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260913163727.77875-1-ovidiu.panait.rb@renesas.com>
-References: <20260913163727.77875-1-ovidiu.panait.rb@renesas.com>
-MIME-Version: 1.0
+ bh=+wwZT56wau4/fBRQIQ1tOcn3ChbubWbFk5KQNmduqpk=;
+ b=CP3uUISvJTjzcwpbq0k1Z8HNLBPKmekbOQbjDaPc+JQJQnF/IYEhqC2wLgcQdWT+DUIUj6zQvNKFb+vVUcc3zuqNQdfF7hDLl+vfbtNz4l3Rx60CzwH8qBxGomjah44IyUonv+ZEhS8w7TzCMgDg2IDksJwxIWCcQCDfgzrmQ4deJFqwWIij2h3l4NPfR7p+wHwzJtbZ5wV6QQJi0G0ZT/TWslM4lnx4e7bLCVx/ZoNOtazDWxYfHbzIL+rwcvPJ88I+2Ab6oov0f51U+VeHiOlsUHX/s7427z6bFaD9tGaxHocl7ruTDvTQ/3UFduVD6F5++zwwXMGWxgRGGPRLww==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mail.toshiba; dmarc=pass action=none header.from=mail.toshiba;
+ dkim=pass header.d=mail.toshiba; arc=none
+From: <nobuhiro.iwamatsu.x90@mail.toshiba>
+To: <pavel@nabladev.com>, <prabhakar.mahadev-lad.rj@bp.renesas.com>
+CC: <cip-dev@lists.cip-project.org>, <biju.das.jz@bp.renesas.com>
+Subject: RE: [cip-dev] [PATCH 6.12.y-cip 0/8] Add DMAC support for
+ RZ/{T2H,N2H} SoCs
+Thread-Topic: [cip-dev] [PATCH 6.12.y-cip 0/8] Add DMAC support for
+ RZ/{T2H,N2H} SoCs
+Thread-Index: AQHdQcUxCFgXCCmlAkqyswnU5cSwkbbJKHyAgAQt9EA=
+Date: Mon, 14 Sep 2026 02:02:59 +0000
+X-TSB-HOP2: ON
+Message-ID: 
+ <TY7PR01MB148189B00035066B9DBA0751FCDBB2@TY7PR01MB14818.jpnprd01.prod.outlook.com>
+References: <20260911081132.11879-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <aqPT_RBxXJlRX4co@duo.ucw.cz>
+In-Reply-To: <aqPT_RBxXJlRX4co@duo.ucw.cz>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mail.toshiba;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY7PR01MB14818:EE_|OS9PR01MB12166:EE_
+x-ms-office365-filtering-correlation-id: 73b7452c-d31b-487d-581f-08df12044d27
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|366016|1800799024|23010399003|376014|10067099003|4143699003|22082099003|18002099003|56012099006|11063799006|38070700021;
+x-microsoft-antispam-message-info: 
+ PCTH3sLC0MKZ8cT+bl9CxrG/2LhLIzd4mDJj7wHueRk4tS4KrkERxMnVjuaOiLhQTU6NMVsViNyFG+uEILhoRhdzmY2q66C4HdU/5+PLRHt5PhcxsqUjHo8j8y1/5kqKLIFyXrBcZ6hXYwz+lQbAnwjXAc5Rz5jl0UGMHDhmIjbVFHYr8Bok3uIV/yvND4N7fAUxRkxuODD5xwoKsn3dPnSTUcPu37VnNsle1dn8bSzriCNJAO6r7ObSY33l7qyLUghsxscsZbVzdz9V2VBYLP0TkO4RZQLWvqAPfYjHnK8Kh9uPY8g/7GbGUChcRDX8rViZWy4odOC3oA28SJH+ors3Czo6rXhodxS4l5n70uVn1s89OYD/2p+3M645qZoXBwoyhyN2BeBjEI7okcur/iwgYaaiJE+4hef9NRMw9pNM3ec5M+smiOb8nNc0EM+6m7HH4taxsQttUgMwxD6N9MKfGYb2jNEs48oed+qnGdi14UZZlZeDaPFOziMWH/82tCfGpmQ+0DUkcx6614WUTU32+19riQOvL81PyVEZo1oUgCkuSawUgvgoV3iLvZO3LKxmFDVuLrcuIltfoi9tlQhIhn5/HKCaygxj4AfldcMIWooCtm8ntSZwYX5B7UkI4M0uPY9+cj8rW90QqwEqEKO9AGs2KP9vKD/oOXMl17+Txg1ER/rk8i+tl9bE32oCOc9QWU8QiIAoBb8PZusfxBtJiMh66wj+xCsmdIiR4Jc=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7PR01MB14818.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(23010399003)(376014)(10067099003)(4143699003)(22082099003)(18002099003)(56012099006)(11063799006)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?cEF1UlB1ZHgvMkpwSEViMXBpNVpHK2d4dFdXdVFPdDlaYzRPYnJJZjd2?=
+ =?iso-2022-jp?B?U1plcmhWcFJpbEYwWUNEeWx4Q3JiQWhJMzl0Mi9xeDVaOFFta0NNbmlh?=
+ =?iso-2022-jp?B?RWxiVUZrNjhRQnIzU2xreWZPeVlXbDNQRlJ1c3NhenFrOWV1a0dKaVBi?=
+ =?iso-2022-jp?B?aUREd0MwVUpRWURHR2dwNjNndm9QOGJEb2ViV0RFa0M1SnNLT2g4UjNH?=
+ =?iso-2022-jp?B?NitxUVZSTGkrdnVDM1VNUFNvMEV2VGJmTVpPU3hjODdoYlR2TVNhY01M?=
+ =?iso-2022-jp?B?TERRYTFjalNNVVVSWjFyZW5LMjIrL3dsLzczcUtieHFJdW1iaUN6Z0wy?=
+ =?iso-2022-jp?B?SVlyb0FRWWgxYkVrQkRWMEZhOHAwaExIakxKcStWd0M3NU5BNkpXQXho?=
+ =?iso-2022-jp?B?WUJqV3hNUXhTczJWTUhHc2VFVmc2VngzeWZncHJqK2FlNGFSNElUaTcz?=
+ =?iso-2022-jp?B?NUNkV3RuVTZPckVQZVFFdHZrdU5taGlzQXN3NlRMWldtWkVOdHppa1U5?=
+ =?iso-2022-jp?B?QURVaGlDNmY3MUIrcVJYVURsdEFmRGc4cGttRysyWXdVN05vTC9GK3FD?=
+ =?iso-2022-jp?B?cEVDWEVyeEpNM0ZqY3ZseVlGRkZETUhsc1dObVZzd3o3ZTNuN0hLQlJt?=
+ =?iso-2022-jp?B?SzZyeDJWTmxOZ3BSUERWaENaK0htNFU2U1NtTFF4RmhGbFRHQkFVbHdX?=
+ =?iso-2022-jp?B?RWgxZVI1YzNpeVlyZlVzcFkyRXQzM1pGR0VDb1FHQlVqNTBBWnRpdHoz?=
+ =?iso-2022-jp?B?WFVKV3JvTjBDM210R3Rxc3gxdnpZbmsrcW11YWhMclprQzE4WVB5KzdT?=
+ =?iso-2022-jp?B?d2JERW5yWjBoSUw5bGRaeGFGUGgyUGd4RzJoVkh1RGlZRmN5aHh4eXpk?=
+ =?iso-2022-jp?B?ZnFxVnRkbmdrRStQbWdFUHZDTEx0TEk5b1BHZWlsYlFvL28ya01yYUZz?=
+ =?iso-2022-jp?B?Q2RhWmU1R3BSQzNaZXZKYVRzaXlVYnY3ZEp3Ymw0V2c3ZkxuVVlaZDln?=
+ =?iso-2022-jp?B?VnErV01qcm44YXFDcUtqT09WSVh3NVhrUmJObjFTZndJYnpyYnU0eUFM?=
+ =?iso-2022-jp?B?SEhLcXg4NTh3ZURRNWJLUnowbk1obW01WGRXUFlLZXMwT2c4bDNhN1FD?=
+ =?iso-2022-jp?B?cDVZMWNkdm9OZ2ZEU1prdm5CRENuc0cySXFEVldITDdacm5NM0lmdTNs?=
+ =?iso-2022-jp?B?WlBySVBlMUpRcy9yMVZBNXlFdUozUHZ2WDVmQko0QVI1Y2drWmljR2RH?=
+ =?iso-2022-jp?B?RklXd09rcmk2WE1veGdIWDF3SmRqaE9yOTBQMkhFa0Zra2lBcE9FZmEx?=
+ =?iso-2022-jp?B?Sk1KS01oak04NUZuRmtWSlVhZFZmZ3RFTit3UldIdytacG5FR2EzMlZp?=
+ =?iso-2022-jp?B?WVRjcWhsbUVreEQydlo5dGdGako5MHNBMEhHT25LV2VpL1dLNTJOeTFY?=
+ =?iso-2022-jp?B?U2RwT3c0UXhac2t5YXcvMFZQbUlJcFRSdDEreFhhU1k4d2hOdm9zSXhk?=
+ =?iso-2022-jp?B?Rkp0T25jQ0Fnc212QTV2ME9PSzcwVUcrYkZGMkpqRGdhTU9SOFNmQUtN?=
+ =?iso-2022-jp?B?S3V2cVhWNkZCK1RYR3RjNUY3QzFObEg3Y0tPTXdqNkFMS0VaLzNhS2Y5?=
+ =?iso-2022-jp?B?aE5WSitwMy9MYkZzaHVlNkhkdlZ3UXpScGg0L05TWXlaWFpsWkcrZTZV?=
+ =?iso-2022-jp?B?QzhBUXlEalJyMXN5Q2VHb2U1U3JpVDIvKzR5QS8xdVJqbVorVTZOT0tm?=
+ =?iso-2022-jp?B?NDZyeDhvR1hQMlVnQ1hhSFhtRUE4eVgvaUxaYTBoQlo0OXhURFVrcU5R?=
+ =?iso-2022-jp?B?MVVTVlZvSUIreUxvd0x3SWRUZ1NmMEpPVkI3L3V3WXNaekQwUGs1Y01z?=
+ =?iso-2022-jp?B?R0R5cTBDNG9LVTRjSDFBYk9pbFhKMnNHTWF4MHVKSmJGUmJRQmsxb0U3?=
+ =?iso-2022-jp?B?cTZBUWJIUUI0ZmQxRkZ3dGhuOWtzMEpmL2E4S0dpTWlTUGU3cU1ZeW80?=
+ =?iso-2022-jp?B?c1d6NisxUWdhTFcwNkhST1JVaGRrNTJrVFVlZjIwa1BhRmc1dlJ1SnFW?=
+ =?iso-2022-jp?B?bHpSaksxNy9obldubGNoYVhTNlRzb0JVeHdSTkJJUUhHN3diaVZoS1E5?=
+ =?iso-2022-jp?B?a1UzeWU2aWlBYy9tQmJHU2xiQTV3Tll1dStOakVLUnI4YndBT25wejZS?=
+ =?iso-2022-jp?B?cGYzRllTOEh1Vm12VWJzNWNHWVBsZnhtWkJrVVgrd0hRWVdZOVlYaFhP?=
+ =?iso-2022-jp?B?a0VudXpXWnV5L2h3WHpaeGthRGJBeE9selRaR0xOYnhSQXg1ZTNSUTBC?=
+ =?iso-2022-jp?B?dThMR2xwbUViOUMvNkE2TjNVODRCTk5OT0Fxb3o5NGRGRUplaVlSZCsy?=
+ =?iso-2022-jp?B?eDV0ZVJETFN6eGVCQUtHUVBQWTRPbENzWG1XalIyUDFIcyszTm9zL3lM?=
+ =?iso-2022-jp?B?akdVaVExRk8yWmpvSCtoV0MraFptT0tqRlQxWFBqaTNzM1cvMVhBR1Jy?=
+ =?iso-2022-jp?B?eXA2MjIrRE5Kc1ZBL2xuek9pSDN4R0RUbXNpUko2cE9FNG9lUkJlUVR0?=
+ =?iso-2022-jp?B?elNLbG14MD0=?=
+Content-Type: text/plain; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OS1PEPF0000D20F:EE_|TYRPR01MB15855:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 0e772bec-3f10-4f4b-6f78-08df11b55836
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|23010399003|82310400026|1800799024|376014|36860700016|10067099003|18002099003|22082099003|56012099006|11063799006|13003099007;
-X-Microsoft-Antispam-Message-Info: 
-	NTOWHNwSj/SMtxyHDKUPypfve+wrPqBzidfsDM4qubeCQbeEKxpUTEAL/Ue1CUb2nh9RPmDkstwVKYuXdeNvKKEXIFtfxRAotA0SvWtY2QFTjgEb+zSnSrMYG+Urs+G7SY66urf5yh55J9y7L+9hG1oQ3+LJ1MENIwpETtmwzrQ5r9agZMhL1THpQsEHDCeQw7A7gR5cdRGLxaXQVuIOsx8v/EcgP34nWZsD0p9BuzP7QPlfOM7k3kGRO0Wjqx/wZ+RlrOirGary39ludiZ38jyO2kdAtGamTV/amZhyh+Qsm11Qc+CJUIQoWhUc9/89aSPGYIFYEno9ZM7ZcaYIK8Hj6IZZCy62uIKsvKuAAVHHfmsnAYwUhyIyYEwEBMOKqU2i59ABUuwAVdQo8Wi4yN1wuGGKGcF4jIeF5s1sCgXOPSSzlTsIdigqysGGO/Ue9tl++p5kDHjYCQB62KQs/a3pJo/MXi/6uAiLhakE+flaeU3VZrX/BEUaF3USieHyjO1GqeqrAjewx6rQ5xPmj7UpygALUph3YIidFL3HMNJ105JAgDXVeyrwDSb6nPNtwg1JLiil2G4qjA9yRUWPUc2F6FwP7ZIU8ASKeCUNGzndV5COsm7EnkVOQfHmrqn/TcPQFlZ/DKMMm2oB/T1sNQ==
-X-Forefront-Antispam-Report: 
-	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay005p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(23010399003)(82310400026)(1800799024)(376014)(36860700016)(10067099003)(18002099003)(22082099003)(56012099006)(11063799006)(13003099007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	n/e5CeRTEqJA9DJMiaG81MDZeAgdknVvfQ0LYvhbYgLDmVUsXGQrFswXAWZa/O0l1dSZN+35+TGxZjdtobVbEG76gxHDmWhUo1cYSyjGu0wJ5LBCccB7dl5AlThuCDjhSQ7VeCYHjS6fO4DlYwQVV67wN4beTKSNZGcWGr19rhB7Z5Lzk1yQgbEtxHwlOTp/SWIFyfUVwEbuGd07SkQ8wtc7/gmnb7QlMFnmnTABOGHdKgcNtg2F2MdpQM4EZyie/1RdNU4G3uCmC44kIg/or5YkgNQVTmnvYq18ZzGYVGhy6y+O5qA9HYziI74cAIX13DqsVchxYqvD8+oDdVKtyYsW7q7wlZqJvwwRoFiVDMnbnBrBZNXU5e53SYZ2XQ3GMkvEfA4iGg9jk3RARFMx7bSEzHwm3M9O8R5/7D3P60DqGjlK609X6p2dxQ03PJgn
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2026 16:37:47.5969
+MIME-Version: 1.0
+X-Exchange-RoutingPolicyChecked: 
+	Khym6raIg9W3WVEnoAXkH/uxsjhTBcWzq/6RTtgs5XuA+4ioW3+/ZUq8UbDR6AGrRCOUvPx6+HYhCGIvwx+nO9zG7SVZOyNNktmxqitx0LjxE33Kc+CFXSO3ck/xwz1B81RlVA/Br8+xE5JQ2cU8TcqNvpw7Jh7XVQ19pRqAccrpu2UPhiC+ENLAwq9hSuKkXOSuzCUIxPljMINI3MBgck3oLvBu2DLfQNitOeMPKTYzZtGmWE2jowhJ0WKvJlXbqEfTrfmDrbmvXXzf1XTu+MW8JfQNbO6C5sqHh0NL8hK2igs0gLw7Hm2gNqyF06sNSWxYpIofcOD0s+2Xkihy5g==
+X-OriginatorOrg: mail.toshiba
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY7PR01MB14818.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 73b7452c-d31b-487d-581f-08df12044d27
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Sep 2026 02:02:59.3357
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0e772bec-3f10-4f4b-6f78-08df11b55836
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay005p.adwin.renesas.com]
-X-MS-Exchange-CrossTenant-AuthSource: OS1PEPF0000D20F.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYRPR01MB15855
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 8DhHzivfCQkkPO1Ngodv5+mAr6gWE9JMX+4LSUThYa3wFZrdRyNU6d9lxZO3lswQKptAGnaYUiw6SIkWzNh76ysRXUEdL6F5RW57nffDOeDm43tbnRE3y33bmKIYN+XY
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB12166
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Sun, 13 Sep 2026 16:37:59 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24159
+ <cip-dev@lists.cip-project.org>; Mon, 14 Sep 2026 02:03:22 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24161
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi all,
 
-commit ce2c7ca2c2acd252c495da0d924f48b70f2f4198 upstream.
+> -----Original Message-----
+> From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On
+> Behalf Of Pavel Machek via lists.cip-project.org
+> Sent: Friday, September 11, 2026 7:12 PM
+> To: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Cc: cip-dev@lists.cip-project.org; iwamatsu nobuhiro(=1B$B4d>>=1B(B =1B$B=
+?.MN=1B(B =1B$B""#D#I#T#C!{=1B(B
+> =1B$B#C#P#T=1B(B) <nobuhiro.iwamatsu.x90@mail.toshiba>; Pavel Machek
+> <pavel@nabladev.com>; Biju Das <biju.das.jz@bp.renesas.com>
+> Subject: Re: [cip-dev] [PATCH 6.12.y-cip 0/8] Add DMAC support for
+> RZ/{T2H,N2H} SoCs
+>=20
+> Hi!
+>=20
+> > This patch series aims to add DMAC support to RZ/T2H and RZ/N2H SoCs.
+> > All the patches have been cherry-picked from upstream kernel.
+>=20
+> I had a minor comments here, but that should be fixed in mainline, first.
+>=20
+> This looks okay to me.
+>=20
+> Reviewed-by: Pavel Machek <pavel@nabladev.com>
+>=20
+> I can apply the series if it passes testing and there are no other commen=
+ts.
 
-Enable DMA support for RSPI channels.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20260303233314.2928711-2-prabhakar.mahadev-l=
-ad.rj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
----
- arch/arm64/boot/dts/renesas/r9a09g056.dtsi | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+I also reviewed this series, looks good to me too.
+I will apply this with Pavel's Reviewed-by tag.
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g056.dtsi b/arch/arm64/boot/d=
-ts/renesas/r9a09g056.dtsi
-index 9a244145c60d..0a772365c577 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
-@@ -731,6 +731,13 @@ rspi0: spi@12800000 {
- 			clock-names =3D "pclk", "pclk_sfr", "tclk";
- 			resets =3D <&cpg 0x7b>, <&cpg 0x7c>;
- 			reset-names =3D "presetn", "tresetn";
-+			dmas =3D <&dmac0 0x448c>, <&dmac0 0x448d>,
-+			       <&dmac1 0x448c>, <&dmac1 0x448d>,
-+			       <&dmac2 0x448c>, <&dmac2 0x448d>,
-+			       <&dmac3 0x448c>, <&dmac3 0x448d>,
-+			       <&dmac4 0x448c>, <&dmac4 0x448d>;
-+			dma-names =3D "rx", "tx", "rx", "tx", "rx",
-+				    "tx", "rx", "tx", "rx", "tx";
- 			power-domains =3D <&cpg>;
- 			#address-cells =3D <1>;
- 			#size-cells =3D <0>;
-@@ -752,6 +759,13 @@ rspi1: spi@12800400 {
- 			clock-names =3D "pclk", "pclk_sfr", "tclk";
- 			resets =3D <&cpg 0x7d>, <&cpg 0x7e>;
- 			reset-names =3D "presetn", "tresetn";
-+			dmas =3D <&dmac0 0x448e>, <&dmac0 0x448f>,
-+			       <&dmac1 0x448e>, <&dmac1 0x448f>,
-+			       <&dmac2 0x448e>, <&dmac2 0x448f>,
-+			       <&dmac3 0x448e>, <&dmac3 0x448f>,
-+			       <&dmac4 0x448e>, <&dmac4 0x448f>;
-+			dma-names =3D "rx", "tx", "rx", "tx", "rx",
-+				    "tx", "rx", "tx", "rx", "tx";
- 			power-domains =3D <&cpg>;
- 			#address-cells =3D <1>;
- 			#size-cells =3D <0>;
-@@ -773,6 +787,13 @@ rspi2: spi@12800800 {
- 			clock-names =3D "pclk", "pclk_sfr", "tclk";
- 			resets =3D <&cpg 0x7f>, <&cpg 0x80>;
- 			reset-names =3D "presetn", "tresetn";
-+			dmas =3D <&dmac0 0x4490>, <&dmac0 0x4491>,
-+			       <&dmac1 0x4490>, <&dmac1 0x4491>,
-+			       <&dmac2 0x4490>, <&dmac2 0x4491>,
-+			       <&dmac3 0x4490>, <&dmac3 0x4491>,
-+			       <&dmac4 0x4490>, <&dmac4 0x4491>;
-+			dma-names =3D "rx", "tx", "rx", "tx", "rx",
-+				    "tx", "rx", "tx", "rx", "tx";
- 			power-domains =3D <&cpg>;
- 			#address-cells =3D <1>;
- 			#size-cells =3D <0>;
---=20
-2.34.1
+Best regards,
+  Nobuhiro
 
 
