@@ -2,50 +2,52 @@ Return-Path: <chris.paterson2@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F335AC88E7F
-	for <webhook@archiver.kernel.org>; Tue, 15 Sep 2026 15:15:27 +0000 (UTC)
-Received: from OS0P286CU010.outbound.protection.outlook.com (OS0P286CU010.outbound.protection.outlook.com [40.107.74.16])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.25492.1789485319649752326
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DBEEC88E75
+	for <webhook@archiver.kernel.org>; Tue, 15 Sep 2026 17:47:01 +0000 (UTC)
+Received: from TYVP286CU001.outbound.protection.outlook.com (TYVP286CU001.outbound.protection.outlook.com [52.101.125.61])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.2888.1789494416206611286
  for <cip-dev@lists.cip-project.org>;
- Tue, 15 Sep 2026 08:15:20 -0700
+ Tue, 15 Sep 2026 10:46:56 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@renesas.com header.s=selector1 header.b=iX/glvSH;
- spf=pass (domain: renesas.com, ip: 40.107.74.16, mailfrom: chris.paterson2@renesas.com)
+ dkim=pass header.i=@renesas.com header.s=selector1 header.b=lKRLXbZA;
+ spf=pass (domain: renesas.com, ip: 52.101.125.61, mailfrom: chris.paterson2@renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Jr3lO94pkaG4aII0/d/njXH23BvFCUdQc7K1JtvrKghaVLpSwucQ2qiaoQK3Ig/4Idd0jtjswlHSxEqbfsHBnkNlpzlkIom1eq21+TCHYhpuxKLUkeStep4fy/fGMRSxwkRbpDifhVf2axEdDz1J3N898ZG63uf1ENMBkJHo+wm3P70Yt/v4yjrPoNKiEvU8s2WhGEA60qfKliY7dd9bl292oRKcuZkAzMExd+6At7SWzaQxhU5s4sULSzxP1Hkcwb3vSCR8RAPSLk4zzW+QsNoom5QvIocw4TZQ0DJgoiD7xaejRICb1TCD5e3SDcj8wt7P4h3BKYX2HqaqXwzccw==
+ b=QpWVyapz7EmfP3uTDm0YQL/5Op+qn6vppyxIBYaUtNpyCvJ2Ck31lCGz3+sibzmvdt+X0y6B01uvv9RmIeqMLQXcex/kmpHF2SZjj7KWEO25l3p+/ENaj0mcuW7d0smmI3PAFuoFpsnNCM/rOxiis+mpw+TpGars99MguB3Xx/KVibGEEqGlx/HX9aIGFL5d2pNq9peI4MRys5vSDs+PyNVLUYrbhe5P/J27e23BelPPdL7sUSf17AJtxvLp4koXYPbAu6SHNWHFVehLgEaTI0IgTXSZ5gogI8N7VezAUCTcIh0U2IKrKlXYh6ZICRLDfv1fa1F1I7VKJIClkzi0KQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Xok2cy47NPALFO4BcqaLb5hgfj49QXZyoK4RgB5sdFk=;
- b=f1GVIWvJVL8csD36/PJ49SfNV62B0g2564e2U6XfpPyDcRNFbG1dLvSrT6UviKtg/SB+jogJsTzv7Z4ngnB08jLiXavUVq5aPgFgyG1e6+TfjEo9kfrJuMZY0pxJnYUlmu/AS4gE8pmJMmT1euprVACRfL0z02zBJAQQAnq6ygm4a6MzVHpDdTiRL/AObMffEyWB9f0nebIYGS8WcAusKm5KFzn17XNUnSC0+9tIzpJDZc1unOdPuxl2s7+U56ESsrWTaM2nJtcCHpeEAzIIycXikgCivcke57B4YzAG+2p3j8YKMcWE6ogRsBWX2DHxM9yMSPrR9wb9vZU7oHHezg==
+ bh=9IQ8JYLaWk4TqfjevKd0zGy/pwaDrf6a6cWhc9DXo98=;
+ b=LOvvhnbPCkC5J8HsChgzieViBiqaJ08mTTUp27cb5QEU5RWzu22hUgPbXgZRytRQaiLRH1vUfl73LV3LrRRLPKODJz3rmgSRq1LZV7vNK6AgmtW/zqvxnFnI534XmUSK9DcNstxZvb2xCI0w+HbvUUIAnxF5gpX/aFqXciVWkfWUz0x6gHnQnLAS9rDIOv3FOnwUlt6gE6p7hq5OYe+MO36GtGttHy7O8xwGsEVSa2AUTbsN2xEaFN9c/ppitbF21gFnhre+4o+CKx22ZNz3jzTqZoyBjV5kIFeFd3VWHPKRv/c0yN3t6pjdiwaczTjMrUt42KLtqkUM02ae3RacIQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
  dkim=pass header.d=renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Xok2cy47NPALFO4BcqaLb5hgfj49QXZyoK4RgB5sdFk=;
- b=iX/glvSHBxmv/c942Myl4QBFJgZjO/xQ+Pdzto2tbrIqAt4pll+8HUh+sSbu7T+0zOoKechoc+2R2nO7IMkpWsz4hmdCemoKdy5YhMVgs+ji1k2rNLj42ec6phpJYfNXJOauDnO2MiH1uSp4HdJTgIdMb5TI6X5rtvJ2gubRymQ=
+ bh=9IQ8JYLaWk4TqfjevKd0zGy/pwaDrf6a6cWhc9DXo98=;
+ b=lKRLXbZA4EXPTbR49YKww45LLFBRDPC2f7Bb3zA/L4JuXYdqHsZIbXVsof+aUetz3sOmVJqo+iq+9jxRAsaLlIFGs6mJ0Yo8w5cpEmhDWD3LzJA7ePOkvQp12mUSSEamTrRMhFgCCk0jP4TYukuJxydkLCQyutVcFIpxJorHPqU=
 Received: from OSZPR01MB8123.jpnprd01.prod.outlook.com (2603:1096:604:165::7)
- by OS3PR01MB7189.jpnprd01.prod.outlook.com (2603:1096:604:14d::14) with
+ by TY5PR01MB18623.jpnprd01.prod.outlook.com (2603:1096:405:3e2::17) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.11; Tue, 15 Sep
- 2026 15:15:07 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.9; Tue, 15 Sep
+ 2026 17:46:50 +0000
 Received: from OSZPR01MB8123.jpnprd01.prod.outlook.com
  ([fe80::f2ff:7635:979f:c31a]) by OSZPR01MB8123.jpnprd01.prod.outlook.com
- ([fe80::f2ff:7635:979f:c31a%6]) with mapi id 15.21.0406.012; Tue, 15 Sep 2026
- 15:15:07 +0000
+ ([fe80::f2ff:7635:979f:c31a%6]) with mapi id 15.21.0428.009; Tue, 15 Sep 2026
+ 17:46:44 +0000
 From: Chris Paterson <Chris.Paterson2@renesas.com>
-To: Pavel Machek <pavel@nabladev.com>, "cip-dev@lists.cip-project.org"
+To: Chris Paterson <Chris.Paterson2@renesas.com>, Pavel Machek
+	<pavel@nabladev.com>, "cip-dev@lists.cip-project.org"
 	<cip-dev@lists.cip-project.org>
-Subject: RE: 7.2.6-rc1, 5.15.221-rc1 testing fails
-Thread-Topic: 7.2.6-rc1, 5.15.221-rc1 testing fails
-Thread-Index: AQHdRRczE16GrDmZ/0qNuQ4l29Tee7bPqEyw
-Date: Tue, 15 Sep 2026 15:15:07 +0000
+Subject: RE: [cip-dev] 7.2.6-rc1, 5.15.221-rc1 testing fails
+Thread-Topic: [cip-dev] 7.2.6-rc1, 5.15.221-rc1 testing fails
+Thread-Index: AQHdRRczE16GrDmZ/0qNuQ4l29Tee7bPqEywgABBpHA=
+Date: Tue, 15 Sep 2026 17:46:44 +0000
 Message-ID: 
- <OSZPR01MB812339A59B91C3C70E2595F4B7BA2@OSZPR01MB8123.jpnprd01.prod.outlook.com>
+ <OSZPR01MB8123B71013F99EC5C0009206B7BA2@OSZPR01MB8123.jpnprd01.prod.outlook.com>
 References: <aqlJxhduleYsXGO1@duo.ucw.cz>
-In-Reply-To: <aqlJxhduleYsXGO1@duo.ucw.cz>
+ <18D5876AF3E5020F.582625@lists.cip-project.org>
+In-Reply-To: <18D5876AF3E5020F.582625@lists.cip-project.org>
 Accept-Language: en-US, en-GB
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -53,119 +55,129 @@ X-MS-TNEF-Correlator:
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=renesas.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OSZPR01MB8123:EE_|OS3PR01MB7189:EE_
-x-ms-office365-filtering-correlation-id: 65cd38b1-5a53-40de-a1e5-08df133c205a
+x-ms-traffictypediagnostic: OSZPR01MB8123:EE_|TY5PR01MB18623:EE_
+x-ms-office365-filtering-correlation-id: 5b41afc3-5125-48b3-bc42-08df13514e9f
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: 
- BCL:0;ARA:13230040|376014|366016|1800799024|23010399003|13003099007|38070700021|6133799003|10067099003|56012099006|11063799006|22082099003|18002099003;
+ BCL:0;ARA:13230040|376014|366016|1800799024|23010399003|4143699003|11063799006|6133799003|56012099006|10067099003|18002099003|22082099003|13003099007|38070700021;
 x-microsoft-antispam-message-info: 
- rCP5dgIY0kozDSi6kx1ZncHz+lSU2vziYerihKmn/e2f4SLJ0kyx1REc6pDG6P2USPQD0JCQN3yoUNToq4mkKbOdBft39HWKQWJnrdaL4ZpOqelm53MovxQfcF0Q132bUFjpsOgQMCVnfOd44VwKSQCRPo86vvgaASU3sCSgtMAMQiywN9JCfW+TIwhGzZe6+wIisDEj3boWzIp5SAYuBG9j8af/QT1CbGnNk09TgYhlf86gnsTbZ6SNSnKgp5X1wU7PMVa2dxsc5MpQQ7GrLA6AILJ1Nlnd21BqidTgmzLL84GNuGz/QbYRt16nj/WbSe3MqDN0+sYMUmCEHRYAJetPKM5b9vgJM2arT2Z5qg5YpwcBoC7D6e/6zRCq491fDLDNEb0B3YpHdZgPG2D4lWwou0tXtw84o/OKUS6oAVxE+HpKDF0Dr1yCQ6rJZ0dEnU9kikq8LMFXLX6uKHzcqY3iBqbIfTTEib1+W8F/J5TzHR4fk0+6qdiIc/CdwSQm1uqnW9RCvalTM0N0u+KLWgWyrmrheD+1+EB7+WuTMYStbgJzts9qlqTs4jJmIcWrfh9RZiPubo+CrHq9/29twLUU+r5cjZQcdEpH39pR1cH9SbtWU8+v2ohPa68hmQciAdqHd4NFFU4NGUde8YyjblQybbyEiVdfiEHTNABeM1M=
+ 1Krxnf1LJVGF7laRiiX3RXmhdx4e8sJXDRmcNWtZngDpIgajWPZBpmBbMG6/3Fr6lBQRkFJHHx8AOhW9HKFZ8AC2aEcizEKlKS7wkyXbPB8jb65EkxtKGFfkM9AGSNAubifk++jY//j+7/Axp9HrwEv7DDxDbTSKlYlX+3Vt/pxJbpCWfLbjG8xXrl6fU3Cn2Q3xhEgOgZWMm2hrr2om0XPdxQlT5IUeUhrILaTgMpix6YJDeH+5cLO/a1QQCwDVNFob5/cyWj/WYinv91LMK/UaYAWRat5WgHsuEJhpCjEH1x4eAtQ57eDKcHbnap/3l1R4gh4HPeka1J22vIm0xSIyElWAZsfd52RaDHwLaXagHYLgIy+mpH7myvPAFW9cfMFQeSlqkL1NSdCYmT6QuXIdADeGal0X2pCGUTWqXr1UD+L/Q9Em16qgT6CZQxUa5Cltvis95NlWv0Kjw0LisvsWsSH11OiykFFPYxRjcHMeGCwwEcuULER8UQtBtI7Eqtu5q9/lVVY3oQy8BqjYmx543LUYO9qqXT1GnBN91vpg6Yv+JYuNrx4V0CwDgBe8eQKFs2g9kRKD99ixq021SG3mw0372HRXTiy+CPPllPEdtmsFDi/MgJ4i7eStkAorgBCAOlMroqDBYDHJNfbOVBEjAheTzluc9TksjWbvV7Y=
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZPR01MB8123.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(23010399003)(13003099007)(38070700021)(6133799003)(10067099003)(56012099006)(11063799006)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZPR01MB8123.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(23010399003)(4143699003)(11063799006)(6133799003)(56012099006)(10067099003)(18002099003)(22082099003)(13003099007)(38070700021);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?Windows-1252?Q?1Q502immcTtGusTLQcs6hKMx3MKJ34efsf3SkOPIDzCIGBmiAcUp1Qd5?=
- =?Windows-1252?Q?evPhp4JzwMHD4SeChI3Zh9+OxNmkfJvp7QAgfgwvrxSr0P2s6Lzo5Cs1?=
- =?Windows-1252?Q?O+RBhzckGSKxWfxgW0ju1W87DNDKbbAwE/rvV4TADHdIu0V45yraXEe0?=
- =?Windows-1252?Q?LUEIXry5PLHYg1payHajCVtpq4hnIPBeweMrExFhF1UOI3kt4LutfQdz?=
- =?Windows-1252?Q?xYNr+T0Ifll++fc/N3wIkUub90clRoHFYvy96auo2z1v6POebF0a9OhI?=
- =?Windows-1252?Q?xQ+QzP1TXpGfGkIZx0bGi7NegVjcmSN9AuYLAsYtTFz9ewMav8r42nb7?=
- =?Windows-1252?Q?AdEFIqsJAalj5siNPyjVbzzB8nnpCqwGvNDSkFquJFmv8LL716kofO9v?=
- =?Windows-1252?Q?ZiWifvpe7w5D6illxOko62vd7g0vOvHc21uFaQDIsHnp9bybuBRJNj+o?=
- =?Windows-1252?Q?gZVU5S0m7ZpExjLelykdUqNWQYw/912pF3y4ktJo9Df5Lw3FtH0Tr9Pt?=
- =?Windows-1252?Q?CaxR17FzP6o6P4Pa/QiyVPV2DJmNP2vJO7+BxnJD7bPKcEtChGXw/K1z?=
- =?Windows-1252?Q?65S0yYBR/eCSFjZLvAEoJkacMuDpP4x+LlGZo0EAtcJp2K9e9Oxa9V5T?=
- =?Windows-1252?Q?efX6RQZJqlwbpLzgCn4tXyOX7ZoEXhDVRslN8+trbetpKK4M+4vetpKG?=
- =?Windows-1252?Q?yRma0NWLhg4P/GYTdPQOGTGKTPXmE/mHH3Sf4JIUloS++1bjFjKNgxmS?=
- =?Windows-1252?Q?fdOP0BVvaE6AXK97bnQ9jKtZUI07k2+A7C/Ki+Sel/ewBL40q1MBAS6+?=
- =?Windows-1252?Q?3uXYjs2MC52DHnwQFJCLPHwEmVK1JOFj5lGb5iW458kLMGN5r0KTaZZP?=
- =?Windows-1252?Q?zKwAtdGj+KmPKdSGfDkQBc01oZPku3hafGNq1l6w81yqK9zkoY0jit85?=
- =?Windows-1252?Q?Oo9D7yg1XLTSVYctLFpDofLO4tawsscyGNL7QOHDdd5mxwIw7GCqL6Iy?=
- =?Windows-1252?Q?xhLU8C1Q3DkyVSypmA/MGRE32vUD+bZZUjWI1jpA8bLowc781vFVBfw+?=
- =?Windows-1252?Q?13hq/a7saDD/8C9MZ+ASrae9U2ZfU8VYXCF9q4r10RT7KjF+9C6pDAFB?=
- =?Windows-1252?Q?rjcBaXx9z5uYP10/d3rdoKElQC3V9R1vAbDg500NzB5ekebPQlrTp8Kj?=
- =?Windows-1252?Q?97eXeYzAv3+ckdGL6DVSjSJzY0F6eN6iqkNZJPjlFLqICsddwAgETpeM?=
- =?Windows-1252?Q?LiXvK1zIVDGqHaz96/PfDY8pu+dUGzDmOBPt4QbQIU305fqla5O2i219?=
- =?Windows-1252?Q?/knjhoMvU7nYAS4deAhTr+jECCa6Sq2vYlC6guXpTbtPLQGR62FiTVWD?=
- =?Windows-1252?Q?fZXhpgPMC8wUVgg9bw73q175YOHRZyTo0csuCWB1obS+K85J4KDk8MZQ?=
- =?Windows-1252?Q?6IL7z1iyVr5SJtrWNKdjeDs6kYpdUfgMVGPJsat09XFwddyQXRuUfIqH?=
- =?Windows-1252?Q?Vaf4XDMMxbV0LImil23fWgAZ+i05dVRFC8FUqFr/nQRHlfWk9gNrjZEK?=
- =?Windows-1252?Q?9gYSSwHgo60lEe2cbsr8tE+sclvU0Z6fGWdKticp9yiI2aREgW+gEQcN?=
- =?Windows-1252?Q?EllYFaayTEhB9mjJCkDNxrfGW5j+VoQCn2YuX4pCo8nwlLS6kU5D95Mi?=
- =?Windows-1252?Q?Zu/v/vFPJkg5vFVqaQMNd/H4YsOPSnDiqNU0vOMM20tnd6PQ1vec3xek?=
- =?Windows-1252?Q?SXMtgs0luPoO5btHPWiuzRvI4pbCi+PgR3MVQwiOBkrkiQUv/Y0ULQ4e?=
- =?Windows-1252?Q?e1PfifRGmjhlgfdRr8IVB0OqkSTbbBrj/MrOqo3h9tst68U/5BQtHYzZ?=
- =?Windows-1252?Q?aH9Oz4zrST5JSA=3D=3D?=
+ =?Windows-1252?Q?dbnjiNxQqqnIeEftUvOPPY5UfPFgclkWPWF3LPwAOd3oydWJIj5qyYPQ?=
+ =?Windows-1252?Q?CmyLRPWAja2QBac6wr70yTppfRPlHqa3M6LMOioLS/PqI7NQ2HWqsbS/?=
+ =?Windows-1252?Q?l0gnwKgFTIXJ4cyMpo5W3rtRcHvBOwV06mL3OWHajH0hP6REGKhSPKpD?=
+ =?Windows-1252?Q?Dw4FYgYcuvsTaDMtnySAFIddZdFl6mxScaYhu6wirpcOiPuuK5/Gio2I?=
+ =?Windows-1252?Q?aguInVSp+dFsjBs3IDjLdRCW7b2Xl2ALPOVxoyOtb7Tvv7EUaJpiOceP?=
+ =?Windows-1252?Q?sQnwM62tzCZLeXvSB4RtCwJK5N7Mu378FMZdbZUoGsP8EL1Rcb5zDBdb?=
+ =?Windows-1252?Q?/kxXi4ZFabDazvV1o7jOXqAbg7t2iv2rinjsdJAm+1DXDY5P3wPmgTDg?=
+ =?Windows-1252?Q?AXp4YxzVDwNK7TVNKpOdf/EeeZG9w5Jg3d6vw1GovJhY5kh1xAmN2M6z?=
+ =?Windows-1252?Q?3CTCzfMq5/gYxCbu6REyGSLY3TAXp9iUioKxzPAYsJHFefGjKQBetCET?=
+ =?Windows-1252?Q?ZE9btK/4cs/HB8BzbeT4i33g/d2JbU/7hNznubQI3Lbq+faW+vtsOb8O?=
+ =?Windows-1252?Q?i8Cv61tS6gk9lFrMVUQyCVLwR5Ix6mUxozmRvlnz4mTZw2JUwh29tMCh?=
+ =?Windows-1252?Q?xLTB5haOFs46A9NzYTU/H58Saoluob1gDPLX01fQaVXlHdHFxyioyRlI?=
+ =?Windows-1252?Q?bnD8J7zEko85i9WrYIl2y6akepMaw0OE8Zs/XwO2YutJ6C5rAassnphI?=
+ =?Windows-1252?Q?GnNgPFCZJJS1M3K5JoeEQ7pHxCWfTTr9JBwp/tIV1EyO3cQB9rVDHOVB?=
+ =?Windows-1252?Q?HSyzT37mXVNJp8ls0cY65jv51Rb7e+kppfDpmXZA65YhFr8s//tLp23p?=
+ =?Windows-1252?Q?kJPIJTXzdtFRtNh2yU6iM3ER0JhEuMHhtwZCP5inof9AxxLl37Ip+J/z?=
+ =?Windows-1252?Q?EOy2CjULFWs6T/OPd5muPFC2em85hEUSd1PpwFfXE0gW0AyzA1cfJLQM?=
+ =?Windows-1252?Q?TOtOPNuXh8Ol+fYXJDoiSC2Z7+ZKaWmmQAowTqBXGBPe98sXUxL/epuj?=
+ =?Windows-1252?Q?/KG5ucTZmw6maziJCEP87pWId8sB2MJDu0YHyrzVQA07Z0jRwpu1896e?=
+ =?Windows-1252?Q?jimfPPwSZzfR9uhba0t0Pwf9VHG5BzZy2gDr/yMXEzzXquZvWleGAVST?=
+ =?Windows-1252?Q?qYdfLtecxRFqFZtEmPqoIPoutobdjoYh7kHO0B8NgyzzeGaYUinHVzk/?=
+ =?Windows-1252?Q?cdS189N9meWQm6e6E05O2NLpkL4YhiZsPDt7ttUbRDS0fDFSKwCajo6P?=
+ =?Windows-1252?Q?nNwt/hUTVQZ6FHgge3Qy+vDzaQFl4fFdDb3tPNwZRagjol9n+iI1kk4l?=
+ =?Windows-1252?Q?noxcPuUscPnhuepaMxd5CbW5FMw0jayQ7bYLsRr4n9mwjpykrRPVd+g9?=
+ =?Windows-1252?Q?obkKz/GSiNgWiDcOQpzjx3fWQP0/GNnU7KeuAk3Bd04b/YKJkQNG2hts?=
+ =?Windows-1252?Q?ACSW48cbSyxVA5xG+Nf80dzsBon+8kPE96KtSPOIiQaW1OVN76Z2KVLh?=
+ =?Windows-1252?Q?eLeHZRVFJqYTnUEjM1ux+AMbn0lHbNcm1wSanp1UXGNcus6QemgmbLut?=
+ =?Windows-1252?Q?gkhCQ8WaiFiRKdzgZyqoR8QTMD+Pi2ZTE9woc+xVfQCrdU1zPhe0Cuhj?=
+ =?Windows-1252?Q?RiDLyijHz7Yeeaxvl2T58Cexb5Ps8ENF8VU5tB+EsWnqRBr/UaNKyv45?=
+ =?Windows-1252?Q?3tRDn9PzwcXWRfUdoHtnTs9PmZZvI5WqPY8bHizc8HmjEH8qXnSPNPC/?=
+ =?Windows-1252?Q?HlzTQlO9lPyapuOrla/VBONRbTvHKiQX0iaYE+I9GX/SRiaSdkAKSlN4?=
+ =?Windows-1252?Q?18lzROZ17SSMMGybdU8Zz0aPA4BBnu0D7ts=3D?=
 Content-Type: text/plain; charset="Windows-1252"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: OSZPR01MB8123.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 65cd38b1-5a53-40de-a1e5-08df133c205a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2026 15:15:07.1651
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5b41afc3-5125-48b3-bc42-08df13514e9f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2026 17:46:44.1951
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: WgSnHjURNHWBQbkuhymkuzljACyTFPYTo2U4oKyyB4HzBCErD41ZtKkpU8UB/cw9lOnSjolyj6SNn5717SffejAcBoXJp9LJVlqL3nTd3oo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB7189
+X-MS-Exchange-CrossTenant-userprincipalname: IiMyVY5MZOIn2ktdmxMfjOVvYgvhDviYstqnpoDnLiWhm/QQzrgwXhXOa5N2kmW6oQwPihazLk+ATHiqRlyVkxfzvJVznQ/zGO20lnCkdhI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY5PR01MB18623
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 15 Sep 2026 15:15:27 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24191
+ <cip-dev@lists.cip-project.org>; Tue, 15 Sep 2026 17:47:01 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24192
 
-Hello Pavel,
-
-> From: Pavel Machek <pavel@nabladev.com>
-> Sent: 15 September 2026 14:36
+> From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On
+> Behalf Of Chris Paterson via lists.cip-project.org
+> Sent: 15 September 2026 16:15
 >=20
-> Hi!
+> Hello Pavel,
 >=20
-> I'm seeing testing failures:
+> > From: Pavel Machek <pavel@nabladev.com>
+> > Sent: 15 September 2026 14:36
+> >
+> > Hi!
+> >
+> > I'm seeing testing failures:
+> >
+> > https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-
+> > /pipelines/2842909542
 >=20
-> https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-
-> /pipelines/2842909542
+> The history of the failing test job can be viewed here:
+> https://lava.ciplatform.org/scheduler/alljobs?search=3Dlinux-
+> 5.15.y_cip_qemu_defconfig_5.15
+>=20
+> All tests after 5.15.221-rc1_270d4b1b8 have failed.
+> (The pass at the top was me resubmitting the latest pass - 5.15.221-
+> rc1_deded5764)
+>=20
+> So, to me it hints at a kernel issue, introduced in once of the 5.15.221-
+> rc1 force-pushes.
+> Hard to track the exact changes as it looks like rc1 got force-pushed
+> three times.
 
-The history of the failing test job can be viewed here:
-https://lava.ciplatform.org/scheduler/alljobs?search=3Dlinux-5.15.y_cip_qem=
-u_defconfig_5.15
+That said, the timing is very close to the qemu version upgrade in the labs=
+, so could be related...
 
-All tests after 5.15.221-rc1_270d4b1b8 have failed.
-(The pass at the top was me resubmitting the latest pass - 5.15.221-rc1_ded=
-ed5764)
-
-So, to me it hints at a kernel issue, introduced in once of the 5.15.221-rc=
-1 force-pushes.
-Hard to track the exact changes as it looks like rc1 got force-pushed three=
- times.
-
-
-> https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-
-> /pipelines/2842913623
-
-The arm qemu jobs all seem to be failing since the qemu upgrade on the lava=
- workers, e.g.
-https://lava.ciplatform.org/scheduler/job/1508639#L146
-qemu-system-arm: unsupported machine type: "virt-2.11"
-
-I'll work to fix this.
-
-
-The r8a774a1-hihope-rzg2m tests are failing because Linux v7.2 dropped buil=
-t-in support for the Ethernet driver that the SoC needs, so it can't mount =
-the NFS anymore.
-I've now dropped this test configuration.
-
-Kind regards, Chris
+Chris
 
 >=20
-> I suspect it is gitlab problem (and not kernel problem), but those
-> usually clear with retries and this one does not. Could someone take a
-> look?
 >=20
-> Best regards,
-> 									Pavel
+> > https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-
+> > /pipelines/2842913623
+>=20
+> The arm qemu jobs all seem to be failing since the qemu upgrade on the
+> lava workers, e.g.
+> https://lava.ciplatform.org/scheduler/job/1508639#L146
+> qemu-system-arm: unsupported machine type: "virt-2.11"
+>=20
+> I'll work to fix this.
+>=20
+>=20
+> The r8a774a1-hihope-rzg2m tests are failing because Linux v7.2 dropped
+> built-in support for the Ethernet driver that the SoC needs, so it can't
+> mount the NFS anymore.
+> I've now dropped this test configuration.
+>=20
+> Kind regards, Chris
+>=20
+> >
+> > I suspect it is gitlab problem (and not kernel problem), but those
+> > usually clear with retries and this one does not. Could someone take a
+> > look?
+> >
+> > Best regards,
+> > 									Pavel
 
