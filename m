@@ -2,50 +2,51 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9133EC88E53
-	for <webhook@archiver.kernel.org>; Tue, 15 Sep 2026 08:35:13 +0000 (UTC)
-Received: from GVXPR05CU001.outbound.protection.outlook.com (GVXPR05CU001.outbound.protection.outlook.com [52.101.83.49])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.18681.1789461305933498401
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D279C88E53
+	for <webhook@archiver.kernel.org>; Tue, 15 Sep 2026 08:36:53 +0000 (UTC)
+Received: from DUZPR83CU001.outbound.protection.outlook.com (DUZPR83CU001.outbound.protection.outlook.com [52.101.66.21])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.18697.1789461409004151507
  for <cip-dev@lists.cip-project.org>;
- Tue, 15 Sep 2026 01:35:06 -0700
+ Tue, 15 Sep 2026 01:36:49 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=R8ojH41V;
- spf=pass (domain: siemens.com, ip: 52.101.83.49, mailfrom: jan.kiszka@siemens.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=bHv7vxD8;
+ spf=pass (domain: siemens.com, ip: 52.101.66.21, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OGKQcYgpjsmNso/qcTfr9uhPqigmRjfCTjExIbSIyUwAODj2zHVbEjm0xtAkWU42o63SPCz5gN4Xsdf+//fI7MatvB/4QmccqAxk37PoGlaO50csr/F1Sj+1mJz7ER+VlfJlngWULjlJViVZxhR3DD84jQUBHxiYiZN+BmqiLgUUjU4kzLaBM8CAWl/ohrWYTkz1fQqPODzH5NcunKcfCR8VzBhOr3FW5PvstYczXiAS/2Xl12vncrTeCoD+ZWuQsGSDEeKI3I82baa1D8HGfvdO1eSLs+qQt/2Fd4Z4bIDnVxWAMCBlNAsIBXJLoz6TPHLwlu9/8Cd9RlUBXqsYQw==
+ b=oim1J2upv0qRiVAYKOJAJn3yoxPJARmr8KmKsTtWE5p0XbfkXxOguVwPROE/8UMWsImTYfU7+bNfyjv8lKoCzN5zqpRGN46c951Ub5ERiwdOjQ8roZcDxvuzsBDNjO/bIs7HmN9ujEsM2fIaNqcMRR16ypph8FkhgjR57JMooxQYgwGqDawLh8xF3ScIekDuFqwoyT2tp8vlJH6RF0HaliTJJkKti0frjkc7BJ15HR5q1IbcXI+Ui9//IytBndDTWAS7MBd7LF+3qLvuiMsuFZiPqaFZuGQyclOGAFoaVNKryPVG1LIAE0btW4NVnXj8GZ2F3hyh8fIBkct7D3LOrQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FzVzUG0lw4AqMsSINEhbl8/b/7CNiDG8BbajBsvbMeI=;
- b=VU5Af3xOAjbYZDHMpwnhuYmYi+M3gVAGIiMTTH9GSOSx7cuXL6xo3g1mxSxdqlpJpbkmOdeS814p00ttQ5v/PCxSgOjVXQfOBz6uIxDW+bBfxuj7I37tuq3sBLCvOLq2G+/yepKWg9ElzSQpeLMWILWNLnKrHuykS8bZSJyIhpkkPJmdvwgeomasm6B73ZdUltOI5IgnDcb1pzrrA1h4QDfqKufwo85+cd0JqchrfFzDSREuYCyk7ocgyW/QuSwi8PO5A5xYizXJVxhf3xDrUxN57s8jW0O2zRxeGcUwfqqOuKBJCbfDA9bOL53XVEQ57DyELG9Eevs4HlufmGsgMQ==
+ bh=vLr3+D9zzfAgciu+sycrmErz1I6zQg/SMcdE3N/asRE=;
+ b=ITVBL1H4XMuV6y+vBtIedYbLi2/bAxwCE5+CQh6OEyJ8uLsdS0bDrEYiEAFJJWDB9cfAJx+Z0tBs/gMwOm+NHrliZi8Hi9d99+IJgqkPKeV09+z94sufBovKiEQJLKEKa5hbxKgjT/5BCiCv/+uTOPzXr7eqq5SEZvdtdZC3zzxFqRG1Mei7bz+1eRmaXYtnm1wV1Ou+UuKSP3wYwFKcAlHCYGNfSLil5xHUniP0V/K+4GKOc7up5uDvCGxkPACOMDdIyA36oSJI6TWOmi2IEBBqhRkkMjlkQrH5AwvS9DkD/S0sNWHFzgWxDqRvMfXklQkwTKognvVXMbIOeMMNrQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FzVzUG0lw4AqMsSINEhbl8/b/7CNiDG8BbajBsvbMeI=;
- b=R8ojH41Veh47GuPewXY167i2mhKXB9SF9TJ8UnXyFC792iqvmmYuo3xA6h1XuLIX3hC4dxyXBYY8g/DiHRc/IgfV62shI9j0UoLTevOgaDNWgMPdpoGK9I7nJUXC7HpNhvR0XpwGbLrA8pDEEi1+/0NlBjoo9FZjYmyqlwA3QfM771ddzykXu31fTnNiLpbbvw5Nd2MDgbkUvMhwr+KuJYKD9wgaKotc5b6s/rat57xzJuDKgta/ScLbUBMiA2JUskwou9kjNRvZ+8oF8/Ockf2B42cLp58Y/Xf05nf6HQtIr90K3TTVF/CLacQGB8rtZgsOlxdPmICgpdvKCx4MwQ==
+ bh=vLr3+D9zzfAgciu+sycrmErz1I6zQg/SMcdE3N/asRE=;
+ b=bHv7vxD8cqZ2NJqwBc0iMyRX3FwTKnkycRtM10LpeahMfzq0tUno4NA/lvAOyZL54Zt09DNkX10SBYd22eRjFIg/O0ooEICXmIXmx8O51nzbKkvea5lDsaLalc8g6kZusPm9UAbJIliMhkY9D7YqrHIGBErVcGi6QXO+36wb8vFrfYDroi4WL4BK5FEGmPG71np3PNa5oK6zDA3Kd8w0bvTh8SH4sx3tgd9zyvdD8FmZjRQ2NJ28h8t9mohJeXTu0cf/+7EydQ5i8s5ANW7PcoxMi3px1TXXt3h2v2e4natX3xbO1GMH6Xls9cJLeQXZQmofJ22IQKO0PJnQ2n4clw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by AM7PR10MB3779.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:178::13) with
+ by PRAPR10MB5275.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:295::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.13; Tue, 15 Sep
- 2026 08:35:01 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.12; Tue, 15 Sep
+ 2026 08:36:41 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::be9f:e8ca:ee9:83e1]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::be9f:e8ca:ee9:83e1%2]) with mapi id 15.21.0428.008; Tue, 15 Sep 2026
- 08:35:00 +0000
-Message-ID: <a1cfc8d4-5fb7-4f75-9600-92ebd7dbbeda@siemens.com>
-Date: Tue, 15 Sep 2026 10:34:43 +0200
+ 08:36:41 +0000
+Message-ID: <edf7e34e-a584-49a0-9b09-0bffeb2a494e@siemens.com>
+Date: Tue, 15 Sep 2026 10:36:40 +0200
 User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Add SECURITY.md for the CIP kernel
 From: Jan Kiszka <jan.kiszka@siemens.com>
-Subject: [PATCH] Add SECURITY.md for the CIP kernel
-Content-Language: en-US
 To: Ulrich Hecht <uli@fpond.eu>, Pavel Machek <pavel@nabladev.com>,
  Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
  cip-dev <cip-dev@lists.cip-project.org>
+References: <a1cfc8d4-5fb7-4f75-9600-92ebd7dbbeda@siemens.com>
+Content-Language: en-US
 Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  xsFNBGZY+hkBEACkdtFD81AUVtTVX+UEiUFs7ZQPQsdFpzVmr6R3D059f+lzr4Mlg6KKAcNZ
  uNUqthIkgLGWzKugodvkcCK8Wbyw+1vxcl4Lw56WezLsOTfu7oi7Z0vp1XkrLcM0tofTbClW
@@ -89,152 +90,161 @@ Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  qH4kDzsqKX8zzTzfAWFxrkXA/kFpR3JsMzNmvextkN2kOLCCHkym0zz5Y3vxaYtbXG2wTrqJ
  8WpkWIE8STUhQa9AkezgucXN7r6uSrzW8IQXxBInZwFIyBgM0f/fzyNqzThFT15QMrYUqhhW
  ZffO4PeNJOUYfXdH13A6rbU0y6xE7Okuoa01EqNi9yqyLA8gPgg/DhOpGtK8KokCsdYsTbk=
-X-Mozilla-Draft-Info: internal/draft; vcard=0; receipt=0; DSN=0; uuencode=0;
- attachmentreminder=0; deliveryformat=0
-X-Identity-Key: id10
+In-Reply-To: <a1cfc8d4-5fb7-4f75-9600-92ebd7dbbeda@siemens.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: FR0P281CA0006.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:15::11) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: FR4P281CA0084.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:cd::6) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AM7PR10MB3779:EE_
-X-MS-Office365-Filtering-Correlation-Id: 134df3c9-19dc-4940-14e7-08df13043b51
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|PRAPR10MB5275:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2128be39-b8a2-42ab-d892-08df13047755
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|1800799024|23010399003|366016|376014|10067099003|6133799003|56012099006|11063799006|55112099003|18002099003|3023799007;
+	BCL:0;ARA:13230040|366016|376014|23010399003|1800799024|6133799003|55112099003|18002099003|22082099003|3023799007|11063799006|10067099003|56012099006;
 X-Microsoft-Antispam-Message-Info: 
-	ADDhEFY5puOzuJp+QiWzYdOXRVOIUJJnYAhzIYGyRlOP5JEZ9OR/10//WT9SVTIFRrpgZ3ZjL2qZ+CHNekUT3zjWOE/XnA40PlKIxa1ckfHqci1iLu9gc3n+sbEK8w8Oz4sxBbZpcbzi0J6KoQXJvQtJISlu6HWWVRamDLTppC3qL5FGG/bHK9yHQIC4iLN05V8eFPynipep6kCijUffh7Lzh4sGcOaO345gfEwz7mnygXQLPO6QH8z7Ie6gJtD2yPbUlK3xVhpdWipii1ZnBka6XyJS7xngbw0uy83IpdhQnJBZeSXzoymDEHCj3D5oSlHzuvJPu88o4LA2OBUbnRlweBLX3kGLDj8nNX8ULsLUmbjBay20oEkkxOyi8vGsjndb9ce51kfQrgeG8GzfC75Nh4ik2fbfMxXbbo/RyOaF884GjYqfPudDkSTXa+wimjPLw3zzR3Rbf9Swl9yzAsSC4xmBKzizbng9pV+h22WRxXM94tFThDJX6ByctS1ucCdY6G7pc7pZPdfoUu1M41fLAc9C0kLg0VEt9SkDUVmcl3DEuTx3lGLTBx6VjEqZOjZ7phVJJ8mp3uOXwNYu5hgBIJ6ar2tpB/vruyf65wFrGivMzhD75T5yVcc248NcOUw442qf9fADOGa4CZBGNaef8uWNTs7QFrDGmtnjiYk=
+	X6xCuDU0w2YrAy44NJwsv3q757g9I68K/6ECGJIaP6vR0f5Erwx6tzNq3EVNGHd/or3zKHB6Z4Vxvd31zWecvPK8pTfl1RaaERPvyl9F95YpLfDCHKoWbsPuFEYonsMBzlE8LCROyJsIRTTMbakSQInNAzj4DogLxGpnB35M7aQw9tNRfuijFtASedHWt15vNIDMDwvgkbUYB2+BedtsdRQTkvjpnAae32kectubOWAGiYRqa9nfFMZ70OEZTdJ0kMI3z4BuB5ZLzX9BeyKC9wzwKA4rDsIaXTYxuAnH/LZvg6IjBad4cRdcuLj8m0zoh41Wd9IsqokhhQxtJG2oII8IebUgNNJcWcGyab8UzSrXGMvDPEjz8dboigEbwrJwqRjTFVXlYWOaWD2EbNYpcYV2X+gJykPe24//J5vRQzcg/a1upt3FyPWrf80ofWJg9adJTjS8nWVXBnYbgC0YRTmm4BkcENtj/Dkg7oJk2nyN5sR6llFMhIVaOJ//rUuBMgonW9Xdtqgg/DSlNnHfCzqa42gz98ezhHaEbr/F+NLc2wAqkcgpQe7HliLAvAU0+HlfNWHeg3+RuLzLbxPuygp4iKHfQ/rWiUPYczHC7OkzkRJwEDDYG+wueB4XKpM611uVO/XR/m8cNwkaCD3BmUD0b7Dl2zU13ipT6ljjYjA=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(366016)(376014)(10067099003)(6133799003)(56012099006)(11063799006)(55112099003)(18002099003)(3023799007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(23010399003)(1800799024)(6133799003)(55112099003)(18002099003)(22082099003)(3023799007)(11063799006)(10067099003)(56012099006);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?02le732M+STKtmQn8I8zpTseVZ9AlwZbhv1KmeVQaRB6X67RB//KV7Zm0jE1?=
- =?us-ascii?Q?laLX5uRVMT7WQgkuvpUjLRQqV2B0ZCexVSL8epXn6qrYHWiva39AUb/FsDGx?=
- =?us-ascii?Q?ZAN62kNtqeioPeZZ/YVjPghwiuv1oqNNKN3XKUe0YiTh4FSt4gbq1LvAWb+g?=
- =?us-ascii?Q?OoLz5IMOCaemGF12Dst0gD1o0K5HHlxC3PvbcJDlNz/5astyWxhtsQKbNZGS?=
- =?us-ascii?Q?C5qXIpJgMELfLHNc3Ij3osZZKWT4hBHCyBo9phJu6OkDNJaQYexKc5dtRmB5?=
- =?us-ascii?Q?FU6wKpw2k3jtCjQS622dWqApbrGPiH/UWB5FsreoM5fS3C5Xp/2rixk/IyXR?=
- =?us-ascii?Q?93vopbm8Ch8E0no/nvaze8DXjqlZOqHcIZySNTsUBcjNZ7ZiwBKSo9/G3jbT?=
- =?us-ascii?Q?SEXdsMmKVLPXVjpMwuzPKaBAYTLlHoAOEAQPybTj+1MoXkrJk2dK1MJX5+oK?=
- =?us-ascii?Q?wFVztGZkseLWs53QVoeDe8Ms0KyU9+JiJqZPd1KG8IS74VgL63d1+RsttMbH?=
- =?us-ascii?Q?RM4y1PyxXCodpvHwwVh/yWQ8tdfakgNpvZ3uE7XCM1IsKGrVAVUKdHznWqrv?=
- =?us-ascii?Q?LAlRAbAcP8E2fhWbOz4NaFt91J6wSovbrxCIqGQDm/nXO249mUAcbmrNRfMu?=
- =?us-ascii?Q?emIloq0FJ2/rMkfbFvtByRSbFJZaKGyeVXRPReOjmoD+CSRFyPWKI0KK9048?=
- =?us-ascii?Q?1fTPxJ2bmy7vbofVO1WA6DE7Cc19t/ej0VSV2/PnO2qS9b4/NEMWyI3Mde0S?=
- =?us-ascii?Q?1BGMgQb9KQVqcqU2EcCN3DzBEKEEco7nZbQ96N1zKcjnDllTJaYEXEYkZcEH?=
- =?us-ascii?Q?7ZoSKB9MrYxyPJabSVCyyowzjPRRFEImezOsr0eQn19RvZT3KHOJjf8FBm4i?=
- =?us-ascii?Q?h7e4vAnZRb+gAUQV0T574EqGRlehdJ9YtqXIvObpCdnpHFmkt0AU6fRI5FNq?=
- =?us-ascii?Q?RVxGjnJ/PyFJ5KVEc6anLCrEMUsH60RUynucE3Re8wnVOpSOuD24Gxn+FzGG?=
- =?us-ascii?Q?/nvJPpkFiFqg+/550z2Mh2eRLQ6HR89F2aRVHA9WfncWRffIwdxFF90O7PgD?=
- =?us-ascii?Q?RBfiZENBgZgrtincUBSh1u3aA/w9w6yrsy0Aris/XDY9aHKGAiH1i2w4Ym05?=
- =?us-ascii?Q?ZyU3nXnIZHWZT6rZyGawL2mcb3tAVQt9yQ//rGS1eR9liEHKlp4F/rGGBM+J?=
- =?us-ascii?Q?b30/yWohOoEfe34nhCKh6XQrRafUw/HZrZ1Ys6Soc5+t+6GxCOoCixq+PWjg?=
- =?us-ascii?Q?dyHtodoIPRdl/2s+lDbwADBq5AEtIbCR1nARiAz3boHyirInbXOf8g+D3mH5?=
- =?us-ascii?Q?kCZKEzkllV255+Pgd+BPnURIRWi+cOqST1E1DUznu0qBa69XIohExJcQoQCc?=
- =?us-ascii?Q?MFIsvKhjjaJ52psk+xYGe32AuNvlii3sCiXVZt/xhXhncskfhxantdxDIOS+?=
- =?us-ascii?Q?T47JbdJAFWOlufUt2lKQM6Nj5FTtlezxiJf83rjISkSbJNOSx0HLGN/ZgscW?=
- =?us-ascii?Q?7T3bNaH7e8+z54kQWKXgM3s0OrEO5JsxFgLoZgJZvZKz0ABpI3ncmUZLi6KJ?=
- =?us-ascii?Q?gyZccl+pA44crAlc1vDZM1A69NZeXir19kar/uvqauns72q4R7SQHiaZvv5B?=
- =?us-ascii?Q?cY7qwAmP6Nibd1S520mrjYt2k6qZyf2oItnm991csUQJKjA/LuGBuNFHj6ah?=
- =?us-ascii?Q?s/7o4GZbo2xdBQtyywXOW0xPFC8yy8BhsFdBOBuzrdpEH1u5Pr5fu0fU6yF3?=
- =?us-ascii?Q?s2/a7AsJEw=3D=3D?=
+	=?us-ascii?Q?GWk2imW0WZ2sQ3rhPhy/ay9JYcZF4BUU37dPpI7RjlOQtuPD8Fxdp/mVQCpp?=
+ =?us-ascii?Q?bkvD7ThhFK1e1GcC5NvwdvBcqv6Xsyt/tviUHDblXLogmnjWWcvMkDn0Tt6B?=
+ =?us-ascii?Q?2uA37Nm87AFItUx371lEfWtZxb9axF0R3GBC4TrLdUtfY422bYVpQmKiuQdT?=
+ =?us-ascii?Q?csSTJLoXd90FNY06NF9Jehh/9ONCniUS76fBHOL3z1GTUGaKttoynPy6VkQY?=
+ =?us-ascii?Q?+iXBAh+MLTEoaJ7q4oiv4Zify0ERPPuWIZddxPZuxWtI0NXsMnXwIvqsueKo?=
+ =?us-ascii?Q?hs16j1P4kc2hRoRz2Ar1Z6joOEWMBo5YhgCk6ggCuK8a2tODMFaO0EfrJd7n?=
+ =?us-ascii?Q?z7Ts/LJ9JNNFGilwKNpSylA0M+8tqO3vKhHn5nG5dEd+kMhqGAC025rv0/AB?=
+ =?us-ascii?Q?WljGctgP5Hw5Za7ESXJ8syEN92/jphtqdf+qHd2S5tysV3nFv/Ah1/+ghpBP?=
+ =?us-ascii?Q?Re1hY2+QEZwy2o/xndKLPEGumUUTYH5+d5pFNk9au8eTLLmsSl7K+H6Iq1+h?=
+ =?us-ascii?Q?JcObilfTh1YB/qR5Ol51TL5x//VztKT1esuE7Hp7Ud5weSCsLCjxJmNI2Pmy?=
+ =?us-ascii?Q?Fu31n+X0HD/9Qew8bXZSv6d1Y1l+Cd6oAYZ5QlYQ/0FwuSHPAkFL+Rmr+dHs?=
+ =?us-ascii?Q?wtiXbk0vsGNlxv96CjsbzGF6fzmyM1ROP+gnc3EoFqR19i/qhTYp513EmDDq?=
+ =?us-ascii?Q?42t3Spw3yYN0NrdMmEq/gYuZtahoHH16Nhk4AC/TtHO43XohKGbbl/nt+Unb?=
+ =?us-ascii?Q?cCA3Ykx5kiAMZoLBWm5w5Y/qMaxQU8tfujWnYCK1sC4cobylqmW2fG3nj95/?=
+ =?us-ascii?Q?txFMb3cwqaWElpVr6NyFucIpVFh73E3Ws1gF44dkao4bkxZHcb1u0PIwqpci?=
+ =?us-ascii?Q?fepA5t3mh6g14XjIBCHsd/DdSLvfl1uWDaUiWK3GVYohbTi7DQMxh6B2kOAO?=
+ =?us-ascii?Q?TGD9vA2v09S8y5p9f/5/6dALzv2AlAFpTXdmkZUdUMw/1PJ71o+Jy8jWDa0k?=
+ =?us-ascii?Q?e0aR9eayrKpgme1dF9XuhuYVUdT/Wxdg17lwuipKVDZ44Peh26SJVm9nMDK3?=
+ =?us-ascii?Q?Yur2DyEyH8sCbrJ4//MCRw8ureRhDm7LvWtt9fLDvQEa0ntwVWkXIHpRJcyz?=
+ =?us-ascii?Q?3JdbTo9I9Vhkw8BOTJx65UCEyOJDckJVUxEqUzR5x7sjGEboejJVbyqdNWfq?=
+ =?us-ascii?Q?tkOX73SB5TVNY9XEEcSp8R+AT88CUGCBT91VB9IhLvR+7r+MZ9QL7ncx0q0B?=
+ =?us-ascii?Q?h8vj4u/e3riZGgrykna4jHm8Lp66DZGahGO4zn+L1UOiJrTUhW2jTSWoPKVk?=
+ =?us-ascii?Q?Qrd3fhVvfRWR9kpK0N+TtNc0za/tKtG/rBl76X72C6UEPqkRFKu8Wlo+qh40?=
+ =?us-ascii?Q?t/R9WSdscbj68rsN34r6kQc3JFTyadXhW0v3VhTwZmbxkSnsWrOWRyzuRHkp?=
+ =?us-ascii?Q?dRQLPrVNdV27lYcRgjoU2jhWVzTiz1DufkMN5EPUohuulItshrNtnx12ZSQT?=
+ =?us-ascii?Q?8+le7371Q38pC4sDf/PFdzTQfujuqOwpuKiQBMXpEztayq1FqybMh5FOo79D?=
+ =?us-ascii?Q?UJxhyMnpY+CQ1nMf5zXoA2tIzy22TCJ2eR25Mdx1zuhhJf+VbuGl+8fD3q6R?=
+ =?us-ascii?Q?MS9XjTqP0E6PrZAJa2b01gxPqU+x3pUxnQ7b7Cs8g2k0RILDc8pIVfFtDOO8?=
+ =?us-ascii?Q?VDznjr4goEYfJCY40lNZ2KepQ6eTksasCbFzgY3TjTUnEf/lPp6KOz5OBpnZ?=
+ =?us-ascii?Q?LWvqG04yMw=3D=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 134df3c9-19dc-4940-14e7-08df13043b51
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2128be39-b8a2-42ab-d892-08df13047755
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2026 08:35:00.8421
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2026 08:36:41.4150
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7zr4aB8cTwSSpoJG/0a+cXXLFOt8iRwxlCGduJcxuQB28f917XaZ6PtZY49hqsiDciJZk0j7En8H0SZZa51KxQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR10MB3779
+X-MS-Exchange-CrossTenant-UserPrincipalName: sPIxBgUORrKVn9KeOS0871xfQvnoiOs8ft4i9zV+105WELbPtuW2rnZ5VfLABYFOYdCtIhKWhM2i/Qo4LuER6A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PRAPR10MB5275
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 15 Sep 2026 08:35:13 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24180
+ <cip-dev@lists.cip-project.org>; Tue, 15 Sep 2026 08:36:53 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24181
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+Sorry for double-posting - connectivity issues suggested it wasn't sent.
 
-This describes at which time which ares of the CIP kernel are handled by
-the CIP security team and how to report vulnerabilities to it. It
-furthermore state the this projects falls under the LF stewardship
-framework.
+Jan
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
+On 15.09.26 10:34, Jan Kiszka wrote:
+> From: Jan Kiszka <jan.kiszka@siemens.com>
+>=20
+> This describes at which time which ares of the CIP kernel are handled by
+> the CIP security team and how to report vulnerabilities to it. It
+> furthermore state the this projects falls under the LF stewardship
+> framework.
+>=20
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> ---
+>=20
+> First proposal. Please review and provide feedback. If we all agree,=20
+> this should be merged into all CIP kernel branches.
+>=20
+>  SECURITY.md | 37 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+>  create mode 100644 SECURITY.md
+>=20
+> diff --git a/SECURITY.md b/SECURITY.md
+> new file mode 100644
+> index 0000000000000..f39a0178338ee
+> --- /dev/null
+> +++ b/SECURITY.md
+> @@ -0,0 +1,37 @@
+> +# Security Policy
+> +
+> +This project is supported under the Linux Foundation CRA stewardship fra=
+mework,
+> +as described at https://www.linuxfoundation.org/security. Security
+> +vulnerabilities should be reported through the mechanisms described belo=
+w,
+> +which we will coordinate with our CRA steward. For actively exploited
+> +vulnerabilities and severe incidents that may require CRA escalation, pl=
+ease
+> +use the project=E2=80=99s emergency security reporting mechanisms as app=
+ropriate.
+> +
+> +## Security Context
+> +
+> +Open source software can be used in various contexts that may go far bey=
+ond
+> +what it was originally designed and also secured for. Therefore, we desc=
+ribe
+> +here what the CIP kernel maintenance is particularly covering and what i=
+s out
+> +of scope.
+> +
+> +Unlike the upstream kernel, the CIP kernel is maintained with the focus =
+on
+> +architectures and configurations defined by the CIP project members, see
+> +https://gitlab.com/cip-project/cip-kernel/cip-kernel-config. Vulnerabili=
+ties
+> +found in code paths not covered this way are considered out of scope.
+> +Furthermore, vulnerabilities that are affecting the upstream Linux kerne=
+l as
+> +well are in the responsibility of the kernel security team, see
+> +https://www.kernel.org/doc/html/latest/process/security-bugs.html. In sc=
+ope for
+> +the CIP kernel are issues caused by patches not found in the correspondi=
+ng
+> +stable kernel (linux-6.12.y-cip vs. linux-6.12.y) or that are related to
+> +missing backports after the corresponding stable kernel went end-of-life=
+.
+> +
+> +## Reporting a Vulnerability
+> +
+> +Please DO NOT report any potential security vulnerability via a public c=
+hannel
+> +(mailing list, gitlab issue etc.). Instead, contact the CIP security tea=
+m via
+> +security@cip-project.org via email. Please provide a detailed descriptio=
+n of
+> +the issue, the steps to reproduce it, the affected versions and, if alre=
+ady
+> +available, a proposal for a fix. You should receive a response within 5 =
+working
+> +days. If the issue is confirmed as a vulnerability by us, we will reques=
+t a
+> +CVE, publish the fix and give credits for your report if desired. This p=
+roject
+> +follows a 90 day disclosure timeline.
 
-First proposal. Please review and provide feedback. If we all agree,=20
-this should be merged into all CIP kernel branches.
-
- SECURITY.md | 37 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
- create mode 100644 SECURITY.md
-
-diff --git a/SECURITY.md b/SECURITY.md
-new file mode 100644
-index 0000000000000..f39a0178338ee
---- /dev/null
-+++ b/SECURITY.md
-@@ -0,0 +1,37 @@
-+# Security Policy
-+
-+This project is supported under the Linux Foundation CRA stewardship frame=
-work,
-+as described at https://www.linuxfoundation.org/security. Security
-+vulnerabilities should be reported through the mechanisms described below,
-+which we will coordinate with our CRA steward. For actively exploited
-+vulnerabilities and severe incidents that may require CRA escalation, plea=
-se
-+use the project=E2=80=99s emergency security reporting mechanisms as appro=
-priate.
-+
-+## Security Context
-+
-+Open source software can be used in various contexts that may go far beyon=
-d
-+what it was originally designed and also secured for. Therefore, we descri=
-be
-+here what the CIP kernel maintenance is particularly covering and what is =
-out
-+of scope.
-+
-+Unlike the upstream kernel, the CIP kernel is maintained with the focus on
-+architectures and configurations defined by the CIP project members, see
-+https://gitlab.com/cip-project/cip-kernel/cip-kernel-config. Vulnerabiliti=
-es
-+found in code paths not covered this way are considered out of scope.
-+Furthermore, vulnerabilities that are affecting the upstream Linux kernel =
-as
-+well are in the responsibility of the kernel security team, see
-+https://www.kernel.org/doc/html/latest/process/security-bugs.html. In scop=
-e for
-+the CIP kernel are issues caused by patches not found in the corresponding
-+stable kernel (linux-6.12.y-cip vs. linux-6.12.y) or that are related to
-+missing backports after the corresponding stable kernel went end-of-life.
-+
-+## Reporting a Vulnerability
-+
-+Please DO NOT report any potential security vulnerability via a public cha=
-nnel
-+(mailing list, gitlab issue etc.). Instead, contact the CIP security team =
-via
-+security@cip-project.org via email. Please provide a detailed description =
-of
-+the issue, the steps to reproduce it, the affected versions and, if alread=
-y
-+available, a proposal for a fix. You should receive a response within 5 wo=
-rking
-+days. If the issue is confirmed as a vulnerability by us, we will request =
-a
-+CVE, publish the fix and give credits for your report if desired. This pro=
-ject
-+follows a 90 day disclosure timeline.
 --=20
-2.47.3
+Siemens AG, Foundational Technologies
+Linux Expert Center
 
