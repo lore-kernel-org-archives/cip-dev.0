@@ -2,56 +2,50 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1261C982E1
-	for <webhook@archiver.kernel.org>; Mon, 21 Sep 2026 05:16:44 +0000 (UTC)
-Received: from PA4PR04CU001.outbound.protection.outlook.com (PA4PR04CU001.outbound.protection.outlook.com [40.107.162.42])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.42721.1789967800492704229
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF31DC982DA
+	for <webhook@archiver.kernel.org>; Mon, 21 Sep 2026 05:25:44 +0000 (UTC)
+Received: from AM0PR02CU008.outbound.protection.outlook.com (AM0PR02CU008.outbound.protection.outlook.com [52.101.72.47])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.43073.1789968341555253896
  for <cip-dev@lists.cip-project.org>;
- Sun, 20 Sep 2026 22:16:41 -0700
+ Sun, 20 Sep 2026 22:25:42 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=uyCjOyOC;
- spf=pass (domain: siemens.com, ip: 40.107.162.42, mailfrom: jan.kiszka@siemens.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=Bvw3Zwai;
+ spf=pass (domain: siemens.com, ip: 52.101.72.47, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Hmjf4/2yc8m9Gyq8AUmA/gHCQLM25AkvbeXr5NEtpiV9t6aH7GMNc19DyfXdi/DkksfZbcTw7rhukx1hGEcLverF6gT9P4Lnq68OKUaBOPQ9+2Qup7nyRrSKneYgq5AZyItJLh0SoBi8aAmeZgWgtSTjoIQaqnn5wImOhZgadmX0sYUWwWBPdqFPunMl67CPGtUjEMREDJzzXJqOBg7NIMyJ8omNEmxsNwjZUUACmRZMUUH5u3jj/g7tiZK96EFEKRp0ilS3qHfchhuIbhPq45CSuO8WteKALcZZd+5gUyYUyYtOtt1ECDafJzIRZCApkNZJ7xeeNjnPv8D2ztStlA==
+ b=bqLZha15Gi0zJ9tlv4qHRq4xgKNFZm0gZ/80mX73rWQXni6jHiX7bPsDaQ3XBwWygo6b9qIG0Wt27mvDMMLsFRFTwvsNjw10UT7oRkRggt2k8dutlEnZLEHJ7G79IbgExDjcFGUI+bWFUVh1UjphX++jHDBs771xh+4ph90WguOVeMDO2V3S3R6aVGqYxjDb7I1zEJLMyOY7aSnXPuiib8q0HCfx4H2nqwBcqXhQtoppf6uPWMh7nCp9HX1S3dqk+YucwMO0Wdk4FJAFJh2nOb1wIGU57A75x0brSDp/zeYfKgNPgc9n+LCW9F5BAayUDZIFG32wIqebumBHHl5VNQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+enXAm/B6Z9kGzvpMJ38N/E23wv7GXTNCKf0hxElrus=;
- b=ARUDOedQtR1Gkx2tQbhKg63iF+HuemY1VDZApGIdEDgik8A0y/F2WOzDfcWV9Iqh3GUN7bQoHbiuzybGVNm/4DpF2kMG/Nz/vp9UoZsa4Hl4N9IQQ674lT3eGjQ3HzKfvP7IZf5wYqSedcfB3xaiGjJrz1M/lpDXJXPINq4lzwvU0POIsAl/munYbFT8ccOeEsGyYbxMsBilJh3dw+SLb8HgN1n3CNo9fRkkyTeEnvNVQ51vmzwgFyj4qmo+W+Z4lIVKYLtIJM41AZx9s6ftGUEroRqVvgHrCAoZav2tSyEhtipZRksTk/BoivBsFbxtpA0EUtorW/AlyY2tFLpMpg==
+ bh=cJOoe3h070ZdWKCfwfIhmh9OqgXA/LZW3EU3jECCaDA=;
+ b=R01njytVMDTRVAzxUcFLpUIwM8aJ1L03VdK34BoYn/yZ5iVPnFR0vKMrRvJEj3WtVbvRDh7rvD/aSW/hp9URXswS5gZbVAW9u3FY1l3c2yKgiXShY/cpY4MDISup1jpBKHu6pg+hK8LxWHJM4gixjpviZr57ode2dSRDE3c/6jIvNeZNjR9U/EEv5f7sJD57R1tYdntLIA5ZfuJu9oMSoEkhqa5dk4gCI++6C2zlhITO1WbW+abED+4SvK9wt1g6g+daKskFfyKCcyF+k5dZcf+Iq+2SzA8vyuqD0er6vBXi2CVpHimN3vc/R+Kd/SWDbq6QYJk9VOJsqPynLTBedA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+enXAm/B6Z9kGzvpMJ38N/E23wv7GXTNCKf0hxElrus=;
- b=uyCjOyOCK5Y/hqu6dycb0Dj/QisuUrSX3Fzqk2XSjLaFMG9zmLgE2DF2Bp7W75GqST6619fDXbBDZmA3cjB/4Sg0Ae/EEk1gzkaNfbwW3NPv2BL+Uh+LayzgnGLjBZUhOMTN1Z8E1RX7xyKMLZYu2tsunhvs1L/EtDinIGygBeCdiyG7sgDqIVPwCihhD+/m9Bd8UbR42ezqdVSLdWMPP1oRKwlGpkQVraxpokcPRrzy6maiknq1fOBeCvh3zkraG9BUskViGUEGAUQ2jXAgX1qNjOE7f8mpCrJ1N7EATigT5uXaVIhorw4YRornZkPXFpEAidtAehU7cGpQ1mJxJQ==
+ bh=cJOoe3h070ZdWKCfwfIhmh9OqgXA/LZW3EU3jECCaDA=;
+ b=Bvw3ZwaiPIEBmLPQCbsQ3KwlUzwqY/tWi9/A0JlMmMh1Ax6hF67btIPGRMwQ2N2o+zIr1v0N1hvIZIMxq2krEzXvC8fyNnfrFGq87pltecVUi8XQZEN4OtohElPvAsC4U4EDsM2LfmRcWn4JoeQEV4hlN2wBJ52C/7aZyHPh5NJMzGQQ9zsliV7Wv970oukTWDPEwMd8vTLHXnMgyuQNTj3+ghtGRWCfEl1s/6MNHlqiXo92xzc8LprUfEMjqoP7SbTZ/S/wDZCvlhFCl/eldg0qDKAH6P6bpiruzwCfkq3NJc3QIM6X5kGKgMCNsdABQQtbEwBDYskb8E9bIkKtJw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by AM7PR10MB3272.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:105::18) with
+ by DU4PR10MB9167.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:569::6) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.16; Mon, 21 Sep
- 2026 05:16:36 +0000
+ 2026 05:25:37 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::be9f:e8ca:ee9:83e1]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::be9f:e8ca:ee9:83e1%2]) with mapi id 15.21.0428.015; Mon, 21 Sep 2026
- 05:16:36 +0000
-Message-ID: <37f91186-518b-400f-a3b1-c61e0207630e@siemens.com>
-Date: Mon, 21 Sep 2026 07:16:35 +0200
+ 05:25:37 +0000
+Message-ID: <28467eec-7feb-4bb0-8c2f-a73ca9c4b6f7@siemens.com>
+Date: Mon, 21 Sep 2026 07:25:36 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [cip-dev] [isar-cip-core][PATCH] Fix file timestamps are not
- reproducible for EFI certificates
-To: "Moessbauer, Felix (FT RPD CED OES-DE)" <felix.moessbauer@siemens.com>,
- Kunijadar Shivanand <Shivanand.Kunijadar@toshiba-tsip.com>,
- "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-Cc: "kazuhiro.hayashi.f74@mail.toshiba" <kazuhiro.hayashi.f74@mail.toshiba>,
- "kumar.dinesh.h95@mail.toshiba" <kumar.dinesh.h95@mail.toshiba>
-References: <20260918085031.2464429-1-Shivanand.Kunijadar@toshiba-tsip.com>
- <88b6f524427c6415422dc6dba589b4cafb4cd439.camel@siemens.com>
- <868cc7cb-d990-42a9-a759-05f7cfc22e36@siemens.com>
- <004d186545ac4db6066399ccbc21cfe43a27cd66.camel@siemens.com>
+Subject: Re: [isar-cip-core][PATCH] Add SECURITY.md
 From: Jan Kiszka <jan.kiszka@siemens.com>
+To: cip-dev <cip-dev@lists.cip-project.org>
+CC: Hirotaka Motai <hirotaka.motai@miraclelinux.com>,
+ Dinesh Kumar <kumar.dinesh.h95@mail.toshiba>
+References: <7c5a1901-7536-435c-aecb-bfdf3a8a9d6f@siemens.com>
 Content-Language: en-US
 Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  xsFNBGZY+hkBEACkdtFD81AUVtTVX+UEiUFs7ZQPQsdFpzVmr6R3D059f+lzr4Mlg6KKAcNZ
@@ -96,146 +90,165 @@ Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  qH4kDzsqKX8zzTzfAWFxrkXA/kFpR3JsMzNmvextkN2kOLCCHkym0zz5Y3vxaYtbXG2wTrqJ
  8WpkWIE8STUhQa9AkezgucXN7r6uSrzW8IQXxBInZwFIyBgM0f/fzyNqzThFT15QMrYUqhhW
  ZffO4PeNJOUYfXdH13A6rbU0y6xE7Okuoa01EqNi9yqyLA8gPgg/DhOpGtK8KokCsdYsTbk=
-In-Reply-To: <004d186545ac4db6066399ccbc21cfe43a27cd66.camel@siemens.com>
+In-Reply-To: <7c5a1901-7536-435c-aecb-bfdf3a8a9d6f@siemens.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0363.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:f8::19) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: FR4P281CA0450.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:c6::11) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AM7PR10MB3272:EE_
-X-MS-Office365-Filtering-Correlation-Id: 623c19b8-7f32-4ec8-2236-08df179f8207
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DU4PR10MB9167:EE_
+X-MS-Office365-Filtering-Correlation-Id: 719c590c-a769-4586-5405-08df17a0c481
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|366016|1800799024|376014|23010399003|11063799006|56012099006|4143699003|10067099003|6133799003|55112099003|22082099003|18002099003;
+	BCL:0;ARA:13230040|23010399003|366016|1800799024|376014|11063799006|56012099006|3023799007|10067099003|6133799003|55112099003|22082099003|18002099003;
 X-Microsoft-Antispam-Message-Info: 
-	tK0kNjurLLl66Y+X70HGdWYP7WJW68XR5WgZm6vJTAzxXzyjzCwoA8aVetEnartTzd6y/DEn+zjDU2GK+28Skj8VcVVn9DUVy2eS86wFdlSLo3+2rBJvUnjTBNupQBZr0qZeSyli2huOpV8lEYzV2YpSDflCNGLsfhbcnLfj2xJhSGIvRF3bqzxmTVJzcxHdOGD5RSkJ2iji4K5XOTHx46LSnldv3B9EKSmqmBZeE8Myc0QhGBXyK1wxqvDU1LWYR1zsBItiGAe0cmvGR0OuUuESko0MBSgFdGLFiguLbWYIGbQsBxvkIj16HiLKyDyn8MnUhzlhmJY3djj/OVao74gfhTBluNDi39aqmFPZVGSTWddjQmNCg77fZhJY6xcV8X43fet7yZ7MSzxgtHju3DrpHRJQvMXXBMHsGpzx4wVaa/U5lQ2OMig9oDkTGh/Kb84e7a0YAmmF4ruEaUsr7Bt4AtlQegaZn89YAFrpQAljr7c6mxoCZV7Sswx3TZMMMJRl8+LyJCDO7nOGBr99eD6ewIqDj3HEyU0k6aCEtCGBHfVzntohKg7gD4fqy7jm3xJuiEtyMXatFY2LM48y9BqCcGyUXPaA+sFcx3+Qy0hGBHKdK+GjOWcw8XuEs+P/
+	kDGphHxUMXo3PAsNzFLKXTAtTaI0N3lO13RpX8VYNDx0vJuth5qr6wtNWDW+MgixmlPA4Kerc1FgwtrqLWo/gg5yRt1OZa0J26CE5zd7c0yc04Ii0JYzodLesegBSQhrgU8Fs94UQ1zEFl2ndLsZGwUeaDjOyyYGC1UYwHyaNIFq0WlPs9bUNjdP1nt8dpJrfubGj1lYukeUuZ2SusmHjDjYflVLhtZGZ3hlfRI/esZB9sAf1OWAXQ8EFKmdRQxWqMSfKdY20cGM9heMekgjoa4NE61D/e+U+V5/Itf5k1dUQRYvoFb73jTPewPSYhq3xvmgxpCsdBWTlcEIBM+LCgxdZ+/bYJId3IOEtjehj0GX9BiqhBm3YrXje5idFG4/hn5X+XlCKVbYLrrpo+MQn5NtwmtJkA9vRP1xNwyJjDADHHsxJatTPYPBdeRR8tuBkKrDjnoy5JDM5sf518ttEID1zYP/KLTaE7WXefAT2l5fWWbPoDtpM0x15UzyItCkaoOPNrWac88cXaE7UJCD9Is+GzOu2BFkfgAr5WNz1GdM+nl1OnXc37QLh9zeXa2WwhydF8iD4r2exWToeTFX3ToJi/szBx///pDjs141mo5HH0E1H1tEFVE+xLQplecc
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(23010399003)(11063799006)(56012099006)(4143699003)(10067099003)(6133799003)(55112099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(1800799024)(376014)(11063799006)(56012099006)(3023799007)(10067099003)(6133799003)(55112099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?b2VSYjhqbUl2QnZHMXhzQkVSei9CSS81QTBrZGRaVWFrTjFhdExXUEZlanRj?=
- =?utf-8?B?Y2xlT1k3M2NrRXF3blhoNlN3Q0g5SzFkb2hPVUhoNEVNQmJVREN0QjVDL3Mv?=
- =?utf-8?B?R3R3MHF0Vm9RNmFLb2FaOEVPRkx2Sm5IcVJUaDEwNFQ0NmgyRitTT1ZTenpl?=
- =?utf-8?B?M3dDckEwM0Vhc01WM2UrWFVEeVUySlMzUkpCTGdsZjdSNTgvY3R0SHRNRkFM?=
- =?utf-8?B?ZWh2UlVCL1A0Nkk0RkcvZTBZTVZxMjJ1eCtTRldjamtCTGQ4THl1em40Qld1?=
- =?utf-8?B?VTlteTVXb3dvOXhZNVp3WlV6WHFHcW12SExxVEJPc3ZYRnhlbnptODMvZmlZ?=
- =?utf-8?B?aHI4SFFFMVBYb0gzRDQrU1NSclp3V09QQi8vUkRKcU02YVRZbWI1S01MbEVY?=
- =?utf-8?B?WVlNNEU3QXYwdXMrV0V4RENOTUJNVmpNTWlNb1dXbDNubXZqM0loakxlY0Jm?=
- =?utf-8?B?RVFYbFAzSk1qdnh5L0FzRGVkekJ3YXFoTVhwYXdsZVJic082Sk1NclpQSFNu?=
- =?utf-8?B?YVNkbUxKNWZ1RjlrYnhRcEdadjZoaTZVY2pZK0RPRVFxRllmbFV1OWVRK1dn?=
- =?utf-8?B?bWc0VEpBRVBHdlpKUlJSaWFmUUpOMlROaEkwYnVTM21UVVE0cUNGN1NtR0lL?=
- =?utf-8?B?NTVmNzN5Ym0zQXk4ZG9GWmI3ZDRXc21aWFE3TGduYXV1QVlxUkNJYVJHUStP?=
- =?utf-8?B?TGpQNHFtK3ljbHRiNkVNWTR1RUx1TE1vYVBBWFhhdVFCT2huWUJLa1Z1bGww?=
- =?utf-8?B?SklUQ00yZW5EYTAyclBUM2s3d3pqQTZRanlBNnc1QkpvWDZtbjV5WUoyZDJ0?=
- =?utf-8?B?ak4wQWRDYzduOU95SHNaZDdZMjBrVU9SSnlJdHJUbFhGa21jYVVwcjRFd0xo?=
- =?utf-8?B?ZkJkVC8zU3E3RmV6TC9iV1NLRURRQjMzaWxUU2RMdGp1SlYzTVRxbGQ5cmhx?=
- =?utf-8?B?c1pMbUp5U2FJQkRpRFBudFlEMS9uc2JQUDNHNkpTYkgrSFEwNDlFWk5lRlF6?=
- =?utf-8?B?NjJqTnVYeXdoU2ZlL0t5a2tQL2tCZnIyanJBNlpUQ253dWtwaWVHdjBJOGxl?=
- =?utf-8?B?bTMvMUU5V2YzMFdZRTNaMTZhdkNCY0MyZHB3U3EyYXNDK2t6SVREL2lSRWlD?=
- =?utf-8?B?MlAyY0pDbWRscXB3RUFQV1hLaUh1dmRNbk1RdllLcG0xVjBadmM2ZmNyb0ty?=
- =?utf-8?B?NUNyNDBzTy9xeXpaMTJST3lkdG1KSnpLK1o0RDlKaENiTEZwUFJxWGRieWxs?=
- =?utf-8?B?NGxEQWpueGYwaWcya2hPeGdjWi9rUmNETi9HbmNGZmN1K1V4S0pIblRWU1lZ?=
- =?utf-8?B?dXFCNXJ1T0hyQlQxdjc1aThERTMxRlQ4bFZhKzRGRWxrTHpsWlQrTy9ZenQz?=
- =?utf-8?B?Tkg5N05nS25ONlIxdStFNEJTbFdxTGtPTHNnTVl3bzEyTUZaalhhaVZJVVEw?=
- =?utf-8?B?Y3BlSjNzTUpqQVkycGFJRG5UOGk2WHUwTUVwci9rQXBNWjJVYzRpQ1l1Wk5P?=
- =?utf-8?B?c0QvRnNxMk1ZY3VScnl0S2draUd3ai9HaFREZTdwVnpFcmJUNldib0FmZnAw?=
- =?utf-8?B?bUpJakhhOTQ4SW5qZmUvRWZMSW8rMWs4aG1PeTRja3RRNC9JUDlyVTNNbmc3?=
- =?utf-8?B?RDNGSFl0c2Z0TFdib3BxZ0RaWUFyYWpsc1BVdGZYam9vSXZhMkk3RjlvZ0dS?=
- =?utf-8?B?NjFoMmRJRVA5L0wyaU50UFBSYlR1MFFMSjFzT0ZFL0xDbTdDOTc1V3haYm1Q?=
- =?utf-8?B?aUJXalNpV0xZSFZqLzVoeTRNck9LZjM1UGU2S2RXYVpFU0g1UllJQlZGaDUv?=
- =?utf-8?B?T1psNldXcXJ5YlpoUVI2TWEzYzRtYXl5NytRcDYvUmVTVU1VOE8rMENIemVp?=
- =?utf-8?B?MzNYOTNIRW1kTS85TWtxSE9QMmJ3WEhsc09SSXU5amlLVVlNZlJrSHJ6YmUz?=
- =?utf-8?B?T01ONEc4dWxNbzNPZFcycEJERXJTMHVsMWNUNW9qbUh5Y29sLzNjWWZ5OVZU?=
- =?utf-8?B?b2t3U0xNUEdWbyttR2phQk42MVFGNnF1bURld1IrRUtIdXBzTlNnQ2hxaDB4?=
- =?utf-8?B?Q3RPWkw3T2xNcU1ySWZtelA0a3ZjSTlHV3d3cG5kZ0VMdHE4c1dUSFJNZ2E1?=
- =?utf-8?B?ZnBXd1graTRyc3JFaUp2NzNCQ2xlbGFTdUpCeWRKUDBLT2p2UXB5d29pY25k?=
- =?utf-8?B?bDh0d3QxUHdPb25IQzF1Y2Frd2daUzk2cWVHOHRpeXJxSFA1b3FIcjBGSFh3?=
- =?utf-8?B?UnpFQW04SVc4Q2ZOT2FsZ2tvcmlKRUl6MUgzZ1hMRGhHVHVGWHdZa1RCVEsr?=
- =?utf-8?B?UVF1WDE1elNvYXc1eXErNjdoKzJIN1hFc1o0cWlBa2tHOE5TbXlMZz09?=
+	=?us-ascii?Q?2ihsQlpBXSmpdW0ua8FVFmjTpON0irMzHW2NA5zK+5aeeq47YypOjGyD0ttN?=
+ =?us-ascii?Q?8RVP8hVmrj48ZAzw6uGzINPkAVWSjEwh6YIF1QgYCd15ex1k7cIEA09gPGoh?=
+ =?us-ascii?Q?GW5vUmFdnx5N56YP+fgdtpYU6K3bD54+RiQV76Nk2Gx4K6BmAdDHLegKgXdh?=
+ =?us-ascii?Q?uvH5g9cFvdgu1LDFh4WNBa8gvowHENn5g8WBn+dP5A0Gv4voxLHOQ0mTQG0C?=
+ =?us-ascii?Q?OxZoSMVxvotZVaSWQAd4F5F/DMK4yZFd5TY/jWhFWQa65FqRJQwFpbU3Pu3O?=
+ =?us-ascii?Q?82V/tYfS8N5Ng5Z0hq5T1UDka2TNBC0POGndsWVomykWOtlAmmWcYOr1ThhF?=
+ =?us-ascii?Q?FuKZJHTdTmpQx/hoTBxkNsj5sobd6MiOeJXmVNTQAum2h0QHXmzN6KHBjBQV?=
+ =?us-ascii?Q?NngYxsOrsABTChKXhbCiBSnzsjKSBUXdqbOwT6rB6gRpZH6XhRrdh2vX+EeR?=
+ =?us-ascii?Q?sABcT+8wbOoz0tBIIP9fe6h8hh+11K+XEpWXlgL4OZ3fz5vE8AD535t4UM6q?=
+ =?us-ascii?Q?OeUldwi02KmbGRrGCp5J4mrHA6wXUgwyBkD13TN9SUxnyb678n3DPcVB6My1?=
+ =?us-ascii?Q?o4do4fPwoUD6s2t2nSPmOaC+tETAjzCafKOZ++vydjEIm2I/PwD685/mmI29?=
+ =?us-ascii?Q?ZTF/IxIOKs5/i68JBqrUYE//FLkz5zQ8K41OHtiTiRbwtZmdXOb/9P32aGho?=
+ =?us-ascii?Q?tK2Y56tWYfo5G5eNx94pxcKTxYVW5Yc9oRg4CEBdTX4eXrPghjT3IUCPu2iC?=
+ =?us-ascii?Q?DbwogZSMtEzFkGrmb1Ay9volBKYUTswUZFwLzHu/3KM97ONfoNsdyVnK45qE?=
+ =?us-ascii?Q?yzXmL/15RSV4VwzNhBfkgwZ+T14crC+t6zrEhPT2MPCFH/chhdO2QUM09z4c?=
+ =?us-ascii?Q?qxPqI3GcxnTSG6v2ZHIhtiu70J4q83PVbuP6CTs3xdCqwf32yciM2rRHF0MX?=
+ =?us-ascii?Q?Ri4IvIRTSi81SUp51j1q4rONuwi6ZHbS9qflDPpGA62qPpA5ZJx52l3F+tQY?=
+ =?us-ascii?Q?yh6mcdGYxnbkJoCgBujp5dJIG+QYGm35vKr5CE6a557xGFd4VpENn8C5Q3RE?=
+ =?us-ascii?Q?NUrvp7tmRTcQWNDMaVBdg3kUxEM+vRNZxJ03axFipwjmvtPiVSlDO/41g11j?=
+ =?us-ascii?Q?X0ipBzTurEyrnFbKWgOkqf/oE5W+lydEBufRm6NV0og2qmEBWo+abqV4zKuu?=
+ =?us-ascii?Q?DoIMNDMPZRZ9uGkAjbk/XnZngdOypAToLKI+2MTvdhudX+cl1/Mt8+VnjXAd?=
+ =?us-ascii?Q?oe6SOZXJHPTD34b4PTZHqhDHn4TUOia7VucyWD/22zZE/KD6IFdwGHtP9Xhk?=
+ =?us-ascii?Q?SsLAvlNAPkRC31AE3GIzTt4OGu1Xo5vlcwkN+/Wnjp1vlx4uClT5tw0uo3vZ?=
+ =?us-ascii?Q?3ua9ac35DU+kJBLSgB/NcQxQh4O/B3mnwFUv3e0mPw9ovWxeO7WF86zCaKgQ?=
+ =?us-ascii?Q?J9ycVtrMJzyHBPxt4ZIiA4CM8P/CN6CGic39o3z5ptnsxePzNOJaAKZ7Z0bQ?=
+ =?us-ascii?Q?kNkaR2raMItMRHMuubXjtl0WZeJpn1y1ROSw9E4wnQAQKpcsJ0L9DpPc+7MN?=
+ =?us-ascii?Q?kWIIEyfwxUj0AuppGuzr19yZ8co/nQ28F61wAXGNHxxFD3/xvBy//f/qOCPF?=
+ =?us-ascii?Q?Upznqj9daJnQH3Qd0OpXeueXazgZKWrPL3h4+5s/GCgUTqtxKKSny7tY5ESK?=
+ =?us-ascii?Q?xx0sSzwfMXNX1777s3xnAMQRYmyRUpQIQgir3Q643cv4/Ywe2gvGfK6zoQdu?=
+ =?us-ascii?Q?o+8DHgwHmw=3D=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 623c19b8-7f32-4ec8-2236-08df179f8207
+X-MS-Exchange-CrossTenant-Network-Message-Id: 719c590c-a769-4586-5405-08df17a0c481
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Sep 2026 05:16:36.0257
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Sep 2026 05:25:37.1026
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: klufKMzLV9u/BuVMLapyzE+WGMWlSYB8GbZdUYnY5uql7ypNej2A5c4BS2WRQOvFMr6lIWz8NXyjXcUfqVW5ww==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR10MB3272
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9ntMIf108k6PPGePmB0v+Rx2914yKtp3Zm3YRqhvwNsRUim1PYgi4M8Zt8Hkw0Th6LI630A2Ds5LKBcjGxSQPQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR10MB9167
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 21 Sep 2026 05:16:44 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24247
+ <cip-dev@lists.cip-project.org>; Mon, 21 Sep 2026 05:25:44 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24248
 
-On 18.09.26 13:21, Moessbauer, Felix (FT RPD CED OES-DE) wrote:
-> On Fri, 2026-09-18 at 13:01 +0200, Jan Kiszka wrote:
->> On 18.09.26 12:54, Moessbauer, Felix (FT RPD CED OES-DE) wrote:
->>> On Fri, 2026-09-18 at 14:20 +0530, Kunijadar Shivanand wrote:
->>>> From: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
->>>>
->>>> Closes https://gitlab.com/cip-project/cip-core/isar-cip-core/-/work_items/162
->>>>
->>>> Signed-off-by: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
->>>> ---
->>>>  .../secure-boot-efi-certs/single-key-to-efi-certs_0.1.bb  | 8 +++++++-
->>>>  1 file changed, 7 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/recipes-devtools/secure-boot-efi-certs/single-key-to-efi-certs_0.1.bb b/recipes-devtools/secure-boot-efi-certs/single-key-to-efi-certs_0.1.bb
->>>> index 263f794..6a5357d 100644
->>>> --- a/recipes-devtools/secure-boot-efi-certs/single-key-to-efi-certs_0.1.bb
->>>> +++ b/recipes-devtools/secure-boot-efi-certs/single-key-to-efi-certs_0.1.bb
->>>> @@ -24,6 +24,12 @@ DPKG_ARCH = "all"
->>>>  
->>>>  do_prepare_build() {
->>>>      deb_debianize
->>>> +    if [ -n "${SOURCE_DATE_EPOCH}" ]; then
->>>
->>> Good catch! Thanks for debugging this. Please just use
->>> DEBIAN_CHANGELOG_TIMESTAMP instead of the SDE. This variable is always
->>> available and aligns the timestamp of SB parts with the one from the
->>> changelog.
->>>
->>
->> And simpler code - even better.
->>
->> Thanks for debugging my bug! :)
-> 
-> While thinking about it, I'm wondering if the timestamp actually has
-> security relevance (e.g. for checking the freshness of the DB). I know
-> that timestamps in general are pointless in this context, but I'm
-> wondering why it can be set in the first place.
-> 
-> The DEBIAN_CHANGELOG_TIMESTAMP usually is set to 1h after unix epoch
-> (for technical reasons 0 cannot be used as this is "magic").
-> 
-> If we need a proper timestamp here, we should provide a way to set the
-> DEBIAN_CHANGELOG_TIMESTAMP just for that package (e.g. by introducing a
-> variable).
-> 
-> But still, the code should use DEBIAN_CHANGELOG_TIMESTAMP to align the
-> changelog timestamp with the SB one.
-> 
+On 14.09.26 10:03, Jan Kiszka wrote:
+> From: Jan Kiszka <jan.kiszka@siemens.com>
+>=20
+> This documents that isar-cip-core falls under the LF CRA stewardship
+> framework, describes what we consider in scope for vulnerability reports
+> and defines the reporting channel via the CIP security mailing list.
+>=20
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> ---
+>=20
+> We will need something for the kernel as well, and also for other CIP=20
+> components. This is just a start and, if it makes sense for all, can act=
+=20
+> as a template.
+>=20
+>  SECURITY.md | 37 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+>  create mode 100644 SECURITY.md
+>=20
+> diff --git a/SECURITY.md b/SECURITY.md
+> new file mode 100644
+> index 00000000..664a303f
+> --- /dev/null
+> +++ b/SECURITY.md
+> @@ -0,0 +1,37 @@
+> +# Security Policy
+> +
+> +This project is supported under the Linux Foundation CRA stewardship fra=
+mework,
+> +as described at https://www.linuxfoundation.org/security. Security
+> +vulnerabilities should be reported through the mechanisms described belo=
+w,
+> +which we will coordinate with our CRA steward. For actively exploited
+> +vulnerabilities and severe incidents that may require CRA escalation, pl=
+ease
+> +use the project=E2=80=99s emergency security reporting mechanisms as app=
+ropriate.
+> +
+> +## Security Context
+> +
+> +Open source software can be used in various contexts that may go far bey=
+ond
+> +what it was originally designed and also secured for. Therefore, we desc=
+ribe
+> +here how isar-cip-core is expected to be used in security-sensitive scen=
+arios.
+> +
+> +This project provides building blocks and reference configurations to cr=
+eate
+> +secured systems that support secure updates. Demonstration images that c=
+an be
+> +created from it may use publicly known keys or contain debugging feature=
+s not
+> +intended for production use. It is the responsibility of the final integ=
+rator
+> +of this project to use appropriate keys and harden the system integratio=
+n. This
+> +includes the choice of secured Debian package versions.
+> +
+> +In scope for vulnerability reports against this project are flaws in new=
+ or
+> +customized packages provided here which contribute to the security of a =
+final
+> +system. Furthermore in scope are noteworthy documentation deficits regar=
+ding
+> +how to achieve secure usage of these packages.
+> +
+> +## Reporting a Vulnerability
+> +
+> +Please DO NOT report any potential security vulnerability via a public c=
+hannel
+> +(mailing list, gitlab issue etc.). Instead, contact the CIP security tea=
+m via
+> +security@cip-project.org via email. Please provide a detailed descriptio=
+n of
+> +the issue, the steps to reproduce it, the affected versions and, if alre=
+ady
+> +available, a proposal for a fix. You should receive a response within 5 =
+working
+> +days. If the issue is confirmed as a vulnerability by us, we will reques=
+t a
+> +CVE, publish the fix and give credits for your report if desired. This p=
+roject
+> +follows a 90 day disclosure timeline.
 
-This has security implication because the timestamping of the signature
-may be compared to the revocation time in case the signer's cert is
-revoked. Signatures that happened before the revocation time will then
-still be accepted, those afterwards won't. Therefore, this timestamp may
-have to reflect the actual signature time. And this is obviously
-complicating reproducibility.
-
-I would vote for making this package (and possibly similar ones)
-reproducible to become an opt-in feature that we enable only for the
-related test. Or only for snakeoil keys. Maybe the latter is simplest.
+Gentle reminder to provide feedback on this. We are getting closer to
+the next release, and this will have to carry a security policy.
 
 Jan
 
--- 
+--=20
 Siemens AG, Foundational Technologies
 Linux Expert Center
 
