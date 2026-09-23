@@ -2,41 +2,41 @@ Return-Path: <felix.moessbauer@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3274C982FA
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E42E6C9830B
 	for <webhook@archiver.kernel.org>; Wed, 23 Sep 2026 11:32:28 +0000 (UTC)
 Received: from PA4PR04CU001.outbound.protection.outlook.com (PA4PR04CU001.outbound.protection.outlook.com [40.107.162.30])
  by mx.groups.io with SMTP id smtpd.msgproc01-g2.4859.1790163139819749837
  for <cip-dev@lists.cip-project.org>;
  Wed, 23 Sep 2026 04:32:20 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=pR3k9NB1;
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=hXTUusAU;
  spf=pass (domain: siemens.com, ip: 40.107.162.30, mailfrom: felix.moessbauer@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=P8a3j60fJpztAEbkUm1NoIwEcRicMlvyh6XGsvoodLrhU86f016MXLaNuLrYkZq3nhhr9h36aHfUzzO7Tm0HcSGVfXxdnkgkUMCqM8fWgzGJ+ER/tLUiU5TaIMEWpLzSuan46n1jT1UsGX7nBnx6WZb9o5J8XoDLn5qnhH3L5RWGJBsKjT6c15grwHBjZFeDINxtEqC2gjv123fo1/qI25EIVTkjS8UDxktTJXF35RbRXUI0K4vl9kygtYSSEzx9bpxkDYp6KJ0VORrOIT/IdFQK7YdRbyABut1sGKOX2H3qB8tkof8Jmds8FnMXS72rKYCluez8gz843YQF7wVNUA==
+ b=pLT+mwB7HG9qjKju+1Q1l24fLWhRV42UIAlO4ggQt2/awJZXdjdFj9jFN13mT4VLBv4qPndsvzSvnue1nbapv/66Lih+2G9p7oJ3FPtjFC8NaTrilhCJU326rE4KH+835mqf3bTo925OAxkLzTP+GYKE3TWXzokhADQtAheNc5S9j+QNI2vHB1xb/fkZXtIaoLYVkTjPLZ13Ty2ARpatghZMNzETe5T6M0EaLexNU6h6W0tqtk5EerETzVI0i+P4xRU4CZPa5XKxG6F0A5/QVoKkAVr83SupSM++UraRxvrHeyRhHPovBk1EXjcSAFcFoTli4u5FMJjMxhdvJ5KveQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GVBYTekBbilMHuWUFZDq+E25qFvplkOI1U2NNONbZfI=;
- b=YVeqlTxH2qVlj+LVeC9xmbcAaMGLV8khialKjL39KGS3H50FrXMZ4dKnf5m8CmIddzfPEB+kSFJlbRikk7VMqG8tThwTUi/uUyb1jJ/9E1B79mDEjdm9vW6tykUjBN0WBuSDbBD33J0azPRxIKBZyT4sCQY88H0wG9A/CJXIJxP+K28BBk1qUA6eMOssWY1pdyjyU82AwOU22ovvmPoqMjtKG9+VCPfr7RAqT9CSurwq2WvpQC7XkC8oAezwVPJRYy0WPAU1DAZfJCjTDMkdNqSd4qD26S29OO0iy46KB5uANsh0i0jm9GqkYhBX7slAHO/QAq2ASgveKXcz2GHNYw==
+ bh=4aU/13xzYdtgWPcDo3lyFQcdQYmXA04W/e1PPFqeN3s=;
+ b=JUJ5LX0CeXY5TYgbe/ztSYqTxE8p29U7rz5Zxa5//1VO3L3kWam06NumQthuD9yise6E0j6qZubh2sBnCfIG7ZBqCl3vMfCcB1H3zC/nap6nWt3lfqSTN+rF9uS6idVmR+pGNdk++xzWjJT/jIdLAuuU7ot3fUKYXWrw/BFlV3kw3u8GYGfAE6e4v8B0/Xh91ZK42GG2FrAWHXNJEx0d36XxCgTHgXNfOhAb3v2dZwAXt9SHON+FihJfbN4nubFmVCTJue4HR+Z0+ohvXMasvPixMTlWrj1xaVznJMfW1QBipS1ibauNAYxHIgoSRRdgfSZMaX0AP6tTGjC7eXJs3w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GVBYTekBbilMHuWUFZDq+E25qFvplkOI1U2NNONbZfI=;
- b=pR3k9NB1CnPDP6b4SZKWtV1Eq1oKcLJE2+pccyZ4yJM0ggcu7lmt7Auc+5JCrXyFIPtyT2pgQ0Tcs6D3EiHNSj0KKMYjA8g7lz7CspEccgcqw6wVOG9xpiE4VJoJBpJpIYZIk9MFVf6JYboidN3UR6OL/2AG6XqNG3hVmtqL5/jH+zULE2rCa02NhxnmHvnYGSQAs9w8cRfiskmQuwO1f4/z7KfiiK7L5J3j81cZ1NgCk2fkaR1M6AQyLDvHkjmVn6jAtYFI9ZtxbxURwg1UxLcYAuWqWSKNI4MpJaKwfgJCOJa5tYX1gxvlv4rolQStG/rsZuqMbD931vEYHc9y+Q==
+ bh=4aU/13xzYdtgWPcDo3lyFQcdQYmXA04W/e1PPFqeN3s=;
+ b=hXTUusAUS0EjfWLDwP148usurezQENPYt6nau8PJUiCyk6l1ZQyosYD4ke3Uje0MWbNmnH+Iqr5PY9MNuc0UJ0YBKqcfwR8IONZUmavkdGzfWuKgnY8Ms5CHLkHmt23rXFcfCuL1rmTjOpKbpkPrUnK1A2cRT+SL3rAnNdbz24UOlOkOpQ2iq7QYHgWAjynwV5kTaEqzAo7zT4q8wJxJBSKeNZ+/I7HT8rcmT2WLAGkfJjqfsMR0C6FudU8Rln5hpGVOcu6i78mzI6sd7668IHQEOJqyCxDxWySXADwhlfUZlstsvczHd2yvrHcdsTYmuthVly/vvSzRLjRXqW8ucQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AM7PR10MB3956.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:17e::10)
  by AM7PR10MB3320.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:10c::13) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.13; Wed, 23 Sep
- 2026 11:32:12 +0000
+ 2026 11:32:11 +0000
 Received: from AM7PR10MB3956.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::c54c:ccd8:ebbf:477c]) by AM7PR10MB3956.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::c54c:ccd8:ebbf:477c%3]) with mapi id 15.21.0451.014; Wed, 23 Sep 2026
- 11:32:12 +0000
+ 11:32:11 +0000
 From: Felix Moessbauer <felix.moessbauer@siemens.com>
 To: cip-dev@lists.cip-project.org
 CC: Shivanand.Kunijadar@toshiba-tsip.com,
@@ -44,12 +44,10 @@ CC: Shivanand.Kunijadar@toshiba-tsip.com,
 	kazuhiro.hayashi.f74@mail.toshiba,
 	kumar.dinesh.h95@mail.toshiba,
 	Felix Moessbauer <felix.moessbauer@siemens.com>
-Subject: [isar-cip-core][PATCH v3 2/2] Fix file timestamps are not reproducible for EFI certificates
-Date: Wed, 23 Sep 2026 13:30:02 +0200
-Message-ID: <20260923113003.259191-2-felix.moessbauer@siemens.com>
+Subject: [isar-cip-core][PATCH v3 1/2] introduce helper class to set secure boot timestamps
+Date: Wed, 23 Sep 2026 13:30:01 +0200
+Message-ID: <20260923113003.259191-1-felix.moessbauer@siemens.com>
 X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260923113003.259191-1-felix.moessbauer@siemens.com>
-References: <20260923113003.259191-1-felix.moessbauer@siemens.com>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
 X-ClientProxiedBy: FR0P281CA0167.DEUP281.PROD.OUTLOOK.COM
@@ -58,111 +56,156 @@ X-ClientProxiedBy: FR0P281CA0167.DEUP281.PROD.OUTLOOK.COM
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: AM7PR10MB3956:EE_|AM7PR10MB3320:EE_
-X-MS-Office365-Filtering-Correlation-Id: b3faddb8-7341-4bd2-1c03-08df19664fd8
+X-MS-Office365-Filtering-Correlation-Id: db3a5fc0-c198-4a26-3d6e-08df19664f0c
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|1800799024|376014|366016|23010399003|6133799003|55112099003|22082099003|18002099003|3023799007|11063799006|10067099003|56012099006;
+	BCL:0;ARA:13230040|1800799024|376014|366016|23010399003|6133799003|55112099003|18002099003|3023799007|11063799006|10067099003|56012099006;
 X-Microsoft-Antispam-Message-Info: 
-	AVRPHGu9JfDn5ZMeYw8yT22uR1B5Nq8HRDMYwwnKKMmINZt9Bp+ThGp1DJh6wXSZ2sNtLWmzX8GkaPYhlsvgftuK8W2dx4c245MO/vriJZzSA2SwUQlf+pPs1EPQYP6bkhvRRZCkEJYQX/N8g7+lrQqjVW+bamrLs3aWR4XvXaFLo2qsaPnBoKeuccSeApz2a3Zim8hpzwDLI2nQw0NkPf4XfuILUdQ7mf+incbCJV6YP4KpSiIYN11ro73ED2b8FTHVQWSOmBrZUiKd6Uu13HiJXu7yNe+nLUhFd2S+68GjmVU5X5xnzNzDKDezVVxyffKIz4e72GT8RdP6FDG17WhXpKjjVdQtn1wkmtBhDGBYTbDIqFHiz/v4JCZn5x6ifgrEN/xQXv16RlRQ74o2FhQkt0VwWmlMlk6GA7zrbQox6brzNONpCn0Ss7ahChUNTMU6AcSJzY5sIcNOyT2OGAJQweOHQeGL2GYyXKEwSE+BMQ1/w6Aj/SXN0fEZFaXC+eozIBOo3IOvkglNz487UI4gD34I+UH3s/vGZfZGY9TmchaKHTo+5eiWThqFZJzqIVpYRYDoa9iZysfOU7TsTuQvEJLYQTkP8mASnnfxexQ7jWXdA2+tZkPiP5ApOpcT
+	WMhZ+DnrdzdTaEYmWfcxo5wpZpdn3tcqwQp1qajzSJosEmstlhIA7smX9uWqOx8xUBoLZLt8JxmJEiHTNPSrzeB8Yb7E3S0AwshWADHIT1BDohZOV/EIZZi28as86cRaCDd5pRvy3kPXHrqj6ARJP/hCrOONCA8Bq3Z2JE66UCXYhtHMtQNiuxaw8JxPjVTjV/bKWhxCwEGaE8JlUWLxLsWB5lrjxFFFu3UzW5zCKzyceFMVt/iKm9piJ1imGzU5MyiHC3bRyEyk2qLKPoqYRsCbPhwnu1GUY4ZNw+4zBkc/KkVkJTUbslvOu4Uatu3OutxSOTQSNQe+Hx6NQj8EPYSytHMzyefLPHXh/QEf8McLy1kpf2I8d66MVqRJg+JBa/7gQW5dv5BHc85MAIAuX1GTuTE2T4BgbJpcfyutCHpgAhsC9WKHtYAQGeV3AxFv0WLEDEeA/UR/gHm5Dkvywno9stUmatSpqggnHy0Q9FzWVyO5cvQW+me6A9BQAhsMXcvFQouFKJjnU+rBsGfk+zhb5pcmIH8XC07VUJn3nQCR6NkzL+Qf4tpoELNQZWdrJA1HHoCrUoFl/WjftfCRD8CMnb5kvIs/2911fsozgIsMOy2427vzhE89s/88HIYEsECT4+1iv1vB2lJal666EZd/SNjGTPDkYBe/juxWFl0=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR10MB3956.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(23010399003)(6133799003)(55112099003)(22082099003)(18002099003)(3023799007)(11063799006)(10067099003)(56012099006);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR10MB3956.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(23010399003)(6133799003)(55112099003)(18002099003)(3023799007)(11063799006)(10067099003)(56012099006);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?Ks4/mCNmPS6SiK1iuYlw8SWIc/ScV6N2EIs0di+moTsi94uETQO468ZybDsi?=
- =?us-ascii?Q?WAobc6Is1Q/yvCbIqJiBXmQRaOtsp+zW1LGHz8X0UZJXFYGBbtQdQUXY2rA3?=
- =?us-ascii?Q?RpzuQXrw9gjpThsRk+nAWWjQ/sznG6TzD9FK5B+OTfYDXMN/TLhXhYue8U/Q?=
- =?us-ascii?Q?E0GMXkBG8q8RsI23JKfCnoyJWVpiBS81+DsPODO62NCePvYK+NHytHgFzPtF?=
- =?us-ascii?Q?ZGj7eIk4Mjgp7aa0xWhjFV3tzM6S4pJsRUjXK2K4dTgdQ1nFcc5RnPcAPcd4?=
- =?us-ascii?Q?UcwVunpNFc1d5jEeG1E92M4dKZUos71Ijv1bqBAA+evPTzdPjELMMdjM7REI?=
- =?us-ascii?Q?8r2NGKzGbDP3SY4U6kB8RY2aegiIMgXewEhkuYz3DqawAIRwiIbz4sMSnTtS?=
- =?us-ascii?Q?e4cEA13niJRZxFr6j5/gVqnWqdflz0+jbe6HwEln5WlhJBJPWXcIvaF5hY0d?=
- =?us-ascii?Q?VJv7EA+bOnOI28ZE28fbTxjRZxac668IiGvSYQd+gYMVX88febw3PH3Vsts3?=
- =?us-ascii?Q?7FxKN8wTd0b7MfpHg6vqlfepD6DsHHFra9fgWgS+z0NSo/0dK0EVYAREfYyG?=
- =?us-ascii?Q?NW9Wc31hgHBCIuU75RcOEIlsLVw4xsxbcYL781RBP5gNixj6WORhbf5nfeMD?=
- =?us-ascii?Q?TdfsWnQDtoE0iu/DATsxmFeXiUQZKufZRzcJb0xNnYcpHW7I09FehPXUrPi6?=
- =?us-ascii?Q?V6PqkgkvPzhfOV+9UhqcRiMdY68GOA0ZILbYJTg2Lx33RBVFTtVKz52pwZDR?=
- =?us-ascii?Q?ltidEIiNCqO3b8oEdQ2laVyhH9pUaNbiAdhbFg8O7is5TAQNRAc46g8Nh/jn?=
- =?us-ascii?Q?DAHsr4SFbfqAkl+YTPjEzryUMs7+X0vLpjDwDD8dKBjdmnHQ4qDmqJ98S5Ji?=
- =?us-ascii?Q?QU3FkvSFpwI3Rn/B4sFMvmhzLk/pOYMZPlGvu+mlLrWmbcfapdiUvWvItd3W?=
- =?us-ascii?Q?xYfQNmwb4NFNQiYmpvFnHEHX/L0eMCziprJIhj35rrMb5AGh2szfPFvaOJ8w?=
- =?us-ascii?Q?6CEsWbJIEW5zR5SEMrBN+UXomhpme3elYZmt3DNgfXe0MoZ0BLoudOrms9G/?=
- =?us-ascii?Q?/YelT3YU2I2p0AZ91PzW/JjWpBdwwDewqUyecMXe+i/SK+RsetZO6DlNILql?=
- =?us-ascii?Q?jr+xXP2QBixJHxRlUiqKzocEmjwpvywKcLxu3zZ0zugg54hPezZ5eSby9Tr1?=
- =?us-ascii?Q?Hhh9JaOPuoXktIqqiH13jnY9Gx7jdYC57U21jRExPk0UARi9GhRl8k2eKLjt?=
- =?us-ascii?Q?c7WYdL97d/qC3RCWlGtbQVeTn3gBKSBgmSOS0dPAdgQafyCEI8Ae3dzxUoNj?=
- =?us-ascii?Q?nHW/tr/m7DgnpDEGtY9RO4SsFaDKZWMSTnW9Tgu1U5GeT8NiRJCweWlHhaku?=
- =?us-ascii?Q?1YTVSnixmpgqfYTR4JY/Hse0eKLCvhlC+b6/HqbIr4u/TRu/a2Zgv67oB2yE?=
- =?us-ascii?Q?vmJFSg5lcukoxFivtEyanpbWkKK3q5ocshh0VMN4q5Ot0csZVc64cHYkYeVc?=
- =?us-ascii?Q?Xv5gVdGjNtzVlcpmEsEeFN0VxeEqxUq8hjNBKXXN+RSUe03K5DU11mGN/Hd7?=
- =?us-ascii?Q?AY/pkB9U8Beu7jVjDZc364gAUoxYwktPolbetEr02zBdHhFxR6MZDrcZ76Uv?=
- =?us-ascii?Q?MjWHr3ajXLeeFrHdmN8WluuMhlIkiWZLuFLebJqLJNAvMrHa1KpzVF0iEKcR?=
- =?us-ascii?Q?veUMpY2uO2yydGf/RshvMrz2NoIfYFqmOQ5Wrd5YqNWJMwZ0Sg3NEdR35xCm?=
- =?us-ascii?Q?Vz76bYazCme/d2uhEG1WdXO+Bov5lNQ=3D?=
+	=?us-ascii?Q?tM+5DOXJleNjKaWTjxPVEhndeTRtWpMAS9NG9NxLQgZyFCMuOIqw+SLltHpR?=
+ =?us-ascii?Q?pNCyKy/gjiPY51esNXKdyDHAkU1H2bi0wGHnbB44Oyf+X8+SZ1NBdVe9I5Xn?=
+ =?us-ascii?Q?eOz0/xBmUi7SjM2wd2sI6PJSvHURFM6j3mH20o+RN3JtXRFu054Di6zrzoJJ?=
+ =?us-ascii?Q?ZtEScZhpAvB5YLIpRb8VVAFFWbCD/euvZW0rxb4VUAARu5HVu2Gr35dwyKFl?=
+ =?us-ascii?Q?cCQqqDTc0EQ4VNalgxO35z7EazgGQ96sMYSkKgnaojWnYod2D2QLal/AuDYG?=
+ =?us-ascii?Q?/Iq2/r5iz7/5d69HSsD7UsJSp67tlbu7iPgSkc1oESNqGL3pM9wxT3Ik+C1Z?=
+ =?us-ascii?Q?qVRWshoCEhTzO0/7aglevIyNXKR2B0PTIvi6nVRFH4WPGUPll3hEtz5u2TAM?=
+ =?us-ascii?Q?Ziqc05hA1EYOkTyjyxNttWKTkgJflDY0Oqyy8Np9UDUzrmhJTdgRM3axUELu?=
+ =?us-ascii?Q?crBrXNKvon+UwccuTJhApZ1QHUFWZGj9PWWRRONdf1z+1MEBtayn0lpm/bC9?=
+ =?us-ascii?Q?TKMI8VvMNOFrgces9VkvJ3xP7/oBrcb/MDV71jlOIPjbI3mJzJ6mSvXLMfKw?=
+ =?us-ascii?Q?jQPdG8lNRCx0/l5ODfAHsEARuP+cnCCHB4Cr2Q7D1h9fnj3KPgS/6slkFwU+?=
+ =?us-ascii?Q?8PGsb1V6xNXRcCd6piuT4xw07C4+dY7qpxtV1b/jb1v5P954b+Pk/0/RHP47?=
+ =?us-ascii?Q?DrNnxWAxZuCdhw15se3KI/qD6cAEx5qvCyNoNFvYxHcGdt6vbCULBRuIAIz2?=
+ =?us-ascii?Q?ekmusxYEWxVmuDMn3oysHmQ3QDvEA1q9WfAz1uIjRIC9yq25SoFFDRjffSA2?=
+ =?us-ascii?Q?GA7z4v240GLhiVoRLUTXH1jPirx5zsnTomnV2UD09A+6RuE96KCYvJjuUcOx?=
+ =?us-ascii?Q?GQXFJ7aSmY8C81X5H2qjzxKSITvTPM4nReCA51jTpUN80M4So1BWv5Hsz+9A?=
+ =?us-ascii?Q?VyvuNhr7ZtXTrHm6G5Lhk01WjTQhDliP1MaaheOFDlNSO7txAWQr9PjPCZ5h?=
+ =?us-ascii?Q?LGtzbnPfs3VDnSOpIJvp41WVgS+r8L4Iw9ltiNSfPvphKT0NMDNE8HMFmBD/?=
+ =?us-ascii?Q?o+RWBNVX81oILLyQd2PLkNECnlrU6BEKrprdEXMlp9R8kTtaRsHO3PLeIk9U?=
+ =?us-ascii?Q?9PWyQ55+EZMxkxtUUJxpUXTJeuB/3pVINS/eFn1MgKzQ9REntVKa0oeWjrQW?=
+ =?us-ascii?Q?30xkgYurJTwcw0SmLFolM0VXJnYqtGP8Q+7zAw1xs7Gxp3THERp5rBtzAa9a?=
+ =?us-ascii?Q?K9c+UHey9eGQrohn295rqa6PaPQT0/HftymSiFP0nsxNT+58bGWcgCZdmvEF?=
+ =?us-ascii?Q?2YH6Wn0//PzbYOwtbM35utc3R9+Q5pW8roMP+7rOBbYaDYnazV27T/0UL7WG?=
+ =?us-ascii?Q?4k39HJgbK0ycX0l7NYl2Ah5dPQXCUo4j6Bw2nntx87uFpUO6FDyO9WPyQKg0?=
+ =?us-ascii?Q?DmXj6HSF9bH24yqsnLSusPiUj+0nKvQZIk3IGPlzJhpmzIo+PW3Q44ZVFODz?=
+ =?us-ascii?Q?jTcsV7bjWxOIpuZnGhiGT7an2WMt6QKvKA1yROCWcLlJzSp2khSuJJZ1v1Cq?=
+ =?us-ascii?Q?WUb3w4nqQzyZ1jxf8T2H0+AOKuVGn6gpqeMzdAW+2gsxUJjgLps+AzRR/Deh?=
+ =?us-ascii?Q?fl5LahzSMU9w98ADuCoG/wUjAbW2ohiUfiIXbMfy+fzPUpNnXNQX6htfpKOa?=
+ =?us-ascii?Q?8QVuOEP2i9qVQEM4Gg/mVR98+6vQ6srr0AfIFcAzyxA9qN97ULf9nQjF/bhW?=
+ =?us-ascii?Q?celF6uHMjG4/2LEwb2ipt2VuwyAYjPA=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b3faddb8-7341-4bd2-1c03-08df19664fd8
+X-MS-Exchange-CrossTenant-Network-Message-Id: db3a5fc0-c198-4a26-3d6e-08df19664f0c
 X-MS-Exchange-CrossTenant-AuthSource: AM7PR10MB3956.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2026 11:32:12.8567
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2026 11:32:11.4997
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oH5/IJ2iYv9ueMdxlPkY3dALDgtPtnju7X7NaRhFW4RhqVBg4ooKaa7RD7jSyPmFh2eqJ1t/oclyV9JhH07zQH2V0snvusVRf1JuQkEbmCA=
+X-MS-Exchange-CrossTenant-UserPrincipalName: uuJPidQDkzO8qd4anRO9W/6+TLhwuTl7MWTkUlLLCm5Ep06meMAGx9f6c/WY8Jkez7INm6wDRuGu1Mkn4fyjZjq1b3Bt+iT6uoPRhKOF54U=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR10MB3320
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 23 Sep 2026 11:32:28 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24275
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24276
 
-From: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
+This class can be used to set the DEBIAN_CHANGELOG_TIMESTAMP according
+to the SDE and also provide the timestamp that is usable by secure boot
+tooling. As first user, we port over the ebg-secure-boot-signer recipe.
 
-Closes https://gitlab.com/cip-project/cip-core/isar-cip-core/-/work_items/1=
-62
-
-[Felix: let dch timestamp depend on SDE, pin timezone to UTC when
-signing, pass timestamp in correct format to sign-efi-sig-list]
-
-Signed-off-by: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
 Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
 ---
-Changes since v2.2:
+ classes-recipe/secure-boot-timestamp.bbclass  | 21 +++++++++++++++++++
+ .../ebg-secure-boot-signer_0.2.bb             |  7 ++++++-
+ ...ure_image.sh =3D> sign_secure_image.sh.tmpl} |  8 ++-----
+ 3 files changed, 29 insertions(+), 7 deletions(-)
+ create mode 100644 classes-recipe/secure-boot-timestamp.bbclass
+ rename recipes-devtools/ebg-secure-boot-signer/files/{sign_secure_image.sh=
+ =3D> sign_secure_image.sh.tmpl} (66%)
 
-- replace :next commit a7b96bb
-- fix double issue of computation and issuing of note
-
- .../secure-boot-efi-certs/single-key-to-efi-certs_0.1.bb      | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/recipes-devtools/secure-boot-efi-certs/single-key-to-efi-certs=
-_0.1.bb b/recipes-devtools/secure-boot-efi-certs/single-key-to-efi-certs_0.=
-1.bb
-index 263f794..75927ec 100644
---- a/recipes-devtools/secure-boot-efi-certs/single-key-to-efi-certs_0.1.bb
-+++ b/recipes-devtools/secure-boot-efi-certs/single-key-to-efi-certs_0.1.bb
-@@ -22,6 +22,8 @@ DEBIAN_BUILD_DEPENDS .=3D ", secure-boot-secrets, efitool=
+diff --git a/classes-recipe/secure-boot-timestamp.bbclass b/classes-recipe/=
+secure-boot-timestamp.bbclass
+new file mode 100644
+index 0000000..f51906e
+--- /dev/null
++++ b/classes-recipe/secure-boot-timestamp.bbclass
+@@ -0,0 +1,21 @@
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2026
++#
++# Authors:
++#  Felix Moessbauer <felix.moessbauer@siemens.com>
++#
++# SPDX-License-Identifier: MIT
++#
++# Provide up-to-date timestamps for the cryptographic operations
++# of the secure boot tooling and reflect that in the Debian changelog.
++# When calling the SB tooling, ensure to use set TZ=3DUTC as well.
++
++DEBIAN_CHANGELOG_TIMESTAMP ?=3D "${SOURCE_DATE_EPOCH}"
++SECURE_BOOT_TIMESTAMP =3D "${@time.strftime('%Y-%m-%d %H:%M:%S', time.gmti=
+me(int(d.getVar('DEBIAN_CHANGELOG_TIMESTAMP'))))}"
++
++issue_timestamp_note() {
++    bbnote "Use timestamp ${SECURE_BOOT_TIMESTAMP} UTC for signing"
++}
++do_prepare_build[prefuncs] +=3D "issue_timestamp_note"
+diff --git a/recipes-devtools/ebg-secure-boot-signer/ebg-secure-boot-signer=
+_0.2.bb b/recipes-devtools/ebg-secure-boot-signer/ebg-secure-boot-signer_0.=
+2.bb
+index 6963d09..1fb9122 100644
+--- a/recipes-devtools/ebg-secure-boot-signer/ebg-secure-boot-signer_0.2.bb
++++ b/recipes-devtools/ebg-secure-boot-signer/ebg-secure-boot-signer_0.2.bb
+@@ -19,7 +19,12 @@ DESCRIPTION =3D "Signing script for EFI Boot Guard setup=
 s"
+ DEPENDS =3D "secure-boot-secrets"
+ DEBIAN_DEPENDS =3D "sbsigntool, secure-boot-secrets, faketime"
 =20
- DPKG_ARCH =3D "all"
-=20
+-SRC_URI =3D "file://sign_secure_image.sh"
++SRC_URI =3D "file://sign_secure_image.sh.tmpl"
++
 +inherit secure-boot-timestamp
 +
- do_prepare_build() {
-     deb_debianize
++TEMPLATE_FILES +=3D "sign_secure_image.sh.tmpl"
++TEMPLATE_VARS +=3D "SECURE_BOOT_TIMESTAMP"
 =20
-@@ -35,7 +37,7 @@ EOF
+ do_install() {
+     TARGET=3D${D}/usr/bin
+diff --git a/recipes-devtools/ebg-secure-boot-signer/files/sign_secure_imag=
+e.sh b/recipes-devtools/ebg-secure-boot-signer/files/sign_secure_image.sh.t=
+mpl
+similarity index 66%
+rename from recipes-devtools/ebg-secure-boot-signer/files/sign_secure_image=
+.sh
+rename to recipes-devtools/ebg-secure-boot-signer/files/sign_secure_image.s=
+h.tmpl
+index 213cf8a..29f22f4 100644
+--- a/recipes-devtools/ebg-secure-boot-signer/files/sign_secure_image.sh
++++ b/recipes-devtools/ebg-secure-boot-signer/files/sign_secure_image.sh.tm=
+pl
+@@ -30,9 +30,5 @@ fi
 =20
- override_dh_auto_build:
- 	cert-to-efi-sig-list /usr/share/secure-boot-secrets/secure-boot.pem PK.es=
-l
--	sign-efi-sig-list -k /usr/share/secure-boot-secrets/secure-boot.key \
-+	TZ=3DUTC sign-efi-sig-list -t '${SECURE_BOOT_TIMESTAMP}' -k /usr/share/se=
-cure-boot-secrets/secure-boot.key \
- 	    -c /usr/share/secure-boot-secrets/secure-boot.pem PK PK.esl PK.auth
- 	cp PK.auth KEK.auth
- 	cp PK.auth db.auth
+ keydir=3D/usr/share/secure-boot-secrets
+=20
+-faketime_cmd=3D""
+-if [ -n "$SOURCE_DATE_EPOCH" ]; then
+-    faketime_cmd=3D"faketime -f \"$(TZ=3DUTC date -d @$SOURCE_DATE_EPOCH +=
+'%Y-%m-%d %H:%M:%S')\""
+-fi
+-
+-eval $faketime_cmd sbsign --key ${keydir}/secure-boot.key --cert ${keydir}=
+/secure-boot.pem --output $signed $signee
++TZ=3DUTC faketime -f '${SECURE_BOOT_TIMESTAMP}' \
++    sbsign --key ${keydir}/secure-boot.key --cert ${keydir}/secure-boot.pe=
+m --output $signed $signee
 --=20
 2.55.0
 
