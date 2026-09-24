@@ -2,49 +2,51 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E23DAC9830E
-	for <webhook@archiver.kernel.org>; Thu, 24 Sep 2026 11:30:40 +0000 (UTC)
-Received: from AM0PR02CU008.outbound.protection.outlook.com (AM0PR02CU008.outbound.protection.outlook.com [52.101.72.13])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.5720.1790249439112830547
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DD0FC98317
+	for <webhook@archiver.kernel.org>; Thu, 24 Sep 2026 11:30:50 +0000 (UTC)
+Received: from GVXPR05CU001.outbound.protection.outlook.com (GVXPR05CU001.outbound.protection.outlook.com [52.101.83.43])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.5721.1790249447356994503
  for <cip-dev@lists.cip-project.org>;
- Thu, 24 Sep 2026 04:30:39 -0700
+ Thu, 24 Sep 2026 04:30:47 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=kI7nVYYV;
- spf=pass (domain: siemens.com, ip: 52.101.72.13, mailfrom: quirin.gylstorff@siemens.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=w2sC4Alz;
+ spf=pass (domain: siemens.com, ip: 52.101.83.43, mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aVj0kVBwZhFFaRk9n4fEMrMtVuI1EtErcPZPzb0aBu7KM5+mFhbiS1TOdH0D9ehD+fLgzE2Zw/v4dT7wKlPOoEhllmBZZDq9+4cYXevdU0f83NRZ99ZZHBNgl0cAy6m444V3Qu9NNnHzZZO4tYaf6MQnA8kiwsXMIjocVDCxRBdy6gei0tvNlIKuJpFLjciMcdBwxraEf5QBD/HjQ7BhvSPD3IB/VqDkpSB9PVkug/R/qrmDKAGmBKatxM6wSXiXo2M5V9JVVuAiXL+I+6X1vOskJOjeS0RAyLPKJB5j2rtKPTi7m582tatN1LP97iEd2cwfMOibbcJWHj6/2fcXrg==
+ b=gd7DD9hHXkSf79srAYjkZysJFVpjdyCt/No/kPNAKDy/2Om5RjyStmHlT6epqSTrZAECN8VWLYMWrj6pfQcyoqdAR7jFreSmukNwfXHEA6yTG4EX2i4L0zETXCeThDDsHusSZyxLNdU8JgBIrhPrn+xlEUmgF+bT6mF/IIVGd2wiwf900vvA7oufOqUD7G+UFy75p9yWxJ4ETfedEHoi5jZRqoygVJfOsSnYfeuFit3yVzaAIV7dLpMS0qG+UEKzn4RDbsm4N6d0sYrDjYc2807/TJMwPBHk+8CgEf9a66caLkySW7eC4keBbRHkg3qh1YKJble8UfStju/AL3He3w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=d089/A9XG8tm0myu37oI7frejU63mG0uM3tg/vtixnA=;
- b=ZG983PLmemEZo+txHl7GJla+5y5pXbDCBpMPtIZ0O9J9rpq8OJeQ/gCbXhMZmB7MzlINRTqT1/SzZD+0xycF92ifkCXtkWWoRfU0Se7WpbHppPAuhoYqKhlQl8gT6HQfD4KetckXR6tHEuXUqiWU8XrUiAlI+hyU9ZN5cJ/nRSWZ5KYm3qqvles9HGRqt9NusQsBcQbPdQEAWGPqds4/2AHmtYuzXdnnwQA818Psw/3n/sTwYNdqZThxRXgnFei235LoEoz7F7CnMsLq503p+TaktsCx6bHEh8YQi1+DAM49O3MyBkwWzTnFN9ullxek1HvC8ZvYaL76S64bfosrLw==
+ bh=o9eW4CcIY1/8GKaX8iTnDvta7BvZC4DKeFF+XWBHL30=;
+ b=inpxlA4BtTGIxzQdBsi52zBIiOzyA4VVCdFE63V1jtxLSR32JtxWY57eC0Rpczq4wHYKHUl94i+X4ZaEc5yDqJbAoildLnibbg20WWK4cGWN+xNe7mLVk/f6wrKhjNNHqPoEHnIY4Ny3UCmzd4+s3T5h1DvzOuEt9x3isIQ0XYhNaQEC4c66UZ0TjREE/g2vSoYVyW8q63YDoWU21avFzEPnJBkx0HBHMvr3j+LNX2DwF4CzLIVAhX2oj9JzCVdPVTtXHRqlCqSh3DvAOX/kQz1/nmnAggKX+dag9dCoxi3+osGBUch15xETI66pn1xWGMwehSv2zhNoHYUj/8itBg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=d089/A9XG8tm0myu37oI7frejU63mG0uM3tg/vtixnA=;
- b=kI7nVYYVhAE6DxweSYoyBlmN09RsnQJMgNZsXZ9/EU3MIg0rRIzFU7W6gnbdW/BD9lmf9lwCn3G8k0rKUH8P5pg1/wthrlYYdRCz6p+zHITFEoRd/1fx7WeENZE8cd5hl0VowC7Vj1ot+LO3vkOxF6kp/7pE0pDGoxKmOEu6EmhgPHPLdldFtSIr4nXicMD4RJPB04lbuKKnKuBiTI0hoE0yk9b1KrT78z/hN8UUW7BoXIukcsuNQHit0rooJIhJkHrorj6cSc/auw6dw4Cs+4dwyLniz9hNoU/0uM2IDsm1OpawcpnpCAe+q+Gqi3a0FKtsyRraUm0ICqM5ZZpi0w==
+ bh=o9eW4CcIY1/8GKaX8iTnDvta7BvZC4DKeFF+XWBHL30=;
+ b=w2sC4AlzRwLZ0Df9yQVQ4p87uOIkZGEfOqv1jQQcyxha+UopMllHFv5ygpCI3dzYEkFNywQSyhcp1j3BoLodTJf8XS8ooMuX3RSo5LrxBu2Ldf1SJdsEpqMPmu6MPycg/x6Mmruzhaty6ki5SBXeTCRbrjkxx/Gejg+NNLItDRhe+eYHhsaINjSnVDep6xOf7r+JcYZasQjITxxY7+P5Lg0tZvjnavaXZLdIebBeQMJMxwlng2HUnJygAI03LTcGimcBMyX1DPFqba+Ey9oNpmGXXnrbvfefTdSiinDqEAC/bFIfFYYJ3OEqljJqBwPpzJJXt8JZk769gPF1NXSfGQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:208:17f::18)
  by DB8PR10MB3308.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:113::15) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.22; Thu, 24 Sep
- 2026 11:30:35 +0000
+ 2026 11:30:40 +0000
 Received: from AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::5511:7126:a2d7:f914]) by AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::5511:7126:a2d7:f914%4]) with mapi id 15.21.0451.014; Thu, 24 Sep 2026
- 11:30:34 +0000
+ 11:30:40 +0000
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 To: jan.kiszka@siemens.com,
 	alexander.heinisch@siemens.com,
 	cip-dev@lists.cip-project.org
-Subject: [cip-dev][isar-cip-core][PATCH v3 0/5] Add wiping of hard disk to factory reset
-Date: Thu, 24 Sep 2026 13:30:16 +0200
-Message-ID: <20260924113028.3191076-1-quirin.gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][PATCH v3 5/5] initramfs-factory-reset: Wipe partition before creating a new fs
+Date: Thu, 24 Sep 2026 13:30:21 +0200
+Message-ID: <20260924113028.3191076-6-quirin.gylstorff@siemens.com>
 X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260924113028.3191076-1-quirin.gylstorff@siemens.com>
+References: <20260924113028.3191076-1-quirin.gylstorff@siemens.com>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
 X-ClientProxiedBy: LO2P123CA0091.GBRP123.PROD.OUTLOOK.COM
@@ -53,134 +55,208 @@ X-ClientProxiedBy: LO2P123CA0091.GBRP123.PROD.OUTLOOK.COM
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: AM0PR10MB3172:EE_|DB8PR10MB3308:EE_
-X-MS-Office365-Filtering-Correlation-Id: 77839e01-b5ae-4b99-10f3-08df1a2f3fdb
+X-MS-Office365-Filtering-Correlation-Id: d133a0cb-745c-4183-a017-08df1a2f4349
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|366016|376014|1800799024|23010399003|6133799003|11063799006|56012099006|3023799007|55112099003|18002099003|10067099003;
+	BCL:0;ARA:13230040|366016|376014|1800799024|23010399003|6133799003|11063799006|56012099006|3023799007|55112099003|18002099003|22082099003|10067099003;
 X-Microsoft-Antispam-Message-Info: 
-	B6/fFUcdk6q4lx6m8N4L1SSKvDWkXQqiIoM1KCaHP1WiXZC0y2MxOoMpcpyhixuCGNIf8K3rY62L4x29WAIbG9w6ZkxTmBU9yMSUFvd5E61/pxyHjcp3vtCEJK2/T0lpefgf1N0DBTlDPsEhmazVEkIkiJUM4Y4GbaLAn7fAT+5jDd3Ttht73SINGpd4K6UcZslcpwMS9YahrwsbpM5Ku2helmq3bCW5dv1e7s9bVbl0nz10hkLQBZ+oYN9xHceHExL9+QQ/LXZUBxzZu8oivtAlEfb/PAbOzSab+aUaJBd0rdyWJSULMyFJENT2EjYEC5sAI6secKV2nuSTSYER5INLjtgxaGZQasuI+uyrw7m+SUxMb4StPUR0fj+9ueIAN/sC4rhBZL3Rmp4dznRCAmqWymgYG5qZEkCMi0xpGYD0Icjb2B6SPstZnaO/ee4nuaBaHqaF4TCYsQ02C2X5iAoOpTIvTVnVAzSxtSETqpGkFgQyxSOcV4SnT04181s7j0xxV3pDBDeoo2YGnh0hval3awzq+SGcdHVTQ7YZdBoKwaDPzbUwkASXnMdqdwJn5CMaSluwfJVzdGTVAoHJx0UF79taB7yh7qj7xbhij0rosspGYff+mVAHo6o56J6n
+	RpPGlRKB7aTsv7OYfbjTIBvRaDvlzp8wqZzNeFOfgdxRvgnajvNd9rM1l15xpwfBAOgAEHT0F+QNC0uAmgNPbf0RorXbou8UNiBJ9tTE5UAF+3SczA5oj6RBR+8/a1Y7zdgf8+osMpONpHwd6griFl6YibzG6haHG9ff9CtAniAjZeS4sQmlXqLX3WLl7Azg3Jah0fpYYZw04dRnS44EBeWP9SAEYBj64AVhK1dSHiIqJKafpxT1yITyhJ2lrKE+sTKU1dMiLM5oNDFD8Y9PK9XORVN2sbePx3L5tQzWXrQTZGPr0LSSWztSjcJspUIJTBPq/Qoxo3MdpRMnZ21FWirBXVYqlUgnVQ04xkMNZwHWs176K3qOMKkbodcVxK9SKA4nIdeIomdpibnC3l6BrhHIAff5jYJOuWcAtE374566H2L4ZdAULLy04HKPkUC/qGgMGwp+DthLSSNGbqxOWLNkFfruc9P41woMfdhF7ouY1BQAK8u7TkuwQtEI9Pi8MyNS1IjqCE+k91WgBPf5gza80wEGmGXs6HZ0c3NZHw3YY19dQ6kWHmLmYIT9lLO1m1mPTYf8l8XIvbBPPf3B2Yx2C3v2JwLCHWY5f7gxV2peI5laA1w82Xe5E/eM7UijENp/nicT0sHpKs52myLX1J6FBoRq68re0twat7eLIwE=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(23010399003)(6133799003)(11063799006)(56012099006)(3023799007)(55112099003)(18002099003)(10067099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(23010399003)(6133799003)(11063799006)(56012099006)(3023799007)(55112099003)(18002099003)(22082099003)(10067099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?0zrt2LH4ebeIeDyl1eA08UNp+oeCR4VANioi0jnQCtwqj3NN5cvyPj0w18oc?=
- =?us-ascii?Q?ywFgZh5G6gcwrmJS4pjiaAFrk+qKFbG1zKjdawrys7a6JyQaLvPO6yQ+/IPk?=
- =?us-ascii?Q?ifhrT8/Cpc/e7Ni5G/ICqHyA9jVzySTU+wHFW/ycKGkhN87WMDNl86XSZSST?=
- =?us-ascii?Q?/of3OSvJ77DgvX8WYb10bDOpSP2HRVTeJwiGlNo9w9++qxQVYNqwwj53S1Sn?=
- =?us-ascii?Q?Rsxtzg6lQKcoscQQBGeECdP9TYKRuS7RYSEdAc30G0+48troT24yR9p9DT26?=
- =?us-ascii?Q?y9kFMLFAvh5AGIaAAfHLOex6xZDYAOFXOJJstH3O8yZItXtj8Ov4unDF19Gu?=
- =?us-ascii?Q?SpYgXXw6JUX5u2VfEWTHWcBQsQzY2QqGLnWstnVHngoplbdMdQyLkT9yBspQ?=
- =?us-ascii?Q?5Wyfp0ZqymfOEpvd2GyGUYVY5v5toIKNcI6Py4Befev4w3MH6tuS7boq9TQ6?=
- =?us-ascii?Q?tyENAQkl/swsqh+WpGn3jACypIdFF1eElQR5VI4kqpQuDKHu392sLMJAtnaZ?=
- =?us-ascii?Q?P8W3OFMHZcVL6WwvMoHLf/klT4togYjoKdLBl9dBNatCDP3SicaIJ8tLEf64?=
- =?us-ascii?Q?SCKWPLO/RtCy/oHWTB8stFVPadG8UfxgCTO4QvhR1LyVkfcjSivPpuLEjmpS?=
- =?us-ascii?Q?vHaeHOgCop5ZKd0cJ0DLERrQjOQXBkCVfEeFUtsFt89eFthKPKuyF62wyKOE?=
- =?us-ascii?Q?+h5S+vYDWl0sXQtsGcGR+E74iyhwjn9UfWOrU0I2+a8EJyAOP2cfkRWDgQip?=
- =?us-ascii?Q?Uap1p9tqOMKeMnv1zelE4a1GCU5eyo9H9LG1Q+Sj3czyLV8uzXwTVyfDrpwB?=
- =?us-ascii?Q?fGWEwUHcsczcFR5AkvJHd4k9Y3bpZd2AEKtFyoAZirD67h+phQl+7tJBBQCi?=
- =?us-ascii?Q?O8wwLeQuKktxHJjLovFLdJAk43w19luIIyvN3EPXDhgBJIL+YkQycjbUMc/0?=
- =?us-ascii?Q?iVBNBNvot3ZJYHNf0YF9MV7+wDUU/jGkSrhtzz3PokUukaD45sG7uUmZPJF8?=
- =?us-ascii?Q?u5mpJblzR7qpeABxxGzgo0JVLNgqKk7mm0g9ZlYAo3XrKQVVPlMxT6Hk+kmT?=
- =?us-ascii?Q?ZxJFHr4biZFTO0qzGdP47KsWXOKZFQPVNPVWfkjGQwzLkI4OU6jfV6RjJGYa?=
- =?us-ascii?Q?yR4VGdfTsnidMER2n3rjQ7ab0+1eMX0oN4wDxUh3Jm7Kcbt6aOODwc3mCTB/?=
- =?us-ascii?Q?GHyoSMUSiSL0XT5enL8Pt8Zs4xkpfcpLn+9oTUGdxd8kYjvrXhXhm3TH01Ki?=
- =?us-ascii?Q?ltmuF6rCS8WO1KzNeHNnP0nqQZkMwJ3mBk/9Ce+OyrEsKQam9Vqc3nmLWD5l?=
- =?us-ascii?Q?fnHsryYe560I/9R5kTkWdxie4aWxfnNtt/ru4XAhvKFpEMnGp5RIg8bij9Rt?=
- =?us-ascii?Q?ppPFr/IZCfmGsHt4mpKIlxS+l6b7yuu2+vbm9dEXAKE++iqyqaeVxiMmhzsC?=
- =?us-ascii?Q?hYNi8Z9EvquDqnmR0+eCEBHWp9xwe67YL/wOgAQJvWG+KPVsQ2gDYbtnCnlD?=
- =?us-ascii?Q?KnXlRgvjM0GQyun9QyWxIZcWVR7GTX1d2g7czREDNG1nAtt095gEle0tBjct?=
- =?us-ascii?Q?tpK3swMcDKf8JIj+TjIDgsUtCXpaaKKQYBRiWKWySweQXEfrNBkfkl/RgRRp?=
- =?us-ascii?Q?uqJVfxEJ76vobIjU6GADvFh6azIoVDGacgG6d1VjV4yRxAtm9vg076W4qKA2?=
- =?us-ascii?Q?uRND26KgG8/aikgdsyYU4RElY5ANZeTfesvUIagvTnLM2v0P5MTTFaVBk3ep?=
- =?us-ascii?Q?9VKIj9HZtFCTeTX1z7fOfZJ1jJRGITA=3D?=
+	=?us-ascii?Q?Wx/3W/dR3dskHxaQjxunNVMht0u9obRdDiqt630GZ+ZpD6LbP0adZNNydzoE?=
+ =?us-ascii?Q?zgbdb17lp4TQ+ZgzxxH3pBiDwnFHv2YqvhwPlhALwqjuP4pQ4T+HFVqTlNgO?=
+ =?us-ascii?Q?cipwJjO6bB49Duovtib9rG8XvRd2WcofHEqmu32siRIWD0HZJjo1OEKe8H9e?=
+ =?us-ascii?Q?WqmtEZLODCqN5k6FpXzr4Tn45pYQ5HMb3g0O2PWVIVgJwp4g1dxmkhmr3tzk?=
+ =?us-ascii?Q?xkgD0Pr/llPmGzYRo0yYlyQn2Fb2d0iEoP8bourFE9xs2vlHPRTq28sBmpD0?=
+ =?us-ascii?Q?YQ5Xncn+YKAhYNleujMIarMIoMjli5HLFvAYFngLZ3DhS1BOzpiWEPPwaERi?=
+ =?us-ascii?Q?0gBMOx0gZe8K2+h5J1FLZmBEF9hrW47lx+De4gGQCnZsKa+U7f2DGynlk+Bq?=
+ =?us-ascii?Q?RIsAw5H7cvsQ1xvumfYf40LQUUFaKEMplqz1KMIYjphfejaUlxnSRNnIq+HV?=
+ =?us-ascii?Q?r6v8vLFBILsZ1VQvhIs26T5Kj+mQ8vtelpHncpf6fxHvkRF+Cihb3BkdlbSr?=
+ =?us-ascii?Q?AeLtTd3onhcsLM4wF4VXQbuSHDsDnRXfSTA7oqvMiRuW7u95EiaZabr/CER6?=
+ =?us-ascii?Q?cI2rliCapRawFtlac8xwgn/hFSBDS8aa5IXpCr7fZ599LLxybidy5R1qPOQQ?=
+ =?us-ascii?Q?+2dMnWpzEI3nyN/eS91RwM0tKlWcFGXSSwSb/XhF+W2LvtCwEk0JXUHbalmq?=
+ =?us-ascii?Q?WVlNJ/5OdgJGVlUHsgLhZcvCrW+4RTdaWrnyfoY62jfV66gIElXUHY+4SPza?=
+ =?us-ascii?Q?3fGh+wHwEuRRBP7dt0bUO050uGi17tox7QikgAFxxakLAYc7xWlMt6H85fS7?=
+ =?us-ascii?Q?fGJUBD30ryI7B29WSBaVxFD71eUr2A6h2dKPfWU38tfXkEeHWhS1842+ACDa?=
+ =?us-ascii?Q?hHCmlM+5b88c3gZBufJgnuo/maT91CiewkSra9PTibShrhuNwjE9e41t/w1m?=
+ =?us-ascii?Q?1RxfxO5qG1/bLrAQg0O6W7PwEoDBbb2j68e112TSgTBidg4qhAhSNOwG+GTP?=
+ =?us-ascii?Q?Q30qfMznJ4raPD9ZKHHm7rd68eaWWGDdOyCuOROU+V7rbC4pV2o4hB2PyKRa?=
+ =?us-ascii?Q?CJfBWzMrEoNzbvSiiwqE2rVl6NV7PXwcAIbgDex1vyGJ8NKy6KKrNDLjRoXz?=
+ =?us-ascii?Q?W/09Td++ouhWoJJAKWMKmyQy8USxLmacQY6b6qFCcJvJXgpEjVdao5Tm8Cjd?=
+ =?us-ascii?Q?xC8onOjTimZ7R1FqqTt9GJ5phxLYlOys3Cn4ZDWU5b//1MuwgXN+5N1TXz2O?=
+ =?us-ascii?Q?zDexgXaljattbc7BH+EVmfDkmsZ/7qwkTVw2dMTwFBGFEI2iK7/ljDgF58Yd?=
+ =?us-ascii?Q?cTrBvqI5UAnf3/6Hne0fv3QKAU8yzWMzL8Ir9/RjAuooFUshnsPidE5nEDOB?=
+ =?us-ascii?Q?4Z7PHud2Yi9gv8ipDc5OWNqbDXsP6vEA94l8Jx//DSFYFYdeEqdt7bwvEfju?=
+ =?us-ascii?Q?Nw4QtNfaWHvM34uF3AIpS6onIJQ4PvxSBg/yelJ+bcK2mBv1GlMp51xdYG+M?=
+ =?us-ascii?Q?jePdSDgAZP74ohQ5mFkzLe5oZwoNBWZkVqCJP9u9n7CACNiZu5LgKy/kYnGe?=
+ =?us-ascii?Q?Fb9WFefvbLi+mSzlE4qY8ojRMGgpGlQpjMchVbMrc5D2Cy892yTA8UmzMGNU?=
+ =?us-ascii?Q?BwFi0K01mbiHKiJhXYLU/BB4Ao2zKTYy/fvILQy3YdVY5+Z+PKWLNFY2L+9u?=
+ =?us-ascii?Q?VA72LZ6r/O3P3xW8q0IdO6mmk8Y7SreEDMKQWBZaf/iipBn/SvH2ZgaJV0Gq?=
+ =?us-ascii?Q?mnYpElqiBQTOA/w+/3ccOP0Zqhxuib4=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 77839e01-b5ae-4b99-10f3-08df1a2f3fdb
+X-MS-Exchange-CrossTenant-Network-Message-Id: d133a0cb-745c-4183-a017-08df1a2f4349
 X-MS-Exchange-CrossTenant-AuthSource: AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2026 11:30:34.8472
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2026 11:30:40.5955
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wfXywoQO/vH0mW6Lh/tnM+v1GeEoA3DkZNSRVzLP1HzN1PdcsHbb1fzFCQYRJYJHg633GPcK+Pf38NtxD7GFACjB4yMbyaS/fLgBiLL2pNI=
+X-MS-Exchange-CrossTenant-UserPrincipalName: y385dQtO/CFJeqfbAnSK2UX9W3G2mkSiZR38YsRTflwcpljyHXL+jQhiBKaHC2Bg8zsShI98zfLAgMH8Q7QAxpo/AlLBaQ32vhawIvrbfn4=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR10MB3308
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 24 Sep 2026 11:30:40 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24308
+ <cip-dev@lists.cip-project.org>; Thu, 24 Sep 2026 11:30:50 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24313
 
-With this patch set a partition marked for factory reset is wiped if
-- disk encryption is disabled, or
-- disk encryption is enabled and the TPM is *not* cleared.
+This ensures that the data cannot be accessed after a factory reset.
 
-If the TPM is cleared, the LUKS key is gone and the old data is
-inaccessible anyway, so the partition is only reformatted.
+A partition is wiped if disk encryption is disabled or if
+INITRAMFS_FACTORY_RESET_CLEAR_TPM is set to '0'. If the TPM is cleared,
+the LUKS key is gone and the old data is inaccessible anyway, so the
+partition is only reformatted.
 
-This fixes the missing wiping from issue [1].
+The watchdog is serviced during the wipe. The timeout can be set via
+INITRAMFS_FACTORY_RESET_TIMEOUT, which defaults to
+INITRAMFS_SETUP_TIMEOUT or 600 seconds.
 
-[1]: https://gitlab.com/cip-project/cip-core/isar-cip-core/-/work_items/164=
-#2-no-proper-wiping-of-disks-if-not-encrypted
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+---
+ .../files/factory-reset-script.tmpl           | 21 ++++++++++++++++++-
+ .../files/reset-env.tmpl                      |  2 ++
+ .../initramfs-factory-reset-hook_0.4.bb       | 14 ++++++++++---
+ 3 files changed, 33 insertions(+), 4 deletions(-)
 
-Changes since v2:
- - Move the TPM clear fix to the front of the series and rename
-   INITRAMFS_FACTORY_RESET_CLEAR_TPM_VAR to
-   INITRAMFS_FACTORY_RESET_CLEAR_TPM_BOOL.
- - Keep CRYPT_SETUP_TIMEOUT instead of renaming it, it now defaults to
-   the new global INITRAMFS_SETUP_TIMEOUT (default 600).
-   - Add INITRAMFS_FACTORY_RESET_TIMEOUT, also defaulting to
-   INITRAMFS_SETUP_TIMEOUT.
- - Move the INITRAMFS_WATCHDOG_DEVICE default (including the ftpm-stmm
-   case from b31ad236d5d9) into the distro configuration so that both
-   hooks use the same logic. Recipes only keep an empty fallback.
- - Split the target -> target_device rename into a separate patch.
- - Fix commit messages.
-
-Changes since v1 (RFC):
- - Wipe automatically depending on disk encryption and on whether the
-   TPM is cleared, instead of requiring an opt-in ':clear' suffix in
-   INITRAMFS_FACTORY_RESET_DEVICES.
- - start_watchdog(): check both parameters, use log_warning_msg()
-   instead of echo.
- - Drop /run/watchdog.pid, the shell variable watchdog_pid is
-   sufficient as start_watchdog() and stop_watchdog() are always called
-   from the same script.
- - Do not add the psmisc dependency and do not copy fuser into the
-   initramfs, both were unused.
- - Keep the blank line after wait_30sec_for_condition.
- - Add fix that the TPM clear was enabled instead of disabled when
-   setting INITRAMFS_FACTORY_RESET_CLEAR_TPM to '0'.
- - Drop the RFC prefix.
-
-Quirin Gylstorff (4):
-  initramfs-factory-reset: Ensure that '0' disables the TPM clear
-    instead of enabling it
-  initramfs-crypt-hook: Move service watchdog to cip functions
-  initramfs-factory-reset: Rename target to target_device
-  initramfs-factory-reset: Wipe partition before creating a new fs
-
-Shivanand Kunijadar (1):
-  Fix file timestamps are not reproducible for EFI certificates
-
- conf/distro/cip-core-common.inc               |  9 +++-
- .../single-key-to-efi-certs_0.1.bb            |  7 +++
- .../files/cip-initramfs-functions             | 36 ++++++++++++-
- ..._0.1.bb =3D> initramfs-cip-functions_0.2.bb} |  0
- .../files/local-top-complete                  | 23 +--------
- ...k_0.11.bb =3D> initramfs-crypt-hook_0.12.bb} | 14 +++---
- .../files/factory-reset-script.tmpl           | 50 +++++++++++++------
- .../files/reset-env.tmpl                      |  2 +
- ...bb =3D> initramfs-factory-reset-hook_0.4.bb} | 17 +++++--
- 9 files changed, 110 insertions(+), 48 deletions(-)
- rename recipes-initramfs/initramfs-cip-functions/{initramfs-cip-functions_=
-0.1.bb =3D> initramfs-cip-functions_0.2.bb} (100%)
- rename recipes-initramfs/initramfs-crypt-hook/{initramfs-crypt-hook_0.11.b=
-b =3D> initramfs-crypt-hook_0.12.bb} (92%)
- rename recipes-initramfs/initramfs-factory-reset-hook/{initramfs-factory-r=
-eset-hook_0.3.bb =3D> initramfs-factory-reset-hook_0.4.bb} (72%)
-
+diff --git a/recipes-initramfs/initramfs-factory-reset-hook/files/factory-r=
+eset-script.tmpl b/recipes-initramfs/initramfs-factory-reset-hook/files/fac=
+tory-reset-script.tmpl
+index 851aa823..3216dc9b 100644
+--- a/recipes-initramfs/initramfs-factory-reset-hook/files/factory-reset-sc=
+ript.tmpl
++++ b/recipes-initramfs/initramfs-factory-reset-hook/files/factory-reset-sc=
+ript.tmpl
+@@ -33,7 +33,10 @@ wait_30sec_for_condition check_partitions
+=20
+ if /usr/sbin/get-factory-reset.sh --delete | grep -q "factory-reset"; then
+     log_begin_msg "Factory Reset"
++    # service watchdog in the background during lengthy disk wiping
++    start_watchdog "${WATCHDOG_DEV}" "${SETUP_TIMEOUT}"
+     for target in ${target_devices}; do
++        wipedisk=3D"false"
+         target_device=3D"$target"
+         log_begin_msg "Reset device: $target_device"
+         fs_type=3D$(get_fstype "${target_device}")
+@@ -48,6 +51,7 @@ if /usr/sbin/get-factory-reset.sh --delete | grep -q "fac=
+tory-reset"; then
+                 fi
+                 ;;
+         esac
++
+         if [ "$fs_type" =3D "luks" ]; then
+             if [ "${INITRAMFS_FACTORY_RESET_CLEAR_TPM_BOOL}" =3D "1" ]; th=
+en
+                 # after this the data on the encrypted partition
+@@ -59,9 +63,23 @@ if /usr/sbin/get-factory-reset.sh --delete | grep -q "fa=
+ctory-reset"; then
+             else
+                 target_device=3D$(find /dev/mapper -iname "*$label")
+                 fs_type=3D$(get_fstype "${target_device}")
+-                echo "luks device detected use $target_device"
++                log_success_msg "luks device detected use $target_device"
++                wipedisk=3D"true"
+             fi
++        else
++            wipedisk=3D"true"
+         fi
++
++        if [ "${wipedisk}" =3D "true" ]; then
++            log_begin_msg "Clear device $target_device"
++            device_size=3D$(blockdev --getsz "${target_device}")
++            if ! dd if=3D/dev/zero of=3D"${target_device}" bs=3D512 \
++                    count=3D"${device_size}" conv=3Dfsync; then
++                log_warning_msg "Could not clear partition $target_device"
++            fi
++            log_end_msg "Finished clearing device $target_device"
++        fi
++
+         case ${fs_type} in
+             ext*)
+                 /sbin/mke2fs -L "${label}" -F -t ext4 "${target_device}"
+@@ -77,3 +95,4 @@ if /usr/sbin/get-factory-reset.sh --delete | grep -q "fac=
+tory-reset"; then
+     done
+     log_end_msg "Factory Reset"
+ fi
++stop_watchdog
+diff --git a/recipes-initramfs/initramfs-factory-reset-hook/files/reset-env=
+.tmpl b/recipes-initramfs/initramfs-factory-reset-hook/files/reset-env.tmpl
+index 07e2376a..8b0bdb20 100644
+--- a/recipes-initramfs/initramfs-factory-reset-hook/files/reset-env.tmpl
++++ b/recipes-initramfs/initramfs-factory-reset-hook/files/reset-env.tmpl
+@@ -2,5 +2,7 @@
+ #
+ # SPDX-License-Identifier: MIT
+ #
++WATCHDOG_DEV=3D"${INITRAMFS_WATCHDOG_DEVICE}"
++SETUP_TIMEOUT=3D"${INITRAMFS_FACTORY_RESET_TIMEOUT}"
+ INITRAMFS_FACTORY_RESET_DEVICES=3D"${INITRAMFS_FACTORY_RESET_DEVICES}"
+ INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE=3D"${INITRAMFS_FACTORY_RESET_LUKS=
+_FORMAT_TYPE}"
+diff --git a/recipes-initramfs/initramfs-factory-reset-hook/initramfs-facto=
+ry-reset-hook_0.4.bb b/recipes-initramfs/initramfs-factory-reset-hook/initr=
+amfs-factory-reset-hook_0.4.bb
+index aaa194b0..d3a4261a 100644
+--- a/recipes-initramfs/initramfs-factory-reset-hook/initramfs-factory-rese=
+t-hook_0.4.bb
++++ b/recipes-initramfs/initramfs-factory-reset-hook/initramfs-factory-rese=
+t-hook_0.4.bb
+@@ -20,6 +20,12 @@ INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE ??=3D "ext4"
+ INITRAMFS_FACTORY_RESET_CLEAR_TPM ??=3D '0'
+ INITRAMFS_FACTORY_RESET_CLEAR_TPM:encrypt-partitions ?=3D '1'
+ INITRAMFS_FACTORY_RESET_CLEAR_TPM_BOOL =3D "${@ '1' if bb.utils.to_boolean=
+(d.getVar('INITRAMFS_FACTORY_RESET_CLEAR_TPM')) else '0'}"
++# Timeout in seconds for wiping the partitions during factory reset,
++# defaults to INITRAMFS_SETUP_TIMEOUT or 600 if that is unset
++INITRAMFS_FACTORY_RESET_TIMEOUT ?=3D "${@ d.getVar('INITRAMFS_SETUP_TIMEOU=
+T') or 600}"
++# Watchdog to service during the factory reset,
++# the default is set in the distro configuration
++INITRAMFS_WATCHDOG_DEVICE ??=3D ""
+=20
+ # to support factory reset on btrfs, add 'btrfs'
+ INITRAMFS_FACTORY_RESET_FSTYPES =3D "${INITRAMFS_FACTORY_RESET_LUKS_FORMAT=
+_TYPE}"
+@@ -34,7 +40,9 @@ FACTORY_RESET_HOOK_TARGET =3D "${@ 'local-top' if bb.util=
+s.to_boolean(d.getVar('IN
+ TEMPLATE_FILES +=3D "reset-env.tmpl factory-reset-script.tmpl"
+ TEMPLATE_VARS +=3D " INITRAMFS_FACTORY_RESET_DEVICES \
+                    INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE \
+-                   INITRAMFS_FACTORY_RESET_CLEAR_TPM_BOOL"
++                   INITRAMFS_FACTORY_RESET_CLEAR_TPM_BOOL \
++                   INITRAMFS_WATCHDOG_DEVICE \
++                   INITRAMFS_FACTORY_RESET_TIMEOUT"
+=20
+ RDEPENDS =3D "factory-reset-helper \
+             initramfs-cip-functions"
+@@ -42,9 +50,9 @@ RDEPENDS =3D "factory-reset-helper \
+ DEBIAN_DEPENDS .=3D ", coreutils, util-linux, e2fsprogs, awk, \
+                     factory-reset-helper, findutils, initramfs-cip-functio=
+ns"
+ DEBIAN_DEPENDS:append:encrypt-partitions =3D ", tpm2-tools"
+-HOOK_COPY_EXECS =3D "mountpoint findmnt mktemp basename \
++HOOK_COPY_EXECS =3D "mountpoint findmnt mktemp basename dd \
+                    mke2fs awk blkid rm get-factory-reset.sh \
+-                   chattr grep find"
++                   chattr grep find blockdev seq"
+ HOOK_COPY_EXECS:append:encrypt-partitions =3D " tpm2_clear"
+=20
+ OVERRIDES .=3D "${@':btrfs-support' if 'btrfs' in d.getVar('INITRAMFS_FACT=
+ORY_RESET_FSTYPES') else ''}"
 --=20
 2.55.0
 
