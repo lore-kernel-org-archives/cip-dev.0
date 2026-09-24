@@ -2,48 +2,48 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFE50C9830E
-	for <webhook@archiver.kernel.org>; Thu, 24 Sep 2026 11:30:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D46AC9831C
+	for <webhook@archiver.kernel.org>; Thu, 24 Sep 2026 11:30:51 +0000 (UTC)
 Received: from DU2PR03CU002.outbound.protection.outlook.com (DU2PR03CU002.outbound.protection.outlook.com [52.101.65.65])
  by mx.groups.io with SMTP id smtpd.msgproc02-g2.5690.1790249442850179999
  for <cip-dev@lists.cip-project.org>;
- Thu, 24 Sep 2026 04:30:43 -0700
+ Thu, 24 Sep 2026 04:30:44 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=fNOouV5c;
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=XCgUjRi1;
  spf=pass (domain: siemens.com, ip: 52.101.65.65, mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=f1eLDm231E6QUnS/VpJcCwEXCZDsaDhA1TxtNIcZWKRu7Rc5pfqWe7fsrj6yTr37WsapcgEzYB8Jlui69UZzD7eR9Av4qFK2xevy4GU/JsDc85LTpBg49P7+pbI9XFK2HCCMWaqiLLSgfCdvjNs5LB81hR9TLgX22UqxlqhnFyDYl7DXvhTj4runKL1TKAsTxNI5d9mR7ja2NQqxi6iAgCcqXVHgY6/Bz8fC/uTNRmPT2NdKlg/HOGXM+DwD24JFftkScnzHHJLhFoe2KWNXuVLMeTGj/fxWQgyP7YgGZRmy+w/wiGrE6piQgMpoyi/cK8UBfKorSjOzvrQvEaYUEQ==
+ b=ukPVR8O7rsDHAbfUb/fU85uGoP4hLv32IsBVD8w+pCjmTuiCdPhjVDRbs6njs5bDtvzvJinTQavUeb3P7DbEtRSupjkCH0wJxLpMvwE2q15/JjjAAn+JsvQaKpFkjC2Ng+x6WDCBxhYE29FgA0EXz1qCwR9H+PpwvFqThmjeLxFsophc/qnxt7Rh4I7+rwyYrV5o/4u1VqgE3PC0U2kcAKbvMxIBhCn/RJU2IihRqzS3W2n1WlQcumL4V7HY4M+pbPsRawC2eV6835EFzEInnAqno5yxuKUjtViqjeVtr32j5JrJv9oyyrC5ayFysRc5BZ7l70lLPj2gX/J3u9Pp8Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6q0SlifLkU6HbTdSvhNhhpnTnvZy5GX9hoskZ6BdWC0=;
- b=JcWlOdhS1LPdIImPxp9cDY9zC1wT5BGgVrMJwqSyb9+a/iUZD4KyjWoTTJ4OGnebr4Vzuu3QNoT5+jJBiiv+bVGjLXRP8FFzOEH7MCwLVOE1aZgv+dXkItm2f07Y5d0lYH5PggXjqvLGF3KePXFHLxrVMgZK7QHPOxY7pWfNwW0fElGwUyWPcx9AE4cS+SyiMDmZC2D++d9OVHUJkuCUcaYOWFYqM6RKZExUQTK9OFGAGnecrC3Tfte/jaJSwmsEQ7C1MAv6PccW0qgpLWf5XFEieuG82ZVrTe26dKKOhCFqldWlnn6VgMtp7k8r1L5KNatN/GId+83VEnCoAI71Zw==
+ bh=AjwdJAwwUdwNHT9g5N+RBE/Tz5gi2B+wmdKgqnfQCpQ=;
+ b=c1RzETXTfSduxt16jpdaNSjG+/zr3NykPBScxX+fRJZFj5YZfZCTdEF2FCWI+8y/mrV9A0qyYZV9eA0CINxSbUxp8I0I866jr8YwIcJ2ZWC/EGqGm7PObaMcUeKXEIR0xOi++jgZgHlx/YuF/kOUUnhI03ZUms/XOtOo04hCjFh6MSNNCCrzNun6gy36OIVNckCf6BhrnZJykDc/kaiL26fMnDtLe2TeSwWrwXYtg2MsQd+/f8IG+TzUL9m8Kzv56ITjYJQ/8aZ7/OLEm/cbgfWyKYMmSoh0WhEtzJ/grZwFoh0rz17u02ewjMYn2Q6BJEwUPCzGGMyE+fCLFTsItw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6q0SlifLkU6HbTdSvhNhhpnTnvZy5GX9hoskZ6BdWC0=;
- b=fNOouV5cwKXoQLPr0iHtcjpT+I2MCqoAKxKG86jh11WSJ+nhPgGPFaLf03iQBoh/73thmwLFFg40kxWJ3BB/85JndHnsT9hQhdDjkMLBMsUWnAwGf7meEDMiSFyKpM/+UVY1a7gZOEoWbV35hU19r9AVsvNlkrWX2xj3ywD1FkpgO2C/6g0//+zLzFJ1u9kuX6EvY3eQzSJOzo5hX5959urJHVMWNwuhj6bfLZVD98jHeYyhwJbAubhpIC0ZOVVNJbfEu9Ya8QztlTWWodWLznYIjTZNE80sSKrVHDBlydv2jKaH3gvRRNsWctmR17aj98ZeQo3owLX1S76do79oPg==
+ bh=AjwdJAwwUdwNHT9g5N+RBE/Tz5gi2B+wmdKgqnfQCpQ=;
+ b=XCgUjRi18LxNlwOR1zxTbSyWsPymHsc1RPT9/PcnhVahyzAXfnD+iqnF5oIvosJlHs9RgRaBdui12lk9Bds21a8zJYRDMFvjWUpfnedgXGof51FrKLGn1CEKgYmBJ29UXFMTvhfhl8/vqBDflBF25YgghHg9uTZwHLdzzJGZKEsvuzGL8tMJ9hlwmYqYJzBwPMCbu9Frn4fSov4nYw8ZMmABE91u3G1oWPzQGjL1TsvlTDMYhjgGPxl+648y5gXLzB4acVlCm/aeQnycWVy5apGLw1/4Lmcr3C2PI5aDih9tfgrs5dyNFh+PinCjMnJRHBfOMVxGcioX7qUcQD8KXA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:208:17f::18)
  by DB8PR10MB3308.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:113::15) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.22; Thu, 24 Sep
- 2026 11:30:39 +0000
+ 2026 11:30:40 +0000
 Received: from AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::5511:7126:a2d7:f914]) by AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::5511:7126:a2d7:f914%4]) with mapi id 15.21.0451.014; Thu, 24 Sep 2026
- 11:30:39 +0000
+ 11:30:40 +0000
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 To: jan.kiszka@siemens.com,
 	alexander.heinisch@siemens.com,
 	cip-dev@lists.cip-project.org
-Subject: [cip-dev][isar-cip-core][PATCH v3 3/5] initramfs-crypt-hook: Move service watchdog to cip functions
-Date: Thu, 24 Sep 2026 13:30:19 +0200
-Message-ID: <20260924113028.3191076-4-quirin.gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][PATCH v3 4/5] initramfs-factory-reset: Rename target to target_device
+Date: Thu, 24 Sep 2026 13:30:20 +0200
+Message-ID: <20260924113028.3191076-5-quirin.gylstorff@siemens.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20260924113028.3191076-1-quirin.gylstorff@siemens.com>
 References: <20260924113028.3191076-1-quirin.gylstorff@siemens.com>
@@ -55,261 +55,154 @@ X-ClientProxiedBy: LO2P123CA0091.GBRP123.PROD.OUTLOOK.COM
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: AM0PR10MB3172:EE_|DB8PR10MB3308:EE_
-X-MS-Office365-Filtering-Correlation-Id: c2ef977d-1767-4790-489a-08df1a2f424a
+X-MS-Office365-Filtering-Correlation-Id: d1ecaa47-0df3-4085-9cc3-08df1a2f4301
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|366016|376014|1800799024|23010399003|6133799003|11063799006|56012099006|3023799007|55112099003|18002099003|22082099003|10067099003;
+	BCL:0;ARA:13230040|366016|376014|1800799024|23010399003|11063799006|56012099006|3023799007|55112099003|18002099003|22082099003|10067099003;
 X-Microsoft-Antispam-Message-Info: 
-	9P4jtnHX3+ZJDIvyhob7cxCCvBhspv1b5JYi7lIiyxitrVwbr/yVfSLHAq5FSKkuJKY1V/Q+eNxoW6ThZrsu52J8SGAk8jNDMuwP7WPRLfM24J8l/qeMu3MURYh7dVLnrtM9u1tY5eaT4E3lKwq840rUdsFpj9k4Yw6o35fI+sTXANB1VKF0cS19YmR2BdquvQQ0xFnRs51/+/RBwxIvEqAauI02ke40D0uqo1Br9kDuHkiN6RQ/cgszHTClNZfoM6OsOlg5mrc6s1JzSXnrCKthR/97eQ94z8AlhRq+22KiEy03HTtf2czggkp11eeAumxWDHubCza6N4+VGHKxtEjiuiEQO6ANRBcvbYDNb0WAAxqTNdGVhToiC0KhmF/jQTrLXeUD7kpmqd08qdHIaCB7c/gVl/afxK0pxgeHXcZwi2Eesk5JPzlIiKlEyNoNST9scCx6BuJVufIt4cxMbBTqK6pt2JzcBzz/4dVlJx2cQBytsrZ0bYf3N3xwYoI24KwFqGFp88PqZj+nKOb5HkZyGlKFHncuHiCvl8IsAVY6l5McVBevqVAtVGGPNdyEWr6dnq07hj1Fuo4jNUJq1anyO4iwzOm+PnAZkTq3XjWMXg2jCYtGDNE6Y6Gm7JaeKF+Itcbs3LxkPV18bL8tNgwlkK0JFWzPnIKdeN21vnU=
+	GrNzQb1gPi/vHQM0Mkc9Off5rO8eM321G9i3l7SU5IiRKHSQpsg6nB/016PlvPuSGTb0k3BABQb9fkEXtXRlBLL9tFrVZacine6vNFe3smbkR61klARRQFfD+Q8mHxQdHWupiJiwF5S131yiQnDcfHko3fAeYCFbZf+tGzf6InxIDoXdKBQYsP1Y1qH6niAYetpl6GhzwCalGlKd0VjVRYcdQJYQJX5htcS14LSGEPNhUBvIcPH3Mc9w6INnpa4ya55mMfuD+sSnySHqI2pB2aqAzjcPrBkwS+AvDOYGm4X9snxAA6L/yOslF2LZDeWZ01TmYYKxMmHD50VwjwuwZDueveWTHZGSzMtGyE4j/yULUvyxhiZvVrCewPVxJtdX2Of+PyRj3CQ7fmACx9mV3704wbmgDbQ4OjkO/Y7k59ny+0FDUanLqudM4t/nfXAjJZnjESJdnO3/8glh2Ad+8JUshkRppwHku8mtPa+q03qMGjHCPrw9ofLH8nwvxj1J2a9wWe73vV5+O7R7TxsxT4mbTG7oKOaisJfbkxF5cySXMdpHnip5iQCPpRAoA8HhzAkVZk2SCpimKw6c6J0JO7ODabVAvlcBJ5ipyQR1VKyvSMIgfDbN6++HgnT3crg2+KbxzymwsfmRXDQCDzcpGuvyaTNi6YkUTaLOdDxuKY8=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(23010399003)(6133799003)(11063799006)(56012099006)(3023799007)(55112099003)(18002099003)(22082099003)(10067099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(23010399003)(11063799006)(56012099006)(3023799007)(55112099003)(18002099003)(22082099003)(10067099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?Cetln9IGHgibD8IMwikCkoKFadKwNonfP5XccqWTfpElOIaZmgSfcevWPd8Y?=
- =?us-ascii?Q?Z07Eums38HNcB92OkgZ5eWgJ2Qg0zKTB6qtaCVgc4lPLgsM4RQo+s2NOTCI/?=
- =?us-ascii?Q?XPoxptZB6DAzZxewUMa9BYcyywxQJ6mGUkajJUVEpqiD9H9w4Zy3TLd/LrDD?=
- =?us-ascii?Q?ng75mITK4CzqB7gG66rH8tPjDBwUMRqmaGKEm/YsfU+nspBbYxn8lcj4o5Rm?=
- =?us-ascii?Q?Hxklkwyg8UQBhmMuZpGfo8xGR+WtO5x0j3Dbc2467fq50Yp2fi0ukgKMm//i?=
- =?us-ascii?Q?X2J2Y4qiR/L4A03pZuxYYLCbzekX3Wdsin01QjVpckENyLjGguUrSZz/5qby?=
- =?us-ascii?Q?zPcAQ3cqwNIekx44HtKQSFT8gUch9WgveSSQxccEO5Lp0IKz38yHdaG4G6S0?=
- =?us-ascii?Q?XgirOL0DvotrOyr3+WUtehbQLj8Xa0KYYFiAXIdPis1bJkXI0c4p+vyGZVLW?=
- =?us-ascii?Q?QA5UAYcx7vNRs0tyHE1BtKbdq9o26hGfuojmQKt/rBXPa1w5s6fxvW9z111y?=
- =?us-ascii?Q?YssAVD9DxWcxRskfjGD5JlbKJBv5s45pj0/MGsXENsv/aawwwpbVT07/Y5DA?=
- =?us-ascii?Q?0xrXUISgcZ5iZMuCyEkA/A05MRLKmNaPnzixwViabCzXVa7mElu6SxVjBsI/?=
- =?us-ascii?Q?glERu7gwPvxZtXENLfQ/anXmMmKnrP8t2sqbKyTkwiyXeY6GXLwQHQV98XXG?=
- =?us-ascii?Q?LGYZXOFFfI6pUyGuqw6h4G6xYibZ6EmcFdFPJApo5d9Yqe2VdT41ejZRFCFO?=
- =?us-ascii?Q?je4nGJf39hswieGIAv6zDT8N2C653OfdvtN6oTnMcZoNciSVK/mWEwHbUonr?=
- =?us-ascii?Q?osdwAZBUkAS6FnGY7+QaTTXTA+foibdfFkIXiLsIXsQakBAjLoYpbaupyL2Y?=
- =?us-ascii?Q?SeESicnMtmLOpaekdS7vllVWuX1lBAkzDJ4jRxscNQgCWnQZTUoc3aR/mFZ/?=
- =?us-ascii?Q?/9+9HOYMkxQyApVCr+XtNDouDxP9kuBgT7jlxc7/XHGF5/a1QwYhS7tCpntR?=
- =?us-ascii?Q?v0Cimwni9/mlSXqvMBW+OG0ZwKB4APiRkAJElZiX0V/fo15A6xzH2aIMP563?=
- =?us-ascii?Q?g6O3DQWJ6Ez6il/4ZTF4PAUpzNbhUZRHXbH69EkeoOiaE0I9f9gB22p09Wbn?=
- =?us-ascii?Q?xVn0rs9CXQyfA3wO010EsXiTNhqm2LoFwIdZrWRaudWFh5ZG5ywjBeMD77dF?=
- =?us-ascii?Q?8/h4nX2Wxp4i3v7m/koYR/+81Td50i0GUJ3a5BXhznYPOce/woBzdbmX5+zO?=
- =?us-ascii?Q?PBEV7e7YtP1+9vtDJwNg+hVOae+QrLYJ+qC0xSRVCF8nzeq4cHS8FWI1lycA?=
- =?us-ascii?Q?w8pIZfArMoe2Uer123mV75lVDSCC7sfqcdoyoqVD1rWxfkssmEwyN53zuzlM?=
- =?us-ascii?Q?N3Nc3aEboWLKM0+cQCM+BAUbUE6tzku5POC76M1LgJ3FTekmDvEWxNO9VAxo?=
- =?us-ascii?Q?jrmhdSrF+y4YOHe86CI3d7vU+TQbzARNgAaxE0bOgPB4Ls2c6fP3BdQCFO+m?=
- =?us-ascii?Q?+gf996aP8Ou5feazgUloCcQ4TR7zcqikFmkL0lW3dSnUYgaB+ViJbpuq48Z5?=
- =?us-ascii?Q?xsdoyUf58udZzmKzDoW3bltBUvY7xSQZyTxoYo5gFDCiHXOFuF3PlQi5QI3W?=
- =?us-ascii?Q?bZb7h6VhzA5jN18Sw83MiTIVIHiDJGRHByuVCkkhQIiTOdWmXCIB/zW1OXuL?=
- =?us-ascii?Q?Zt2c/0zyJFmFnzMDpZxnYvIcNQxQVUUYQMQ7tHo7Z1glZp8YRrR1jTKTqST/?=
- =?us-ascii?Q?bX05+E3aY6MA+/KMqNl5jlr6fktkFcY=3D?=
+	=?us-ascii?Q?lope6Tz1kQ3UN53EqMCtcJQbwijZuLFcEJ1ildPNdHtvKoKv/NUv0XXPuUyN?=
+ =?us-ascii?Q?3p83ZrS9uMC5yyA+dzng6/ZFKg9DZuTNrinnv+vrElwVlsaaEDV8cIghhs0T?=
+ =?us-ascii?Q?iW0iHgmukHxUJcgNVkHVqTUqU2Cv7c0u/oaXGYYqP7QxFHqEMCj2YU7P5r8Y?=
+ =?us-ascii?Q?xSgIPfnMe3wijfIytXd/Xwjre0+GFOqx6zKxrbQj6A0cQFsduQ0wUOvSnGP9?=
+ =?us-ascii?Q?r0EkUBn7PoNLGLwtlW/rPbBs3yyzpo1k4vlyB/iqrxnwUl3L+Jzf+5fCIcSx?=
+ =?us-ascii?Q?hE6ZmnIlmYmCWZNeo/tNzIrD3itb+A3OIEtgTsI6M9x7ItDkLo41ohp8ytKw?=
+ =?us-ascii?Q?F0aEazCrkQ37A2syVMNKzu81s/Q65h2TMcgWzV5+W0qRoHXBksM7TzhAgAWc?=
+ =?us-ascii?Q?7uldwgipnFTwT+bd0R9SNJfz37cxc18lj2UZyfTSUdhtnpP6Cf3KS49pU9PR?=
+ =?us-ascii?Q?ZclYPAHCp5Tp1B0BhqEKQXGh82BJyFyILkeMo+EY4k30tvs1TFenSwLvJ+2H?=
+ =?us-ascii?Q?bJx0HgIanFs/hFZRBMNNZqbxIC7yKEcqrCRZzlU4JaYQnZM752mizlZIHCQZ?=
+ =?us-ascii?Q?UyrPQn0EE1utt0y1o61uI1waeAkqW7O70KoRicaknUViyrSymR2rR2GDiDt+?=
+ =?us-ascii?Q?1/VD4Hub+A00Er32E7GBoWuhIJxCZIoFA9SvgtWGvY+WsV0hIJdwSnmPNSpW?=
+ =?us-ascii?Q?g60QxImNxppU1w8DNNEh+i20Jt2l1pGgJQqTTVT6pAszHtTTYu8MmZnhUxYK?=
+ =?us-ascii?Q?VADaeM6tVoIyNtwQ/Hc2ZeY/RFJbR141C+A1Dh3+Q8YeLoCi1sHdwjPPCr64?=
+ =?us-ascii?Q?pHNhE3WDY/FveIZl4YraNHeVob72pOVNf7gwagmIgHtU+uozoWzx5Ef+DFMq?=
+ =?us-ascii?Q?6wo/ADj7R+48Rt4449dctWHMM0jyA2JTjkJdbSPABtjeIHUVOox/3tf9xMVS?=
+ =?us-ascii?Q?4/a0+vxHpFmDD6oBix3eEyFC3FTnrAxS2+1ZuftugurEoIxm32x5Y4ycOc8o?=
+ =?us-ascii?Q?w6S1RCH3GYRZLEupXGAyeWTcYi18y0S80w29IKO5hDiCZCZIRGkuQxPMWPcO?=
+ =?us-ascii?Q?pBCf7ZH1kDqNnAa7u91mVKHkTEC3y8qshsp8++uy9WLNPtYIzZ1rU0QdIhwj?=
+ =?us-ascii?Q?qZxfU+k4KNnxeh4QcEt3CPE6bUfNiCZtXyerm7ZhFcffQF/yxAhfp2Ca1Srl?=
+ =?us-ascii?Q?8PNBaUr77phnHFMDEBw/IboejXIsfAQupBrGwr5thMUgCRnfYDIcb0oXz1Av?=
+ =?us-ascii?Q?zVm3syQJ3GFLslYNGHdre58KwB4PCFr1EmseqdxyROFPF3B1ryLLzhBUxn6f?=
+ =?us-ascii?Q?Hwjz1quSTPEHaLJbQTz7nqbf2qKmShyfAAuGIg0ymW3Oa37TN2XUrT/MY8tf?=
+ =?us-ascii?Q?xWfS793dY7Dv+EPRJZEfMpQiKrcsTZawLpVfVAfveOU050dHkiaQl5JQYae6?=
+ =?us-ascii?Q?6SpeNIucwco01K1aO6eZ0T4e16TyTwYuRU5GMY/RFQfzNiZRbo+5IcKorUSE?=
+ =?us-ascii?Q?EB9q6XvU1b9xcDqp+VJaRRu9lhWB8Yztxp6lOm2DkTrKepHEcPeVN69H+B9t?=
+ =?us-ascii?Q?rwonCc0RK2F/6rjQxEqh7JYtegb6io5o4zfLU5yhqGUlYkyYR5oTd/6+bMIE?=
+ =?us-ascii?Q?oBO3Y59cMMGGLw7wUGYUgck8t97rT/2r4rYqjzo3meO8dk0mpybhISqzPfc/?=
+ =?us-ascii?Q?/etW29be1cqYonwa8ur43l1sZzhBelTyisSNOpWUMPNlFEPIJQwGQbql8avw?=
+ =?us-ascii?Q?UGRx9VkHlrvYEXTT+f70Ss/hlC9g18g=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c2ef977d-1767-4790-489a-08df1a2f424a
+X-MS-Exchange-CrossTenant-Network-Message-Id: d1ecaa47-0df3-4085-9cc3-08df1a2f4301
 X-MS-Exchange-CrossTenant-AuthSource: AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2026 11:30:39.1284
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2026 11:30:40.1191
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zPMq2ReJ4k7OaK1hyuUza/CU+x1SEWTb2C5iI+4MCqreMq94qfddOEtVDV0ErDwKampnPbyom1gp35TEkB/j7hQ1Lf1B2Z3GaGz8Tcj+c7U=
+X-MS-Exchange-CrossTenant-UserPrincipalName: fFvcRZ61qQb3pKN9uO0yzz/J6Qy6mGFXSouXeEIOwnTagDhlUqbqpZk3/7IxrdaLtO4VbfBdis7jotr/HMJbq2qds5pS+SQ0u09ef5998L4=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR10MB3308
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 24 Sep 2026 11:30:50 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24310
+ <cip-dev@lists.cip-project.org>; Thu, 24 Sep 2026 11:30:51 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24312
 
-This is in preparation for servicing the watchdog also during the
-factory reset.
+The loop variable target is overwritten with the LUKS mapper device
+if the partition is encrypted. Use a separate variable target_device
+for the device that is actually formatted to make this explicit.
 
-As the watchdog device is now shared between multiple initramfs hooks,
-move the default of INITRAMFS_WATCHDOG_DEVICE from the recipe to the
-distro configuration. The recipe only keeps an empty fallback.
-
-CRYPT_SETUP_TIMEOUT now defaults to the new global variable
-INITRAMFS_SETUP_TIMEOUT, falling back to 600 seconds. This allows to
-set a common timeout for all initramfs hooks servicing the watchdog
-while keeping CRYPT_SETUP_TIMEOUT for a task specific value.
+Also quote the basename argument in check_partitions and fix a double
+space in a warning message. No functional change.
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- conf/distro/cip-core-common.inc               |  9 ++++-
- .../files/cip-initramfs-functions             | 36 ++++++++++++++++++-
- ..._0.1.bb =3D> initramfs-cip-functions_0.2.bb} |  0
- .../files/local-top-complete                  | 23 ++----------
- ...k_0.11.bb =3D> initramfs-crypt-hook_0.12.bb} | 14 ++++----
- 5 files changed, 53 insertions(+), 29 deletions(-)
- rename recipes-initramfs/initramfs-cip-functions/{initramfs-cip-functions_=
-0.1.bb =3D> initramfs-cip-functions_0.2.bb} (100%)
- rename recipes-initramfs/initramfs-crypt-hook/{initramfs-crypt-hook_0.11.b=
-b =3D> initramfs-crypt-hook_0.12.bb} (92%)
+ .../files/factory-reset-script.tmpl           | 27 ++++++++++---------
+ 1 file changed, 14 insertions(+), 13 deletions(-)
 
-diff --git a/conf/distro/cip-core-common.inc b/conf/distro/cip-core-common.=
-inc
-index 99218c3d..c945378a 100644
---- a/conf/distro/cip-core-common.inc
-+++ b/conf/distro/cip-core-common.inc
-@@ -1,7 +1,7 @@
- #
- # CIP Core, generic profile
- #
--# Copyright (c) Siemens AG, 2019-2025
-+# Copyright (c) Siemens AG, 2019-2026
- #
- # Authors:
- #  Jan Kiszka <jan.kiszka@siemens.com>
-@@ -31,3 +31,10 @@ TEE_SUPPLICANT_IN_USERLAND ?=3D "0"
-=20
- PREFERRED_PROVIDER_factory-reset-helper ?=3D "factory-reset-helper-file"
- PREFERRED_PROVIDER_factory-reset-helper:ftpm-stmm =3D "factory-reset-helpe=
-r-efi"
-+
-+# Watchdog to service by initramfs hooks during lengthy operations like
-+# partition encryption or factory reset. In our integration, enabling
-+# fTPM/StMM implies a U-Boot-based firmware which may enable a watchdog ea=
-rly.
-+INITRAMFS_WATCHDOG_DEVICE ?=3D "${@'/dev/watchdog' \
-+    if int(d.getVar('WDOG_TIMEOUT') or 0) > 0 \
-+        or 'ftpm-stmm' in d.getVar('OVERRIDES').split(':') else ''}"
-diff --git a/recipes-initramfs/initramfs-cip-functions/files/cip-initramfs-=
-functions b/recipes-initramfs/initramfs-cip-functions/files/cip-initramfs-f=
-unctions
-index f14956d5..aeeca06c 100644
---- a/recipes-initramfs/initramfs-cip-functions/files/cip-initramfs-functio=
-ns
-+++ b/recipes-initramfs/initramfs-cip-functions/files/cip-initramfs-functio=
-ns
-@@ -2,7 +2,7 @@
- #
- # CIP Core, generic profile
- #
--# Copyright (c) Siemens AG, 2025
-+# Copyright (c) Siemens AG, 2025 - 2026
- #
- # Authors:
- #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-@@ -84,3 +84,37 @@ secure_boot_enabled() {
-     fi
-     return 1
- }
-+
-+service_watchdog() {
-+    watchdog_dev=3D"$1"
-+    setup_timeout=3D"$2"
-+    if [ ! -e "$watchdog_dev" ]; then
-+        panic "Could not find '$watchdog_dev' - Please check your kernel c=
-onfiguration."
-+    fi
-+    for _ in $(seq $((setup_timeout / 10)) ); do
-+        printf '\0'
-+        sleep 10
-+    done > "$watchdog_dev"
-+}
-+
-+# start_watchdog and stop_watchdog share $watchdog_pid via the shell
-+# environment, so both have to be called from the same script.
-+start_watchdog() {
-+    if [ -z "$1" ] || [ -z "$2" ]; then
-+        log_warning_msg "Watchdog is disabled."
-+        return 0
-+    fi
-+    if [ -z "$watchdog_pid" ]; then
-+        service_watchdog "$1" "$2" &
-+        watchdog_pid=3D$!
-+    fi
-+}
-+
-+stop_watchdog() {
-+    if [ -n "$watchdog_pid" ]; then
-+        while kill -9 "$watchdog_pid" 2>/dev/null; do
-+            sleep 1
-+        done
-+        watchdog_pid=3D""
-+    fi
-+}
-diff --git a/recipes-initramfs/initramfs-cip-functions/initramfs-cip-functi=
-ons_0.1.bb b/recipes-initramfs/initramfs-cip-functions/initramfs-cip-functi=
-ons_0.2.bb
-similarity index 100%
-rename from recipes-initramfs/initramfs-cip-functions/initramfs-cip-functio=
-ns_0.1.bb
-rename to recipes-initramfs/initramfs-cip-functions/initramfs-cip-functions=
-_0.2.bb
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complet=
-e b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-index 3312e632..f5b1c8f1 100755
---- a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-@@ -63,20 +63,6 @@ if [ -z "${create_file_system_cmd}" ]; then
- 	create_file_system_cmd=3D"mke2fs -t ext4"
- fi
-=20
--service_watchdog() {
--	if [ -n "$WATCHDOG_DEV" ]; then
--		if [ ! -e "$WATCHDOG_DEV" ]; then
--			panic "Could not find '$WATCHDOG_DEV' - Please check your kernel config=
-uration."
--		fi
--		for n in $(seq $(($SETUP_TIMEOUT / 10)) ); do
--			printf '\0'
--			sleep 10
--		done > "$WATCHDOG_DEV"
--	else
--		echo "Watchdog is disabled."
--	fi
--}
--
- check_partitions()
+diff --git a/recipes-initramfs/initramfs-factory-reset-hook/files/factory-r=
+eset-script.tmpl b/recipes-initramfs/initramfs-factory-reset-hook/files/fac=
+tory-reset-script.tmpl
+index d17cf322..851aa823 100644
+--- a/recipes-initramfs/initramfs-factory-reset-hook/files/factory-reset-sc=
+ript.tmpl
++++ b/recipes-initramfs/initramfs-factory-reset-hook/files/factory-reset-sc=
+ript.tmpl
+@@ -17,7 +17,7 @@ check_partitions()
  {
- 	found=3D0
-@@ -307,10 +293,7 @@ for partition_set in $partition_sets; do
- 	fi
-=20
- 	# service watchdog in the background during lengthy re-encryption
--	if [ -z "$watchdog_pid" ]; then
--		service_watchdog &
--		watchdog_pid=3D$!
--	fi
-+	start_watchdog "${WATCHDOG_DEV}" "${SETUP_TIMEOUT}"
-=20
- 	# Create random password, store it in the tpm2, sealed via PCR:7,
- 	# to allow continuing reencryption in case of power-failure.
-@@ -374,6 +357,4 @@ if [ -x /usr/bin/tpm2_shutdown ]; then
- 	tpm2_shutdown -c
+     found=3D0
+     for partition in ${INITRAMFS_FACTORY_RESET_DEVICES}; do
+-        if blkid | grep -q "$(basename $partition)"; then
++        if blkid | grep -q "$(basename "$partition")"; then
+             found=3D$((found + 1))
+         fi
+     done
+@@ -34,16 +34,17 @@ wait_30sec_for_condition check_partitions
+ if /usr/sbin/get-factory-reset.sh --delete | grep -q "factory-reset"; then
+     log_begin_msg "Factory Reset"
+     for target in ${target_devices}; do
+-        log_begin_msg "Reset device: $target"
+-        fs_type=3D$(get_fstype "${target}")
+-        case "$target" in
++        target_device=3D"$target"
++        log_begin_msg "Reset device: $target_device"
++        fs_type=3D$(get_fstype "${target_device}")
++        case "$target_device" in
+             *by-partlabel*)
+-                label=3D"$(basename "${target}" )"
++                label=3D"$(basename "${target_device}" )"
+                 ;;
+             *)
+-                label=3D$(blkid --match-tag LABEL "$target" | awk -F=3D '{=
+gsub(/"/,"");print $2}' )
++                label=3D$(blkid --match-tag LABEL "$target_device" | awk -=
+F=3D '{gsub(/"/,"");print $2}' )
+                 if [ -z "${label}" ]; then
+-                    log_warning_msg "Could not find any label  for target =
+'$target'"
++                    log_warning_msg "Could not find any label for target '=
+$target_device'"
+                 fi
+                 ;;
+         esac
+@@ -56,23 +57,23 @@ if /usr/sbin/get-factory-reset.sh --delete | grep -q "f=
+actory-reset"; then
+                 # use a variable from the reset-env to set it
+                 fs_type=3D"$INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE"
+             else
+-                target=3D$(find /dev/mapper -iname "*$label")
+-                fs_type=3D$(get_fstype "${target}")
+-                echo "luks device detected use $target"
++                target_device=3D$(find /dev/mapper -iname "*$label")
++                fs_type=3D$(get_fstype "${target_device}")
++                echo "luks device detected use $target_device"
+             fi
+         fi
+         case ${fs_type} in
+             ext*)
+-                /sbin/mke2fs -L "${label}" -F -t ext4 "${target}"
++                /sbin/mke2fs -L "${label}" -F -t ext4 "${target_device}"
+                 ;;
+             btrfs)
+-                /sbin/mkfs.btrfs -L "${label}" --force "${target}"
++                /sbin/mkfs.btrfs -L "${label}" --force "${target_device}"
+                 ;;
+             *)
+                 log_warning_msg "Unrecognized filesystem type ${fs_type} -=
+ could not format"
+                 ;;
+         esac
+-        log_end_msg "Reset device: $target"
++        log_end_msg "Reset device: $target_device"
+     done
+     log_end_msg "Factory Reset"
  fi
-=20
--if [ -n "$watchdog_pid" ]; then
--	kill "$watchdog_pid"  > /dev/null 2>&1
--fi
-+stop_watchdog
-diff --git a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.=
-11.bb b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.12.bb
-similarity index 92%
-rename from recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.1=
-1.bb
-rename to recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.12.=
-bb
-index 7d198582..b9f829ce 100644
---- a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.11.bb
-+++ b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.12.bb
-@@ -88,12 +88,14 @@ CRYPT_PARTITIONS ??=3D "var:/var:reencrypt"
- # CRYPT_CREATE_FILE_SYSTEM_CMD contains the shell command to create the fi=
-lesystem
- # in a newly formatted LUKS Partition
- CRYPT_CREATE_FILE_SYSTEM_CMD ??=3D "/usr/sbin/mke2fs -t ext4"
--# Timeout for creating / re-encrypting partitions on first boot
--CRYPT_SETUP_TIMEOUT ??=3D "600"
--# Watchdog to service during the initial setup of the crypto partitions
--INITRAMFS_WATCHDOG_DEVICE ??=3D "${@'/dev/watchdog' \
--    if int(d.getVar('WDOG_TIMEOUT') or 0) > 0 \
--        or 'ftpm-stmm' in d.getVar('OVERRIDES').split(':') else ''}"
-+# Timeout in seconds for creating / re-encrypting partitions on first boot=
-.
-+# Defaults to INITRAMFS_SETUP_TIMEOUT, which applies to all initramfs
-+# hooks servicing the watchdog, or 600 if that is unset. Set
-+# CRYPT_SETUP_TIMEOUT to use a task specific timeout.
-+CRYPT_SETUP_TIMEOUT ?=3D "${@ d.getVar('INITRAMFS_SETUP_TIMEOUT') or 600}"
-+# Watchdog to service during the initial setup of the crypto partitions,
-+# the default is set in the distro configuration
-+INITRAMFS_WATCHDOG_DEVICE ??=3D ""
- # clevis needs tpm hash algorithm type
- CRYPT_HASH_TYPE ??=3D "sha256"
- CRYPT_KEY_ALGORITHM ??=3D "ecc"
 --=20
 2.55.0
 
