@@ -2,37 +2,37 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5AA0C9831A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1A60C9831B
 	for <webhook@archiver.kernel.org>; Thu, 24 Sep 2026 08:12:51 +0000 (UTC)
 Received: from DB3PR0202CU003.outbound.protection.outlook.com (DB3PR0202CU003.outbound.protection.outlook.com [52.101.84.69])
  by mx.groups.io with SMTP id smtpd.msgproc01-g2.2973.1790237559227108906
  for <cip-dev@lists.cip-project.org>;
- Thu, 24 Sep 2026 01:12:40 -0700
+ Thu, 24 Sep 2026 01:12:41 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=agT6m886;
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=j1aXYVrr;
  spf=pass (domain: siemens.com, ip: 52.101.84.69, mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=P61Pn22zUjOhvOVAkJPKgFWyouRL0JubmO3yxvMHSwje9zPUBx21aYNwvyLkTz/3uFY//1PN2Daru0OZ2ljxEUVPrCDt+wF8iifEILvNlI79dlnxyrlvntdKPYmbDaEUIQUrfHrUkrcmC/tqb8NspXGAJx0kx02jR8si6Rgp2/u8BS3fA0htj+t+dIlZWF6KBZ6tZJ/JO+SoNu8kDJ1KvjATTRN/e7W68SOcu5BwpcZKkL7x7+lMlMLs0Vjxwf9Pgc6PtU3Phoek3GP2ZajuAUOgTwcO2wUB1FMGZHVJH/EAhejb4OWOHkVsOSgfX57/Pu/R+pGVSU5sgKm4V9OoIA==
+ b=QT7cN4wtlH5FULl4NY0EEFSeXPNZbKY+cKNjddthFI4dPY2wMKeuL0++XWzp6qDajCDdaFvd7Fdy7bPKgbmK09Udkg6S2+Z0j6cMl0VGhfI5IkWpSeZryYMyetk45gahI6jKOkpVN4yOylDH+gMzALJNzdUkjNY9QbXGv0h6zccLqQ/gLvoXe0tBmyBzlzYkuOJg/N6ve4k4vPgsABZKgiAHupj3gj00UORl1bWT4YDcJZ+yNHUGQZhRUmPvJ35olPGryeph1/cpWtiwwgxz6Z5ZL6d7KTtezSn+AVjw8QkeL2Jr8pWOmpZib0n6E50XHxjzhDNYGmW1v+ddg7O1eg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wS5z445dyKs7qlVBAyEuFL6Zcx20WaDeLcTmyRduEw4=;
- b=YK3lqc7rW/ikuBC7mmHLnXHrYBhjD3jJc0FuOF1NrhTC5uHk+7HAbIPgOAgRmXHqZzcxU8+5PhmlPPIsWi8pBxfrNaTmMsOL3wRqYpQBekrU3NoODY4hYzUqGBfVpcfu/DbKNHyJ87ui0nurbGYQEleNVsTYCdQ0rQwx2WOgbfZVMPAj7jAB2275LrGkNe9hJyFMI6NhcND6p+af67n2gbSRnNBTlftvLhs1sQxHOjbGTqC7Hw+POZ0G+bwcLORyGpza47S38sInFa3edAdmx5pbofa2z5/QwRPA47cUSUBwrwIeGc4p07cYTqTTHPe3b+dQNGszFxylQhUN7dBmoQ==
+ bh=uKAFHyYcAPvyCLqaAA8Lbnq7vny4cl5dlysROGED/qE=;
+ b=LDC5j7vFXf6TNxzSWOs6F2mzzUe/3w3ZOajO67neCn6PLnodqM7t+UU99glsibP9Hnf6FpXJc0iDKNLJzLZYKk9z5I7sq9tIPRuxlZW8rXvHCk0jZeUzKbkoo4otJl70wVfXSiCe6of0jHiov0+owxKGVUsK91SOOyZ1ICuqu+e06gIGz26p3/O9K3iQrfIr9FXHJslVWB6HxYAE6lnUQB9TV5yPZgmJAVwn9sfp718yDbFP7y+AF3HrxEd2UbbS3H6kSqBi1wwX5qYRH/Tp3zLb3aGY6utdm+IT693CFGek0dpr9Uxakf56W8MvWqcqYSI8PNh42ZZ7e/+CQN+yQQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wS5z445dyKs7qlVBAyEuFL6Zcx20WaDeLcTmyRduEw4=;
- b=agT6m886uFJz0Fh/tVzp2kvkATjmdgt9bVcVkRa7ZW0ONejcLGhTxzA4aI8IN4WR5k+Mnl25pborcCgL2cbrFMGKc8fEPMDlaA6DQwf1XkwKhK68IKvySjIt8xcp1iih9MEpDRyNRQWfaz5G8Ui/OvVTM9hd670cPMfZncg/yXUoOK6yuiJeGMw2gOxVl+V0Fk5HrwK3V3pqCueXUJd0QNf862pIR9QOUb17Z24M9Wmwz8NxSDB12e3wN88Q8H3SGylygM2rgL6n6jhPgMWIlONTtNiRTGKjnk53eF2vo7qmZq/5tn2YBeV8Gpf6+353kOCNjmvITv9+85fDmhKJQA==
+ bh=uKAFHyYcAPvyCLqaAA8Lbnq7vny4cl5dlysROGED/qE=;
+ b=j1aXYVrr83GURNIxGftAuAMEVtMcUkSZjPMw5Bd4l/KGC7nwHxTNij53ukPWw06Fx5T9T6ZP7/Z3iuFJBFcnUcaGeWhWfTmT/oxx+7B1N3zhefSlezWb0MYqcebN1AGlk97yL9TYdQWI+SD1jHy00jFJeHYIdFiC8lbsBOimIXIF1IPYvKfW6/Eubidcsk2ftbPN8MpYQDgf/iKyxrQjkIYfApi8HYhsr1YsW9dF33hmelktZqHmMFo2twnh6tB8XLm+g7U93S1SXLNsDdJNSlElNTjdgGQNnak8dpbFe6kAS0cU60+7StrMSQyBp5SBoLdtbubnzN0xY+hBscNKOQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:208:17f::18)
  by DU0PR10MB7922.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:312::22) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.14; Thu, 24 Sep
- 2026 08:12:36 +0000
+ 2026 08:12:38 +0000
 Received: from AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::5511:7126:a2d7:f914]) by AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::5511:7126:a2d7:f914%4]) with mapi id 15.21.0451.014; Thu, 24 Sep 2026
@@ -43,457 +43,123 @@ To: jan.kiszka@siemens.com,
 	felix.moessbauer@siemens.com,
 	clara.kowalsky@siemens.com,
 	christoph.steiger@siemens.com
-Subject: [cip-dev][isar-cip-core][PATCH v4 02/14] Add doc/README.cis-hardening.md
-Date: Thu, 24 Sep 2026 10:12:11 +0200
-Message-ID: <20260924081226.2844456-3-quirin.gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][PATCH v4 03/14] Add cip-cis-rules to apply hardening configuration to the system
+Date: Thu, 24 Sep 2026 10:12:12 +0200
+Message-ID: <20260924081226.2844456-4-quirin.gylstorff@siemens.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20260924081226.2844456-1-quirin.gylstorff@siemens.com>
 References: <20260924081226.2844456-1-quirin.gylstorff@siemens.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 X-ClientProxiedBy: LO4P265CA0002.GBRP265.PROD.OUTLOOK.COM
  (2603:10a6:600:2ad::22) To AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:208:17f::18)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: AM0PR10MB3172:EE_|DU0PR10MB7922:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7a261140-b788-4936-8b98-08df1a1396ac
+X-MS-Office365-Filtering-Correlation-Id: 8d01aea5-b50c-42d7-9afa-08df1a1397a2
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|366016|376014|1800799024|23010399003|10067099003|56012099006|11063799006|5023799004|3023799007|6133799003|55112099003|9063799003|18002099003|22082099003;
+	BCL:0;ARA:13230040|366016|376014|1800799024|23010399003|10067099003|56012099006|11063799006|3023799007|6133799003|55112099003|18002099003|22082099003;
 X-Microsoft-Antispam-Message-Info: 
-	hVFaMoqexjnJX6o+dZMVaxVy47nW5TD3Z5wEv7IrmN+deYRoMZD6DFvcKIrwFhficLdmbMAQrxCmYCPt4mU+p2D9z1zIO2sMwLte6sxdcd80I6fLsCf9vOnx4iZn3K5fwXDl3wFY+8RJx9mb3mO+flHqWoDj2mCAi5wgDOPNCYP4eXP81OJziKj+teMAPGeJ4b9iV01D8weFcILwGkucL7RoV3Z1C5IAMp3gU9SmdttTMXgg5KmGdQa+3s+q6JEiQ5wzFVU8wD0qVzuGBHu5QpeKT3LWUAD9ILUCmRIgWQt/LAsX5UxEay6Wk7iZCkhNmNItqh/ZcAU7zblDVr9z1wbcAxWVS4zAPA/DHCncRf8lvSrVHxJOkyGtaxxqa2OoPkKPgL6d95aoLSJTjKb6Bt97ruRHraQO9DktC+yDTHpJ6OkPg++vtuRkbvcZt1K2CHBSM2it5JLa02K52EjfU+tu/R5BqT2006r0y1zE6LpX1ZCoW22rVUJ3lBZdSd/wfaQxwC6718JPNidZte8NTmDz7fdRXmggmSrBBn4ymB/Unhvjx9jkA5xDvUYBdpDFXcnOMdAZqJKBf4h0CkZTvaLp5KmnFzVlhVAs51WwUbkX2sGGjfbpcvihhI0IQVhJlEa3UFN+/XRUvNRoeVT9Kci2d2leygqyZHEB7W7Oo3I=
+	p7wXzFkikr8YTGMVFwOxs39qcjMBCJnGQZ/K1rlZcmnCkmCqI5U8m699C11b26phcxSysswyS8vWzwv96F0MOX7GjrX9YCiNxR/++/V37naMTI2VRViEXt4VU0YEd7EibOvwp1meTiHTBSJEO/iIbPztd1BjvlIPsNox++vg4cm2MmDNq19k9p+ZiZ/my+aqJOKpYCLb9ijivctZ8D7F8Ca1AHZSJcPt+kyHSkcZES1uZMxH2qTocTVrqP+v0UsJCaMxJFKvDFEdostcq9yKJHOdo+InuykSIrNDrpo37kB3pbcOm/U4RdWusJ7xGglcdw/Y2SNy15GMgNg8v/bHVzdsxwu0Yzwy9QiwUvJ3PrOOSwoVBJvVXiCexs5fB3n5r/FhU6IiMvLHAtDemSrCu1mFzizNqUACxC6buWT6d4SRhFMje0Z+ROIA4PjNaInJk9AJFoKaJWoDTsIfZ0flfybDxC5+yuwAtbYOog726byHU5KZuFciF5iaDmu5LfpPjDSxigXnwyNHDXMRcKzIrmQEwfSXr56Qvf6yMmraUvNnQWGtLX11wjOZxmrGlW9bGx8Gi92HLqPqWRK2ftWJbgHLxGIT0rCy9GnW8tsRfvH60603kRn4d1jsEa5QiyOHQscvyjV8e3VUciV/KWB2juTDhedP0CdiFzbV5k7egMM=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(23010399003)(10067099003)(56012099006)(11063799006)(5023799004)(3023799007)(6133799003)(55112099003)(9063799003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(23010399003)(10067099003)(56012099006)(11063799006)(3023799007)(6133799003)(55112099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?0rSetJcdjXonbyL9QGw9mNZsRa7SGVZg+ZSGIulR8ZhpPUUH7vQK8Y7WoMif?=
- =?us-ascii?Q?vBOGrIhuGdIDmU6z8MmJ9rkjm3vQimQqzW6iRYZKDtz4qOcHbnMt1FkNRTn7?=
- =?us-ascii?Q?WWG8DyKx2njektDho59BkQta1sNPU6zB6RajJNSIKn2EOqdQgo8m3hhDicNM?=
- =?us-ascii?Q?ieieuK0HQvfqNoZ7YobGooum1+ojTGXfaGJ2QzyR45E+I1OcuuE/F3iRq4Qe?=
- =?us-ascii?Q?ynZrA1FTsFMsZ1qB8LZYvBl2Oi+s6agakXwkx57rLOi1my47VHovbWPHdHwI?=
- =?us-ascii?Q?/ZVSiE1Xaqz8W1V5RmilaeHpv7+s1VykwkU3q8qLnjDRUUalGG5y/huv1LiH?=
- =?us-ascii?Q?m67dxGTGAPu2Ya0Yp5ujMpOfZ5tLlNOIqqo9SnXdpbK0jApb3pP+MP9lp0zV?=
- =?us-ascii?Q?Q/BgdUMNRFGpPnMDI6k7a8AhonNAAVteZtW5duEJryDkQsvZVjKAsvPUu7Sm?=
- =?us-ascii?Q?f69cXBfn5R0M+mlGFPz8f+4/+w2cuteW7Dqles0OOQPWbC9/Lk+r3bl0DJvo?=
- =?us-ascii?Q?JWCxQ0uP6bUI/q19JsblzvmNRXZ2mNTs+JUoyksEXeNib3MJqgwZqmdfVKm+?=
- =?us-ascii?Q?4cm4DgLbC2VYa+mOnas+l9B52hadyN5oeJRdnjiMTFHnbJedXvLqXS3ncSrG?=
- =?us-ascii?Q?rslYw3DGpxP7LqfMffUuYz512oSOj6xAKTM1IdjTOhAg5QV6HR5GNqtP+JDt?=
- =?us-ascii?Q?cdxWFyU4M22EelBlvv29C0iytpae236Gi8gnVib9sbS9ejDQdrNsm2FFP1lf?=
- =?us-ascii?Q?nJLSO0F5ZlacTkVpP8c9cDGIujHNNjtFCaVLFUNYTtskr6PkHAYMcbeSyUhr?=
- =?us-ascii?Q?rWfovP1/AF+gp+G7Ruu9PumomLOCl9FOOaga+RUFMz/m/a/udVLJsYwet1iO?=
- =?us-ascii?Q?vr5WpJqUolU1IMu7zKUMoyVmRNKZP9FqCCotDM8qYcf5Qw/49+tItvA4/foO?=
- =?us-ascii?Q?wDEFCgyjAAq4veS5G7KTmSyPveDHcUJ1nB+cPBnv77f2FiDbw2HmXMjrLMVL?=
- =?us-ascii?Q?oKsI53cRUAIpJBArFF3twDTGIC9L1sxD5gJNH/6VG5HerJwJ/hJzvM1aZEct?=
- =?us-ascii?Q?RSCv7eqVgkD1LbszVJewFIzEU8m02pcMuP/Gn06Bl1jk9jjOpNaMw+EDWoQD?=
- =?us-ascii?Q?PFGlJ7ZsOGos0jsHb3LwA7oL9/OqVfEgz40HSqOjXlbFfRLSqkuKhYnZaizV?=
- =?us-ascii?Q?2SGazgE76bd7RrsiSZbq1dtDFuKa2HXXJvNtAzRrFcUbuGScem7HRVI7iDYh?=
- =?us-ascii?Q?9uv228RdJtKB1t02A3V4IvE4CYd4gaRaRWGEF18k0cIkfQ4I6Kd/9sBNaO4y?=
- =?us-ascii?Q?PdHPfmQBLnbhpuFLMXnLzgtEkGLrBX9umVTmSDnurT/AaAWihpUMMC1JTyng?=
- =?us-ascii?Q?UQ5fAmO/jtzvtAosJf7ViwsGE7MVz06LIyBYcxnPIgPqwhvmApBj/VK7ywT7?=
- =?us-ascii?Q?3hSpMvHdFELlWT9Vj8VxHSN5mRm+QoItnRmnQdFL+90h5Oqd+5DPddWJdLY8?=
- =?us-ascii?Q?ndwbdSFWDw/nQmxeiODEPJxrH0221cD4+4V1elYbeOMxCRVYfLo7pAgPQP0t?=
- =?us-ascii?Q?xQJoaPEiY1yFafMuuAWFnA0JQcVZL6CzERxWKQoCk+vgHm0/YR5Ue/japYTX?=
- =?us-ascii?Q?DlyniHcNGY45OCeUCmgw+LwWMY9f9GO3gmqJLg0vHQ6zO4u0XhVJnom5PbSk?=
- =?us-ascii?Q?nYT3O6r/KghYkL7/bpd91CFLPGAYODSVlE+3ZFNas8k25LIrSfxBAL0N5THi?=
- =?us-ascii?Q?lVyNtoaN/B3XnzaogPKCr5lSMw7HJus=3D?=
+	=?us-ascii?Q?a02Iywb5QdCaGx7f1EqiIiHZhjIkqR2ZD/wPkEumQ00rfxNVuTmLmxglNoBh?=
+ =?us-ascii?Q?Gih0L1bW1152lGgROe0mgvVleEze0bgBDjLEuUbKKQ2DUTpKEzFKhTLZEKsm?=
+ =?us-ascii?Q?lpj0hy8m4UIxjxhvLsA7J+PHkBzB97l+4djzgGyu/FhYhG9OTZIwN+Nf/6wk?=
+ =?us-ascii?Q?kFBS/qb8tYlcLQvVVhdQLNfkLMbcRL3RKhZroERpLZDKkjKREXLPs9ADNmDd?=
+ =?us-ascii?Q?oU1E2ALPIuRZJ7lZJlNEhdHquteC2jiUaTk+jLqkh5N0xnSTATCewxe2JmzA?=
+ =?us-ascii?Q?rVC/gCY7MHC+VfOKsd/txKy+/4gvKaNsXBVgntoU/6A5xwe3b04lbxQcTFqd?=
+ =?us-ascii?Q?74WGZ9BdyscPLz6Zp9VTftlgZXXiADaYl8LCHi85wwP8bcaD3Ioks7jqx7MK?=
+ =?us-ascii?Q?xMlr/tegr7NS4oJpKsSivEIbE5OmMUOYE5cFURfL/dR8nFV2QySKo3ji+tSh?=
+ =?us-ascii?Q?PbSr0se19m153Uax0UDxt22bAzJan2HPvSExZN8yDSykLPLhOeKOKiknGCVX?=
+ =?us-ascii?Q?s7sHC2XOIUXjxFEpFMdHigV3g5/UbR1FqP+jDs1fVrhNSbIMUTmgdpCXRZvY?=
+ =?us-ascii?Q?CAh6egf/9uloi5EerVtSY91FCl7Z4+VL0fzEDl/l31jJ9zAADdd5tPVyEhB3?=
+ =?us-ascii?Q?tzwssclNX5jGlu3ugomhSmB6eEpp+9Qv0yLhKdg+TlpbuwLplX1CFzwzL38U?=
+ =?us-ascii?Q?jvU4uLHrFYTA3GA0T97t5JmiMU7Fd66mEaDopEIsJDicRLApdc1LQFGHQtXC?=
+ =?us-ascii?Q?VrRqJxeoDUVq00pqBZJ7++zTgKYkU/ru4uCzC3H3Ov6xP5xSew23VsE1VaB3?=
+ =?us-ascii?Q?/e5s++MklYn+kRiQnYHWlXCzLrMvFlBaOoqBo0mqdtfOCxa0B3FKzSEbmrAV?=
+ =?us-ascii?Q?J7Ox//lnLXcbk2Fwc0Tzv1TOmA0yOTE2OSuTvafqriZGSDCTbqgx6GIaXGHi?=
+ =?us-ascii?Q?bNMlK+TRc5Ff6SGfejnvNc6qTDPzjCK/lwXjItJP44DbjTCbEmchEteLIF+N?=
+ =?us-ascii?Q?LaQ62vtYSOmkT+Dw9WB4FtXKiRkc9bb8nC49ULYLuDZhnwWY5jiwOy3ZYDby?=
+ =?us-ascii?Q?G15qSF07yCybm2/7Wxp/Y6N6ZWhh4ju+DvhsC8PslHiYH0mo7rPCQ1TIWnc7?=
+ =?us-ascii?Q?0RU1xg3uudDENJp4ZnlM/tlDAIDHTXBYWXS6nZLOXLM0jaA5wzzF4fsoEnVc?=
+ =?us-ascii?Q?dMOGAQHTF2F3sjs96ObuUN4l2a/ErhUSdJakeZWPnDqLU62/uJqzteEFZxdM?=
+ =?us-ascii?Q?ELt30vNy9R+Ua8LFIgouXeSErlSylpg/RgUY4Xf928fNxhP+qHndBH4GCAoV?=
+ =?us-ascii?Q?X090UZs/8vuMtBfd1idhetLrA/xUwAL4mlog5lS2FCD1IXpO6gfmZabH4MyM?=
+ =?us-ascii?Q?kBHrt/qO+eg0XayaUV/R1dJBnGlhlZYs2uctniwdDmMAPgoJKp2y50410Uxl?=
+ =?us-ascii?Q?nwGv/mAcnUitl7Kr9t1lz8NhVImRh+feCjhFz3ecIWqdu/mcuYpDEx4JheUo?=
+ =?us-ascii?Q?zgmNQBxS5N6b6HU4PcZ3UBjg8oezzJ2+ruq1tcvOcsywWnyv0UgfCiCOFFJB?=
+ =?us-ascii?Q?PhASsSMOGu30/+OUqVNCNx8q9LgOh3FE/4wqdStKC4YIuuWN2p5LU/imo1qP?=
+ =?us-ascii?Q?u12J0qwoqxGz0DZ8nP3UM1kDCnYY5AiH9wd2vWVphxJ//DcwYCPVCcRqWAFy?=
+ =?us-ascii?Q?f4vNzWYWWEwdcmT45s7n4Z6OWkQZtaqWhr6bVTm1o+5WMmRmIzl5n5VJEEq9?=
+ =?us-ascii?Q?lHSCgAKfwu+BVCUaMgJ+nrUkUHmSeRk=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a261140-b788-4936-8b98-08df1a1396ac
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8d01aea5-b50c-42d7-9afa-08df1a1397a2
 X-MS-Exchange-CrossTenant-AuthSource: AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2026 08:12:34.5735
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2026 08:12:36.2511
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CP2uDG9q5cvSTYZZzbJBDbe3AZmTiCPRvzX76sdIpELhlOxZJHF8flj0nlu1C6B0laJYO1VO5lQjw/V4rDHEqXgvhm9hqjHQ7+xNsXi6yMI=
+X-MS-Exchange-CrossTenant-UserPrincipalName: SDx9C/i8WllN4gp22RpTH8gTvOkYN85JRSfrtbbY/xX04rvx7K3cavvccwqS9TAiPzWd+pqlXDwvH9BvrJhr7A7OKODVu/PvTvgnKD8r91I=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB7922
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 24 Sep 2026 08:12:51 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24289
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24290
+
+This package uses the configuration from `cip-cis-rules-config`
+to generate a Debian package containing the selected hardening
+rules.
 
 Co-Authored-by: Clara Kowalsky <clara.kowalsky@siemens.com>
 Co-Authored-by: Felix Moessbauer <felix.moessbauer@siemens.com>
 Co-Authored-by: Christoph Steiger <christoph.steiger@siemens.com>
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- README.md                   |   1 +
- doc/README.cis-hardening.md | 283 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 284 insertions(+)
- create mode 100644 doc/README.cis-hardening.md
+ .../cip-cis-rules/cip-cis-rules_1.0.0.bb      | 23 +++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+ create mode 100644 recipes-security/cip-cis-rules/cip-cis-rules_1.0.0.bb
 
-diff --git a/README.md b/README.md
-index f84adadc..026ab434 100644
---- a/README.md
-+++ b/README.md
-@@ -62,6 +62,7 @@ The following topics are in separate READMEs:
-  - [Update and Secure boot signing](./doc/README.signing.md)
-  - [Encryption with TPM2](./doc/README.tpm2.encryption.md)
-  - [Factory-reset](./doc/README.factory-reset.md)
-+ - [CIS hardening](./doc/README.cis-hardening.md)
-  - [Release policy](./doc/README_version-release-policy.md)
-=20
- ## Community Resources
-diff --git a/doc/README.cis-hardening.md b/doc/README.cis-hardening.md
+diff --git a/recipes-security/cip-cis-rules/cip-cis-rules_1.0.0.bb b/recipe=
+s-security/cip-cis-rules/cip-cis-rules_1.0.0.bb
 new file mode 100644
-index 00000000..c87ffffc
+index 00000000..216e0556
 --- /dev/null
-+++ b/doc/README.cis-hardening.md
-@@ -0,0 +1,283 @@
-+# CIS Hardening
++++ b/recipes-security/cip-cis-rules/cip-cis-rules_1.0.0.bb
+@@ -0,0 +1,23 @@
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2026
++#
++# Authors:
++#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
++#
++# SPDX-License-Identifier: MIT
++#
++DESCRIPTION =3D "CIS rule overrides for CIP based images"
++MAINTAINER =3D "Felix Moessbauer <felix.moessbauer@siemens.com>"
 +
-+CIP Core can generate and apply a selected set of CIS hardening rules duri=
-ng
-+the image build.  The rule catalog is derived from OVH `debian-cis` and is
-+exposed as a Kconfig menu.  The selected rules are exported as JSON, conve=
-rted
-+into Debian package content, and reused for kernel configuration and optio=
-nal
-+runtime validation.
++SRC_URI =3D "git://gitlab.com/cip-playground/cip-cis-rules.git;protocol=3D=
+https;branch=3Dcis-debian-13;destsuffix=3D${P}"
++SRCREV =3D "094acbe4926840f924c35b0526ee4f316984f891"
 +
-+## Key design decisions
++DPKG_ARCH =3D "all"
++PROVIDES =3D "${BPN}"
 +
-+- CIS hardening is optional.
-+- Hardening is enabled by a single image configuration option,
-+  `CIP_CIS_HARDENING`, plus the selected rule configuration.
-+- Hardening and validation are independent.  An image may apply hardening,
-+  but skip the validation support. Only validating is not supported, thoug=
-h.
-+- Hardening and validation configuration must be overridable from a
-+  third-party layer, for example through a `cip-cis-rules-config_%.bbappen=
-d` that
-+  provides a checked-in configuration.
-+- The default level `2` configuration must harden all generic settings.
-+  A conformity level below `100%` is acceptable for this default because t=
-he
-+  remaining rules are product specific and must be completed downstream.
++inherit dpkg
 +
-+## Enabling CIS hardening
-+
-+Enable hardening for an image by setting `CIP_CIS_HARDENING`:
-+
-+```
-+CIP_CIS_HARDENING =3D "1"
-+```
-+
-+When this option is enabled, `cip-core-image`:
-+
-+- inherits the CIS hardening image class
-+- installs the `cip-cis-rules-config-${MACHINE}` package
-+- applies the generated hardening package to the root file system,
-+- adds the generated kernel hardening fragment to the CIP kernel build.
-+
-+## Configuring rules
-+
-+Rules can be selected with the recipe menuconfig task:
-+
-+```
-+./kas-container shell <kas files>
-+bitbake cip-cis-rules-config -c menuconfig
-+bitbake cip-core-image
-+```
-+
-+The menu contains:
-+
-+- a hardening level choice, currently levels `1` to `5`,
-+- one boolean option per CIS rule,
-+- justification strings for rules disabled even though the selected level
-+  requires them.
-+
-+Changing the hardening level in the menu resets rule selections to the def=
-aults
-+for the new level.  Existing justification strings are kept.
-+
-+The menu writes the configuration to `${S}/${HARDENING_CFG_NAME}` in the w=
-ork
-+directory of `cip-cis-rules-config` (`config.json` if `HARDENING_CFG` is n=
-ot set).
-+After the package build it is deployed to
-+`${DEPLOY_DIR_IMAGE}/${CIP_CIS_HARDENING_CONFIG}`.
-+
-+No default configuration is shipped: a build with `CIP_CIS_HARDENING` enab=
-led
-+fails in `do_check_config` until a configuration is provided.
-+
-+For product builds, copy the generated config into a local layer and selec=
-t it
-+with `HARDENING_CFG` from a `cip-cis-rules-config_%.bbappend`, e.g.:
-+
-+```
-+FILESEXTRAPATHS:prepend :=3D "${FILE_DIRNAME}/files:"
-+HARDENING_CFG =3D "example.config.json"
-+```
-+
-+The file named in `HARDENING_CFG` is added to `SRC_URI` automatically.  Ch=
-eck
-+both the bbappend and the config into version control.  You can have multi=
-ple
-+configurations checked in this way, and select which one should be applied=
- with
-+`HARDENING_CFG`.
-+
-+The JSON format is validated against
-+`recipes-security/cip-cis-rules-config/files/scripts/config.schema.json`,
-+whereby `apply` controls whether the rule is enabled.  `justification` doc=
-uments
-+why a required rule is disabled.
-+
-+## What the hardening package installs
-+
-+The `cip-cis-rules-config` package is a configuration package.  It install=
-s only the
-+files for rules with `apply: true`; rules without implemented snippets are
-+kept in the JSON selection but do not add files to the root file system.
-+
-+Implemented snippets currently cover:
-+
-+- `/etc/modprobe.d/` files for disabled filesystems and USB storage,
-+- `/etc/sysctl.d/` files for kernel and network sysctl settings,
-+- `/etc/ssh/sshd_config.d/` files for SSH daemon hardening,
-+- `/etc/sudoers.d/` files for sudo hardening,
-+- `/etc/security/limits.d/` and `/etc/security/pwquality.d/`,
-+- PAM snippets under `/usr/share/pam-configs` and `/etc/pam.d`,
-+- chrony configuration under `/etc/chrony/conf.d`,
-+- helper scripts under `/usr/share/cip-cis-rules/configuration` for settin=
-gs
-+  that require an install-time action, such as file permissions,
-+  `pam-auth-update`, and `/etc/login.defs` edits.
-+
-+The `cip-cis-rules-config` package installs the generated data artifacts u=
-nder
-+`/usr/share/cip-cis-rules/`:
-+
-+- `config.json`, the selected rule set,
-+- `hardening.cfg`, the kernel config fragment generated from enabled
-+  kernel-relevant rules.
-+
-+The same artifacts are also deployed to `DEPLOY_DIR_IMAGE` as:
-+
-+- `${CIP_CIS_HARDENING_CONFIG}`,
-+- `${CIP_CIS_HARDENING_KCONFIG}`.
-+
-+## Kernel hardening
-+
-+When `CIP_CIS_HARDENING` is enabled, the CIP kernel includes
-+`${DISTRO}-hardening.kernel.cfg` as `hardening.kernel.cfg` through
-+`KERNEL_CONFIG_FRAGMENTS`.
-+
-+The fragment is generated from enabled rules only.  Disabled rules are omi=
-tted
-+from the kernel fragment and should carry a justification in `config.json`=
- if
-+they are required by the selected level.
-+
-+## Validation
-+
-+Set `CIP_CIS_HARDENING_VALIDATION` to enable validation support in the ima=
-ge:
-+
-+```
-+CIP_CIS_HARDENING_VALIDATION =3D "1"
-+```
-+
-+With validation enabled, `cip-core-image` installs `cis-validation`, and t=
-he CIP
-+kernel build additionally checks the generated hardening fragment against =
-the
-+kernel configuration it produced.  Validation requires `CIP_CIS_HARDENING`=
- to
-+provide the selected CIS rule configuration and generated kernel hardening
-+fragment.
-+
-+There are two independent validation stages: a **build-time** check of the
-+generated kernel configuration, and a **runtime** audit of the target.  Bo=
-th use
-+the same selected CIS rule configuration, so they verify that the policy y=
-ou
-+picked is the policy that is actually applied.
-+
-+### What is validated
-+
-+- **Build-time kernel validation** verifies that the CIS hardening fragmen=
-t
-+  actually took effect in the kernel configuration produced by the CIP ker=
-nel
-+  build.
-+- **Runtime validation** runs the OVH `cis-hardening` audit on the target =
-and
-+  requires full conformity with the selected policy.
-+
-+### Build-time kernel validation
-+
-+The generated hardening kernel fragment is checked by the
-+`do_validate_kernel_config` task from
-+`classes-recipe/cis-kernel-hardening-validation.bbclass`.  The CIP kernel
-+recipe inherits that class only when both `CIP_CIS_HARDENING` and
-+`CIP_CIS_HARDENING_VALIDATION` are set; the check is gated by the `inherit=
-`
-+itself, not by a task flag.
-+
-+The task runs `after do_dpkg_build before do_deploy_deb`, so a failure sto=
-ps
-+the kernel before its package reaches `isar-apt`.
-+
-+It compares the fragment against the `/boot/config-*` file shipped inside =
-the
-+generated `linux-image-*` package.  That package is the only place the mer=
-ged
-+configuration exists: Isar compiles the kernel with sbuild inside an ephem=
-eral
-+chroot, so `merge_config.sh` writes the merged `.config` there, and what
-+remains under `${S}` is the pre-merge staged defconfig without the fragmen=
-t
-+applied.
-+
-+Both directions of the fragment are checked:
-+
-+- options that a CIS rule requires to be disabled must be absent from the =
-merged
-+  configuration =E2=80=94 `=3Dm` is a violation as well as `=3Dy`, since a=
- disabled
-+  filesystem must not be buildable at all;
-+- options that a rule requires to be enabled must be `=3Dy`.
-+
-+The task writes a JSON compliance report to
-+`${DEPLOY_DIR_IMAGE}/${CIP_CIS_HARDENING_REPORT}`, by default
-+`${DISTRO}-hardening-kernel-${KERNEL_NAME_PROVIDED}-report.json`.  Every c=
-hecked rule is listed with a
-+`compliant` flag and a per-symbol breakdown, where `actual` is the literal
-+string `not set` when a symbol is absent from the kernel configuration:
-+
-+```json
-+{
-+  "rules": [
-+    {
-+      "rule": {
-+        "name": "1.1.1.5",
-+        "description": "Disable SquashFS filesystem",
-+        "compliant": true,
-+        "symbols": [
-+          {
-+            "symbol": "CONFIG_SQUASHFS",
-+            "expected": "n",
-+            "actual": "not set",
-+            "compliant": true
-+          }
-+        ]
-+      }
-+    }
-+  ]
++do_prepare_build() {
++    deb_add_changelog
 +}
-+```
-+
-+If any expectation is unmet, the kernel build fails and names every offend=
-ing
-+rule, symbol, expected value and actual value.  In that case the report is=
- not
-+deployed; it is left in the recipe's `deploy-hardening` directory, and the
-+fatal message names that path.
-+
-+Validation applies only to kernels built from this layer, because only tho=
-se
-+receive the hardening fragment.  An image that uses an upstream or Debian =
-kernel
-+gets no build-time kernel check; for such kernels the relevant CIS rules a=
-re
-+enforced by the `/etc/modprobe.d` drop-ins installed by `cip-cis-rules-con=
-fig`
-+and verified by the runtime audit.
-+
-+### Runtime CIS audit
-+
-+On the target, the `cis-validation` service runs the OVH `cis-hardening`
-+audit (`hardening.sh --audit`).  The audit checks the *selected* policy ra=
-ther
-+than the complete upstream rule set:
-+
-+- Rules disabled in `${CIP_CIS_HARDENING_CONFIG}` are converted into overr=
-ide
-+  files with `status=3Ddisabled` during the image build
-+  (`generate-overrides.py`) so the audit skips them.
-+- SSH overrides from the hardening package are mapped to their real audit
-+  targets at package install time (`postinst`).
-+- Non-CIS rules (`99.*`) are dropped from the audit (as they highly
-+  opinionated and not part of the CIS hardening guide).
-+
-+The audit runs in a temporary CIS configuration tree on a tmpfs mount, wit=
-h a
-+bind-mounted `/etc/default/cis-hardening`, so it never modifies the runnin=
-g
-+(and possibly read-only) file system.  It succeeds only when the reported
-+`CONFORMITY_PERCENTAGE` is `100.00`; otherwise it exits non-zero.
-+
-+- **When:** during boot up the `cis-validation.service` is started
-+  after `network-online` is up.
-+  It can also be run manually with `/usr/bin/cis-validation`.
-+- **Why:** it detects configuration drift over the lifetime of the device,=
- so
-+  the target remains demonstrably conformant long after it left the factor=
-y,
-+  not just at build time.
-+
-+## Notes and limitations
-+
-+Some CIS rules are inherently use case specific. Examples are partition la=
-yout
-+rules, firewall policy, SSH access lists, password ageing, and rules that
-+inspect existing users or files.  Configure or justify those rules accordi=
-ng
-+to the target product requirements before relying on validation results.
-+
-+The hardening package will **not** install additional packages to fulfill
-+a rule, for example iptables or ssh. These use case specific packages need=
- to
-+be installed by the user.
-+
-+### Comparison to `security-customizations`
-+
-+The recipe `security-customizations` sets some hardening options similar t=
-o the recipe `cip-cis-rules`.
-+Because `security-customizations` is part of the certification efforts, it=
- is not modified. The following sections
-+list the touch points.
-+
-+#### SSH hardening
-+
-+The recipe `security-customizations` contains hardening rules for ssh. Thi=
-s table summarizes the differences from
-+the cip-cis-rules:
-+| security-customizations | cis-rules |Comment|
-+| ------ | ------ |------|
-+|ssh-remote-session-term.conf|cis-5.2.16-sshd-idle-timeout.conf| adapt cis=
- hardening to lower values of cip security|
-+|ssh-pam-remote.conf        |    -    | no rule implemented in cip-cis-rul=
-es |
-+|ssh-hardening.conf        |cis-5.2.7-sshd-maxauthtries.conf        | 3 vs=
- 4 |
-+|ssh-hardening.conf        |cis-5.2.23-limit-ssh-max-sessions.conf        =
-|2 vs 10|
-+|ssh-hardening.conf        |cis-5.2.21-disable-ssh-allow-tcp-forwarding.co=
-nf        ||
-+|ssh-hardening.conf        |cis-5.2.6-disable-x11-forwarding.conf        |=
-|
-+|ssh-hardening.conf        | -       | AllowAgentForwarding is allowed acc=
-ording to cis rules|
-+
-+####  Other hardening
-+
-+The script `postinst` of the recipe `security-customizations` contains the=
- following changes:
-+|security-customizations|cis-rules|Comment|
-+| ------ | ------ |------|
-+| set password creation parameters with pam.cracklib| | parameter differ b=
-etween the implementations|
-+|lock user account after unsuccessful attempts| - | no rule implemented in=
- cip-cis-rules|
-+| Concurrent session control| - |no rule implemented in cip-cis-rules|
-+| Audit storage capacity| - |no rule implemented in cip-cis-rules|
-+| Enable Multi Factor Authentication for Local and Remote Session| - |no r=
-ule implemented in cip-cis-rules|
 --=20
 2.55.0
 
