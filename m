@@ -2,22 +2,22 @@ Return-Path: <hung.tran.jy@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52044C9830E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBB43C9831A
 	for <webhook@archiver.kernel.org>; Thu, 24 Sep 2026 11:45:44 +0000 (UTC)
-Received: from OS0P286CU011.outbound.protection.outlook.com (OS0P286CU011.outbound.protection.outlook.com [52.101.228.65])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.5962.1790250337706625988
+Received: from TYVP286CU001.outbound.protection.outlook.com (TYVP286CU001.outbound.protection.outlook.com [52.101.125.12])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.5963.1790250340747120461
  for <cip-dev@lists.cip-project.org>;
- Thu, 24 Sep 2026 04:45:38 -0700
+ Thu, 24 Sep 2026 04:45:41 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@renesas.com header.s=selector1 header.b=gh8nXrt+;
- spf=pass (domain: renesas.com, ip: 52.101.228.65, mailfrom: hung.tran.jy@renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@renesas.com header.s=selector1 header.b=b9nD8Hdo;
+ spf=pass (domain: renesas.com, ip: 52.101.125.12, mailfrom: hung.tran.jy@renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HScjFPo0Wb7PCMErUtbf5JMaRmoBAj40WnAP06g7OtaD6HL0rHJIN6lKl3LdMJdjIDyVnehrlhJbKNHQzfcf7rDmqHXZOT4GhurdIeLbyD//G7CGRrP417UpuWAvAD8sjPnYygHqgRu9OVkz8JSXO+cGee4Xnv+IeU2OarliwwzxAmWHCl5Ktbq6b15eqI8z8rd6mbDfDLKi0gjlmHlYOj/oahlUuVMn/BomYJq/T+jDAguhwGEnk1/BQcGZYNhOVl+Y9v9EGPKh1c9rjNs4SfivaT7HbUC6nPS9Z5NsMOUR6Ja50qcFzSXXqYRAGLhGlOnxMhwcDLnyQf6p6gZQ9Q==
+ b=GDkgbMueY+oOUrAWHtA7RdJvNFepQ3TvSFAgdtpROagGjqCoXY0aUK5S36T8HSXzZvcDsicSVqhw8/GOKGqXUJDWH8l8yW2MPVT6mJqBNV/L5RYPqYDzEMQmqCCBMmieEfZxCqnW1byWdX40mQ3/SxDkw5D4tYMjvcxv6lOiQcNqnbV9VHA1dEKNiXweNf0HOqWC9mfhR33PUts+aVDGFwDG23AXZZaH0hV1qq/1mYKCxIHAuJs/pAGgdjLHkwbkZLFZ+ugUqACIdaVfxE3mOnaGDTIIAqKnarxp3wVk+BRTm/E0vxtbgXE3nQUx6Fo5wzFIBfENdAAjobn5pKavDA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KvciBfbLRParow2eY/7zPyaucHQOq1JznSQ1XXBUsb4=;
- b=sRCpiy/d4gBkrmHrFodgWXMTtCEmNpeyVhgSFEY7QHz4Jirj6+RtjOf3HT7mHS575kEIshfm7sufWln1hMCiHwcjjRdruj0lyw7cQ/ESN/6lEuytN51EfbCw/Yvp3pbzaL2iFYqZoCxUBXPpRjpOLnhoGxFeEClWjsZMH9D2xt9EVcWFCgeWVqbknRv9lYrH3jwlx7EMXSMTv5ff6q8jmcyYlRZ7UK+qEX17sY+JxYqvC28o0NTM3kErc8v2o1cqsrcZPAe578L1eElWC2Rk9TWKl9jpJ8u5ZTbZqIOdz/v/EuNfA0yau89mABf77lutUR3nOH22We9HDvPmcVNhFw==
+ bh=miJpIVp70dfnyEg3LguObNPxba8feg2dgwAhnUMU6gM=;
+ b=d7ZJDss3NoBZUwN4Ieu2j+RU2WrNkArwM/i1y+UdUHsX6f39Q2MftOEDJ4NGer2vp5EklntNRTF752LLwytwvtvQ/4SQxuem2cO+DJNhwcglQU0RkK1yXtqtebrw9L87sFTt+AhYH95ZqvMRlQb4CDeSgrjCrHefoRrrex4UyUYs1PYfDnYkJicQjA6gK7V1b/ysEbqD/YU0NhU4vwjKXvuFBZvcQFG6gXOOjR6OrUgJBNeEgQy+PitzEZnf+Zuw1PI6ca0MyTpPUg1Db10gugNnrZUeEq6m7oYXV/tjJujm4RITQ7Ad0Mjz+G4bDcq2yJWXQZW3G8pHcfOrdbRLwg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  8.62.32.50) smtp.rcpttodomain=lists.cip-project.org
  smtp.mailfrom=renesas.com; dmarc=pass (p=none sp=none pct=100) action=none
@@ -25,104 +25,113 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KvciBfbLRParow2eY/7zPyaucHQOq1JznSQ1XXBUsb4=;
- b=gh8nXrt+zXe+w1xIVmzXn/Ir1OQ3UaFawV6rNrwM3MCvOMaxpI7D4pQTf+EX60tBQORNDCtAF03BjHVNzv+/U0qZEfd3Uco60MraP7k560hp9oII0PwIErpeZFfkcNW7ceNwHSVdber9rkxE6Ze0OM5xCsTTXXN7vkhwNpxpmG0=
-Received: from TYCP301CA0060.JPNP301.PROD.OUTLOOK.COM (2603:1096:400:384::9)
- by OS3PR01MB7048.jpnprd01.prod.outlook.com (2603:1096:604:121::14) with
+ bh=miJpIVp70dfnyEg3LguObNPxba8feg2dgwAhnUMU6gM=;
+ b=b9nD8HdofAx1bz3EhgAVsxxGPDfebWR/NsGQK96GRwXzjmqBRczyCPDR1a/K/SInxyPqRwteM6eySewI3TNajbsSSvWzt4XT/VbwvCzHomUYD1K3akUlvnFmB6l2zKdKEGQ8PsgR89L1NjFnqgBPXKSCFhNTS9wdUhjw8dHhzUg=
+Received: from TY4PR01CA0037.jpnprd01.prod.outlook.com (2603:1096:405:2bd::10)
+ by TY4PR01MB13959.jpnprd01.prod.outlook.com (2603:1096:405:206::5) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.18; Thu, 24 Sep
- 2026 11:45:32 +0000
-Received: from TY2PEPF00005623.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:384:cafe::8e) by TYCP301CA0060.outlook.office365.com
- (2603:1096:400:384::9) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.451.13 via Frontend Transport; Thu,
- 24 Sep 2026 11:45:32 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 8.62.32.50) smtp.mailfrom=renesas.com; dkim=none (message not signed)
+ 2026 11:45:34 +0000
+Received: from TYO1EPF00005023.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:405:2bd:cafe::96) by TY4PR01CA0037.outlook.office365.com
+ (2603:1096:405:2bd::10) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.451.18 via Frontend Transport; Thu,
+ 24 Sep 2026 11:45:34 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
+ smtp.mailfrom=renesas.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=renesas.com;
 Received-SPF: Pass (protection.outlook.com: domain of renesas.com designates
  8.62.32.50 as permitted sender) receiver=protection.outlook.com;
  client-ip=8.62.32.50; helo=ejcrelay005p.adwin.renesas.com; pr=E
 Received: from ejcrelay005p.adwin.renesas.com (8.62.32.50) by
- TY2PEPF00005623.mail.protection.outlook.com (10.167.240.54) with Microsoft
+ TYO1EPF00005023.mail.protection.outlook.com (10.167.240.20) with Microsoft
  SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.451.8
- via Frontend Transport; Thu, 24 Sep 2026 11:45:32 +0000
+ via Frontend Transport; Thu, 24 Sep 2026 11:45:34 +0000
 Received: from VNM-5CG30610QM.adwin.renesas.com (VNM-5CG30610QM.adwin.renesas.com [10.231.33.39])
-	by ejcrelay005p.adwin.renesas.com (Postfix) with ESMTP id 33BAE30001E7;
-	Thu, 24 Sep 2026 20:45:31 +0900 (JST)
+	by ejcrelay005p.adwin.renesas.com (Postfix) with ESMTP id 4A6FA30001E7;
+	Thu, 24 Sep 2026 20:45:33 +0900 (JST)
 From: Hung Tran <hung.tran.jy@renesas.com>
 To: cip-dev@lists.cip-project.org
 CC: jan.kiszka@siemens.com,
 	quirin.gylstorff@siemens.com
-Subject: [isar-cip-core][PATCH v4 0/2] Add support for Renesas rzt2h-evk platform
-Date: Thu, 24 Sep 2026 18:45:27 +0700
-Message-ID: <20260924114529.962-1-hung.tran.jy@renesas.com>
+Subject: [isar-cip-core][PATCH v4 2/2] ci: Add rzt2h-evk build target
+Date: Thu, 24 Sep 2026 18:45:29 +0700
+Message-ID: <20260924114529.962-3-hung.tran.jy@renesas.com>
 X-Mailer: git-send-email 2.37.1
+In-Reply-To: <20260924114529.962-1-hung.tran.jy@renesas.com>
+References: <20260924114529.962-1-hung.tran.jy@renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY2PEPF00005623:EE_|OS3PR01MB7048:EE_
+X-MS-TrafficTypeDiagnostic: TYO1EPF00005023:EE_|TY4PR01MB13959:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 82af0e74-3b44-42f8-d462-08df1a3156ca
+X-MS-Office365-Filtering-Correlation-Id: 51e17df3-5b5d-44af-0413-08df1a3157ff
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|82310400026|1800799024|376014|23010399003|36860700016|18002099003|56012099006|11063799006|10067099003;
+	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700016|23010399003|10067099003|56012099006|11063799006|18002099003|22082099003;
 X-Microsoft-Antispam-Message-Info: 
-	zBNaeqjMbzsiB9SPlXSJduf4+y1xIu7kc2uXgJbJxNLHwbxDoyoWKMcb0/mWESNSL4Iy+SfmOJ3NbjbL98oYKSA0YO+5mAmI0bPDg8HcOp8vqtTxukQb04IfNjwldb/ONHRePuxgk40HHFngDrgycAclRilSGl8/ym4RYAsy2Em+IfAMOj6gPK3Ux88JqLnv/wnJ3ezAn0SI1gVs1wYO+u8dPcvbpM6YuDJHuRGcGrXUjp+ojat7EQLBGpSTBbNSHYP3IcOP8qMVpvoSbAqIU/T92WqIAwFOgk2bLdUxs35qtMvxXj4uiT/BwDInJbjJEA8A+jvwlNulvv6XCD6qqh8AaR2L7mQYM1borDW9BdPW+GECxOX7Ra2qGmInO+7YgjuCyC+ZF1kMfk5z3WWKE/rbppjmYH9tJobNZhY4pahKsF8SdzGVtErJhIIP2wc8PrzFKLLwU9KTdk0QIR6IB0hu7utrMViOjcyWsMk8VtQOMSf0mpGDdUO/4Hg3Ehh9VL/ixqJPbU6SkbEW9ZJsAiq9XoYSVAcJG7nIEN19XKXXdZJIi9C9LjsnVo6XhgXr1Njk3zcf0vb+gmkn2z5g40em0Yw5lIGlh3yZmvGJ428o763P0zbz7D8yp6DBnAqaUSrJks3JlqR9b9d/Ww574QVu7swDviVq9B/ARv978o9VJu5sxkYsgLJaxX3adiiiiBU1yH8opMQnnEs0MXsqzw==
+	22MYIztIEUGTVqvuJrO3gPtSG/FIUN3kVkVNbxMu5/eXpVsI9+6gUUlcvItYJyfWR/5FQMnCdM+OWeVV8Kl7INitOrm6NvifAwIJgIbYmThM2+znVsDKB0UQ/fxUKY21phGuwY8nJwEpAkd+vKaIZcKfgfdCqwMV4wYr3g/JTPPz7w45rfxg5omyONxdIY2Ui6IlI0vGB1D47cexpyWgjHQb+KwcsILNVn0FuZMs4hto11hdjPy0R8E0kDetvbHC0tB5rAHd9jUCNrY0Vo0QO04ANMOV26rjdX/9YusXaVPwR0syM6oRxQpfbKZevTLzRFaEB55sP0k8g+NS13I3NPFs2/lWF7Ss++b52bvWbimlmT0kDCpZ1IXFs6RkBf7ZKCbv2D1OSzinw0K1tn4VSq16FXcHNlS7zucyMQHKyXr0a38oofQLrvsaqpLg0n0DIfixINacCx6Rda6B3ERoljGVMOsIoqQc+ijMpACy5NGTaarclPhY8iQOXXsXPNh12rkzrroGLQYIEJ3XVcBkwtHqnxBOy21LZoZHz2yN2CfsGLpiNdYr38RQJY8iyOlSL0btcAi+crSYSAOXhSOZXQ0IXMjxoxODDvBA5F261EdQ/sMGPRPPW4d/JaI3012ewf7XUQc2iN7nBLhyTv4eALG7yPUujcwBgGVgFanhRPOLNFwRwEVDM2vAT5BNMhIconqgyUp+6GPCJ7LI00EoaA==
 X-Forefront-Antispam-Report: 
-	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay005p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(23010399003)(36860700016)(18002099003)(56012099006)(11063799006)(10067099003);DIR:OUT;SFP:1101;
+	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay005p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700016)(23010399003)(10067099003)(56012099006)(11063799006)(18002099003)(22082099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	VJhEzWbvk28wTDdTGYFIDgjw2ac950M+FZQGbtx8zIBIJHhmc3QL3Wx+KTNfHxPmdLp5bBxz3HUJYucOgOb8y0Cauouv0DUUMdMJgyXOXBAEAC2/72upIkNWTc8RT3T5iqgss7BYaM8NIHg6WnLRYK9g6RxBcjn6aqhsqqV6QgzOaFEjRGim6vQ7mgQ3LfYA0bInCvXDcKFAJRo5kX5Eg1kfe00u9f0RBRI42gJniMfBIrstVwcT6RnzAEpFwr0Cb6KX60wWA9GnlYFIpQmFDzJIeyi61J9liPohKjhV9zPhd8sSkbVttAvpOc5+Icc5uUYCfCXivVNSKEbI7oJddWHJCm7qj+XVB+0m3B9562r/eIXFgG328lI8xrqh2yj6CFnnXkIMbokMTEEb5yasJ59pPK/EYEcNiI6srE/OOPHRAaqJRzm2fJVHMB8zz3ua
+	T4XxregAMHDSXfo2+LCADykwctJYS0UbVGipjL7ko6L9rZzRCgXWRN6j7Q1vVJ1EH9sNSXRrU4vMSIBwh4EtD62gize5wWiBnvxylvwYRukCKCHDJjW/LlgsxfAMnkAvA/FZjhHL9FcnB3jgfb6Axmn0zto1iRirpG8e1w3UbRonYtn23TXxvuvO9QotuKbElNsp+p86HashAJ0b/HtMnkmo7oFeh7US2VlmROkVzWNeiiVGQWlgGuXv7a+4jaW16tT1BGwKxHOOT76NzspYLAW5KQDnywmxhma6sLTfZEBpTHuLwcQRANzobnv03ZjmY1g0gOnyDucUTso2eidcS82dFRsfuk3lzakgE9ongX/AJKnqJ0Re8wgvBr+uj5e/1Oa/I+lT9KYhRIrr2oJ4Oy3NiosusPO8t29UAxFs/KRS0jIhHC2fEwXs2tnPDQZJ
 X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2026 11:45:32.1261
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2026 11:45:34.1460
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 82af0e74-3b44-42f8-d462-08df1a3156ca
+X-MS-Exchange-CrossTenant-Network-Message-Id: 51e17df3-5b5d-44af-0413-08df1a3157ff
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay005p.adwin.renesas.com]
-X-MS-Exchange-CrossTenant-AuthSource: TY2PEPF00005623.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthSource: TYO1EPF00005023.JPNP286.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB7048
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB13959
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 24 Sep 2026 11:45:44 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24333
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24335
 
-From: Hung Tran <hung.tran.jy@renesas.com>
+Signed-off-by: Hung Tran <hung.tran.jy@renesas.com>
+---
+ .gitlab-ci.yml | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-Add support for Renesas RZ/T2H EVK, which is the new reference platform for=
- CIP project.
-
-Changes v2:
-- Remove unnecessary exclusion with 4.4 kernel
-- Add CI
-
-Change v3:
-- Remove CI build for older releases, only keep the latest (trixie)
-
-Change v4:
-- Update commit description
-
-Hung Tran (2):
-  Add support for Renesas rzt2h-evk platform
-  ci: Add rzt2h-evk build target
-
- .gitlab-ci.yml                    | 15 +++++++++++++++
- Kconfig                           | 12 +++++++++---
- conf/machine/rzt2h-evk.conf       | 18 ++++++++++++++++++
- kas/board/rzt2h-evk.yml           | 15 +++++++++++++++
- wic/rzt2h-evk-efibootguard.wks.in | 14 ++++++++++++++
- wic/rzt2h-evk.wks                 | 17 +++++++++++++++++
- 6 files changed, 88 insertions(+), 3 deletions(-)
- create mode 100644 conf/machine/rzt2h-evk.conf
- create mode 100644 kas/board/rzt2h-evk.yml
- create mode 100644 wic/rzt2h-evk-efibootguard.wks.in
- create mode 100644 wic/rzt2h-evk.wks
-
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+index 5a20ad6..57fd01e 100644
+--- a/.gitlab-ci.yml
++++ b/.gitlab-ci.yml
+@@ -122,6 +122,13 @@ build:hihope-rzg2m-base:
+     target: hihope-rzg2m
+     dtb: r8a774a1-hihope-rzg2m-ex.dtb
+=20
++build:rzt2h-evk-base:
++  extends:
++    - .build_base
++  variables:
++    target: rzt2h-evk
++    dtb: r9a09g077m44-rzt2h-evk.dtb
++
+ build:qemu-amd64-base:
+   extends:
+     - .build_base
+@@ -196,6 +203,14 @@ build:hihope-rzg2m-test:
+     extension: test
+     dtb: r8a774a1-hihope-rzg2m-ex.dtb
+=20
++build:rzt2h-evk-test:
++  extends:
++    - .build_base
++  variables:
++    target: rzt2h-evk
++    extension: test
++    dtb: r9a09g077m44-rzt2h-evk.dtb
++
+ build:qemu-amd64-test-nokernel:
+   extends:
+     - .build_base
 --=20
 2.37.1
 
