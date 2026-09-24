@@ -1,262 +1,121 @@
-Return-Path: <hung.tran.jy@renesas.com>
+Return-Path: <pavel@nabladev.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EAB5C9831C
-	for <webhook@archiver.kernel.org>; Thu, 24 Sep 2026 11:45:44 +0000 (UTC)
-Received: from OS0P286CU010.outbound.protection.outlook.com (OS0P286CU010.outbound.protection.outlook.com [40.107.74.39])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.5917.1790250340038710448
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8255C98317
+	for <webhook@archiver.kernel.org>; Thu, 24 Sep 2026 11:54:04 +0000 (UTC)
+Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.6094.1790250841139400955
  for <cip-dev@lists.cip-project.org>;
- Thu, 24 Sep 2026 04:45:40 -0700
+ Thu, 24 Sep 2026 04:54:01 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@renesas.com header.s=selector1 header.b=SkoufsJg;
- spf=pass (domain: renesas.com, ip: 40.107.74.39, mailfrom: hung.tran.jy@renesas.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vAblmBN8GIzdOQA2i2UsV3vKPR+76QBTdzQK3tXRdYJda61acGkQCn0SPDAJUol4Zo0eS+vVA+M2k5O9Qeo40oJNC4SQPqp+VlkKeA95qnZAwD+3+S2fVQGpwKSArdXepEQ7PN9CXATsuAMzO05z8kYvol/GaSNjzQFmvrBdvCN3RZtcImn9AZM4MJsR+sepKGUsJJNelCbchAZdDIx3CKbQL1Jj3nruxVRpRYistijSq5dNbYWJoj22Pl7XZeUiKSkV+IxY1T89B9mJcL3seE5jZXSElaUWaxZr0p4DdTVBKeJ3xfgvi2swXZqfxm6yNh0neHSA09quv6oaxuvLwg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cv4XXtkk9HzZSVtUVEq9Y+6rbCuZY0aBmvnxUXwx4Nc=;
- b=dQ3pAYbwAug4qToJrhIzHe9Z8FOlSRCbOrG4x3qTECYRnr9QFqLJdTCQnVJovutXOIBv6Onf7R+d65TAlxO7RzVMvm6CI40tb6rUn5sEk3+qLMVgandhI3LvqLXyERKUGpGNpsXWdMyiFB93am0BbLFSK/8uzkAm6WQXPheVTc3x+8dFlYcm/Jlrxj+FTdmfb9oa6+g+WmX1wAklBeCDdAM9aQB9lS+LbGuWHpEWvZPEP0sAt5B4xMSF/c+BmKvf/8J3eI1Y3GzYVaBAhglUdmrUWFBAqj67hue6VC/tfsbjveQW523J2YzzyaWv/VyIsFB+adpuB+r3TJHNhDeLMg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 8.62.32.50) smtp.rcpttodomain=lists.cip-project.org
- smtp.mailfrom=renesas.com; dmarc=pass (p=none sp=none pct=100) action=none
- header.from=renesas.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cv4XXtkk9HzZSVtUVEq9Y+6rbCuZY0aBmvnxUXwx4Nc=;
- b=SkoufsJgAcyestu9d+Go/fZs8k449mYNEkGQmjw5wsHDD3isN84gFMQuBh1LMwLNBav5qScjsIOJypMgWIfU9NYxlyVKxd/ij5ysAWUMLJ2l9qQ9k4RER2eq7fqwfvdRA6SdiAAqLSrxg5fjh7DkkaH1Y+7RNvdRI6SNeIB9wwk=
-Received: from TY4PR01CA0032.jpnprd01.prod.outlook.com (2603:1096:405:2bd::13)
- by TYCPR01MB7219.jpnprd01.prod.outlook.com (2603:1096:400:f0::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.18; Thu, 24 Sep
- 2026 11:45:34 +0000
-Received: from TYO1EPF00005023.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:2bd:cafe::2) by TY4PR01CA0032.outlook.office365.com
- (2603:1096:405:2bd::13) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.451.18 via Frontend Transport; Thu,
- 24 Sep 2026 11:45:34 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
- smtp.mailfrom=renesas.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=renesas.com;
-Received-SPF: Pass (protection.outlook.com: domain of renesas.com designates
- 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
- client-ip=8.62.32.50; helo=ejcrelay005p.adwin.renesas.com; pr=E
-Received: from ejcrelay005p.adwin.renesas.com (8.62.32.50) by
- TYO1EPF00005023.mail.protection.outlook.com (10.167.240.20) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.451.8
- via Frontend Transport; Thu, 24 Sep 2026 11:45:33 +0000
-Received: from VNM-5CG30610QM.adwin.renesas.com (VNM-5CG30610QM.adwin.renesas.com [10.231.33.39])
-	by ejcrelay005p.adwin.renesas.com (Postfix) with ESMTP id 4323730001E9;
-	Thu, 24 Sep 2026 20:45:32 +0900 (JST)
-From: Hung Tran <hung.tran.jy@renesas.com>
-To: cip-dev@lists.cip-project.org
-CC: jan.kiszka@siemens.com,
-	quirin.gylstorff@siemens.com
-Subject: [isar-cip-core][PATCH v4 1/2] Add support for Renesas rzt2h-evk platform
-Date: Thu, 24 Sep 2026 18:45:28 +0700
-Message-ID: <20260924114529.962-2-hung.tran.jy@renesas.com>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20260924114529.962-1-hung.tran.jy@renesas.com>
-References: <20260924114529.962-1-hung.tran.jy@renesas.com>
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=XICxOBve;
+ spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8E65C104A99;
+	Thu, 24 Sep 2026 13:53:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
+	s=dkim; t=1790250834;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=v20w2hKCfcDfW1pU0lE2vr4l+bGXLeKQlEE4gzNb3B4=;
+	b=XICxOBveu2x0OwkfH4rBH/TFea0K64X1P3doGAAPZvMpe+6NwMkShBKeJ1Snk48SHwXUeX
+	rwPizlmARaNMD6xiF3HO2YrlBiLn78Uov9cRF0+G8sfP8892F2LX2Er5y2APZ0hyUv48V9
+	8quWy+oohygi2JMyjRujvbbdWAsJDSu/VUCqGhPKvInxM8+4tgY5p3B2iJxw/0cfFdg79f
+	/0qImvgruWrBMt6XsltkQr+t2O8ch/C04cUzWe9jGT9dqzAE+tT6zMZE+EjCht62aa9jE7
+	5gE5Q6ppv0O3CL3ulwKg5F0lP89HyznE6oOZZcknACpbHMXjRkv5TwMfa4PpYA==
+Date: Thu, 24 Sep 2026 13:53:48 +0200
+From: Pavel Machek <pavel@nabladev.com>
+To: Ulrich Hecht <uli@fpond.eu>
+Cc: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+	"pavel@nabladev.com" <pavel@nabladev.com>,
+	"nobuhiro.iwamatsu.x90@mail.toshiba" <nobuhiro.iwamatsu.x90@mail.toshiba>
+Subject: Re: Request for review for 4.4-st80, 4.4-cip115 (sit down for this
+ one)
+Message-ID: <arUPTC54RINDdYlb@duo.ucw.cz>
+References: <1957665225.34596.1790092309178@webmail.strato.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYO1EPF00005023:EE_|TYCPR01MB7219:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 0d0ae899-bdc6-46ef-a3b8-08df1a31575b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700016|23010399003|10067099003|56012099006|11063799006|6133799003|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info: 
-	3+vJxq3yeC1cg6vJmukSvXEPSHjqqGvnlhEtYeFmJWLXqDf+Mgo/KbGWJs6YGB//FBxZlryK9m+cDQgBngtDSd99MejHOryZrxwARCD4w7yVDgFTut0c7xJ/NmE2ah19OTAzuk0AdJnMdUhU7Mjylnie6SPDfRFJ/FlpKRTUVMqkKjREWV7XceNQNUoJ1988a/VT6ShahYztXagQuIZcyqtpLtDA8foKzupyPzoa+6ZH3j7ZMNNW/iznQSav+WZkMUEno3PWAqgcsC4OKPs13QYx12CF85IgCHYOcBlmIm2iTs0ZX7fQaB5J8vYMxqnLKJcQqn1dxLB/v+/5xsrsGEpNypl2OoiVelXe2u1n+3n6Ko7+1+kznRuc6QRjvn+rMHUN6r4SHsAMm05jgWuhw8G6FShuq+YWApgc74zcKmRuKV6pSAeTqc639ynGo2iwehxL5PebaIIoSjQLjHwqBUQIq53kYBnKCgjVEaqDPYJLBrKMdIav8gnF1SyTylsr5DMTYP8XQnDiVbMVzxIUU3CiMIY7AaobV/wbsPj4fg2+VwMIWr/y8JJLXjyXtlhffL28V3jQIcx9xTSwCZA4m87dvvFlaAVV9CQ3f08da3SfNl5cKGy0Nf3Kzx1rQJX42NGm85yLA2rIVMcJf/w3FSIVPzpQW8aCf9ILh/I6QE9zBO/XLQ2cyJSOXCnlOIZ+20KV5hutyGtTLysTr/jf7w==
-X-Forefront-Antispam-Report: 
-	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay005p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700016)(23010399003)(10067099003)(56012099006)(11063799006)(6133799003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	xmRYJFJ+Fq9xsmg+KiFvgshesKuek0gKSRtwDl0tRoiDgryF1xtnS4hLW8zjFxqD6YD38yUeQf6ILGnIlMXpOznQawZzvLxKRZHoGD9xWKtPonC53t+FWQtRHym+BBa4Lsx/QXtniuWrLD5KgTDhLKfS6znyz8D2Ecq/fBU9ZzJDownEr7pdMY0l2QszLRjkEKVYPPUJIoItcaISs9w3f/+9qdtivY22xGKQGJV80Iv8zbnfMgvZu34ac+FzfQytlFL3eSah/JlwhLsO2LT/dOX3RS3N3qluxM7hWRG4/nFmv2bkNya+o/qnk5zZ90i042ghC7LXoNaEmqG1Ak/oD39KLoc0VdCm9oQE1NZI8Xm5a+C032sCWfR2D06nQrZz7hpNy5jVHMEt2aDocG99JBhzSoQrAXuV6oawk1SFOG0isIkiE4CRj3Frjp9tUXLa
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2026 11:45:33.0744
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0d0ae899-bdc6-46ef-a3b8-08df1a31575b
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay005p.adwin.renesas.com]
-X-MS-Exchange-CrossTenant-AuthSource: TYO1EPF00005023.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB7219
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Rn1eDzaAZnxLz/dy"
+Content-Disposition: inline
+In-Reply-To: <1957665225.34596.1790092309178@webmail.strato.de>
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 24 Sep 2026 11:45:44 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24334
+ <cip-dev@lists.cip-project.org>; Thu, 24 Sep 2026 11:54:04 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24336
 
-rzt2h-evk is the new reference platform for CIP project.
-It uses Renesas RZ/T2H SoC, based on armv8.2 architecture.
-This platform is only supported from CIP Linux 6.12.
 
-The efibootguard.wks file is largely identical to the existing
-qemu-arm64-efibootguard configuration and could be reused. However,
-it is kept as a separate file to allow future platform-specific
-customizations, such as adding bootloader support to enable booting
-from an SD card.
+--Rn1eDzaAZnxLz/dy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Hung Tran <hung.tran.jy@renesas.com>
----
- Kconfig                           | 12 +++++++++---
- conf/machine/rzt2h-evk.conf       | 18 ++++++++++++++++++
- kas/board/rzt2h-evk.yml           | 15 +++++++++++++++
- wic/rzt2h-evk-efibootguard.wks.in | 14 ++++++++++++++
- wic/rzt2h-evk.wks                 | 17 +++++++++++++++++
- 5 files changed, 73 insertions(+), 3 deletions(-)
- create mode 100644 conf/machine/rzt2h-evk.conf
- create mode 100644 kas/board/rzt2h-evk.yml
- create mode 100644 wic/rzt2h-evk-efibootguard.wks.in
- create mode 100644 wic/rzt2h-evk.wks
+Hi!
 
-diff --git a/Kconfig b/Kconfig
-index 438234c..6894e87 100644
---- a/Kconfig
-+++ b/Kconfig
-@@ -119,6 +119,11 @@ config TARGET_BEAGLEV_FIRE
- 	select ARCH_RISCV64
- 	select HAS_SWUPDATE
-=20
-+config TARGET_RZT2H
-+	bool "RZ/T2H EVK"
-+	select ARCH_ARM64
-+	select HAS_SWUPDATE
-+
- endchoice
-=20
- config KAS_INCLUDE_BOARD
-@@ -134,6 +139,7 @@ config KAS_INCLUDE_BOARD
- 	default "kas/board/iwg20m.yml" if TARGET_IWG20D
- 	default "kas/board/qemu-riscv64.yml" if TARGET_QEMU_RISCV64
- 	default "kas/board/beaglev-fire.yml" if TARGET_BEAGLEV_FIRE
-+	default "kas/board/rzt2h-evk.yml" if TARGET_RZT2H
-=20
- comment "Kernel options"
-=20
-@@ -149,15 +155,15 @@ config KERNEL_4_4
- config KERNEL_4_19
- 	bool "Kernel 4.19.x-cip"
- 	depends on !ARCH_RISCV64
--	depends on !TARGET_TI_AM62PX_SK
-+	depends on !TARGET_TI_AM62PX_SK && !TARGET_RZT2H
-=20
- config KERNEL_5_10
- 	bool "Kernel 5.10.x-cip"
--	depends on !TARGET_TI_AM62PX_SK && !TARGET_BEAGLEV_FIRE
-+	depends on !TARGET_TI_AM62PX_SK && !TARGET_BEAGLEV_FIRE && !TARGET_RZT2H
-=20
- config KERNEL_6_1
- 	bool "Kernel 6.1.x-cip"
--	depends on !TARGET_TI_AM62PX_SK && !TARGET_BEAGLEV_FIRE
-+	depends on !TARGET_TI_AM62PX_SK && !TARGET_BEAGLEV_FIRE && !TARGET_RZT2H
-=20
- config KERNEL_6_12
- 	bool "Kernel 6.12.x-cip"
-diff --git a/conf/machine/rzt2h-evk.conf b/conf/machine/rzt2h-evk.conf
-new file mode 100644
-index 0000000..5cfbfa5
---- /dev/null
-+++ b/conf/machine/rzt2h-evk.conf
-@@ -0,0 +1,18 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) 2026 Renesas Electronics Corporation
-+#
-+# Authors:
-+#  Hung Tran <hung.tran.jy@renesas.com>
-+#
-+# SPDX-License-Identifier: MIT
-+#
-+
-+DISTRO_ARCH =3D "arm64"
-+
-+IMAGE_FSTYPES ?=3D "wic"
-+
-+USE_CIP_KERNEL_CONFIG =3D "1"
-+DTB_FILES =3D "r9a09g077m44-rzt2h-evk.dtb"
-+IMAGE_BOOT_FILES =3D "${KERNEL_IMAGE} ${DTB_FILES}"
-diff --git a/kas/board/rzt2h-evk.yml b/kas/board/rzt2h-evk.yml
-new file mode 100644
-index 0000000..90261dc
---- /dev/null
-+++ b/kas/board/rzt2h-evk.yml
-@@ -0,0 +1,15 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) 2026 Renesas Electronics Corporation
-+#
-+# Authors:
-+#  Hung Tran <hung.tran.jy@renesas.com>
-+#
-+# SPDX-License-Identifier: MIT
-+#
-+
-+header:
-+  version: 14
-+
-+machine: rzt2h-evk
-diff --git a/wic/rzt2h-evk-efibootguard.wks.in b/wic/rzt2h-evk-efibootguard=
-.wks.in
-new file mode 100644
-index 0000000..ca18bec
---- /dev/null
-+++ b/wic/rzt2h-evk-efibootguard.wks.in
-@@ -0,0 +1,14 @@
-+# Copyright (c) 2026 Renesas Electronics Corporation
-+#
-+# SPDX-License-Identifier: MIT
-+
-+include ebg-sysparts.inc
-+
-+part --source rawcopy --sourceparams "file=3D${IMAGE_FULLNAME}.${RO_ROOTFS=
-_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --par=
-t-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
-+part --source empty --sourceparams "${ABROOTFS_SOURCEPARAMS_B}" --align 10=
-24 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-84=
-83-4772-8E79-3D69D8477DE4 --part-name systemb
-+
-+# var and optional home are extra partitions
-+${WIC_HOME_PARTITION}
-+${WIC_VAR_PARTITION}
-+
-+bootloader --ptable gpt
-diff --git a/wic/rzt2h-evk.wks b/wic/rzt2h-evk.wks
-new file mode 100644
-index 0000000..4a4af6c
---- /dev/null
-+++ b/wic/rzt2h-evk.wks
-@@ -0,0 +1,17 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) 2026 Renesas Electronics Corporation
-+#
-+# Authors:
-+#  Hung Tran <hung.tran.jy@renesas.com>
-+#
-+# SPDX-License-Identifier: MIT
-+#
-+
-+part /boot --source bootimg-partition --ondisk mmcblk0 --fstype vfat --lab=
-el boot --align 1 --size 32M --extra-space 0 --fsuuid 0x4321dcba --use-uuid
-+
-+# Rootfs partition
-+part / --source rootfs --ondisk mmcblk0 --fstype ext4 --label root --align=
- 1024 --size 2G --active --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --us=
-e-uuid
-+
-+bootloader --ptable gpt
---=20
-2.37.1
+> Here are the manual backports for the upcoming 4.4 kernel release. As alw=
+ays they can be found in https://git.kernel.org/pub/scm/linux/kernel/git/ci=
+p/linux-cip.git/log/?h=3Dlinux-4.4.y-st-rc
+>=20
+> There's a total of 87; 13 by me, and 74 by LLM. (The latter are labeled w=
+ith "Assisted-by: SLTR:qwen-3.8".)
+> Total manual backport ratio is 21%, slightly down from 22% for st79.
+>=20
+> Speak up if you find a class of patches in here that we should not
+> consider for backporting in the future.
 
+It seems commit ids no longer match what is in the tree.
+
+First third of patches looks good, I believe one will cause
+compilation fail.
+
+Best regards,
+								Pavel
+
+
+
+a an API change, hopefully noone depends on that bug > d482fcdcb9cf5 net: i=
+pip: require CAP_NET_ADMIN in the device netns for changelink
+a an API change, hopefully noone depends on that bug > 9447834f71856 net: i=
+p6_tunnel: require CAP_NET_ADMIN in the device netns for changelink
+a an API change, hopefully noone depends on that bug> 66b209be16611 net: ip=
+_vti: require CAP_NET_ADMIN in the device netns for changelink
+a > f5d2ad74edde2 NFS: Pin the 'struct nfs_server' during a FREE_STATEID ca=
+ll
+a just a robustness against fs corruption > 4acc604700f7f ocfs2: reject non=
+-inline dinodes with i_size and zero i_clusters
+
+This will need to be del_timer_sync(), AFAICT.
+
+!! timer_delete_sync does not exist in 4.4 > 33b3774667584 wifi: libertas_t=
+f: fix use-after-free in lbtf_free_adapter()
+a just a WARN removal > 15fd6b8ab4e3f net: remove WARN_ON_ONCE() from sk_mc=
+_loop()
+a > f50d09ccb2a3c net: openvswitch: fix skb leak on flow key update failure=
+ during recirculation
+a just a robustness against out-of-tree users > f0bb3b226b24d audit: fix po=
+tential integer overflow in audit_log_n_string()
+a just a preparation > 1e58c90011532 skbuff: introduce skb_pull_data
+a > 8a27878187716 tipc: prevent snt_unacked underflow on CONN_ACK
+a > 9681717544d1f ipv6: mcast: Fix potential UAF in MLD delayed work
+a > e3b1657d6d49f vmxnet3: fix BUG_ON in vmxnet3_get_hdr_len() for Geneve p=
+ackets
+a > ab0f8bfb5b96d xfrm: defensively unhash xfrm_state lists in __xfrm_state=
+_delete
+a > 1ee9bb33f50c5 btrfs: do not trim a device which is not writeable
+a > 210f49c16babe HID: appleir: fix UAF on pending key_up_timer in remove()
+a > f762e427204a5 netfilter: ipset: fix order of kfree_rcu() and rcu_assign=
+_pointer()
+a > 104e962c0778d Bluetooth: fix UAF in bt_accept_dequeue()
+
+--Rn1eDzaAZnxLz/dy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCarUPTAAKCRAw5/Bqldv6
+8oupAJ9xyoOj3rUAcLwO7h/i+7eAPX5JZQCgrq3nrnTKTp5C3JBvv1Dak1/QRz4=
+=AJZt
+-----END PGP SIGNATURE-----
+
+--Rn1eDzaAZnxLz/dy--
 
