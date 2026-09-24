@@ -1,195 +1,167 @@
-Return-Path: <masami.ichikawa@miraclelinux.com>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ABEBC98314
-	for <webhook@archiver.kernel.org>; Thu, 24 Sep 2026 07:19:40 +0000 (UTC)
-Received: from mail-yx2-f42.google.com (mail-yx2-f42.google.com [74.125.224.170])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.2374.1790234375245835596
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02139C98315
+	for <webhook@archiver.kernel.org>; Thu, 24 Sep 2026 08:12:41 +0000 (UTC)
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (DB3PR0202CU003.outbound.protection.outlook.com [52.101.84.69])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.2973.1790237559227108906
  for <cip-dev@lists.cip-project.org>;
- Thu, 24 Sep 2026 00:19:35 -0700
+ Thu, 24 Sep 2026 01:12:40 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@miraclelinux-com.20251104.gappssmtp.com header.s=20251104 header.b=a3J9h8+o;
- spf=pass (domain: miraclelinux.com, ip: 74.125.224.170, mailfrom: masami.ichikawa@miraclelinux.com)
-Received: by mail-yx2-f42.google.com with SMTP id 00721157ae682-8a45b788a71so17496607b3.0
-        for <cip-dev@lists.cip-project.org>; Thu, 24 Sep 2026 00:19:35 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1790234374; cv=none;
-        d=google.com; s=arc-20260327;
-        b=r9mIWn75lHpb4FpIObL+0mx6ikvkXSDjrZHtM0JcJMkN3BJ1CzcBQUzyjPYYdzLT3t
-         Tq5X4OxT08G/+CbZQGtvhM7IGpNoAqitjRhlvsdTIF6mW6Ug1dzjcmvYA/+UIrmPD1XW
-         6e4BtLq6bD5E2e1dutUtpk8FIj4RG1ttc4aw7QYt9qXQbNlO5AdYucIIvLUGVeKcC1/I
-         CpV7yCkoc8LX5EMXmZfMcNxaRfvLEiXZPQ8MG9akjdqlRos94bZkXdIzINo/QWQWjwZz
-         a81aMNFd9+4N6CVmr270kEQxyttYbawE9GOOyubrOsHj83qEEHUyFdTkPjgnzuLa8X0f
-         tp+A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=Ip7vSb3Fbjr4T6rz/Q29ehXyNPjXTKm7gujOck0Wrg4=;
-        fh=pMdhRv1kyG5MNR0BUSVIPLHum9zPZW2mYB9oYwYp5mc=;
-        b=m5GS2VxwT42o7DjdAu10VuOKSppNiuGMYqkmKkX7broA+rgJZHW8bFnkN2AySqEPGc
-         zWXGsKJreFkCe1p6jPYUY+HE/7J7hRoqUkprhdUZX4dW29AipS3U4y3rlZQ2p2CDw89j
-         4zMb9vk3pG5FcwN2g30NxShWSau0GT38U9ifgnJIll1Vs7Xgg+gwWNIq0zgG8JgFnTn8
-         n2nN6vYcg8+604wXUaWkX7Yi/ZpLRu43IXhZMg5cEa9Gd7ODeSAVIsLCin2TJgq9s1XU
-         5X5viTQSuQkf/UwRvxrLCZa8Y8sYKQLjltc5MeHwIHhNV0n6xHyVoRaLM3adBqePj1PH
-         LgNw==;
-        darn=lists.cip-project.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20251104.gappssmtp.com; s=20251104; t=1790234374; x=1790839174; darn=lists.cip-project.org;
-        h=content-transfer-encoding:content-type:to:subject:message-id:date
-         :from:in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=Ip7vSb3Fbjr4T6rz/Q29ehXyNPjXTKm7gujOck0Wrg4=;
-        b=a3J9h8+otNBcI1xm6OdfC1R5LS1qIWEi48GNJowM5Tx/DLMZa65+YX/aMyURMn99Zs
-         QhC/QwVPiGxm/8gJ+n9sSvI/60++2jAejUEn9weeqh76ROCjuSvn2VO32tNYLFphevuV
-         Tz7GULV4eb2rt99edmGl0JkxcR0t49kD6A+CSmIcuLzO2iGEh6AZNX34IpJRAG/WPgII
-         zQejJWbqvUFueIfU47JS3vnJale2Yudswp4uWcM4O0wPW/cpmV5A8LQY5Jo/5t2IaumX
-         HMQssqXKwqwV6AoNzceWqwVyRR0wWsR3ifGTuYA3ysDBSb3xhmRVM6C45lrX3DZ7lBg0
-         +N5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790234374; x=1790839174;
-        h=content-transfer-encoding:content-type:to:subject:message-id:date
-         :from:in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=Ip7vSb3Fbjr4T6rz/Q29ehXyNPjXTKm7gujOck0Wrg4=;
-        b=cK6JEVGJLpbZeV7Mvoz1q4cKgBCIympQHmd1Us5t1yaYl1X3J9X9iAQ+KHsSFhDnE8
-         /R6MHCH65qxqfE/m7qhtwZV/e573TQN+E0cKYN7UTAnwmEcADiY/tf8wl85DTd60FzeZ
-         LBgLUmVtEpp+tYjLqRyB8sKPH8apGDWQA5+11xQeCGrbL36lI96QJynAMS/k93EF8YK1
-         zfj84fT6m28C9dLgo4fFazMt9z+AaQCQLiUn7roVtGQP0kpfWDw+dZFpWszHcg8+wtOR
-         1IGljv/9qhEg8nC25OjP/w0NqU/x3aJYw56vVC66yhznqkiHLjQTQulDzgHq24g5g0oo
-         Xn4A==
-X-Gm-Message-State: AFuF++nb7xMKm14BH8a4AIr2c44FMxwgIN+V6KuaGk5rEiFc6FP2q2/v
-	DWHhb+UohlVtjWp7yG4VI7bR2a2L3wY04RARTZ6Mvjib3EatpHOF+4uTPqq6k/sGM0bByDOoz9G
-	/ComgAjsU8oj81lgEQ5hqAylhH1yQWNm7B8optzUxdQX1mS4Fl8V6vqZMuQ==
-X-Gm-Gg: AYBFou2N2VxHBOWypgXOOASriqd+fvW2718CM4+SmdIYJuA2OYY6JK8cYEOo5osAzO4
-	bTLyr3CATknx8nw2D6XSpoXej7sQWqdbfpcDI4d1YRCEkWRsjOUOCg62UFrxch+t0yTni5zb4P9
-	jm4RNeR8IJUghfsWvapPj1oQD4Jy93JI6Bs5IdQRMbxeMgwJSpMAdhsOzvFWHTPpPwR4zZ9EfWB
-	ODvtQCIUKKGugP2X6dUF5q5uzpJbylgCiG4lomj24XxEHHbO4zd+9snkfwXiqalC2cB90+Fh8FU
-	IqbdhRxTrX3PiOw2CzP+mMq3LD5wCJVMe0+Sbd/Mwu8Wtqg6zzJcao8vZSFjZUAkXQGnaAj9FIX
-	HHbJbJ25NZ3wqR92fciU1krrs6MDE7sx7iep+sA==
-X-Received: by 2002:a05:690c:e3e6:b0:866:7724:3bcd with SMTP id
- 00721157ae682-8a648fc1493mr8444387b3.16.1790234373969; Thu, 24 Sep 2026
- 00:19:33 -0700 (PDT)
-MIME-Version: 1.0
-References: <1859c4aa-3da8-4a00-be0d-7234c6db0076@siemens.com>
-In-Reply-To: <1859c4aa-3da8-4a00-be0d-7234c6db0076@siemens.com>
-From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
-Date: Thu, 24 Sep 2026 16:18:57 +0900
-X-Gm-Features: AclHuK8Lhja6qdhlibrz9MueNNgC3lf8WtRraL00fKns4pSAQEvPro12IN7yOkM
-Message-ID: <CAODzB9rYxOoBO7-1vCc5BY5SU0BSj9Nn19BUs6yxXtXSJFq7Rg@mail.gmail.com>
-Subject: Re: [cip-dev] CIP IRC weekly meeting today on libera.chat
-To: cip-dev <cip-dev@lists.cip-project.org>
-Content-Type: text/plain; charset="UTF-8"
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=HJ2BDnLy;
+ spf=pass (domain: siemens.com, ip: 52.101.84.69, mailfrom: quirin.gylstorff@siemens.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LkYcaQrmgMw21XPGhPJAm0uV6Zbk/vHbFktiKCmoEKWpJn1wMg3kWbP7P36UOGKtEMiexl/FBqupwcaKS0q9WuNRf4ApZ/9ehCjxsVdDJke8kVJ4yRA30jj6H8AyIfZ03IXVsXKcAPifgBhipnsEaXuoGEMPeFAc7u+pyatQo08pGIH/mfsaVwm28fFYEvWsamlJNwqfTm/VzSAuOQEmXA35EnaNkPb9yqJKaul2E1WOZ6/dC8CDwHxPgZaFlyCBG2mq32pICSi+er4J++NqVTI6BVNuB6xeSA1PPfXsIFu+CsmXFyrmbMiDg4sCs9BmFzhuHlewvH7sP74VXdlhdQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=npkC7ybIH9OFl3oD2ehXPJpsHH+mIIuVSr7tDLsZ2mc=;
+ b=xL6L9O6Es3uhsdfVAup7/ayrSOxvZCrcUqhR3ITxaDDfBsJIUtO1lDhWKcPAXZTa4Mc8podFnF+wn/S2ivvs9ZF4KhkOAWBCdYqCzEuwXxCJEdGYKW9GPj314SjiumaC2dLodtabrRYT32C8US9UO0YzOHq0U9hpyeW5I3KiHCZx8O3vGQrn/6L7DAQcn8s7+MKBdWEcR+CJCSHgzBT8xVtFBvvZUmwVmZkL5Pnedrao4QLYjfyzocorIO/czq+yRBrqTjlCfrfdxNAA0ELd6ytHwsSbtn20EoF9aZvri64PBhwWpbIZJ0tB6Wr1b7IFY30veAGH3q4SHGmcrPSAdA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=npkC7ybIH9OFl3oD2ehXPJpsHH+mIIuVSr7tDLsZ2mc=;
+ b=HJ2BDnLyPC8JlKl++rf4aGJ0zVNXYejEgQNPEmUqedLEBryoEddERA5apWkaA6FZCN97uduQ1Urg2Jl1AmjPqOYf8dnewNPWlCaMGwGwuXqNfUCkqx7Fpz77MILBJMsixzFYy8MCMNCy4wkOivXl18t/3jrpTpYLfYbVsgCYGfldezTh3L31ElijCii4/tTS0Py0xYYboYiUJ5qYvpTb7WOA5TZ/cxvNMtN9uKdwmWxRJSCFTqw8ugFpfDxGtZf2kGdPilgc3ldhm4qHH10Vxa1I00k5L6gFfW6EPD4qDJMvFz2GN8Z7XexF3k/ic9VV7zxIUeGj+rCdKmcoe5Hi5A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:208:17f::18)
+ by DU0PR10MB7922.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:312::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.14; Thu, 24 Sep
+ 2026 08:12:35 +0000
+Received: from AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::5511:7126:a2d7:f914]) by AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::5511:7126:a2d7:f914%4]) with mapi id 15.21.0451.014; Thu, 24 Sep 2026
+ 08:12:35 +0000
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+To: jan.kiszka@siemens.com,
+	cip-dev@lists.cip-project.org,
+	felix.moessbauer@siemens.com,
+	clara.kowalsky@siemens.com,
+	christoph.steiger@siemens.com
+Subject: [cip-dev][isar-cip-core][PATCH v4 01/14] Fix file timestamps are not reproducible for EFI certificates
+Date: Thu, 24 Sep 2026 10:12:10 +0200
+Message-ID: <20260924081226.2844456-2-quirin.gylstorff@siemens.com>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260924081226.2844456-1-quirin.gylstorff@siemens.com>
+References: <20260924081226.2844456-1-quirin.gylstorff@siemens.com>
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: LO4P265CA0002.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2ad::22) To AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:208:17f::18)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM0PR10MB3172:EE_|DU0PR10MB7922:EE_
+X-MS-Office365-Filtering-Correlation-Id: d10f8ff7-f76d-493c-2db9-08df1a139646
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: 
+	BCL:0;ARA:13230040|366016|376014|1800799024|23010399003|10067099003|56012099006|11063799006|6133799003|55112099003|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info: 
+	2ahNELck8YmZGiGnJhPoWdZ4hoQWRbBIMVHrHP2acpJLHffHzPPteYecftaBRtiqXsge6DNjmj+73Zz0R38Yxn8wKc3yWfL3ep626Kuzl613BZXxoeykPIPTbK+VyiLst3V2Cm9UQkSglgKvzjUuNuhMJF+ZMakJUcvQkA04ERvC8a5KDRcpHwTrUS3Q4T6z2jgnAzfsQvDqQuHJcJlvyzeAGcyj0v6yk2huJe2AJhLeTtiv848T2Z6Cb25e3AoYEiQ8MmtfUNs+mQscJ/VpQuMTRgXnj7A6ghhiwzTNpj+ry1qu4Rn/RiafyWt4fNfKA2dUZC9qOfD2u4sDDmgpwfYyiNUliIN94Guuupnx/dF7Iq+09fT3+WW2QQSnIjdjvH8rLqdRrvvrxVKNyE9ScRQsqclKJKXsUoTvNyPYXZsyss9hv/R1NWl/AUfmYYG0wJm0AU/A9N1vnBBv4Gb23ZpUJ9eKJQ32b7CCMaLXpbC9HJ0FMQJjaxvkuLvhNfsFhNeS8fnXcX+QxL+4a6/5yyPxHXbFzG3oMlWKV7Zye9MhT5qlCSVxZqbjQAG81qDgsb75WJawobwCiHDgHKYHo1a1WsD9flybre1biUCrAfptt7bB0SRAeyfRpQt2A3IQ
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(23010399003)(10067099003)(56012099006)(11063799006)(6133799003)(55112099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?yLsFu3yGv4vKnx0FmgUUW82c7zvZorh9xb6xsQdAkWt92Z6VPmHJnGAmADhI?=
+ =?us-ascii?Q?uU9DsKi6tL9w9JrgCSeF7RlMUhO2t8aQnXwfTY7JMY0dkYoUKizdE0ZIMF3K?=
+ =?us-ascii?Q?zCEmVe+OKocSklbIFVf8o4DiA0rWJiPAnEBETlmxeRaVmQawhKx4C+/kbVSI?=
+ =?us-ascii?Q?WBBTkhH9s1+5o6YVpgtG//A1l87QHrPdxsBkcBP3DxYodnfHl5Nw6y8icCc/?=
+ =?us-ascii?Q?m/7jpnT4niLjKZNReQgDz0plpF6421imslzwU0iziGWqS3K+ePTB9mmfSfPh?=
+ =?us-ascii?Q?SylsdB7r7U+yQ9k5lT9rZo9+YO4zwzl1n8GaoaG0rvumA8Qjocn1T7UhWEVB?=
+ =?us-ascii?Q?rdH+HyTJWOHn4a4JDluf1Rb1qFJjaAYp2g9LCt0HU894hybWp94ae67WPg1c?=
+ =?us-ascii?Q?Gm+QIRQDNlt8x4vbe8zQdlM4SZ32pxRoUsIoah078RMGWxl2wICxJZh4tNz8?=
+ =?us-ascii?Q?9n/Zwi96iyS5GUbiCNkIOOZb5rl0whS4d4NLZwcKb5TiLH00lOggJ/bK3BI7?=
+ =?us-ascii?Q?hclTopX7SiZNxX94A8v+wszxCUkAjREJCNY9eFFw7g4Fx/Iykp5vPLarshYX?=
+ =?us-ascii?Q?kiNgAN1xgzqYyhnzPXqntdPJery8H9Yocp6kfsw7fgHJIW/48xo30hcm4opv?=
+ =?us-ascii?Q?CbgnhSzo/Oi/RVgPLbWRhn9OqEGUZ9oJvqX0HagY05ayuf52TAb00H1OeHc6?=
+ =?us-ascii?Q?RbPqd40Zo4yjLLVVRSSD8SdSI18uFnVObtgfDYipwGJAMJsrnCTNhB4q28lI?=
+ =?us-ascii?Q?lyWBbkehCk5e19P27ZXZZkrplcO40/LWUZHapGAQCH8hgvFqKubA7p6fJgqX?=
+ =?us-ascii?Q?ssv6IKTTbXjQb8ztQGI0AzoRl8bp94QzHGAfAH0+mzZvQ+iP9T5yeBXZdW+k?=
+ =?us-ascii?Q?d5MNCO6XHdwp25Le8yiDXAavmEPq7IaPitWetFrVupndFkEUmAljwTG3eKN3?=
+ =?us-ascii?Q?27oCJMMRB30A/iRCjHEnvK1+97/xyBuqiMWBMPF0sd2fS+ZXrdFRjPPLPNCd?=
+ =?us-ascii?Q?Z6zqZqs3KcvbPVGQhwjWK0gE6C4G1+VEjmlifD2DgaXK7BPTEvy5rU1k2wel?=
+ =?us-ascii?Q?iT60QX1dWgrJJk4cRuT+j0DvmGEdFogUEeq89wYLEhp+mAExdBy7vEvew6oq?=
+ =?us-ascii?Q?xSyYwTacM/mVa4cUGdcltdwc8BR7DeNFpfQAtPv9mtnt8kf3ta0KcoJ7ThWs?=
+ =?us-ascii?Q?eQ7d+L03B1FlBkJaix+JMeVr3y6OzH+FxjNpmBIVCeCHyISsRENN7VtH+ll0?=
+ =?us-ascii?Q?3nG5Z9nfUtj/ID0Dhc/svEUC72JppZneMB8LigDIGJMALujvg8BzgxwGXIqP?=
+ =?us-ascii?Q?dxAh0jNbZq23QxfPk31rKG/8J+ePahK3d/vVNCf6spNYxO+I9MIF96vJNrpK?=
+ =?us-ascii?Q?6wQQ8QcCp+2LeVTbkom2/3Yy8YXXIMiSVFzSjNdrT13OdaT1S08sqccNIvtf?=
+ =?us-ascii?Q?m2seLHMVYBryeeGiiVkHjAVblrfueJ/P0aByGEPRIBEbkSgvg0IcnOdIfEHW?=
+ =?us-ascii?Q?kvk3GKU0RLy1ITvqZCosV7mC9vbEjVh2y9+Xgx06V2V0qKfL7nSSp+9L7oSH?=
+ =?us-ascii?Q?jAShOQ+SFDimGAMVl6YzIZp4hOIMjO98V9TX58fT5daM+fsQr8Wn4VaqyluK?=
+ =?us-ascii?Q?nQ/XAPojPdiTA5CDc/cCYOYd/jNWFT67VXSaql+/dAMyteFc966QlQC4dyZ/?=
+ =?us-ascii?Q?FkJsXGUkqgEMAc+2ksIaEODNgbfPiAoefqefopMFQ7jOJBEbL4iclncmI1lj?=
+ =?us-ascii?Q?eW1oWWi2vbScNqKGfi+EsX6la8iFTXM=3D?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d10f8ff7-f76d-493c-2db9-08df1a139646
+X-MS-Exchange-CrossTenant-AuthSource: AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2026 08:12:34.0161
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1TDnh/6ymvPYBw4XG+oUnoNuJUkaUtZkHJPXflFMhBFc9fIL7yX6etpzBt2kyGo15MHV4PA5s1XFTE258BRnFTcM1MDlkSZLFmO/KfVk9/M=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB7922
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 24 Sep 2026 07:19:40 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24286
+ <cip-dev@lists.cip-project.org>; Thu, 24 Sep 2026 08:12:41 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24288
 
-Hello,
+From: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
 
-I'm sorry, but I won't be able to attend today's meeting.
+Closes https://gitlab.com/cip-project/cip-core/isar-cip-core/-/work_items/1=
+62
 
-2026=E5=B9=B49=E6=9C=8824=E6=97=A5(=E6=9C=A8) 16:03 Jan Kiszka via lists.ci=
-p-project.org
-<jan.kiszka=3Dsiemens.com@lists.cip-project.org>:
->
-> Hi all,
->
-> Kindly be reminded to attend the weekly meeting through IRC to discuss
-> technical topics with CIP kernel today. Our channel is the following:
->
->     irc:irc.libera.chat:6697/cip
->
-> The IRC meeting is scheduled to UTC (GMT) 12:00:
->
-> https://www.timeanddate.com/worldclock/meetingdetails.html?year=3D2026&mo=
-nth=3D9&day=3D24&hour=3D12&min=3D0&sec=3D0&p1=3D224&p2=3D179&p3=3D136&p4=3D=
-37&p5=3D241&p6=3D248
->
-> USWest    USEast    UK        DE        TW        JP
-> 05:00     08:00     13:00     14:00     20:00     21:00
->
-> Last meeting minutes:
-> https://ircbot.wl.linuxfoundation.org/meetings/cip/2026/09/cip.2026-09-17=
--12.00.log.html
->
-> * Action items
-> * Kernel maintenance updates
-> * Kernel release status [*]
-> * Kernel testing
-> * AOB
->   - SECURITY.md
->   - LLM review tool: updates, feedback
->   - /me absent next week
->
-> Jan
->
-> [*]
-> Date the data is created: Thu Sep 24 07:01:12 AM UTC 2026
-> linux-4.4.y-cip: interval 30 day
->   latest version: v4.4.302-cip114
->   latest version release date: Wed Aug 19 08:54:45 AM UTC 2026
->   limit date: Fri Sep 18 08:54:45 AM UTC 2026
->   Status: *Late*
-> linux-4.4.y-cip-rt: interval 60 day
->   latest version: v4.4.302-cip113-rt62
->   latest version release date: Thu Jul 30 09:07:13 AM UTC 2026
->   limit date: Mon Sep 28 09:07:13 AM UTC 2026
->   Status: On track
-> linux-4.19.y-cip: interval 30 day
->   latest version: v4.19.325-cip136
->   latest version release date: Fri Sep 11 08:53:07 AM UTC 2026
->   limit date: Sun Oct 11 08:53:07 AM UTC 2026
->   Status: On track
-> linux-4.19.y-cip-rt: interval 60 day
->   latest version: v4.19.325-cip136-rt50
->   latest version release date: Wed Sep 16 09:32:17 PM UTC 2026
->   limit date: Sun Nov 15 09:32:17 PM UTC 2026
->   Status: On track
-> linux-5.10.y-cip: interval 30 day
->   latest version: v5.10.268-cip77
->   latest version release date: Fri Sep 11 06:54:50 AM UTC 2026
->   limit date: Sun Oct 11 06:54:50 AM UTC 2026
->   Status: On track
-> linux-5.10.y-cip-rt: interval 60 day
->   latest version: v5.10.268-cip77-rt34
->   latest version release date: Thu Sep 17 09:59:47 AM UTC 2026
->   limit date: Mon Nov 16 09:59:47 AM UTC 2026
->   Status: On track
-> linux-6.1.y-cip: interval 30 day
->   latest version: v6.1.187-cip60
->   latest version release date: Fri Sep 11 10:35:49 PM UTC 2026
->   limit date: Sun Oct 11 10:35:49 PM UTC 2026
->   Status: On track
-> linux-6.1.y-cip-rt: interval 60 day
->   latest version: v6.1.182-cip59-rt31
->   latest version release date: Wed Aug 19 06:16:01 PM UTC 2026
->   limit date: Sun Oct 18 06:16:01 PM UTC 2026
->   Status: On track
-> linux-6.12.y-cip: interval 15 day
->   latest version: v6.12.108-cip31
->   latest version release date: Fri Sep  4 12:46:01 PM UTC 2026
->   limit date: Sat Sep 19 12:46:01 PM UTC 2026
->   Status: *Late*
->
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#24285): https://lists.cip-project.org/g/cip-dev/messa=
-ge/24285
-> Mute This Topic: https://lists.cip-project.org/mt/121405957/4520416
-> Group Owner: cip-dev+owner@lists.cip-project.org
-> Unsubscribe: https://lists.cip-project.org/g/cip-dev/unsub [masami.ichika=
-wa@miraclelinux.com]
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
->
+[Felix: let dch timestamp depend on SDE, pin timezone to UTC when
+signing, pass timestamp in correct format to sign-efi-sig-list, print
+bbnote regarding chosen timestamp value]
 
-Regards,
+Signed-off-by: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
+Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+---
+ .../secure-boot-efi-certs/single-key-to-efi-certs_0.1.bb   | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/recipes-devtools/secure-boot-efi-certs/single-key-to-efi-certs=
+_0.1.bb b/recipes-devtools/secure-boot-efi-certs/single-key-to-efi-certs_0.=
+1.bb
+index 75927ec5..dfb0ff94 100644
+--- a/recipes-devtools/secure-boot-efi-certs/single-key-to-efi-certs_0.1.bb
++++ b/recipes-devtools/secure-boot-efi-certs/single-key-to-efi-certs_0.1.bb
+@@ -20,11 +20,18 @@ DEBIAN_PROVIDES =3D "secure-boot-efi-certs"
+ DEPENDS =3D "secure-boot-secrets"
+ DEBIAN_BUILD_DEPENDS .=3D ", secure-boot-secrets, efitools"
+=20
++# We need up-to-date timestamps for the cryptographic operations
++# but we must reflect the chosen timestamp in the Debian changelog
++DEBIAN_CHANGELOG_TIMESTAMP ?=3D "${SOURCE_DATE_EPOCH}"
++# sign-efi-sig-list expects "YYYY-MM-DD hh:mm:ss" and interprets it in loc=
+al time
++SECURE_BOOT_TIMESTAMP =3D "${@time.strftime('%Y-%m-%d %H:%M:%S', time.gmti=
+me(int(d.getVar('DEBIAN_CHANGELOG_TIMESTAMP'))))}"
++
+ DPKG_ARCH =3D "all"
+=20
+ inherit secure-boot-timestamp
+=20
+ do_prepare_build() {
++    bbnote "Use timestamp ${SECURE_BOOT_TIMESTAMP} UTC for signing EFI cer=
+tificates"
+     deb_debianize
+=20
+     cat <<EOF > ${S}/debian/${BPN}.install
 --=20
-Masami Ichikawa
-Cybertrust Japan Co., Ltd.
+2.55.0
 
-Email :masami.ichikawa@cybertrust.co.jp
-          :masami.ichikawa@miraclelinux.com
 
