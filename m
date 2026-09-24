@@ -1,169 +1,198 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41AD4C98314
-	for <webhook@archiver.kernel.org>; Thu, 24 Sep 2026 08:13:02 +0000 (UTC)
-Received: from OSPPR02CU001.outbound.protection.outlook.com (OSPPR02CU001.outbound.protection.outlook.com [40.107.159.9])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.2967.1790237573835819464
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20651C98311
+	for <webhook@archiver.kernel.org>; Thu, 24 Sep 2026 09:32:28 +0000 (UTC)
+Received: from TY3P286CU002.outbound.protection.outlook.com (TY3P286CU002.outbound.protection.outlook.com [52.101.229.10])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.3855.1790242347060716071
  for <cip-dev@lists.cip-project.org>;
- Thu, 24 Sep 2026 01:12:54 -0700
+ Thu, 24 Sep 2026 02:32:27 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=LULTQSFn;
- spf=pass (domain: siemens.com, ip: 40.107.159.9, mailfrom: quirin.gylstorff@siemens.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=glHopw6b;
+ spf=pass (domain: bp.renesas.com, ip: 52.101.229.10, mailfrom: biju.das.jz@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VHKiQq4ieQ7SaAYbkI+/3tmN1fvRa/ObLcUfSABlg3hugy+YVh4DU6zGjZwOc+IjbJUBJAjjkiNpanJcpUOjiz5Ea4szvlN6AxH1+KjINSoQonvETcgh8xuLKvB7ww0a0c5T03Imy6UXhg2GBzVP4W3gpYpm/aCzdrNYcCaRQxQ3n3w3EuDG2uAaFgroyfLWtFi2tPQtAXSD03S5suzz0itEnAy3gYwGGRYQlGiHFACZ13K0owrdFoalIsoAM4HyFcH2bF4MXc6Sy8j8FqG+mpXtkrndjEB26rbRbW79ik0Spbh9ouNzJj/3NfK25SpqGDyRXwdPyK+bWQSNI+Pz1Q==
+ b=p3+HuUMcrUdLVIkdjYW0J5WYwFhUxCAQEQcm+WyBJPF6g81C9ZcJKFDsDYfsb4S6CmVSMGfpC31zeKAkE90tCjx3kx59cBtdshZ8V77i/RbLtMNaadRXQZ5/X63R5JRut7rKtpHJgUzFjPUqfm4G2eWPNkBSNE3ZGuhpOxLuBFGLvuT8m+KSRmQEj77YndVZV9NmBqMBZU+dQlSLW9XvOePvR6pf9PkDDYcoBhF6pycbq17jydpdTZWd+btycDhLgYSb75RL6/x9h9Bd2he2fZnSZBJCUvIUjrzX9URayEHrJF6Rd+0FQ/dcsqVOQ8kmQGkn8kd3oUVGyOuY3GbtUg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kKu98pTlf39gOnYRs3MlM4g15HOFDAI3i3I6GIB8+gs=;
- b=rZDBnU/Ktl8gJg5J8oPnIS0dtZNmQdTkh7oSyZ6fbj57HCYWmDsRkJkdAtDXz5tN5o+O6tTJLKzKnbuY9ue4Rt5bG8bGCGSWpCvSro+MVBratNtdoFnM4xm0RvlAQYGPMEGmWzhFRS3YXdG/lYYevrZm/Bk1h535U/qmohyG6U8nHTuVwf8CaFEuRUupC8xiir/bGHBOj6tXFOWqtP8NStxbvBKuYxI4V3dR3b8noB8s87D6mjMIyHfgu7SiADkc8TJUsi0Jr98qWKvrV2eEs/QiFnWeTZ+5c6YG066ws8UIcYEr0tMHToZbB1leNwaL7N/jWNF6Bk4SkSLaFHwpOw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
+ bh=e4G18Nb3Ard+RKCrPsUKRtmPpZN65VA9FQkDtoaAOpw=;
+ b=St1PyxPp8o2bsCfA2mBI8xUvKcF//eRiZyAOyPdj72Bz7HP7UsHHmGVUBWnCcEpShx5JLwuJzrtaUT2X4h/G2fgAQNeAiyMvy2oic9knkdS5nOzM9zqtYPc0m8OIHhGYT8lAuv0AktscriiED+lUV5VyqOodCXwUunWK9AJ7s1J3A63Z10seVfjcGRV+guJruOHsvHinQAcRsbIqG+0BVhGbYmSFsjDpilMSSE1+cB+iBwwnet91b9HMFuQVF/EtjZG1r21uNkdzamuWdmMuitTtP3t+XNLRu3cNEGhruDjkdCF1GTl3QuN3+afjZptQ4HZDiAvDUHbGcgL6gA+ycA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 8.62.32.50) smtp.rcpttodomain=bp.renesas.com smtp.mailfrom=bp.renesas.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=bp.renesas.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kKu98pTlf39gOnYRs3MlM4g15HOFDAI3i3I6GIB8+gs=;
- b=LULTQSFngbbAqH6ZDaP1/fyxxdkBnhsxgZTS8Aw5Jjx/p+Wep6tpQWP1pgca++uddGTZUU85zRyQWjU120567yisOzDaXXRv2m/b0Z/COt6Jk4rsM1rFuAlmCXCuyStj9ucNilSgz1TJmcA93+f7ykCnrU9UlwqtpYoV3vICgMt5zPoX/u6iWhiWkYaLxcpy7QU/tGgflk8KtzX5SVDqXXgBrlDiaTNyofhfKrOfkf8PvkCkSp1MyxJM9ukLKqp1fT5deaxdnD4c7J+ZPFyBlRQ9QtAleVLbqSsL73z3Atk259RiqiSspRcM1IPWY7Lfese8obMBSDkFXfdjyxb3cg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:208:17f::18)
- by AS5PR10MB8055.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:650::16) with
+ bh=e4G18Nb3Ard+RKCrPsUKRtmPpZN65VA9FQkDtoaAOpw=;
+ b=glHopw6bDWgrsPz1b6f6HNC3ingZgMrDuE5/EnRb3IraU2pkOflq6yZekCunMZbhmRlsCD4p326be41pDOx6S7nemEGwsu39okTz9LdEEhLWXQ04J+IOJ82C+xmpcSheQ1Z6mQUL70P5jsvcALJvMq/O1KakFpvcylyVli8KsXY=
+Received: from TYCP286CA0037.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:29d::12)
+ by TY4PR01MB15625.jpnprd01.prod.outlook.com (2603:1096:405:270::7) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.18; Thu, 24 Sep
- 2026 08:12:46 +0000
-Received: from AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::5511:7126:a2d7:f914]) by AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::5511:7126:a2d7:f914%4]) with mapi id 15.21.0451.014; Thu, 24 Sep 2026
- 08:12:46 +0000
-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-To: jan.kiszka@siemens.com,
-	cip-dev@lists.cip-project.org,
-	felix.moessbauer@siemens.com,
-	clara.kowalsky@siemens.com,
-	christoph.steiger@siemens.com
-Subject: [cip-dev][isar-cip-core][PATCH v4 14/14] Kconfig: add option to enable CIS hardening
-Date: Thu, 24 Sep 2026 10:12:23 +0200
-Message-ID: <20260924081226.2844456-15-quirin.gylstorff@siemens.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260924081226.2844456-1-quirin.gylstorff@siemens.com>
-References: <20260924081226.2844456-1-quirin.gylstorff@siemens.com>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-X-ClientProxiedBy: LO4P265CA0002.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2ad::22) To AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:208:17f::18)
+ 2026 09:32:23 +0000
+Received: from TY1PEPF0000BAD9.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:29d:cafe::23) by TYCP286CA0037.outlook.office365.com
+ (2603:1096:400:29d::12) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.451.18 via Frontend Transport; Thu,
+ 24 Sep 2026 09:32:23 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
+ smtp.mailfrom=bp.renesas.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=bp.renesas.com;
+Received-SPF: Pass (protection.outlook.com: domain of bp.renesas.com
+ designates 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
+ client-ip=8.62.32.50; helo=ejcrelay004p.adwin.renesas.com; pr=E
+Received: from ejcrelay004p.adwin.renesas.com (8.62.32.50) by
+ TY1PEPF0000BAD9.mail.protection.outlook.com (10.167.240.38) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.451.8
+ via Frontend Transport; Thu, 24 Sep 2026 09:32:23 +0000
+Received: from biju-VirtualBox.adwin.renesas.com (DEU-5CG6192QFB.adwin.renesas.com [10.226.92.107])
+	by ejcrelay004p.adwin.renesas.com (Postfix) with ESMTP id 6097F300020C;
+	Thu, 24 Sep 2026 18:32:19 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: cip-dev@lists.cip-project.org,
+	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
+	Pavel Machek <pavel@nabladev.com>
+CC: Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 2/3] arm64: dts: renesas: r9a08g046: Add RSPI{0..2} nodes
+Date: Thu, 24 Sep 2026 10:31:52 +0100
+Message-ID: <20260924093156.131928-3-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260924093156.131928-1-biju.das.jz@bp.renesas.com>
+References: <20260924093156.131928-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM0PR10MB3172:EE_|AS5PR10MB8055:EE_
-X-MS-Office365-Filtering-Correlation-Id: 89225a76-8432-40c3-7077-08df1a139cc8
-X-MS-Exchange-AtpMessageProperties: SA
+X-MS-TrafficTypeDiagnostic: TY1PEPF0000BAD9:EE_|TY4PR01MB15625:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 881ca98e-f303-4fe5-0b70-08df1a1ebd02
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|1800799024|366016|23010399003|376014|10067099003|56012099006|6133799003|11063799006|22082099003|18002099003|55112099003;
+	BCL:0;ARA:13230040|82310400026|1800799024|376014|23010399003|36860700016|13003099007|22082099003|18002099003|56012099006|11063799006|10067099003;
 X-Microsoft-Antispam-Message-Info: 
-	fQRKs1zRj7T0eJWL1lS/Q7GbrNBagPAYtXT/WwurCIsFxovyymgl0aZDsQAapdpwwORHhf0b6uOhsnnNvNWck2FeKeoPvvefSgv4H5DfdxZmT+QlMnlq4rXLmONxqowXGNnpKsbEWsDM6Nvr40oxGyN8SY04XCTJ7mURp1jiV9D7F+/14kQWSuICY6ZiRurvYVCvWcy5IXzGPnQFQ7hguhvSQ5o8S1CPIhXrIPQ4wUy2YxkGXO41rt0PCQZubGxbYKKkXxKs8DbE7eFaJYXaewrf+JhTTAqYs2I0OcqlcI5QWqq8QXBj53Hi0Q47wGclgeg6tUIFI8hXrDtO8GZlfHVuetrUM4YTOuxfSIxDUTbTyDp9XRfuJespZ31iyn2dF+u6v8a8pxv6SKfAG7xK+tYAU/mbeuvrtaNqAiVFyQMAgKFH/QBDB/OLjxJ6f/B35sACXaNkKjv6Y+IGkn1lNufTOdyQgCpCRjdL3FaD7X8ubQY821COUy6CrNICvhA50wdHvj3R25EelfL3mUbMcmKx2YjYfA+lYCsvEh7EKFM4WDqqKYih6SoC1OM/QeOgUixILEmrnoImTJcrLhIy6ub8NrKlR15KAtmRl0LtGgG8q5zTiE1GqL7YPTbMegU+xJtZr1r08ty6Kn0dVepCerdmE9EFI3hEAkF51UobWy0=
+	HtG0KnAIBT/gSBheT3e3W0Fh96hoPKMM+QKvu+vt2zIECVJmOvcXJ1NCvNln6f6ra7w/07QK9BxvS1Hv8yKfxfkpghRjdQvNTH9PZiO3NJheK9QW2nvjxTVMC51lY9VMwNXW5Zq7518nOK7MU+YROztP+yfwZtylqDKDRj5JqKmrBkibXYe5lrIH4BomhXisb6mwJKuymuki7ZKnPxLYtbJL1Ghsx6mQfk2NFndHi7mtL0Cml6dZiXY8b5gCiSOyraAeJ5q5utYub7g2R68c1PvxXiIDBTdJPHh5+Omb7AkEnM7C3z021bV60aO1QXG9arC3QX4IpdCIdqVJI1V6zlmkOrx6pIRvVAYC3rmjb35AE1hzTbC08xAeAlej7L4RqEF4jSOv9Aee4TQA3oJXVtgcxENgmP6JCJ/cBVjaPPgPSbNkKfuI/cGUnxMg1HQWOJ1i9XRFoDzzJeTLn6mO3ndGoEMxh7II0Fx3FdpZrLCdH7GjUUorF+qcd7IgCtDjeoXHpTiU6ZxB8jGFgHiOizTR7NL5/DbmzB5uKfR4TnoFsAcmhznDVx/4k5CSc/1QvnZJ8dP+tPid5T+hrstBrj4a89lHps3pJSmrIxYPum8W7YZiru9ZWKrxtYrNOmFvBL+90KcqiWxkbUaWeickdQ==
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(23010399003)(376014)(10067099003)(56012099006)(6133799003)(11063799006)(22082099003)(18002099003)(55112099003);DIR:OUT;SFP:1101;
+	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay004p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(23010399003)(36860700016)(13003099007)(22082099003)(18002099003)(56012099006)(11063799006)(10067099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?DJJhaHT42SAomHPoIyLytWaH4A2pRWWTvQrL9mzt3rWv6qTFBu7kosFfN6U7?=
- =?us-ascii?Q?Ab3Hbr5e5ckH4cqWX7MW1dFRA3J0S6jJ8jfvMGKrHg3cskaBMev7gRl3sREf?=
- =?us-ascii?Q?GLoHymRkjyNhsKjNh+47HquRwgNk6GvcXwNKTK/DPlzhipy6ljaMReK7dKN7?=
- =?us-ascii?Q?KB5MI+ixKbHy4hghgORY4ILg6AiqfRi67jwK1rZLM8UNRTFuLA9QRaHKd97Q?=
- =?us-ascii?Q?ECjGUP6qPJl3ECpgbEqsgaWcaL8iSQJlSXANJUAwXp9iI44auG4IHnEuC0Ij?=
- =?us-ascii?Q?FzgaSDDXiVev3X2xXV/elFaiJADh3CQWnw23FVohodYgur3lYdZGw3ogRY0r?=
- =?us-ascii?Q?oqZ4RJi3tc3EA9OpgMtnuVBRw9O7k57oLuuTmxkLr/OugP/oNo4jnITSk+3P?=
- =?us-ascii?Q?ESKIIcBab9kQbHp5oePcCkmP5upexTJ/w67e7M7mzkxCF9oEUqqTE3Or4ma4?=
- =?us-ascii?Q?6qfX5OR12+VW551Eor4wY4+g42yjjVxcHgKX62KdXjoN2f5cUDpSgAaCrL4U?=
- =?us-ascii?Q?QhDEb+p8ll58MtcJWuYBUGIpCEwyFEw+VNyBKXLYSaN24f0ODOJljsnEJR0C?=
- =?us-ascii?Q?7c9PNmxy0V9FD0EIHPwyufjAjJYA6/whprEXWLYjB0rsbR7gPMpuzl+V9NQW?=
- =?us-ascii?Q?Bha2+Sie6MShWryQK2SmxelH8IvUVxOsBSa7sd9m7NWovuiEiyA75CAkulNv?=
- =?us-ascii?Q?nArZsSGr9DegwtgDm6NwVYDXN7QsrEvnLcYMxS3EmGo0rxInY0riz3GnTQZV?=
- =?us-ascii?Q?eqCnTKWBTPVmFaoPiabC0fhcnovXqZevFkxcwHQxK8kXK1aqcgYrxY2zMB8h?=
- =?us-ascii?Q?KXTwV5yk5TF7Ai+gm7AbPPqUx8rrDRtKpTnNW9pTJkHoBOcPCSU68Blo7/5W?=
- =?us-ascii?Q?SWSHYyGDuY23Isy1BUHQ8Wbu1ue3o9UqwMEqTv4JxwjmzGE2eCTJNhLQu5wc?=
- =?us-ascii?Q?+L4FVwAMLWix92FrQ8elgfNmdf29MA0WDP9K743eRsg0DwhM02i+2W5Nimhd?=
- =?us-ascii?Q?OORLMC+ZYv86l7f5XcwFSs2/oIU96upWuFZrQlIrQFDyMgQeKgXQEsYctilB?=
- =?us-ascii?Q?NYvP+55foHLeL+Zw/hXJDxw1WZ30+gXqiI4Gg1xKmMfVYAcM/GmfjCEWlQIv?=
- =?us-ascii?Q?51Yu/PDbw76Ez44Eo2TqNH1IpuXmbWP+avuz/lqlWCw2agorLNxZ5vajD47D?=
- =?us-ascii?Q?oVDcsLnVkqjpdE7H9cP/u6Q/pJgd7WOVkUqU343ZGquFNwWUO2rbnPFF3mr6?=
- =?us-ascii?Q?GXsUyFGepBdOcA6YiewGY+qp7JYjdPSREPSQ++Knp10+LKZWlgaLxqBVl8fz?=
- =?us-ascii?Q?OWUHUYP+6qwifRXL9Jd5ztbvp1BMTB189R37/J2ndySlcWNwemji0a+/YHCQ?=
- =?us-ascii?Q?PUHMylDcAykRXoacLTtj+vUM3UVhA7RN9nvL086U8K4QI5JTUgbNF+sDBMJQ?=
- =?us-ascii?Q?hIjKGNlgv910J2ZrAfAHZGYqX7XKd/+Y5bjh14paaL3WoYZ9s5rfEIH5eQ7O?=
- =?us-ascii?Q?5jxy0eUgzRuaq350UKqZdfyyPn1kxqZQNsjd+YXXVNOmJd8sGOo4bweRIDdV?=
- =?us-ascii?Q?1/QREMLB6qU3No83+mOdMY9bx/8cD3qTG5aLJlOUwqktQdQ1NShrbmX+TVLT?=
- =?us-ascii?Q?uYS4YbCDo8Eh4HD8jTsJMgRX8LUkKz0yYujzQure/usjpgy0dXa4YrK3p/jN?=
- =?us-ascii?Q?Qoa9PW5GSjF9okxi6EMeD8VMhK1eSFpq94kMuBhp5lwwUf3E5z3gKwTp+Rlp?=
- =?us-ascii?Q?0rMWkfiRjGi3IQ6Vnyu6JC3vomS0gYQ=3D?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 89225a76-8432-40c3-7077-08df1a139cc8
-X-MS-Exchange-CrossTenant-AuthSource: AM0PR10MB3172.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2026 08:12:44.8726
+	fbLQSCN5zzVoCEW56TTC/ewjG5j/jWd/Y3ebjSicrHrELqfdbjDY8JSxtwsODhkYGIZQauBzcSO5hA7mRmew5kfkxSbY5pBSVfCBcFtia+7tO84Y7qPkh7mGNFucPHHE4Gnbqnd5KjUIV3wwYpwjm88Va2UeAVWvzzvs2qzj0ZrgVaXUx/1dnQGY17WGjYJZ/zWIdRES5Qn28COPhqivI6767X5tOoQDtvwc2vVRT5TwpgiLrrJtXIBga8ZhG4YCsR/9gb/XcpgvngMoSoth1+IdDZy1GNA80txpBbM+I0hbrHgvo3xWDNS7//Nw3ZoWv4+LdggsWAjMd6a+g6M8Xw6Di9Z4JAL1LrjOdWv4Cz6i1BhqmD2+CcXw0Bc/336VuI/6zEqZiR6I+hgGKlnHBKFNZnU8M76NNdag9hdWiTSVuyDnNoMWC5pHNREBsyIe
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2026 09:32:23.1772
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vxEZYP+zoCPQAjE061+qwfalkzRDVe1Pz0znPt/ivcPA7aFQYLgOxKChbvrOnZyQW+578O3c+Y6ccaRZX/AUAUil5+JDSJMvHThqRI3lIUk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS5PR10MB8055
+X-MS-Exchange-CrossTenant-Network-Message-Id: 881ca98e-f303-4fe5-0b70-08df1a1ebd02
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay004p.adwin.renesas.com]
+X-MS-Exchange-CrossTenant-AuthSource: TY1PEPF0000BAD9.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB15625
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 24 Sep 2026 08:13:02 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24300
+ <cip-dev@lists.cip-project.org>; Thu, 24 Sep 2026 09:32:28 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24304
 
-The option CIS_HARDENING includes kas/opt/cis-hardening.yml, which
-enables the CIS hardening and its validation.
+commit ba82a7f75e8a33963354c1be109793f2bccccb79 upstream.
 
-Note: With the default configuration the following rules fail during
-validation, as their prerequisites are intentionally not installed:
-1.3.1 install sudo
-3.5.1.1 enable firewall
-3.5.4.1.1 net_fw_default_policy_drop
-5.3.1 enable pwquality
+Add device tree nodes for the three RSPI channels on the RZ/G3L
+(R9A08G046) SoC.
 
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://patch.msgid.link/20260529130704.327505-2-biju.das.jz@bp.renes=
+as.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- Kconfig | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/arm64/boot/dts/renesas/r9a08g046.dtsi | 69 ++++++++++++++++++++++
+ 1 file changed, 69 insertions(+)
 
-diff --git a/Kconfig b/Kconfig
-index 490af8d9..f922a2ab 100644
---- a/Kconfig
-+++ b/Kconfig
-@@ -369,6 +369,15 @@ config FACTORY_RESET
- 	  This adds the necessary packages to request and execute a factory
- 	  reset of the persistent partition. See also ./doc/README.factory-reset.=
-md.
+diff --git a/arch/arm64/boot/dts/renesas/r9a08g046.dtsi b/arch/arm64/boot/d=
+ts/renesas/r9a08g046.dtsi
+index 4bb156dc3b23..57c63f7ab6d8 100644
+--- a/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
+@@ -358,6 +358,75 @@ i2c3: i2c@10090c00 {
+ 			status =3D "disabled";
+ 		};
 =20
-+config CIS_HARDENING
-+	bool "Harden image according to CIS rules"
-+	depends on DEBIAN_TRIXIE
-+	help
-+	  This hardens the image according to the CIS Debian Linux Benchmarks
-+	  and validates the successful application of those rules.
-+	  No default rule selection is shipped: provide one via HARDENING_CFG
-+	  in a cip-cis-rules-config bbappend. See ./doc/README.cis-hardening.md.
++		rspi0: spi@100b0000 {
++			compatible =3D "renesas,r9a08g046-rspi";
++			reg =3D <0 0x100b0000 0 0x1000>;
++			interrupts =3D <GIC_SPI 440 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 441 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 442 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 443 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 444 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names =3D "idle", "error", "end", "rx", "tx";
++			clocks =3D <&cpg CPG_MOD R9A08G046_RSPI0_PCLK>,
++				 <&cpg CPG_MOD R9A08G046_RSPI0_TCLK>;
++			clock-names =3D "pclk", "tclk";
++			resets =3D <&cpg R9A08G046_RSPI0_PRESETN>,
++				 <&cpg R9A08G046_RSPI0_TRESETN>;
++			reset-names =3D "presetn", "tresetn";
++			dmas =3D <&dmac 0x26f2>, <&dmac 0x26f1>;
++			dma-names =3D "rx", "tx";
++			power-domains =3D <&cpg>;
++			#address-cells =3D <1>;
++			#size-cells =3D <0>;
++			status =3D "disabled";
++		};
 +
- config KAS_INCLUDE_DATA_ENCRYPTION
- 	string
- 	default "kas/opt/encrypt-data.yml" if IMAGE_DATA_ENCRYPTION
-@@ -385,6 +394,10 @@ config KAS_INCLUDE_FACTORY_RESET
- 	string
- 	default "kas/opt/factory-reset.yml" if FACTORY_RESET
-=20
-+config KAS_INCLUDE_CIS_HARDENING
-+	string
-+	default "kas/opt/cis-hardening.yml" if CIS_HARDENING
++		rspi1: spi@100e9000 {
++			compatible =3D "renesas,r9a08g046-rspi";
++			reg =3D <0 0x100e9000 0 0x1000>;
++			interrupts =3D <GIC_SPI 445 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 446 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 447 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 448 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 449 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names =3D "idle", "error", "end", "rx", "tx";
++			clocks =3D <&cpg CPG_MOD R9A08G046_RSPI1_PCLK>,
++				 <&cpg CPG_MOD R9A08G046_RSPI1_TCLK>;
++			clock-names =3D "pclk", "tclk";
++			resets =3D <&cpg R9A08G046_RSPI1_PRESETN>,
++				 <&cpg R9A08G046_RSPI1_TRESETN>;
++			reset-names =3D "presetn", "tresetn";
++			dmas =3D <&dmac 0x26f6>, <&dmac 0x26f5>;
++			dma-names =3D "rx", "tx";
++			power-domains =3D <&cpg>;
++			#address-cells =3D <1>;
++			#size-cells =3D <0>;
++			status =3D "disabled";
++		};
 +
- config WDOG_TIMEOUT
- 	int "EFI Boot Guard watchdog timeout in seconds"
- 	default 60
++		rspi2: spi@100ea000 {
++			compatible =3D "renesas,r9a08g046-rspi";
++			reg =3D <0 0x100ea000 0 0x1000>;
++			interrupts =3D <GIC_SPI 450 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 451 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 452 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 453 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 454 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names =3D "idle", "error", "end", "rx", "tx";
++			clocks =3D <&cpg CPG_MOD R9A08G046_RSPI2_PCLK>,
++				 <&cpg CPG_MOD R9A08G046_RSPI2_TCLK>;
++			clock-names =3D "pclk", "tclk";
++			resets =3D <&cpg R9A08G046_RSPI2_PRESETN>,
++				 <&cpg R9A08G046_RSPI2_TRESETN>;
++			reset-names =3D "presetn", "tresetn";
++			dmas =3D <&dmac 0x26fa>, <&dmac 0x26f9>;
++			dma-names =3D "rx", "tx";
++			power-domains =3D <&cpg>;
++			#address-cells =3D <1>;
++			#size-cells =3D <0>;
++			status =3D "disabled";
++		};
++
+ 		canfd: can@100c0000 {
+ 			reg =3D <0 0x100c0000 0 0x20000>;
+ 			/* placeholder */
 --=20
-2.55.0
+2.43.0
 
 
