@@ -2,47 +2,52 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E256C9830D
-	for <webhook@archiver.kernel.org>; Fri, 25 Sep 2026 13:06:48 +0000 (UTC)
-Received: from DU2PR03CU002.outbound.protection.outlook.com (DU2PR03CU002.outbound.protection.outlook.com [52.101.65.49])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.7743.1790341602152708641
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92D12C9830D
+	for <webhook@archiver.kernel.org>; Fri, 25 Sep 2026 14:36:08 +0000 (UTC)
+Received: from AM0PR02CU008.outbound.protection.outlook.com (AM0PR02CU008.outbound.protection.outlook.com [52.101.72.35])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.208.1790346963832232420
  for <cip-dev@lists.cip-project.org>;
- Fri, 25 Sep 2026 06:06:42 -0700
+ Fri, 25 Sep 2026 07:36:04 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=ALaXuD0n;
- spf=pass (domain: siemens.com, ip: 52.101.65.49, mailfrom: jan.kiszka@siemens.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=RCe/oZa9;
+ spf=pass (domain: siemens.com, ip: 52.101.72.35, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VmIf0lBp+wOmnM3ZrK0VAo0NwmqgkLKAO85PLo6tIboiV3TDeS95VuwybT+ZdV6tpPz7XSlqkqmEiEyq2zgd+FzsKYqoPY2jINtjZWVVdZZvqaT2TDZoYnEY34B1y3hwzAslReDyVj7U9V5fReJJXTCbGKUMfigBzOfyK65zyYC18nVn/efkQVT9aBpC9Jl4peYMsykN4mFLbx51firXaEoitDCVTSM+U+vGgFebuPjJQbrfJeJK45EoHCY2TBcG8jmFW218QNC91uWU2xzIe28bXbRLB7OBAqD823hbnjwKyjTyvRsFKGdlrH5yl7WctRc4QsUW52sJXu2NdiereQ==
+ b=ECJIl+nittVyeCZRht+gFT/Sw8SNqqBFPo1glcWE4P49sHRLMdMkNRZPTChjLGHNmLgTl9FVwOPcnefcZGY8znpxdaaxMdXCNZZpfZagF0P918Zhd/1RqyTUYUa5RCA1RWBHNjw8E6mjhKcDVJf7Q0XAmpHZ8856F9yqzCVYFeA5SNfCWl0FVHeDWz/mXmzzWmPJ3xQtt4e1YR3hYKjfscE4rzB42tqddMmoRP4+fs8keA1kBr8PVagE00IGdI4jmVMmi4NHjY7hbSd9zvDeRJMTipwrXn4gthu9dqQ510pwMusdBW1/9E0Clq8ZDrUo4aP63sbz4YjAIgjFnXrj7Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GcKSH9RnoNxH0la2u0+k+1qhrmUHaDTVh4ERFRUtKgo=;
- b=Ljk7n2b5LixDx8b4tjtpgSlQIB8LbgsprcHNU52qByogUfu9QekaOJlR2ZAgKxjB52Bspnii+eryqz2SpzVzDLB5S3uQQaljqRdi/saFX7WAspX9P3MtxmNXUVEj3NR7xz3o81vfwPtI7BjcHi9CYrfAQKyykwD0HPDGUL8X05SP55QKBomwMyEczoOrd9jMrLQsGXxKw9/g9AUQDEXljUhmQR663Bxs59KjaohYpKAuasuwF7Y2dMSc6PUZIBXyeVECNUPe50Ws+2AEklXKZYr0QjPqMifDDdpi8ibIJ8xjlfqOpSSgUh+dPqKV9iZZyfK2CcWBZ51s01AybhId1Q==
+ bh=aPprjL7N6L4ByfpOg961ZD2fIcmujDqOAJcizpaNLHc=;
+ b=kkHLl1RsoEfIaiM11DR1zl037LHMS1l6/aKjSi7GVFpWS7CzvNBANK89DvBhfgCCvOSZCx7aaynBcqZChGjNGxpMYLMmFXvPcHrTUiJ/YJhjxFl2VRN7ZfPn84y3qsH0mxJHV9MXMZdBEVWsfxn6NeVly4WJMS/86VNnOMIPZ4tyux3+VXt+fXnekgrJapDCfuVp2NINTclkKw8kdWZyweKRz+IYWnTF9D1JN3m7XOmLj4CupoZCIKA5WJBhdXUELYtQuYKtRqa0o0YeBYZ4omimbLim9Lha8mO+cilwTUf4VZBTHKlZYpXzeMacxsgroLuf8v2BGwJHLTzF82Agqw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GcKSH9RnoNxH0la2u0+k+1qhrmUHaDTVh4ERFRUtKgo=;
- b=ALaXuD0nlW9/Hh4UsU9+NwwCAUeMKR2ZsipchlOOIIAfEbWI+k9NRXdiTW0mYQug0lh/iX+9Xergg8guKOSVk7Y6l3X9Z4NB1Cfj96OJwXc402iJeoPkL5lpgS1gpKSfuXWFkniYV4ukO6Ro0lm6JxBdDPdU2U5aBvp1L6eDtmhdfOs8Pz+sJsHy9JoI8bk96+Y2VhKNjrbQzENxIT9VK74AvUxeOO/NbBbOLAP51zVjcd2BYFVJkvnk4sb8KI3wX5paQu1gQBoC9AkozVJUQySOF12ouoj9D1VQkV7kUTxUptOWINbS5h33Uh54NHubzFbvEKXRP7+l5T659kxqcA==
+ bh=aPprjL7N6L4ByfpOg961ZD2fIcmujDqOAJcizpaNLHc=;
+ b=RCe/oZa9N28MfY+W0SYR2k+379nu62jFpEmsaE/zwBiWMqCkrBKgJgxBENY6fsLStnXStqyJ9oEnhpmKz7D/sZmxJJcjvL7Qc31ESsexayK1EAo9wLIpe3MuNkSZTJNJLE4H+4mDVmp31OCPMKIuTy3Mn7q9kjSflrmOADtGzo7Y3epEwl1XG2y+tOES5pdkC7Dou0XNcUUk52xqbiVEg3uE8Qv178jNDZBH6TAODeLXb5Kh9Go2dHoQLIi8uIC51RPjeRcJd0rZtwthUrhF1p3LJgWwsZ6JkiPyed8fI8GNfcB0wFmvM/tJulBcvivnj9jaxRn76eoBdpc6WEUhbQ==
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by GVXPR10MB6005.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:1::16) with
+ by GV1PR10MB8808.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:1d6::11) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.18; Fri, 25 Sep
- 2026 13:06:33 +0000
+ 2026 14:35:59 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::be9f:e8ca:ee9:83e1]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::be9f:e8ca:ee9:83e1%2]) with mapi id 15.21.0451.014; Fri, 25 Sep 2026
- 13:06:32 +0000
-Message-ID: <406ab70e-7459-441c-b8c5-69c62574e05e@siemens.com>
-Date: Fri, 25 Sep 2026 15:06:27 +0200
+ 14:35:59 +0000
+Message-ID: <2568d437-101e-431d-aa12-4e4abdf48f77@siemens.com>
+Date: Fri, 25 Sep 2026 16:35:57 +0200
 User-Agent: Mozilla Thunderbird
+Subject: Re: [isar-cip-core][PATCH] Add SECURITY.md
+To: Hirotaka Motai <hirotaka.motai@miraclelinux.com>,
+ cip-dev@lists.cip-project.org
+CC: kumar.dinesh.h95@mail.toshiba
+References: <7c5a1901-7536-435c-aecb-bfdf3a8a9d6f@siemens.com>
+ <28467eec-7feb-4bb0-8c2f-a73ca9c4b6f7@siemens.com>
+ <8229d22c-889a-45e4-9726-6b6bc5d7b2d4@miraclelinux.com>
 From: Jan Kiszka <jan.kiszka@siemens.com>
-To: cip-dev <cip-dev@lists.cip-project.org>
-Subject: [isar-cip-core][PATCH] Update isar revision
 Content-Language: en-US
 Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  xsFNBGZY+hkBEACkdtFD81AUVtTVX+UEiUFs7ZQPQsdFpzVmr6R3D059f+lzr4Mlg6KKAcNZ
@@ -87,209 +92,175 @@ Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  qH4kDzsqKX8zzTzfAWFxrkXA/kFpR3JsMzNmvextkN2kOLCCHkym0zz5Y3vxaYtbXG2wTrqJ
  8WpkWIE8STUhQa9AkezgucXN7r6uSrzW8IQXxBInZwFIyBgM0f/fzyNqzThFT15QMrYUqhhW
  ZffO4PeNJOUYfXdH13A6rbU0y6xE7Okuoa01EqNi9yqyLA8gPgg/DhOpGtK8KokCsdYsTbk=
+In-Reply-To: <8229d22c-889a-45e4-9726-6b6bc5d7b2d4@miraclelinux.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BL1P223CA0029.NAMP223.PROD.OUTLOOK.COM
- (2603:10b6:208:2c4::34) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: FR5P281CA0001.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:f2::15) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|GVXPR10MB6005:EE_
-X-MS-Office365-Filtering-Correlation-Id: c4a97528-3f04-4480-ce2d-08df1b05d1f0
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|GV1PR10MB8808:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6af55bea-11c7-4dae-b75e-08df1b1250df
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|376014|1800799024|366016|23010399003|6133799003|55112099003|18002099003|56012099006|11063799006|10067099003;
+	BCL:0;ARA:13230040|1800799024|23010399003|366016|376014|10067099003|11063799006|56012099006|4143699003|3023799007|6133799003|55112099003|22082099003|18002099003;
 X-Microsoft-Antispam-Message-Info: 
-	UjYIJuo9tqC/eJkou8/U/r5djY3Vo2zTsC3f2aQGFH1B95yc6U6KZ1+DUOPvtiJe7iqtXm8VwEsWiF++qFihGFujsh1tqtYmmZouksbV/HXw+Hv4Jc9Suzh985GbRmJLV61rIuC7fQ31BcbxbsNZ1doCJi6sFW5j4heGyBxjLxbU4fnNGrQm5jrEZFO1ZTs8EKYocqDCmUt8wuyXvm/p5q4c6t4KZF8yz0AkkLfOrgPPjJ8Ozg2PrwfhCTLMLs9DppNW7DzpHMPqa6g6XASDP6JcX4nktJr4+fKEO+MLWFPQvOmjkgg/5biifmC5AW4jQCj2NUdJKxm/dsh2ggS6gRCwTDDT3O8gh8tVs05KLKA4qdmFfm5QGFyzy+2cD3psUEA/2/0d2wlelhPpN7uNsgbdawU2nQPreOcN6D5M1DOGdoIf0eCCpM8oQdG26L/QAmaTVtZL/zYYUhNBaG9CXHhfTnJJZZMVADSSbTa7aWRME59hR4kS8D+H1/OPKzmwHmY/MLj74amrMBSUZgCSvQjEo3iRreY00mypWI2PXG3+fa7l3PHFfGROOsqeQ755aL0mFiMW/qBDA/CfKYFbUkOzxVUwg/zodkUICuRqQK4p6ptLkJgGymqD0kMenCWwmSMW8asCoNFz/XzLpVPiEyq8ihBlaFXZS8tRA7+LOaU=
+	aqyXgc1LfJ9/uBGDEEeVFCv1fH9qH7llwJQ4fOn+1quuvYHgiTDLIik1Tcpxt+y55quu1d3fwi6bkyUEP+/GTuDwPvswDKrs7lhmBaQf4b4GJH3T6xhb2OJAmIFysCYpW0eD+8LRoOzI2JeWU6QgLqyap4Tcs9bB2Z1zfA2PSUx1Cgen0YQXhYSjyEBM5y1YmMTunjcjjpfgR4GWEslBjUQmBUagFsomUAvRngXln26t5WmE/wzRAKrOcq3cigjr4lzuHgjHRDcRV2xQPyfheEuTrNOnQoqP6XK5arFElshLSQebc4w8y8uXUsMozVgnWIJofMuuMFBlZ0DsOo//T9ywQAp3/i4Un6gCwN/tbfpbO8NZrMZTyonvGgUPkhaDJqwxFSaCRnqCps74JpBsXE8SWYYHU6GbbkIDmjzTbMw+Ei3rOhpCQjjtzLP12BIQFj2qptkOE3pBzKPCdwKGdc3UgMUmhsfI5TiOao/sB9ED5oSj75iTyMX0F/gaxyWqq3C/DS9r//hLrZBNrUK9f5TvxZ2OaTnimnx7RSYKUqlcRlswz2AOi3dQ14c6x/cAHE0erosE5xAhdjJlF64sgcX/6Jb10RkrhhRceg1TikBF0nmXENizg3s/hcNFbrFjCgH6rpJA+bqz0nW1qX/pfs51ceirypJpQeesnZUvlFQ=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(23010399003)(6133799003)(55112099003)(18002099003)(56012099006)(11063799006)(10067099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(366016)(376014)(10067099003)(11063799006)(56012099006)(4143699003)(3023799007)(6133799003)(55112099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?Wjg3dUwvM0hBUUxscjZRTzZNQVBQQkJ6bUl1UHptWGtackpQQXFWNmN5dEsv?=
- =?utf-8?B?cUNCT3JtTzZCVit3c2U3VFlOdUFJNUdBTmZuNlB4S3VqWlpOdWI2ZXBQM3Rj?=
- =?utf-8?B?Y2VGOHVLUkVBMVg2QVNnYllFY0daSGdTYk5GQXJsRUwxQ3Y5MTcvQU5EYTVT?=
- =?utf-8?B?bU81ZHNrNm4xcjB0L0V4SzRCNXh5cURjUWduUGZRcFlYOGpScDR3WWpISWw4?=
- =?utf-8?B?dWdIeE85SnVvRXhmSTNjRi9VVHd0Z0tMS1ZPVXFBVkFaWGY4RkhZSXBUWTFK?=
- =?utf-8?B?NWp0L0I1akl3QUcxY1R6L2hNU2pCc2dLS2ZyWlZnZlpNWHo0eEt4R3hYRHJE?=
- =?utf-8?B?VWFFWS9jelYwVzliTWYxVkVZeUxxVXBEQ3phbEtyMVJUMFRBRXR6RXpLUndH?=
- =?utf-8?B?N0F4K0QwNU5EL3FZb0QwcEthd0NGMURKcjk5ZFpjOFQ5elJPV3FwamlxQkNs?=
- =?utf-8?B?MEFJdUZ5N1NOTXgwSi95NDdmV2hQalF2SCtYcjZpVzdPSjV6NDZ1UDNQakJP?=
- =?utf-8?B?ajVZb3ZqOVA1UTZMUjRhb0pWOVR2bGhzZndDeHNra01KTWJxMjI4bkVCMnlw?=
- =?utf-8?B?UHYvRTJ3SWNtRkZuTURCUkpya2FqOUhjOGxsZVNuYk8vS3JTOUxza0lYZ05h?=
- =?utf-8?B?bks4ZzVZZUNuc1IrLzVaVkVLTEtaVUt0T1dqWk1PTEpFdFVpTUowenRXTWZ4?=
- =?utf-8?B?eUtpRjUzY1l1dFVUd1daZ3lmb0JzUm9iSC9KRTRQT2tOK0w5L0tXaDlCbkN4?=
- =?utf-8?B?TGttSmVoeW56OXBqTnNEMTUxU05zVlk3UTVMeHZ5RzRnN1Bsdm85R2RmaUY4?=
- =?utf-8?B?ZjhzVnBEZHRLdktwZ3crMENxbzUxS2NqZmdnM0trMFY5OGltVHAzTmN1SFlj?=
- =?utf-8?B?K1Mzb3JEamxkNS9KekhFY0FPaVo1ZWlSY2M1OFNzS2pLeUxmMkxiSjRRcC8x?=
- =?utf-8?B?MTIyNE54RGxsS01qemFMUW0wQkNtSlZxK1lnZ0hJMlRBeGJQNmZYeHdlcnYy?=
- =?utf-8?B?aVpCVkFhWGZVUnFGNnpPMEdlL0svWk51VnZ4bVJBcHNyZlh4RmtEL01UUEJM?=
- =?utf-8?B?clExSS9aS0ZiUUZSdENENHFDeStmNzcyWm04dXhDUmJ0Y0FlbHorb1dTcDVn?=
- =?utf-8?B?K0tiTGtjNTNoUjVDTERNRG1PelQ1VjRTM0N5M2FWWE1jYnlyOEk4ZFBEbE1q?=
- =?utf-8?B?dFI3ZER2Rkw0YkhCcmVpcHNRMmNsZ0ppM1RSZXpqdjJMUTFXenFoZUcyV3h2?=
- =?utf-8?B?b2RibldGY1IvWXI0dGM0dStkcWRiSFpNS0x3MU5ldDhYZmtINXdUM0NuWFdi?=
- =?utf-8?B?eWZEVVpWRUFuRFBqSmRSRCtOMnRUZnVqUjdWRFp4L2M5Q0ZpQUZHU1lGUElt?=
- =?utf-8?B?ZjZLaGFDMjFlZTVSck45dWN6dUUxaHoxZ1YxUWc0K09KWjZiTnBJQ3NVbHBL?=
- =?utf-8?B?VEhwRnppeFlkdGRkSklGRCtQdTY4WTh3TGVmQTcrQUM1bGplVXFJL0VmTUhm?=
- =?utf-8?B?aGk0cHNaejBZRGQzanl6Ry9PN0IxTVhQNnQ4WWFzVjF1UFltVDlsK1NPUEdw?=
- =?utf-8?B?UlBMOG5hMm1GZUpSTlUya21IY1VuNVNpSjlMam1ZdDBuOFNUTXVFekNNOUJS?=
- =?utf-8?B?QnpIcE1sdHhPeFA1SG5mMmxRb2w2VktxeG4yTlQ0SUM2RDlra3VwK0MrYTI3?=
- =?utf-8?B?elJDNlVha0xTbVdTbVdsOUNRaWcwRjFpb3Jua3MvdnhyejQ4NGdoOEZiOFlL?=
- =?utf-8?B?dTl2OU0vUG5BaGVjbDNtczJkbVFhOW5FUmxqWjZrZkh5cStEb1UwVEFHMzlH?=
- =?utf-8?B?N3U2ckZsQnk0Z1pPcXUzcE80cmJmVzBiaTVYU2lvVllvYlFCdUplN0U3RXVZ?=
- =?utf-8?B?K3hSTi9XazFVdkhGSnltVVMrVnJ0R01oTTdRTG1yOHJkdFZMdkdCY3k0bEFn?=
- =?utf-8?B?ZGtPZkN5d09zU1ZkV3lzMm5nc2hqbndHNWZXREc2Njg1MkgrZGFBSEtQdTdw?=
- =?utf-8?B?REQvd2R6eEFONkJFZlNTWTl0WmliVzJPL2pRZk5pSWw4VFFOTGs3UnB0cmMr?=
- =?utf-8?B?ZUx2N2Q5OTMyYTVzNDh3cmpJeE5GTHl2cDY4Qmdhb1YyUjJlVGQvQ2hWeHQy?=
- =?utf-8?B?NEpoMzVvak1vSGxqdTZVOEMreGNFL3R6RWpidnIyQWFkTzVqNWdjVWN1YW9D?=
- =?utf-8?B?YXE1QXVUTExIUUY0SURRL3A3MmRsMFZ0ZFhLd0JzVnVwbWNvQllRNkQyK2pw?=
- =?utf-8?B?WERvQ0FaMStMRUozdjR0dWhZR0w0MVZKSW1Td2o3K1NyY1V1WTgrbnZMamlI?=
- =?utf-8?B?MDlBa044cjBMYktqTEtpVjNCVlBuVWlHdzVIUjgzbjdHVFd4L1FvUT09?=
+	=?us-ascii?Q?LA2tTo4H1MD7VaMRHMfnnnUPUfjjVQ9oKRPaIJHZc5YMudrzLtPHawyYQj4K?=
+ =?us-ascii?Q?OFYv61utI1tXCzOgRu+PPjY9HxMj1PK0RiSPPBHkBYjVwuJBcDLj5tKFBs7O?=
+ =?us-ascii?Q?wPSOOBdYe4N/NaDE6rlilv2ikRNgNIV/WbKeGbrqEII3T0WUgbRADa0+nioz?=
+ =?us-ascii?Q?rMQD2HMIiqehshP60pd4VHq0s0B0k6vxBdILDUyxvIaogOEfKAHEKBKQb680?=
+ =?us-ascii?Q?uC8YZt3Lub8pdWETaH5Tq6mDCZ4j3w2rvG9dDtzC6obx/V0BRcPBiTxRKDFm?=
+ =?us-ascii?Q?DRsRnFISMj5XIwrmqrmdjXo7KNzI1XaG3OEDxsWb+0k4G6bUeoQmw7ATYRDB?=
+ =?us-ascii?Q?+svInzQzVGibLvBxE4WKwCCtaJq66UW+IFMOmyzS7/pWLNa0KuvOAFaHLCS6?=
+ =?us-ascii?Q?GzlTeCAzArv0aKOoPARgqmhRxpA9N+KWPOgM9rAhnhVRW/i0BU9KR+ixgvHm?=
+ =?us-ascii?Q?nR/aA7ZMzQe4bKtqgdooNcbt3Yv2BgjRmNXH/bOrKd6QIkDlqTjve5GIBGVJ?=
+ =?us-ascii?Q?skorLkjDAq3aIfkp/EXE7iB4XWEpXz0zExpmlo9fLArp8ubnYWNT5WZ8aM+f?=
+ =?us-ascii?Q?o6JQ5z4Vh1j+ayuvIoaRklnX8XtULYpw1muZ9wwNi8jKOBvVkmCltBDk8A8N?=
+ =?us-ascii?Q?DZhB7MX/O6oQnoaYvovoQN0Cj+5N4lu9CRpNmKqVg8QxqJIj7BXxMWhIJOQp?=
+ =?us-ascii?Q?D5i3Fah8qizxifQMUXUyM5rW+fb/q+Oz+WVbtG2+d71daDBhK6wEp6DpHXqf?=
+ =?us-ascii?Q?+fbrx7UymmVFkcqz7boXbqsfTHG0yTyyIJ+LUAHCtzsfRSktRkhCZC5Qg3v7?=
+ =?us-ascii?Q?Ztxqz/HDEzkANENcbqM5OToZV7vrxVCr91aX0SkDLy79PLQJAlRt9jsFq9fT?=
+ =?us-ascii?Q?fjpwwCh0i7tPvPxjsizb1qmSURaII3njdY6ZKPCGoEA9TCFmowvHk7TM8G3F?=
+ =?us-ascii?Q?BB6DHdSObYHbjgGYKt+F8+XByWcwy0RRT56oSB/h5NC7KlT3of2moTf5uX4R?=
+ =?us-ascii?Q?s87cBX/tqG4uv45vnTKnPe/hmdAsl2OJfBo1tkeo6eEWXk1mMSgLTzxaZ1OG?=
+ =?us-ascii?Q?3KIKBzC0R2UN9iCCqelW84tfYZ2NT4qxyehzwhRyULYt5NOhD1b6+zCws/SV?=
+ =?us-ascii?Q?orKq4LLB9XIKbRHYvcZC7KdtRTP8fAgFqrXkU1WVh6irBiJJeYm67z/FlBpA?=
+ =?us-ascii?Q?mjBn/3N/nbzKOyANI9WVZkbWFX10ValHZjE92rO2xAWuNeFZuzfdsU6El708?=
+ =?us-ascii?Q?hbitHr4pDnH3GHj0JV5NdxbaJNaS33B2r78sfJNQNrfkKaS5UXshVnW8MRas?=
+ =?us-ascii?Q?YzP7thF7OGH+hap++nJd78pJwFLsqgrjLuCSKss95Az6bxWAzuZ2PnuI5S5U?=
+ =?us-ascii?Q?ZTailiilE4nO01IJBT7ahTpIvIzysJ751knvxnbp1JHT65aKMOLA5GHiUEJk?=
+ =?us-ascii?Q?m/leapelCs7Ty2scv8kYPOjI4DVjp0lKDJqtCSK3nJ95WnMv0Uk3Eenp7z68?=
+ =?us-ascii?Q?vLgI0pAxyuw1OcHZBjmLa18lLkjCKnykfqBBdijIdqkgiDH0c+z1INVxUHnE?=
+ =?us-ascii?Q?8PjoqheUr/yb2JJdOxeTeP8sy5Y5dnhgRL06nTybpaIyLEc907NOshXrT5wn?=
+ =?us-ascii?Q?N9GILYk9hGIx4xbi1ukF+lb4n4r70nYxzd1/zwgl97ZfF5HvItewZLYnyAuz?=
+ =?us-ascii?Q?50Gn9OI488RihIDFviZhaBG+KQw2xJ1JZdNlm6BR2sRw4r+3Ws884nXzXYta?=
+ =?us-ascii?Q?aZMM+h/JjlceCTEw7n3ZmeWRm5A3tY8=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c4a97528-3f04-4480-ce2d-08df1b05d1f0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6af55bea-11c7-4dae-b75e-08df1b1250df
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2026 13:06:32.2967
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2026 14:35:59.1330
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uyHO+Ad0wNpJYJ24dPf2XHwueXk5uRZmSTHLksdPo1MctEj9q5hMsww69niLPTGKL241IYwrdpF82tVifCzIXA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR10MB6005
+X-MS-Exchange-CrossTenant-UserPrincipalName: YUShdRUjJdunHIh6WQx4S5BC6X98CHcobJRRQSNir05zUeK97qp7M/c0lcj4ww4N5NBcjhFwg/R13dI6A5FUUw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR10MB8808
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 25 Sep 2026 13:06:48 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24349
+ <cip-dev@lists.cip-project.org>; Fri, 25 Sep 2026 14:36:08 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24350
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+On 25.09.26 09:25, Hirotaka Motai wrote:
+> Hi Jan,
+>=20
+> Sorry for the delayed response.
+>=20
+> On 2026/09/21 14:25, Jan Kiszka wrote:
+>> On 14.09.26 10:03, Jan Kiszka wrote:
+>>> From: Jan Kiszka <jan.kiszka@siemens.com>
+>>>
+>>> This documents that isar-cip-core falls under the LF CRA stewardship
+>>> framework, describes what we consider in scope for vulnerability report=
+s
+>>> and defines the reporting channel via the CIP security mailing list.
+>>>
+>>> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+>>> ---
+>>>
+>>> We will need something for the kernel as well, and also for other CIP=20
+>>> components. This is just a start and, if it makes sense for all, can ac=
+t=20
+>>> as a template.
+>>>
+>>>  SECURITY.md | 37 +++++++++++++++++++++++++++++++++++++
+>>>  1 file changed, 37 insertions(+)
+>>>  create mode 100644 SECURITY.md
+>>>
+>>> diff --git a/SECURITY.md b/SECURITY.md
+>>> new file mode 100644
+>>> index 00000000..664a303f
+>>> --- /dev/null
+>>> +++ b/SECURITY.md
+>>> @@ -0,0 +1,37 @@
+>>> +# Security Policy
+>>> +
+>>> +This project is supported under the Linux Foundation CRA stewardship f=
+ramework,
+>>> +as described at https://www.linuxfoundation.org/security. Security
+>>> +vulnerabilities should be reported through the mechanisms described be=
+low,
+>>> +which we will coordinate with our CRA steward. For actively exploited
+>>> +vulnerabilities and severe incidents that may require CRA escalation, =
+please
+>>> +use the project=E2=80=99s emergency security reporting mechanisms as a=
+ppropriate.
+>>> +
+>>> +## Security Context
+>>> +
+>>> +Open source software can be used in various contexts that may go far b=
+eyond
+>>> +what it was originally designed and also secured for. Therefore, we de=
+scribe
+>>> +here how isar-cip-core is expected to be used in security-sensitive sc=
+enarios.
+>>> +
+>>> +This project provides building blocks and reference configurations to =
+create
+>>> +secured systems that support secure updates. Demonstration images that=
+ can be
+>>> +created from it may use publicly known keys or contain debugging featu=
+res not
+>>> +intended for production use. It is the responsibility of the final int=
+egrator
+>>> +of this project to use appropriate keys and harden the system integrat=
+ion. This
+>>> +includes the choice of secured Debian package versions.
+>>> +
+>>> +In scope for vulnerability reports against this project are flaws in n=
+ew or
+>>> +customized packages provided here which contribute to the security of =
+a final
+>>> +system. Furthermore in scope are noteworthy documentation deficits reg=
+arding
+>>> +how to achieve secure usage of these packages.
+>>> +
+>>> +## Reporting a Vulnerability
+>>> +
+>>> +Please DO NOT report any potential security vulnerability via a public=
+ channel
+>>> +(mailing list, gitlab issue etc.). Instead, contact the CIP security t=
+eam via
+>>> +security@cip-project.org via email. Please provide a detailed descript=
+ion of
+>>> +the issue, the steps to reproduce it, the affected versions and, if al=
+ready
+>>> +available, a proposal for a fix. You should receive a response within =
+5 working
+>>> +days. If the issue is confirmed as a vulnerability by us, we will requ=
+est a
+>>> +CVE, publish the fix and give credits for your report if desired. This=
+ project
+>>> +follows a 90 day disclosure timeline.
+>=20
+> I have reviewed the commit, and it looks good to me.
+> No further comments.
+>=20
 
-This brings a number of rootless fixes plus 2 patches currently waiting
-to be merged. The first one of it resolves some forky build issues.
+Thanks for the feedback!
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
- ...t-run-as-tmpfs-for-systemd-execution.patch | 44 +++++++++++++++++++
- ...xtension-fix-machine-id-file-being-w.patch | 35 +++++++++++++++
- kas-cip.yml                                   |  9 +++-
- 3 files changed, 87 insertions(+), 1 deletion(-)
- create mode 100644 isar-patches/0001-isar-mounts-mount-run-as-tmpfs-for-systemd-execution.patch
- create mode 100644 isar-patches/0002-image-postproc-extension-fix-machine-id-file-being-w.patch
+Jan
 
-diff --git a/isar-patches/0001-isar-mounts-mount-run-as-tmpfs-for-systemd-execution.patch b/isar-patches/0001-isar-mounts-mount-run-as-tmpfs-for-systemd-execution.patch
-new file mode 100644
-index 00000000..8102bf7f
---- /dev/null
-+++ b/isar-patches/0001-isar-mounts-mount-run-as-tmpfs-for-systemd-execution.patch
-@@ -0,0 +1,44 @@
-+From ec00b9572eb464e45c0c47f653e1c5a7d9316273 Mon Sep 17 00:00:00 2001
-+From: Felix Moessbauer <felix.moessbauer@siemens.com>
-+Date: Wed, 23 Sep 2026 16:33:50 +0200
-+Subject: [PATCH 1/2] isar-mounts: mount /run as tmpfs for systemd execution in
-+ chroot
-+
-+When running systemd inside the chroot, it might access /run and place
-+files there. These can have ownerships (like 0000) which require DAC
-+capabilities for traversing and removing. As this is tricky to achieve
-+across all cleanup code, we stick to the systemd file system hierarchy
-+and mount /run as a tmpfs. By that, all files below it will
-+automatically be dropped when leaving the namespace.
-+
-+This solves cleanup issues on rootless like:
-+  find: '<...>/rootfs/run/systemd/dissect-root': Permission denied
-+
-+As we anyways cleanup the /run in do_rootfs_finalize (image only), this
-+does not change the content of the image. However, it improves the
-+reproduciblity of our internal rootfs' which can improve caching.
-+
-+Reported-by: Jan Kiszka <jan.kiszka@siemens.com>
-+Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
-+---
-+ meta/classes-global/base.bbclass | 4 ++++
-+ 1 file changed, 4 insertions(+)
-+
-+diff --git a/meta/classes-global/base.bbclass b/meta/classes-global/base.bbclass
-+index 8f81ab70..3d5d1c12 100644
-+--- a/meta/classes-global/base.bbclass
-++++ b/meta/classes-global/base.bbclass
-+@@ -399,6 +399,10 @@ def insert_isar_mounts(d, rootfs, mounts):
-+         lines.append('mount -t devpts -o noexec,nosuid,uid=5,mode=620,ptmxmode=666 none {}/dev/pts'.format(rootfs))
-+         lines.append('( cd {}/dev; ln -sf pts/ptmx . )'.format(rootfs))
-+         lines.append('mount -t tmpfs none {}/dev/shm'.format(rootfs))
-++        # required by systemd file-system hierarchy
-++        lines.append('mount -t tmpfs -o mode=0755 tmpfs {}/run'.format(rootfs))
-++        # required by Debian policy 9.1.4
-++        lines.append('mkdir {}/run/lock'.format(rootfs))
-+         lines.append('mount -o bind /dev/random {}/dev/random'.format(rootfs))
-+         lines.append('mount -o bind /dev/urandom {}/dev/urandom'.format(rootfs))
-+         lines.append('mount -t proc none {}/proc'.format(rootfs))
-+-- 
-+2.47.3
-+
-diff --git a/isar-patches/0002-image-postproc-extension-fix-machine-id-file-being-w.patch b/isar-patches/0002-image-postproc-extension-fix-machine-id-file-being-w.patch
-new file mode 100644
-index 00000000..435ce7c7
---- /dev/null
-+++ b/isar-patches/0002-image-postproc-extension-fix-machine-id-file-being-w.patch
-@@ -0,0 +1,35 @@
-+From ac63ef6d3ebbfe6d0ba23caea659c7d4f609a0f6 Mon Sep 17 00:00:00 2001
-+From: Badrikesh Prusty <badrikesh.prusty@siemens.com>
-+Date: Wed, 23 Sep 2026 20:13:06 +0200
-+Subject: [PATCH 2/2] image-postproc-extension: fix machine-id file being
-+ written empty
-+
-+The pipe operation was lost when passing data to run_in_chroot because
-+run_privileged_heredoc consumes stdin for the heredoc script, resulting
-+in an empty /etc/machine-id file.
-+Move the pipe operation inside the chroot environment to fix it. This
-+ensures /etc/machine-id is properly written with either "uninitialized"
-+(systemd >= 247) or empty string (systemd < 247).
-+
-+Fixes: 14acf490 ("introduce wrappers for privileged execution")
-+Signed-off-by: Badrikesh Prusty <badrikesh.prusty@siemens.com>
-+---
-+ meta/classes-recipe/image-postproc-extension.bbclass | 2 +-
-+ 1 file changed, 1 insertion(+), 1 deletion(-)
-+
-+diff --git a/meta/classes-recipe/image-postproc-extension.bbclass b/meta/classes-recipe/image-postproc-extension.bbclass
-+index 59128c2a..9e37a65b 100644
-+--- a/meta/classes-recipe/image-postproc-extension.bbclass
-++++ b/meta/classes-recipe/image-postproc-extension.bbclass
-+@@ -63,7 +63,7 @@ image_postprocess_machine_id() {
-+     if dpkg --compare-versions "$SYSTEMD_VERSION" "lt" "247"; then
-+         MACHINE_ID=""
-+     fi
-+-    echo "$MACHINE_ID" | run_in_chroot ${IMAGE_ROOTFS} tee /etc/machine-id
-++    run_in_chroot ${IMAGE_ROOTFS} sh -c "echo $MACHINE_ID | tee /etc/machine-id"
-+     run_privileged rm -f '${IMAGE_ROOTFS}/var/lib/dbus/machine-id'
-+ }
-+ 
-+-- 
-+2.47.3
-+
-diff --git a/kas-cip.yml b/kas-cip.yml
-index 53d61bb9..818944d8 100644
---- a/kas-cip.yml
-+++ b/kas-cip.yml
-@@ -22,9 +22,16 @@ repos:
- 
-   isar:
-     url: https://github.com/ilbers/isar.git
--    commit: 589bee972846c1f88797465262d1efbbb254d4d0
-+    commit: 1d8791f5ea178bc31ba2ff3c211ef5030f542c13
-     layers:
-       meta:
-+    patches:
-+      p1:
-+        repo: cip-core
-+        path: isar-patches/0001-isar-mounts-mount-run-as-tmpfs-for-systemd-execution.patch
-+      p2:
-+        repo: cip-core
-+        path: isar-patches/0002-image-postproc-extension-fix-machine-id-file-being-w.patch
- 
- bblayers_conf_header:
-   standard: |
--- 
-2.47.3
+--=20
+Siemens AG, Foundational Technologies
+Linux Expert Center
 
