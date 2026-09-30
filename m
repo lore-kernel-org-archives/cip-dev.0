@@ -2,26 +2,26 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC867CA5FC7
-	for <webhook@archiver.kernel.org>; Wed, 30 Sep 2026 15:09:44 +0000 (UTC)
-Received: from tor.source.kernel.org (tor.source.kernel.org [172.105.4.254])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.15882.1790780975688949232
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02EAACA5FC5
+	for <webhook@archiver.kernel.org>; Wed, 30 Sep 2026 15:09:45 +0000 (UTC)
+Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.15884.1790780977744003645
  for <cip-dev@lists.cip-project.org>;
- Wed, 30 Sep 2026 08:09:35 -0700
+ Wed, 30 Sep 2026 08:09:37 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.105.4.254, mailfrom: srs0=1v+x=hw=tuxon.dev=claudiu.beznea@kernel.org)
+ dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.234.252.31, mailfrom: srs0=1v+x=hw=tuxon.dev=claudiu.beznea@kernel.org)
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by tor.source.kernel.org (Postfix) with ESMTP id CCC9F60232;
-	Wed, 30 Sep 2026 15:09:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0FF91F00898;
-	Wed, 30 Sep 2026 15:09:33 +0000 (UTC)
+	by sea.source.kernel.org (Postfix) with ESMTP id 6920343CDD;
+	Wed, 30 Sep 2026 15:09:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E1731F00899;
+	Wed, 30 Sep 2026 15:09:36 +0000 (UTC)
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 2/4] arm64: dts: renesas: r8a774b1: Add missing iommus properties
-Date: Wed, 30 Sep 2026 18:09:27 +0300
-Message-ID: <20260930150929.597001-3-claudiu.beznea@tuxon.dev>
+Subject: [PATCH 5.10.y-cip 4/4] arm64: dts: renesas: r8a774e1: Add missing iommus properties
+Date: Wed, 30 Sep 2026 18:09:29 +0300
+Message-ID: <20260930150929.597001-5-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260930150929.597001-1-claudiu.beznea@tuxon.dev>
 References: <20260930150929.597001-1-claudiu.beznea@tuxon.dev>
@@ -30,136 +30,90 @@ Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 30 Sep 2026 15:09:44 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24382
+ <cip-dev@lists.cip-project.org>; Wed, 30 Sep 2026 15:09:45 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24384
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit 1d325f5060d4940ea28818848e3a2290b217e963 upstream.
+commit 3d7de696a10924f26c2b9df7db2f741acd138a66 upstream.
 
-Add missing iommus properties to all Audio-DMAC, SDHI, Serial-ATA, and
-Frame Compression Processor device nodes.
+Add missing iommus properties to all Frame Compression Processor device
+nodes.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/2d6a97d2df0532c661a2be6bafc9e5061c645197.17=
+Link: https://lore.kernel.org/b2a1a5fd41c78c881e6e410b720e5e12572e2668.17=
 20430758.git.geert+renesas@glider.be
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a774b1.dtsi | 26 +++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a774e1.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774b1.dtsi b/arch/arm64/boot/=
-dts/renesas/r8a774b1.dtsi
-index 5b05474dc272..312c136b9f96 100644
---- a/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
-@@ -1996,6 +1996,14 @@ audma0: dma-controller@ec700000 {
- 			resets =3D <&cpg 502>;
- 			#dma-cells =3D <1>;
- 			dma-channels =3D <16>;
-+			iommus =3D <&ipmmu_mp 0>, <&ipmmu_mp 1>,
-+				 <&ipmmu_mp 2>, <&ipmmu_mp 3>,
-+				 <&ipmmu_mp 4>, <&ipmmu_mp 5>,
-+				 <&ipmmu_mp 6>, <&ipmmu_mp 7>,
-+				 <&ipmmu_mp 8>, <&ipmmu_mp 9>,
-+				 <&ipmmu_mp 10>, <&ipmmu_mp 11>,
-+				 <&ipmmu_mp 12>, <&ipmmu_mp 13>,
-+				 <&ipmmu_mp 14>, <&ipmmu_mp 15>;
- 		};
-=20
- 		audma1: dma-controller@ec720000 {
-@@ -2030,6 +2038,14 @@ audma1: dma-controller@ec720000 {
- 			resets =3D <&cpg 501>;
- 			#dma-cells =3D <1>;
- 			dma-channels =3D <16>;
-+			iommus =3D <&ipmmu_mp 16>, <&ipmmu_mp 17>,
-+				 <&ipmmu_mp 18>, <&ipmmu_mp 19>,
-+				 <&ipmmu_mp 20>, <&ipmmu_mp 21>,
-+				 <&ipmmu_mp 22>, <&ipmmu_mp 23>,
-+				 <&ipmmu_mp 24>, <&ipmmu_mp 25>,
-+				 <&ipmmu_mp 26>, <&ipmmu_mp 27>,
-+				 <&ipmmu_mp 28>, <&ipmmu_mp 29>,
-+				 <&ipmmu_mp 30>, <&ipmmu_mp 31>;
- 		};
-=20
- 		xhci0: usb@ee000000 {
-@@ -2136,6 +2152,7 @@ sdhi0: mmc@ee100000 {
- 			max-frequency =3D <200000000>;
- 			power-domains =3D <&sysc R8A774B1_PD_ALWAYS_ON>;
- 			resets =3D <&cpg 314>;
-+			iommus =3D <&ipmmu_ds1 32>;
- 			status =3D "disabled";
- 		};
-=20
-@@ -2148,6 +2165,7 @@ sdhi1: mmc@ee120000 {
- 			max-frequency =3D <200000000>;
- 			power-domains =3D <&sysc R8A774B1_PD_ALWAYS_ON>;
- 			resets =3D <&cpg 313>;
-+			iommus =3D <&ipmmu_ds1 33>;
- 			status =3D "disabled";
- 		};
-=20
-@@ -2160,6 +2178,7 @@ sdhi2: mmc@ee140000 {
- 			max-frequency =3D <200000000>;
- 			power-domains =3D <&sysc R8A774B1_PD_ALWAYS_ON>;
- 			resets =3D <&cpg 312>;
-+			iommus =3D <&ipmmu_ds1 34>;
- 			status =3D "disabled";
- 		};
-=20
-@@ -2172,6 +2191,7 @@ sdhi3: mmc@ee160000 {
- 			max-frequency =3D <200000000>;
- 			power-domains =3D <&sysc R8A774B1_PD_ALWAYS_ON>;
- 			resets =3D <&cpg 311>;
-+			iommus =3D <&ipmmu_ds1 35>;
- 			status =3D "disabled";
- 		};
-=20
-@@ -2200,6 +2220,7 @@ sata: sata@ee300000 {
- 			clocks =3D <&cpg CPG_MOD 815>;
- 			power-domains =3D <&sysc R8A774B1_PD_ALWAYS_ON>;
- 			resets =3D <&cpg 815>;
-+			iommus =3D <&ipmmu_hc 2>;
- 			status =3D "disabled";
- 		};
-=20
-@@ -2328,6 +2349,7 @@ fcpf0: fcp@fe950000 {
+diff --git a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi b/arch/arm64/boot/=
+dts/renesas/r8a774e1.dtsi
+index 8eb006cbd9af..cfcfca00f663 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
+@@ -2638,6 +2638,7 @@ fcpf0: fcp@fe950000 {
  			clocks =3D <&cpg CPG_MOD 615>;
- 			power-domains =3D <&sysc R8A774B1_PD_A3VP>;
+ 			power-domains =3D <&sysc R8A774E1_PD_A3VP>;
  			resets =3D <&cpg 615>;
 +			iommus =3D <&ipmmu_vp0 0>;
  		};
 =20
- 		vspb: vsp@fe960000 {
-@@ -2380,6 +2402,7 @@ fcpvb0: fcp@fe96f000 {
+ 		fcpf1: fcp@fe951000 {
+@@ -2646,6 +2647,7 @@ fcpf1: fcp@fe951000 {
+ 			clocks =3D <&cpg CPG_MOD 614>;
+ 			power-domains =3D <&sysc R8A774E1_PD_A3VP>;
+ 			resets =3D <&cpg 614>;
++			iommus =3D <&ipmmu_vp1 1>;
+ 		};
+=20
+ 		fcpvb0: fcp@fe96f000 {
+@@ -2654,6 +2656,7 @@ fcpvb0: fcp@fe96f000 {
  			clocks =3D <&cpg CPG_MOD 607>;
- 			power-domains =3D <&sysc R8A774B1_PD_A3VP>;
+ 			power-domains =3D <&sysc R8A774E1_PD_A3VP>;
  			resets =3D <&cpg 607>;
 +			iommus =3D <&ipmmu_vp0 5>;
  		};
 =20
+ 		fcpvb1: fcp@fe92f000 {
+@@ -2662,6 +2665,7 @@ fcpvb1: fcp@fe92f000 {
+ 			clocks =3D <&cpg CPG_MOD 606>;
+ 			power-domains =3D <&sysc R8A774E1_PD_A3VP>;
+ 			resets =3D <&cpg 606>;
++			iommus =3D <&ipmmu_vp1 7>;
+ 		};
+=20
+ 		fcpvi0: fcp@fe9af000 {
+@@ -2670,6 +2674,7 @@ fcpvi0: fcp@fe9af000 {
+ 			clocks =3D <&cpg CPG_MOD 611>;
+ 			power-domains =3D <&sysc R8A774E1_PD_A3VP>;
+ 			resets =3D <&cpg 611>;
++			iommus =3D <&ipmmu_vp0 8>;
+ 		};
+=20
+ 		fcpvi1: fcp@fe9bf000 {
+@@ -2678,6 +2683,7 @@ fcpvi1: fcp@fe9bf000 {
+ 			clocks =3D <&cpg CPG_MOD 610>;
+ 			power-domains =3D <&sysc R8A774E1_PD_A3VP>;
+ 			resets =3D <&cpg 610>;
++			iommus =3D <&ipmmu_vp1 9>;
+ 		};
+=20
  		fcpvd0: fcp@fea27000 {
-@@ -2388,6 +2411,7 @@ fcpvd0: fcp@fea27000 {
+@@ -2686,6 +2692,7 @@ fcpvd0: fcp@fea27000 {
  			clocks =3D <&cpg CPG_MOD 603>;
- 			power-domains =3D <&sysc R8A774B1_PD_ALWAYS_ON>;
+ 			power-domains =3D <&sysc R8A774E1_PD_ALWAYS_ON>;
  			resets =3D <&cpg 603>;
 +			iommus =3D <&ipmmu_vi0 8>;
  		};
 =20
  		fcpvd1: fcp@fea2f000 {
-@@ -2396,6 +2420,7 @@ fcpvd1: fcp@fea2f000 {
+@@ -2694,6 +2701,7 @@ fcpvd1: fcp@fea2f000 {
  			clocks =3D <&cpg CPG_MOD 602>;
- 			power-domains =3D <&sysc R8A774B1_PD_ALWAYS_ON>;
+ 			power-domains =3D <&sysc R8A774E1_PD_ALWAYS_ON>;
  			resets =3D <&cpg 602>;
 +			iommus =3D <&ipmmu_vi0 9>;
- 		};
-=20
- 		fcpvi0: fcp@fe9af000 {
-@@ -2404,6 +2429,7 @@ fcpvi0: fcp@fe9af000 {
- 			clocks =3D <&cpg CPG_MOD 611>;
- 			power-domains =3D <&sysc R8A774B1_PD_A3VP>;
- 			resets =3D <&cpg 611>;
-+			iommus =3D <&ipmmu_vp0 8>;
  		};
 =20
  		csi20: csi2@fea80000 {
