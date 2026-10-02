@@ -1,100 +1,79 @@
-Return-Path: <pavel@nabladev.com>
+Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55888CA5FDD
-	for <webhook@archiver.kernel.org>; Fri,  2 Oct 2026 13:10:57 +0000 (UTC)
-Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.11729.1790946649285130801
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54FEACA5FDD
+	for <webhook@archiver.kernel.org>; Fri,  2 Oct 2026 13:46:37 +0000 (UTC)
+Received: from tor.source.kernel.org (tor.source.kernel.org [172.105.4.254])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.12569.1790948794907739263
  for <cip-dev@lists.cip-project.org>;
- Fri, 02 Oct 2026 06:10:49 -0700
+ Fri, 02 Oct 2026 06:46:35 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=Z1aVvjof;
- spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C474D10769A;
-	Fri, 02 Oct 2026 15:10:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1790946642;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=gKFZ1KYe17+rMJisUsbJntNRxwiQylzISf2fobaZTgs=;
-	b=Z1aVvjofoz+o3OQapPgXrOQ20RTxmVFuIz+VA1QvErzyd2C3ZP8USKiz406tX5gDi0aTWf
-	0H4oSuLmLO0WzB9ENc4xWodSleydK+W0P3+RYytlzi8sEpnxuY1sIGf+MtLcLTvxCofOKQ
-	+nEhrh04soDDKxIwGD0AFzUk0MoHZMoTyP0VSDCsdN1a1nsCOgmMvDRuymXhKXdrKthhle
-	7o4CK7jYxfoP8lOg2gCEdk9F1uTLID/Fm5mvLIPNyg8QH8P9qVYya6Eyj5A+GZd0d/q/Oy
-	nNw+FdssdFc5CDd6nPBnNC7VOaF6u9QPiOSHt+c8puWXfHD3rIFtFsTTVXyQ1Q==
-Date: Fri, 2 Oct 2026 15:10:37 +0200
-From: Pavel Machek <pavel@nabladev.com>
-To: Biju <biju.das.au@gmail.com>
-Cc: cip-dev@lists.cip-project.org,
-	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
-	Pavel Machek <pavel@nabladev.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 5.10.y-cip] irqchip/renesas-rzg2l: Fix loss of interrupt
-Message-ID: <ar-tTUo5zWBE1kMg@duo.ucw.cz>
-References: <20261002125054.360202-1-biju.das.jz@bp.renesas.com>
+ dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.105.4.254, mailfrom: srs0=xiat=hy=tuxon.dev=claudiu.beznea@kernel.org)
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	by tor.source.kernel.org (Postfix) with ESMTP id 7CEFD60A70;
+	Fri,  2 Oct 2026 13:46:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 187071F000FF;
+	Fri,  2 Oct 2026 13:46:31 +0000 (UTC)
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+To: nobuhiro.iwamatsu.x90@mail.toshiba,
+	pavel@nabladev.com
+Cc: cip-dev@lists.cip-project.org
+Subject: [PATCH 5.10.y-cip v2] PCI: rzg3s-host: Fix compilation warning
+Date: Fri,  2 Oct 2026 16:46:29 +0300
+Message-ID: <20261002134629.2382379-1-claudiu.beznea@tuxon.dev>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="r9GdPnAbN1JmHAKQ"
-Content-Disposition: inline
-In-Reply-To: <20261002125054.360202-1-biju.das.jz@bp.renesas.com>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 02 Oct 2026 13:10:57 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24416
+ <cip-dev@lists.cip-project.org>; Fri, 02 Oct 2026 13:46:37 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24417
 
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
---r9GdPnAbN1JmHAKQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fix the following compilation warning:
 
-Hi!
+pcie_rzg3s_host.c: In function =E2=80=98rzg3s_pcie_probe=E2=80=99:
+../drivers/pci/controller/pcie-rzg3s-host.c:1558:2: warning: ISO C90 forb=
+ids mixed declarations and code [-Wdeclaration-after-statement]
+ 1558 |  struct rzg3s_pcie_host *host;
+      |  ^~~~~~
 
-> From: Biju Das <biju.das.jz@bp.renesas.com>
->=20
-> [ Upstream commit 50b10bd0c2d721ad38abd1abe3acdefb6caa0944 ]
->=20
-> rzg2l_clear_irq_int() and rzg2l_clear_tint_int() perform a
-> read-modify-write on the ISCR/TSCR status registers to clear the bit
-> for the interrupt just handled. Since these registers are
-> write-0-to-clear per bit, this is racy:
->=20
-> If another interrupt's status bit gets set between the read and the write,
-> that bit is written back as 0 by the software-constructed value, clearing
-> an interrupt that hasn't been serviced yet and losing it.
->=20
-> This can be reproduced by triggering multiple interrupts at once, e.g.:
->=20
->   gpioset -c gpiochip0 355=3D0 353=3D0 328=3D0 352=3D0
->=20
-> Fix this by writing back only the bit being cleared, with all other bits
-> set to 1, instead of read-modify-writing the whole register.  Since 1-bits
-> are left unchanged by hardware, concurrently-set status bits for other
-> interrupts are preserved.
+With it dropped extra ';' at the end of the moved line.
 
-Looks good to me. drivers/irqchip/irq-renesas-rzg2l.c does not exist
-in v5.10, so -stable can't pick this up for us.
+Fixes: c5249a6594d6 ("PCI: Add Renesas RZ/G3S host controller driver")
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
 
-Reviewed-by: Pavel Machek <pavel@nabladev.com>
+Changes in v2:
+- dropped extra ';' and updated patch description
 
-I can apply this if it passes testing and there are no other comments.
+ drivers/pci/controller/pcie-rzg3s-host.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Best regards,
-                                                                Pavel
+diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/contr=
+oller/pcie-rzg3s-host.c
+index 987015e8ec9b..010b6747a0aa 100644
+--- a/drivers/pci/controller/pcie-rzg3s-host.c
++++ b/drivers/pci/controller/pcie-rzg3s-host.c
+@@ -1553,10 +1553,10 @@ static int rzg3s_pcie_probe(struct platform_devic=
+e *pdev)
+ 	struct pci_host_bridge *bridge;
+ 	struct device *dev =3D &pdev->dev;
+ 	struct device_node *np =3D dev->of_node;
+-	struct device_node *sysc_np __free(device_node) =3D
+-		of_parse_phandle(np, "renesas,sysc", 0);;
+ 	struct rzg3s_pcie_host *host;
+ 	int ret;
++	struct device_node *sysc_np __free(device_node) =3D
++		of_parse_phandle(np, "renesas,sysc", 0);
+=20
+ 	bridge =3D devm_pci_alloc_host_bridge(dev, sizeof(*host));
+ 	if (!bridge)
+--=20
+2.43.0
 
-
---r9GdPnAbN1JmHAKQ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCar+tTQAKCRAw5/Bqldv6
-8sBvAJ4yqq55C0OctP3TAUCcIBj/O8gFbQCfVwWJoCVjbBVN73Lq51x9PbkcONE=
-=wJT3
------END PGP SIGNATURE-----
-
---r9GdPnAbN1JmHAKQ--
 
