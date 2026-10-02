@@ -1,194 +1,218 @@
-Return-Path: <nobuhiro.iwamatsu.x90@mail.toshiba>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12BB9CA5FCE
-	for <webhook@archiver.kernel.org>; Fri,  2 Oct 2026 00:16:02 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.1173.1790900151110432251
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D7D8CA5FC4
+	for <webhook@archiver.kernel.org>; Fri,  2 Oct 2026 11:19:55 +0000 (UTC)
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (DB3PR0202CU003.outbound.protection.outlook.com [52.101.84.34])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.9457.1790939991891002964
  for <cip-dev@lists.cip-project.org>;
- Thu, 01 Oct 2026 17:15:52 -0700
+ Fri, 02 Oct 2026 04:19:53 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.s=key2.smx header.b=i8hccGXO;
- spf=pass (domain: mail.toshiba, ip: 210.130.202.158, mailfrom: nobuhiro.iwamatsu.x90@mail.toshiba)
-DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=mail.toshiba;h=From:To:CC:
-	Subject:Date:Message-ID:References:In-Reply-To:Content-Type:
-	Content-Transfer-Encoding:MIME-Version;i=nobuhiro.iwamatsu.x90@mail.toshiba;
-	s=key2.smx;t=1790900148;x=1792109748;bh=2D672Pmn/7u3QrqxSRF0IFcOErNUZhp5UyshU
-	Brgx0c=;b=i8hccGXOESKirexxVIH9UwmYrMCZjpBLpNWNtpkpPTzBtqMi3S8OvNbsu4FrvDOR9b9
-	XFXPRVDneO4y93u9pfMKO+a36iIDG46swXGzErWYMXzIQt5fVRKg/kwnTzaJK93imrWw9VfDPgFb3
-	tahzIl3c8thhfNVxZC3eXZAs7H2OrO5x90N6K0HCp9nfk7RCXRKD3g7KHC6jyw8Pvode8rLC1Wjb3
-	rypeZme63o85d9GZ7ZVmRSWoylJiKislNxXzeXX/gbIsx4tgO2Evdh0q1HFQzHiWJoCKtjB8Zahn3
-	3+ZWJSWNR6SgIIp1HL5HVpIIZahTErGaT7XeBHa++mJw==;
-Received: by mo-csw.securemx.jp (mx-mo-csw1122) id 6920FlGE1836025; Fri, 2 Oct 2026 09:15:48 +0900
-X-Iguazu-Qid: 2rWg3sYdYrwyLWp5kA
-X-Iguazu-QSIG: v=2; s=1; t=1790900147; q=2rWg3sYdYrwyLWp5kA; m=2fqKhm9VhDxmOo9m7F6hm1+HJgAAKmVdxNMX071rYEI=
-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	 id 4hwq7R2Fqhz1xng; Fri,  2 Oct 2026 09:15:47 +0900 (JST)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=Zf+ZAy6s;
+ spf=pass (domain: siemens.com, ip: 52.101.84.34, mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SDvQpkvyQrgzrlIDFA9lohHClhsUxD4QQXJdXwEEpWFh91pKAHUjk3hMwYQzVJNwfLsYDgVWmWxzg90wrXoUaGsnhX2Wp7d3A3+IoktOacTwGUspkl3vlbkJuv/lFjWRSlwunnZpuzxWWzhdMdLKGv2KqwWtiAvFC/7YW7NK4dkBmvFgnSB/zzfyDOsVh6B6kaiWmP1WVRLnoPWrkXa4k7IljLjTev9T87iOxCw9O40Qd7Mn0kwln5LtZiWycJ97pilRBqp8QQ/8E890/eAPEgqt2aSOBsgHWhO+3M3vtm5gli40mmsYtRZXxuvztN4ZUiT91Af8/dSLkiGE3cz6wQ==
+ b=sr6dxeqP2LYesmJM2lOfxMPcw72NcxSPQi2UR6B69y8j5qJsGrCHZHGghmYHTnn5N60BuF1SDauXSorVWuK/I4udm+BF+ZpkPvx8+S4+wo8wM8Romds5UVc/MyWNCZErYf+XJTrrdHkkSuMJPGXyDTWZJHJLTm2zYDUO+5Q8rty91+dRvZwAmjCFQkNWZtJ81rnWVJE+dZaGFfJkgpdPmXzs2ogFok+IVorKa7htl5QjeHojWmyRc71AbXUayAbWf2a2AfBKGF7cC3D0bfhlsHdtJxfDc8SBch9xOdyTm7eL73wQptUd7uVOo5iQd3reANTNf+ulzNiVkDLQUGxXxg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Jp60GBV+nHi/OoXcispE+jqBu2BYUdy2YRBrSq6XIuw=;
- b=sKgITuo1cxGHgK48uvoOimNgmmPdQB5jqN3ChIZfylO8/93kFdPfWda+mlVnw/0LV3gyZhYkZBZGv4ywa1mrHr+CKtaYjPgYW4LkmjIA4qtlCG5TZ4wU8dZ1Auv0qu1gsasO0Br8YRwjv0eeBtg3reQZ3Kk0KRA9Zb5rg1cop/LISyFESFeht4pz4OVZwl8sbTFoipHd6zS+EGyvBejtHaNmlLZjSwbBUIGpsKT4p6mEAD3vp7OD3OQ3CDvt8E1CXuanRRKI12UStehPk3Jy5rR0/J1c0qdRtqkg0kLllJ3QEBClIiN22d0XRNAZ6Xta6lk/MPeMQtpeScgxTfnzNQ==
+ bh=yR4DWBQH4oFiACUP+krhxCvpHprh2u7nvn1VHxWmCaQ=;
+ b=MW3jSHbq0E6VQea03S+6xAzIP8UrKsSTC3nWB8WkBpJnxKswIdtMSq9Hbo3JXCjvZrrfdS98IfkGxjcm2KWdgNaK0tNIK4eQnL0tUmgvX8flZlJWfp9I75MCkIb+g9M+HYOThy82i2+fJiO5OecjmE5YeALBeDwnKhAc7pvky+Pk0DqaPN/Bd7+yEK4zSFjPoY62Gf1uhUHN+rpkvEWJwa0AznH5Af96yMmKBiFHTLcvwAi+iceqeTtiTr/KG/xVdupLHk3R6tLVw+Dj8B0LFfANyUgVBcm25+WB6U8Pd6Pm0XAoVuEjFgdZjrsnjog8xGADYuZIAWv1lLSMQMreKA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mail.toshiba; dmarc=pass action=none header.from=mail.toshiba;
- dkim=pass header.d=mail.toshiba; arc=none
-From: <nobuhiro.iwamatsu.x90@mail.toshiba>
-To: <biju.das.jz@bp.renesas.com>, <cip-dev@lists.cip-project.org>,
-        <pavel@nabladev.com>
-CC: <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [cip-dev] [PATCH 6.12.y-cip 0/3] Add Reneses RZ/G3L RSPI support
-Thread-Topic: [cip-dev] [PATCH 6.12.y-cip 0/3] Add Reneses RZ/G3L RSPI support
-Thread-Index: AQHdTAehex3U4PayT0iyxysdE3WCZbbokUwwgADXYuA=
-Date: Fri, 2 Oct 2026 00:15:44 +0000
-X-TSB-HOP2: ON
-Message-ID: 
- <TY7PR01MB14818C1FE803BC90BE5F9C32ECD892@TY7PR01MB14818.jpnprd01.prod.outlook.com>
-References: <18D837EDDA8014EF.2416057@lists.cip-project.org>
- <TY3PR01MB113465D5BE3E3F4DA59396432868A2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-In-Reply-To: 
- <TY3PR01MB113465D5BE3E3F4DA59396432868A2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mail.toshiba;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY7PR01MB14818:EE_|TY4PR01MB17053:EE_
-x-ms-office365-filtering-correlation-id: 1dc421d0-7e41-41f7-340d-08df201a4ced
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|23010399003|366016|376014|1800799024|10067099003|260925022911599003|56012099006|260925021911599003|260925021311599003|4143699003|11063799006|22082099003|18002099003|38070700021;
-x-microsoft-antispam-message-info: 
- Rfhe4NZDO3ykZWjibyhU/au9+ukJHHc+JzWKrqA0HA9JcNP6gJD71iKO2/vpNBp2YiT+Ind19FQ/pO3WD+tr1hpazo8dvxW/j9IGHIPj7hH3lDuzpNZaQkWufH0FfupX1CrsYS1ExoxyYEpHht37pW8oSwtxAwAyuk0nfP09VM+ZAH9o7Kb6ZYvIUtDZQlMeBWD9huQTkf96iJWq+qrfQ+99AwqjiF57FyWe0PXFcsItwj7TzkSj2Pg5YIlDsyEMVapQ8KmOIP2jfjsrvieI8gUKvtlB3Vl+9iAewm1W7yPUitJRvkegjzoWqLKCF4Po3rE4LLQjbfY6N1NOJXjO2kbf1KSAUSZB+dM93tRUnejvoBc4qe/iLDulcag5slKMqlq1W9bXwzplAuLUGqF2jtM2iP6do0ZyawFf3EeqKbf68ucJ7XP+v9Y2fv9MPWPyRrNRrXlvlAeVpVh8C10tHHzxA8qO7h2MWeF5PZOvXa6wWEH/JoY140oHUEJoHkw7U12Xvv2xCP5oTZUWRuQfnoM95knLhdsOw+fynI+wrG/TNlReccM4SXDX9Rp4uWyKqqP2HoYLAzTyGEx3ejkLKXGXhklBELyTa5DhC6QiaJpJNO3ZbW/uLfzq9DWkwByZKRFHjPfdrt/g/yxmYpCOY23VltahHz69lIT/1rtwLWI=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7PR01MB14818.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(376014)(1800799024)(10067099003)(260925022911599003)(56012099006)(260925021911599003)(260925021311599003)(4143699003)(11063799006)(22082099003)(18002099003)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?WUh0dW4zeWR0eFZqYjZYSFhoaCtPQ3dKbExqOEtLSFVTL3JaalMzYUw3?=
- =?iso-2022-jp?B?UlJabEtrRWhrL0Y2eEhwYVcwaUl6eUdodkJFS3lIZDlrUSs1SEIraDZI?=
- =?iso-2022-jp?B?T2dBeTJ5VEI1RXdqN1dDalAwYm0rWkNGbzZoT2ZLUDdCMUJOMjZhVnlo?=
- =?iso-2022-jp?B?OUhEZUlEc3Y4YjZjK0V2elpBZjEwQWZJbnA4NDVVNnpuSXVDaGhSYzZl?=
- =?iso-2022-jp?B?ck9oVzY4MmRGT0xqTlZ0azQya0t4WlY3VWJFOTZuc0EweVczWHBsWlFo?=
- =?iso-2022-jp?B?RlFsZXhWRjViVTh2QUR1RHBhc3gwRXpIYnVnSGN2ZXBtVEZiUG9zSUg0?=
- =?iso-2022-jp?B?aVdYUGlGWVM5cjVlNkM3aFFxUGZ4VFMwWWRDZEIxUlA5YUljVk1jU05w?=
- =?iso-2022-jp?B?NmdrUUtZbGZscEcyR3dQZjNEOHMrdG5FeTVwU3hDZDNOVzZLSEFzUGhW?=
- =?iso-2022-jp?B?czVkdjNsM2FmckplNlAxczAwWmVRdUViN0x4WUVzbFZGS3l4MTZPcWN1?=
- =?iso-2022-jp?B?clBmNGxxbzRWZS91ek5NdW5CUnBUbmg4OXJxVDRIWVVlOUozNklXZDJB?=
- =?iso-2022-jp?B?eFBsVUY5N2lhVGVIVXk4SnhXbi96bGZ4ai9uY2U0VDFiajFha0F6T1pW?=
- =?iso-2022-jp?B?M25uSk5jRk43dCsrb0pJYk9yakdMbGhSQndXeGpzS0FuZ2FzdS95ZmxM?=
- =?iso-2022-jp?B?TThIVHNMdTEzcFBRaHNDUWZvMHdkUVo4bEZrbGNnUkZCS2I4d09GRGJP?=
- =?iso-2022-jp?B?WVZoakJucUJyRlZvWFllMlY4R1RYUXl4UXgvRmJPMkQ0OFEwZHdMUnZw?=
- =?iso-2022-jp?B?NkNjT1o1MWJhbW52aUh2Q21xWUJmanhhQ1gvUmc3WXplNnpHWEhxaUxS?=
- =?iso-2022-jp?B?NldIdHo2SzN6NG94c0xXVEI2Z0tJcHl0d3pFcDc5SVR1d1JNbWR1UUNZ?=
- =?iso-2022-jp?B?NGVPY3JCNXArU3l3WHFDYWdpSFIwS2MrY2dta3c1SUxZaDEvTENsY0hH?=
- =?iso-2022-jp?B?SkN6ZkExbTZRZ3praDFzZ0EzQmlXZGZQeTlVa1p1ZmcrZFp0ZWhybzkz?=
- =?iso-2022-jp?B?VUlvNGpLditjbE10MTBmL2d5TjkvRlJ2cVU5T1d5NzQxeW53OE04QkNL?=
- =?iso-2022-jp?B?cjNCaVovU1R6U252aWh0UDZWbUZORDh4OXJ3YXFzQzB4QWE0ZC9sZ2F1?=
- =?iso-2022-jp?B?Z1BzWUFOTjdwQUxZUndCaHFtN2NNSjYrYmVJRVhJUGpCcFlBbWxMSnZs?=
- =?iso-2022-jp?B?dklVUGlqdkNPaFJReGQrblA1dGgwRDJhaGF5cmFvOVdEcHlsZlVhZjZL?=
- =?iso-2022-jp?B?WWNDSmdvRFRFUWpPS0Ivay9OSTZ5YU9QNkRNazZQdXp5THViWHZlRVZU?=
- =?iso-2022-jp?B?OUlxek96a0M0cG1XSXRSSHBoZldjbHFpUW5xZlR6am04TU9FdlNmS0N3?=
- =?iso-2022-jp?B?Nnl2QXJMT3JWNSswZW55dkc4a3FxeHVldnBaV1U4aVNmWGFxNlRQUFh6?=
- =?iso-2022-jp?B?R1krRC90dkVFNGljd3VZdnM0STlnb1dnZ0tGTHdPamlreFRuZ3J1eW5p?=
- =?iso-2022-jp?B?V0JXT0tUM0NsNXgycWE0c3QrNk5UWjBOREVtSVRjdTh3UWM5NHlUVUFa?=
- =?iso-2022-jp?B?M3UyMnNLbWRXQzczL1hMZ0tTcTdCM01WanhRdzd2ZHA5NXNhZmZJQ3Qx?=
- =?iso-2022-jp?B?aHZKaGxDUVovMzlnYkt5WHo0T3RhMFF3Syt1dGdhOXhZamRIcW9JZTd1?=
- =?iso-2022-jp?B?bEh3QTlXSTVOTkN3ZE8wSHY5dWNkNlNUVmVqYUpQZHA1Y1RndFlIb1Jl?=
- =?iso-2022-jp?B?cnU2azluZUZpYVlDMERTamNiNVVqNEo4R3pwL1R1M29IUWdTS0dZNitq?=
- =?iso-2022-jp?B?SlJQMG9BT2VaWW0vVk1xWWdtdUxySkZ4NC9oSFZGK2drdUhtWXRwSGNN?=
- =?iso-2022-jp?B?SWNSNW9Eb0RkNnd0MXQ5NndzdE90eTBROVIvbkRZRHBVdE9DcGtmUFFO?=
- =?iso-2022-jp?B?TExkSEs3UHNpdnZpZ0lJZmJsTzZYbkMrOG9NZzJCOXk2UmlEOE1wbVFU?=
- =?iso-2022-jp?B?Lzlnc2dyVFhPaUNNTlBMT01QTVNmSGlzWE00MlZaQnRQOXMwdlJRdnR0?=
- =?iso-2022-jp?B?eGd2ZGNNUEsrT0Y1ZlJ2SW9acjlZdzhnalgrbUFYRHQ4dlRiVXF2L1JH?=
- =?iso-2022-jp?B?M1RmN25KVHNEcUxvRnAySDhwaEh6cUVWS1NaUFVGN1NXY1kwYmt6VEFG?=
- =?iso-2022-jp?B?WnV6a2lFN1lhSzU0YktqWlgxNzVmUXVxWW5mWkFOQUJ4S2RsbEdwemdC?=
- =?iso-2022-jp?B?YUJaR2VlYWo0MVNFdnI0d3dCdllRU0JSb2JPOEIvQ3c5NmlvYzFPQ3JI?=
- =?iso-2022-jp?B?VjR2T1psRlY5ZFRDc2d4eWJGSm0rODM1OXhXaThNUWphN0ZRZTZLQld3?=
- =?iso-2022-jp?B?MEs4NEFLYWlnS3UxUmVUY3ZpRWpwU0hLek5SN0cwWThtR1pmdXNhWEd0?=
- =?iso-2022-jp?B?YkFoeEVST3V2cTBSR2ZLbTJ6Q0RmODhPN2F3R09pWDhUalc5N09DWVpB?=
- =?iso-2022-jp?B?QXRLMWl4OD0=?=
-Content-Type: text/plain; charset="iso-2022-jp"
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yR4DWBQH4oFiACUP+krhxCvpHprh2u7nvn1VHxWmCaQ=;
+ b=Zf+ZAy6sUO8VhbAl3DuGfrCF1N3kuUKqVjQvLOLzNBQMygE5NfLu8dzBhKdCbXVWRj8/suRvSaxrqWhHgAHVOqejjoLfMURu3slTBN6QepIbExP/O360vLWwlCWyDTX4c0ehsui9A96MlwbXYX9MIWPtIF+hqu+0QzRZTdEP1OyNvKkQqZwdtY+1D8IwmZhmnCX+Hq5o2tB4vTlR6UVc56p1CntRfCkwNecAr1vu9e7XlplhR3tsAaT516E5j5V+B5lqSFSbkxz3v+HW3tqy1RQakRe/8yeawn/v3TFCW6g/6D8l1CEYR6q5Jfo4Z0XseLRI8CbXugSwynwnV13fnw==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:113::12)
+ by PA3PR10MB9311.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:4d7::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.24; Fri, 2 Oct
+ 2026 11:19:48 +0000
+Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::ae26:d131:7cff:4001]) by DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::ae26:d131:7cff:4001%3]) with mapi id 15.21.0472.016; Fri, 2 Oct 2026
+ 11:19:45 +0000
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+To: felix.moessbauer@siemens.com,
+	jan.kiszka@siemens.com,
+	cip-dev@lists.cip-project.org,
+	cedric.hombourger@siemens.com
+Subject: [isar-cip-core][RFC 00/11] Add darcut initramfs for CIP Core
+Date: Fri,  2 Oct 2026 13:18:47 +0200
+Message-ID: <20261002111938.3600786-1-quirin.gylstorff@siemens.com>
+X-Mailer: git-send-email 2.55.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: FR4P281CA0022.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:c9::17) To DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:10:113::12)
 MIME-Version: 1.0
-X-Exchange-RoutingPolicyChecked: 
-	pCT3DzyAn5pRpU7wznlhXJl9P9XTR+Hj35eax6U9+T+eVsWNPsZBuxCNA5kYd3CFqJ3ucmElk4AUJx8yE1TL8bA2mMTPVE7ciSjM8q3b3PTBvjRqErBtDZbzxAL7huu9ADvXUYajT8Xie255Ot2xWyt+X+LE++DusdIoDXt9LqsAIsnWQ0KUH6934Bn1TCS/Q67zg1kuvCNG2bmt/xxCzSedK87cevVMdv5sEMUTKPL29tgMTtfQIPC/6Wl31tkza6VxhvsDr6S2xQzx5pnUPtltQNV+laKRH6CmGb1jMNKsuHpk2vTr2V9Z86qZjDa7L1uK5Xl3sasbsGidgNvNIw==
-X-OriginatorOrg: mail.toshiba
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB8PR10MB3178:EE_|PA3PR10MB9311:EE_
+X-MS-Office365-Filtering-Correlation-Id: be35e4de-03c7-494a-01b2-08df20770ffd
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: 
+	BCL:0;ARA:13230040|23010399003|1800799024|376014|366016|6133799003|10067099003|11063799006|56012099006|55112099003|18002099003;
+X-Microsoft-Antispam-Message-Info: 
+	g/iPuO7c/Y4Nk96++mRzcpeUhmdolgXIb7JOfp9QerNB9DbzIkM5gjDpiBf2q4EBPbm54AWrUk5FHtTZXKLO5huxacL6S38ZE/35Rt2lgRQdvgGxTJrPTBFnjtpxno/O6V7YKKnc5V1HkFGK/imKk0Ey24KyQJZePNow2cTikV+1CbWm28L/GCkaP3Mf1CG6glKbu+cSJu6m/8MgjO9iORDkfkr2mQbCdGM2Rq/iMvJ1L2hvzoeHh1/8FOUi3PP0Su4H2DwR9we26jV/78n1cA6KVqCn94H8aJRFzxOjSpQ+shCWDpw2X/dR+byqZjt5IVpxtd+p9UnUrXPuI95ml6/L/HNfnMU+9dL7rPY1Gx0fVjxPD1e5I2QK8ctT4ObeGq7OSLBylEQQu86mwV9qjqsfB8q+nuIfCAzqYITOlKswWCWPkR1JEys+N4zpkkj8bu/2lpcaGzoLm7Vgfr+POCB/6JBa6vSpCLA8MUb2OMDcI64mPyUekxSAU1RmEYzBAa/TVS6Cr7c6mfotAMufWtBT/JyTxW9BeFj8bsp/qbE74SiCqhBttACTnJRkJbn1o33VfVOzllM6pCvLYA6zoEyqGl7C/IzP/n1ThmceFOQQfC3tz0bofMILvCH+elV5pmWQjFvXf9ncbrf1TNFgjDFcMAE00AkFrH39J9l1HPU=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(376014)(366016)(6133799003)(10067099003)(11063799006)(56012099006)(55112099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?/FyXW3nqRktDaeyUmf12ThMfnp5W5rCT1J+k67ggt+E9iRp/z40l3cN2qT1n?=
+ =?us-ascii?Q?jeHoPjr8nd5chKh1kFSu5otFFaRPWuqaDYMJ4fA8+Ifsq/bCaHSdC6vY6BPe?=
+ =?us-ascii?Q?vEgx2tkIrFGPEZ3o93OfiAzt5UbygD1MnS/Gh8d6+ZQUML9ySZ4y1bfLoGKp?=
+ =?us-ascii?Q?QOboksYntXriWJJZkLh00b8eeD2aIMbov7D4S9IUhXL6kV+eL7DI+ZV8nUPt?=
+ =?us-ascii?Q?ArQs80tXl1HD+lTnmNuBMD+sFSQdDLRIW6ibDhoMmMIjtrDN1gpAuUg/9EJa?=
+ =?us-ascii?Q?2nIk+dTlXI0rSk0R7k4eFLOB4IuU1hjkwg3Wpx1opSRwPkI29342uph6oBwj?=
+ =?us-ascii?Q?KiFyIZqmnQT4R7Tj0xRnA19N8i1V22WtlsPba7Dh97lpzj2Um5pOmmFDwYuA?=
+ =?us-ascii?Q?CapbNhPdbKQAnYn3YS8SR0672XnzwGSYweUm4ewQbCk6Eg9R+rp3dP6rEuin?=
+ =?us-ascii?Q?qSJdiQvcJ6ojCFIehHhmVB0A2rgYo4N+0tSleBCGOVwM7dd6R5jTIDtUGatG?=
+ =?us-ascii?Q?MdKXvoapRlIxQ3oH7tuSKG5iLjNLhFEbb/3CLkbNzkLUNTsIfEuclMFI2ZMV?=
+ =?us-ascii?Q?eLf6L+5wRr+YWEJzUVaLZBhUoirIPokIB+7EcAO0NMRSZuWb8JmF8xpkTMFW?=
+ =?us-ascii?Q?D6Og/FgEvnYE2ZoD5OpRZzu82JOEln9T2dNmH/d8yCebJSFqASNZu6PGYx+o?=
+ =?us-ascii?Q?5os/Zhd/HRC1NXGiQJ7YFEg+G5Pb6Hraxpv3f2oPMse3kFgJTjGRgaJajRcz?=
+ =?us-ascii?Q?fzzMIiKo8F+u45PhLgoaBsigLAnIvYJNLTuoozbwQRmoBk2pQ97cSjVzaJ2J?=
+ =?us-ascii?Q?hBwLba+1C79WrUtOg6kNLtLS+KL2IgZU/judczfsD8dJBV5YqrTEtb3E5ePl?=
+ =?us-ascii?Q?C9jUdNz6BXdeCj1gBekHOqTid13sZ8Fe6rVp5xZpYE4W+xnMngR7kwO60Fd/?=
+ =?us-ascii?Q?GW1bAshLdsR5Jcx0IiUGbuNoIcJJTaCOYKK6cQ/0vAlybISVdNfBrDWw3lOe?=
+ =?us-ascii?Q?vxFSr7xvLxwHmTT+07tPXzNbqA2YotkliOgzJ5Z7bGwHtJMgu3QdAGJ3zN81?=
+ =?us-ascii?Q?vNNBHjEcnW9E8CbLdbS7mQHYXX2SbvtBFYU1lElSgifjySooDzZEV+DPD1u0?=
+ =?us-ascii?Q?lVjMSsv/amBghUQLV1ppF15miv69BTl9/GPJ7gs3FOX3BPIomAUYlRzYhhqA?=
+ =?us-ascii?Q?+D2N2uInZO1erwhbPqnysuwfFujr+HvgDJiC2J4DxndGa4QhizTu5F99JOWV?=
+ =?us-ascii?Q?HFYD07KbFVW9Am7CgsiAnJoejATZJTEUkgU337N2DeQiPf/lJgXk8nE7B8IR?=
+ =?us-ascii?Q?6SHMMl09ZW8k5j5UlKI1jw/hqwiEHetF19F4Qk8yqmWnwnreBApG3bLcqa7J?=
+ =?us-ascii?Q?N9YOp0WEbHssxEgS6evE9NgV/2evgtQOluVbXiv5Unga9yBcB8pvl51NqxRz?=
+ =?us-ascii?Q?Onc/AuGt8MovH3KP/28pS+VC6v/vsegYB5rrlmx7NV7gFOGY9WYvs3W0vUku?=
+ =?us-ascii?Q?9fW6WQQdqPoqcGswRNDVuvlEazlDIYEPdqZKtjLcJq+wzb5MKimdu9GxKWIR?=
+ =?us-ascii?Q?lkTQ3WMZu9L5DwF03xtma7Qcz9FTGj/Dn+GSkg0YkFGkDkwX8I/GTQClNat8?=
+ =?us-ascii?Q?ZvP1y43LB4RJUV4JiUrzqCJhHb74eY00Uumeu/ufG+f9B5oWaDcD6nXejznD?=
+ =?us-ascii?Q?gcRX9xVkGfI1nuftoJ1K+9Q2MWAC6oc3OKZ0DVlQvLbF6phkGgiaco+KwzMJ?=
+ =?us-ascii?Q?ehWwT6d6g49I+ny7+Vn5d/Fx5IaV980=3D?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: be35e4de-03c7-494a-01b2-08df20770ffd
+X-MS-Exchange-CrossTenant-AuthSource: DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY7PR01MB14818.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1dc421d0-7e41-41f7-340d-08df201a4ced
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Oct 2026 00:15:44.1659
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2026 11:19:45.5785
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: rI2KJXPCy+NtikR2NRPJUNndYpczTwx6reSfKT87enDN/ySDhtJRQI2CQ4lBpPI1svaJDys0IbAFpGWOtk+Pmsf9Hgn4huqhCyLBk4u3kZBkLi7yUiozV2rDK4yKdkPC
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB17053
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bxx37VPBlWLJE8fabwchSI/3csoKy7pm7n58N6ZEMZLxVuGbvR82+MhSKotBDwJc7o5/u9s2KvSvSeDuEndgsaY9VY5PXIRoyTi8W/Z/EW0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA3PR10MB9311
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 02 Oct 2026 00:16:02 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24402
+ <cip-dev@lists.cip-project.org>; Fri, 02 Oct 2026 11:19:55 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24403
 
-Hi Biju,
+This series adds the necessary recipes and configuration to build a
+dracut initramfs for CIP Core. The initramfs is used to boot the system
+with a read-only root filesystem, and provides support for features
+such as dm-verity, factory reset, and watchdog.
 
-> -----Original Message-----
-> From: Biju Das <biju.das.jz@bp.renesas.com>
-> Sent: Thursday, October 1, 2026 8:06 PM
-> To: Biju Das <biju.das.jz@bp.renesas.com>; cip-dev@lists.cip-project.org;
-> iwamatsu nobuhiro(=1B$B4d>>=1B(B =1B$B?.MN=1B(B =1B$B""#D#I#T#C!{#C#P#T=
-=1B(B)
-> <nobuhiro.iwamatsu.x90@mail.toshiba>; Pavel Machek
-> <pavel@nabladev.com>
-> Cc: Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Subject: RE: [cip-dev] [PATCH 6.12.y-cip 0/3] Add Reneses RZ/G3L RSPI
-> support
->=20
-> Hi All,
->=20
-> > -----Original Message-----
-> > From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On
-> > Behalf Of Biju Das via lists.cip- project.org
-> > Sent: 24 September 2026 10:32
-> > Subject: [cip-dev] [PATCH 6.12.y-cip 0/3] Add Reneses RZ/G3L RSPI
-> > support
-> >
-> > Add Renesas RZ/G3L RSPI support. All the patches in this series are
-> cherry-picked from mainline.
-> >
-> > Biju Das (3):
-> >   spi: dt-bindings: renesas,rzv2h-rspi: Document RZ/G3L SoC
-> >   arm64: dts: renesas: r9a08g046: Add RSPI{0..2} nodes
-> >   arm64: dts: renesas: r9a08g046l48-smarc: Enable RSPI2
-> >
-> >  .../bindings/spi/renesas,rzv2h-rspi.yaml      | 29 ++++++++
-> >  arch/arm64/boot/dts/renesas/r9a08g046.dtsi    | 69
-> +++++++++++++++++++
-> >  .../boot/dts/renesas/r9a08g046l48-smarc.dts   | 19 +++++
-> >  3 files changed, 117 insertions(+)
-> >
-> > --
-> > 2.43.0
->=20
-> Gentle ping.
->=20
+The code for these dracut modules will be stored in a a separate
+repository the make the maintenance easier. The repository is located
+for the RFC at
+https://gitlab.com/cip-playground/embedded-dracut-modules.
 
-Sorry for the late review.
-I reviewed this series, looks good to me. I can apply this if tests are OK =
-and there are no other comments.
-  Test: https://gitlab.com/cip-project/cip-kernel/linux-cip/-/pipelines/290=
-4860853
+I will use force push on this repository until the development is
+settled.
 
-Reviewed-by: Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
+It only supports Debian trixie and later, as it uses systemd for the initra=
+mfs.
 
-Best regards,
-  Nobuhiro
+I tested it only with the isar-cip-core build it should also work with
+downsteam layers. Please test it and report any issues.
+
+Currently know issues:
+- The iTCO_wdt kernel module is not loaded in the initramfs, which affects
+Debian mainline kernels. The linux-cip kernel has the module build in
+so it works there.
+
+Quirin Gylstorff (11):
+  Update Isar to next
+  swupdate: add RO_ROOTFS_VERITY to select a dm-verity rootfs
+  efibootguard-boot: emit systemd verity cmdline for dracut
+  wic: select the A/B rootfs image via WIC_ROOTFS_IMAGE_TYPE
+  embedded-dracut-modules: add recipe
+  dracut-config-cip-*: add build configuration packages
+  factory-reset-helper-efi: use systemd FactoryReset variable with
+    dracut
+  cip-core-initramfs-dracut: add dracut initramfs
+  watchdog: use the rootfs systemd watchdog timeout in the dracut initrd
+  Kconfig: add option to generate initramfs with dracut
+  doc: document dracut initramfs
+
+ Kconfig                                       | 11 +++
+ classes-recipe/dracut-cip-config.bbclass      | 54 +++++++++++
+ classes-recipe/read-only-rootfs.bbclass       | 12 ++-
+ classes-recipe/swupdate.bbclass               |  3 +-
+ conf/distro/cip-core-common.inc               |  8 ++
+ doc/README.dracut.md                          | 95 +++++++++++++++++++
+ doc/README.factory-reset.md                   | 46 +++++++++
+ doc/README.secureboot.md                      | 10 +-
+ kas-cip.yml                                   |  9 +-
+ kas/opt/dracut.yml                            | 17 ++++
+ kas/opt/ebg-secure-boot-snakeoil.yml          |  3 +-
+ recipes-core/customizations/common.inc        |  7 +-
+ .../customizations/files/99-watchdog.conf     |  6 --
+ .../files/99-watchdog.conf.tmpl               |  6 ++
+ recipes-core/images/swupdate.inc              |  1 +
+ .../cip-core-initramfs-dracut.bb              | 41 ++++++++
+ .../cip-core-initramfs/cip-core-initramfs.bb  |  4 +-
+ .../dracut-config-cip-crypt_0.1.bb            | 86 +++++++++++++++++
+ .../dracut-config-cip-crypt/files/postinst    | 10 ++
+ .../dracut-config-cip-factory-reset_0.1.bb    | 49 ++++++++++
+ .../dracut-config-cip-overlay_0.1.bb          | 44 +++++++++
+ .../dracut-config-cip-verity_0.1.bb           | 23 +++++
+ .../dracut-config-cip-watchdog_0.1.bb         | 30 ++++++
+ .../embedded-dracut-modules_0.1.bb            | 21 ++++
+ .../factory-reset-helper-efi_0.1.bb           |  5 +-
+ .../wic/plugins/source/efibootguard-boot.py   | 36 ++++++-
+ wic/bbb-efibootguard.wks.in                   |  2 +-
+ wic/beaglev-fire-efibootguard.wks.in          |  2 +-
+ wic/de0-nano-soc-efibootguard.wks.in          |  2 +-
+ wic/hihope-rzg2m-efibootguard.wks.in          |  2 +-
+ wic/qemu-arm64-efibootguard-secureboot.wks.in |  2 +-
+ wic/qemu-arm64-efibootguard.wks.in            |  2 +-
+ wic/qemu-riscv64-efibootguard.wks.in          |  2 +-
+ wic/rzt2h-evk-efibootguard.wks.in             |  2 +-
+ ...i-am62px-sk-efibootguard-secureboot.wks.in |  2 +-
+ wic/ti-am62px-sk-efibootguard.wks.in          |  2 +-
+ wic/x86-uefi-efibootguard-secureboot.wks.in   |  2 +-
+ wic/x86-uefi-efibootguard.wks.in              |  2 +-
+ 38 files changed, 616 insertions(+), 45 deletions(-)
+ create mode 100644 classes-recipe/dracut-cip-config.bbclass
+ create mode 100644 doc/README.dracut.md
+ create mode 100644 kas/opt/dracut.yml
+ delete mode 100644 recipes-core/customizations/files/99-watchdog.conf
+ create mode 100644 recipes-core/customizations/files/99-watchdog.conf.tmpl
+ create mode 100644 recipes-initramfs/cip-core-initramfs-dracut/cip-core-in=
+itramfs-dracut.bb
+ create mode 100644 recipes-initramfs/dracut-config-cip-crypt/dracut-config=
+-cip-crypt_0.1.bb
+ create mode 100644 recipes-initramfs/dracut-config-cip-crypt/files/postins=
+t
+ create mode 100644 recipes-initramfs/dracut-config-cip-factory-reset/dracu=
+t-config-cip-factory-reset_0.1.bb
+ create mode 100644 recipes-initramfs/dracut-config-cip-overlay/dracut-conf=
+ig-cip-overlay_0.1.bb
+ create mode 100644 recipes-initramfs/dracut-config-cip-verity/dracut-confi=
+g-cip-verity_0.1.bb
+ create mode 100644 recipes-initramfs/dracut-config-cip-watchdog/dracut-con=
+fig-cip-watchdog_0.1.bb
+ create mode 100644 recipes-initramfs/embedded-dracut-modules/embedded-drac=
+ut-modules_0.1.bb
+
+--=20
+2.55.0
 
 
