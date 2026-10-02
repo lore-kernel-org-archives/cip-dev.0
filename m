@@ -2,49 +2,49 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF74CCA5FE3
-	for <webhook@archiver.kernel.org>; Fri,  2 Oct 2026 11:20:05 +0000 (UTC)
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (DB3PR0202CU003.outbound.protection.outlook.com [52.101.84.53])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.9457.1790940002646661841
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CBF3CA5FE7
+	for <webhook@archiver.kernel.org>; Fri,  2 Oct 2026 11:20:06 +0000 (UTC)
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (DB3PR0202CU003.outbound.protection.outlook.com [52.101.84.34])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.9457.1790939991891002964
  for <cip-dev@lists.cip-project.org>;
- Fri, 02 Oct 2026 04:20:03 -0700
+ Fri, 02 Oct 2026 04:20:00 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=HoNTDsKC;
- spf=pass (domain: siemens.com, ip: 52.101.84.53, mailfrom: quirin.gylstorff@siemens.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=NpqKS5UA;
+ spf=pass (domain: siemens.com, ip: 52.101.84.34, mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aeG9IxLwNcJGH2teloVMn0URCrbD2g93V1HZqS2De4FoMdITCSPg2/M6wiqMQxSF8PALO++arCsdMOlcqUQNhA8CY8LxIaVaL2HUF91CWUBlhwcFcJOErITMyNZMinq8edkEEZw/5NHkptMyrfaBCRI5Pij0+8l0KFYH6zYsvlCGyur/ACa8Ct1191DDpMxCXbOaDsyYI8OqzzJO1ozz+aQd9x0o0tE9Zesd2qbuHsYuHTJMpPUT/9M1tWbweMlv34gXWIpxU1vjkM4hLi3N9cftmdv8y0huZJ0XYR+9m+/jKuNBJfDz/K9J58tOY9DcxDswQsYI/w7UEt4Kn1IesA==
+ b=umL1wIUr6Uli7K3+gj02AxZcChuMIbGvhhE6Gg4L3SMsgjInwIAmeviZUxz/oFI8fvWEXWHm2o3PO2UgstHECBz83RBiyBCA6PD32tQDPd7zYRxOk9oo0mxhV3i4UfR+MSBnOvou3/ysG9r4KaLpUPw7+b0MLMoZY4gSQb371qyNyN9laYA9PTOLR3Fq55qW0xbv7gbRW9MpSE51whC2R9OzZvjn1qzVtX8j5RPZybyiLtc4y/q3oUtZuN6GArh4JpyUuuRFdnbOLCCDj61rma/eSZn+hmbWuolm4qc7WBxRTfjv0496ljq7Ujzs2UAI7bXYLMDRopCRF3mboRUX1g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RLHn5tTGEpQpY6GZnKzXg8IpFt6Duew+fpeU07TY088=;
- b=VGclyTdzZks0+Vhh+ZZMz13dawo5HE+W2HrgFF6jFcw1CYtlcqXx59v3BTyOoZwNCCd5fFwKsh+I4E7Yxz7Ed5Xsf24xMh1Hyw67hNNZ/SkBeol2JwIrDZ/EAweg7Cee3FAf8eZ6S0sJ+tXvvJOSF7fR++i0jY/2zGGAdXB1BFoiMvpMmMfab1dhxWGWmSQMdfC1nFKdVV9PMl0tLjP7pWwioMsb7eu7nI5JAOyJinYK81rFRDOPXFE2OOHw31H5RgfGWwj5GXVTGK21CXt7AuzdKJrBb7S4lCy+a3jJountjgAgK6fj72gi5e+S4ikE6Io5EABFavhY5F6eA9LP5Q==
+ bh=uq6suQrxpeFZSl19HN9ocRix1fIK+MbXr2b13cwFF4o=;
+ b=e+TcSmMd6LNwptOcD0+tiqJXbPOPrphRCn6kw9i8nJ3aiSj6trhUhBJJM/GMICKz1J40VqRbP3GLsgOtBCytmQzwBlZVuRstTgulj5DCF1MaY8O4ymbbNUjUT54fF8ZSeG/r81TPvurX8SYP9OQDp2F+qGcDBsQVbcquA/nAMh7coHeca7t6KP81HB8FlM9fJYRLWZYlrSVxHac9sJgp1zaqOBGYS8TXUHHorUtBjhcivkNti8dpntAHssV6iv+iqKkYoc/GVW2BQQemJNONgpSQZaDOIgvpczJabx047hufo6xHCYCN/CySd1oRrLSdMgcsuB3CiKvkfStlZZeOYA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RLHn5tTGEpQpY6GZnKzXg8IpFt6Duew+fpeU07TY088=;
- b=HoNTDsKC5AYnFlLnkYxC7E8K63HsXfohCKkn/IXzKAwJfb8PXKL89GAnBJq67PThLAVKRFdmqLNzpl3neRrtx5+aWX4gyXjhImE6GGTLdKpZdrKctLJ8sIPKXRI7OCWpA8FTTmXQTc9ywdgujne2P00HuIef4QLKt6IdwQ19q8tnJtMMUdZwopw2G0zYaqCMBuPppWX7N81G63w4WJlYpje9qHMssTANSBILDn8ZAMhJz4B+71Zz4i1rUW5rLgarPRvB1M2xJRKJxjS0tEsUY2ceXL90lm5dBf4JIlXgpeXK778SzhZAMr992axdGNKy9Yy8rDTxeI6yo1PMaBggWQ==
+ bh=uq6suQrxpeFZSl19HN9ocRix1fIK+MbXr2b13cwFF4o=;
+ b=NpqKS5UAcPeK7MKXsOhbF7TwQak7T5VAN7x2GLa+GJdCJoHxjJ7RPsiUvQ23g6ZfHyMM5Z8tw7xpw5FNLwgpmtonyvlDE2BhtSFKPxzy+pmyxqOA7bJGfrtAiDqw7kGmOmUUlJmHu65Tz0eAbyc6NEiQ5evbQNdBxxyRoiPDX0w589aVH7Wc4bDVQ8b0AxiUWLGSp3Cihxb66ydbw72S5itC/fux3ApLC+rON0Id3JlTFZRaJkodw6uRfggc2iZx55aFx/UbPYGBHF0qTTvG1ZqZBizeN0y5xxK4sPGpPlNUEbAQST3mtGFXyW8IO4+A2wsgYL1snytDhtGdtYw8aA==
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:113::12)
  by PA3PR10MB9311.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:4d7::19) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.24; Fri, 2 Oct
- 2026 11:19:53 +0000
+ 2026 11:19:50 +0000
 Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::ae26:d131:7cff:4001]) by DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::ae26:d131:7cff:4001%3]) with mapi id 15.21.0472.016; Fri, 2 Oct 2026
- 11:19:53 +0000
+ 11:19:49 +0000
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 To: felix.moessbauer@siemens.com,
 	jan.kiszka@siemens.com,
 	cip-dev@lists.cip-project.org,
 	cedric.hombourger@siemens.com
-Subject: [isar-cip-core][RFC 09/11] watchdog: use the rootfs systemd watchdog timeout in the dracut initrd
-Date: Fri,  2 Oct 2026 13:18:56 +0200
-Message-ID: <20261002111938.3600786-10-quirin.gylstorff@siemens.com>
+Subject: [isar-cip-core][RFC 05/11] embedded-dracut-modules: add recipe
+Date: Fri,  2 Oct 2026 13:18:52 +0200
+Message-ID: <20261002111938.3600786-6-quirin.gylstorff@siemens.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261002111938.3600786-1-quirin.gylstorff@siemens.com>
 References: <20261002111938.3600786-1-quirin.gylstorff@siemens.com>
@@ -56,169 +56,110 @@ X-ClientProxiedBy: FR4P281CA0022.DEUP281.PROD.OUTLOOK.COM
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DB8PR10MB3178:EE_|PA3PR10MB9311:EE_
-X-MS-Office365-Filtering-Correlation-Id: fa6cc82e-4017-4b05-dd50-08df207713e7
+X-MS-Office365-Filtering-Correlation-Id: 86669844-6005-40d3-9fc8-08df20771238
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|23010399003|1800799024|376014|366016|6133799003|3023799007|10067099003|11063799006|56012099006|55112099003|18002099003|22082099003;
+	BCL:0;ARA:13230040|23010399003|1800799024|376014|366016|3023799007|10067099003|11063799006|56012099006|55112099003|18002099003|22082099003;
 X-Microsoft-Antispam-Message-Info: 
-	dZ4YpHal/lqmMFukFNNhw5wCkAkEvkymS9DHxDQ5o39dzZAxNEtAAOD/UUdDXAGzAhyl4CQtovxR2pN2qwJAqN1soAnJfwHB5ylkiv/BaWiWVhb8VixEqxZCEljnqYfrzt0zsQgpKkSpAGP/JEhfu1rBL4TWvst2sruGE0VzJyw+gF3jI09J8q3DwEVwFQy06KSU8BaTDZivJInY2251XHI/YHWk0uZJZZOBqPZzSnFlP98lB1Vq8Xi7Xaz8wrj/+t8xjQ07BeAaTlzYeCnh+OEmJF1LHwBCJoxfgytFCjM4IRX1+d6KVrxc2VzCPyuYn+/GBG7wBGHmxmYMiOo6BlKbFdxf4A/xBQY+zqSWJx/m9EvzMrJbmLS8uMSqbAWfyRzcO7MRuixWbD1z8puxzi72XWFlIVIUC9EnQEplCxBt1pTCuuWQ0k1dxNYQSDFkCOaEXq6DFdWVmXszCU9nXevs+e9C81bPZjZJX60FroL+h588XDBaPq1O586R22Fm5iAzeLjFd4kwpOH6YG9AMteCpn5tQ3gxuzr1o5n5iYf891Mrg83HoyhMEYDBegR//uAVqCyW58i83BHPUWlRaT4yDcK4jgxsCF0YFRPzOaBfxKGvekbrYdIUBDuIFlxYSkcGu7HBSUeOluSkpVmsNA8p3at0s/KMeIxO1Rs+6K0=
+	bRwUG7pGwKnZxPU3N3JKe0nGJpqn3BiLCz4++3JSeyYV4ms5qWr+wJDOSSQu2tvdKLxcdqpXeHYbmVt2tF8V5tz0Imi8eGo3hAj9jrkxBH7dvbC9eC+S3ZZVu5lqrP/fR+OhkUvJ/95sfgvcKwrkQBTwGyJhZMIQ3bqf6a/uStxjmeQeXmDk9hEC77SO+Nx3Jna6IzZbnopFZyXCqnQ6fFaQ9ybpWS43sZtr/75bb+6vu6p4reCrScHHSB2ZqmeSU+cNbzD/J13R3hwBlrUt1jOCrRkI5tlg2670hHKZxmK49fWmhf7DZvLVAiw0nEfGDJEbqYMhDUMMykctrVrhBRP2AIm+sYWeeeUtpGClBpuaVYSKkihU4IfUmTJxLHOWEos31c7i3HpIW5zOC4avdBr4LHALSTzs3/WoYW1gHTIcl9xujfcSE8Gzn0FYcr2paUQe8Q+zdDrLjK/YAsKKZPiJ4jBsjqtt8PF6zrcfWg9TARpKvldXXCaIJUbkMF9vq6DqI6joMEOwFRkplBghnwZ7TWMWmfN4Vt/IBZxRgnYV25LRpBZkvJCwwvq4Va65aU60NLwJ4QlMmq312Iz95th6dsyPvxTBL3yRA22wl95UNeuPY1xVklfnnnyHh9pQkH10RYlonR41s7ilSED+TDR+uIjlUuvLYfJ+Zu7zDOY=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(376014)(366016)(6133799003)(3023799007)(10067099003)(11063799006)(56012099006)(55112099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(376014)(366016)(3023799007)(10067099003)(11063799006)(56012099006)(55112099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?hSJef/kXO1YAizYne178JPnbAbHgMpIx8KjCIwVEbtFeHI3qH+NfSu/JXeSj?=
- =?us-ascii?Q?48vMcDtbLCFq079rms//GIBv06+oCIwhDJtbaLNG+lG62M+B42mWkhCoUlha?=
- =?us-ascii?Q?djCQfaub23y6Ng5V0Z8Rg7/7RXxJcamPC7kHrb4uop1SvwnO+jkqK3ca7jRM?=
- =?us-ascii?Q?yJWK0+wNjXUnxcbVR3ejrZ9buApLM3qrs8nlQehnETVSQVdHbNMy3r1lHS7m?=
- =?us-ascii?Q?OCqirpWBYNLGdKIIYOyEV6oC7jdj5Gmwdn9TedriTLCJinU2q20E1/UCeWpD?=
- =?us-ascii?Q?fvQBp6j7jJG7sDqtlDW8pGkc/qOXknQC3mMkgHd+UKPnoFCsJqhb5D2u9kCO?=
- =?us-ascii?Q?yJQhDEw923DPlvqrq0IEgNPiepeidHdlOAhE8WM+rpS6sMVLibAlaU0uAMWY?=
- =?us-ascii?Q?m8d6wqVgp7pZF143AiFQPQyHqeBZIwl0wJU8rx3asl06eQGBSeEHms0P0yF+?=
- =?us-ascii?Q?bRGnIIJdzLKxxct+T0lf4zqkLzb29wqClmhEqrxvemXS7l9iIcBuB4+XhEkk?=
- =?us-ascii?Q?4DGL46rnXWpSn33tR9L5ZZQWr5P9lx/s2EvpbMDFvjrBvJYdSxE+AxpH9H62?=
- =?us-ascii?Q?MZiQePlPlwzy9frt1OpUxTqtlVrscmHbk3H2s/Qn/qoWl4RowXhq0HOTl9it?=
- =?us-ascii?Q?35QFMo+3S+eT32QVdFJ+6QA9tFt18Amhr9jwyVeW/5Jc7ErfZTpAfQnZoIih?=
- =?us-ascii?Q?x9Ew/TTC2UZy0y83kP74l67/DJEf23giPyWIiJLsRuhgmroQ51qdYHwMIsuo?=
- =?us-ascii?Q?ppJu+XyPWNhla4BWrNZvvwfmQVkWHByl5XM6oZhDFHP//SPFJyYOajROW5na?=
- =?us-ascii?Q?OouaWD2R+w0NvxmnpMIWIUlbYk+o2iUx2Qy2lZile0jgzHi8zA2jMQlBsD9c?=
- =?us-ascii?Q?vTKcfYPXFyVGrJ8skHrZWil5erqqj4/CqWl00MmkzvSjKv9EHyl6gh0ENJI3?=
- =?us-ascii?Q?IHdNY35BF9YF/E5KRJkABfAPQs592NhXTNRMjIPBz6K3ZCDdY931+6iP5csC?=
- =?us-ascii?Q?rO5m6AzsKd97qGvoIA8rF4h3/AuahIdaqP5npyY8Zo4uSY24ekSQg7PZjq/o?=
- =?us-ascii?Q?sDmtybqlxQLVI63j5Tfe10JJoM+Ts/1PKmWTJQPUF4q124qdAMBJMkz+Y7tq?=
- =?us-ascii?Q?JRMoT5xsWhjNj8M/xbDiRnhUwlVPIAnijePkojp7xQBWKJJW/TrUelIClyeE?=
- =?us-ascii?Q?8KwieYNlhZwSaM5YeJPd+qbAk8x87A6XBkiAUEvnyXa02PB7Wi2kstsRBv/L?=
- =?us-ascii?Q?XBeYvdXD/Dh6PO8xMX4g8zcU7rEeZVqECNrmKjXw8/3oNCloO2WugOZNSVH2?=
- =?us-ascii?Q?uX5U6c7ICyKwncSzBQ8Mhqc0V2UuYAul0DFG5mndj/gftv1VD9/23Og6Di1I?=
- =?us-ascii?Q?UEtmr6/KSVTWQjFsXo6ykpHHGnjqbk1CDib4uSZ55z/uzye6PkydBRuL6NZ7?=
- =?us-ascii?Q?yDl1ohSUSSsSldqZiq1ShNQfMUAL7G/vX027at4z+xrWJcHG61uueNWwKfaM?=
- =?us-ascii?Q?lwzCqsYsBsOAqkyQhUyW+rpdjj7idGlWz2OqKIXokTU1JwlviAcM+3tFOX8J?=
- =?us-ascii?Q?dpLUNbwBl4zBHm7urluPkMK0Lnvhk8iB3RcC8WjkcvSwXArmPzmS2J9CeqG7?=
- =?us-ascii?Q?IGgtfh4OLsybjQTuDRy1C24ML1aHfEIiebU1ULpYz2bztFib0l+XHZw8mEF1?=
- =?us-ascii?Q?39e46/bj5mkwLjyqrMBBFrbk4rRpzMZCbqE4j0zIpyiyk0uzRXXa9RI/Zkxs?=
- =?us-ascii?Q?SYpvYp1vSZJbsNIzbFIC/TlkGILHXBU=3D?=
+	=?us-ascii?Q?MDEeCWSzzJiN9SJo7d3sgi9WA+JnKTFU01vJoOc/nmBcs0oZ19z+6lNqTvrh?=
+ =?us-ascii?Q?tGLaKdrMLKDaL8d0tfBS6P4RKqIWveUnTn3ioygL0TKVPNS2fpIOUfJKbSHi?=
+ =?us-ascii?Q?bv+NXUmslX+I1g9ALidW+viqyZJbAMLZJmdbTn287O1XyKEHnvvYrCGli5Dt?=
+ =?us-ascii?Q?vw5TYv4C9IKdZNHje2MaILUkOs3N6PrZDKNUSIpqAFrhY0H+jZ+Xr1/SQBUz?=
+ =?us-ascii?Q?GuURP23kB2A3a46VgJo44XLy6rcQg2gF58RhhgZRk07zGcbwttvf9qI3F/Gb?=
+ =?us-ascii?Q?1cEnPgQtpWkGjLZNloHOJqT/+/XiGRS4v5FRhMCYgqC512hKeyQEnOac9IT6?=
+ =?us-ascii?Q?/xDkSRYjSGrzl3QIRIEZqeaeSrLORHshzKEvdh1SGMtStFl5VhSp3bf/Lb6V?=
+ =?us-ascii?Q?vvIUAUFWlahrn3CeV+06dePeO7yHuVFMqRTKLiIYRL09Y+dnSfGMzVgHsY9e?=
+ =?us-ascii?Q?3uxLps3rw0IFfDdS1X3zpQjHdtA+51CxU3xSNzLN6y7n6FEWJxH26yQUtS1W?=
+ =?us-ascii?Q?Y29s4rCoD2AlhbF5AgAdbanlmYoQr00QNu8ga9zywaVwOLb9aI7hg0peIDPQ?=
+ =?us-ascii?Q?KDQzjTO8inublrBgKl2g9RV83/8b8IOOcYR58ZRbB6zBoDf75GH8EpZr9TeU?=
+ =?us-ascii?Q?8mCp7GJjyqjQdYhp3SMu3P8WlAXIQfj0HZAJxW16ef9xcG9j2W/m39DK9siI?=
+ =?us-ascii?Q?TpvI88XIGdMriZImQgxdTk3xtgS1Id4l+/vQrFEZbGVcbWF8TVjApKamqlwV?=
+ =?us-ascii?Q?bPlBGtH/0fiY5pb+VlmB+FkMfL4j3CFNWq2Tp+otV2gyHP1AXN0G9m7yZOqQ?=
+ =?us-ascii?Q?ZVaHN8mMdQuTWFcvkiFI4dW7wQwJEFB0kcZqdFJ+YUKh/N0/+09yJEICX8o3?=
+ =?us-ascii?Q?tm71Qfgy1jftA88FxSYI0gUq11yfczQi8YzrcoZkOaQgOHZIW1NmHmD2KQaj?=
+ =?us-ascii?Q?XDz1ixr0tw9sQWd6lYAOKh+9zeMoAcjacoIVr9BkW5LHPWkEo4dazT2Ykqg8?=
+ =?us-ascii?Q?SNI95IbIZUmAoFpW1h3qPbVUkkokdEy8+r3HeUCfEEky8yj3SVLwiX4vUd06?=
+ =?us-ascii?Q?hjecEYFqnsZh3J7AfSB2+Y/c+6uqviPk0ayKxZykguiNd98kDGLOYPfKSl/V?=
+ =?us-ascii?Q?Gp6M75h4i2hcNTzdkpt2Sxm66SBgjyyGEYGhlrAbKIkhAyB772p94wLzmQe1?=
+ =?us-ascii?Q?TkwGi5KN6n7vB9GVd9uNXEbO67wbIC+jhfHIGGq+LgowyinkjjpJKjZAwTwj?=
+ =?us-ascii?Q?tlzCJNIdZV/wK5zqJxgkj1HI30odvKi31dCrHaiB1DpJZYMXhNAFYo3lawsH?=
+ =?us-ascii?Q?cm1xurh2//vfiNJFTs4HVjKMSCsGMiSa/LSlApxzrz+kU9WxUglYow77vK7X?=
+ =?us-ascii?Q?nsYZ+iTxBqX5vk5vf+4l/lCPEu8ZIfzL8lTRtmcLNK7Re71AodzaEVvoomw3?=
+ =?us-ascii?Q?qtCEOFjwHIWdMfKVwFLE2H4W1LREXdm6rxHfLAT3sNoNvaP6zEMi5JuDiZ+5?=
+ =?us-ascii?Q?SKKquw9EyRDzZ8RBdIuUhyrTns2fPqB6q8AOHqQpprDJ5mTDB8uawMJP9Nn9?=
+ =?us-ascii?Q?8qVkdkhnVpiBRF3v9Dqnk3wpB6PvSSr5x2AkWex7N8Inv9KySMG1+LUq7rAB?=
+ =?us-ascii?Q?rjLITOPAQs+bbVNAfTB+ekjkKQfoCWiCwtz0aTlc8tGyO7W2Eqfq5ScVHCde?=
+ =?us-ascii?Q?f0vgvTLWugczQluDhTgPdKyTTtT3JkFbQvQJ8LTiPwZVSyjaiBw1jrAkPl20?=
+ =?us-ascii?Q?GlSpFpbkwcFM/SUWkcxyW3u+5+PPCFI=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fa6cc82e-4017-4b05-dd50-08df207713e7
+X-MS-Exchange-CrossTenant-Network-Message-Id: 86669844-6005-40d3-9fc8-08df20771238
 X-MS-Exchange-CrossTenant-AuthSource: DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2026 11:19:51.8937
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2026 11:19:49.1045
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: u6rpcFoxw5K88LQYY0CkPEY3d005isbJkQF1WsDlxqwFWgUFBAN99y+SNs4W79RFp8SG4iJvTrbXbuVJBcSrhDnBaTNmS3slerROP+NIloU=
+X-MS-Exchange-CrossTenant-UserPrincipalName: rISexz/HsJwkjKofXYtna9THGXfIUx8lkBoYJsOSDtxABLHV2M1NE+797YehsAvyyQ7IcsRkGvy/9LDIZOZIdxlbYVhYH53AK/o2mYJl89o=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA3PR10MB9311
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 02 Oct 2026 11:20:05 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24412
+ <cip-dev@lists.cip-project.org>; Fri, 02 Oct 2026 11:20:06 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24408
 
-Introduce SYSTEMD_WATCHDOG_SEC for the rootfs systemd watchdog and use it
-as default for the cip-watchdog dracut module, so initrd and rootfs
-service the hardware watchdog with the same timeout.
+Builds the dracut modules cip-verity, cip-overlay, cip-crypt and
+cip-factory-reset from the external cip-dracut-modules Debian source
+package. The modules replace initramfs-verity-hook,
+initramfs-overlay-hook, initramfs-crypt-hook (systemd backend) and
+initramfs-factory-reset-hook (EFI variable) for dracut-based initrds.
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- conf/distro/cip-core-common.inc                            | 3 +++
- recipes-core/customizations/common.inc                     | 7 ++++---
- recipes-core/customizations/files/99-watchdog.conf         | 6 ------
- recipes-core/customizations/files/99-watchdog.conf.tmpl    | 6 ++++++
- .../dracut-config-cip-watchdog_0.1.bb                      | 2 +-
- 5 files changed, 14 insertions(+), 10 deletions(-)
- delete mode 100644 recipes-core/customizations/files/99-watchdog.conf
- create mode 100644 recipes-core/customizations/files/99-watchdog.conf.tmpl
+ .../embedded-dracut-modules_0.1.bb            | 21 +++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+ create mode 100644 recipes-initramfs/embedded-dracut-modules/embedded-drac=
+ut-modules_0.1.bb
 
-diff --git a/conf/distro/cip-core-common.inc b/conf/distro/cip-core-common.=
-inc
-index bbcea1da..db3fe1de 100644
---- a/conf/distro/cip-core-common.inc
-+++ b/conf/distro/cip-core-common.inc
-@@ -37,6 +37,9 @@ INITRD_CMDLINE_STYLE ?=3D "${@'systemd' if d.getVar('INIT=
-RAMFS_RECIPE') =3D=3D 'cip-co
- RO_ROOTFS_VERITY ?=3D "${@'1' if d.getVar('INITRAMFS_RECIPE') =3D=3D 'cip-=
-core-initramfs-dracut' else '0'}"
- OVERRIDES .=3D "${@':ro-rootfs-verity' if bb.utils.to_boolean(d.getVar('RO=
-_ROOTFS_VERITY')) else ''}"
-=20
-+# Runtime watchdog timeout of systemd, in the rootfs and the dracut initrd=
-.
-+SYSTEMD_WATCHDOG_SEC ?=3D "60"
-+
- # Watchdog to service by initramfs hooks during lengthy operations like
- # partition encryption or factory reset. In our integration, enabling
- # fTPM/StMM implies a U-Boot-based firmware which may enable a watchdog ea=
-rly.
-diff --git a/recipes-core/customizations/common.inc b/recipes-core/customiz=
-ations/common.inc
-index 0fd3d4f8..09f4c744 100644
---- a/recipes-core/customizations/common.inc
-+++ b/recipes-core/customizations/common.inc
-@@ -19,14 +19,15 @@ SRC_URI =3D " \
-     file://postinst.tmpl \
-     file://ethernet \
-     file://99-silent-printk.conf \
--    file://99-watchdog.conf"
-+    file://99-watchdog.conf.tmpl"
-=20
- CUSTOM_HOSTNAME ??=3D "demo"
-+SYSTEMD_WATCHDOG_SEC ??=3D "60"
- WIRELESS_FIRMWARE_PACKAGE ?=3D ""
- INSTALL_WIRELESS_TOOLS ??=3D "0"
-=20
--TEMPLATE_FILES +=3D "postinst.tmpl"
--TEMPLATE_VARS +=3D "CUSTOM_HOSTNAME"
-+TEMPLATE_FILES +=3D "postinst.tmpl 99-watchdog.conf.tmpl"
-+TEMPLATE_VARS +=3D "CUSTOM_HOSTNAME SYSTEMD_WATCHDOG_SEC"
-=20
- DEPENDS +=3D "sshd-regen-keys change-root-homedir"
-=20
-diff --git a/recipes-core/customizations/files/99-watchdog.conf b/recipes-c=
-ore/customizations/files/99-watchdog.conf
-deleted file mode 100644
-index 1f38c559..00000000
---- a/recipes-core/customizations/files/99-watchdog.conf
-+++ /dev/null
-@@ -1,6 +0,0 @@
--#
--# SPDX-License-Identifier: MIT
--#
--[Manager]
--RuntimeWatchdogSec=3D60s
--ShutdownWatchdogSec=3D60s
-diff --git a/recipes-core/customizations/files/99-watchdog.conf.tmpl b/reci=
-pes-core/customizations/files/99-watchdog.conf.tmpl
+diff --git a/recipes-initramfs/embedded-dracut-modules/embedded-dracut-modu=
+les_0.1.bb b/recipes-initramfs/embedded-dracut-modules/embedded-dracut-modu=
+les_0.1.bb
 new file mode 100644
-index 00000000..3d75192f
+index 00000000..5e7cbc6d
 --- /dev/null
-+++ b/recipes-core/customizations/files/99-watchdog.conf.tmpl
-@@ -0,0 +1,6 @@
++++ b/recipes-initramfs/embedded-dracut-modules/embedded-dracut-modules_0.1=
+.bb
+@@ -0,0 +1,21 @@
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2026
 +#
 +# SPDX-License-Identifier: MIT
-+#
-+[Manager]
-+RuntimeWatchdogSec=3D${SYSTEMD_WATCHDOG_SEC}s
-+ShutdownWatchdogSec=3D${SYSTEMD_WATCHDOG_SEC}s
-diff --git a/recipes-initramfs/dracut-config-cip-watchdog/dracut-config-cip=
--watchdog_0.1.bb b/recipes-initramfs/dracut-config-cip-watchdog/dracut-conf=
-ig-cip-watchdog_0.1.bb
-index 1fd1a87e..fdad94ee 100644
---- a/recipes-initramfs/dracut-config-cip-watchdog/dracut-config-cip-watchd=
-og_0.1.bb
-+++ b/recipes-initramfs/dracut-config-cip-watchdog/dracut-config-cip-watchd=
-og_0.1.bb
-@@ -14,7 +14,7 @@ DESCRIPTION =3D "Build configuration for the cip-watchdog=
- dracut module"
- DEBIAN_DEPENDS =3D "dracut-cip-watchdog"
-=20
- INITRAMFS_WATCHDOG_DEVICE ??=3D ""
--INITRAMFS_WATCHDOG_SEC ??=3D "${@ int(d.getVar('WDOG_TIMEOUT') or 0) or 60=
-}"
-+INITRAMFS_WATCHDOG_SEC ??=3D "${SYSTEMD_WATCHDOG_SEC}"
-=20
- CONF_NAME =3D "cip-watchdog.conf"
- CFG_VARS =3D "INITRAMFS_WATCHDOG_DEVICE INITRAMFS_WATCHDOG_SEC"
++
++inherit dpkg
++
++DESCRIPTION =3D "CIP dracut modules: cip-verity, cip-overlay, cip-crypt, c=
+ip-factory-reset"
++MAINTAINER =3D "cip-dev <cip-dev@lists.cip-project.org>"
++
++SRC_URI =3D "git://gitlab.com/cip-playground/embedded-dracut-modules.git;p=
+rotocol=3Dhttps;branch=3Drfc;destsuffix=3D${P}"
++SRCREV =3D "5fe822b058bcc9e035da4ac5056b7219b8c3d9ba"
++
++PROVIDES +=3D " \
++    dracut-cip-verity \
++    dracut-cip-overlay \
++    dracut-cip-crypt \
++    dracut-cip-factory-reset \
++    dracut-cip-watchdog"
 --=20
 2.55.0
 
