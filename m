@@ -2,49 +2,49 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CBF3CA5FE7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B18D9CA5FE6
 	for <webhook@archiver.kernel.org>; Fri,  2 Oct 2026 11:20:06 +0000 (UTC)
 Received: from DB3PR0202CU003.outbound.protection.outlook.com (DB3PR0202CU003.outbound.protection.outlook.com [52.101.84.34])
  by mx.groups.io with SMTP id smtpd.msgproc01-g2.9457.1790939991891002964
  for <cip-dev@lists.cip-project.org>;
- Fri, 02 Oct 2026 04:20:00 -0700
+ Fri, 02 Oct 2026 04:20:02 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=NpqKS5UA;
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=f0x2Xvdx;
  spf=pass (domain: siemens.com, ip: 52.101.84.34, mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=umL1wIUr6Uli7K3+gj02AxZcChuMIbGvhhE6Gg4L3SMsgjInwIAmeviZUxz/oFI8fvWEXWHm2o3PO2UgstHECBz83RBiyBCA6PD32tQDPd7zYRxOk9oo0mxhV3i4UfR+MSBnOvou3/ysG9r4KaLpUPw7+b0MLMoZY4gSQb371qyNyN9laYA9PTOLR3Fq55qW0xbv7gbRW9MpSE51whC2R9OzZvjn1qzVtX8j5RPZybyiLtc4y/q3oUtZuN6GArh4JpyUuuRFdnbOLCCDj61rma/eSZn+hmbWuolm4qc7WBxRTfjv0496ljq7Ujzs2UAI7bXYLMDRopCRF3mboRUX1g==
+ b=cKASJwzjJtDx42jTgvVsUdP5haYTzYTS0XyvSH7b+EkzuLLnUM4W2HYh8b2jmBZ/13pEkp9X5WcG3Xyd2bAyjXClTZH3ZmMngQFVcZjViULv3vK2zrNJJNgKLADEqq7DyYoFA0gQk2Lezxe2to7d1ZLBRC8YKEBjDen4b+lfI/KGRlx9UnB/ZXIVtGff0G6RW+0UD0vDAgM0mFQ52Eq6a/tZ1Ivco9jVjNxad63R3lmtW5GjpjJRVHFc3jT6x7uuX7igoBAqOeKkIwiQ+1kuBukqUZjFcgEqeyYA+w9s5zV8eW5a1RJbt2lPtsm9pDz93QeXKGKXJW3G0hNx6pSAeQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uq6suQrxpeFZSl19HN9ocRix1fIK+MbXr2b13cwFF4o=;
- b=e+TcSmMd6LNwptOcD0+tiqJXbPOPrphRCn6kw9i8nJ3aiSj6trhUhBJJM/GMICKz1J40VqRbP3GLsgOtBCytmQzwBlZVuRstTgulj5DCF1MaY8O4ymbbNUjUT54fF8ZSeG/r81TPvurX8SYP9OQDp2F+qGcDBsQVbcquA/nAMh7coHeca7t6KP81HB8FlM9fJYRLWZYlrSVxHac9sJgp1zaqOBGYS8TXUHHorUtBjhcivkNti8dpntAHssV6iv+iqKkYoc/GVW2BQQemJNONgpSQZaDOIgvpczJabx047hufo6xHCYCN/CySd1oRrLSdMgcsuB3CiKvkfStlZZeOYA==
+ bh=7ZlBADfOUxDFddeFjHUWtgfpEfzTM61wTQehI5ucFJE=;
+ b=Ey2jhbserOVEaaZTNsg2OqoVOpurwfWmNsvtsifm/pvjVP5aU5t1PNL9eLykw5NOQVgS9XnlfxHIINCZBIBnEbOLT/SlnV4Rf1ziVX6a7QLcIoF/cpQA5kXZfplWFe648VhmfIywDPyk0yE/gUMn5kNDokB+P8kyNrCaW49e4d/uQAJ+BbvrEtS2pVKUEqnHeg8ZqsIAQ0OreyLO20OkXLdYruAI9F6VOIWDL8NJRtkEkGdHprGwdGNrf2Ug35be1sR6beD7jtBdAjxf46OtCSK4YIhXaa4TohYN+U/SD1MyolpYn5UHoiae3Sdfb3h1xtevGplHe6lJLZFdw6Cojw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uq6suQrxpeFZSl19HN9ocRix1fIK+MbXr2b13cwFF4o=;
- b=NpqKS5UAcPeK7MKXsOhbF7TwQak7T5VAN7x2GLa+GJdCJoHxjJ7RPsiUvQ23g6ZfHyMM5Z8tw7xpw5FNLwgpmtonyvlDE2BhtSFKPxzy+pmyxqOA7bJGfrtAiDqw7kGmOmUUlJmHu65Tz0eAbyc6NEiQ5evbQNdBxxyRoiPDX0w589aVH7Wc4bDVQ8b0AxiUWLGSp3Cihxb66ydbw72S5itC/fux3ApLC+rON0Id3JlTFZRaJkodw6uRfggc2iZx55aFx/UbPYGBHF0qTTvG1ZqZBizeN0y5xxK4sPGpPlNUEbAQST3mtGFXyW8IO4+A2wsgYL1snytDhtGdtYw8aA==
+ bh=7ZlBADfOUxDFddeFjHUWtgfpEfzTM61wTQehI5ucFJE=;
+ b=f0x2XvdxP31cWba2EDNmyv2TkxYv30d78p5n5I9OXlwUCpTlPy8NVqoSNbO54fccxYoLxLYx6McFnD1sarDir5Ks/D9peRi7jOE/yO42Wlq3Rh611CFWYmZd59DKcF+o7GSd4V7nFOWZjayBTcaLlsag7C2ZtMTweLCk6ZuexvE7LLUcs25Wvga4730/J96E56aRvJkn60PQJScjATKfn5lgBAw8l0YttfoyP41kBwFYusHxSvMoPt1PX/JCEG0dOyElWbsUS4NDaHe6LOyNqEdLINy14SLYEIy3CeJjJMQY8oQQB/4CSQtq/T1fKmkB4/j0CF605r0NUnIhS2Laxw==
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:113::12)
  by PA3PR10MB9311.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:4d7::19) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.24; Fri, 2 Oct
- 2026 11:19:50 +0000
+ 2026 11:19:51 +0000
 Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::ae26:d131:7cff:4001]) by DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::ae26:d131:7cff:4001%3]) with mapi id 15.21.0472.016; Fri, 2 Oct 2026
- 11:19:49 +0000
+ 11:19:51 +0000
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 To: felix.moessbauer@siemens.com,
 	jan.kiszka@siemens.com,
 	cip-dev@lists.cip-project.org,
 	cedric.hombourger@siemens.com
-Subject: [isar-cip-core][RFC 05/11] embedded-dracut-modules: add recipe
-Date: Fri,  2 Oct 2026 13:18:52 +0200
-Message-ID: <20261002111938.3600786-6-quirin.gylstorff@siemens.com>
+Subject: [isar-cip-core][RFC 07/11] factory-reset-helper-efi: use systemd FactoryReset variable with dracut
+Date: Fri,  2 Oct 2026 13:18:54 +0200
+Message-ID: <20261002111938.3600786-8-quirin.gylstorff@siemens.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261002111938.3600786-1-quirin.gylstorff@siemens.com>
 References: <20261002111938.3600786-1-quirin.gylstorff@siemens.com>
@@ -56,110 +56,97 @@ X-ClientProxiedBy: FR4P281CA0022.DEUP281.PROD.OUTLOOK.COM
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DB8PR10MB3178:EE_|PA3PR10MB9311:EE_
-X-MS-Office365-Filtering-Correlation-Id: 86669844-6005-40d3-9fc8-08df20771238
+X-MS-Office365-Filtering-Correlation-Id: 5ada472f-dbc2-41d3-6aec-08df20771326
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|23010399003|1800799024|376014|366016|3023799007|10067099003|11063799006|56012099006|55112099003|18002099003|22082099003;
+	BCL:0;ARA:13230040|23010399003|1800799024|376014|366016|6133799003|10067099003|11063799006|56012099006|55112099003|18002099003|22082099003;
 X-Microsoft-Antispam-Message-Info: 
-	bRwUG7pGwKnZxPU3N3JKe0nGJpqn3BiLCz4++3JSeyYV4ms5qWr+wJDOSSQu2tvdKLxcdqpXeHYbmVt2tF8V5tz0Imi8eGo3hAj9jrkxBH7dvbC9eC+S3ZZVu5lqrP/fR+OhkUvJ/95sfgvcKwrkQBTwGyJhZMIQ3bqf6a/uStxjmeQeXmDk9hEC77SO+Nx3Jna6IzZbnopFZyXCqnQ6fFaQ9ybpWS43sZtr/75bb+6vu6p4reCrScHHSB2ZqmeSU+cNbzD/J13R3hwBlrUt1jOCrRkI5tlg2670hHKZxmK49fWmhf7DZvLVAiw0nEfGDJEbqYMhDUMMykctrVrhBRP2AIm+sYWeeeUtpGClBpuaVYSKkihU4IfUmTJxLHOWEos31c7i3HpIW5zOC4avdBr4LHALSTzs3/WoYW1gHTIcl9xujfcSE8Gzn0FYcr2paUQe8Q+zdDrLjK/YAsKKZPiJ4jBsjqtt8PF6zrcfWg9TARpKvldXXCaIJUbkMF9vq6DqI6joMEOwFRkplBghnwZ7TWMWmfN4Vt/IBZxRgnYV25LRpBZkvJCwwvq4Va65aU60NLwJ4QlMmq312Iz95th6dsyPvxTBL3yRA22wl95UNeuPY1xVklfnnnyHh9pQkH10RYlonR41s7ilSED+TDR+uIjlUuvLYfJ+Zu7zDOY=
+	ITVMmTwg76P6HuUV6drA0urlPq3NRYtuoPD/HhOZXzY0sAhbFTWaRlyIV5GYTqoaGLqPGaJem0LIZfUKp1RRxEGaxSJrybZ2mc3OModnw52yrIYkbf65pPgHBgsHjWTcp5oWwrzgCZ976cOIuSWcxgxxtcnKBif5Hq8U8pb/dLcyPQkABY95a2gw+zyuEY1CQa9T1F+KglOnc5pW3Svq+YGIp+pZXJu7xhi/nePDeVWlCHYC+7YUYB0/KrsnT521CmznJIrudpHKk2Xx4nO20+gwZCrRfJsT0F9Zc7LdmRabbTweWl/gcWRluQs/DYin/tIh76scJ7Vet/3cLK3c9TYP07+EMwK4XSVjjKArzrnrnFmvmZh5Uu+LJXxyNGqNtg8hu8qUYlxkoTDNTfcwikst4pbkafUwGOQTqKNo6+Np/XKouVpmpiydFeqCmSeLgJimVh7vtcDubzfMXm4ZqFG9lD6bRneUUg1wLHRToPOJ8bhPJvWAWBStBjFAr3HZQdMDdj2VpjyuGvO6xa65oB95QiXLPy667WmI7/QMNrkSs4ga/XFYbETc2eTUTWlOj6d8JJdq7QU2S8hTMxhAfUIYCAmNZ2hsr3dKfiAlz3pXmgyYCl9Hpf0ZkMHy78rk
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(376014)(366016)(3023799007)(10067099003)(11063799006)(56012099006)(55112099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(376014)(366016)(6133799003)(10067099003)(11063799006)(56012099006)(55112099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?MDEeCWSzzJiN9SJo7d3sgi9WA+JnKTFU01vJoOc/nmBcs0oZ19z+6lNqTvrh?=
- =?us-ascii?Q?tGLaKdrMLKDaL8d0tfBS6P4RKqIWveUnTn3ioygL0TKVPNS2fpIOUfJKbSHi?=
- =?us-ascii?Q?bv+NXUmslX+I1g9ALidW+viqyZJbAMLZJmdbTn287O1XyKEHnvvYrCGli5Dt?=
- =?us-ascii?Q?vw5TYv4C9IKdZNHje2MaILUkOs3N6PrZDKNUSIpqAFrhY0H+jZ+Xr1/SQBUz?=
- =?us-ascii?Q?GuURP23kB2A3a46VgJo44XLy6rcQg2gF58RhhgZRk07zGcbwttvf9qI3F/Gb?=
- =?us-ascii?Q?1cEnPgQtpWkGjLZNloHOJqT/+/XiGRS4v5FRhMCYgqC512hKeyQEnOac9IT6?=
- =?us-ascii?Q?/xDkSRYjSGrzl3QIRIEZqeaeSrLORHshzKEvdh1SGMtStFl5VhSp3bf/Lb6V?=
- =?us-ascii?Q?vvIUAUFWlahrn3CeV+06dePeO7yHuVFMqRTKLiIYRL09Y+dnSfGMzVgHsY9e?=
- =?us-ascii?Q?3uxLps3rw0IFfDdS1X3zpQjHdtA+51CxU3xSNzLN6y7n6FEWJxH26yQUtS1W?=
- =?us-ascii?Q?Y29s4rCoD2AlhbF5AgAdbanlmYoQr00QNu8ga9zywaVwOLb9aI7hg0peIDPQ?=
- =?us-ascii?Q?KDQzjTO8inublrBgKl2g9RV83/8b8IOOcYR58ZRbB6zBoDf75GH8EpZr9TeU?=
- =?us-ascii?Q?8mCp7GJjyqjQdYhp3SMu3P8WlAXIQfj0HZAJxW16ef9xcG9j2W/m39DK9siI?=
- =?us-ascii?Q?TpvI88XIGdMriZImQgxdTk3xtgS1Id4l+/vQrFEZbGVcbWF8TVjApKamqlwV?=
- =?us-ascii?Q?bPlBGtH/0fiY5pb+VlmB+FkMfL4j3CFNWq2Tp+otV2gyHP1AXN0G9m7yZOqQ?=
- =?us-ascii?Q?ZVaHN8mMdQuTWFcvkiFI4dW7wQwJEFB0kcZqdFJ+YUKh/N0/+09yJEICX8o3?=
- =?us-ascii?Q?tm71Qfgy1jftA88FxSYI0gUq11yfczQi8YzrcoZkOaQgOHZIW1NmHmD2KQaj?=
- =?us-ascii?Q?XDz1ixr0tw9sQWd6lYAOKh+9zeMoAcjacoIVr9BkW5LHPWkEo4dazT2Ykqg8?=
- =?us-ascii?Q?SNI95IbIZUmAoFpW1h3qPbVUkkokdEy8+r3HeUCfEEky8yj3SVLwiX4vUd06?=
- =?us-ascii?Q?hjecEYFqnsZh3J7AfSB2+Y/c+6uqviPk0ayKxZykguiNd98kDGLOYPfKSl/V?=
- =?us-ascii?Q?Gp6M75h4i2hcNTzdkpt2Sxm66SBgjyyGEYGhlrAbKIkhAyB772p94wLzmQe1?=
- =?us-ascii?Q?TkwGi5KN6n7vB9GVd9uNXEbO67wbIC+jhfHIGGq+LgowyinkjjpJKjZAwTwj?=
- =?us-ascii?Q?tlzCJNIdZV/wK5zqJxgkj1HI30odvKi31dCrHaiB1DpJZYMXhNAFYo3lawsH?=
- =?us-ascii?Q?cm1xurh2//vfiNJFTs4HVjKMSCsGMiSa/LSlApxzrz+kU9WxUglYow77vK7X?=
- =?us-ascii?Q?nsYZ+iTxBqX5vk5vf+4l/lCPEu8ZIfzL8lTRtmcLNK7Re71AodzaEVvoomw3?=
- =?us-ascii?Q?qtCEOFjwHIWdMfKVwFLE2H4W1LREXdm6rxHfLAT3sNoNvaP6zEMi5JuDiZ+5?=
- =?us-ascii?Q?SKKquw9EyRDzZ8RBdIuUhyrTns2fPqB6q8AOHqQpprDJ5mTDB8uawMJP9Nn9?=
- =?us-ascii?Q?8qVkdkhnVpiBRF3v9Dqnk3wpB6PvSSr5x2AkWex7N8Inv9KySMG1+LUq7rAB?=
- =?us-ascii?Q?rjLITOPAQs+bbVNAfTB+ekjkKQfoCWiCwtz0aTlc8tGyO7W2Eqfq5ScVHCde?=
- =?us-ascii?Q?f0vgvTLWugczQluDhTgPdKyTTtT3JkFbQvQJ8LTiPwZVSyjaiBw1jrAkPl20?=
- =?us-ascii?Q?GlSpFpbkwcFM/SUWkcxyW3u+5+PPCFI=3D?=
+	=?us-ascii?Q?3H4mLaVVYtJhSR62lhtKotXAYaPKFTskG8q4elnVIFhBU9eJ49gNjwRIX9vh?=
+ =?us-ascii?Q?2DM16iHOOMBwz40eNvtrAU4ago39i2lBcvMHYv9LJaWleZv2MEIiOerbiG9P?=
+ =?us-ascii?Q?KhvMmIjGu4lpOmvje0eWzqNmPXrogUoxi8+W26JiHR+83nMflS+IScDCb3fY?=
+ =?us-ascii?Q?GkOESA3cQQihbAFlG3K4jrRe4hK6AUGXrQxmAfrErQCcdwTd7VaVfvnLdnHZ?=
+ =?us-ascii?Q?6wgnD+M+04AVVWYw0tBgdUHnILieiDmghojYid26uoV/r8uQc4UL4DffyISS?=
+ =?us-ascii?Q?7Vk5ia/MuiMU96C7xcFPGf3SWsQvo6jgaivxBssz5Vhwtseb3e4xQU+5a7NN?=
+ =?us-ascii?Q?sVZOct3zQ3CaNuo8Bl3rCFRLdecjCE9Lgrg9IHiOvp3JtmU68ThP6Y0y2psD?=
+ =?us-ascii?Q?titnE16gLxVcrwCg4BpKypT/2hpI5ZvC9/WZTCLpzEu+vHPo65AU9XmDBSlR?=
+ =?us-ascii?Q?uE3LMAMWFkHNssymJMX+J34VN1gMBfzbnCSwg78u5p2Hjhc8oN1n+uK3yb2W?=
+ =?us-ascii?Q?S5DoFzTbjsjAEM7c48ik1CVo2Nk5DkrR0KbjB7RCxoTgV6ZFOBeI6rjBBMHH?=
+ =?us-ascii?Q?3C75Zrwejjfdwn/j/RsdD+kF9Js6LcCeK1H04xZQ7MDaBJdx6efXL1snq2F5?=
+ =?us-ascii?Q?dePIZZfyZlHLjn9keQoldR2wSvmpXB5H5uGkJNuGGLf/bDDn8vT7LHC+jZcq?=
+ =?us-ascii?Q?VLLgZWbFGIHhgTAsJEriG62BGRaXINY0eBw86/tokPIFvcD40dLjzKA7g6QV?=
+ =?us-ascii?Q?Woid7O+aMXMpSCmk7BUGlildJBaYqDkqNvL653lTlhd9jkJ6zDvpSEQD5mXx?=
+ =?us-ascii?Q?NfszS2uzaruEHLMvMzmDCuwpmXeUF67rxU5L60WzPKuZHhVSkpPmEqH4Shd2?=
+ =?us-ascii?Q?bCcxCc7d58d86ljTOMOiuTz/JDjdtt0AEPDpNhVNU8X6HjUUJPLMbGtAICNb?=
+ =?us-ascii?Q?e+qdWgLb75G5bW6rjVCrqXj9cWlCu7r4727nlbIqjmU+1Q36MpCLJeyHTkwt?=
+ =?us-ascii?Q?vIM75DzJhdVZ+/3IZpvAvyWGqlVilWnp5E/DbAQVUUG/piqWgo67cvx5AR7W?=
+ =?us-ascii?Q?M8Bz6cRMWsc224RTl7ngKtjGedIfo0n7k4B+R79ekYcVYi8H8RzjM1Gzm3R8?=
+ =?us-ascii?Q?la1z6eRVYF+laLD6ZnIIyDPhelIOyLIqvezc4LeX1gmoVKckW8wOCZH3b0fB?=
+ =?us-ascii?Q?79cRrQmnsVCvTkFTXSUSsiCU8HUKgCxtZwcOmoKSENkGk/AOdP5V9j4g6dPL?=
+ =?us-ascii?Q?KEx/s80AFrdFkNKWYypeA0tQ57u3E1PxZrvCUgOxhn1ACu3gWcdO7ea92M8p?=
+ =?us-ascii?Q?6leAs8oJDavMPADhwv6cpGCZ7++OLXUoexBHCJ5tdENkjTkm0RdEkHdtUgo3?=
+ =?us-ascii?Q?z8sgU32gN3QsXfHgxzDK5gt6N1jtlJEbf5fPPrtlEMco8CkcSx3zJzBoop/K?=
+ =?us-ascii?Q?IcglNzW2ZLcWEnVhjcDjXbUq9w/jAhKMW/VNeF3AEvpPWSGC/dTWKXlOKkpQ?=
+ =?us-ascii?Q?MhoqlGmzrfVQBJAWp1tGQaLUwPUS5KXDzZCzfwNBP/51VLgpSTe+nN9GLevf?=
+ =?us-ascii?Q?8/Cpg8qddIPEUfaQYgjAOk2Miw9kaZ6+EwAxPEPHagCtRvJCQnDI33lKCIbZ?=
+ =?us-ascii?Q?zg/mTzzRXuDYxriU3ZlBWiBFlUPDZk9h4ltpTMlsaD3DXpuUtzaBiKL2qVCl?=
+ =?us-ascii?Q?A0sJIDkiAY9N5Ny+H6lJsDifbvPSREkh8yun4JcHTRhH12M2Kza7cOcKOs9Y?=
+ =?us-ascii?Q?dLJvuTzwE+Ey1CUscjqkrKAZKP5D7xw=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 86669844-6005-40d3-9fc8-08df20771238
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5ada472f-dbc2-41d3-6aec-08df20771326
 X-MS-Exchange-CrossTenant-AuthSource: DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2026 11:19:49.1045
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2026 11:19:50.6227
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rISexz/HsJwkjKofXYtna9THGXfIUx8lkBoYJsOSDtxABLHV2M1NE+797YehsAvyyQ7IcsRkGvy/9LDIZOZIdxlbYVhYH53AK/o2mYJl89o=
+X-MS-Exchange-CrossTenant-UserPrincipalName: +Tuq2ebMs3R3yhg0BSn/v7WAqbP5KxfuZbSyF4QXb1ZnfHAA5vRKzaKbiS2niJOj3SrotFKx18bG0caEJPnVn7weu6XzeC3GmgmvcvJ3DLE=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA3PR10MB9311
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 02 Oct 2026 11:20:06 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24408
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24409
 
-Builds the dracut modules cip-verity, cip-overlay, cip-crypt and
-cip-factory-reset from the external cip-dracut-modules Debian source
-package. The modules replace initramfs-verity-hook,
-initramfs-overlay-hook, initramfs-crypt-hook (systemd backend) and
-initramfs-factory-reset-hook (EFI variable) for dracut-based initrds.
+The cip-factory-reset dracut module reacts on systemd's FactoryReset
+EFI variable. Keep the CIP vendor variable for initramfs-tools.
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- .../embedded-dracut-modules_0.1.bb            | 21 +++++++++++++++++++
- 1 file changed, 21 insertions(+)
- create mode 100644 recipes-initramfs/embedded-dracut-modules/embedded-drac=
-ut-modules_0.1.bb
+ .../factory-reset-helper/factory-reset-helper-efi_0.1.bb     | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/recipes-initramfs/embedded-dracut-modules/embedded-dracut-modu=
-les_0.1.bb b/recipes-initramfs/embedded-dracut-modules/embedded-dracut-modu=
-les_0.1.bb
-new file mode 100644
-index 00000000..5e7cbc6d
---- /dev/null
-+++ b/recipes-initramfs/embedded-dracut-modules/embedded-dracut-modules_0.1=
-.bb
-@@ -0,0 +1,21 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2026
-+#
-+# SPDX-License-Identifier: MIT
-+
-+inherit dpkg
-+
-+DESCRIPTION =3D "CIP dracut modules: cip-verity, cip-overlay, cip-crypt, c=
-ip-factory-reset"
-+MAINTAINER =3D "cip-dev <cip-dev@lists.cip-project.org>"
-+
-+SRC_URI =3D "git://gitlab.com/cip-playground/embedded-dracut-modules.git;p=
-rotocol=3Dhttps;branch=3Drfc;destsuffix=3D${P}"
-+SRCREV =3D "5fe822b058bcc9e035da4ac5056b7219b8c3d9ba"
-+
-+PROVIDES +=3D " \
-+    dracut-cip-verity \
-+    dracut-cip-overlay \
-+    dracut-cip-crypt \
-+    dracut-cip-factory-reset \
-+    dracut-cip-watchdog"
+diff --git a/recipes-support/factory-reset-helper/factory-reset-helper-efi_=
+0.1.bb b/recipes-support/factory-reset-helper/factory-reset-helper-efi_0.1.=
+bb
+index 071b1ddb..bd455897 100644
+--- a/recipes-support/factory-reset-helper/factory-reset-helper-efi_0.1.bb
++++ b/recipes-support/factory-reset-helper/factory-reset-helper-efi_0.1.bb
+@@ -15,9 +15,8 @@ DEBIAN_CONFLICTS =3D "factory-reset-helper-file"
+ # use systemd-factory-reset as default
+ # https://www.freedesktop.org/software/systemd/man/devel/systemd-factory-r=
+eset.html#EFI%20Variables
+ # The efivariable is defined by ${FACTORY_RESET_MARKER}-${FACTORY_RESET_EF=
+IVARS_GUID}
+-FACTORY_RESET_MARKER ?=3D "FactoryResetRequest"
+-# Use a new vendor id instead of the one from systemd
+-FACTORY_RESET_EFIVARS_GUID ?=3D "abc688c9-fee3-41f7-87d3-1076e4a29e8f"
++FACTORY_RESET_MARKER ?=3D "${@ 'FactoryReset' if d.getVar('INITRD_CMDLINE_=
+STYLE') =3D=3D 'systemd' else 'FactoryResetRequest'}"
++FACTORY_RESET_EFIVARS_GUID ?=3D "${@ '8cf2644b-4b0b-428f-9387-6d876050dc67=
+' if d.getVar('INITRD_CMDLINE_STYLE') =3D=3D 'systemd' else 'abc688c9-fee3-=
+41f7-87d3-1076e4a29e8f'}"
+ FACTORY_RESET_TYPE =3D "efivar"
+=20
+ DEBIAN_DEPENDS .=3D ", coreutils, util-linux, e2fsprogs, bsdextrautils, ef=
+ivar"
 --=20
 2.55.0
 
