@@ -2,157 +2,77 @@ Return-Path: <yoshitake.kobayashi.x25@mail.toshiba>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D632BCC6B30
-	for <webhook@archiver.kernel.org>; Thu, 15 Oct 2026 02:59:58 +0000 (UTC)
-Received: from mail-wr2-f35.google.com (mail-wr2-f35.google.com [74.125.225.99])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.17555.1791084995899821979
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE959CC6B2D
+	for <webhook@archiver.kernel.org>; Thu, 15 Oct 2026 03:00:08 +0000 (UTC)
+Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.37550.1791258187070601731
  for <cip-dev@lists.cip-project.org>;
- Sat, 03 Oct 2026 20:36:36 -0700
+ Mon, 05 Oct 2026 20:43:08 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@miraclelinux-com.20251104.gappssmtp.com header.s=20251104 header.b=j+Lsobua;
- spf=pass (domain: miraclelinux.com, ip: 74.125.225.99, mailfrom: hiraku.toyooka@miraclelinux.com)
-Received: by mail-wr2-f35.google.com with SMTP id ffacd0b85a97d-48b059eae96so590445f8f.0
-        for <cip-dev@lists.cip-project.org>; Sat, 03 Oct 2026 20:36:35 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1791084994; cv=none;
-        d=google.com; s=arc-20260327;
-        b=qJigJvn9tVvIAu9KIyh5MsWmBaeV9enSheay601mGmXOnLcU/6h64JAA7ozaJlqr+4
-         pFuiLKvnz5a4VDqrKpXys7dkYJuYMVYo+HtuDDSKwMj4CNDBxu2xjseSFxRffDZBAbpu
-         T6RXTD6GkMqL/DH/c9kO3H6bbe/YeqhJ8r+OuMdyMlD5jhBLPVE3sqHTPuw0X/OeL/ax
-         hsZR4+FYe5XwD/zY8RtaBOjmdHAyhDnaGpn5R4KSbL55BtbYVQoqRjt71c2pIz3z9Js+
-         KK8+2AGDZeLmgyMaEZ8XIN2zJwMCq2TEdaLryRspdYvN+glEgJn+gekH2QzY03aBDD8b
-         9UTg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=bml0r5+brw7848B9VOziLBdSQEPpcuJydDVFxY472go=;
-        fh=1iWBQiuvm2qZVWDLQ7zjrJ8j0emlOe4z7PagA0qHzqo=;
-        b=NoqL1oWS5Bfm56oz0SNMD85Glv/wuRnaGX/+SXU0ahMWf7C9ZAwZjbx5KdJ0diD7VZ
-         AoH9JX655j1/Z4tLThpqmhTSCSdWjQew802RsuHGzZ3cl9G9XNmp2ztubFiqSLhJkfk7
-         zncwjJ5KBboVxXU7iNtElXWyAl9HsNXOG58vP8aIQBUl+kLnSenipQJTEDfosXYJc6I1
-         Pu4urJMUL3+PWfIw+nr8yg+UhHmNl9/Ul9F624FR8K6URAxZElQQVyCwJseKJ9NiRZmV
-         GOn795CpVvULgLWG4P3YUlHOGe8Sdz9pAShMgm6pHYH6h44AB42VljG7kx0Nj7gLUVVi
-         deYw==;
-        darn=lists.cip-project.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20251104.gappssmtp.com; s=20251104; t=1791084994; x=1791689794; darn=lists.cip-project.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=bml0r5+brw7848B9VOziLBdSQEPpcuJydDVFxY472go=;
-        b=j+LsobuaFreK/ruNcU0QKnJNHwHWgBg5t+JwIQjRTjk5romtwqR9mrQ341xzSEzQEo
-         zPvdAhFX4QAK/OuOS0BfTA6yO8A3f0oKm+b2fO/md3XQA3eOeHcko2+bax9QIfEe7GNZ
-         EiTUuXggYVvdzko2+74Ydsx98Hr8PSRmHN1uEHD84qsgkiV42zd7373ITMyqPV6atGvk
-         TSKHKXNfkVAitVdop4p7SBR03Z+LpYP6wreiZCABoMtVkLJrOSb++I67RJ6uozkxsMmW
-         JU/eBCHDrIlNZXF7YaWcJR8PQGdWkl6L2eMDYcUfpwnODGtTl3wVG08wb84l9chBg0Oq
-         35pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791084994; x=1791689794;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=bml0r5+brw7848B9VOziLBdSQEPpcuJydDVFxY472go=;
-        b=rsPpFb8GdnzPBRfbTHHS0bneAa6KJTjZs44IpJ6MrJqQztmY+vW1hQU7uhEbpGFFCh
-         W2pqIur0CvN5rRBEeKxZ+y1zbVrp407P3DWAkYrh4pXyqQavfyQku0atVGeGztLNr9Fz
-         2mmdKrK+udqjOCnV3tUh3ZUjmSgxv3kv+CSXXNCToYrQ3OgsFmJE2f0a9N/BOrVl8nHn
-         peCO+YnTm8C6pbsUTRhr199qJfWgzfl7NhEshFPHa3SPBoNU3WyLkHuCcd5ea2C46Qzo
-         KI5MdagOeOX6HVdJ/Eh23Bzi2epPudyW+CLwmIcYa9IJKtCvxIpCbvNB4lS50ctDs9a7
-         b3tA==
-X-Forwarded-Encrypted: i=1; AKwUvBy53UlEt8NDZSF3BoKlG2OiF8PT4Qjnz+n1GyHFTFrfOfQy8rrUFaj8tI0CMap5EltuUjzxoJ5W@lists.cip-project.org
-X-Gm-Message-State: AFq9FYL3051oTBbznw/qfqIaxLMzBqo1aOTPuMt2fK9kfL9a8jTe4p4O
-	SzygJERimwOjmiHh3tL4sAkhYrIL8BzJCjy5U2QRDrjhag2ptEUsJLUAI/9OOLpM7Un1FmBID7G
-	weFSNYrrWvlsT7cKySubJ5d6OpWLaZ9ra8moeAI1dqRuxU8NdF5UTrsN7Fw==
-X-Gm-Gg: AYBFou1SXa7JXQM3uv+aPys4MeFaDvLJOlZorJ3mskFTnWiPB7sjaSPSSSwZ1MHm6on
-	r55jKYNHscP1FV3KLsBvzGNeROq7Bo5pLJD3lBRAXYyMb4ubm6/ylz/3lFX/zk/c0QOVashdG5f
-	ehssss7v0N34S3pzwfGJjnpWyPae/Z7bh5+7D0c7u/z9lXS1/ZaIOBBRkruq0pZWkNfcpeaNk2/
-	+CBKr5HeF+iJivLYZBzSMD4SILJ69Ft3JXBnkPcxMGARb3jQ44AvfOAs/IG3VJqff03x/boPcM4
-	B9CNL+b7NJAYXpinUKUMZ27vhybcdSqqD/lLxSQQkJ2XrXPsz66Fa1uwC95ekDte70Y=
-X-Received: by 2002:a05:6000:2207:b0:48b:e50:714e with SMTP id
- ffacd0b85a97d-48b12734465mr12090057f8f.36.1791084667404; Sat, 03 Oct 2026
- 20:31:07 -0700 (PDT)
+ dkim=pass header.i=badrikesh.prusty@siemens.com header.s=fm1 header.b=CASn3bmZ;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-1328765-2026100603325864b0da199c00020749-ir4mph@rts-flowmailer.siemens.com)
+Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 2026100603325864b0da199c00020749
+        for <cip-dev@lists.cip-project.org>;
+        Tue, 06 Oct 2026 05:32:59 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=badrikesh.prusty@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=7nLPD+hQq0eIjxIlIQVkBrp2b4RHGXqTrwTeFKBbE+Y=;
+ b=CASn3bmZGXQiY9C428vWUYfvk4KR0W9P891SSHZbpOmVO3MfnFdgEezJpz40OczXOvlgjP
+ 0mEunqgYgks5mIsUsei2NbC75PsFb4PBxVwQRkgBPhMGsKnsxt0SAAVqxoHCoe0RZ3MCL5uU
+ JI5mTmJ7ry0S/3oyl7ejk5FNt1+IQJJ90TZotSV+oU63OHr29X9DwNGP3MRMfymNhHsshOCq
+ t0SW/1TUdOS5eUP18MXTd0SHc06gtN1j0ER1S++QG277O95VF8uRGr2hI7Z/9LVs8UcV5taQ
+ V7GC3YR/4a0kfS5CavcLz4wyhXapERfE7CUw5PyWOholgaCarjUlrMGQ==;
+From: Badrikesh Prusty <badrikesh.prusty@siemens.com>
+To: cip-dev@lists.cip-project.org
+Cc: jan.kiszka@siemens.com,
+	Shivanand.Kunijadar@toshiba-tsip.com,
+	Badrikesh Prusty <badrikesh.prusty@siemens.com>
+Subject: [PATCH] swupdate-handler-roundrobin: Fix Lua version for bookworm and bullseye
+Date: Mon,  5 Oct 2026 23:32:42 -0400
+Message-ID: <20261006033242.301666-1-badrikesh.prusty@siemens.com>
 MIME-Version: 1.0
-References: <c9a0c64f-5341-4983-8020-32144e5fd0ca@siemens.com> <243f9dd8-960c-4c9d-ab65-4821d8aca1d7@miraclelinux.com>
-In-Reply-To: <243f9dd8-960c-4c9d-ab65-4821d8aca1d7@miraclelinux.com>
-From: Hiraku Toyooka <hiraku.toyooka@miraclelinux.com>
-Date: Sun, 4 Oct 2026 12:30:31 +0900
-X-Gm-Features: AclHuK8j_mg1GKJliYQauQz5IfAeAceF3VB6AddyNY2ZwkoqvSBHlGg_EVWfdTg
-Message-ID: <CADPJy8UhBXwXXDsiCg4DopRNXS26nxhxf1U0abncnr9L9zmMaw@mail.gmail.com>
-Subject: Re: [cip-dev] lab-cip-cybertrust
-To: Hirotaka Motai <hirotaka.motai@miraclelinux.com>
-Cc: quirin.gylstorff@siemens.com, cip-dev@lists.cip-project.org, 
-	hiraku.toyooka@cybertrust.co.jp
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1328765:519-21489:flowmailer
+Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 15 Oct 2026 02:59:58 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24466
+ <cip-dev@lists.cip-project.org>; Thu, 15 Oct 2026 03:00:08 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24467
 
-Hi Quirin,
+SWUpdate 2023.12 on bookworm and bullseye requires liblua5.4-dev, but
+the roundrobin handler was being installed to the Lua 5.3 directory,
+causing the handler to not be found at runtime.
 
-I'm sorry for the late reply.
-I rebooted the lab and resubmitted the jobs that failed previously.
-They have now completed successfully on qemu-03, although I'm still
-not sure about the root cause.
+Update SWUPDATE_LUA_VERSION to 5.4 for both bookworm and bullseye to
+match the Lua version used by SWUpdate 2023.12 on these distributions.
 
-> > https://lava.ciplatform.org/scheduler/job/1514767
-> > https://lava.ciplatform.org/scheduler/job/1514772
-> > https://lava.ciplatform.org/scheduler/job/1514774
+This fixes the error:
+  feature 'roundrobin' required for image in sw-description is absent!
 
-Resubmitted jobs (executed on qemu-03):
-https://lava.ciplatform.org/scheduler/job/1521324
-https://lava.ciplatform.org/scheduler/job/1521326
-https://lava.ciplatform.org/scheduler/job/1521327
+Fixes: 902ad326 ("swupdate-handler-roundrobin: Keep default lua version as 5.5")
+Signed-off-by: Badrikesh Prusty <badrikesh.prusty@siemens.com>
+---
+ .../swupdate-handler-roundrobin_0.1.bb                        | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Best regards,
-Hiraku Toyooka
+diff --git a/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb b/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb
+index 6e923e4..965e0f5 100644
+--- a/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb
++++ b/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb
+@@ -28,8 +28,8 @@ SRC_URI += "${@('file://' + d.getVar('SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG')) if
+ 
+ SWUPDATE_LUA_VERSION = "5.5"
+ SWUPDATE_LUA_VERSION:trixie = "5.4"
+-SWUPDATE_LUA_VERSION:bookworm = "5.3"
+-SWUPDATE_LUA_VERSION:bullseye = "5.3"
++SWUPDATE_LUA_VERSION:bookworm = "5.4"
++SWUPDATE_LUA_VERSION:bullseye = "5.4"
+ SWUPDATE_LUA_VERSION:buster = "5.3"
+ 
+ do_install[cleandirs] = "${D}/etc \
+-- 
+2.39.5
 
-On Fri, Sep 25, 2026 at 3:56=E2=80=AFPM Hirotaka Motai
-<hirotaka.motai@miraclelinux.com> wrote:
->
-> Hi Quirin,
->
-> Thank you for sharing the error status.
-> We'll check it out.
-> Since it's a holiday week in Japan right now, we might not be able
-> to get back to you until next Monday or later...
->
-> Best regards,
->   -- Hiro / Cybertrust Japan
->
-> On 2026/09/24 20:04, Quirin Gylstorff via lists.cip-project.org wrote:
-> > Hi,
-> >
-> > I disabled qemu-03 as it had three times in the row the same error:
-> >
-> > *Job error:* Decompression subprocess exited with non-zero code: unxz: =
-(stdin): Compressed data is corrupt
-> >
-> > https://lava.ciplatform.org/scheduler/job/1514767
-> >
-> > https://lava.ciplatform.org/scheduler/job/1514772
-> >
-> > https://lava.ciplatform.org/scheduler/job/1514774
-> >
-> >
-> > The test works one qemu-cariad-01:
-> >
-> > https://lava.ciplatform.org/scheduler/job/1515037
-> >
-> > Best regards,
-> >
-> > Quirin
-> >
-> >
-> >
-> >=20
-> >
-
-
-
---=20
-Hiraku Toyooka
-Cybertrust Japan Co., Ltd.
 
