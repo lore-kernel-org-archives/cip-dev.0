@@ -1,211 +1,332 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5627CA5FF0
-	for <webhook@archiver.kernel.org>; Tue,  6 Oct 2026 07:09:47 +0000 (UTC)
-Received: from OSPPR02CU001.outbound.protection.outlook.com (OSPPR02CU001.outbound.protection.outlook.com [40.107.159.40])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.39798.1791270578906957707
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2668CCA5FF0
+	for <webhook@archiver.kernel.org>; Tue,  6 Oct 2026 09:49:13 +0000 (UTC)
+Received: from DUZPR83CU001.outbound.protection.outlook.com (DUZPR83CU001.outbound.protection.outlook.com [52.101.66.1])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.41718.1791280148743229283
  for <cip-dev@lists.cip-project.org>;
- Tue, 06 Oct 2026 00:09:39 -0700
+ Tue, 06 Oct 2026 02:49:09 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=osMmbidG;
- spf=pass (domain: siemens.com, ip: 40.107.159.40, mailfrom: jan.kiszka@siemens.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=cWkm3X/c;
+ spf=pass (domain: siemens.com, ip: 52.101.66.1, mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Oq7cH107HZJYBV3p1+aIRhpkPCfgccnbjpALfeUgit8SO0oUlZ0SaBLN5/cLkedLbQ2SLcd5rGU4yam3/01yIgDt5NQ2fV695QOMIFD7zsLVgLquCY4mE6Rp2YQ9JGgkqUFWNxYaN6HG+Ae8npV5HIQfLj35mfihOKjzd+JpHu/pFkVsaTrGqyR3RV0mKlGaL6jhyGuhsrHtkgqlh3osTdRGL2++uQ7kvK0uFXiuiOMqO/gGfmPRLJCkWRmxwJd/E4sm9IOJeEBYvZIPsrioT4JMyTSnFP3c98+VIun1PLOvsx3sVzSsWGP3iKSjFkthu8SbSZKBK25SomUNhqse3A==
+ b=NcJLMDqUPpzIz9DkvIWj9RSPMUgSON5l3gn0yZ0F6qHBK/PDauB1ANUG7ds4P7pdGnheEPyOcskxka/J6Th/kZXAW5GcP54zUNOnkG6vIqV3E1JIfdL3qPtFfeJEhACpiS3oE9pfBmQORoUmtZpmsI0zOJBzrVUT88C0P7ptCegErITPhjwr3qRaIvRZtzrLKPolhX3pjpIKKygYdpLPa+2+yp9G+v+eJ6C0uhe0tXQ+D0ATHsgiwaBl+sHDe9CcwpgdPJQvm6ORtM0aJkxle57AJ1hWynUNHemLVA6DTFHwMZUt9GU3PRwxi98I/dFcvLy8Ll1BGKUMmxOLR7tGFw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AqCZD2p9PqAYQQU+aa857oBR391luMB3BhU3E+JMCAE=;
- b=uHVdPH2LD6+yBEG/+Kr4fMLkhgJpX8/lySuW0DsHRRtOB8fjLwDF+Er8DCB3+ITqu7Bp1aE1V38vMGQLgNhMBKbLx7Rs+nGI/DhMEkLCLXx0RwXaq0b+92lFCnn1Ui91KCH87jCvCz6NB64FM0BmYc07dKciu+PYlL5mQaSqxcTXfLJdODfmH9QxiHcAs44Bq+EGjvxwrKlsKA1eFdpXxik4ZttoWFfK5YgVrxmBGJQReztuV1k2VGRHeM4VwehpFRjvHRI8gARFl7VkMv5c8CCGMP2MftmDr84S4Q3j/xj446W8TToli5lEdxtdH0yx7EcuWs3pbMl3g99v613M9g==
+ bh=KS0I6mbkRVvTwVxWo+RtXMz8rd+K5f+BjJcwGE0+K6I=;
+ b=WmIgaCJQ1mNDHGkIhlzTDkByHMxjyUrs8xTDuYgKJ8eIcaux0CBIutBTU2Re0FOhkHA3qemvtf6qLMBUOgFBhPpCZdhpbT2D5YNpsm0lqRHY8ERUvE9qxZ2A7piNxBHBbWw0UDYJvBjLA35vF0OA32N7wVYO2DSBwgoQUNyUaCZKr/lnnirKb6V7rg2kt+uT7yffK2mh9ryQJpImzZozHqZM7YGihkPZ76Hn7HmCpGQhY5usPYeOkHZj9FwhnQoSz/VwP3uriyYJ++toKwCTiXB5COfFaS7Y1sFTBdX21qgroh5p4bbwxhCjj+61yX2Gb/dtx9F6P+5nYjdHcHA/AQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AqCZD2p9PqAYQQU+aa857oBR391luMB3BhU3E+JMCAE=;
- b=osMmbidGqkU0sMTjFGN/191SlefFv/gzJYZhg7k1dOsTQQ5A3FOZrJSt5MXS7CbYRrNoLw6EwVlA7F+Ag7zrTb3MocBDL57iGP1dQnDLRt0FRPm88pzJlzerrtM+EkymGcuQwZNRP7NgvJhd196UtJWVEoMrX4HKaRcHoL5p5Sz+g6Of7WSyrnf7z6Wf60qotTocc/N+jNo2Gwu4L1oDaPmKmmHFZvTiXkqtb/8acFrfLrAXek/6KbLyBGwUd2BOxO+pKMjbgAwKuTiR0vbt1uxYtx4+AR7CoNFI1iCrJ5rzVGqgPtQwoMY8/aQFDRd5uS/DW2blotXlJLLfKujVxA==
+ bh=KS0I6mbkRVvTwVxWo+RtXMz8rd+K5f+BjJcwGE0+K6I=;
+ b=cWkm3X/cOvReBxUBlUsNQiDRJID/9lBqj7BI0EIAZeWeGxSuc8VmU+QS9lVHOll4heycco4FqF3DoQ9PuJEwX/GLAeuVScTQBcgZP7bYQnuk6gaJdJ+wti1Ll8aE0bgMTKq2hryPIkSNeN/ydmQxQ0ei2sR+mdLs4HdRkCeruSuP9Op1UQD+54fwTXtQGCX44l//V9esnIAcIs9oB1FmAbbzs1yX2sCfYFzngEGYBUoPq0F2d1UK1J1lvEPFBbBhWS06LWiu3Xyu0OP1/7TRQUsIf+i6mw5bgDIDDxh6ut3Kj0TuEYlkv3CuTa3Y2N9/2msOhVX432nl2yXjqaOqOw==
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AMCPR10MB992291.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:785::10) by DUZPR10MB8150.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:10:4d8::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.472.19; Tue, 6 Oct
- 2026 07:09:32 +0000
-Received: from AMCPR10MB992291.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::fbce:789a:27cf:d1e]) by AMCPR10MB992291.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::fbce:789a:27cf:d1e%5]) with mapi id 15.21.0472.016; Tue, 6 Oct 2026
- 07:09:32 +0000
-Message-ID: <4853f7c5-df38-431f-a7cb-7b80e2a781ee@siemens.com>
-Date: Tue, 6 Oct 2026 09:09:30 +0200
+Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:113::12)
+ by AS8PR10MB7641.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:636::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.472.20; Tue, 6 Oct
+ 2026 09:49:05 +0000
+Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::ae26:d131:7cff:4001]) by DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::ae26:d131:7cff:4001%3]) with mapi id 15.21.0472.016; Tue, 6 Oct 2026
+ 09:49:05 +0000
+Message-ID: <ecb14250-c5bb-4348-a4a7-2f0524d89e84@siemens.com>
+Date: Tue, 6 Oct 2026 11:49:03 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] swupdate-handler-roundrobin: Fix Lua version for bookworm
- and bullseye
-To: Badrikesh Prusty <badrikesh.prusty@siemens.com>,
- cip-dev@lists.cip-project.org
-Cc: Shivanand.Kunijadar@toshiba-tsip.com
-References: <20261006033242.301666-1-badrikesh.prusty@siemens.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
+Subject: Re: [isar-cip-core][RFC 03/11] efibootguard-boot: emit systemd verity
+ cmdline for dracut
+To: "Moessbauer, Felix (FT RPD CPC OES-DE)" <felix.moessbauer@siemens.com>,
+ "Kiszka, Jan (FT RPD CPC)" <jan.kiszka@siemens.com>,
+ "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+ "Hombourger, Cedric (FT FDS CES LX)" <cedric.hombourger@siemens.com>
+References: <20261002111938.3600786-1-quirin.gylstorff@siemens.com>
+ <20261002111938.3600786-4-quirin.gylstorff@siemens.com>
+ <8541e3fbfd401936ffad06669dd951570253d709.camel@siemens.com>
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 Content-Language: en-US
-Autocrypt: addr=jan.kiszka@siemens.com; keydata=
- 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
-In-Reply-To: <20261006033242.301666-1-badrikesh.prusty@siemens.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0191.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:ca::11) To AMCPR10MB992291.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:785::10)
+Autocrypt: addr=quirin.gylstorff@siemens.com; keydata=
+ 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
+ Z2NBPBZUysw=
+In-Reply-To: <8541e3fbfd401936ffad06669dd951570253d709.camel@siemens.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: VIUP296CA0150.AUTP296.PROD.OUTLOOK.COM
+ (2603:10a6:800:34c::14) To DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:10:113::12)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AMCPR10MB992291:EE_|DUZPR10MB8150:EE_
-X-MS-Office365-Filtering-Correlation-Id: a514d7c4-5bd0-4364-3a7d-08df2378c51a
+X-MS-TrafficTypeDiagnostic: DB8PR10MB3178:EE_|AS8PR10MB7641:EE_
+X-MS-Office365-Filtering-Correlation-Id: fb1e7e4d-0aa8-48a6-2f67-08df238f0eed
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|376014|23010399003|366016|1800799024|6133799003|18002099003|55112099003|22082099003|10067099003|56012099006|11063799006;
+	BCL:0;ARA:13230040|23010399003|1800799024|366016|376014|18002099003|55112099003|22082099003|4143699003|6133799003|10067099003|56012099006|5023799004|11063799006;
 X-Microsoft-Antispam-Message-Info: 
-	PiWcvSqpLbEUTiRKjircZfJyfH74uxdBQXEv1IIGEJGKi2bguCXWTo2zwCwozEejvaLYKoisDAQfSujkJdFKw3mIJJ0/wushBdhOIA2BY4OmmYmJaaTwll07FWmGlXSqGf8SR5joMLKgahBwiMB1zGvh8q4paF8lahqoyKgg/RvsT+6+tIAzMCeCGHT0MOb8Va7XYTH2Nnl5Ik/lRuZ8ps1xM7yo2+e+8VEhpsYva8QOLKaqQfEqmkVtx5xEqxxamy+5cyCmW/d9OH5HOsSuRKHOcNCDEmnPXfnyRrylBQU9iVb+Qr2/iAOJjAMNELJhnYwAjpB6IeQRmzyqfPX/0kyf7J35ip6qmChZFPKlGpt99WCYRi9fYbnq9tx3S6Y7H+5QxP4OGPVNrWiFK5alZ10kVJ5XzWmRRyC//hTDrE8UxXfQIc8+YFgpqISs4Z5SfN74JNG+4XV+Pi6XbPwiIIvALyV626Xru14Dt0EmB6Gww/UiCA+Z0lTqz2T1pRSSOeCdc4zpx9CnCG+6dxaMtCETbMpY3OJG8LD0BiWsPpqmE0cmyTtkuMJIwV1xTEu6T5CunbsvUJdUPVfIpg5SsunTVZXpf8YNrHfvyR8CnwcacPMfniH0tO8o/wH8duXWTT0xiDPUTbs0i4p6VF0fJO+4BVmmHsiS0E8yt1RXaSY=
+	195AZ1Ww58Dle1565ZMqwOQJdqHhtsVf3E9245BPnEygcxkt59nAamDxXIs+zS/X9giMrnguKCcRePOne5GsU/urCTnA7u/A2cClHYBCsPvdwGY+9u3jOMP0qVAcip6Us1idR5U+mS5aMR5eMP5u+NasDtK2Tk1rTwD0iCVRhk0RHhIJHfnFAsUHdf8nK39e0DZ0DiYNjMci2VzIMnvpyXM0LFvbYnkRpO/Kn+vkK93mEDKm//C971n30nWJVpMjvcpW0tGDaRo3ZEeOT0wip/Y220rbhot3uVXIFT2okoEaw7b61GErLbrvori+ca9DuYJ53x99LFUcXNcUAOe84i/PjBsg1NoTuzZlagYiVDAPiM1lCfr+7vLbzYY0lglYHBEvJCzzTv/S+47u95CU8OqW3E6u+GLrwSAz5LVXuMXZw7yMp3ouMczddkVlmRuEc4RrvDrCMT+bKkozwbmjTj5Y1iZIyUQPZ5wgbL8cfexeoUuQpkTTJDGLYwWQUtDssPjKIlHCTlR9RNVV0Cyz0BZusXVMcBrwWsG0Y94SDk+GKwTRTGzsf3qYJqBsOp98gKRKeaC8FtXBA+QGmoe7B2BkyMLAassSrFHvO6p/Bf46bwLa0yOrv0/hvAiheNm8aSScHOcIJmEIkoaWhpuWvnQ2K7GId8iTrAyooCuI28A=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AMCPR10MB992291.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(23010399003)(366016)(1800799024)(6133799003)(18002099003)(55112099003)(22082099003)(10067099003)(56012099006)(11063799006);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(366016)(376014)(18002099003)(55112099003)(22082099003)(4143699003)(6133799003)(10067099003)(56012099006)(5023799004)(11063799006);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?VytncW0xeUNzTWU5YmFKaktidUdJNm5oMkp0bm05eXoxQ3A4dlk2M01ISFNh?=
- =?utf-8?B?cElnUXF6Zyt2aFl5Y0JwWXUzeDJjOVh0UFgyc3k2Vkp2NDBZdWFHNlZoMGdn?=
- =?utf-8?B?VmsybXcrNkgvRzEwWGNvMG5IYTNob2MzUHhYSlQxeEJCTkFyc2JCV1NXaUlY?=
- =?utf-8?B?ZzA0aGxpTFR1MWpGbUZIVDhCQTNtWnlJQnl5bHVYNy9XTkc0azBWTG9NeGRD?=
- =?utf-8?B?cjZHSEwwdkNwazBPK0t3aWJGNlFSVHNlQnVTYjA5dG1EWTlONW8zekU4ZlZG?=
- =?utf-8?B?ZHl1NmtrV1NVMXIxVTY1ZWhVNXJ6NVZ5cy9tTjlYUkhWNkZXT28zVEl4amtq?=
- =?utf-8?B?cWxpTG1aMzAzd2pLNkI2MG0valZVVXpMYzJKRlRiMVh5RHV4NklGZDR6c2Nu?=
- =?utf-8?B?VCtYNU1qYTVxb0NIUkZ5OVhES0JtUmFxSHhKdEtOZjRuMENjWXhISnZSclkz?=
- =?utf-8?B?ekFuWk9VenZod21VQ3JMSFdBUTJKTUxqNjREbTdzZFdKLzZMN241RUg2LzFa?=
- =?utf-8?B?TWRlQmdJOUZpSkFRZFdmcmhMcVRWQkplS3ErUldpR2poYm54ZlREZjBMM25C?=
- =?utf-8?B?cTVxWXQ2UEh6cC9YVy83dkpFWDZRY0ttV0I0NHRnQjFFa3FwOXgyUGNyZTVo?=
- =?utf-8?B?Rm5SanNOUnR4NWtMK3hzY2tYQVZKVE93dVJyQkVEQ20zSHZNaVNYWUhoL2lh?=
- =?utf-8?B?TDVVaklRNXRkMWdpUHpnZ3RGcStoZzhsalh3TFJIVXVZYXlNMDdmcWNncHJ1?=
- =?utf-8?B?d2M3aGh0UDgraHNKZHIwMVh3bjFrMmhxRUdVb1prYVJlS2cwN3A4WmtPeWdz?=
- =?utf-8?B?d0dvY1RKTWhFR2JkbjRReGx4WXdwWmEvVXh3cFdQRWNGVFdCbVV2TnhnNW0v?=
- =?utf-8?B?NkZkUHFvdnFpbExFR2NGeTlxT2pmeWdoTEVmWm9POENHZElJSngyb2VQK0lh?=
- =?utf-8?B?N2FiNDMwbUFMN2lkTWQ5MEozYzBKaWduVDQ0UDM0ZTdzeTFZUmhMdmYxSUNp?=
- =?utf-8?B?UkZFa0t3RzJ3eC9WN1ZtMkJqYkJOd0MwcHVtd0tBd09PK2RoZ24wZzFqR2hK?=
- =?utf-8?B?Zmw4anB2WlAyK1M5NXpEcDVDYnJ4aFE0MDRRc3BPU2t4NmF3Y1NJaFB5NER4?=
- =?utf-8?B?dVR1Vk5nd0l2TnVvU1phaWg1WVJkSThHT0VUV1NvdmNGUW9hVDZBM25tSFJH?=
- =?utf-8?B?STc0TURkSENkS3c4czhwMjAxUWxYZUN0VmxuSzd3aDhPakl2UjB6aFA3TTlC?=
- =?utf-8?B?eDlGZEJhVys2d3RvWXEwdkRQOWROTVU0SjNTcThkY2VkM0lOL3JySDdPTERw?=
- =?utf-8?B?VmVuczd0YzgwSkV6NFp6bUJ0ZUxhdlVzN3lORFhubVU4QzFzdWZIazN1b0wx?=
- =?utf-8?B?Z2NWT2pKRTJJYmc5bTNqd3VBNE1qT0dNRzRIMklKODRqdnVpR2tZSGpGNGll?=
- =?utf-8?B?QUNqMVhXQU5OWXIrS3BSYkJ5NkFkbnRXMDZ1KzFNbDdhd2gvaWtzTWhUOU5K?=
- =?utf-8?B?dnFjWFZ1NS9kK0dVT25kR3pNTThGU0lPUExWRkZRaFQ1ejFIWEJtMHhkNWdV?=
- =?utf-8?B?RmpJdGRMcmsxbUpVRW1BL00yYTJMcWx0U1BFWUQ0UjhqNFlmMTVrK1BSV3ZG?=
- =?utf-8?B?cDJ0Y0R2bFZiemFPYjFSQTV5SE9OZmJSYXl1c3dKU2U3VjBaeU1EK3JQaWto?=
- =?utf-8?B?Z01lNVRXbDVsbllOK3lndlhldTJ4RnpUeE15WXdrbzdGWDZYMmVNRkJSM3hr?=
- =?utf-8?B?azVZLzVrL1R2ZHRiSXNVWWIzZ1l3Tmhzc0lFNHN3RmpKU09Vbm9XR1QyNzRH?=
- =?utf-8?B?Q2xHSXhiQjQ2cEpsbmQ4Z1ZNQlZkYzIvVnRPSkFtT2VXbHJFUXYrMHJWMWRV?=
- =?utf-8?B?dFZON09DandkRTkwWmRvNUNFR0t2NnlmK2RzYUEvdElwcnI5K3RXVlFNekRl?=
- =?utf-8?B?MERFaURoWWI4bFEvY05CcFJOcUpudXpCTVJBcWRsQzExOUpmajNIRDRpQ2R4?=
- =?utf-8?B?NkxQQ1pXa29BTlVpRmpzbUNGdmEvTlkrSDgwaWFqbnBkb3V6M3VyN1N2WTVL?=
- =?utf-8?B?WXc0czZJZUJmeVUyelZXYzFEVTZ0eUYzMFBJaFhTZkV4MkVXaE5EM3JZR3Jq?=
- =?utf-8?B?WDlWNDg0TVJCRUhweVJkeUdzVnliSjFFWlJVSXRIRVVYR1dROGJVUlBnWVlm?=
- =?utf-8?B?R1NjYXM2SUErckFLWGNGUXlPTGRTVTQwdC9sMVVZejY5WE5aZFNUblFJRG9T?=
- =?utf-8?B?UXBER0U3VVNoNkNOOEk2VkRmcW1oQlNTMlhQVFJWQWppNFNwYVl5cUNCeHdN?=
- =?utf-8?B?ZE5FN1hsZ25iYlBhVVpFOGlBTFNWRkNYWEpJV1J6WEtmUlFVY1lKZz09?=
+	=?us-ascii?Q?khZGRPB7EjDaHGKnS6AmBqpR5VQ/gfClEp37OuGxsEVTYfLkK/38hgbEjf8B?=
+ =?us-ascii?Q?XjQwC60ziS10Da+U+JBqTKqHWrnYKkGjYB4+dL8t6lHYuAeDVfpqtR10ZyZ2?=
+ =?us-ascii?Q?w00r1WICoicxd18c3UZNY6CHZEE4e2dwYHi6rARljbN/V7hZUFi2qBl6DkrZ?=
+ =?us-ascii?Q?CPGgEgEWJCxs/azRnPG2bjbotT4wM7eyaOpAyVl0J3h0pd1Gm+/lDlFmRunD?=
+ =?us-ascii?Q?ZGgKDzPDQWv6BlezK8MoSY+cZLDsFlRiEsosVVN1bpe+nnXo1vyY9gM040Rg?=
+ =?us-ascii?Q?IJTpRAct7zY59keEDOjTU9gmpwpsIM2wgxeR891ZHAx9x8uyhOBZdYT3zh6p?=
+ =?us-ascii?Q?qABqYI4poCUH++oVbKTLoo1g/vw+l5AgfL5OiX+nvQC72XAPCOAktM9ZkE1I?=
+ =?us-ascii?Q?1U905EnrRrkjQBWzl95oVZhlvFHaTl0oDKBPzOmDeWweSGGs60AL/j0P/Y++?=
+ =?us-ascii?Q?v/RyuvFxp+dGZX5Ej+cBJ8FjhEgPa7XiBfrpcabH33TeYFpWUsSUDMskOJg9?=
+ =?us-ascii?Q?oG6Oek8vCnFnpTfy1F2OO63AkLSPBYp/RM0HtWyI2x6Qga4dBIFlA25pEEIZ?=
+ =?us-ascii?Q?njOQkaO2pxUIlvAA0h3yrtcE91g+kz7YDMkRWsbDqp0E+GKc8b7vGrsDIuDy?=
+ =?us-ascii?Q?RKmdU6NTPQ81lnst1ano+FpbBJ81zeHYRZCXa3a4bci3i0rHnyGCEPK9C/2s?=
+ =?us-ascii?Q?qy1Ghy2zSwV/XxCXcbZEpJLgV6qISP515qfi2pWmF3tJh2ycT1AIBes2X1lG?=
+ =?us-ascii?Q?BbuWVt+jlaQ91Us8T+fGJ5Fqx53wNKK5EM3kAq1+Z/jK42aCDqNNGGWmt4RU?=
+ =?us-ascii?Q?wZRSmh4YhbtiSoUSaoaVccmKKnYm44p1uqhTWWdVkvRvCc/8F62JA4YzGa48?=
+ =?us-ascii?Q?JPVLSOttyWetZOk3I5R1K2vtQe9BStcrcQjX1HO4z1af7EUM9uFyaRsLtFGI?=
+ =?us-ascii?Q?NdcQv87ek7l27ePzsnL0BFmIC9YOQ9uzKM6nJDtiY53vspuHvgEA1Rx1ZioR?=
+ =?us-ascii?Q?PA4cqTILMi/GOT5c/db58Pp/9twgJ4Ginm7qNfl9KtzoxCs60LOe9HsuOwTV?=
+ =?us-ascii?Q?4dYFnmGrQmmfwuwh7CsbA8rpsS+c7XwvvXqvlV990ipr/FmweWP18zMIYshY?=
+ =?us-ascii?Q?IuyaOm1C2+h+VjMfZsyqRoGkLl/ilAyWOFQvxKbDXN5q4qZ0Hq6pT4zhVU3l?=
+ =?us-ascii?Q?IWg5s3oLhGXzO69+OFSO7MG6aAUOT8x2ZijkQ14K1UlIArXvgkNyp8nbFU0/?=
+ =?us-ascii?Q?4PFUp3g3zWtCmmvG5a1Hcaccn4Cg2sV0lnrc4PLZCY0qF4YpvA1+e9B1Zpl6?=
+ =?us-ascii?Q?Ojc1KKWhLWoFwb62QEyR82k7TmAyQn35bCFhWaXD3a6D863hGpIH4zK9o0a9?=
+ =?us-ascii?Q?E2pGtNgoXckqD5jMnC5igXi1x7/aOUNs1mEa7V+pV7kfzAUPZu4D4RHZujE+?=
+ =?us-ascii?Q?asofky3BsQRCZLXp4KT1+/NOnHeSuz9TM8fu3GG1QArztW3mTTxUaEIRtgEj?=
+ =?us-ascii?Q?wAspgSEzAHDOrvCqERz9u+pK/PfRBFRSVCsNUu0Z8lH0xnIQzB5q+0f94LW2?=
+ =?us-ascii?Q?Tess8I4biw+lvcsHcYkTLbnrfav9gPM7B6r4RoZdQPEJbnrCeFYyYOOMpiD1?=
+ =?us-ascii?Q?x5c55uXkON6oMhn3QxlQW5exCZKC6ZYVDRgVhtRvPIuwMaFwNvP1phfChLLt?=
+ =?us-ascii?Q?dqEFctzIHJOtvnDtXWXYQd6TwxFvrhKTpbqSaJSLncfVXElVzjr6UdX5fRqW?=
+ =?us-ascii?Q?K/QRkEAI1Gjd+sRh9vFM5TbX3pvmAc8=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a514d7c4-5bd0-4364-3a7d-08df2378c51a
-X-MS-Exchange-CrossTenant-AuthSource: AMCPR10MB992291.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: fb1e7e4d-0aa8-48a6-2f67-08df238f0eed
+X-MS-Exchange-CrossTenant-AuthSource: DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2026 07:09:32.0477
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2026 09:49:04.9681
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nhPQspfUzUzIHgJZuRNA9vowE+uqynUYXHZMrn6wYFAZ08r1d9mh0NXSJS6x3EaxLEE/tH72Bi1AS/SfPRe//A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DUZPR10MB8150
+X-MS-Exchange-CrossTenant-UserPrincipalName: RcUxcwSkNIV3+pf1AOmY12B2OttbPHOLXwOOZUoALErHJd66cYdHCXbC5J9zLcz0Ye2ihl+oZ4jM90HTILWnUvkOhjN/h5gmEYKA9nGIttE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB7641
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 06 Oct 2026 07:09:47 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24431
+ <cip-dev@lists.cip-project.org>; Tue, 06 Oct 2026 09:49:13 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24432
 
-On 06.10.26 05:32, Badrikesh Prusty wrote:
-> SWUpdate 2023.12 on bookworm and bullseye requires liblua5.4-dev, but
-> the roundrobin handler was being installed to the Lua 5.3 directory,
-> causing the handler to not be found at runtime.
-> 
-> Update SWUPDATE_LUA_VERSION to 5.4 for both bookworm and bullseye to
-> match the Lua version used by SWUpdate 2023.12 on these distributions.
-> 
-> This fixes the error:
->   feature 'roundrobin' required for image in sw-description is absent!
-> 
-> Fixes: 902ad326 ("swupdate-handler-roundrobin: Keep default lua version as 5.5")
-> Signed-off-by: Badrikesh Prusty <badrikesh.prusty@siemens.com>
-> ---
->  .../swupdate-handler-roundrobin_0.1.bb                        | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb b/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb
-> index 6e923e4..965e0f5 100644
-> --- a/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb
-> +++ b/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb
-> @@ -28,8 +28,8 @@ SRC_URI += "${@('file://' + d.getVar('SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG')) if
->  
->  SWUPDATE_LUA_VERSION = "5.5"
->  SWUPDATE_LUA_VERSION:trixie = "5.4"
-> -SWUPDATE_LUA_VERSION:bookworm = "5.3"
-> -SWUPDATE_LUA_VERSION:bullseye = "5.3"
-> +SWUPDATE_LUA_VERSION:bookworm = "5.4"
-> +SWUPDATE_LUA_VERSION:bullseye = "5.4"
->  SWUPDATE_LUA_VERSION:buster = "5.3"
->  
->  do_install[cleandirs] = "${D}/etc \
 
-Thanks for identifying this. Did you also check if buster is still fine?
 
-Jan
+On 10/2/26 5:10 PM, Moessbauer, Felix (FT RPD CPC OES-DE) wrote:
+> On Fri, 2026-10-02 at 13:18 +0200, Quirin Gylstorff wrote:
+>> INITRD_CMDLINE_STYLE selects the kernel command line dialect for
+>> verity. The default "initramfs-tools" keeps cip.verity_root_options=3D.
+>> "dracut" emits systemd's native roothash=3D and
+>> systemd.verity_root_options=3D, with the data and hash device resolved a=
+t
+>> runtime by the cip-verity dracut module (/dev/cip/verity-data), plus
+>> INITRD_EMERGENCY_CMDLINE (default "rd.shell=3D0 rd.emergency=3Dreboot"),=
+ so
+>> that a failed boot reboots and EFI Boot Guard can roll back.
+>>
+>> Also drop the LABEL=3Dvar entry from the generated fstab. /var is mounte=
+d
+>> by the initramfs (overlay and crypt hooks); the additional fstab entry
+>> makes systemd manage a second var.mount for the same filesystem.
+>>
+>> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>> ---
+>>  =C2=A0classes-recipe/read-only-rootfs.bbclass=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 |=C2=A0 6 +++-
+>>  =C2=A0.../wic/plugins/source/efibootguard-boot.py=C2=A0=C2=A0 | 33 ++++=
++++++++++++++--
+>>  =C2=A02 files changed, 36 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/classes-recipe/read-only-rootfs.bbclass b/classes-recipe/re=
+ad-only-rootfs.bbclass
+>> index 70152de2..179dcb98 100644
+>> --- a/classes-recipe/read-only-rootfs.bbclass
+>> +++ b/classes-recipe/read-only-rootfs.bbclass
+>> @@ -17,6 +17,11 @@ IMAGE_INITRD =3D "${INITRAMFS_RECIPE}"
+>>  =20
+>>  =C2=A0do_image_wic[depends] +=3D "${INITRAMFS_RECIPE}:do_build"
+>>  =20
+>> +INITRD_CMDLINE_STYLE ?=3D "cip-initramfs"
+>> +
+>> +INITRD_EMERGENCY_CMDLINE ?=3D "rd.shell=3D0 rd.emergency=3Dreboot"
+>> +WICVARS +=3D "INITRD_CMDLINE_STYLE INITRD_EMERGENCY_CMDLINE RO_ROOTFS_T=
+YPE"
+>> +
+>>  =C2=A0WIC_HOME_PARTITION =3D ""
+>>  =C2=A0WIC_HOME_PARTITION:separate-home-part =3D "part /home --source ro=
+otfs --change-directory=3Dhome --fstype=3Dext4 --label home --align 1024=C2=
+=A0 --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid c07d5e8f=
+-3448-46dc-9c0f-58904f369524"
+>>  =20
+>> @@ -76,7 +81,6 @@ image_configure_fstab() {
+>>  =C2=A0=C2=A0=C2=A0=C2=A0 run_privileged tee '${IMAGE_ROOTFS}/etc/fstab'=
+ << EOF
+>>  =C2=A0# Begin /etc/fstab
+>>  =C2=A0/dev/root	/		auto		defaults,ro			0	0
+>> -LABEL=3Dvar	/var		auto		defaults			0	0
+>>  =C2=A0proc		/proc		proc		nosuid,noexec,nodev		0	0
+>>  =C2=A0sysfs		/sys		sysfs		nosuid,noexec,nodev		0	0
+>>  =C2=A0devpts		/dev/pts	devpts		gid=3D5,mode=3D620			0	0
+>> diff --git a/scripts/lib/wic/plugins/source/efibootguard-boot.py b/scrip=
+ts/lib/wic/plugins/source/efibootguard-boot.py
+>> index ca97d7d7..f6d16310 100644
+>> --- a/scripts/lib/wic/plugins/source/efibootguard-boot.py
+>> +++ b/scripts/lib/wic/plugins/source/efibootguard-boot.py
+>> @@ -36,6 +36,7 @@ import logging
+>>  =20
+>>  =C2=A0msger =3D logging.getLogger('wic')
+>>  =20
+>> +from wic import WicError
+>>  =C2=A0from wic.pluginbase import SourcePlugin
+>>  =C2=A0from wic.misc import exec_cmd, get_bitbake_var, BOOTDD_EXTRA_SPAC=
+E
+>>  =20
+>> @@ -91,8 +92,11 @@ class EfibootguardBootPlugin(SourcePlugin):
+>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cmdline =3D bootloader=
+.append or ''
+>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 # the verity cmdline f=
+ormat is identical to systemd.verity_root_options
+>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if source_params.get("=
+verity_root") =3D=3D 'y':
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cmdl=
+ine +=3D " cip.verity_root_options=3Dpanic-on-corruption,%s" \
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 % cls._get_verity_opts()
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if g=
+et_bitbake_var("INITRD_CMDLINE_STYLE") =3D=3D "systemd":
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 cmdline +=3D cls._get_verity_cmdline_dracut()
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 else=
+:
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 cmdline +=3D " cip.verity_root_options=3Dpanic-on-cor=
+ruption,%s" \
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 % cls._get_verity_opts()
+>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if source_params.get("=
+abrootfs_root") =3D=3D 'y':
+>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 cmdline +=3D " cip.abrootfs_root_options=3D%s" \
+>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 % cls._get_abrootfs_opts()
+>> @@ -188,6 +192,31 @@ class EfibootguardBootPlugin(SourcePlugin):
+>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 cmdline.append(f'{k}=3D{v}')
+>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ",".join(cmdlin=
+e)
+>>  =20
+>> +=C2=A0=C2=A0=C2=A0 @classmethod
+>> +=C2=A0=C2=A0=C2=A0 def _get_verity_cmdline_dracut(cls):
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 """Emit systemd's native ver=
+ity arguments."""
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 opts =3D cls._get_verity_opt=
+s().split(',')
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 root_hash =3D None
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rest =3D []
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for opt in opts:
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if o=
+pt.startswith('hash=3D'):
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 root_hash =3D opt[len('hash=3D'):]
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 else=
+:
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 rest.append(opt)
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if not root_hash:
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rais=
+e WicError("efibootguard-boot: no root hash found in the "
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 "verity environment file")
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rootfstype =3D get_bitbake_v=
+ar("RO_ROOTFS_TYPE") or "squashfs"
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 emergency =3D get_bitbake_va=
+r("INITRD_EMERGENCY_CMDLINE")
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if emergency is None:
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 emer=
+gency =3D "rd.shell=3D0 rd.emergency=3Dreboot"
+>=20
+> That means in case the variable is set but empty, nothing is added. As
+> this is security critical, we should at least issue a warning if these
+> values are different (we should also check the parts provided in the
+> wic script).
 
--- 
-Siemens AG, Foundational Technologies
-Linux Expert Center
+Which is a valid case for debugging so I will add a warning.
+Quirin
+>=20
+> Felix
+>=20
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return (" roothash=3D%s"
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 " systemd.verity_root_options=3Dpanic-on-corruption,%=
+s"
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 " systemd.verity_root_data=3D/dev/cip/verity-data"
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 " systemd.verity_root_hash=3D/dev/cip/verity-data"
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 " root=3D/dev/mapper/root rootfstype=3D%s ro %s"
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 % (root_hash, ",".join(rest), rootfstype, emergency))
+>> +
+>>  =C2=A0=C2=A0=C2=A0=C2=A0 @classmethod
+>>  =C2=A0=C2=A0=C2=A0=C2=A0 def _get_abrootfs_opts(cls):
+>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 abrootfs_sd_keys =3D [=
+"target-image-uuid"]
+>> --
+>> 2.55.0
+
 
