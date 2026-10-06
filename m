@@ -2,53 +2,53 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B421CA5FED
-	for <webhook@archiver.kernel.org>; Tue,  6 Oct 2026 09:51:43 +0000 (UTC)
-Received: from AM0PR02CU008.outbound.protection.outlook.com (AM0PR02CU008.outbound.protection.outlook.com [52.101.72.46])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.41795.1791280302136076076
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38F2ACA5FED
+	for <webhook@archiver.kernel.org>; Tue,  6 Oct 2026 10:00:33 +0000 (UTC)
+Received: from AS8PR04CU009.outbound.protection.outlook.com (AS8PR04CU009.outbound.protection.outlook.com [52.101.70.54])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.41896.1791280826616796782
  for <cip-dev@lists.cip-project.org>;
- Tue, 06 Oct 2026 02:51:42 -0700
+ Tue, 06 Oct 2026 03:00:27 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=l9QspY6C;
- spf=pass (domain: siemens.com, ip: 52.101.72.46, mailfrom: quirin.gylstorff@siemens.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=jQgkYbfH;
+ spf=pass (domain: siemens.com, ip: 52.101.70.54, mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ixb2XtovHT+FjFwT2KavNFMEPsybMoTLDsoXAMPKRtY5a9kY25KCTNXkontA7NrBC4MOFylBm6TOk6yHGP/8fr1F05zD4FqR3oDi9fqrhe0h1KuV+Q2VYq7oZgKPs13tgOtgZbw+cM06oIkd9sr84sU3MGOUKFNNabvaEoLVG+ilJCTo89CqdDxn1ZK9xDtJQh8rh/h9UP1N2CcBerszEROpfXeo2jxRDy8FAi0JVV6FWx2GuBDQPjg21h03hQBpOMWYEhpi35Lcl3Pj44Tls2Dt08Am0x7La/aRE6MDexcdsUgaiPSRO9doFfrvN6oCi3HFTDL69MnvQcERa+rSpg==
+ b=jk2yWskCK8ACgew02TZ4nGT2Xw4FfJ69tZ7TQTxhbPEzFERIE2/b+2867xdk0XHL4JI9jKzzcLRbm5Kab1zqRGFPUl0rN8VOe9GZ4xKJFz2Kkp90/anjoA8+QgJ0wUycaDsdWysf2oJ1UlsNmNjIQj2kGChc91NB9kLe6qvYnIxwv/kUUUsllvtIkr2aBj7OEj3L12qzO6qClR86Q9RMkA7zL3h7O+N3C+3YMUKootd6vDMTqrx1ab2y4xjvLmI3Gphnzr5CI2iEXpiSKxuILZOI97ISR6zgzqe0dGGJGrUQbyz1ohwd+nztVbJ5vPyvRFGtbFa4CkhR1C/J5mP1Dw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=x9Esp0iCyrn5aSrD5TkMbPWr1sjzVKd3r0C/7In5iAs=;
- b=POfWnpe+Y9cXf2iHvcU38B5npdeiYpiavdmIms0cT2Lrg+z6rgabFmYL/57dZQ3oC92KtxvObFLdb8G4TbEAjYjlTtoitzE473+lO+t5JISJvifglz6VoThN2CCgSLiPYLzh2KZYlDB+8DLYlfQzfF/P3tw7NJdZ8uMYynvzxpnIvXmrrFxXOOp5feHpShIcVmNy7xOS0pHMvc20Vt1QNVDPTKHmjnFfNPTnwOeFAdpipmLMxU4pRyLMo9T1YjGcEXmYD4iqV1lLXcRNskstxSuwUIS9k0DzRRQXM2z6dOccXGIW/0w+5Hat94UdkVNIDQWq27AoHFh66S3U1B4d9w==
+ bh=vt0IbSyt8JRCSYHGxjiNSFjCR50RCH6PwQuM8C7yrw0=;
+ b=cekEfoasNPwrE3eOZ2SYhG+HjCee79FRhQB9FIIeACaN/4WmGsqg4kK8e+kXY9Rky9kiYEzQ3/8cg8f9vUy46j6CDeybaosLlEiIyI8xxg4mrfySX4FXwFZ1yuxkqTyKWg0c6X5kfRyOgkhKncjxqph6CTM0AEan1usvMESBrdMr2gc3+lic2V/s8AXjuSPETv0IYLZC3VYHiCJyOXYzCTZA5GdfLgYgX/vSh4Ovox3UnzYdfyDHczDti9S08Afq7YHwe5OiHxTn+atSeKvINKgzr1fiqwuQyYKRPsBh/Yw033SP+fZPr+TH8Ic7rep2WCsEy4UcowT5ajkv2sOx4g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=x9Esp0iCyrn5aSrD5TkMbPWr1sjzVKd3r0C/7In5iAs=;
- b=l9QspY6CHiTPSOgrVG7HxJryw7DMJdMEkiBuTxtvcNafwWpDnsTl3AG5JK71XtfKHO0aZ41j2XO2NGvYHue86+YDm37bHwCQDLqJvMEZcDKhlMk06SbNj8pzzLNjMqARHOUyUqFN9ICZ3mRWjWQEFSq8tK++KBKtVpiO4Tlrl8qBMxzDn7gq6stZTb4KGy/JleIH/7HW/5Lxy3k3jnUjxPTnm4LQ6J4cSK6ZVZEyBWC2q0iyCeuhxM7th+RVQEsgaMaiCPv3q36fyk60jJvch1KEs8x09kTH1u5YFSZ9NZi8UGnPoEvywnbfAI2CLgbdmiaNnxEasiZJjehf86I9IA==
+ bh=vt0IbSyt8JRCSYHGxjiNSFjCR50RCH6PwQuM8C7yrw0=;
+ b=jQgkYbfH0ptbHHX9coKJuKYB1oLO5sOmqUQmhQvNJzBGWTktAX9c2rDMpvqT1bQDvrlVFfCC9w4Inu4x2izDPX3kXYnBFmWEi8tcCBxaHjos6/SlMW2bKE30kQH5nAA/UTmYGNIrf/Zalx1zOPCw1yb07NnaPTDVIeKKVe37cyVkxXx9lr3NctMXfnFdHFbujNwg429yKBFF+qytbP3xJdGl1jgwENUMMInazEwSyzQuOs8adX+D652FDYjKb1lo9gQK6jqFhvN656zW8MQZeJ2AfdNuJjrVtTRzDGnu1BFmO/UvN8WNC4ZaGiGGf2u3ZXwV9oUkAW8OyCbWDh88vg==
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:113::12)
- by AS8PR10MB7641.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:636::15) with
+ by AM7PR10MB3334.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:10b::20) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.472.20; Tue, 6 Oct
- 2026 09:51:37 +0000
+ 2026 10:00:18 +0000
 Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::ae26:d131:7cff:4001]) by DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::ae26:d131:7cff:4001%3]) with mapi id 15.21.0472.016; Tue, 6 Oct 2026
- 09:51:37 +0000
-Message-ID: <956fd945-0bf8-412c-bd6e-52546d446871@siemens.com>
-Date: Tue, 6 Oct 2026 11:51:36 +0200
+ 10:00:18 +0000
+Message-ID: <1f91793f-d41d-4113-8bba-54c53741df47@siemens.com>
+Date: Tue, 6 Oct 2026 12:00:16 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [isar-cip-core][RFC 08/11] cip-core-initramfs-dracut: add dracut
- initramfs
+Subject: Re: [isar-cip-core][RFC 09/11] watchdog: use the rootfs systemd
+ watchdog timeout in the dracut initrd
 To: "Moessbauer, Felix (FT RPD CPC OES-DE)" <felix.moessbauer@siemens.com>,
  "Kiszka, Jan (FT RPD CPC)" <jan.kiszka@siemens.com>,
  "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
  "Hombourger, Cedric (FT FDS CES LX)" <cedric.hombourger@siemens.com>
 References: <20261002111938.3600786-1-quirin.gylstorff@siemens.com>
- <20261002111938.3600786-9-quirin.gylstorff@siemens.com>
- <406608c4c1988ae22f0f1a5561a80b3d588da250.camel@siemens.com>
+ <20261002111938.3600786-10-quirin.gylstorff@siemens.com>
+ <dada54a5507157cbb8971fbea78257ff3de1dfce.camel@siemens.com>
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 Content-Language: en-US
 Autocrypt: addr=quirin.gylstorff@siemens.com; keydata=
@@ -95,223 +95,215 @@ Autocrypt: addr=quirin.gylstorff@siemens.com; keydata=
  qIxmFqiZiwfFB91OCCqRFtm2LcfwR1fLrUtSrhmENjdBhZljfJKjxAfFOWXngfT10Sin9h20
  4A7NrVMzatAJLl79L0PdJIVpGUDQHU9K7rIs2MoQKzmAvyUSJB4sAChft5wz7JbvFKqY2fW4
  Z2NBPBZUysw=
-In-Reply-To: <406608c4c1988ae22f0f1a5561a80b3d588da250.camel@siemens.com>
+In-Reply-To: <dada54a5507157cbb8971fbea78257ff3de1dfce.camel@siemens.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: VIVP296CA0012.AUTP296.PROD.OUTLOOK.COM
- (2603:10a6:800:357::16) To DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: VIVP296CA0065.AUTP296.PROD.OUTLOOK.COM
+ (2603:10a6:800:35a::17) To DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:10:113::12)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB8PR10MB3178:EE_|AS8PR10MB7641:EE_
-X-MS-Office365-Filtering-Correlation-Id: 46c54670-2fac-4a64-5a47-08df238f69fd
+X-MS-TrafficTypeDiagnostic: DB8PR10MB3178:EE_|AM7PR10MB3334:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3cc21173-1a35-4164-b582-08df2390a00a
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|23010399003|1800799024|366016|376014|18002099003|55112099003|22082099003|4143699003|6133799003|10067099003|3023799007|56012099006|11063799006;
+	BCL:0;ARA:13230040|23010399003|1800799024|376014|366016|10067099003|11063799006|56012099006|4143699003|3023799007|6133799003|22082099003|18002099003|55112099003;
 X-Microsoft-Antispam-Message-Info: 
-	HAgWmi7gWOCClOzGvlVDP6MznOns5ylLA4zVHr7A5mqi4cN2llpbNysxkm5jR2TdMs6jPpKeLKtrUIzEnc6ddmA88pX6bDR8XQEDEqZNhb92MpABtUS4pQuYkLWUPc4yiCd6z2ycrzrgrto1Mz6DuU2bFs+WuC3kK+AibHVk6Kr7C5txQacINVxAXwtSSMHDt6iGqzI+jahOpm3RvBegYUVkYiXfkuI0PpRREmY7MzZUFUo/f6BXQ0n+KBogeV140+LNlLygOtz+BvuTyi/7RiQhWtEQjgAmVAO+Wnuh7cYmo+n5CpLZEDhBZ7neSloXJ6nRsgMDXsFTzAF1dQGTHFOcf8HcxZhZrPG3b3rZFVJgGfAcrS0z6dwwVhyvJVdF/C9dks3zP88VRHv2UAajWlW5lvxTWRhAFK2D2u1z6xpGdCIKfJdIIScvRkgMDQy5teMZAeIKEX8zrlGaq4ZCmZoxku4ENqgHb4tFlin1DUpOksWx//JgpjkWaZkppCy1H5VpA/kDLvJmll8SP2HriOaS2aBt4cAU0LvJnVblfpBxka7MxgG6sH9Gg7ZAyg8gAJU175jWU7QzGxxOO6aEGxSay/OXWmr31q/QHOPMDCZhXQ7eIgUYIENmwk0VN3IAcScvZFH1d2IK3Pab6zkuAWZMJQ179uJQRJ5F+RBzWwQ=
+	0RXktqIIXmkuy69oEb37R4eoJMxAlJs8iKROVmbotS8bl9FBiOHTgFzFBnVNWYJ7TKZSjs3P0Y8mSApbCIEbb7NPO+p1QrY5n6GoBPYIUp/PVIMLJSEq+9Ax8q1Ig4PqXHxOXkxHqYlHZD4627Og7wEkxxr9pC6O+npDcVTKGp8gGy525w2u/8KQ+hVvEDexjgje3GqjcVlAvSYllhTzKChjxkR3PZd5PJPYnsx/tEKl70Vf3H2WBX0a2M5srDKGotM8129kylteEqkHs7Pj/vS9FPHkOu/YAPei7XNu8nQzqwjcdJVeVJI/d9/33sHDY1nYrO9wKkqM/S3/MWeParffBLoLwDAa2E1NrfGQCzBbW8Sd1E8h2VqUoDJj3ffFspFFUuXKDLVxnNonOSZYl6AzBnstaHALBSK4dIeA0J/5SPjD7LOoVpvWlGnOd7Kyh5o6jbyTbTyv4M6Fyvh1bHndKVPvIxTTAmGGN+aVbnc17zavyUEbcIv2RuJPwtAQwYGzehJeD16uu4uFHr005yhZX+c9iCk735AF5ivlN3oIzKs2F/aA+UYqQEuE5Fb1ceaaY8R6HSG+H6AAZ730GZu3FeWSiVszljb12KYKFWolklV5X+gDV/4xZtbdbXkscjW8s9a4mfgayRAhep6rgMp/VGk2Pi+mZ1FkwdEx450=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(366016)(376014)(18002099003)(55112099003)(22082099003)(4143699003)(6133799003)(10067099003)(3023799007)(56012099006)(11063799006);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(376014)(366016)(10067099003)(11063799006)(56012099006)(4143699003)(3023799007)(6133799003)(22082099003)(18002099003)(55112099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?4zgrOD/cqfznfZ6IEc4xYPEK8e1jaxTpK6b765xcjlXqe1Swj9O7AEXqlnsI?=
- =?us-ascii?Q?T5FpbwH9OGXw4WDsQcerBhyBp2Fjs8V/sH8zUnAsVdrDUOldqI8LRIb8u2jQ?=
- =?us-ascii?Q?DjYZTAegXM7Ho/IrpB6VSMWTYwQfWgyb+X/P5yvmzn50Wr5cIw/7D9q3Fr6q?=
- =?us-ascii?Q?hXn7PuQnDq+YMWo7a5yqclk/1d9IPe1e0yetcm7TwRYuwfPIWDV1td7I1cNx?=
- =?us-ascii?Q?RwW3hlYqi3vN1uuVZQ2YFAhv49sRMWpe0WUj5DuJGZqfio6gQVlZe3oe+uKT?=
- =?us-ascii?Q?E7js7BEGUKf2Ta6kCIkMQNh1g+hkAdp4/4M2o9OyhEbNpSeZDsID5zDvAEtV?=
- =?us-ascii?Q?38Sc8zSOvvkO5XKKMmCLm9OMSzVLpeAEL9Wx6cck2KtS7p9i9bURDXuw2n81?=
- =?us-ascii?Q?vzkS3/lpaCgihJ5Po/L1k+xAZzEcnsxWp1qUNnHfBVZ+CgtPVmDFoFKzoZOM?=
- =?us-ascii?Q?GFtn9m8fj8c5aZ0JtE3SoOZ6S1vN2h1lXFeHUXtiwNDY5bv9VC4spcc8UOcG?=
- =?us-ascii?Q?oO2OGby7NbVsbtfYKotEdBWSs4dPyidoneXDHb/x0D+uHT5tzaohvJkExYId?=
- =?us-ascii?Q?MY1f79qp89JeCT9qqjA+IMAVykDE53FFG5O4SBuyBNnO5K0ZMDZa+tboAd/Z?=
- =?us-ascii?Q?ucEnYOo230oqIC4+P3DhBtZ0BqqvQRSotJFBbzcxdVE/O+tDHhBWt/ISFR58?=
- =?us-ascii?Q?7BiAnU4R6vgxsJ4b7yPxhH4Ckinfeexw0D1zALXvfe3UwI45diM/+tknEBdV?=
- =?us-ascii?Q?wYbr8lHTViFqMIzpiEVOkys7lu0bmLlvgUJx0mciVfi+dYwGaL/whFBoiZ9p?=
- =?us-ascii?Q?0jFXilJQTob1FQ9LyRMH16Saxzuq1shZyCVaZ2dzcDrhvveYH4G8dmchxLXJ?=
- =?us-ascii?Q?I0Fdptwr3R2LXB1p0JHxRxuCbF5rQo5jFAj0Y+GcsI7MVzL8NP7er9iEO0l8?=
- =?us-ascii?Q?m64CfSoe3qNt1kkvL4AdwKwc3sKoKMY0yV7p3AQQu3z4OCWXbe/LhLQVApx9?=
- =?us-ascii?Q?BXZRmIvFgZtjVKL5Or6KeI77kyB0Ach5SqENjFAiFCh0C+iL7DbIlbPo8cb4?=
- =?us-ascii?Q?5qCM8iZtXkHyvaVnDcIkhKXU92pLqvZ2To0hg+3CNSAkHWMOx+3dKiUtvmtj?=
- =?us-ascii?Q?RDUFWqog72UyiEZqjFTwxgXJHK1Qk6b8gWaurKLGCykfGn2LAqoD+FniG2WF?=
- =?us-ascii?Q?npFdPkGpSF1D3RB80ScN5I7ZIBTwpdYXs4olpA2V15UQNHdqPsAfAIMbUCl0?=
- =?us-ascii?Q?1aONhTzTDyKsv/TAa9tQY5fCcNBAmTNo2t1DDYLgklyR0mTv7frpY8Kn7cDC?=
- =?us-ascii?Q?vOezLpUs8Pxyvw3QVuLdKO284/IMWrwPHYCU1oISV/x/B8kTM940/FdPZPTb?=
- =?us-ascii?Q?qJBoSuAtjBqiIm1xUZQGLBLejBm4sgrx8wRDUD9IPxRvkfmwoRiYC9TCCSLu?=
- =?us-ascii?Q?9OdnIrY0oNOiON6eIG2ZqQkMcq9hTi8KdBTSf3X7CwHMUBdiI+bLzxrlN5e1?=
- =?us-ascii?Q?ba9JhKoWubzmJSg3oGX/xlA86zSh7ekp+jHnAptVnkCoixQu77wZ6remqnGh?=
- =?us-ascii?Q?RFnKSE9zu09Tu7VONtiPo5QBC1eCehj82PQTg/mndHbWOg6hq2ZOuCJaSVcb?=
- =?us-ascii?Q?bfjtEgR/Wtj+MlllpKfvdYR3sIZu/ekavzNWepjPDXxHwnWX0f6h4yKQVZK9?=
- =?us-ascii?Q?KzMg/rmfjdFKP1fCcKDwFQHWArMvAaF+xF5fMI/1cgRSaaU0VIyDKeJD2Q8S?=
- =?us-ascii?Q?xSox+wq0rmHREWTCSDZqroCuCuBtgAU=3D?=
+	=?us-ascii?Q?PgfGnjtcQg4yNftIggE/hbzLq1blrR53RGrbxyCkz2dvXZ/4cnM3TgZltSCy?=
+ =?us-ascii?Q?s8xDR0miGAAOF+ErI+UWlhfNzCJXrIQ4dPP50zsk1sGTqwGoX3T6B1dxC1A7?=
+ =?us-ascii?Q?5//xGGZm5n9pa1gsg4a2X57KfTthsnovzm/GSJiNBF1W7zbA7yavEJAr0bLR?=
+ =?us-ascii?Q?iDP9i3HoKAQdOJ51k7bPZmCThKTKxTzaxq6Ul4QIe0sgucp6KbBQROSGsocf?=
+ =?us-ascii?Q?CXZP/ggOqIB15J4VGmuqY3Mmd2ybCyFpgxhBNwrGoFqL16JbC0+GijhPdg+D?=
+ =?us-ascii?Q?1FRu/sfI9ib04WciNI7Dj2dn0cp2eHHtG9Rnufn5WiXN9xZKL1EmGUWP2YMQ?=
+ =?us-ascii?Q?6HvRUePZKSCjgdCKLInjv5UN+8Mtot4Wr1l7Y3iI3IozE9LgU2Xz8Fa9OHfP?=
+ =?us-ascii?Q?UeH7w3KJJhcoqstR70kx7pTtoDJKFmMgL4Kmio8RWXORNJEYWDHI9sAr5N17?=
+ =?us-ascii?Q?zvrPjJHT4k0pk2NK3S6TaXmCOvUGAVvWBSATUQRWwVGq9or2tDAZwTriJjBR?=
+ =?us-ascii?Q?KsvBLUQIlvovgf8iBe9FGYJQ3jIlfT/wtVBSLi0LG61mVm7XIhL1yhmdkoPf?=
+ =?us-ascii?Q?zLOtbFdVJ/cgqqOHAp+HCMIEDBtCjjc1K/1+2RsWQ0zEn5ZX7HcgTNY8j3lG?=
+ =?us-ascii?Q?TE+gA127pwB2qY53drGF1huquqHZw01SBmmMAjtK+CQPeH4GPsZX5WZ04H2b?=
+ =?us-ascii?Q?FGxQMMMuh3m2P+k7K3b2rQKfy0lx5Q2q93a4G5lDNP8gZVFQw45T1OxljSo5?=
+ =?us-ascii?Q?LlcHwDc3YB19jnHax1mA85b500xiQ8toYegYgrijVBlJwaJ5XuM7htlSuKVw?=
+ =?us-ascii?Q?QcXFkT+B3iHYZMuFcY0vL0sfNBea2B20UH4jbwBy5Lf0Br9wF2XqcP0yffF4?=
+ =?us-ascii?Q?ke6rWRjjGASWIvszGwCshHJwgzbMksnadoQKjpOxcVZEM7mIvXYeGkFQwulX?=
+ =?us-ascii?Q?BiV5pdEpalwXqb0g6dt2RdYmRx/qYwNz15KuvE0BV4o6H2qZL2SAvEwTXqUf?=
+ =?us-ascii?Q?Dyxw1bZZJ6n1HkZHqa4mAQgIUJaCOcBSinPDLSYXbVkyPwEzLUgjhnVA2tRU?=
+ =?us-ascii?Q?AT0GhqnjzLWIHDQUMk0u9p36MBlkYou4hlGl6cHMAhI0PkP5LhehwzDcPTWn?=
+ =?us-ascii?Q?SixLsddhOudvt0AogKFJ2aypLE7urwwXkOkOf0sPa1YJHA/sShLWbalxCzPg?=
+ =?us-ascii?Q?yNdY2bmYTKiPIeRPM8FJDy8DGQ9AYo/5JnKUTctCEGhtlzbyeNUUwFTl0UFf?=
+ =?us-ascii?Q?oRRN8sccKSE55EJt6knEGk3wopT47TF0xNoMzGwJuoWlYEuv9F9s6AxUh1o2?=
+ =?us-ascii?Q?Z481gant76xX7EBy4I8+xUsW5835sMRdtsxe5ywIoEPkbJffgGsOEy7a6Q8U?=
+ =?us-ascii?Q?KsXlmZ5iWfEg2XMDcaa7vLV5l3YSM1nLVQI3BljwrzQwvQNYv2QGiO0sD5dw?=
+ =?us-ascii?Q?m6jqECLFpPtNjUojo2MbYmbALJpHcjMnwRh+Lj8ek1dqCEqO6f8Zrbi0ufVR?=
+ =?us-ascii?Q?rj26G8nDE4qgci1ZUM8bvgPQz/TjS60j99ZNYbb4BvMrcspv4pXRE0kuOTQN?=
+ =?us-ascii?Q?7MDxKG5vYDKNSeilp4MeqS2/nopjaXaMQbZ1lTf8jM5qRxCtPv2x5fDVtR6t?=
+ =?us-ascii?Q?Bm1Eu2bKsUYXxLKKrW4d2RBt0gAgzy8oNqgYqOAsgwyyJ1jORnQHaquWG5Px?=
+ =?us-ascii?Q?MqmvVB48TDwqaZKj8xQEQKYxdM1jQnFA+72XcrgbyxjeUHITsO31czGbuwWV?=
+ =?us-ascii?Q?m0aFiVpSCKKLD3M/bvaqtYFtdQs7z4o=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 46c54670-2fac-4a64-5a47-08df238f69fd
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3cc21173-1a35-4164-b582-08df2390a00a
 X-MS-Exchange-CrossTenant-AuthSource: DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2026 09:51:37.6919
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2026 10:00:17.9978
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: i3I07Z5b04X1QO9de+wFvv0V+FCsEw7G1u67oHhvtfvPacIL5ffM7/OQiay3gEx5pKUMXJK9CYJCfAI4u7adnHcOuaJzfKQXbiRMPEitxak=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB7641
+X-MS-Exchange-CrossTenant-UserPrincipalName: ju9Qmo4/cCuKtYDm4XbvHFusRLr6ryPb9XHy2Z4HYrP3AFUnLd/scIbA6QFYTQD+v/1f72drCu+5ti98hAz5rsAaWpLW99Y1fDg1RUNgid4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR10MB3334
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 06 Oct 2026 09:51:43 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24433
+ <cip-dev@lists.cip-project.org>; Tue, 06 Oct 2026 10:00:33 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24434
 
 
 
-On 10/2/26 5:15 PM, Moessbauer, Felix (FT RPD CPC OES-DE) wrote:
+On 10/2/26 5:22 PM, Moessbauer, Felix (FT RPD CPC OES-DE) wrote:
 > On Fri, 2026-10-02 at 13:18 +0200, Quirin Gylstorff wrote:
->> Generates the initrd with dracut (--no-hostonly) on trixie. The overlay
->> module is always included; verity, crypt and factory-reset follow the
->> swupdate, encrypt-partitions and factory-reset overrides.
->>
->> kas/opt/dracut.yml selects the recipe and the dracut kernel command
->> line style.
+>> Introduce SYSTEMD_WATCHDOG_SEC for the rootfs systemd watchdog and use i=
+t
+>> as default for the cip-watchdog dracut module, so initrd and rootfs
+>> service the hardware watchdog with the same timeout.
 >>
 >> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 >> ---
 >>  =C2=A0conf/distro/cip-core-common.inc=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 3 ++
->>  =C2=A0kas/opt/dracut.yml=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
 =A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 17 ++++++++
->>  =C2=A0.../cip-core-initramfs-dracut.bb=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 41 +++++++++++++++++++
->>  =C2=A03 files changed, 61 insertions(+)
->>  =C2=A0create mode 100644 kas/opt/dracut.yml
->>  =C2=A0create mode 100644 recipes-initramfs/cip-core-initramfs-dracut/ci=
-p-core-initramfs-dracut.bb
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 3 +++
+>>  =C2=A0recipes-core/customizations/common.inc=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 | 7 ++++---
+>>  =C2=A0recipes-core/customizations/files/99-watchdog.conf=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 6 ------
+>>  =C2=A0recipes-core/customizations/files/99-watchdog.conf.tmpl=C2=A0=C2=
+=A0=C2=A0 | 6 ++++++
+>>  =C2=A0.../dracut-config-cip-watchdog_0.1.bb=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 | 2 +-
+>>  =C2=A05 files changed, 14 insertions(+), 10 deletions(-)
+>>  =C2=A0delete mode 100644 recipes-core/customizations/files/99-watchdog.=
+conf
+>>  =C2=A0create mode 100644 recipes-core/customizations/files/99-watchdog.=
+conf.tmpl
 >>
 >> diff --git a/conf/distro/cip-core-common.inc b/conf/distro/cip-core-comm=
 on.inc
->> index dbd65e3f..bbcea1da 100644
+>> index bbcea1da..db3fe1de 100644
 >> --- a/conf/distro/cip-core-common.inc
 >> +++ b/conf/distro/cip-core-common.inc
->> @@ -32,6 +32,9 @@ TEE_SUPPLICANT_IN_USERLAND ?=3D "0"
->>  =C2=A0PREFERRED_PROVIDER_factory-reset-helper ?=3D "factory-reset-helpe=
-r-file"
->>  =C2=A0PREFERRED_PROVIDER_factory-reset-helper:ftpm-stmm =3D "factory-re=
-set-helper-efi"
->>  =20
->> +# The dracut initramfs requires a verity rootfs and the systemd cmdline=
- style.
->> +INITRD_CMDLINE_STYLE ?=3D "${@'systemd' if d.getVar('INITRAMFS_RECIPE')=
- =3D=3D 'cip-core-initramfs-dracut' else 'cip-initramfs'}"
->> +RO_ROOTFS_VERITY ?=3D "${@'1' if d.getVar('INITRAMFS_RECIPE') =3D=3D 'c=
-ip-core-initramfs-dracut' else '0'}"
+>> @@ -37,6 +37,9 @@ INITRD_CMDLINE_STYLE ?=3D "${@'systemd' if d.getVar('I=
+NITRAMFS_RECIPE') =3D=3D 'cip-co
+>>  =C2=A0RO_ROOTFS_VERITY ?=3D "${@'1' if d.getVar('INITRAMFS_RECIPE') =3D=
+=3D 'cip-core-initramfs-dracut' else '0'}"
 >>  =C2=A0OVERRIDES .=3D "${@':ro-rootfs-verity' if bb.utils.to_boolean(d.g=
 etVar('RO_ROOTFS_VERITY')) else ''}"
 >>  =20
+>> +# Runtime watchdog timeout of systemd, in the rootfs and the dracut ini=
+trd.
+>> +SYSTEMD_WATCHDOG_SEC ?=3D "60"
+>=20
+> The actual watchdog timeout should be set on the kernel cmdline by the
+> ebg plugin (based on the WDOG_TIMEOUT value).
+
+We can do that as an alternative for setting it via the plugins.
+
+
+
+>=20
+>> +
 >>  =C2=A0# Watchdog to service by initramfs hooks during lengthy operation=
 s like
->> diff --git a/kas/opt/dracut.yml b/kas/opt/dracut.yml
+>>  =C2=A0# partition encryption or factory reset. In our integration, enab=
+ling
+>>  =C2=A0# fTPM/StMM implies a U-Boot-based firmware which may enable a wa=
+tchdog early.
+>> diff --git a/recipes-core/customizations/common.inc b/recipes-core/custo=
+mizations/common.inc
+>> index 0fd3d4f8..09f4c744 100644
+>> --- a/recipes-core/customizations/common.inc
+>> +++ b/recipes-core/customizations/common.inc
+>> @@ -19,14 +19,15 @@ SRC_URI =3D " \
+>>  =C2=A0=C2=A0=C2=A0=C2=A0 file://postinst.tmpl=C2=A0\
+>>  =C2=A0=C2=A0=C2=A0=C2=A0 file://ethernet=C2=A0\
+>>  =C2=A0=C2=A0=C2=A0=C2=A0 file://99-silent-printk.conf=C2=A0\
+>> -=C2=A0=C2=A0=C2=A0 file://99-watchdog.conf"
+>> +=C2=A0=C2=A0=C2=A0 file://99-watchdog.conf.tmpl"
+>>  =20
+>>  =C2=A0CUSTOM_HOSTNAME ??=3D "demo"
+>> +SYSTEMD_WATCHDOG_SEC ??=3D "60"
+>>  =C2=A0WIRELESS_FIRMWARE_PACKAGE ?=3D ""
+>>  =C2=A0INSTALL_WIRELESS_TOOLS ??=3D "0"
+>>  =20
+>> -TEMPLATE_FILES +=3D "postinst.tmpl"
+>> -TEMPLATE_VARS +=3D "CUSTOM_HOSTNAME"
+>> +TEMPLATE_FILES +=3D "postinst.tmpl 99-watchdog.conf.tmpl"
+>> +TEMPLATE_VARS +=3D "CUSTOM_HOSTNAME SYSTEMD_WATCHDOG_SEC"
+>>  =20
+>>  =C2=A0DEPENDS +=3D "sshd-regen-keys change-root-homedir"
+>>  =20
+>> diff --git a/recipes-core/customizations/files/99-watchdog.conf b/recipe=
+s-core/customizations/files/99-watchdog.conf
+>> deleted file mode 100644
+>> index 1f38c559..00000000
+>> --- a/recipes-core/customizations/files/99-watchdog.conf
+>> +++ /dev/null
+>> @@ -1,6 +0,0 @@
+>> -#
+>> -# SPDX-License-Identifier: MIT
+>> -#
+>> -[Manager]
+>> -RuntimeWatchdogSec=3D60s
+>> -ShutdownWatchdogSec=3D60s
+>> diff --git a/recipes-core/customizations/files/99-watchdog.conf.tmpl b/r=
+ecipes-core/customizations/files/99-watchdog.conf.tmpl
 >> new file mode 100644
->> index 00000000..969388cf
+>> index 00000000..3d75192f
 >> --- /dev/null
->> +++ b/kas/opt/dracut.yml
->> @@ -0,0 +1,17 @@
->> +#
->> +# CIP Core, generic profile
->> +#
->> +# Copyright (c) Siemens AG, 2026
->> +#
->> +# Authors:
->> +#=C2=A0 Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>> +++ b/recipes-core/customizations/files/99-watchdog.conf.tmpl
+>> @@ -0,0 +1,6 @@
 >> +#
 >> +# SPDX-License-Identifier: MIT
 >> +#
->> +
->> +header:
->> +=C2=A0 version: 14
->> +
->> +local_conf_header:
->> +=C2=A0 dracut-initrd: |
->> +=C2=A0=C2=A0=C2=A0 INITRAMFS_RECIPE =3D "cip-core-initramfs-dracut"
->> diff --git a/recipes-initramfs/cip-core-initramfs-dracut/cip-core-initra=
-mfs-dracut.bb b/recipes-initramfs/cip-core-initramfs-dracut/cip-core-initra=
-mfs-dracut.bb
->> new file mode 100644
->> index 00000000..8541574e
->> --- /dev/null
->> +++ b/recipes-initramfs/cip-core-initramfs-dracut/cip-core-initramfs-dra=
-cut.bb
->> @@ -0,0 +1,41 @@
->> +#
->> +# CIP Core, generic profile
->> +#
->> +# Copyright (c) Siemens AG, 2026
->> +#
->> +# Authors:
->> +#=C2=A0 Quirin Gylstorff <quirin.gylstorff@siemens.com>
->> +#
->> +# SPDX-License-Identifier: MIT
->> +
->> +inherit initramfs
->> +
->> +DESCRIPTION =3D "dracut-generated initramfs for cip-core"
->> +
->> +INITRAMFS_USE_DRACUT =3D "1"
->> +# dracut-config-* packages are skipped by module-name extraction, so th=
-e
->> +# modules they pull in are listed explicitly.
->> +INITRAMFS_INSTALL +=3D "dracut-config-cip-overlay \
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dracut-config-cip=
--verity \
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dracut-config-cip=
--watchdog"
->> +DRACUT_EXTRA_MODULES +=3D "cip-overlay cip-verity cip-watchdog"
->> +
->> +INITRAMFS_INSTALL:append:encrypt-partitions =3D " dracut-config-cip-cry=
-pt"
->> +DRACUT_EXTRA_MODULES:append:encrypt-partitions =3D " cip-crypt"
->> +
->> +INITRAMFS_INSTALL:append:factory-reset =3D " dracut-config-cip-factory-=
-reset"
->> +DRACUT_EXTRA_MODULES:append:factory-reset =3D " cip-factory-reset"
->> +
->> +# buster, bullseye and bookworm lack the dracut features needed here
->> +python () {
->> +=C2=A0=C2=A0=C2=A0 overrides =3D (d.getVar('OVERRIDES') or '').split(':=
-')
->> +=C2=A0=C2=A0=C2=A0 if any(s in overrides for s in ('buster', 'bullseye'=
-, 'bookworm')):
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 raise bb.parse.SkipRecipe(
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "cip=
--core-initramfs-dracut is only supported on trixie and later; "
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "use=
- initramfs-tools on other distributions.")
->> +}
->> +
->> +RO_ROOTFS_TYPE ??=3D "squashfs"
->> +DRACUT_EXTRA_DRIVERS +=3D "${RO_ROOTFS_TYPE}"
->> +
->> +ROOTFS_INITRAMFS_GENERATOR_CMDLINE:append =3D " --no-hostonly --no-host=
-only-cmdline --reproducible"
+>> +[Manager]
+>> +RuntimeWatchdogSec=3D${SYSTEMD_WATCHDOG_SEC}s
+>> +ShutdownWatchdogSec=3D${SYSTEMD_WATCHDOG_SEC}s
+>> diff --git a/recipes-initramfs/dracut-config-cip-watchdog/dracut-config-=
+cip-watchdog_0.1.bb b/recipes-initramfs/dracut-config-cip-watchdog/dracut-c=
+onfig-cip-watchdog_0.1.bb
+>> index 1fd1a87e..fdad94ee 100644
+>> --- a/recipes-initramfs/dracut-config-cip-watchdog/dracut-config-cip-wat=
+chdog_0.1.bb
+>> +++ b/recipes-initramfs/dracut-config-cip-watchdog/dracut-config-cip-wat=
+chdog_0.1.bb
+>> @@ -14,7 +14,7 @@ DESCRIPTION =3D "Build configuration for the cip-watch=
+dog dracut module"
+>>  =C2=A0DEBIAN_DEPENDS =3D "dracut-cip-watchdog"
+>>  =20
+>>  =C2=A0INITRAMFS_WATCHDOG_DEVICE ??=3D ""
+>> -INITRAMFS_WATCHDOG_SEC ??=3D "${@ int(d.getVar('WDOG_TIMEOUT') or 0) or=
+ 60}"
+>> +INITRAMFS_WATCHDOG_SEC ??=3D "${SYSTEMD_WATCHDOG_SEC}"
 >=20
-> The --reproducible flag is provided by isar. The others are just the
-> default if I read the dracut manpage correctly. In this case, the whole
-> line can be dropped.
->=20
-> Anyways, the --no-hostonly and --no-hostonly-cmdline parts should be
-> moved to isar if needed, as isar also provides the dracut-cross
-> support.
+> Why template this at all? Doesn't systemd.watchdog_sec=3D30 on the kernel
+> cmdline overwrite these settings globally?
 
-I am not sure about moving them to isar - there could be usecases for=20
-build host specific initrd.
-
+I tried to have the same interface as used for the initramfs recipe for=20
+compatibility with old builds.
 Quirin
 
 >=20
 > Felix
 >=20
+>>  =20
+>>  =C2=A0CONF_NAME =3D "cip-watchdog.conf"
+>>  =C2=A0CFG_VARS =3D "INITRAMFS_WATCHDOG_DEVICE INITRAMFS_WATCHDOG_SEC"
 >> --
 >> 2.55.0
 
