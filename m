@@ -1,78 +1,1252 @@
-Return-Path: <yoshitake.kobayashi.x25@mail.toshiba>
+Return-Path: <nobuhiro.iwamatsu.x90@mail.toshiba>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE959CC6B2D
-	for <webhook@archiver.kernel.org>; Thu, 15 Oct 2026 03:00:08 +0000 (UTC)
-Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.37550.1791258187070601731
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7271FCC6B2E
+	for <webhook@archiver.kernel.org>; Thu, 15 Oct 2026 04:23:09 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.135])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.32305.1792038182862551896
  for <cip-dev@lists.cip-project.org>;
- Mon, 05 Oct 2026 20:43:08 -0700
+ Wed, 14 Oct 2026 21:23:04 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=badrikesh.prusty@siemens.com header.s=fm1 header.b=CASn3bmZ;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-1328765-2026100603325864b0da199c00020749-ir4mph@rts-flowmailer.siemens.com)
-Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 2026100603325864b0da199c00020749
-        for <cip-dev@lists.cip-project.org>;
-        Tue, 06 Oct 2026 05:32:59 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=badrikesh.prusty@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=7nLPD+hQq0eIjxIlIQVkBrp2b4RHGXqTrwTeFKBbE+Y=;
- b=CASn3bmZGXQiY9C428vWUYfvk4KR0W9P891SSHZbpOmVO3MfnFdgEezJpz40OczXOvlgjP
- 0mEunqgYgks5mIsUsei2NbC75PsFb4PBxVwQRkgBPhMGsKnsxt0SAAVqxoHCoe0RZ3MCL5uU
- JI5mTmJ7ry0S/3oyl7ejk5FNt1+IQJJ90TZotSV+oU63OHr29X9DwNGP3MRMfymNhHsshOCq
- t0SW/1TUdOS5eUP18MXTd0SHc06gtN1j0ER1S++QG277O95VF8uRGr2hI7Z/9LVs8UcV5taQ
- V7GC3YR/4a0kfS5CavcLz4wyhXapERfE7CUw5PyWOholgaCarjUlrMGQ==;
-From: Badrikesh Prusty <badrikesh.prusty@siemens.com>
-To: cip-dev@lists.cip-project.org
-Cc: jan.kiszka@siemens.com,
-	Shivanand.Kunijadar@toshiba-tsip.com,
-	Badrikesh Prusty <badrikesh.prusty@siemens.com>
-Subject: [PATCH] swupdate-handler-roundrobin: Fix Lua version for bookworm and bullseye
-Date: Mon,  5 Oct 2026 23:32:42 -0400
-Message-ID: <20261006033242.301666-1-badrikesh.prusty@siemens.com>
+ dkim=pass header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.s=key2.smx header.b=l6sgoSAF;
+ spf=pass (domain: mail.toshiba, ip: 210.130.202.135, mailfrom: nobuhiro.iwamatsu.x90@mail.toshiba)
+DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=mail.toshiba;h=From:To:CC:
+	Subject:Date:Message-ID:Content-Type:Content-Transfer-Encoding:MIME-Version;
+	i=nobuhiro.iwamatsu.x90@mail.toshiba;s=key2.smx;t=1792038173;x=1793247773;bh=
+	+UEcIrt/VK+yNQDG2zAEqpe3UUE3d85OgApXTwri8ho=;b=l6sgoSAFQ8wgrMg0NYrs3FH4H+yJ/I
+	Nlrg0Y0LfMZ2X/vs7oOAqrKHJFRyxzmbE+1yeEAn16ppcp2j/zG1N7MJNPAcmRwuqQYpN6j9crRt5
+	scLiXowygxYcBdN+1ZzXweqhP/1chLY63HNP6FpH6WcEBGsrJpmVTaCdUDYlxvHYOWdbNkd01QpNy
+	mVmkkBVP5girMJ75GH9YlZUN8EYEG1wGgUdh43zpygMSzGUpW+FXCQWJzwyiknOF9RvTvPioagtDT
+	2G8b06PfeOJ2gOyjmF4/Tz6GVDmwJscHn57N96aH+0bLCIy9EQPCxaGxxGFNcutQl1AFAauU7nxS2
+	p4AA==;
+Received: by mo-csw.securemx.jp (mx-mo-csw1801) id 69F4MqLm3543214; Thu, 15 Oct 2026 13:22:53 +0900
+X-Iguazu-Qid: 2yAb15SCiFx6rfnfGQ
+X-Iguazu-QSIG: v=2; s=1; t=1792038171; q=2yAb15SCiFx6rfnfGQ; m=TsenQWOdPU19imgcXH31yZncS72XkC4D7QSQutgumv8=
+Received: from imx12-a.toshiba.co.jp (unknown [38.106.60.135])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	 id 4j4w0V6Jb2zyPQ; Thu, 15 Oct 2026 13:22:49 +0900 (JST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RxntoYvHFg6qnHZGERkOr1aJWHu8gfC8UwBfDyE9gqmeq7eEmpxiTdz8WfGN4YhhNGlp8Xnwth8O5zJJQFFu+PQQKyKvAU6HxS1Gfjm4KF1Hto2rbKkxjNLdApf5WDctSgTeFgDhUWtNKpAmiO0cIcKApV/YdPqWyogulJsK6XN640vhhz9HRUgPCc3Ix4lTS96b8wro++k8nzPn9NcYJUaMA+OSfzMb0cMFHRJauAI4TEtxnWa9MtmofgqqLLoUPGa3HCepnzE3r52FTTNG5iTHqlQ5COtOrOf+tc1QgTfVyyxH/wHhVAxMPt3kPAry4x4EVFkNeOohrckYqZwnyw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=l6w/FyuvDJNoefgbu8CmdRLB2sSFUUHCI2p6r9RJiC0=;
+ b=o1KlgkT9j7fWleVP1FQRm49bdynTXEnpElMEXaA0sourmie4hzKKszBZHaVHF9KToLbzY20Alkd9+LMuiGpp3BujzCkbpE9YnXnh+h/HOsGKU6STBmd4Z8TkgeKgQJWL/nWKtCI9SReYQ2buTGoUzQFuqYh6dxHtGp/4xEYZIXdgSOpTuN4odz29Eri8x1atv0jocDAsvJMblZoqvtxJlFG4TTAwQvzB5PrsjLrhjnNFXWTN3H4z5IRNu8YPuzI3CT13ff4k81qELabF59coL5AcIPVRnygpq2ljNKiItiASR0mTMUfP2+jC1OVi6ec8GIjbdv51gOZTmwQSmWoPcQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mail.toshiba; dmarc=pass action=none header.from=mail.toshiba;
+ dkim=pass header.d=mail.toshiba; arc=none
+From: <nobuhiro.iwamatsu.x90@mail.toshiba>
+To: <cip-dev@lists.cip-project.org>
+CC: <pavel@nabladev.com>, <masami.ichikawa@miraclelinux.com>, <uli@fpond.eu>,
+        <jan.kiszka@siemens.com>, <chris.paterson2@renesas.com>
+Subject: [ANNOUNCE] Release v5.10.271-cip78
+Thread-Topic: [ANNOUNCE] Release v5.10.271-cip78
+Thread-Index: Ad1cXNPgXmGiOmdcQsazKiKYj11NfA==
+Date: Thu, 15 Oct 2026 04:22:46 +0000
+X-TSB-HOP2: ON
+Message-ID: 
+ <TY7PR01MB148182F3A22CB873F274B3420CD9C2@TY7PR01MB14818.jpnprd01.prod.outlook.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mail.toshiba;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY7PR01MB14818:EE_|OS7PR01MB13668:EE_
+x-ms-office365-filtering-correlation-id: c77d5e81-d6eb-4d9c-c5b4-08df2a73f6e5
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|23010399003|1800799024|366016|376014|6133799003|10067099003|3023799007|18002099003|38070700021|11063799006|5023799004|261009223327099003|261009220027099003|261009221227099003|261009221727099003|261009223027099003|56012099006;
+x-microsoft-antispam-message-info: 
+ WWjS6xH7jLQDqIfh0BaiqhOV3XsquYAyOQrvD2yWDlNuf0XVmWcisVbyl+4WQnHZvxwIWq/jlZ+AOb2yLHpL0wLZdaNe2YaugJTMUkxyuPy1G6cc8Ulodk9lTEZo6Zp1yBNnIRX66YGxwBOnLOR0UBT2dg9jxD7nnXFIFoD5f/3gt3XGgvZd2aOOg22qcBUzJbEyLG3PavF+HK2sKSzyh+x7cN/2RS0riCtOnwqoAfiPxZK9+1XZShvHNF7+F8iNVw1sRZyMbECirQzlddxh52CbDPi1TOaDfhCJAIqAU5PbRkFNhbgiZkLvQnllJ3/2KmqQUhTxJ4aNXqPUkUsvrHTHFwJyeJtWX+qFNKstR2rT9Ne60VDb9C5XxSNSYymAtG+17q1f7zOHw6AkbA/lK9zyiGoYpDt6/77R/q1+KopG/Uzm2/STNd/4LJlqGZ3eQoxpUrT20gOmw0ri0zxa5UZUOXtINzDjswOP4U8/Xry0ThPFA2EkB1vigyn/fZh2q/4ckTncw1Yjh3RX8iZhXl4e9aGRzmyl05IKuwXkrOAfAkWJSRyL+8cot4DRTmvvLMflDj/BUKZMNT6+vIknZlv4/Cfk0Pup2mVQ3XL/2Rjut9+KQoa8REkCJ85Fa+N3EXKdd+yD1vpD4QjMHr24znkisXoQmta/FOJ+WrJ3zE5eCwKsD5z0ls8Wn4oQvaNV
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7PR01MB14818.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(366016)(376014)(6133799003)(10067099003)(3023799007)(18002099003)(38070700021)(11063799006)(5023799004)(261009223327099003)(261009220027099003)(261009221227099003)(261009221727099003)(261009223027099003)(56012099006);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?ZmIrQU5rMk1ZRS9FMkVrUnFiaS9OdjhXQVFqWWtSakcyNU9YMWZoWENP?=
+ =?iso-2022-jp?B?WDR5OUtIcklNSDd0NlJWQTRJREZYdEkzVURtM25KenZzdnRFcStJRGU1?=
+ =?iso-2022-jp?B?cmhPSm91eWNCVXd6bHlIcEQ0cTNNMzNQek50YUhlUVA0aFdJY3Y2NWZ3?=
+ =?iso-2022-jp?B?Z1dueCt1bXJCMGFkMnQ1ZFd2My9sMTlmUjA5NmVkNHUrKzJhcm12a0Uw?=
+ =?iso-2022-jp?B?VGI1N004WDdxbFB6L05nYzJCbjJWVU95L3YxK0svZ1JqbmpZVlNPMmxs?=
+ =?iso-2022-jp?B?RkxUekZjcThzWk5KUkkxdlpoYjhrdjBwdXVVWkYwZ2JUdE1XbFdnRHdZ?=
+ =?iso-2022-jp?B?dSs0M0s1czkrRDJJdEUvc3Q5S1M2dzdNU3M2TnVabmZMWUw5cnI3TE1Y?=
+ =?iso-2022-jp?B?bmVidGJDTnU1Q3ZnSHB6U0JONzJOVS9aQWxjZmZ2Ly9WaEVSemMxZVl1?=
+ =?iso-2022-jp?B?UGE2eU4wWG00cStPNVZqWnhOL3FjOTZ0ZVFCdi92RG13cmQ2NUhOcktL?=
+ =?iso-2022-jp?B?eDdSUEJQN3oxUzZIV0UyczlicUJLRVR3SE1OczRCVnZDSWpjangzM0Fq?=
+ =?iso-2022-jp?B?aDNVK2dXY1ZOdUFVZXNVbzV4SXMzQ0RHSnpockxINm41U0YwRUJPN01l?=
+ =?iso-2022-jp?B?aVBLck5TbUkvSTlyUkozYlFGejNickNldWpUU1M3SXpjM2VocUcwWEdl?=
+ =?iso-2022-jp?B?NHAvTXVnaDlNWGdyZnRuUXZqVVFWWFhNMmpEZ3NjV2FaeE1Dd1c1SS9H?=
+ =?iso-2022-jp?B?dFo3UTcrdzVWb2RNQnlDOWdDNllzZGg0Y3BZazFEZms4ZnNoY1JTSWZW?=
+ =?iso-2022-jp?B?R1k3VTdRc3BpNjhiVlRab2RYeThTNmZFOGM5T0tReEw2b2oyY1Fkbys2?=
+ =?iso-2022-jp?B?dGFqa3NKKy9vWHBTSS9SQ0x6R1h5UFRSRDBXSUFjUzNJSFhScHA0WGY4?=
+ =?iso-2022-jp?B?WURpOW1kNG5vVVk2NENvRnJnbVRwL09HTmZsRjQyK3kyczNSZUtCc1Vi?=
+ =?iso-2022-jp?B?bkRibFdJeEFUQTFMODh3N09ncDFzM0NkMEp4Wm1NWjcxdUQzOFBYYWtG?=
+ =?iso-2022-jp?B?c3laa3luOGZUY0dlVmJuTkltVlNYeGZjbmxwaTFudG51dm9YbzBYTTRj?=
+ =?iso-2022-jp?B?eG9hcmhMd0hnWU5UU2lreTJlT3habGJCRWFJRmk1S0RTOWRrZ1Q1Tjhp?=
+ =?iso-2022-jp?B?UVBuVEl1K0pHNThuRlg4OUx5YnpCTFdjcEM0QmhFZmJ3aHZ1L1F1Vk5H?=
+ =?iso-2022-jp?B?aWhUc0FpK0Y5ZVozUHJKV3FKN0NxUCsybkoxc1FTT21URFZMaXNTUVNS?=
+ =?iso-2022-jp?B?N0Y2ckdLK1ZnS01la2IzRmpScnNUUmU1TGJYWTAxa3VnK3NqdUJ5VDdE?=
+ =?iso-2022-jp?B?SzhWNjByeGNnK01QRXdVaC9CSHpUeTJXZ05DeUZJUTFRODVXZXUvMExV?=
+ =?iso-2022-jp?B?eE5wMjdqY1pENE1ncUpsRzlvR1NiSGZFVWZEODVWUVJ0aGNmRFlWN1Zt?=
+ =?iso-2022-jp?B?TDFDVk01UWU0VEg2dUJwdFZNZjF1TVF2RFZReFBidTNGSEZONjk1enI4?=
+ =?iso-2022-jp?B?RXJac3pDYi8wcjZaemFwOHVsSldOaTcyRll3NWM1SWd3Zi9NaTZxNzFx?=
+ =?iso-2022-jp?B?N2Zsa3ZJTkIrVFZrRjhqUWkrRnVpUXl6MnJOK25LYUQ2K0RZUVZZOUNX?=
+ =?iso-2022-jp?B?dU1RRk51TWxEdUI4L1VDY0U3c3RiVzRBdzBpOE5FdnBnUWo5SEFwNVg4?=
+ =?iso-2022-jp?B?NmVsc0hhdlFsaysyeXQxUk9SbEZYV3FwQVVGMVFqREJ4RHpwcm9hWUIv?=
+ =?iso-2022-jp?B?bHM4dUpPTkJIMnh4bk93ZGtjRjFOU0QzYWR6VEFPWFhJYi9YTmRtbVJO?=
+ =?iso-2022-jp?B?Y2FvWlNmcHpnTDJ2SGZpblNKQ2Y1M0ViTjRrNTdpYU9KNlhmZzgzNzgr?=
+ =?iso-2022-jp?B?U1hja0VRT0tZUW11djBhbnRJUlVFdFBaS2pkZks2Q2o0cWtZUE9qZ0ox?=
+ =?iso-2022-jp?B?TjdmY21pOVEzdVVvUUphL1NZUCt5TEdiaEVDWEhKTFV0S2tSbTZJV3hm?=
+ =?iso-2022-jp?B?a2tiK2FZbnRDMHNXeWJSYkM1akl6RytiVFNSR2tpaXZnak9GTk96RkVk?=
+ =?iso-2022-jp?B?L1NoNk8ySjEzTlFqUDJmRUxyNVNodHlVc0pocEtYc0lpRlZPa09zZHJk?=
+ =?iso-2022-jp?B?c1B5dWZlb0Q5c2QrVG5GVTZ0cEwzUEl5eTlIMXNhUWdrbytFWUNOWlRP?=
+ =?iso-2022-jp?B?bVlTRHg3UE9RUys5Y1E2NE5TK0xkeEczbTBYRC9Tb1Y1aW1QR0d5bC9a?=
+ =?iso-2022-jp?B?NEhqcnBpT3pidFJuMDlsbyswb2dOVjBOam00L0FDVUF5TEM1RTN0cVRs?=
+ =?iso-2022-jp?B?VWdqd1FpbTA1dnJ0Mm9yOUlFVDRmeWphR2dLc1hRbjc3LzAxVVlQNncv?=
+ =?iso-2022-jp?B?S0dHZlJHV1l3TE9VTllsWERINmlJTDZabFNiUExDUit5ZkJtR3Flbnkz?=
+ =?iso-2022-jp?B?MmxQeEdLMDRyYlUrQjN0ckQ0OEcxKzR0VnArSTVGd1F5dG9wa1RKZ1Iv?=
+ =?iso-2022-jp?B?Z1dZZUVzTT0=?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-1328765:519-21489:flowmailer
-Content-Transfer-Encoding: 8bit
+X-Exchange-RoutingPolicyChecked: 
+	WMdWBgXGNf6XylD8Wva4UhXuWgUU0p2s1GicTnR2ZAdEmHWfvE9+XCsv5qUxSQwPqS9uhrAkL3T49f/YpEhQzXWkI5eLUdnV2TwhqruG+4jjKxD4DGICCvydwrcdFzLSaeanc4jv+60JV5ulFByR30Fp3Bp6qpinVadWnELwF4erDkhRsbwSqQuosAAMheJ9YgdIgmHre66FKR+rZhXkdbqUWq9KkZ4ck2T+5o04F5wIJXJbhh1se2fzgzNewGGqn4W5/wH0IKcmHpcmZKH4PzmoBNr74xLQ0S+Bz70xgwKmqHBZg6VdW36+3uqTv1p4CrAPb+icvGF/940RPnRjxA==
+X-OriginatorOrg: mail.toshiba
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY7PR01MB14818.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c77d5e81-d6eb-4d9c-c5b4-08df2a73f6e5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Oct 2026 04:22:46.1147
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Wk88EpTXuzxclA328eAuoenXWRlQP6NwVsR3v0GpO3qYYs8FZSG6/FeY3whxu77KfTYHvKw+ISZNYLQ0Ey7n36tw1LqH7kEWCz228J4jW7+pTsxF8psx6LkwT2ut4Z9S
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS7PR01MB13668
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 15 Oct 2026 03:00:08 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24467
+ <cip-dev@lists.cip-project.org>; Thu, 15 Oct 2026 04:23:09 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24468
 
-SWUpdate 2023.12 on bookworm and bullseye requires liblua5.4-dev, but
-the roundrobin handler was being installed to the Lua 5.3 directory,
-causing the handler to not be found at runtime.
+Hi all,
 
-Update SWUPDATE_LUA_VERSION to 5.4 for both bookworm and bullseye to
-match the Lua version used by SWUpdate 2023.12 on these distributions.
+CIP kernel team has released Linux kernel v5.10.271-cip78.
+The linux-5.10.y-cip tree has been updated base version from v5.10.268
+to v5.10.271.
+In this release, patches were integrated to fix bugs in PCI, irqchip,
+and pinctrl, add iommus properties to various DTS files, and perform SoC
+support and DMA refactoring for renesas_sdhi and tmio drivers on Renesas
+ARM64 SoCs.
 
-This fixes the error:
-  feature 'roundrobin' required for image in sw-description is absent!
+Information about this release is as follows:
 
-Fixes: 902ad326 ("swupdate-handler-roundrobin: Keep default lua version as 5.5")
-Signed-off-by: Badrikesh Prusty <badrikesh.prusty@siemens.com>
----
- .../swupdate-handler-roundrobin_0.1.bb                        | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+  v5.10.271-cip78:
+    repository:
+      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+    branch:
+      linux-5.10.y-cip
+    commit hash:
+      ef24e6dcf682f112bcdbb5b39cbed7a8cedcfd46
+    fixed CVEs:
+      CVE-2024-46754: bpf: Remove tst_run from lwt_seg6local_prog_ops.
+      CVE-2024-58094: jfs: add check read-only before truncation in jfs_tru=
+ncate_nolock()
+      CVE-2024-58095: jfs: add check read-only before txBeginAnon() call
+      CVE-2025-40102: KVM: arm64: Prevent access to vCPU events before init
+      CVE-2026-53089: bpf: Fix use-after-free in offloaded map/prog info fi=
+ll
+      CVE-2026-53275: ipv6: mcast: Fix use-after-free when processing MLD q=
+ueries
+      CVE-2026-68476: ipvs: reload ip header after head reallocation
+      CVE-2026-72323: ipv4: igmp: Fix potential UAF in igmp_gq_start_timer(=
+)
+      CVE-2026-80782: HID: magicmouse: do not keep a stale msc->input if no=
+ input is claimed
+      CVE-2026-80789: nvmet-tcp: bound SGL data length before allocating co=
+mmand buffers
+      CVE-2026-80794: nfc: nci: fix uninit-value in the RF discover/activat=
+ed NTF handlers
+      CVE-2026-80796: nfc: nci: add data_len bound checks to activation par=
+ameter extractors
+      CVE-2026-80806: ext4: don't enable DAX on new encrypted files
+      CVE-2026-80807: nilfs2: reject invalid block index in GC ioctl
+      CVE-2026-80824: usb: usbfs: fix use-after-free of usb_device in usbde=
+v_release()
+      CVE-2026-80826: USB: c67x00: fix use-after-free in c67x00_add_iso_urb=
+()
+      CVE-2026-80827: USB: serial: option: fix slab OOB read in interrupt U=
+RB callback
+      CVE-2026-80829: ALSA: usb-audio: fix OOB write in snd_usbmidi_novatio=
+n_output()
+      CVE-2026-80830: usb: core: Add lock to usb_wakeup_notification()
+      CVE-2026-80831: crypto: mxs-dcp - fix source scatterlist length acces=
+s
+      CVE-2026-80840: ipv6: seg6: clear IPv4 control block on IPIP decapsul=
+ation
+      CVE-2026-80843: xfrm: fix xfrm_state_construct() auth-trunc leak
+      CVE-2026-80844: xfrm: ah6: validate routing header segments_left
+      CVE-2026-80846: xfrm: drop ESP-in-TCP packets with no ingress device
+      CVE-2026-80848: xfrm: espintcp: fix UAF during close
+      CVE-2026-80854: usb: gadget: f_tcm: keep port count until LUN teardow=
+n completes
+      CVE-2026-80863: RDMA/rxe: Fix OOB in free_rd_atomic_resources()
+      CVE-2026-80916: kcov: fix data corruption and race conditions on PREE=
+MPT_RT
+      CVE-2026-80921: KVM: s390: vsie: zero stale crypto bits
+      CVE-2022-48650: scsi: qla2xxx: Fix memory leak in __qlt_24xx_handle_a=
+bts()
+      CVE-2023-52676: bpf: Guard stack limits against 32bit overflow
+      CVE-2023-54237: net/smc: fix potential panic dues to unprotected smc_=
+llc_srv_add_link()
+      CVE-2024-41062: bluetooth/l2cap: sync sock recv cb and release
+      CVE-2025-21651: net: hns3: don't auto enable misc vector
+      CVE-2025-22103: net: fix NULL pointer dereference in l3mdev_l3_rcv
+      CVE-2025-38097: espintcp: remove encap socket caching to avoid refere=
+nce leak
+      CVE-2025-40123: bpf: Enforce expected_attach_type for tailcall compat=
+ibility
+      CVE-2026-100070: netfilter: nf_nat_sip: rewind offset when NAT shrink=
+s the packet
+      CVE-2026-100075: RDMA/srpt: Fix srpt_alloc_rw_ctxs() unwind counters
+      CVE-2026-23191: ALSA: aloop: Fix racy access at PCM trigger
+      CVE-2026-31420: bridge: mrp: reject zero test interval to avoid OOM p=
+anic
+      CVE-2026-43088: net: af_key: zero aligned sockaddr tail in PF_KEY exp=
+orts
+      CVE-2026-43198: tcp: fix potential race in tcp_v6_syn_recv_sock()
+      CVE-2026-46158: mptcp: pm: ADD_ADDR rtx: always decrease sk refcount
+      CVE-2026-46170: mptcp: pm: ADD_ADDR rtx: free sk if last
+      CVE-2026-53078: bpf: Fix same-register dst/src OOB read and pointer l=
+eak in sock_ops
+      CVE-2026-72255: netfilter: nf_queue: pin bridge device while NFQUEUE =
+holds fake dst
+      CVE-2026-74268: tcp: clear sock_ops cb flags before force-closing a c=
+hild socket
+      CVE-2026-74378: RDMA/rxe: Fix TOCTOU heap overflow in get_srq_wqe
+      CVE-2026-74565: netfilter: nf_tables: make nft_object rhltable per ta=
+ble
+      CVE-2026-80671: perf sched: Fix register_pid() overflow, strcpy, and =
+BUG_ON
+      CVE-2026-80689: tracing/mmiotrace: Add NULL check for mmio_trace_arra=
+y in logging functions
+      CVE-2026-80888: drm/vmwgfx: drop dma_buf reference on foreign-fd prim=
+e import
+      CVE-2026-80912: selinux: reject an unclaimed class value in security_=
+get_classes()
+      CVE-2026-80930: tpm: tpm_i2c_nuvoton: disable IRQ on wait timeout
+      CVE-2026-80931: w1: ds28e17: reject an oversize length on an I2C bloc=
+k read
+      CVE-2026-80932: vsock/virtio: flush works in dependency order
+      CVE-2026-80941: wifi: rtw88: Fix potential memory leak in rtw_txq_pus=
+h_skb()
+      CVE-2026-80944: wifi: mwifiex: Detach sync cmd buffer on interrupted =
+wait
+      CVE-2026-80949: wifi: brcmfmac: Fix memory leak in brcmf_sdio_read_co=
+ntrol()
+      CVE-2026-80952: i3c: master: Fix info leak and UAF in device unregist=
+er path
+      CVE-2026-80963: dm-stats: fix a crash if allocation of per-cpu data f=
+ails
+      CVE-2026-80965: ALSA: serial-u16550: Check card index validity at pro=
+be
+      CVE-2026-80966: ALSA: portman2x4: Check card index validity at probe
+      CVE-2026-80968: ALSA: mts64: Check card index validity at probe
+      CVE-2026-80969: ALSA: mpu401: Check card index validity at probe
+      CVE-2026-80971: ALSA: bcd2000: clear the URB pointers on disconnect
+      CVE-2026-80973: ALSA: 6fire: bound the MIDI event length from the dev=
+ice
+      CVE-2026-80976: seg6: reset IP6CB after IPv6 decapsulation
+      CVE-2026-80977: net: skbuff: don't touch shared zerocopy state in skb=
+_tx_error()
+      CVE-2026-80978: net: cap advertised IP tunnel headroom
+      CVE-2026-80987: NTB: ntb_transport: Reject oversized TX buffers
+      CVE-2026-80988: NTB: ntb_transport: Fail TX enqueue when the QP link =
+is down
+      CVE-2026-80994: net: openvswitch: fix flow mask use-after-free on flo=
+w deletion
+      CVE-2026-81000: net: tun: bound receive headroom
+      CVE-2026-81001: slip: fix use-after-free in sl_sync()
+      CVE-2026-81002: xdp: fix zero-copy frame layout
+      CVE-2026-81003: net/iucv: filter frames in afiucv_hs_rcv() by ingress=
+ device
+      CVE-2026-81005: ipmi: si: Fix NULL pointer dereference after failed r=
+egistration
+      CVE-2026-81007: ipmi: ipmb: validate write message length
+      CVE-2026-81008: interconnect: Fix use after free in icc_get() and of_=
+icc_get_by_index()
+      CVE-2026-81017: platform/chrome: sensorhub: Bound the EC-reported sen=
+sor number
+      CVE-2026-89440: mmc: via-sdmmc: stop card-detect handling on probe fa=
+ilure
+      CVE-2026-89456: s390/dasd: Propagate partial completion length across=
+ ERP recovery
+      CVE-2026-89457: s390/dasd: Guard sysfs discipline callbacks against u=
+nallocated private data
+      CVE-2026-89458: s390/dasd: Do not complete a failed ESE read as succe=
+ssful
+      CVE-2026-89461: power: supply: max17040: synchronize work cancellatio=
+n on suspend
+      CVE-2026-89469: power: supply: lp8727: fix use-after-free in lp8727_r=
+elease_irq()
+      CVE-2026-89470: power: supply: cros_usbpd: Limit port counts to EC_US=
+B_PD_MAX_PORTS
+      CVE-2026-89471: power: supply: cros_usbpd-charger: bound the EC-repor=
+ted port count
+      CVE-2026-89476: sctp: fix stream->outcnt underflow on duplicate RECON=
+F responses
+      CVE-2026-89477: sctp: fix NULL deref on untransmitted RECONF completi=
+on
+      CVE-2026-89478: sctp: drop a chunk if its transport was removed
+      CVE-2026-89479: sctp: stop processing a packet once its association i=
+s deleted
+      CVE-2026-89482: nvme-tcp: do not accept C2HData based on blk_rq_paylo=
+ad_bytes() alone
+      CVE-2026-89483: nvme: zero the discard fallback page
+      CVE-2026-89485: lockd: pin next file across nlm_inspect_file lock-dro=
+p
+      CVE-2026-89487: openvswitch: only skb_tx_error() a packet we are abou=
+t to drop
+      CVE-2026-89488: openvswitch: Fix CT limit teardown use-after-free
+      CVE-2026-89489: openrisc: fix arbitrary kernel memory access via or1k=
+_atomic syscall
+      CVE-2026-89490: ocfs2: fix readdir position truncation on 32-bit kern=
+els
+      CVE-2026-89491: ocfs2: cluster: don't sleep while holding o2hb_live_l=
+ock in o2hb_region_pin()
+      CVE-2026-89493: ocfs2: validate rl_used against rl_count in refcount =
+block validator
+      CVE-2026-89494: ocfs2: validate lengths in dlm_mig_lockres_handler
+      CVE-2026-89495: ocfs2: bound namelen in dlm_migrate_request_handler
+      CVE-2026-89496: ocfs2: always run deallocs on copy-on-write completio=
+n
+      CVE-2026-89497: orangefs: skip leading spaces before parsing client d=
+ebug masks
+      CVE-2026-89498: orangefs: fix double-free of trailer_buf on readdir c=
+opy failure
+      CVE-2026-89504: regulator: as3722_get_regulator_dt_data: fix prematur=
+e of_node_put leaving dangling of_node pointer
+      CVE-2026-89508: RDMA/ucma: Lock the handler in ucma_set_ib_path()
+      CVE-2026-89510: RDMA/cxgb4: Cancel reg_work before freeing device on =
+remove
+      CVE-2026-89511: qede: Fix NULL pointer dereference in TPA fragment pr=
+ocessing
+      CVE-2026-89512: remoteproc: scp: Fix device reference leak on failed =
+lookup
+      CVE-2026-89515: scsi: core: Fill in DMA padding bytes in scsi_alloc_s=
+gtables()
+      CVE-2026-89524: wifi: ath6kl: clamp assoc request/response lengths be=
+fore subtracting IE offsets
+      CVE-2026-89525: udf: reject VAT indexes equal to the entry count
+      CVE-2026-89538: SUNRPC: Reject krb5 v2 wrap tokens with oversized ec =
+field
+      CVE-2026-89540: sunrpc: init gssp_lock before publishing proc entry
+      CVE-2026-89541: SUNRPC: harden gss_unwrap_resp_priv length checks
+      CVE-2026-89542: SUNRPC: harden gss_krb5_unwrap_v2 against short token=
+s
+      CVE-2026-89548: SUNRPC: always drain cache_cleaner before destroying =
+a cache_detail
+      CVE-2026-89549: sunrpc: route to a populated pool in svc_pool_for_cpu=
+()
+      CVE-2026-89551: SUNRPC: xdr_buf_trim: clamp buf->len to avoid underfl=
+ow
+      CVE-2026-89554: mptcp: fix uninitialized local_id in syncookie MP_JOI=
+N reconstruction
+      CVE-2026-89555: mpls: reload header after pskb_may_pull()
+      CVE-2026-89557: md: do overflow check for sb->bblog_shift in super_1_=
+load()
+      CVE-2026-89559: libnvdimm/labels: Prevent integer overflow in __nd_la=
+bel_validate()
+      CVE-2026-89562: ip6_gre: fix hardware header length for NBMA tunnels
+      CVE-2026-89563: ip6_tunnel: use skb_cow_head() in ip6_tnl_xmit()
+      CVE-2026-89569: Bluetooth: RFCOMM: serialize security confirmation ha=
+ndling
+      CVE-2026-89573: dm array: reject an array block whose value size is n=
+ot the caller's
+      CVE-2026-89575: dm raid1: reserve space for NUL-terminator in build_c=
+onstructor_string()
+      CVE-2026-89576: dm-era: fix shadowed superblock leak on take-snap fai=
+lure
+      CVE-2026-89582: bnx2x: fix double free in bnx2x_init_firmware() error=
+ path
+      CVE-2026-89586: ata: libata-scsi: fix DSM TRIM for sector sizes large=
+r than 2048 bytes
+      CVE-2026-89594: hsi: omap_ssi_core: fix missing DMA mask setup for SS=
+I controller device
+      CVE-2026-89595: fsnotify: Fix stale object mask after concurrent mark=
+ updates
+      CVE-2026-89596: forcedeth: fix off-by-one when saving/restoring non-P=
+CI config space
+      CVE-2026-89597: fbdev: uvesafb: unregister connector callback on init=
+ failure
+      CVE-2026-89599: fbdev: omapfb: panel-dsi-cm: initialize lock before r=
+egistering display
+      CVE-2026-89603: entry: Fix seccomp bypass after ptrace with TSYNC
+      CVE-2026-89605: ecryptfs: release message context on send failure
+      CVE-2026-89606: ecryptfs: reject too-small tag 70 packets
+      CVE-2026-89607: ecryptfs: reject oversized encrypted_key_size in pars=
+e_tag_3_packet
+      CVE-2026-89608: ecryptfs: pass packet set buffer size to parser
+      CVE-2026-89609: ecryptfs: hold msg ctx list lock when cleaning daemon=
+ queue
+      CVE-2026-89621: HID: mcp2221: validate report size in mcp2221_raw_eve=
+nt()
+      CVE-2026-89626: HID: sensor: custom: Fix field sysfs group cleanup on=
+ failure
+      CVE-2026-89627: HID: roccat: free buffered reports when destroying de=
+vice
+      CVE-2026-89628: HID: picolcd: clamp eeprom debugfs read to bytes actu=
+ally received
+      CVE-2026-89643: audit: avoid dropping live tree ref on fsnotify rule =
+autoremove
+      CVE-2026-89649: ceph: bound xattr value length in __build_xattrs()
+      CVE-2026-89655: ceph: fix UAF in __kick_flushing_caps() on cf entry f=
+reed during unlock
+      CVE-2026-89656: libceph: reject buckets with mismatched CRUSH ids
+      CVE-2026-89662: NFSD: Prevent lock owner use-after-free during client=
+ teardown
+      CVE-2026-89663: nfsd: revoke copy-notify stateids before dropping the=
+ir reference
+      CVE-2026-89665: nfsd: reject out-of-range useconds in NFSv2 SETATTR/C=
+REATE
+      CVE-2026-89669: nfsd: initialize copy-notify stateid before publishin=
+g it
+      CVE-2026-89673: nfsd: fix XDR padding calculation in ff_encode_getdev=
+iceinfo
+      CVE-2026-89674: nfsd: fix XDR length calculation in nfsd4_ff_encode_l=
+ayoutget
+      CVE-2026-89684: nfsd: fix cpntf publish race in nfs4_init_cp_state
+      CVE-2026-89694: nfsd: check client ownership when cancelling a copy-n=
+otify stateid
+      CVE-2026-89696: nfsd: block non-SAVEFH ops after FOREIGN PUTFH to pre=
+vent NULL deref
+      CVE-2026-89697: nfsd: add fh_want_write() for early-verified SETATTR =
+in nfsd_proc_setattr()
+      CVE-2026-89699: nfsd: validate symlink target length in NFSv4 CREATE
+      CVE-2026-89704: nfsd: sample writeback error cursor before async COPY=
+ loop
+      CVE-2026-89706: nfsd: Reset write verifier when async COPY writeback =
+fails
+      CVE-2026-89711: NFSD: remove flawed WARN_ON_ONCE from nfsd_mode_check
+      CVE-2026-89712: NFSD: restart ssc_expire_umount walk after dropping n=
+fsd_ssc_lock
+      CVE-2026-89720: ubifs: fix out-of-bounds read in signature length che=
+ck
+      CVE-2026-89723: nilfs2: fix slab-out-of-bounds in nilfs_direct_propag=
+ate after truncation
+      CVE-2026-89724: media: vicodec: fix out-of-bounds write in FWHT encod=
+er
+      CVE-2026-89725: media: cec: stm32: prevent out-of-bounds write on RX =
+overflow
+      CVE-2026-89726: lib/ucs2_string.c: fix out-of-bounds read in ucs2_str=
+nlen()
+      CVE-2026-89729: HID: sensor-hub: Fix out-of-bounds write in sensor_hu=
+b_get_feature
+      CVE-2026-89730: fpga: altera-cvp: Avoid out-of-bounds read in trailin=
+g byte write
+      CVE-2026-89732: usb: gadget: f_fs: Prevent deadlock during ep0 read l=
+oop
+      CVE-2026-89733: usb: gadget: uvc: fix dangling pointers in uvc_functi=
+on_bind() and uvc_function_unbind()
+      CVE-2026-89736: usb: gadget: u_audio: Fix use-after-free on sound car=
+d disconnect
+      CVE-2026-89741: Revert "media: v4l2-dev: fix error handling in __vide=
+o_register_device()"
+      CVE-2026-89742: rapidio: mport_cdev: fix use-after-free in dma_req_fr=
+ee()
+      CVE-2026-89749: tracing: Fix crash passing ERR_PTR to kthread_stop()
+      CVE-2026-89752: mm: memcg: stop reclaim when a limit update is supers=
+eded
+      CVE-2026-89753: mm/vmscan: report RCU-tasks quiescent states in shrin=
+k_lruvec()
+      CVE-2026-89765: timers/itimer: Zero-init old itimerval before copy to=
+ userspace
+      CVE-2026-89777: vfio/pci: clear vdev->msi_perm after freeing it on in=
+it failure
+      CVE-2026-89780: net: qualcomm: rmnet: restore skb->dev on deaggregate=
+d frames
+      CVE-2026-89783: xfrm6: fix out-of-bounds write in xfrm6_input_addr() =
+when secpath is full
+      CVE-2026-89784: SUNRPC: check rpc_sockaddr2uaddr() return value in rp=
+cb_register_inet4/6
+      CVE-2026-89789: gtp: add synchronize_net() in gtp_newlink() error pat=
+h to prevent use-after-free
+      CVE-2026-89816: drm: Fix drm_crtc_commit leak if signaled when PAGE_F=
+LIP_EVENT is used
+      CVE-2026-89821: drm/amd/display: avoid divide-by-zero in __is_lut_lin=
+ear()
+      CVE-2026-89823: drm: fix race between partial drm_dev_register() fail=
+ure and ioctl
+      CVE-2026-89843: scsi: qla2xxx: Zero-init bsg stack buffers to avoid i=
+nfo leak
+      CVE-2026-89845: scsi: qla2xxx: Avoid req_q_map double-read in qla2x00=
+_error_entry()
+      CVE-2026-89846: scsi: qla2xxx: Bound rsp_info_len to avoid OOB sense-=
+data read
+      CVE-2026-89847: scsi: qla2xxx: Avoid double completion in async IOCB =
+timeout
+      CVE-2026-89850: scsi: qla2xxx: Don't query firmware state while chip =
+is down
+      CVE-2026-89851: scsi: qla2xxx: Fix FCE trace enable parsing in debugf=
+s
+      CVE-2026-89852: scsi: qla2xxx: Zero mailbox struct in qla2x00_get_fir=
+mware_state()
+      CVE-2026-89853: scsi: qla2xxx: Fix FCE trace use-after-free during fi=
+rmware dump
+      CVE-2026-89854: scsi: qla2xxx: Fix cs84xx use-after-free on host tear=
+down
+      CVE-2026-89855: scsi: qla2xxx: Serialize flash version read in reset =
+handler
+      CVE-2026-89856: scsi: qla2xxx: Clamp MSI-X derived queue counts to av=
+oid truncation
+      CVE-2026-89858: scsi: qla2xxx: Bound image count in qla2x00_update_fr=
+u_versions()
+      CVE-2026-89861: scsi: qla2xxx: Hold vport reference in qla24xx_report=
+_id_acquisition()
+      CVE-2026-89864: scsi: qla2xxx: Bound i2c->length in I2C bsg handlers
+      CVE-2026-89865: scsi: qla2xxx: Zero SFP DMA buffer in FRU/I2C bsg han=
+dlers
+      CVE-2026-89871: media: video-i2c: fix kthread error pointer left in k=
+thread_vid_cap on failure
+      CVE-2026-89872: media: v4l2-fwnode: Fix fwnode leak in v4l2_fwnode_pa=
+rse_link
+      CVE-2026-89876: media: tda18250: fix possible integer overflow
+      CVE-2026-89878: media: s2255: check firmware size before reading trai=
+ling marker
+      CVE-2026-89879: media: s2255: bound JPEG frame size before copying in=
+to the buffer
+      CVE-2026-89880: media: rtl2832_sdr: release URBs and stream buffers o=
+n start_streaming() failure
+      CVE-2026-89881: media: rtl2832_sdr: use vb2_video_unregister_device()=
+ on remove to fix DMA leak
+      CVE-2026-89887: media: i2c: ov7740: fix use-after-destroy in remove
+      CVE-2026-89890: media: go7007: defer the ALSA v4l2 put until card rel=
+ease
+      CVE-2026-89891: media: em28xx: fix use-after-free of dev_next->devlis=
+t on disconnect
+      CVE-2026-89892: media: em28xx: defer audio-only extension registratio=
+n
+      CVE-2026-89893: media: cx23885: cancel NetUP CI work before teardown
+      CVE-2026-89894: media: cx231xx: reject geometry changes while the VBI=
+ queue is busy
+      CVE-2026-89895: media: cobalt: Avoid freeing ALSA private data twice
+      CVE-2026-89896: media: cedrus: fix memory leak in cedrus_init_ctrls()
+      CVE-2026-89897: media: cec: Serialize exclusive follower delivery
+      CVE-2026-89901: media: airspy: use vb2_video_unregister_device() on d=
+isconnect to fix NULL deref
+      CVE-2026-89923: KVM: s390: Free guest debug data on vcpu destroy
+      CVE-2026-89924: KVM: s390: Fix old_data leak in guest debug error pat=
+h
+      CVE-2026-89925: KVM: s390: Fix memory leak in guest debug handling
+      CVE-2026-89927: KVM: x86: hyper-v: Clamp stimer deadline to avoid liv=
+elock
+      CVE-2026-89936: iio: dac: m62332: Fix regulator reference count imbal=
+ance
+      CVE-2026-89937: iio: chemical: sgp30: Handle IAQ thread creation fail=
+ure
+      CVE-2026-89945: ASoC: cs35l34: drain threaded IRQ before runtime susp=
+end
+      CVE-2026-89946: ASoC: cs35l33: drain threaded IRQ before runtime susp=
+end
+      CVE-2026-89947: clk: meson: align gxbb_32k_clk_sel number of parents =
+with actual count
+      CVE-2026-89948: batman-adv: bla: fix freeing of claims on meshif dele=
+tion
+      CVE-2026-89949: batman-adv: dat: avoid unaligned fault in IP extracti=
+on
+      CVE-2026-89951: batman-adv: fix stale receive device on merged fragme=
+nts
+      CVE-2026-89952: mtd: rawnand: validate ONFI extended parameter page s=
+ections
+      CVE-2026-89953: mtd: mtdoops: free page bitmap when the backing MTD i=
+s removed
+      CVE-2026-89954: mtd: afs: validate v2 image info bounds
+      CVE-2026-89964: parisc: eisa: Fix infinite loop when parsing invalid =
+IRQ value
+      CVE-2026-89965: nvdimm/btt: reject an arena whose nfree is below the =
+lane count
+      CVE-2026-89968: nvmet-tcp: reject unsolicited H2CData PDUs
+      CVE-2026-89969: nvmet-tcp: fix out-of-bounds write when receiving an =
+over-long PDU
+      CVE-2026-89973: nvme-tcp: check the data direction of a C2HData PDU
+      CVE-2026-89979: ALSA: pcm: Fix race between non-atomic ops and trigge=
+r-start
+      CVE-2026-89982: i2c: mux: Fix channel node leak on adapter add failur=
+e
+      CVE-2026-89984: perf/x86/intel: Fix kernel address leakages in LBR st=
+ack
+      CVE-2026-89997: dm: fix resume-vs-remove race
+      CVE-2026-89999: HID: wacom: validate report length in wacom_intuos_pr=
+o2_bt_irq
+      CVE-2026-90000: HID: rmi: fix OOB access with undersized RMI reports
+      CVE-2026-90007: scsi: pm8001: Use rollback index when freeing MSI-X v=
+ectors
+      CVE-2026-90011: scsi: target: iscsi: Reserve a terminator byte for th=
+e login payload
+      CVE-2026-90015: xhci: fix lost bounce buffers on TDs spanning several=
+ ring segments
+      CVE-2026-90017: staging: rtl8723bs: fix OOB read in rtw_action_frame_=
+parse()
+      CVE-2026-90019: usb: gadget: fix null pointer dereference in usb_put_=
+function_instance()
+      CVE-2026-90020: USB: gadget: fix NULL pointer dereference in gadget_d=
+ev_ioctl()
+      CVE-2026-90025: usb: typec: ucsi: displayport: Fix OOB altmode array =
+index
+      CVE-2026-90031: usb-storage: ene_ub6250: fix race between scan work a=
+nd probe
+      CVE-2026-90032: media: usbtv: keep device alive while ALSA card exist=
+s
+      CVE-2026-90033: ALSA: usb-audio: fix OOB write in snd_usbmidi_us122l_=
+output()
+      CVE-2026-90034: usb: image: mdc800: change kmalloc() to kzalloc()
+      CVE-2026-90049: net: skbuff: don't skb_tx_error() the source skb in s=
+kb_zerocopy()
+      CVE-2026-90054: tcp: fix corruption of urgent data on multi-segment r=
+etransmit
+      CVE-2026-90055: usb: atm: usbatm: fix invalid ci_range initialization
+      CVE-2026-90056: net: fec: only stop PTP if it was initialized
+      CVE-2026-90058: net/sched: bound qdisc_pkt_len to prevent qdisc soft =
+lockup
+      CVE-2026-90062: netfilter: nf_tables: move hardware offload step afte=
+r building the chain blob
+      CVE-2026-90068: ASoC: dapm: Fix off-by-one check on the second enum c=
+hannel
+      CVE-2026-90070: tpm: st33zp24: Return zero on status read failure
+      CVE-2026-90071: net/sched: sch_teql: restore skb->dev on the slave fa=
+ilure path
+      CVE-2026-90072: net/sched: sfq: clamp quantum to avoid signed overflo=
+w soft lockup
+      CVE-2026-90073: net/sched: hhf: clamp quantum before hhf_change() to =
+avoid overflow
+      CVE-2026-90074: net/sched: fq_pie: clamp default quantum to avoid sig=
+ned overflow
+      CVE-2026-90075: net/sched: fq_codel: clamp default quantum and mtu
+      CVE-2026-90081: net/rds: use wq_has_sleeper() in rds_cong_map_updated=
+()
+      CVE-2026-90088: Bluetooth: RFCOMM: Validate MTU in rfcomm_apply_pn() =
+to prevent infinite loop
+      CVE-2026-90102: NFSv4/pnfs: key the data server cache on the NFS vers=
+ion
+      CVE-2026-90103: NFSv4.2: fix LAYOUTSTATS send buffer exhaustion
+      CVE-2026-90107: net/smc: free pending qentry in smc_llc_flow_stop() b=
+efore memset
+      CVE-2026-90114: net: bridge: Reject descending VLAN tunnel ranges
+      CVE-2026-90126: rtc: pcf8563: fix clock provider leak on unbind
+      CVE-2026-90128: vdpa/mlx5: fix wrong list iterated in add_direct_chai=
+n error path
+      CVE-2026-90141: ipvs: fix integer overflow in ftp helper port/address=
+ parsing
+      CVE-2026-90143: net: kcm: Hold RCU read lock while running BPF parser
+      CVE-2026-90151: NFSv4: remove callback IDR entry on client allocation=
+ failure
+      CVE-2026-90157: bpf: Reject negative optlen in cgroup getsockopt hook
+      CVE-2026-90160: lwt_bpf: Restore reserved headroom after xmit program
+      CVE-2026-90202: scsi: mpt3sas: Avoid freeing unallocated PCIe SGL buf=
+fers
+      CVE-2026-90203: Squashfs: check block offset is not negative
+      CVE-2026-90214: ASoC: xilinx: formatter_pcm: fix stream_data leak on =
+open error
+      CVE-2026-90216: ubi: Fix rollback for explicit UBI device numbers
+      CVE-2026-90218: RDMA/cma: Fix WARNING in res_to_rt
+      CVE-2026-90219: RDMA/cxgb4: Free debugfs on registration failure
+      CVE-2026-90222: nfc: pn533: hold a reference to the request skb durin=
+g send_frame
+      CVE-2026-90223: nfc: llcp: bound SNL TLV parsing to the skb and add l=
+ength checks
+      CVE-2026-90224: nfc: nci: fix double completion race in nci_data_exch=
+ange_complete
+      CVE-2026-90225: nfc: llcp: read llcp_sock->local under the socket loc=
+k in getsockopt
+      CVE-2026-90226: nfc: llcp: avoid userspace overflow on invalid optlen
+      CVE-2026-90245: fbdev: kyro: Validate overlay viewport coordinates
+      CVE-2026-90249: iio: light: gp2ap002: Fix unbalanced runtime PM on re=
+peated event writes
+      CVE-2026-90251: Bluetooth: MSFT: validate evt_prefix_len against the =
+response length
+      CVE-2026-90281: phy: qcom: snps-femto-v2: Fix possible NULL-deref on =
+early runtime suspend
+      CVE-2026-90283: hugetlbfs: release subpool on fill_super failure
+      CVE-2026-90284: firmware_loader: do not queue completed sysfs fallbac=
+k requests
+      CVE-2026-90285: scsi: qla2xxx: Remove redundant VPD flash read in sys=
+fs read path
+      CVE-2026-90286: drm/amdgpu/gfx6: Use PFP on the compute queues too
+      CVE-2026-90290: arm64: hibernate: Restore DAIF state on error
+      CVE-2026-90292: RDMA/siw: Fix use-after-free in siw_accept()
+      CVE-2026-90293: IB/isert: post the full-feature receive buffers after=
+ session registration
+      CVE-2026-90294: IB/isert: delay the final Login Response until the se=
+ssion is registered
+      CVE-2026-90295: cpufreq: imx6q: fix out-of-bounds write when probed m=
+ore than once
+      CVE-2026-90296: cpufreq: imx6q: fix devres accumulation across driver=
+ rebind
+      CVE-2026-90297: drm/sun4i: crtc: Propagate layer initialization error
+      CVE-2026-90298: drm/sun4i: tcon: Drop TCON TOP device reference
+      CVE-2026-90302: ocfs2: synchronize heartbeat callbacks with o2net tea=
+rdown
+      CVE-2026-90303: ARM: 9485/1: mm: acquire mmap write lock around show_=
+pte() for user faults
+      CVE-2026-90307: RDMA/srp: fix heap information leak on a truncated SR=
+P_CRED_REQ
+      CVE-2026-90314: remoteproc: fix OOB read via signed offset in rsc_tab=
+le_for_each_entry()
+      CVE-2026-90318: fat: release buffer head after rebuilding parent
+      CVE-2026-90319: rapidio: clear mport->net when rio_add_net() fails
+      CVE-2026-90327: phonet: pep: do not write beyond optlen in getsockopt
+      CVE-2026-90329: HID: synchronize input before cleaning up a failed pr=
+obe
+      CVE-2026-90334: tty: clear cdev pointer after cdev_add() failure
+      CVE-2026-90341: firmware: coreboot: Validate table bounds
+      CVE-2026-90348: wifi: ath10k: snoc: use memcpy_fromio() for MSA ramdu=
+mp
+      CVE-2026-90360: regulator: core: use system_freezable_wq for init com=
+plete work
+      CVE-2026-90361: wifi: ath11k: fix leak in ath11k_service_ready_ext_ev=
+ent()
+      CVE-2026-90362: drm/msm/dsi: Drop dev_pm_opp_set_rate(0)
+      CVE-2026-90372: wifi: mt76: mt7915: avoid nss underflow in mt7915_mcu=
+_get_sta_nss
+      CVE-2026-90382: wifi: mt76: mt76x02: do not WARN on invalid rx descri=
+ptor length
+      CVE-2026-90386: i3c: dw: avoid shift-out-of-bounds when DAA assigns n=
+o devices
+      CVE-2026-90388: iommu/dma: Check atomic pool allocation result direct=
+ly
+      CVE-2026-90391: lib/test_hmm: fail dmirror_fault() when the mirrored =
+mm is gone
+      CVE-2026-90393: bpf: Fix potential UAF in bpf_netns_link_update_prog
+      CVE-2026-90394: power: supply: sc2731_charger: cancel work on remove
+      CVE-2026-90395: power: supply: isp1704_charger: cancel work on remove
+      CVE-2026-90403: wifi: rtlwifi: pci: fix error path in rtl_pci_probe()
+      CVE-2026-90411: nvme-fc: unmap cmd_iu DMA on rsp_iu mapping failure i=
+n init_request
+      CVE-2026-90413: IB/isert: reject login PDUs declaring more data than =
+was received
+      CVE-2026-90414: IB/isert: reject PDUs declaring more data than was re=
+ceived
+      CVE-2026-90415: RDMA/cxgb4: free STAG index when TPT entry write fail=
+s
+      CVE-2026-90416: RDMA/mlx5: Fix stack out-of-bounds read in cc_params =
+debugfs
+      CVE-2026-90419: nilfs2: prevent out-of-bounds read in super root bloc=
+k parsing
+      CVE-2026-90420: nilfs2: fix infinite loop in nilfs_clean_segments()
+      CVE-2026-90431: remoteproc: Prevent crash handling to race with rproc=
+_del()
+      CVE-2026-90434: isofs: release zisofs block pointer buffer head
+      CVE-2026-90435: RDMA/mlx5: Fix integer overflow of user QP buffer siz=
+e
+      CVE-2026-92496: wifi: ath11k: Avoid buffer overread in ath11k_wmi_tlv=
+_op_rx()
+      CVE-2026-92498: wifi: ath6kl: avoid buffer overreads in WMI event han=
+dlers
+      CVE-2026-92501: ext4: drain in-flight DIO before buffered write fallb=
+ack
+      CVE-2026-92504: thermal: intel: int3400: clean up ODVP on probe failu=
+res
+      CVE-2026-92521: ACPI: PCI: Clear driver_data on all paths that free t=
+he acpi_pci_root
+      CVE-2026-92522: ACPI: processor: validate MADT IOAPIC entry bounds
+      CVE-2026-92524: irqchip/gic-v3-its: Prevent leak in its_vpe_irq_domai=
+n_alloc()
+      CVE-2026-93037: RDMA/hfi1: Propagate sdma_txinit_ahg() errors
+      CVE-2026-93039: ASoC: meson: Keep link pointers valid on realloc fail=
+ure
+      CVE-2026-93040: dmaengine: dw-edma: Serialize channel state checks
+      CVE-2026-93041: dmaengine: dw-edma: Serialize abort state updates
+      CVE-2026-93046: software node: Fix software_node_get_reference_args()=
+ with index -1
+      CVE-2026-93048: mtd: part: reject MTDPART_OFS_RETAIN in mtd_add_parti=
+tion()
+      CVE-2026-93049: mtd: mtdswap: Avoid freeing registered blktrans devic=
+e twice
+      CVE-2026-93051: misc: ad525x_dpot: use driver core groups for sysfs f=
+iles
+      CVE-2026-93053: speakup: keyhelp: guard letter_offsets possible out-o=
+f-range indexing
+      CVE-2026-93054: uio: Fix stale info pointer in failed registration pa=
+th
+      CVE-2026-93055: UDF symlink pathComponent header OOB read
+      CVE-2026-93056: usb: gadget: f_uac1_legacy: remove broken string conf=
+igfs attributes
+      CVE-2026-93061: gpu: host1x: Avoid stack over-read in debug output he=
+lpers
+      CVE-2026-93067: drm/bridge: tc358767: clamp the reported AUX read siz=
+e to the request
+      CVE-2026-93095: hfsplus: validate thread record before delete key reb=
+uild
+      CVE-2026-93098: rpmsg: glink: fix deadlock in endpoint destroy during=
+ driver detach
+      CVE-2026-93103: RDMA/hfi1: Preserve unit 0 on allocation failure
+      CVE-2026-93108: RDMA/ipoib: Drain RCU callbacks during module teardow=
+n
+      CVE-2026-93110: RDMA/core: Wait for RCU callbacks before unloading ib=
+_core
+      CVE-2026-93120: usb: gadget: configfs: fix out-of-bounds read of qw_s=
+ign
+      CVE-2026-93138: bpf: Fix vmlinux BTF prep race in bpf_get_btf_vmlinux
+      CVE-2026-93140: udf: Mark LVID buffer as uptodate before marking it d=
+irty
+      CVE-2026-93141: usb: gadget: r8a66597: avoid double free of ep0_req i=
+n probe error path
+      CVE-2026-93145: clk: qcom: gdsc: tear down per-domain genpds in gdsc_=
+unregister()
+      CVE-2026-93158: crypto: sa2ul - stop probe if context pool creation f=
+ails
+      CVE-2026-93159: crypto: atmel-sha204a - fix heap info leak on I2C tra=
+nsfer failure
+      CVE-2026-93160: crypto: atmel-ecc - reject hardware ECDH without a pu=
+blic key
+      CVE-2026-93165: platform/chrome: sensorhub: Fix memory overread in ri=
+ng handler
+      CVE-2026-93167: csky: Fix a4/a5 restoration in syscall trace path
+      CVE-2026-93170: dmaengine: xilinx_dma: Fix channel idle state managem=
+ent in AXIDMA and MCDMA interrupt handlers
+      CVE-2026-93177: drm/amdgpu/pm/powerplay: bounds-check voltage index i=
+n Vega10 lookup
+      CVE-2026-93178: drm/amdgpu/pm/powerplay: bounds-check voltage index i=
+n SMU7 lookup
+      CVE-2026-93183: drm/lima: call drm_mm_init() with a valid allocation =
+range
+      CVE-2026-93188: HID: roccat: bound device-supplied profile index
+      CVE-2026-93189: HID: core: quiesce input in hid_hw_stop() to prevent =
+use-after-free
+      CVE-2026-93191: smack: fix incorrect task context in smack_msg_queue_=
+msgrcv
+      CVE-2026-93203: batman-adv: bla: avoid CRC corruption due to parallel=
+ claim add
+      CVE-2026-93206: PCI/proc: Use file_ns_capable() when checking config =
+space read access
+      CVE-2026-93213: of: fix out-of-bounds read in of_alias_scan() stem pa=
+rser
+      CVE-2026-93214: usb: gadget: f_tcm: fix deadlock in usbg_make_tpg()
+      CVE-2026-93219: clocksource/drivers/timer-sun4i: Advertise a real min=
+imum delta
+      CVE-2026-93222: signal: avoid shared siginfo namespace rewrites
+      CVE-2026-93226: ipv6: use RCU iterator to dump route exceptions
+      CVE-2026-93236: media: meson: vdec: fix NULL pointer deref in vdec_tr=
+y_fmt_common
+      CVE-2026-93245: apparmor: policy_int make sure list heads are initial=
+ized before fail path
+      CVE-2026-93252: ocfs2: fix circular locking dependency in ocfs2_init_=
+acl()
+      CVE-2026-93256: arm64: hibernate: mask DAIF before restoring hibernat=
+ed kernel
+      CVE-2026-93261: locking/lockdep: Fix NULL pointer dereference in __lo=
+ck_set_class()
+      CVE-2026-93262: md/raid5-ppl: fix use-after-free in ppl_do_flush()
+      CVE-2026-93264: RDMA/efa: Fix PBL chunk length computation
+      CVE-2026-93268: ext4: skip extra isize expansion during mount to prev=
+ent deadlock
+      CVE-2026-93271: wifi: ath11k: cap out-of-range rx MCS instead of leav=
+ing bogus rate
+      CVE-2026-93274: pinctrl: bcm2835: Don't remove an unregistered GPIO c=
+hip
+      CVE-2026-93279: staging: octeon: add missing tasklet_kill in cvm_oct_=
+tx_shutdown
+      CVE-2026-93280: greybus: audio: bound the topology section sizes agai=
+nst the fetched size
+      CVE-2026-93283: i3c: master: Fix device_register() error path
+      CVE-2026-98160: staging: rtl8723bs: fix mismatched free of HalData in=
+ rtw_sdio_if1_init()
+      CVE-2022-48816: SUNRPC: lock against ->sock changing during sysfs rea=
+d
+      CVE-2022-49142: net: preserve skb_end_offset() in skb_unclone_keeptru=
+esize()
+      CVE-2022-50406: iomap: iomap: fix memory corruption when recording er=
+rors during writeback
+      CVE-2023-53707: drm/amdgpu: Fix integer overflow in amdgpu_cs_pass1
+      CVE-2024-47408: net/smc: check smcd_v2_ext_offset when receiving prop=
+osal msg
+      CVE-2024-49568: net/smc: check v2_ext_offset/eid_cnt/ism_gid_cnt when=
+ receiving proposal msg
+      CVE-2024-56545: HID: hyperv: streamline driver probe to avoid devres =
+issues
+      CVE-2025-21759: ipv6: mcast: extend RCU protection in igmp6_send()
+      CVE-2025-68190: drm/amdgpu/atom: Check kcalloc() for WS buffer in amd=
+gpu_atom_execute_table_locked()
+      CVE-2026-52988: netfilter: nf_tables: join hook list via splice_list_=
+rcu() in commit phase
+      CVE-2026-68155: libceph: Reject monmaps advertising zero monitors
+      CVE-2026-68236: drm/amd/display: set new_stream to NULL after release
+      CVE-2026-74460: can: ems_usb: validate CPC message lengths
+      CVE-2026-74496: fou: Fix use-after-free in fou_create()
+      CVE-2026-74743: macvlan: inherit needed_headroom and needed_tailroom =
+from lowerdev
+      CVE-2026-80833: crypto: sun8i-ss - Remove crypto_rng interface
+      CVE-2026-80834: crypto: sun8i-ce - Remove crypto_rng interface
+      CVE-2026-90304: ARM: 9484/1: enable interrupts when unhandled user fa=
+ults are triggered
+      CVE-2026-93204: batman-adv: dat: atomically update mac addresses
+      CVE-2026-93286: net: appletalk: fix NULL pointer dereference in aarp_=
+send_ddp()
+      CVE-2026-93287: i2c: smbus: reject oversized block transfers in the c=
+ommon path
+      CVE-2026-93782: vhost-scsi: flush backend after device ioctls
+      CVE-2026-93783: Bluetooth: RFCOMM: validate skb length in rfcomm_recv=
+_frame
+      CVE-2026-93784: wifi: cfg80211: validate IEs in cfg80211_wext_siwgeni=
+e()
+      CVE-2026-93785: cifs: validate idmap key payload length
+      CVE-2026-93789: wifi: iwlwifi: bound aligned TLV advance in FW parser
+      CVE-2026-93795: blk-cgroup: fix leaks and online flag on radix_tree_i=
+nsert failure
+      CVE-2026-93797: wifi: iwlwifi: mvm: fix an off-by-1 boundary check
+      CVE-2026-93798: btrfs: fix reloc root cleanup in merge_reloc_roots()
+      CVE-2026-93800: btrfs: fix use-after-free on reloc root after error i=
+n insert_dirty_subvol()
+      CVE-2026-93802: wifi: rsi: validate beacon length before fixed buffer=
+ copy
+      CVE-2026-93803: wifi: libipw: fix key index receive bound checks
+      CVE-2026-93807: wifi: rsi: avoid reading TKIP MIC keys for non-TKIP c=
+iphers
+      CVE-2026-93808: ALSA: usb-audio: caiaq: validate EP1 reply lengths
+      CVE-2026-93815: net: au1000: move free_irq out of the close-time spin=
+locked section
+      CVE-2026-93816: f2fs: validate inline dentry name lengths before conv=
+ersion
+      CVE-2026-93819: PCI: mediatek: Protect root bus removal with rescan l=
+ock
+      CVE-2026-93820: PCI: rockchip: Protect root bus removal with rescan l=
+ock
+      CVE-2026-93821: PCI: altera: Protect root bus removal with rescan loc=
+k
+      CVE-2026-93822: PCI: iproc: Protect root bus removal with rescan lock
+      CVE-2026-93830: net: stmmac: xgmac2: disable RBUE in default RX inter=
+rupt mask
+      CVE-2026-97407: ASoC: rockchip: rockchip_pdm: Handle runtime PM resum=
+e failures in set_fmt
+      CVE-2026-97408: Bluetooth: L2CAP: validate connectionless PSM length
+      CVE-2026-97411: net: ibm: emac: mal: fix potential system hang in mal=
+_remove()
+      CVE-2026-97416: btrfs: balance: fix potential bg lookup failure in bt=
+rfs_may_alloc_data_chunk()
+      CVE-2026-97417: netfilter: nf_conntrack: use get_unaligned_be32() in =
+tcp_sack()
+      CVE-2026-97418: ALSA: es18xx: check control allocation before private=
+ data setup
+      CVE-2026-97419: hsr: broadcast netlink notifications in the device's =
+net namespace
+      CVE-2026-97420: bpf: NUL-terminate replaced sysctl value
+      CVE-2026-97430: xhci: Prevent queuing new commands if xhci is inacces=
+sible
+      CVE-2026-97435: net: dsa: sja1105: flower: reject cross-chip redirect
+      CVE-2026-97440: net: qrtr: fix node refcount leak on ctrl packet allo=
+c failure
+      CVE-2026-97441: ata: ahci: fail probe if BAR too small for claimed po=
+rts
+      CVE-2026-97443: perf/ftrace: Fix WARNING in __unregister_ftrace_funct=
+ion
+      CVE-2026-97444: ACPICA: add boundary checks in two places
+      CVE-2026-97445: ACPICA: Enhance buffer validation in acpi_ut_walk_aml=
+_resources()
+      CVE-2026-97446: ACPICA: Fix NULL pointer dereference in acpi_ns_custo=
+m_package()
+      CVE-2026-97448: ACPICA: Add validation for node in acpi_ns_build_norm=
+alized_path()
+      CVE-2026-97449: ACPICA: Add package limit checks in parser functions
+      CVE-2026-97450: ACPICA: validate handler object type in two places
+      CVE-2026-97451: ACPICA: Fix integer overflow in acpi_ex_opcode_3A_1T_=
+1R() (mid_op)
+      CVE-2026-97452: ACPICA: Prevent adding invalid references
+      CVE-2026-97453: ACPICA: validate byte_count in acpi_ps_get_next_packa=
+ge_length()
+      CVE-2026-97454: ACPICA: add boundary checks in acpi_ps_get_next_field=
+()
+      CVE-2026-97455: ACPICA: Fix use-after-free in acpi_ds_terminate_contr=
+ol_method()
+      CVE-2026-97456: ACPICA: Fix condition check in acpi_ps_parse_loop()
+      CVE-2026-97472: ipv6: addrconf: fix temp address generation after pre=
+fix deprecation
+      CVE-2026-97475: thermal/drivers/tegra/soctherma: Switch to devm cooli=
+ng device registration
+      CVE-2026-97476: rds: filter RDS_INFO_* getsockopt by caller's netns
+      CVE-2026-97481: serial: 8250: fix possible ISR soft lockup
+      CVE-2026-97482: usb: gadget: goku_udc: avoid NULL deref of dev->drive=
+r in INT_USBRESET log
+      CVE-2026-97483: usb: core: hcd: fix possible deadlock in rh control t=
+ransfers
+      CVE-2026-97484: usbip: vhci_hcd: fix NULL deref in status_show_vhci
+      CVE-2026-97485: omfs: handle set_blocksize failures
+      CVE-2026-97486: hpfs: handle set_blocksize failures
+      CVE-2026-97487: jfs: handle set_blocksize failures
+      CVE-2026-97488: qnx4: handle set_blocksize failures
+      CVE-2026-97489: bfs: handle set_blocksize failures
+      CVE-2026-97490: affs: handle set_blocksize failures
+      CVE-2026-97491: net/rds: Don't sleep inside rds_ib_conn_path_shutdown
+      CVE-2026-97492: wifi: mac80211: don't call ieee80211_handle_reconfig_=
+failure when not needed
+      CVE-2026-97502: mmc: davinci: avoid NULL deref of host->data in IRQ h=
+andler
+      CVE-2026-97507: media: dm1105: fix missing error check for dma_alloc_=
+coherent
+      CVE-2026-97508: thunderbolt: Set tb->root_switch to NULL when domain =
+is stopped
+      CVE-2026-97510: thunderbolt: Release request if tb_cfg_request() fail=
+s in __tb_xdomain_response()
+      CVE-2026-97523: mptcp: close race between scheduler and state change
+      CVE-2026-97524: mptcp: avoid unneeded actions on subflow reset
+      CVE-2026-97568: mptcp: syncookies: remember the request backup flag
+      CVE-2026-97572: bnxt_en: Propagate RX ring init failures in bnxt_init=
+_nic()
+      CVE-2026-97573: bnxt_en: Handle buffer allocation failure in bnxt_rx_=
+ring_reset()
+      CVE-2026-97592: s390/crypto: Fix missing scrub of temp buffers with A=
+ES ctr and gcm algorithm
+      CVE-2026-97596: ipvs: reject invalid states in connection template sy=
+nc records
+      CVE-2026-97598: ipv4: fib: bound automatic table ID allocation
+      CVE-2026-97601: ieee802154: 6lowpan: fix NULL dereference in lowpan_n=
+ewlink
+      CVE-2026-97604: fbdev: vfb: defer cleanup until the last reference
+      CVE-2026-97611: net: openvswitch: fix use-after-free of the flow tabl=
+e mask array
+      CVE-2026-97612: net: mpls: clear inner_protocol when the last label i=
+s popped
+      CVE-2026-97899: drm/i915: Fix memory leak in query_perf_config_list()
+      CVE-2026-97904: cpufreq: initialize policy rwsem before sysfs publica=
+tion
+      CVE-2026-97905: cpufreq: zero-initialize policy cpumask before sysfs =
+publication
+      CVE-2026-97909: ASoC: sti: initialize IRQ lock before requesting IRQ
+      CVE-2026-97910: ASoC: sprd: validate compress buffer sizes against fi=
+xed allocations
+      CVE-2026-97923: tracing: Free histogram the var ref when its initiali=
+zation fails
+      CVE-2026-97926: ufs: validate cylinder group metadata before caching =
+it
+      CVE-2026-97927: ufs: create the root dentry after loading cylinder me=
+tadata
+      CVE-2026-97931: ALSA: us122l: Prevent write upgrades for read mapping=
+s
+      CVE-2026-97940: ipv6: fix fib6 walker UAF on seq stop
+      CVE-2026-97948: powerpc/eeh: Fix recursive locking on devices without=
+ EEH sensitive driver
+      CVE-2026-97951: scsi: target: iscsi: Fix hang for aborted WRITE_PENDI=
+NG commands
+      CVE-2026-97952: sunvdc: unmap LDC cookies when the descriptor send fa=
+ils
+      CVE-2026-97954: net/rds: fix tcp stream corruption with large pages
+      CVE-2026-97957: net: hinic: fix mailbox segment buffer overflow
+      CVE-2026-97958: net/sched: cls_api: Don't replay RTM_GETCHAIN in tc_c=
+tl_chain().
+      CVE-2026-97959: net/sched: cls_route: free emptied bucket on filter m=
+ove
+      CVE-2026-97981: net: ethernet: cortina: Count dropped frames as NAPI =
+work
+      CVE-2026-97982: net: ethernet: cortina: Fix budget accounting
+      CVE-2026-97993: vhost-vdpa: don't install the eventfd_ctx_fdget() err=
+or in config_ctx
+      CVE-2026-97995: virtio_console: do not free control-out buffers on re=
+move
+      CVE-2026-97998: netfilter: nfnetlink_log: cope with concurrent instan=
+ce destruction
+      CVE-2026-98006: ALSA: caiaq: Decoupling ep1_in_urb in caiaq dev
+      CVE-2026-98009: net/sched: ets: clamp quantum in parse and fallback p=
+aths
+      CVE-2026-98010: net/sched: drr: clamp quantum in change class
+      CVE-2026-98011: net/sched: hhf: clamp quantum in change and init path=
+s
+      CVE-2026-98012: net/sched: sfq: clamp quantum in change path
+      CVE-2026-98013: net/sched: fq_pie: clamp quantum in change path
+      CVE-2026-98015: net/mlx5: E-Switch: fix use-after-free in mlx5_eswitc=
+h_termtbl_put
+      CVE-2026-98022: net: cap tx_queue_len at S16_MAX to prevent oversized=
+ ring allocations
+      CVE-2026-98023: vxlan: reject dynamic fdb entries that reference a ne=
+xthop id
+      CVE-2026-98025: net: usb: cx82310_eth: drop URB after 0xffff reboot s=
+entinel to prevent partial_data heap overflow
+      CVE-2026-98027: net: dsa: mv88e6xxx: bound the policy rule dump by th=
+e caller's buffer size
+      CVE-2026-98030: net: dsa: bcm_sf2: bound the CFP rule dump by the cal=
+ler's buffer size
+      CVE-2026-98063: bpf: Fix NULL-ptr-deref in btf_var_show()
+      CVE-2026-98064: bpf: Fix NULL-ptr-deref when showing a void BTF type
+      CVE-2026-98066: ALSA: caiaq: Fix potential double-free at error path
+      CVE-2026-98068: net/rds: don't let rds_conn_shutdown() consume a conc=
+urrent drop
+      CVE-2026-98069: net/rds: acquire the fastpath locks in rds_conn_shutd=
+own()
+      CVE-2026-98070: net/rds: acquire RDS_IN_XMIT in rds_tcp_reset_callbac=
+ks()
+      CVE-2026-98071: net/rds: clear cp_flags bits individually in rds_conn=
+_path_reset()
+      CVE-2026-98072: net/rds: use wq_has_sleeper() in release_in_xmit()
+      CVE-2026-98074: bonding: do not clear curr_active_slave prematurely w=
+hen releasing all slaves
+      CVE-2026-98076: tracing/probes: Fix use-after-free on field name/type=
+ of events with multiple probes
+      CVE-2026-98077: netfilter: nf_conntrack_sip: fix OOB read in sip_skip=
+_whitespace()
+      CVE-2026-98078: ipvs: fix reversed sequence option serialization
+      CVE-2026-98080: btrfs: do not force reloc root creation during qgroup=
+_account_snapshot()
+      CVE-2026-98091: btrfs: detach failed sprout device from transaction u=
+pdate list
+      CVE-2026-98094: staging: fbtft: make dirty_lock IRQ-safe
+      CVE-2026-98095: af_packet: Don't cast tpacket_hdr.tp_len to int in tp=
+acket_parse_header().
+      CVE-2026-98096: ipv6: sr: restore network header before routing and f=
+orwarding
+      CVE-2026-98108: Bluetooth: L2CAP: fix chan mode for LE_CONN_REQ + EXT=
+_FLOWCTL pchan
+      CVE-2026-98123: sctp: fix soft lockup from unpadded ASCONF-ACK parame=
+ter iteration
+      CVE-2026-98130: sctp: fix a TOCTOU race in SCTP_CMD_TIMER_START
+      CVE-2026-98157: EDAC/device_sysfs: Use kstrtouint() for poll_msec to =
+prevent truncation
+      CVE-2026-98158: ppp_async: drop the errored frame instead of resettin=
+g its headroom
+      CVE-2026-98185: wifi: mwifiex: validate scan response extents
+      CVE-2026-98186: wifi: mwifiex: bound the pairwise-cipher OUI walk to =
+the IE length
+      CVE-2026-98187: wifi: p54: require a full exp_if record in PDR_INTERF=
+ACE_LIST
+      CVE-2026-98188: wifi: p54: validate curve data length in the calibrat=
+ion curve converters
+      CVE-2026-98189: wifi: wilc1000: fix RX buffer OOB-write in wilc_wlan_=
+handle_isr_ext()
+      CVE-2026-98190: wifi: wilc1000: fix out-of-bounds read in P2P public =
+action frames
+      CVE-2026-98191: wifi: wlcore: release runtime PM ref on regdomain con=
+fig failure
+      CVE-2026-98194: wifi: libertas_tf: fix UAF in lbtf_free_adapter()
+      CVE-2026-98195: wifi: iwlegacy: fix broadcast stations deallocation
+      CVE-2026-98196: wifi: brcmsmac: fix UAF in brcms_free_timer()
+      CVE-2026-98197: hwmon: (w83791d) remove fan/pwm 4-5 sysfs group on re=
+move
+      CVE-2026-98201: Input: zero ff_effect before compat copy in input_ff_=
+effect_from_user
+      CVE-2026-98202: Input: synaptics-rmi4 - fix GPF in suspend and resume=
+ when unbound
+      CVE-2026-98203: Input: soc_button_array - check btns_desc->package.co=
+unt
+      CVE-2026-98204: Input: rmi_smbus - fix out-of-bounds read in rmi_smb_=
+write_block()
+      CVE-2026-98205: Input: evdev - zero absinfo before partial copy in EV=
+IOCSABS
+      CVE-2026-98207: mmc: spi: reset bytes_xfered before retrying CRC fail=
+ures
+      CVE-2026-98208: mmc: sdio_uart: fix xmit_fifo leak when the port tabl=
+e is full
+      CVE-2026-98209: mmc: sdhci-of-aspeed: Remove children before releasin=
+g SDC resources
+      CVE-2026-98210: mmc: mxcmmc: cancel data work and watchdog on remove
+      CVE-2026-98217: IB/mlx4: Fix use-after-free on pkey sysfs registratio=
+n failure
+      CVE-2026-98233: net/packet: clear RX owner on VNET header error
+      CVE-2026-98234: net/sched: hhf: cap hh_flows_limit at change time
+      CVE-2026-98241: ipv6: xfrm: use full sockets in local error paths
+      CVE-2026-98251: openvswitch: avoid reallocating confirmed conntrack l=
+abels
+      CVE-2026-98252: RDMA/core: fix refcount bug in iwpm_get_nlmsg_request=
+()
+      CVE-2026-98253: RDMA/ucma: Serialize join and leave on copy_to_user f=
+ailure
+      CVE-2026-98255: tcp: exclude old ACKs from tcp fast path
+      CVE-2026-98257: rds: ib: use rds_conn_drop() on protocol version mism=
+atch
+      CVE-2026-98262: ata: libahci: clear PxCLBU and PxFBU for AHCI_HFLAG_3=
+2BIT_ONLY
+      CVE-2026-98272: net: mvpp2: prevent buffer overflow in page_pool allo=
+cation
+      CVE-2026-98275: net: ethernet: cortina: Ack RX overrun interrupt corr=
+ectly
+      CVE-2026-98276: net: lock the socket in sock_gettstamp()
+      CVE-2026-98282: powerpc/iommu: Fix the overflow validation in iommu_t=
+ce_check_ioba
+      CVE-2026-98298: dmaengine: mmp_pdma: fix wrong sg length in mmp_pdma_=
+prep_slave_sg()
+      CVE-2026-98299: tcp: do not let tcp_rmem be set below 4096
+      CVE-2026-98300: tcp: Don't call skb_clone_and_charge_r() for close()d=
+ listener in tcp_v6_do_rcv().
+      CVE-2026-98302: net: fddi: skfp: fix NULL deref when setting the MAC =
+address while down
+      CVE-2026-98306: seg6: set IPSKB_L3SLAVE from IP6SKB_L3SLAVE on IPIP d=
+ecapsulation
+      CVE-2026-98308: ALSA: hda: trace PCM open only after assigning a stre=
+am
+      CVE-2026-98311: wifi: virt_wifi: don't transfer operstate before regi=
+ster
+      CVE-2026-98314: ALSA: pcm: set timer->private_data before registering=
+ the PCM timer
+      CVE-2026-98319: drm: Fix drm_pending_vblank_event leak in error path =
+for out_fence_ptr
+      CVE-2026-98320: netfilter: flowtable: hold reference on ct until flow=
+ is released
+      CVE-2026-98322: netfilter: nft_nat: fully initialise new_addr in netm=
+ap setup
+      CVE-2026-98323: RDMA/siw: Bound fragmented header copies by the remai=
+ning length
+      CVE-2026-98339: wifi: cfg80211: don't filter by BSS type when removin=
+g stale entries
+      CVE-2026-98340: wifi: cfg80211: only group hidden BSSes with beacon e=
+ntries
+      CVE-2026-98342: dmaengine: wait for RCU readers before releasing dma_=
+device
+      CVE-2026-98343: dmaengine: fix use-after-free in dma_chan_put() and d=
+ma_release_channel()
+      CVE-2026-98344: dmaengine: Fix device kref underflow in dma_chan_put(=
+)
+      CVE-2026-98345: wifi: cfg80211: check IP header size in cfg80211_clas=
+sify8021d()
+      CVE-2026-98347: IB/IPoIB: Avoid restoring OPER_UP after multicast flu=
+sh
+      CVE-2026-98348: wifi: libipw: reject too-short association responses
+      CVE-2026-98349: wifi: libipw: reject too-short beacon and probe respo=
+nses
+      CVE-2026-98351: wifi: virt_wifi: free skb when disconnected
+      CVE-2026-98354: RDMA/mad: Fix receive buffer leak when PKey enforceme=
+nt fails
+      CVE-2026-98357: IB/isert: wait for deferred control PDU completions b=
+efore releasing the connection
+      CVE-2026-98358: IB/iser: reject a remote invalidation of an unregiste=
+red direction
+      CVE-2026-98362: clk: scpi: bound-check DVFS index in scpi_dvfs_recalc=
+_rate
+      CVE-2026-98363: firmware: arm_scpi: reject DVFS OPP count above MAX_D=
+VFS_OPPS
+      CVE-2026-98367: RDMA/siw: Clear association under lock if siw_qp_modi=
+fy fails in siw_accept
+      CVE-2026-98370: xfrm: fix compat ALLOCSPI request use-after-free
+      CVE-2026-98379: netfilter: ip6t_rpfilter: reject routes without inet6=
+_dev
+      CVE-2026-98380: net/sched: reject IDR error pointers when deleting ac=
+tions
+      CVE-2026-98383: bpf: Disallow bpf_skb_pull_data() for LWT_SEG6LOCAL
+    added commits:
+      CIP: Bump version suffix to -cip78 after merge from stable
+      PCI: rzg3s-host: Fix compilation warning
+      irqchip/renesas-rzg2l: Fix loss of interrupt
+      arm64: dts: renesas: r8a774e1: Add missing iommus properties
+      arm64: dts: renesas: r8a774c0: Add missing iommus properties
+      arm64: dts: renesas: r8a774b1: Add missing iommus properties
+      arm64: dts: renesas: r8a774a1: Add missing iommus properties
+      pinctrl: renesas: rzg2l: Populate struct gpio_chip::set_config
+      pinctrl: renesas: rzg2l: Use -ENOTSUPP instead of -EOPNOTSUPP
+      mmc: renesas_sdhi: Add OF entry for RZ/G2E SoC
+      mmc: renesas_sdhi: Add OF entry for RZ/G2N SoC
+      mmc: renesas_sdhi: take DMA end interrupts into account
+      mmc: renesas_sdhi: improve naming of DMA struct
+      mmc: renesas_sdhi: add quirk for broken register layout
+      mmc: renesas_sdhi: Add missing checks for the presence of quirks
+      mmc: renesas_sdhi: style fix for proper function bodies
+      mmc: renesas_sdhi: make 'dmac_only_one_rx' a quirk
+      mmc: renesas_sdhi: make 'fixed_addr_mode' a quirk
+      mmc: renesas_sdhi: remove a stale comment
+      mmc: renesas_sdhi: remove outdated headers
+      mmc: renesas_sdhi: Refactor renesas_sdhi_probe()
+      mmc: tmio: add callback for dma irq
+      mmc: renesas_sdhi: remove accessor function for internal_dmac
 
-diff --git a/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb b/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb
-index 6e923e4..965e0f5 100644
---- a/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb
-+++ b/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb
-@@ -28,8 +28,8 @@ SRC_URI += "${@('file://' + d.getVar('SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG')) if
- 
- SWUPDATE_LUA_VERSION = "5.5"
- SWUPDATE_LUA_VERSION:trixie = "5.4"
--SWUPDATE_LUA_VERSION:bookworm = "5.3"
--SWUPDATE_LUA_VERSION:bullseye = "5.3"
-+SWUPDATE_LUA_VERSION:bookworm = "5.4"
-+SWUPDATE_LUA_VERSION:bullseye = "5.4"
- SWUPDATE_LUA_VERSION:buster = "5.3"
- 
- do_install[cleandirs] = "${D}/etc \
--- 
-2.39.5
+Best regards,
+  Nobuhiro
 
 
