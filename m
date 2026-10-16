@@ -2,92 +2,92 @@ Return-Path: <bot@kernelci.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 474C5CC6B38
-	for <webhook@archiver.kernel.org>; Fri, 16 Oct 2026 02:30:11 +0000 (UTC)
-Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com [74.125.82.180])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.13310.1792117807575826452
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26B94CCA462
+	for <webhook@archiver.kernel.org>; Fri, 16 Oct 2026 02:30:51 +0000 (UTC)
+Received: from mail-dl1-f51.google.com (mail-dl1-f51.google.com [74.125.82.51])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.13325.1792117843248315692
  for <cip-dev@lists.cip-project.org>;
- Thu, 15 Oct 2026 19:30:07 -0700
+ Thu, 15 Oct 2026 19:30:43 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci.org header.s=google header.b=R0MXO7iE;
- spf=pass (domain: kernelci.org, ip: 74.125.82.180, mailfrom: bot@kernelci.org)
-Received: by mail-dy1-f180.google.com with SMTP id 5a478bee46e88-35f036b17easo1304734eec.1
-        for <cip-dev@lists.cip-project.org>; Thu, 15 Oct 2026 19:30:07 -0700 (PDT)
+ dkim=pass header.i=@kernelci.org header.s=google header.b=MumItHyj;
+ spf=pass (domain: kernelci.org, ip: 74.125.82.51, mailfrom: bot@kernelci.org)
+Received: by mail-dl1-f51.google.com with SMTP id a92af1059eb24-15354aa70e8so1713040c88.1
+        for <cip-dev@lists.cip-project.org>; Thu, 15 Oct 2026 19:30:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci.org; s=google; t=1792117807; x=1792722607; darn=lists.cip-project.org;
+        d=kernelci.org; s=google; t=1792117842; x=1792722642; darn=lists.cip-project.org;
         h=message-id:date:reply-to:cc:to:from:subject
          :content-transfer-encoding:mime-version:content-type:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=5gNK3FwxXwKjSLR/6EF+2TpPkRVjwvd9mBz8NfJQlbI=;
-        b=R0MXO7iE13hSvyGGVavzwmjSB+8fvMcOppouf2ON8j9EaZUKbEb8jpPEteAerPPBor
-         czhlddnkHqe2ZpGTIaxSoEE5WSm+RgiwhlY4GPhCIpfr0088fwQVH3KSPk4LPpjpxmbM
-         /0yp+NpBRWPYVYAGWwEV2LJ4VXY+HDzWzPryveCtv3Bvalswn9e6BxPcYZd7no+1jd9b
-         MvAuiFcLZ5x6UOEBFL7VpHTyvny5mrisASh8wf677yCc3icbA1aB6ZunyZw80zSF66P4
-         HsTugL8TslqDXiAezoCufZJq8cVDWvizwHFS+GgUuUQt0Rfso84+wP4Ckmtep9pMFhd/
-         DFFA==
+        bh=FUJ0FzLQVLPgACf6SkU4rj5c0uBNiQPYkbSucCcl2nk=;
+        b=MumItHyjudw49JFKygmlGVsFBH+ZOazz5LBAHcILDsWH5eZcsxK6sRhXeR08Hs16bi
+         osK1MUkg/xeC3xyiz64eKAaWJJLbKsBuyqLfknffVvTFcjT9xmRRcIdW1Nkoi9GCM4sp
+         hKyAfmbSE0MNk4EmI1k/Pb7x8EhbByhqPterdId04h7qhthEvIQDKq9I+YP9XGQoa1vf
+         eBGVzPdVZmXIhf5jN/bpGSQY6jzsx9c3R4DUfppA5rhn5HzhKsErC+3HdyvG2ua69vDM
+         BmVvPuufLrVFUlHlTnpo3h0ZAUwdLB/bfzBQSpQozHFJ5UmMBp6Akc1J5/yicq0M9gW0
+         zwgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792117807; x=1792722607;
+        d=1e100.net; s=20260707; t=1792117842; x=1792722642;
         h=message-id:date:reply-to:cc:to:from:subject
          :content-transfer-encoding:mime-version:content-type:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=5gNK3FwxXwKjSLR/6EF+2TpPkRVjwvd9mBz8NfJQlbI=;
-        b=BMb1XTkKlQwgg2HT6RPbG6sxNvGtc8NfXMOMcI+qVRMhP3sbLxa4zHP3zJZcVXVTpu
-         usNL0cdhq+CrwIBIOSYVrdhG6+6Qe0zKiLh3GHKIhspHLbqvdVjoJClluzdfMekN7i1t
-         qcdRQFsKpPaB8OqK0FKjsbJ50Uk4PWrs9IZ6Gora2qjHAfmFFDLRLGBlPXKncdKebMtL
-         THaWVUK7pkHRJbi4REpoKEqIyyBTqZ57xcrhcFaZLsKIkVcz1CdAheUe20CwFKHfrFOO
-         pUsMv5PIIby3hDXqGjhKM/XOtOrf3SoFvwBI5uzTnajzbcEU9vf9B5STNmUYRZcoYdw2
-         XJZQ==
-X-Gm-Message-State: AFq9FYI67M6e9F89TFHC4DGP/S9CgmhHZ+U9YpqWUnsImjBnhC49aG7L
-	GSLJGNcHr2snJwG4LMzIPsqSs0LTArtyaVRJSBTaxHKiIg4CI5kLVqG5lPVuNTORhJ0=
-X-Gm-Gg: AYBFou0xa+KzkAldycpSXPaqcPsBjXjni/HumnpAFpIYjXEWbcXMaj32i+efD1p+4h3
-	rVAVqRvfAmm33wgQvi8eWG7VaHB0qOinojulsu8Ig5mPu9CTz77RFwvSfi0psGG7qL7d2VDv5A7
-	/lc7+3rEKD86Ohdv1WPDvjsWrUr2Adoq69byUglgvt520tH3zkCykKd3Jj7ev56UujeLk1QG+Cq
-	g1yo56wkGINfLiDznBNdoZsmJA3/WUimpZeGtz6+OpyZAC4GKckxIkqNTV04BBZopbBEurXhcg5
-	3YyBVcWVviHdVoNaYEepptEjuHFIGVU4GemjVSPDHZGPoAHAjeu2o0OzGhGz3NFZTkeyP5LjscR
-	boFk4QnrFy/ac+ZDjucUHbJdB8qQz7rbr0gbSikkO1MueQHbkiP6+06RWNYt32XuO/3GRSbZLix
-	zcA8Vbd6AgFxktpeeaC1XmJRUUZFyPqoKsEcUoqfi3zjsqVaXmxL3ZEPuopoo+xXo=
-X-Received: by 2002:a05:7300:b293:b0:351:207d:bff4 with SMTP id 5a478bee46e88-3537deccb0fmr28226429eec.4.1792117806599;
-        Thu, 15 Oct 2026 19:30:06 -0700 (PDT)
+        bh=FUJ0FzLQVLPgACf6SkU4rj5c0uBNiQPYkbSucCcl2nk=;
+        b=y9Zi4xRvsW7w1ws9Mw+U91w+8t+dm7hjTnLNvGawE6/LHEDUNMEv+WPj42sD0KGaCq
+         iQ/ySXX7gLale6LIJKZIsxUsSeTwX5yUSszygBcAeLdqhEI1w2fNNvAorbiawS1QaJPN
+         ij3IYwfWn7R2Da3jqYFzfptjAqC6l8jGLF2HMdCm3uBZXrU6ozdg+Hw1Mf2fxmurwc5l
+         JdgL5r+xPa/YUqtoxIEDp0hzzCae4VqCgNUEFD/U4NKOb13eJb7Yzx2770jdPqHzC8q1
+         kT701QOeTDMyxGbiNRoGdDR5LuXYsbbOE80m3to4ajB7RyAkYIX9bUeNpLNyIJmRVLiX
+         2YlA==
+X-Gm-Message-State: AFq9FYK/5rxmyznb42yNyxz4liOyioUDVHmNhXb8ROcLvngiv3Ig+P22
+	shc7sq5oW3QVBbEU8159fjoZCU4YEh6igJzE0kXXXutzwfjsEbxVnGH0tNvrIXI7jVI=
+X-Gm-Gg: AYBFou1TVdYxGhdDDjtv9oEmRM/XBHMiKKyMHlfYYAY5VqZYjZ9tvu1VjnFlX5xHtxF
+	cov5XjVsXhu6CdVGW3Nogf1iLhlbesdt8sl8fOditp39jqwU8AoBw966ZA+IhGhU4uWzbS/jN/0
+	CF3VzhrxlZwh9E6wpvcGLP/3N58dF6AzVXXME3LE1Am05YAtsA+hUS7X//pAtRvgM0sHk4rLVnN
+	WuTuKRPuXfqJey9b3D1oaUTshLAlCaEabakNX4efx1NMjalI+jo5NXpvn1AwAmthlTgjeqfibqv
+	B9+IPEktkn8+nZF44SnZCRCA67/J4DRfyXLIAAxlLxYkdga5IDShbTBLtQ7yRZ/JwOWm+j3kvf7
+	jZjxcqjE1I6W8/uHJx4up+qBTGFFgjTq2WBq7hrXykx8WIsUXuzHmLu2ULuupnCIPX1SPRtuk1P
+	LE8PlvX1DsUUMAnggv9w/tt7khxGtMZGu8WAadH8vZOIO2kI8vIC7ExFi7Y/KqulA=
+X-Received: by 2002:a05:701b:2092:20b0:16d:c848:d36e with SMTP id a92af1059eb24-16dc848d4ecmr27590350c88.13.1792117842089;
+        Thu, 15 Oct 2026 19:30:42 -0700 (PDT)
 Received: from 244668f92ec4 ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3607ee0d391sm2086245eec.4.2026.10.15.19.30.05
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-183190aa3ebsm1372554c88.8.2026.10.15.19.30.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Oct 2026 19:30:05 -0700 (PDT)
+        Thu, 15 Oct 2026 19:30:41 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: [STATUS] cip/linux-6.1.y-cip-rt -
- 407b1406d2fad2b7ac279f28757bbd06e1d541dd
+Subject: [STATUS] cip/linux-5.10.y-cip -
+ ef24e6dcf682f112bcdbb5b39cbed7a8cedcfd46
 From: KernelCI bot <bot@kernelci.org>
 To: kernelci-results@groups.io
 Cc: cip-dev@lists.cip-project.org
 Reply-To: kernelci@lists.linux.dev
-Date: Fri, 16 Oct 2026 02:30:05 -0000
-Message-ID: <179211780515.391248.13476473435623274437@244668f92ec4>
+Date: Fri, 16 Oct 2026 02:30:41 -0000
+Message-ID: <179211784065.391248.1738929409881965877@244668f92ec4>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 16 Oct 2026 02:30:11 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24475
+ <cip-dev@lists.cip-project.org>; Fri, 16 Oct 2026 02:30:51 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24476
 
 
 
 Hello,
 
-Status summary for cip/linux-6.1.y-cip-rt
+Status summary for cip/linux-5.10.y-cip
 
 Dashboard:
-https://d.kernelci.org/c/cip/linux-6.1.y-cip-rt/407b1406d2fad2b7ac279f28757bbd06e1d541dd/
+https://d.kernelci.org/c/cip/linux-5.10.y-cip/ef24e6dcf682f112bcdbb5b39cbed7a8cedcfd46/
 
 giturl: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-branch: linux-6.1.y-cip-rt
-commit hash: 407b1406d2fad2b7ac279f28757bbd06e1d541dd
+branch: linux-5.10.y-cip
+commit hash: ef24e6dcf682f112bcdbb5b39cbed7a8cedcfd46
 origin: maestro
-test start time: 2026-10-15 11:08:26.524000+00:00
+test start time: 2026-10-14 23:46:52.260000+00:00
 
-Builds:	    6 ✅    0 ❌    0 ⚠️
-Boots: 	    9 ✅    0 ❌    0 ⚠️
-Tests: 	   19 ✅    1 ❌    3 ⚠️
+Builds:	    3 ✅    0 ❌    0 ⚠️
+Boots: 	    3 ✅    0 ❌    0 ⚠️
+Tests: 	    0 ✅    0 ❌    0 ⚠️
 
 ### POSSIBLE REGRESSIONS
 
