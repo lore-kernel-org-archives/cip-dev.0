@@ -2,48 +2,48 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C935CCF2D6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EE17CCF2DB
 	for <webhook@archiver.kernel.org>; Mon, 19 Oct 2026 10:26:00 +0000 (UTC)
 Received: from MRWPR03CU001.outbound.protection.outlook.com (MRWPR03CU001.outbound.protection.outlook.com [40.107.130.11])
  by mx.groups.io with SMTP id smtpd.msgproc02-g2.31403.1792405557545157339
  for <cip-dev@lists.cip-project.org>;
- Mon, 19 Oct 2026 03:25:59 -0700
+ Mon, 19 Oct 2026 03:25:58 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=LcIE6C27;
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=uogjNk4z;
  spf=pass (domain: siemens.com, ip: 40.107.130.11, mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=c+nGXVTXn05BsxFKL/OgmHdWDgagcSCXO0QGeh54p0NIKpxg56/n9E1TjAekZdwgpDZLA/g6emC7qjZSo2xOqf3cn3gXQIRt91U04IbmQA8zLUARobjO7ere7zIkWl8WPNWCcJvsI1XkMCcjyV0q0P1uqMCTblQzT8+N1280hWBMVxc7sinXD1YKV9eRRUaw+HmiXkRwC3DgazBLhT/uX4mcHy8+NhZ+sbndaMpN2LfZwbPZSN6n6wWy5vNshLKOKZ6G9mN3BLlTy8/gDM8GVN8gDkTH2Ey1xuyY+2XJCbvI6BEeVpQ2sSXHWUF6s+8JJtFG+9APRP/Z49m9+vU43w==
+ b=ikz+0KYuQQ6xNAC1KEYf7YwDo9l+vb2U40TAcj43ibEgLMbXGE+kyijmrPKZ7NjBmNnlj/Rq+xqAWm5WloTRrklPah0/KMoAW4D53qg5C4VxWsT4tQvF/LfZyJLpFPYWkS1dTwkAwcuyrbqJvx/m2Wv6hW5nWRlK/Q5FztXvUkdlVT/9wwa9g6fEYCWL5pdnjPuvwkgHZRXh3ioLtw0v2TFsMzDZoWim5k05mAOvVFDGhFCwJuhXlDHBIpNMpDAgtudGm+vXR3fLY79+utvzUXfk4s/7XzOAr47EzJZwY6WS2EtgTCNj3UjgYG1/EjKIR8/hGXCd7sDIQtWsjswMJQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=geybjG3HSlc7+27vW7kNtsKbh+NX9xed6xsZFbJosPU=;
- b=Fxpcb+5fHhvmTJ9gjPFk+8eai+UzkVtzvEFuUcvtFq/dUeReKTsGbizXbMNektOdzubDnRHP5BFF7ZfmV19Xx0bQJEyH6eecOrtDBTdNk2ZnkNmOoXaoPwVbkUuEJip9rzsWw6K136TJ7SY7xYqRNWKIhQi9KHmmgJo6QFhtse9WC65qUTBQEZ7+ZxJO8i+rVcves9qj4LVjEwXZFwrTN1NxNz0AicuRe2dJH0dopVeDK4P0U05umRZnyLYcg61To7aeHI7RA3ia37TSqbH1eBwuMjO9eaJS1JTsZ6N2SVgzrAWunF8v3qKEC5bGZFvflR4lPZ6BfaP8qTzCC/SJSg==
+ bh=5dVyT+FIPlrw/Q832dD1I750tsz5oUtURcZJOkc0mUU=;
+ b=cwR2NLjFGjrsxbGQZ0ZTTK7BjNrJgAws5GWPyiatDjRM7WfOo9KmuddaHnK0dKK64h8k0J3YxDOjiY/1cF2BJWNAEW62jp8ohgAosbi0crVahUDW4OZHVIhwVXmIgnA9orxCUEnwV0f3kle9qDHzV7PrMcIMaEtB/q52B/V5fzXgjAFIiBSNRE1LrvPUpTQsGlvf2Z0KWQvWJ425+pd8Yn7ljrqpEUAlpERg9F/Bu8J855rrxkfpxLAGTPaICLHY6SI+WRAMQnEw4EbdPqYCIj/wrbMyvejYm0tmpLYp/vMSmKIoFghOyg/IkywbeZHOd7i5neWffFcc9xktmLGLsg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=geybjG3HSlc7+27vW7kNtsKbh+NX9xed6xsZFbJosPU=;
- b=LcIE6C27MlykjEeLwNJ4wX1VMsF5iAIqcsPIXnNlwiMTJ0WxwiFsHjuwJcU1zJr9OhzeHwi583QBwwpNDb8zSWwY0by2ojGeobvu1C8b+haLy7Dv2x1avKFwkYVDWNBeovnKcx9rd7tpAmqhTJf1kapRCUXBq9t+mzEYSTxc7GwbQyQU/7EMXlD6RPFfRZlDB8qfc5WY1VYqyb4mX5CDfHtyvuYC7L+uk55d7VN/GP5C+e0nljHZHwFCDcpZ2dyjlyQ0U1meu5JXUOgm8O45AveXVEZ7yBv99p7BM/bo07EER+oYA4UQbneKRB2r0JwEizenxGW/LfZIKzFFVSV7Dg==
+ bh=5dVyT+FIPlrw/Q832dD1I750tsz5oUtURcZJOkc0mUU=;
+ b=uogjNk4zGoPpH1CdM9V8PDbE69NDrzfYjB61oaC+8TtGpiTljNu99LVQn2bA1sOejvX5jQ5LK6woVgEH0qR0aTfiI911/JwLHDsY9JCgPQdYO7vtp3URdrkyHlqYKo2TstHENoYLeNvbUDvYFuIFF1Utr6PtQWB9pojChMt9su8Qv82buDvdB/zr+x/2v322dII0SpynWFdIpmPMau+1PtHPVenF1QXhUj6EgjljgPaDzO2Gty9wXccHCcs2fQq6xTKc+/7sShs19zcD4pbOHn8wwSlhAvc3ifXj+uW0ZvrytzFgFEhGo58zyQkG1M4+lEixAUL/P7x4Al2qIQsF1Q==
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:113::12)
  by AS4PR10MB5524.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:4ce::5) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.19; Mon, 19 Oct
- 2026 10:25:53 +0000
+ 2026 10:25:50 +0000
 Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::ae26:d131:7cff:4001]) by DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::ae26:d131:7cff:4001%3]) with mapi id 15.21.0522.017; Mon, 19 Oct 2026
- 10:25:53 +0000
+ 10:25:50 +0000
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 To: felix.moessbauer@siemens.com,
 	jan.kiszka@siemens.com,
 	cip-dev@lists.cip-project.org
-Subject: [cip-dev][isar-cip-core][PATCH v2 07/12] cip-core-initramfs-dracut: add dracut initramfs
-Date: Mon, 19 Oct 2026 12:25:18 +0200
-Message-ID: <20261019102541.672620-8-quirin.gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][PATCH v2 02/12] efibootguard-boot: emit systemd verity cmdline for dracut
+Date: Mon, 19 Oct 2026 12:25:13 +0200
+Message-ID: <20261019102541.672620-3-quirin.gylstorff@siemens.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261019102541.672620-1-quirin.gylstorff@siemens.com>
 References: <20261019102541.672620-1-quirin.gylstorff@siemens.com>
@@ -55,178 +55,242 @@ X-ClientProxiedBy: LO4P123CA0314.GBRP123.PROD.OUTLOOK.COM
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DB8PR10MB3178:EE_|AS4PR10MB5524:EE_
-X-MS-Office365-Filtering-Correlation-Id: a8c14a6c-50e7-4b7a-ece7-08df2dcb59f1
+X-MS-Office365-Filtering-Correlation-Id: 95d684d7-fcc8-461e-930c-08df2dcb5845
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|376014|1800799024|23010399003|366016|6133799003|55112099003|18002099003|22082099003|10067099003|3023799007|261009223027099003|261009221227099003|261009223327099003|261009221727099003|261009220027099003|11063799006|56012099006;
+	BCL:0;ARA:13230040|376014|1800799024|23010399003|366016|6133799003|55112099003|18002099003|22082099003|10067099003|261009223027099003|11063799006|56012099006;
 X-Microsoft-Antispam-Message-Info: 
-	zA4UV6jHf90+UFlc9xAruJluSVF7RgHLwlTReYrcSoZq643LVLpNh/cp0w7UMoSarbT39akoNHY0K83SiOfLQNuEgEckmWUKKLB3NaVkF3QSo8mP+jvbIsa+EornG8/+BvfRn88MPpMkYpfUG2R+1Pi8s7vCLN+KANp33X/dFF9p6xmCis9+nIASlAwwOUZt/nTjZlxJGQu+KshQ45cEb4P04CNJzJ4Fq/q7RtgbxsEc5tVd40EMpFCkCPo7vvxNFVpKbpM0oFfbKzKnh0bmmahIzB3f2F4qp+K+4BeiACA3Ob0C2+cjTkNWw6laR5WSMCFTHC3xAH5AhKxeY8sEfH0TFTXufOSQ99wX3Yl2RJRoEBf/miBBL5VaKkYbBi1tfC78+qWyyNxM9xj9nHioEh7NoxQLPXadG/8tNBZhQkL37wNcbL3Z1ChgK3SZ6l1GEgr2r6it/EYOz1uO9BKEzM4A7zEE6pFVMSoz//BAcfweYMyD/uo3aeBkLyHnl+X60/1VOcR4/aErm0tQtcDJqvu3q/gt0DDAWLGFgAt4fO+wEsF3MHsVQzPBU6ZR/g/K/8jH0n99IzLK0/cqpH0VjQ/uuGktHE/lFOHwWCRE4NKUswgL3TmvLsmB/9Yr9ls96iK8uoDfA4F6i7xmAvU/7WH7h+CyS1xVfKEYQ2XTJsQ=
+	6bcl61ZpXBbLEfgsy5dfwOW8vTie8sjcV9b5BDoS6ChqKLDWD6DNmI7yDFe8ZDTbzPzJ5+D9L6q4JOzKoFkX6LmQa6TxdbvpkQ4QMZu+XEXFQCMZOU0Nn/7C0iOvegGerMHqsSqrVsXwa54IttEsZXTfIlTuPn4xXMRpwgSTz+DvBFlYDNHzaI2JnuB8Ck6PGzihPRoSQssfcy24F9GY3k+jyumDocB8S3LpgRI1Oh3MMx9KyiTm9zqPZ6kE+hQPncDeVa24hTXlVVQbqlDPtdKCTgE4ADbKuOZXLijZuwfKXkzOkppfcomEiOWqKSLZ6mS7vUVQezbeCRa7QIAMW4quqF6RCik8jq4enjbQtD1Q5WaFYcwWZpl7nE34Srp69+lUclTUfk9vL2W5avAhEzkjDAJvAikmTV8kPNGlJsgH1Mo33RDh3EozJlOppk8eSUno37cuFxKElGnWOCTn8MNGvRIvv0F0m6N7r16GTnffkxFDZoHgmeUo7owAo548qibyk/BZ66EpSSdX0iGYbDHT09Z+5Z4x6m+VbSKexO+W5OPPrh7b85hsU4HoR0ffhVlcPZ1tGOV9fUSvsTnY2VIf4LMmFboiWOgV6DjCPgyIFDlKjLwdR36XijcgtT1HVjy66EJvm0+xNaQyyX4r3RxyI6wNfUQeOl72Rx+DTsY=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(23010399003)(366016)(6133799003)(55112099003)(18002099003)(22082099003)(10067099003)(3023799007)(261009223027099003)(261009221227099003)(261009223327099003)(261009221727099003)(261009220027099003)(11063799006)(56012099006);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(23010399003)(366016)(6133799003)(55112099003)(18002099003)(22082099003)(10067099003)(261009223027099003)(11063799006)(56012099006);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?I5s7dgYnGLZqzLw5Jur5hMHNLjt7RolMGeo0h4x7q+Cp4obi3D4/Yy+2hi7A?=
- =?us-ascii?Q?bx0AKtEX8czTTKrfM6BJWLQq9RG+XwRC5nstZ/LUjPNtcOjjIUa74tJw8tk9?=
- =?us-ascii?Q?7sU/WZcVvEgBm8vaCYyP80CtVbLcpyqSBx3glj+t6OUAZmjHrZf2mMPWLC/s?=
- =?us-ascii?Q?mQVRn0kmjsXskLAnkEZUixzbNV94wWGje3nFYPeMrWgtQhwkf25rrlliZPUr?=
- =?us-ascii?Q?ooSOrBDiICipJCHe1eh8ibEi1tClKV8m3YX2TFIojrPnvW5aK4T8QO7n0oEg?=
- =?us-ascii?Q?Kxd8go0ms7F26SukJzhBLu0hULVOZBgAWCYCbMD8s17RXjiMXmL+V2255R0K?=
- =?us-ascii?Q?hLx45VZxhk6E6lcuJ++2JpVo7Wqx008nfgsYc7T/ydiXIp8gTGAWChiED7VH?=
- =?us-ascii?Q?RHSodEwB9PT4D/9L/NZ8BsR3lY9ke8Ph4Bz3f2yr8kz0bqn1yqYN94DE7nrx?=
- =?us-ascii?Q?D2kBKdnnHRXC7beeCmrz5SNqYYoQjsW5R6jaods1WXfrjEzXJyycCfhYQuZ2?=
- =?us-ascii?Q?skC6IubYoAQFBrcAZm633q+jreLxrIFF4Z5tRoD10o/pTzZ6hy+kFTAU+epn?=
- =?us-ascii?Q?iIsUpfp0C7SK6nja22UA2l7oMBC2Jdd1cH9lrjA9k4yEuBdJKyG9Kx6Mddd9?=
- =?us-ascii?Q?sRcro0WOrWZxC5cU0GV0BLOM95j5avLnoKPdGJ12ESGaeHeq6EOBuDwGi2ip?=
- =?us-ascii?Q?ssIVKu2xNe3C5bC3au8ZIZuC5ftDTtjXLVOkob8nfBV7XrAKYuzghVwLM0bi?=
- =?us-ascii?Q?8tn5YPOAIhYrgJ1jZ873siYwlSL2DcM8fHCQ9tixRb2cnPR5lTgLTH/gq8SQ?=
- =?us-ascii?Q?ySMEpyKLylr3fsm22D8umC122CmZ04JxOSZJMWL2n1yxqspu7Ci1j15ulvrw?=
- =?us-ascii?Q?RmJNh61/zA9hgYz7qQ7yYcriJjlq1vIi/v8pjER0w/3vQ1IgcUsq8zg3wJTc?=
- =?us-ascii?Q?6mcdq66oEssVOQhLuLBTLaRbOhtzkhg9gX19Zf2OD9X6vCNWVfs5PWm+vs54?=
- =?us-ascii?Q?Zo93MM3EQdufRxPwczsvvJksjtvocKdf7rDML0x7axJI8Q3mBm9zofsZRXcP?=
- =?us-ascii?Q?kroqfSReQlyJbq5PP6ylmDxpqYdiEHwGKiJmrDBgTAYD7b8qLnF1qKZin55d?=
- =?us-ascii?Q?6mwnSR1OAG4EnsXJ1ACxN5CKb/AL+l+KKJ8mwqRfJ4rPYTbYBDnHmimhkmgX?=
- =?us-ascii?Q?ixpHwecxnxWITnBwE7w+Qf5vUjWKSCU/uCvNwGHALGy6/UF663c9w114HpGD?=
- =?us-ascii?Q?oB7ts88gwDVEfQox/3JWtHASZ8rFiFxxUIJeziBg7WAYk+DLhZdc4sW2fUeX?=
- =?us-ascii?Q?K+mdZd0sMa0rR/3cYFJ1JHc5uvDiwoV2alQp4zzngwtRvfUB/VE+9NlYLnvw?=
- =?us-ascii?Q?s8C4mMRjddILJ+Qi7Yrawk7n7P+UkWTc0X0PMdk1ctYzqw2DcmD7a8mThz5y?=
- =?us-ascii?Q?Lwpy1AeG6pVfwJF9uMzLzztcCxlbz42p8Hd48E11SeJVVmjOhUXV2fpRARZj?=
- =?us-ascii?Q?kqB1zX+flHrjtQyQ5e0v2h3DCgmEAK+lNpQSmdCkZmHWVokWtwxKVIsn109E?=
- =?us-ascii?Q?C+00IvCtnpofRs1/vvH7Dbm7hU11CS9ForACb+sbzU21OoFWw9DSo6VbFe5x?=
- =?us-ascii?Q?nVQlhlnghqH9+c2pADD+QltW9ljerKGVAQv/Zk8gcWtI7ylYwPnZzhwL57k7?=
- =?us-ascii?Q?kPFcfEgOISTvSMy0Ucn2CtUFMMHmoDFRDot4YY4kFcrdSgWgF71ng7Ny0h/E?=
- =?us-ascii?Q?nd/VpilOI6TfFGP3nlwPr/f8DAucZrY=3D?=
+	=?us-ascii?Q?+tiQvyqkyqWMN/fTCVtyB35rK5uTsr8HjBOoM0z0OzaMkrS8D3JZ7+pvaQRy?=
+ =?us-ascii?Q?MqJbgx9VXTo7Z5rffJjvThcWL/S6QxHmHHokNTAOFfy7yBQfahwCV2N6wlLx?=
+ =?us-ascii?Q?LCJsVAkqkG4V5FvaF+PsfcZpdoTDt6M14vSwr1MqGPofMeJAbTj34GTU+jHU?=
+ =?us-ascii?Q?2hn3lr7GwQX8Nsj4x8V8fIBKHPlVHbMlxvB8myf2k8rntL1uBp+fLzTQN+eA?=
+ =?us-ascii?Q?K4WT42P/kDq/QQKvJ36uONfFy6cdaeKUH2ME950Yb8MzpgEMClID8fBw+DVI?=
+ =?us-ascii?Q?OG3BMs+WkolEFr7bvVOFw1lq6R5hWN99bI40Y28mScwXwyF9VVmiYEWTyQ/u?=
+ =?us-ascii?Q?KU3jXoCRIoVq+XGv2BHMyyHGjntM4NnBieg16LoPT4Sv2CKqO6/J3xc5w7cH?=
+ =?us-ascii?Q?RIcKCeBKel3wL4eFTRvC6iKehu/e2BTbvPETZ09RB2fKpFBt+Mqwb5b8HksS?=
+ =?us-ascii?Q?yDChkty22hw1JypYltuwg8FC1WraPu4FkkDCt73XMpzaPzdB5mGUSAtsYQic?=
+ =?us-ascii?Q?nHEU4qEdAhgdbqN2mq8N2OuTB3pWjpCoqY7s9NdkPIGmGN1ECWU+1cAO6AZI?=
+ =?us-ascii?Q?w6OjQ+i2a6m6Zptoy8Ri8oCj5JpVk/89IYXm1OQ8bNpI/XNSzUjrzaB7zE5F?=
+ =?us-ascii?Q?wrscala/Tf3BsCngpBI/XWVCDVlpWRZ2CZdZvQGnqGQPFesWVzHSsPrsS9Iq?=
+ =?us-ascii?Q?lUTnNXOxrb1w2S3IQMLoCtGTFp1CwC0XKgilzsUnLQBLOIjMqVb2uFtF1Mad?=
+ =?us-ascii?Q?3eB4TWTQ1A8F4ozSi/Uqw1kAQcY+qHmVMib/rjfjf/JY2va6WcB6G3+VIOms?=
+ =?us-ascii?Q?muTY0hxn1p6A1UDKDu0/qJXsbYV9wkXaobE13U4LiJggSWtJ8AbiPiPM0J8s?=
+ =?us-ascii?Q?tkV7uFGc2Vjb2twTuEi25svhxpu3/JSdHNsMaNsEJaXXmUtnhoJWqWLcXkGD?=
+ =?us-ascii?Q?QKQkYeyu7mP6GQU34fKYKEkVE+D1IkqPbktuXcw3iRFi4HJjF2BvIKgiUxid?=
+ =?us-ascii?Q?dK16mOmc155ciRES4tF+x+4nOQp/Jxrr6GA5LmhbNMpmFmURBNEAeU0QKpkE?=
+ =?us-ascii?Q?6dljthtyzTX7aXPWu6r0PTOJ3uAuFIZVtnRFa7+sa8lvzYZBCe7VicIA8ZIv?=
+ =?us-ascii?Q?o5UceyZbKGkpt7MYcVkivGjkpPHXz2S1WkQFhV5OGzk98NCDdDu3GjGcsp+o?=
+ =?us-ascii?Q?8BI/bSTVAmMDtrGe+ueBSkNcoMMdQV7QIowX2XVZk3cFaemuynySwysv/F/0?=
+ =?us-ascii?Q?bTIgH3T3zPL1I2Hww9eWx2NTrGo4aouYGP71qm77HamXrYQVkhAA1+KubKAc?=
+ =?us-ascii?Q?Svdz8jDjoRhg3PsWLYv8I9QUugT93Mc7Pil1kWYK8tQZEFs2CEBv+Ky+np7W?=
+ =?us-ascii?Q?kgu7h9VEwPSA59kbCnC9Sl4DEfgQfsZ/4c/bVMac2cw7vWHe7kNXnNdGQ8zh?=
+ =?us-ascii?Q?8XvAdspOXofWSGLwf4FA5DC87FKzXy7HlmF8iIOcw7YSekp4zq63JgCaSyGP?=
+ =?us-ascii?Q?s8nmHd6ckWyqYXydmD861W1EAJmDuQzWRfznj7MoHDn3c8IJl+CUsS6Alg37?=
+ =?us-ascii?Q?aYoQXk358n79gJewJBT3FpbnqB2/BGf53wDsBK7SCkPPjSgT9w65N5p43Xq2?=
+ =?us-ascii?Q?rOCjvK9/AQUUPkOZw6T101uVlYYfy6D5fRYSvugu1lStTeTcTOIPejQ/AfDp?=
+ =?us-ascii?Q?gaJs357TJsI91X+iAoNyr0dXL12C0BBq4xWyOsjbStPlAn4r0h/ZGox8f9WW?=
+ =?us-ascii?Q?RdQnjbxfED5HMKSTIGvlfax4XZIi7Nk=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a8c14a6c-50e7-4b7a-ece7-08df2dcb59f1
+X-MS-Exchange-CrossTenant-Network-Message-Id: 95d684d7-fcc8-461e-930c-08df2dcb5845
 X-MS-Exchange-CrossTenant-AuthSource: DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Oct 2026 10:25:52.1928
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Oct 2026 10:25:49.3768
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vsZzNpCKMQa+zTJeUWT27xa6L405Rw+RXrNpr3USbXR9d6AgkQIltPFez/TRrnqvxPgbibeSYtXJyW/ny3p3jm0w7mYznDCFujey92z+ZDY=
+X-MS-Exchange-CrossTenant-UserPrincipalName: Tdn4rZlqfyg+BscxjnXRIXIzurOzMAQMfaD5KqP05IoF0mKeFv1z6VUa3K+Tl2f8mWe9SCbTbhToLnLTsANJx40OklCFVJVhEHnudheoJSQ=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR10MB5524
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 19 Oct 2026 10:26:00 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24487
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24485
 
-Generates the initrd with dracut (--no-hostonly) on trixie. The overlay
-module is always included; verity, crypt and factory-reset follow the
-swupdate, encrypt-partitions and factory-reset overrides.
+INITRD_CMDLINE_STYLE selects the kernel command line dialect for
+verity. The default "initramfs-tools" keeps cip.verity_root_options=3D.
+"dracut" emits systemd's native roothash=3D and
+systemd.verity_root_options=3D, with the data and hash device resolved at
+runtime by the cip-verity dracut module (/dev/cip/verity-data), plus
+INITRD_EMERGENCY_CMDLINE (default "rd.shell=3D0 rd.emergency=3Dreboot"), so
+that a failed boot reboots and EFI Boot Guard can roll back.
 
-kas/opt/dracut.yml selects the recipe and the dracut kernel command
-line style.
+Also drop the LABEL=3Dvar entry from the generated fstab. /var is mounted
+by the initramfs (overlay and crypt hooks); the additional fstab entry
+makes systemd manage a second var.mount for the same filesystem.
 
+efibootguard-boot: use verity root for dracut without secure boot
+
+The dracut initramfs has no abrootfs support; dm-verity roothash
+matching is its only A/B root selection. Without secure boot the
+default wic layout (ebg-sysparts.inc) passes abrootfs_root=3Dy, so the
+unified kernel image lacked roothash=3D and the image did not boot.
+
+Promote abrootfs_root=3Dy to the verity root cmdline when
+INITRD_CMDLINE_STYLE is systemd. The wic .inc files cannot be
+parametrized instead, as wic does not expand BitBake variables there.
+
+efibootguard-boot: explain a missing verity env file
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- conf/distro/cip-core-common.inc               |  3 ++
- kas/opt/dracut.yml                            | 17 ++++++++
- .../cip-core-initramfs-dracut.bb              | 41 +++++++++++++++++++
- 3 files changed, 61 insertions(+)
- create mode 100644 kas/opt/dracut.yml
- create mode 100644 recipes-initramfs/cip-core-initramfs-dracut/cip-core-in=
-itramfs-dracut.bb
+ classes-recipe/read-only-rootfs.bbclass       |  6 +-
+ .../wic/plugins/source/efibootguard-boot.py   | 67 +++++++++++++++++--
+ 2 files changed, 66 insertions(+), 7 deletions(-)
 
-diff --git a/conf/distro/cip-core-common.inc b/conf/distro/cip-core-common.=
-inc
-index dbd65e3f..bbcea1da 100644
---- a/conf/distro/cip-core-common.inc
-+++ b/conf/distro/cip-core-common.inc
-@@ -32,6 +32,9 @@ TEE_SUPPLICANT_IN_USERLAND ?=3D "0"
- PREFERRED_PROVIDER_factory-reset-helper ?=3D "factory-reset-helper-file"
- PREFERRED_PROVIDER_factory-reset-helper:ftpm-stmm =3D "factory-reset-helpe=
-r-efi"
+diff --git a/classes-recipe/read-only-rootfs.bbclass b/classes-recipe/read-=
+only-rootfs.bbclass
+index 70152de2..179dcb98 100644
+--- a/classes-recipe/read-only-rootfs.bbclass
++++ b/classes-recipe/read-only-rootfs.bbclass
+@@ -17,6 +17,11 @@ IMAGE_INITRD =3D "${INITRAMFS_RECIPE}"
 =20
-+# The dracut initramfs requires a verity rootfs and the systemd cmdline st=
-yle.
-+INITRD_CMDLINE_STYLE ?=3D "${@'systemd' if d.getVar('INITRAMFS_RECIPE') =
-=3D=3D 'cip-core-initramfs-dracut' else 'cip-initramfs'}"
-+RO_ROOTFS_VERITY ?=3D "${@'1' if d.getVar('INITRAMFS_RECIPE') =3D=3D 'cip-=
-core-initramfs-dracut' else '0'}"
- OVERRIDES .=3D "${@':ro-rootfs-verity' if bb.utils.to_boolean(d.getVar('RO=
-_ROOTFS_VERITY')) else ''}"
+ do_image_wic[depends] +=3D "${INITRAMFS_RECIPE}:do_build"
 =20
- # Watchdog to service by initramfs hooks during lengthy operations like
-diff --git a/kas/opt/dracut.yml b/kas/opt/dracut.yml
-new file mode 100644
-index 00000000..969388cf
---- /dev/null
-+++ b/kas/opt/dracut.yml
-@@ -0,0 +1,17 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2026
-+#
-+# Authors:
-+#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+#
++INITRD_CMDLINE_STYLE ?=3D "cip-initramfs"
 +
-+header:
-+  version: 14
++INITRD_EMERGENCY_CMDLINE ?=3D "rd.shell=3D0 rd.emergency=3Dreboot"
++WICVARS +=3D "INITRD_CMDLINE_STYLE INITRD_EMERGENCY_CMDLINE RO_ROOTFS_TYPE=
+"
 +
-+local_conf_header:
-+  dracut-initrd: |
-+    INITRAMFS_RECIPE =3D "cip-core-initramfs-dracut"
-diff --git a/recipes-initramfs/cip-core-initramfs-dracut/cip-core-initramfs=
--dracut.bb b/recipes-initramfs/cip-core-initramfs-dracut/cip-core-initramfs=
--dracut.bb
-new file mode 100644
-index 00000000..8541574e
---- /dev/null
-+++ b/recipes-initramfs/cip-core-initramfs-dracut/cip-core-initramfs-dracut=
-.bb
-@@ -0,0 +1,41 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2026
-+#
-+# Authors:
-+#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
+ WIC_HOME_PARTITION =3D ""
+ WIC_HOME_PARTITION:separate-home-part =3D "part /home --source rootfs --ch=
+ange-directory=3Dhome --fstype=3Dext4 --label home --align 1024  --size 1G =
+--fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid c07d5e8f-3448-46dc-9c0=
+f-58904f369524"
+=20
+@@ -76,7 +81,6 @@ image_configure_fstab() {
+     run_privileged tee '${IMAGE_ROOTFS}/etc/fstab' << EOF
+ # Begin /etc/fstab
+ /dev/root	/		auto		defaults,ro			0	0
+-LABEL=3Dvar	/var		auto		defaults			0	0
+ proc		/proc		proc		nosuid,noexec,nodev		0	0
+ sysfs		/sys		sysfs		nosuid,noexec,nodev		0	0
+ devpts		/dev/pts	devpts		gid=3D5,mode=3D620			0	0
+diff --git a/scripts/lib/wic/plugins/source/efibootguard-boot.py b/scripts/=
+lib/wic/plugins/source/efibootguard-boot.py
+index ca97d7d7..5a5ec1c0 100644
+--- a/scripts/lib/wic/plugins/source/efibootguard-boot.py
++++ b/scripts/lib/wic/plugins/source/efibootguard-boot.py
+@@ -36,6 +36,7 @@ import logging
+=20
+ msger =3D logging.getLogger('wic')
+=20
++from wic import WicError
+ from wic.pluginbase import SourcePlugin
+ from wic.misc import exec_cmd, get_bitbake_var, BOOTDD_EXTRA_SPACE
+=20
+@@ -89,11 +90,20 @@ class EfibootguardBootPlugin(SourcePlugin):
+         boot_files =3D source_params.get("files", "").split(' ')
+         unified_kernel =3D source_params.get("unified-kernel") or 'y'
+         cmdline =3D bootloader.append or ''
++        cmdline_style =3D get_bitbake_var("INITRD_CMDLINE_STYLE")
++        root_mode =3D cls._resolve_root_mode(source_params, cmdline_style)
++        if root_mode =3D=3D "verity" and source_params.get("verity_root") =
+!=3D 'y':
++            msger.info("efibootguard-boot: abrootfs_root replaced by "
++                       "verity_root, the dracut initramfs has no abrootfs =
+"
++                       "support")
+         # the verity cmdline format is identical to systemd.verity_root_op=
+tions
+-        if source_params.get("verity_root") =3D=3D 'y':
+-            cmdline +=3D " cip.verity_root_options=3Dpanic-on-corruption,%=
+s" \
+-                % cls._get_verity_opts()
+-        if source_params.get("abrootfs_root") =3D=3D 'y':
++        if root_mode =3D=3D "verity":
++            if cmdline_style =3D=3D "systemd":
++                cmdline +=3D cls._get_verity_cmdline_dracut()
++            else:
++                cmdline +=3D " cip.verity_root_options=3Dpanic-on-corrupti=
+on,%s" \
++                    % cls._get_verity_opts()
++        elif root_mode =3D=3D "abrootfs":
+             cmdline +=3D " cip.abrootfs_root_options=3D%s" \
+                 % cls._get_abrootfs_opts()
+         if unified_kernel =3D=3D 'y':
+@@ -152,6 +162,21 @@ class EfibootguardBootPlugin(SourcePlugin):
+         cls._create_img(part_rootfs_dir, part, cr_workdir,
+                         native_sysroot, oe_builddir)
+=20
++    @classmethod
++    def _resolve_root_mode(cls, source_params, cmdline_style):
++        """
++        Return the effective root selection: 'verity', 'abrootfs' or None.
++        The dracut initramfs (systemd cmdline style) has no abrootfs
++        support, so abrootfs_root=3Dy is promoted to verity there.
++        """
++        if source_params.get("verity_root") =3D=3D 'y':
++            return "verity"
++        if source_params.get("abrootfs_root") =3D=3D 'y':
++            if cmdline_style =3D=3D "systemd":
++                return "verity"
++            return "abrootfs"
++        return None
 +
-+inherit initramfs
+     @classmethod
+     def _generate_kernel_opts_from_file(cls, filename, keys):
+         env_file =3D None
+@@ -176,8 +201,13 @@ class EfibootguardBootPlugin(SourcePlugin):
+         verity_sd_keys =3D ["data-block-size", "hash-block-size", "data-bl=
+ocks",
+                           "hash-offset", "salt", "uuid", "root-hash"]
+         image_basename =3D get_bitbake_var("IMAGE_BASENAME")
+-        opts =3D cls._generate_kernel_opts_from_file(f'{image_basename}*.v=
+erity.env',
+-                                               verity_sd_keys)
++        deploy_dir =3D get_bitbake_var("DEPLOY_DIR_IMAGE")
++        pattern =3D f'{image_basename}*.verity.env'
++        if not fnmatch.filter(os.listdir(deploy_dir), pattern):
++            raise WicError("efibootguard-boot: verity root requested but "
++                           "'%s' not found in %s. Set RO_ROOTFS_VERITY =3D=
+ "
++                           "\"1\"." % (pattern, deploy_dir))
++        opts =3D cls._generate_kernel_opts_from_file(pattern, verity_sd_ke=
+ys)
+         cmdline=3D[]
+         # fixup for root-hash to avoid an error in the initramfs search fo=
+r the
+         # root option in the kernel cmdline
+@@ -188,6 +218,31 @@ class EfibootguardBootPlugin(SourcePlugin):
+                 cmdline.append(f'{k}=3D{v}')
+         return ",".join(cmdline)
+=20
++    @classmethod
++    def _get_verity_cmdline_dracut(cls):
++        """Emit systemd's native verity arguments."""
++        opts =3D cls._get_verity_opts().split(',')
++        root_hash =3D None
++        rest =3D []
++        for opt in opts:
++            if opt.startswith('hash=3D'):
++                root_hash =3D opt[len('hash=3D'):]
++            else:
++                rest.append(opt)
++        if not root_hash:
++            raise WicError("efibootguard-boot: no root hash found in the "
++                           "verity environment file")
++        rootfstype =3D get_bitbake_var("RO_ROOTFS_TYPE") or "squashfs"
++        emergency =3D get_bitbake_var("INITRD_EMERGENCY_CMDLINE")
++        if emergency is None:
++            emergency =3D "rd.shell=3D0 rd.emergency=3Dreboot"
++        return (" roothash=3D%s"
++                " systemd.verity_root_options=3Dpanic-on-corruption,%s"
++                " systemd.verity_root_data=3D/dev/cip/verity-data"
++                " systemd.verity_root_hash=3D/dev/cip/verity-data"
++                " root=3D/dev/mapper/root rootfstype=3D%s ro %s"
++                % (root_hash, ",".join(rest), rootfstype, emergency))
 +
-+DESCRIPTION =3D "dracut-generated initramfs for cip-core"
-+
-+INITRAMFS_USE_DRACUT =3D "1"
-+# dracut-config-* packages are skipped by module-name extraction, so the
-+# modules they pull in are listed explicitly.
-+INITRAMFS_INSTALL +=3D "dracut-config-cip-overlay \
-+                      dracut-config-cip-verity \
-+                      dracut-config-cip-watchdog"
-+DRACUT_EXTRA_MODULES +=3D "cip-overlay cip-verity cip-watchdog"
-+
-+INITRAMFS_INSTALL:append:encrypt-partitions =3D " dracut-config-cip-crypt"
-+DRACUT_EXTRA_MODULES:append:encrypt-partitions =3D " cip-crypt"
-+
-+INITRAMFS_INSTALL:append:factory-reset =3D " dracut-config-cip-factory-res=
-et"
-+DRACUT_EXTRA_MODULES:append:factory-reset =3D " cip-factory-reset"
-+
-+# buster, bullseye and bookworm lack the dracut features needed here
-+python () {
-+    overrides =3D (d.getVar('OVERRIDES') or '').split(':')
-+    if any(s in overrides for s in ('buster', 'bullseye', 'bookworm')):
-+        raise bb.parse.SkipRecipe(
-+            "cip-core-initramfs-dracut is only supported on trixie and lat=
-er; "
-+            "use initramfs-tools on other distributions.")
-+}
-+
-+RO_ROOTFS_TYPE ??=3D "squashfs"
-+DRACUT_EXTRA_DRIVERS +=3D "${RO_ROOTFS_TYPE}"
-+
-+ROOTFS_INITRAMFS_GENERATOR_CMDLINE:append =3D " --no-hostonly --no-hostonl=
-y-cmdline --reproducible"
+     @classmethod
+     def _get_abrootfs_opts(cls):
+         abrootfs_sd_keys =3D ["target-image-uuid"]
 --=20
 2.55.0
 
