@@ -1,185 +1,66 @@
-Received: from mailout3.zih.tu-dresden.de (mailout3.zih.tu-dresden.de [141.30.67.74])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.6523.1792500421424063187
+Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.6950.1792501599155269635
  for <cip-dev@lists.cip-project.org>;
- Tue, 20 Oct 2026 05:47:01 -0700
+ Tue, 20 Oct 2026 06:06:39 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tu-dresden.de header.s=dkim2022 header.b=hAzUJPn0;
- spf=pass (domain: tu-dresden.de, ip: 141.30.67.74, mailfrom: muhammad_usama.sardar@tu-dresden.de)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=tu-dresden.de; s=dkim2022; h=Content-Type:Subject:From:To:MIME-Version:Date
-	:Message-ID:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=wR/WVHodNbln41lNWGBFkhxia909Ve/qd0DX4oUO8lM=; b=hAzUJPn0X8KVhGHlQeWHuZhHG3
-	Kbt/n6ot0Ys6aBpvU41J9CLvXZbenffcsr1vU6wVaUMm3Rb9uHjGyF8z7T6RAF8z/U8BfhEFlUZps
-	pYJcBP5oF1R73MePA88uOmX8VQaFUcYKIgx/iXMB8OeIrR0cbVyPEjT0KNm7LwtdUJ6ZZaAS9PmN5
-	ui+dz+xwH+8d5k56x0gjAs1wnXKj7Ahii+06gCe0Z/89hyNhXsnEfdIUdk2hzYcZZQksOXyORpQfV
-	UHa05RuYCkNTP099+66MQ2bxab+5Y1V97SqZjoyhKrHBtFXnSwDv2wlfvOu2P55FROHrOcuHgXXYo
-	3DZHtupA==;
-Received: from msx-l420.msx.ad.zih.tu-dresden.de ([172.26.34.140] helo=msx.tu-dresden.de)
-	by mailout3.zih.tu-dresden.de with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <muhammad_usama.sardar@tu-dresden.de>)
-	id 1xJ9F1-00Ee4Q-1a
-	for cip-dev@lists.cip-project.org;
-	Tue, 20 Oct 2026 14:46:59 +0200
-Received: from [10.12.5.228] (141.76.13.149) by
- msx-l420.msx.ad.zih.tu-dresden.de (172.26.34.140) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.53; Tue, 20 Oct 2026 14:46:52 +0200
-Message-ID: <49bffea3-63e0-4151-ad98-1710231f6b27@tu-dresden.de>
-Date: Tue, 20 Oct 2026 14:46:52 +0200
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=Sgmfz5HH;
+ spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B63E9108DDA;
+	Tue, 20 Oct 2026 15:06:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
+	s=dkim; t=1792501592;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=kq+ALJ68cOLH+vQyt+LPirmcSz0u+iSRANzZ09bYjRM=;
+	b=Sgmfz5HHdoijm9/6htiWCiB12fwjzuTjcPuiBONPYxsLBvOIv0M1lvQflmDhlnksrB4iCv
+	OLwdWmJTrSrV2kD4mI7WWzxnH08nkgZUHv2p279wpCl6tnCHD5TC6wJ29nlFJHR4YquXwu
+	a2DywGnBDv/6zJu6/TVpiJ2A89Qo6pYI4GV7OUKgeld/DudeRAKSTn2AusOVI4ceBPlBMj
+	gqeL+nQA6FDVEpfVe3hr/4B8/GtchS77fJuWyxFUov2AbEdCLxA/yNk+JqQFMxfp1z6oBA
+	0zZ9mI9kf0gV/Y55RbokYGPIViK1pMxz70IufFEDk5FQ2Oq7H04+POHbGcxpsw==
+Date: Tue, 20 Oct 2026 15:06:30 +0200
+From: Pavel Machek <pavel@nabladev.com>
+To: muhammad_usama.sardar@tu-dresden.de
+Cc: cip-dev@lists.cip-project.org
+Subject: Re: [cip-dev] =?iso-8859-1?Q?Contribution?=
+ =?iso-8859-1?Q?=3A_EarlyAttestationTsch=FCss_=28EAT=29=3A_8+_Critical-Sev?=
+ =?iso-8859-1?Q?erity_Vulnerabilities_of_CVSS_9=2E1_i?= =?iso-8859-1?Q?n?=
+ Early Attestation Exposed by Formal Analysis in ProVerif
+Message-ID: <atdnVlo5i7MERcar@duo.ucw.cz>
+References: <49bffea3-63e0-4151-ad98-1710231f6b27@tu-dresden.de>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: <cip-dev@lists.cip-project.org>
-From: Muhammad Usama Sardar <muhammad_usama.sardar@tu-dresden.de>
-Subject: =?UTF-8?Q?Contribution=3A_EarlyAttestationTsch=C3=BCss_=28EAT=29=3A?=
- =?UTF-8?Q?_8+_Critical-Severity_Vulnerabilities_of_CVSS_9=2E1_in_Early_Atte?=
- =?UTF-8?Q?station_Exposed_by_Formal_Analysis_in_ProVerif?=
-Content-Type: multipart/signed; protocol="application/pkcs7-signature";
-	micalg=sha-512; boundary="------------ms060606020303030001090406"
-X-ClientProxiedBy: MSX-L414.msx.ad.zih.tu-dresden.de (172.26.34.134) To
- msx-l420.msx.ad.zih.tu-dresden.de (172.26.34.140)
-X-TUD-Virus-Scanned: mailout3.zih.tu-dresden.de
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="9ZYetsFwyhRuImde"
+Content-Disposition: inline
+In-Reply-To: <49bffea3-63e0-4151-ad98-1710231f6b27@tu-dresden.de>
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 20 Oct 2026 12:47:08 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24502
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 20 Oct 2026 13:06:48 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24503
 
---------------ms060606020303030001090406
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
 
-SGkgYWxsLA0KDQpGb2xsb3dpbmcgdXAgb24gb3VyIHByZXZpb3VzIGNvbnRyaWJ1dGlvbiwg
-R2l0SHViIGhhcyBjb21wbGV0ZWQgaXRzIA0KcmV2aWV3IG9mIHRoZSA3IEdpdEh1YiBTZWN1
-cml0eSBBZHZpc29yaWVzIChHSFNBcykgb24gcmVsYXkgYW5kIA0KZGl2ZXJzaW9uIGF0dGFj
-a3Mgd2UgcmVwb3J0ZWQgYWdhaW5zdCBlYXJseSBhdHRlc3RhdGlvbiBpbXBsZW1lbnRhdGlv
-bnMgDQpvZiBQcml2YXN5cyBhbmQgRWRnZWxlc3MgU3lzdGVtcyBiYXNlZCBvbiBvdXIgZm9y
-bWFsIGFuYWx5c2lzIGluIA0KUHJvVmVyaWYuIEdpdEh1YiBoYXMgaXNzdWVkIDcgbmV3IENW
-RXMgWzAtNl0sIGVhY2ggd2l0aCBDVlNTIHNldmVyaXR5IA0Kc2NvcmUgb2YgOS4xIG91dCBv
-ZiAxMCBmb3IgZWFjaC4NCg0KQW5vdGhlciBDTkEgVnVsbkNoZWNrIGhhcyByZXZpZXdlZCBh
-bmQgYWNjZXB0ZWQgb3VyIHZ1bG5lcmFiaWxpdHkgcmVwb3J0IA0KYWdhaW5zdCBlYXJseSBh
-dHRlc3RhdGlvbiBpbXBsZW1lbnRhdGlvbiBvZiBDb25maWRlbnRpYWwgQ29tcHV0aW5nIA0K
-Q29uc29ydGl1bSAoQ0NDKSBBdHRlc3RhdGlvbiBTcGVjaWFsIEludGVyZXN0IEdyb3VwIChT
-SUcpIGFuZCBpc3N1ZWQgb25lIA0KbmV3IENWRSBbN10gd2l0aCBDVlNTIHNldmVyaXR5IHNj
-b3JlIG9mIDkuMS4NCg0KTklTVCBhbmQgRU5JU0EgaGF2ZSBjb3JyZXNwb25kaW5nbHkgYWRk
-ZWQgdGhvc2UgQ1ZFcyBpbiB0aGVpciBOVkQgYW5kIA0KRVVWRCwgcmVzcGVjdGl2ZWx5Lg0K
-DQpUaGlzIHByb3ZpZGVzIGluY3JlYXNpbmdseSBtb3JlIGV2aWRlbmNlIHRoYXQgZWFybHkg
-YXR0ZXN0YXRpb24gWzhdIGlzIA0KaGFybWZ1bC4gUHJpdmFzeXMgaGFzIGFscmVhZHkgbW92
-ZWQgdG8gb3VyIHByb3Bvc2VkIHBvc3QtaGFuZHNoYWtlIA0KYXR0ZXN0YXRpb24gcHJvcG9z
-YWwgWzldLiBDQ0MgQXR0ZXN0YXRpb24gU0lHIGhhcyBhcmNoaXZlZCB0aGVpciByZXBvIG9m
-IA0KZWFybHkgYXR0ZXN0YXRpb24uIEVkZ2VsZXNzIFN5c3RlbXMgc3RpbGwgbWFpbnRhaW5z
-IGFuIGVhcmx5IGF0dGVzdGF0aW9uIA0KaW1wbGVtZW50YXRpb24uIEZ1cnRoZXIgZGV0YWls
-cyBhcmUgaW4gWzEwXS4NCg0KQmVzdCByZWdhcmRzLA0KLVVzYW1hIGFuZCBTb25nYm8NCg0K
-DQpbMF0gaHR0cHM6Ly93d3cuY3ZlLm9yZy9DVkVSZWNvcmQ/aWQ9Q1ZFLTIwMjYtMTA4MjY1
-DQoNClsxXSBodHRwczovL3d3dy5jdmUub3JnL0NWRVJlY29yZD9pZD1DVkUtMjAyNi0xMDgy
-NjYNCg0KWzJdIGh0dHBzOi8vd3d3LmN2ZS5vcmcvQ1ZFUmVjb3JkP2lkPUNWRS0yMDI2LTEw
-ODI2Nw0KDQpbM10gaHR0cHM6Ly93d3cuY3ZlLm9yZy9DVkVSZWNvcmQ/aWQ9Q1ZFLTIwMjYt
-MTA4MjY4DQoNCls0XSBodHRwczovL3d3dy5jdmUub3JnL0NWRVJlY29yZD9pZD1DVkUtMjAy
-Ni0xMDgyNjkNCg0KWzVdIGh0dHBzOi8vd3d3LmN2ZS5vcmcvQ1ZFUmVjb3JkP2lkPUNWRS0y
-MDI2LTEwODM2Mg0KDQpbNl0gaHR0cHM6Ly93d3cuY3ZlLm9yZy9DVkVSZWNvcmQ/aWQ9Q1ZF
-LTIwMjYtMTAwODM1DQoNCls3XSBodHRwczovL3d3dy5jdmUub3JnL0NWRVJlY29yZD9pZD1D
-VkUtMjAyNi0xMTIzNzcNCg0KWzhdIGh0dHBzOi8vZGF0YXRyYWNrZXIuaWV0Zi5vcmcvZG9j
-L2RyYWZ0LWZvc3NhdGktc2VhdC1lYXJseS1hdHRlc3RhdGlvbi8NCg0KWzldIGh0dHBzOi8v
-ZGF0YXRyYWNrZXIuaWV0Zi5vcmcvZG9jL2RyYWZ0LWZvc3NhdGktc2VhdC1leHBhdC8NCg0K
-WzEwXSBodHRwczovL3d3dy5pZXRmLm9yZy9hcmNoaXZlL2lkL2RyYWZ0LWludHJhLWhhbmRz
-aGFrZS1mYWlsLTU1Lmh0bWwNCg0K
+--9ZYetsFwyhRuImde
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
---------------ms060606020303030001090406
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+Hi!
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgMFADCABgkqhkiG9w0BBwEAAKCC
-DlwwggbmMIIEzqADAgECAhAxAnDUNb6bJJr4VtDh4oVJMA0GCSqGSIb3DQEBDAUAMIGIMQsw
-CQYDVQQGEwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkx
-HjAcBgNVBAoTFVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJT
-QSBDZXJ0aWZpY2F0aW9uIEF1dGhvcml0eTAeFw0yMDAyMTgwMDAwMDBaFw0zMzA1MDEyMzU5
-NTlaMEYxCzAJBgNVBAYTAk5MMRkwFwYDVQQKExBHRUFOVCBWZXJlbmlnaW5nMRwwGgYDVQQD
-ExNHRUFOVCBQZXJzb25hbCBDQSA0MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA
-s0riIl4nW+kEWxQENTIgFK600jFAxs1QwB6hRMqvnkphfy2Q3mKbM2otpELKlgE8/3AQPYBo
-7p7yeORuPMnAuA+oMGRb2wbeSaLcZbpwXgfCvnKxmq97/kQkOFX706F9O7/h0yehHhDjUdyM
-yT0zMs4AMBDRrAFn/b2vR3j0BSYgoQs16oSqadM3p+d0vvH/YrRMtOhkvGpLuzL8m+LTAQWv
-QJ92NwCyKiHspoP4mLPJvVpEpDMnpDbRUQdftSpZzVKTNORvPrGPRLnJ0EEVCHR82LL6oz91
-5WkrgeCY9ImuulBn4uVsd9ZpubCgM/EXvVBlViKqusChSsZEn7juIsGIiDyaIhhLsd3amm8B
-S3bgK6AxdSMROND6hiHT182Lmf8C+gRHxQG9McvG35uUvRu8v7bPZiJRaT7ZC2f50P4lTlnb
-LvWpXv5yv7hheO8bMXltiyLweLB+VNvg+GnfL6TW3Aq1yF1yrZAZzR4MbpjTWdEdSLKvz8+0
-wCwscQ81nbDOwDt9vyZ+0eJXbRkWZiqScnwAg5/B1NUD4TrYlrI4n6zFp2pyYUOiuzP+as/A
-Znz63GvjFK69WODR2W/TK4D7VikEMhg18vhuRf4hxnWZOy0vhfDR/g3aJbdsGac+diahjEwz
-yB+UKJOCyzvecG8bZ/u/U8PsEMZg07iIPi8CAwEAAaOCAYswggGHMB8GA1UdIwQYMBaAFFN5
-v1qqK0rPVIDh2JvAnfKyA2bLMB0GA1UdDgQWBBRpAKHHIVj44MUbILAK3adRvxPZ5DAOBgNV
-HQ8BAf8EBAMCAYYwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHSUEFjAUBggrBgEFBQcDAgYI
-KwYBBQUHAwQwOAYDVR0gBDEwLzAtBgRVHSAAMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2Vj
-dGlnby5jb20vQ1BTMFAGA1UdHwRJMEcwRaBDoEGGP2h0dHA6Ly9jcmwudXNlcnRydXN0LmNv
-bS9VU0VSVHJ1c3RSU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDB2BggrBgEFBQcBAQRq
-MGgwPwYIKwYBBQUHMAKGM2h0dHA6Ly9jcnQudXNlcnRydXN0LmNvbS9VU0VSVHJ1c3RSU0FB
-ZGRUcnVzdENBLmNydDAlBggrBgEFBQcwAYYZaHR0cDovL29jc3AudXNlcnRydXN0LmNvbTAN
-BgkqhkiG9w0BAQwFAAOCAgEACgVOew2PHxM5AP1v7GLGw+3tF6rjAcx43D9Hl110Q+BABABg
-lkrPkES/VyMZsfuds8fcDGvGE3o5UfjSno4sij0xdKut8zMazv8/4VMKPCA3EUS0tDUoL01u
-gDdqwlyXuYizeXyH2ICAQfXMtS+raz7mf741CZvO50OxMUMxqljeRfVPDJQJNHOYi2pxuxgj
-KDYx4hdZ9G2o+oLlHhu5+anMDkE8g0tffjRKn8I1D1BmrDdWR/IdbBOj6870abYvqys1qYlP
-otv5N5dm+XxQ8vlrvY7+kfQaAYeO3rP1DM8BGdpEqyFVa+I0rpJPhaZkeWW7cImDQFerHW9b
-KzBrCC815a3WrEhNpxh72ZJZNs1HYJ+29NTB6uu4NJjaMxpk+g2puNSm4b9uVjBbPO9V6sFS
-G+IBqE9ckX/1XjzJtY8Grqoo4SiRb6zcHhp3mxj3oqWi8SKNohAOKnUc7RIP6ss1hqIFyv0x
-XZor4N9tnzD0Fo0JDIURjDPEgo5WTdti/MdGTmKFQNqxyZuT9uSI2Xvhz8p+4pCYkiZqpahZ
-lHqMFxdw9XRZQgrP+cgtOkWEaiNkRBbvtvLdp7MCL2OsQhQEdEbUvDM9slzZXdI7NjJokVBq
-3O4pls3VD2z3L/bHVBe0rBERjyM2C/HSIh84rfmAqBgklzIOqXhd+4RzadUwggduMIIFVqAD
-AgECAhA/YCOTOabjcS/HTP8f2MRxMA0GCSqGSIb3DQEBDAUAMEYxCzAJBgNVBAYTAk5MMRkw
-FwYDVQQKExBHRUFOVCBWZXJlbmlnaW5nMRwwGgYDVQQDExNHRUFOVCBQZXJzb25hbCBDQSA0
-MB4XDTI0MTExOTAwMDAwMFoXDTI2MTExOTIzNTk1OVowgdoxCzAJBgNVBAYTAkRFMRAwDgYD
-VQQIEwdTYWNoc2VuMSgwJgYDVQQKEx9UZWNobmlzY2hlIFVuaXZlcnNpdGFldCBEcmVzZGVu
-MREwDwYDVQRhEwhHT1ZERStTTjEyMDAGCSqGSIb3DQEJARYjbXVoYW1tYWRfdXNhbWEuc2Fy
-ZGFyQHR1LWRyZXNkZW4uZGUxDzANBgNVBAQTBlNhcmRhcjEXMBUGA1UEKhMOTXVoYW1tYWQg
-VXNhbWExHjAcBgNVBAMTFU11aGFtbWFkIFVzYW1hIFNhcmRhcjCCAiIwDQYJKoZIhvcNAQEB
-BQADggIPADCCAgoCggIBAKhTeUVDqbjfDFmkVrgQMFC3S4O0vjW9zjlrkD8FrZ2ipCLuiNE2
-XHibuTw57N2lrcWMRqjw/Tv7WqpasIHjIlvE5SJ+VuOzu5P0xLqfroT4MSlKIq1LyXkL1u09
-A9EuCUxhf4Uc3Ir17VYzjS7meqv4+4yoVhnL9zepze8f0FG3EJmGJlBSJ8sD6dVxGQkDLWMf
-NNt/I8wkaQSFkzvd+KppPOjc4t4JtQWIHKPMKS3lbXv8RLO1jaPO9Fdfg4D/dq5I8fsnfg6y
-gmCL+nTsHWAXqgX8vcDVG5tz5ONzHgODtItrQWO+m4d8W16JWCbMMCFIqscZ5weRfS5dSFZk
-sptipqIm5tzUL3y2/VOFCiL/tofo7yA1bHnFXUGm2LkJVNx6pDZFh1G9OYPqmrjjSxL9E/ed
-xQ1lIe3GmBJGBUFldlP8STm3WapaatgNcuQ6HXX1HexWF14NBIguNajgOR17JxX0JS4t9o5f
-3Po+Nqa/Als1Mm9Q6PACcVRhm7yH4vj3UqGcjAps6YM/HDkNoA2qsHmqZ/ya15eIORADN+ZQ
-O7hJYBH5TJprVdGXL7aTLNJh6xEn5V9TFcsT017ocQ5bJteN6caUay/0zPenwtabuSLR6y7e
-gmx8gTF4oPDUlgkaNcKAmkyzwM+IzPNIJvyxq/NI1pQRyTGUQJYyExO7AgMBAAGjggHBMIIB
-vTAfBgNVHSMEGDAWgBRpAKHHIVj44MUbILAK3adRvxPZ5DAdBgNVHQ4EFgQU4R79RPVSVexS
-+el1ZxCchmYs1akwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYI
-KwYBBQUHAwQGCCsGAQUFBwMCMFAGA1UdIARJMEcwOgYMKwYBBAGyMQECAQoEMCowKAYIKwYB
-BQUHAgEWHGh0dHBzOi8vc2VjdGlnby5jb20vU01JTUVDUFMwCQYHZ4EMAQUDAjBCBgNVHR8E
-OzA5MDegNaAzhjFodHRwOi8vR0VBTlQuY3JsLnNlY3RpZ28uY29tL0dFQU5UUGVyc29uYWxD
-QTQuY3JsMHgGCCsGAQUFBwEBBGwwajA9BggrBgEFBQcwAoYxaHR0cDovL0dFQU5ULmNydC5z
-ZWN0aWdvLmNvbS9HRUFOVFBlcnNvbmFsQ0E0LmNydDApBggrBgEFBQcwAYYdaHR0cDovL0dF
-QU5ULm9jc3Auc2VjdGlnby5jb20wLgYDVR0RBCcwJYEjbXVoYW1tYWRfdXNhbWEuc2FyZGFy
-QHR1LWRyZXNkZW4uZGUwDQYJKoZIhvcNAQEMBQADggIBAIxymCHDahevSfae44bVKxAKDRLh
-ZVraNygdRQ2RQOkz8v8b/cl5yuWR/l3yMpIrwiDWT37UQibNuoPxaZeRBjDh8ItcUP51sOAV
-7zd3GwfyUJNYKmgd6LjfE8+mkXrVU2JffVjRUgiyy7eBTzvTz5PFUQh2oqWfTh/Oz3pFXV+/
-0K3eP+fNkr0gljmEZi/h0ici5cJ+Q9J/Zx6Vg9ke2qb6PIh+zeb5oL40i7FR875NX/WGKMib
-ojTopS5xPbo0KmN64FqgasfJW03t0wyTtcYOap6tw2RcfVpjfsXQqEfjdjyrNHH6l/TDxUoL
-cNlu0zkYHMYmJ6MJ6VwaHWB5hou9N0WWrcQotsfkpf7lGZSlum9jG5/uB+d3FLK00QM99XN7
-RhLbLOKKuw2Xri3MEcN/LvIRDIHef4uoONAI+4bOW+1wFmGwqpHYxA/JoUXoRjojuAon8lCF
-uVf3tFAkQ/V8zuPxCX36gEOsyQuK3IAeS8R8qhV5Cc+dcYDKid61AluluBcUSxfKxmoK19Mm
-f39FTD+bJpBCiEAdJuZfP6TD0dtBVcgJ4dBLZ4H13WBeVZRDXcxghYJcNWFHPa/qi20jmuUs
-CvcD4z2+LBFnVrwhOeBefYjm6zy7+9IbuomR11B4+AnLkjzTBZxcX17UMWyqVe4hZN2CsVS0
-7doWTJJYMYIEWDCCBFQCAQEwWjBGMQswCQYDVQQGEwJOTDEZMBcGA1UEChMQR0VBTlQgVmVy
-ZW5pZ2luZzEcMBoGA1UEAxMTR0VBTlQgUGVyc29uYWwgQ0EgNAIQP2Ajkzmm43Evx0z/H9jE
-cTANBglghkgBZQMEAgMFAKCCAc8wGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG
-9w0BCQUxDxcNMjYxMDIwMTI0NjUyWjBPBgkqhkiG9w0BCQQxQgRA47rnCRnK7cEpsBxY0jwa
-uW1HC5cBd+OD1GVM3RjARlqKoC00KHabWIP9AxPnJQCmZEIMLg5QO9UdI+2icNLnEDBpBgkr
-BgEEAYI3EAQxXDBaMEYxCzAJBgNVBAYTAk5MMRkwFwYDVQQKExBHRUFOVCBWZXJlbmlnaW5n
-MRwwGgYDVQQDExNHRUFOVCBQZXJzb25hbCBDQSA0AhA/YCOTOabjcS/HTP8f2MRxMGsGCyqG
-SIb3DQEJEAILMVygWjBGMQswCQYDVQQGEwJOTDEZMBcGA1UEChMQR0VBTlQgVmVyZW5pZ2lu
-ZzEcMBoGA1UEAxMTR0VBTlQgUGVyc29uYWwgQ0EgNAIQP2Ajkzmm43Evx0z/H9jEcTBsBgkq
-hkiG9w0BCQ8xXzBdMAsGCWCGSAFlAwQBKjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwDgYI
-KoZIhvcNAwICAgCAMA0GCCqGSIb3DQMCAgFAMAcGBSsOAwIHMA0GCCqGSIb3DQMCAgEoMA0G
-CSqGSIb3DQEBAQUABIICADSVEqUsRvTY7pP/l1ohrPc1lCFU1kgYqS2DwzUZhYu1ll7J4s5r
-kbM++PrySCfIRW+4an2hJQIP9qC0Pb99swbh3I12ZQ2wUE8uZvw+y3UIew06VbtTUKndFbVC
-c2I7vHvcCb7OxhrR0VDwgOLVs4J36NYZStFwZqpKdvI3Ejwoa4YkkTaOZnB2uYZjUPnIBSHG
-mRUv2UH/Aqc9MX/uLUPVEsFTd0PoG0YRPFptxtR58XLID6WC/6NMUSTimZG2Xbx2EipX8Pps
-PEkWGaraXSC1TXplbMuiEGqpH8QoprjR4RoR5xvTFeTLrPGM4nriISetm+2wmKGkhXppTpPe
-L8yf4SAh2m849IwJjeDfaB/CDXyo2OPDwGt7YjfjM0SdwN0J1LyL77yVZzAE6gB1AnxwMOes
-XuHPEVyudpkZeXI7aRNuYVHW9tOoSF8lqVSSwV2C3D2fCscrpsLkG4z6GJXb/MO6bvF0C5yC
-j8P5n/CN47Lj51eY/9k47a8SAxMIX4S3SUrU0M/6tvuxSkdjDMGXB2keDDmgBr4BcBV4kLGB
-1TcEhcSvnWnlqy+zNzYerDGUTAtLiQG/F++WyHnDpPi4SE38Rtm88L6eoAbb2761gXdXrbKL
-ipFHGxojpy8OWFXcOy6HcTiW9RvToMloZpfy/vXKfSqSw1eFAcJht/6vAAAAAAAA
---------------ms060606020303030001090406--
+> Following up on our previous contribution, GitHub has completed its review
+> of the 7 GitHub Security Advisories (GHSAs) on relay and diversion attacks
+> we reported against early attestation implementations of Privasys
+> and
+
+Can you briefly explain link between your work and CIP project?
+
+Best regards,
+								Pavel
+
+--9ZYetsFwyhRuImde
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCatdnVgAKCRAw5/Bqldv6
+8jDDAJ9D/z1/GxrWvBJ0jyFBfFbQH/WKrACdHnjLDnzU5ZBPXAQVt21iTueaulU=
+=x0OG
+-----END PGP SIGNATURE-----
+
+--9ZYetsFwyhRuImde--
