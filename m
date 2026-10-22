@@ -1,63 +1,63 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.23301.1792676429184889311
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.23302.1792676430704816335
  for <cip-dev@lists.cip-project.org>;
- Thu, 22 Oct 2026 06:40:29 -0700
+ Thu, 22 Oct 2026 06:40:31 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=EeG1TFbX;
- spf=pass (domain: gmail.com, ip: 209.85.128.42, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4a1ec92f655so11355835e9.0
-        for <cip-dev@lists.cip-project.org>; Thu, 22 Oct 2026 06:40:28 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=okUTC2tJ;
+ spf=pass (domain: gmail.com, ip: 209.85.128.52, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4a0286c981dso19744225e9.2
+        for <cip-dev@lists.cip-project.org>; Thu, 22 Oct 2026 06:40:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792676427; x=1793281227; darn=lists.cip-project.org;
+        d=gmail.com; s=20251104; t=1792676429; x=1793281229; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=CcluD7lcF+2pNqOt6BvJNcvOfp2xS3ypgtHRa3vyDWY=;
-        b=EeG1TFbXSHLaD8sH9MEeSmSUmD2an+hqtR3xir463LlPwMafHwalzdIATh86kmS0OG
-         +UqAwz5sBAZxh2jJwJbTiG4RDWD0QEg3UzNXAnYPIcnDyYyW3+BKvn4GXd/+FTC8xafN
-         xP7OA3P+MttVTt9Bo1pV7uo72BoTPkitGbC80dNLPMJARnhSZbKzhnfFE8kD8wtTD7eN
-         eUaUvKHwJhxgtQWWboPGFIgmeMYG6bdYJNHVcIlyVG6QajTTOTbjcGEoCH5ysgwc7Ntf
-         nQsAgOwVp1tNdAyNFojj90CIkdnBagAMMFMFqsSFmH12Rpl8mUKWYv4mboHSikOSSn7g
-         TEjw==
+        bh=63QI94CPtdBo2PuOI7DGuvOhgePK5L/yROTzGitS94w=;
+        b=okUTC2tJ7Ew4iD0WMjYnAEPjS56ygKxMkV+tLuKIdnmRVsTDCxMtFQ1Chwlql5pUWX
+         +McCS+vl2whC5wrLE6ezGljNnM40M3EqmGe8kg1FK9bqwmLq7kHDng5UFqyh0weuNQvs
+         fxUIySAl9zQddQ6//QuTNOIfVdhAK9z/lJZC/D/TO8sKvzOLUGnt4+ygM7rhLhkr2HT+
+         ZbDBteQTFCeVLdWV+ANL7ozhT+PETcnltueR7GY/EuHpa7P4JY+GsziAA0903wcgv1OC
+         da3DtIsHZmc8RF1NUDajND7Vwhsk9hNE3zB2wAPjG7LmMx1cuA/RiHM07FN4LOoVUzeK
+         IVrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792676427; x=1793281227;
+        d=1e100.net; s=20260707; t=1792676429; x=1793281229;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=CcluD7lcF+2pNqOt6BvJNcvOfp2xS3ypgtHRa3vyDWY=;
-        b=XSgSO+08Ux0h+iy6RM1LtR9wBrMFBb8cXnH6SGXVaVKxJNdIxAsgjIsDWm0Q8xOr2j
-         fyb4E9H2G5WSxesK+8lihNq1/0LApBWrnqQid7Y1Pt7lZze6DyXervUmHjxENs/0GIw2
-         IP6B72bysw9oio/HL1OXW+90UBJfB3aLTfExbbOT9eNndDfDyUEekK00ADBd+eaO+PAy
-         HOtSxiHhyMy+RrVT6prf201T0ZorHxbAC68kXPcmx/nf5TcjdjE4GJBUkUGpXB1ARDeS
-         yWrRyqf4Tada1l1BFqYSoSKWm4NgjlgJx8hmKEvgZz2+mXHzHWOTQHbEDljbnt3nvaJL
-         ZlJg==
-X-Gm-Message-State: AFq9FYIKy28bBwhkHcCU0kVkmh5d2mBdwJ4eZQKVrRFSbXXgi3Isqg44
-	sAqi9RlUbMfh9jbZSXmUS4ETrh4BMaJL8duY1yMwEy3npE693vFczuUGSBI8mg==
-X-Gm-Gg: AYBFou1qMJH+hVECwQAWlqClScDKuJVrW7eQX/oobc1I0MaMBv+QkMrHJ6pbRo3Tpup
-	I9rLh1shh8rXOZUNfEEYy1tbhud0BHDncQa3ar7cr3kOzWbX79ZrldA0q6iO+S7mr0UPrCXrTkA
-	CXSOQAMYCb6MxHrHvFSaFeqbd6SSI+VW/8XsgmKZL2a1X1VA1pa/nCsExrAjvS5P8i1yVzUQi0I
-	Dky3boWInGs++dstZgsY1RDK9jsiHABwSyCt93ndpl1Ekg6zmTfhOYjrFGYHMHl6pomLanYzAds
-	Kc+DeGzRjxX+Z9gRGqt2d6cdOp8/p84aDkYpCTFG5b9t3yiJuWOl5OSjHe/3s2uHtHmg2qi7s8F
-	NkOt5KcYb7UGSCsuPl5E7ZMed0m6eZyWE2xU2NoCGCV+hWXjnCNGI+1wBcUXGLk3pRWowsfi1MY
-	WL08l0ajZubHxY9K+IQ0jKkRsYS5kiUfpx64gziko6GWWsda+e+RSbWci0fmKSI01h9IcXdFl0T
-	DjhQg5m6xVQLRObLnB3EDDPQ7X4UQ8k7l8msTYOPIasEEMKJSYS5iLNpgtBd58nQzoujqc6QDr5
-	XwQpw7il5VEhyp7c6/V5MIl+uAsSxg==
-X-Received: by 2002:a05:600c:3e0c:b0:49f:c5aa:9ef4 with SMTP id 5b1f17b1804b1-4a204b042e5mr42763355e9.8.1792676427196;
-        Thu, 22 Oct 2026 06:40:27 -0700 (PDT)
+        bh=63QI94CPtdBo2PuOI7DGuvOhgePK5L/yROTzGitS94w=;
+        b=QYCZUAczEegzbPmy6LX2C+T+Aa3dh4kMRUoXWtX8YfpZwqP7ERToaD2DXspkkqJb3/
+         RW3r1uSiig83uvay6qHeKN2F17tj1uiE5qZ4gbiXKLJ2uGoiifdnmg3pdZTu2O6nZI2L
+         OU5vOqmFQZ1wCm8rfYvSivrv56l9tekCEOcY1XzcA59YBhglGANsyDjvqlJOZKp8s2+v
+         GNwp+JH9a7R6DNRK608pXg+Y9oUu1ci1dhxSJSnuBWowzdh+S9HqFOEPd6eqX7+llO9O
+         YTIKZgGHhmW+yQ4E46BNXnQ6rkfRXvcSjBGQAHvsW8/pezeIrv1uoHXeRQhoA1vVf9/6
+         /6Ig==
+X-Gm-Message-State: AFq9FYK3S9l4fOvXzyCv8EOPw5Cst38QrEkcV+yS0y5iyef8rmRHLBHN
+	kLb5FTGXBBTnDdP0lMWNQcrho3sY/VnJ5SrSrfcwWONbkNwyfgCse8POzPNHrw==
+X-Gm-Gg: AYBFou1kEjfIndF9dbVDjlWxE7zpK3kC3gzx2Z+02b+OfiyF1Mv7bGRZr4JYvgHVGVs
+	DH/fp/72hgOh9uTa6Y26GMSgL7eiSjhi0EbWJhTk36Y+oyFiu5iryZD4IPErFwgqIw0kd8sHvlI
+	ZGReyrdBUpzidUhyKect5KGO0vKH+KI2sF8jsS75DccyWBfd6EBujnIUVVZOpmS90TWuHTYWi16
+	+qAxaeARxeus51tQljlX4VDhEf3zZdqonSyK5Bqyr+4YWJX+I5r/9laRgNQqK8ONY1JcA6bg98B
+	vsVGLkIYQHAvaxAnHBvBnGlcEyDtq+SUGwdgCQCLdwK/kvxM/9rfISwewc5rj2Y7OUvpgHx7dZf
+	pkX/DEtwNbhy/HaBEPsAXsfrtkx9EszPCip/bqJeu/e0mYdV7yJLhIobxUU4Ij8B0aG4FD4MbZA
+	+nYv9MyJi0+oZkfT4EdfrTzhq0idSoXOvBq7tQqoiwAbbOjXbw9GfP7ceAZpibHJf9/AuaNK770
+	kNPHD+84ZVU8NDywIPRcu15vkczHHIdjYIkVh03kDhfi+dir+YbIKmu4jUwoocUPbTYsHDr3/ux
+	3i35lVsQrZleoKiXjwc5U4RVs+r0Vg==
+X-Received: by 2002:a05:600c:8b72:b0:4a1:8efb:c9ae with SMTP id 5b1f17b1804b1-4a1fdd2b8e4mr95416865e9.23.1792676428824;
+        Thu, 22 Oct 2026 06:40:28 -0700 (PDT)
 Return-Path: <biju.das.au@gmail.com>
 Received: from localhost.localdomain ([2a00:23c4:a702:d301:3c4e:ba43:9a8e:7e31])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a203963f3fsm82888415e9.2.2026.10.22.06.40.26
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a203963f3fsm82888415e9.2.2026.10.22.06.40.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Oct 2026 06:40:26 -0700 (PDT)
+        Thu, 22 Oct 2026 06:40:27 -0700 (PDT)
 From: Biju Das <biju.das.au@gmail.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 3/5] arm64: dts: renesas: r9a08g046: Add rsci{0..3} device nodes
-Date: Thu, 22 Oct 2026 14:40:12 +0100
-Message-ID: <20261022134021.217964-4-biju.das.au@gmail.com>
+Subject: [PATCH 6.12.y-cip 4/5] arm64: dts: renesas: r9a08g046l48-smarc: Enable rsci{1,2,3} nodes
+Date: Thu, 22 Oct 2026 14:40:13 +0100
+Message-ID: <20261022134021.217964-5-biju.das.au@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261022134021.217964-1-biju.das.au@gmail.com>
 References: <20261022134021.217964-1-biju.das.au@gmail.com>
@@ -65,119 +65,115 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Thu, 22 Oct 2026 13:40:34 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24512
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24513
 Content-Type: text/plain; charset="utf-8"
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[ Upstream commit daae3ecaeb1b14ba06fe7c0ca1c1d88bdf094d07 ]
+[ Upstream commit 4fb32d9e4836c33ea9861f7c3e57beab6f546eb1 ]
 
-Add rsci{0..3} device nodes to the RZ/G3L ("R9A08G046") SoC DTSI.
+Enable rsci{1,2,3} device nodes for the RZ/G3L SMARC EVK.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20260519100022.116318-2-biju.das.jz@bp.renesas.com
+Link: https://patch.msgid.link/20260529125442.327290-1-biju.das.jz@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a08g046.dtsi | 84 ++++++++++++++++++++++
- 1 file changed, 84 insertions(+)
+ .../boot/dts/renesas/r9a08g046l48-smarc.dts   | 59 +++++++++++++++++++
+ 1 file changed, 59 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g046.dtsi b/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
-index 57c63f7ab6d83..c63a857f0e5b0 100644
---- a/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
-@@ -427,6 +427,90 @@ rspi2: spi@100ea000 {
- 			status = "disabled";
- 		};
+diff --git a/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts b/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
+index c1c36f7529597..5289efd1a430a 100644
+--- a/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
++++ b/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
+@@ -13,6 +13,7 @@
+ #define SW_DPI_EN		0
+ #define SW_GPIO4		1
+ #define SW_I3C_EN		0
++#define SW_SER0_PMOD		1
  
-+		rsci0: serial@100b8000 {
-+			compatible = "renesas,r9a08g046-rsci";
-+			reg = <0 0x100b8000 0 0x1000>;
-+			interrupts = <GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 417 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 418 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 419 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 420 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 421 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi", "tei",
-+					  "aed", "bfd";
-+			clocks = <&cpg CPG_MOD R9A08G046_RSCI0_TCLK>,
-+				 <&cpg CPG_MOD R9A08G046_RSCI0_PCLK>;
-+			clock-names = "operation", "bus";
-+			power-domains = <&cpg>;
-+			resets = <&cpg R9A08G046_RSCI0_PRESETN>,
-+				 <&cpg R9A08G046_RSCI0_TRESETN>;
-+			reset-names = "presetn", "tresetn";
-+			status = "disabled";
-+		};
+ #define PMOD_GPIO4		0
+ #define PMOD_GPIO6		0
+@@ -37,6 +38,9 @@ / {
+ 	aliases {
+ 		i2c2 = &i2c2;
+ 		i2c3 = &i2c3;
++		serial0 = &rsci2;
++		serial1 = &rsci3;
++		serial2 = &rsci1;
+ 		serial3 = &scif0;
+ 	};
+ 
+@@ -134,6 +138,30 @@ i2c3_pins: i2c3 {
+ 			 <RZG3L_PORT_PINMUX(2, 1, 4)>; /* RIIC3_SDA */
+ 	};
+ 
++	rsci1_pins: rsci1 {
++		pinmux = <RZG3L_PORT_PINMUX(D, 4, 5)>, /* RSCI1_RXD_MISO_SCL */
++			 <RZG3L_PORT_PINMUX(D, 5, 5)>, /* RSCI1_TXD_MOSI_SDA */
++			 <RZG3L_PORT_PINMUX(D, 6, 6)>, /* RSCI1_CTS */
++			 <RZG3L_PORT_PINMUX(D, 7, 5)>; /* RSCI1_SS_CTS#_RTS# */
++		bias-pull-up;
++	};
 +
-+		rsci1: serial@100f1000 {
-+			compatible = "renesas,r9a08g046-rsci";
-+			reg = <0 0x100f1000 0 0x1000>;
-+			interrupts = <GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 423 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 424 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 426 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 427 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi", "tei",
-+					  "aed", "bfd";
-+			clocks = <&cpg CPG_MOD R9A08G046_RSCI1_TCLK>,
-+				 <&cpg CPG_MOD R9A08G046_RSCI1_PCLK>;
-+			clock-names = "operation", "bus";
-+			power-domains = <&cpg>;
-+			resets = <&cpg R9A08G046_RSCI1_PRESETN>,
-+				 <&cpg R9A08G046_RSCI1_TRESETN>;
-+			reset-names = "presetn", "tresetn";
-+			status = "disabled";
-+		};
++	rsci2_pins: rsci2 {
++		pinmux = <RZG3L_PORT_PINMUX(7, 6, 5)>, /* RSCI2_RXD_MISO_SCL */
++			 <RZG3L_PORT_PINMUX(7, 7, 5)>, /* RSCI2_TXD_MOSI_SDA */
++			 <RZG3L_PORT_PINMUX(8, 0, 6)>, /* RSCI2_CTS */
++			 <RZG3L_PORT_PINMUX(8, 1, 5)>; /* RSCI2_SS_CTS#_RTS# */
++		bias-pull-up;
++		power-source = <1800>;
++	};
 +
-+		rsci2: serial@100f2000 {
-+			compatible = "renesas,r9a08g046-rsci";
-+			reg = <0 0x100f2000 0 0x1000>;
-+			interrupts = <GIC_SPI 428 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 429 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 430 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 431 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 432 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 433 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi", "tei",
-+					  "aed", "bfd";
-+			clocks = <&cpg CPG_MOD R9A08G046_RSCI2_TCLK>,
-+				 <&cpg CPG_MOD R9A08G046_RSCI2_PCLK>;
-+			clock-names = "operation", "bus";
-+			power-domains = <&cpg>;
-+			resets = <&cpg R9A08G046_RSCI2_PRESETN>,
-+				 <&cpg R9A08G046_RSCI2_TRESETN>;
-+			reset-names = "presetn", "tresetn";
-+			status = "disabled";
-+		};
++	rsci3_pins: rsci3 {
++		pinmux = <RZG3L_PORT_PINMUX(8, 2, 5)>, /* RSCI3_RXD_MISO_SCL */
++			 <RZG3L_PORT_PINMUX(8, 3, 5)>; /* RSCI3_TXD_MOSI_SDA */
++		bias-pull-up;
++		power-source = <1800>;
++	};
 +
-+		rsci3: serial@100f3000 {
-+			compatible = "renesas,r9a08g046-rsci";
-+			reg = <0 0x100f3000 0 0x1000>;
-+			interrupts = <GIC_SPI 434 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 435 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 436 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 437 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 438 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 439 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi", "tei",
-+					  "aed", "bfd";
-+			clocks = <&cpg CPG_MOD R9A08G046_RSCI3_TCLK>,
-+				 <&cpg CPG_MOD R9A08G046_RSCI3_PCLK>;
-+			clock-names = "operation", "bus";
-+			power-domains = <&cpg>;
-+			resets = <&cpg R9A08G046_RSCI3_PRESETN>,
-+				 <&cpg R9A08G046_RSCI3_TRESETN>;
-+			reset-names = "presetn", "tresetn";
-+			status = "disabled";
-+		};
+ 	rspi2_pins: rspi2 {
+ 		pinmux = <RZG3L_PORT_PINMUX(6, 0, 2)>, /* RSPI2_MISO */
+ 			 <RZG3L_PORT_PINMUX(6, 1, 2)>, /* RSPI2_MOSI */
+@@ -155,6 +183,37 @@ ssi0_pins: ssi0 {
+ 	};
+ };
+ 
++#if SW_SER0_PMOD
++&rsci1 {
++	pinctrl-0 = <&rsci1_pins>;
++	pinctrl-names = "default";
 +
- 		canfd: can@100c0000 {
- 			reg = <0 0x100c0000 0 0x20000>;
- 			/* placeholder */
++	uart-has-rtscts;
++
++	status = "okay";
++};
++#endif
++
++#if !SW_DPI_EN
++&rsci2 {
++	pinctrl-0 = <&rsci2_pins>;
++	pinctrl-names = "default";
++
++	uart-has-rtscts;
++
++	status = "okay";
++};
++#endif
++
++#if (!SW_DPI_EN)
++&rsci3 {
++	pinctrl-0 = <&rsci3_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++#endif
++
+ #if !SW_DPI_EN
+ &rspi2 {
+ 	pinctrl-0 = <&rspi2_pins>;
 -- 
 2.43.0
 
