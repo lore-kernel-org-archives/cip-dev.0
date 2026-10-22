@@ -1,63 +1,63 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.23299.1792676428488842080
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.23301.1792676429184889311
  for <cip-dev@lists.cip-project.org>;
- Thu, 22 Oct 2026 06:40:28 -0700
+ Thu, 22 Oct 2026 06:40:29 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=e3SDXLlI;
- spf=pass (domain: gmail.com, ip: 209.85.128.51, mailfrom: biju.das.au@gmail.com)
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4a20a37703bso5176625e9.1
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=EeG1TFbX;
+ spf=pass (domain: gmail.com, ip: 209.85.128.42, mailfrom: biju.das.au@gmail.com)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4a1ec92f655so11355835e9.0
         for <cip-dev@lists.cip-project.org>; Thu, 22 Oct 2026 06:40:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792676426; x=1793281226; darn=lists.cip-project.org;
+        d=gmail.com; s=20251104; t=1792676427; x=1793281227; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=0v9Iu2QnDGZV6gHDUpMxmegxUDD2CshRWpLbvDAQUf0=;
-        b=e3SDXLlI1Ume5F/DXkiz7v4XZXjbK03xlK4uehBv/IF1ixeLY1vu/vJqbx58dmYPZb
-         TLv96wTJXcgsFFlDMuZy49io5XhNNpnLh/5KaIo4lXlhYRQ6hjdjuyakkGZ3Eb2QWYCN
-         D3Ew9LBgPIhgP40CgDke/8cYDLJ0fQbxE803tWpFxKjniq4lL8g9Ff3Dkc2XG2dRiY1r
-         U1Kh1e4gX6EOSEaOymwzdl1TU1eh+nkAL9FqHGSf4AA77L622O/6lWNALRlM0bJAXLk+
-         1+KK+/QZ3Ull/RZwnSVsfDiTVTsPPyjAap8/6UYnhvhJpefVJxjWcms2/WTOXInZVuSL
-         r8bw==
+        bh=CcluD7lcF+2pNqOt6BvJNcvOfp2xS3ypgtHRa3vyDWY=;
+        b=EeG1TFbXSHLaD8sH9MEeSmSUmD2an+hqtR3xir463LlPwMafHwalzdIATh86kmS0OG
+         +UqAwz5sBAZxh2jJwJbTiG4RDWD0QEg3UzNXAnYPIcnDyYyW3+BKvn4GXd/+FTC8xafN
+         xP7OA3P+MttVTt9Bo1pV7uo72BoTPkitGbC80dNLPMJARnhSZbKzhnfFE8kD8wtTD7eN
+         eUaUvKHwJhxgtQWWboPGFIgmeMYG6bdYJNHVcIlyVG6QajTTOTbjcGEoCH5ysgwc7Ntf
+         nQsAgOwVp1tNdAyNFojj90CIkdnBagAMMFMFqsSFmH12Rpl8mUKWYv4mboHSikOSSn7g
+         TEjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792676426; x=1793281226;
+        d=1e100.net; s=20260707; t=1792676427; x=1793281227;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=0v9Iu2QnDGZV6gHDUpMxmegxUDD2CshRWpLbvDAQUf0=;
-        b=o5XEffd2IEa3nHcazB1oYkNFbABwI8mydwwmyMXt+cUNYSu6aY9iqn1bOeKqvDSKAh
-         BqzppRaGYA1zt8DNhgMcbtkV7pjtL+jIV8KSCFRdbxE+XIKUn4LyWn424Do9Tdyjw0wD
-         qvljvxnDF8chXwH0v2ZedLDR7QXjhOJVBm4+tgeYStYiHddJHh9cO1IqK7FV6a7ZiL3D
-         JuqWl4cFb+a5hWEWq0wiBpwIbuk/HdDeLyWA66Amj0qsjoJEWHHteOS5apSNxjSnRNh8
-         tALQZMD37Vr5WG6ENvDKO+J0CWPiKSP3ZiMFj1D0fbcFz50k0GQq8jxSgDkkIlSv1YMA
-         JWvA==
-X-Gm-Message-State: AFq9FYKNRQ3gvwKhTo+TKySlhyYup5xuEZy4BeTcY2rNijtGt+EnPfVU
-	isTN2WxMrr1l0Wf3ApPF5PSAF0XlL/8iylnY1xn7QWuG6TgSy6mBN/kR5/zVpw==
-X-Gm-Gg: AYBFou0CRxMhPW7zL0T9lsMaijWVCcwPQHA3XTvijiib576K53MoojI4GMGTk0xYbnY
-	8Pq1r0KUCmQ5I4SFcdwIpoFMSkk43CbgCba9cbgPxKKc7cJ7pBCe+JZc9LDDAN3bzVYO4edUsnC
-	BK/7mejyOVmO10etAFotUaGj6cQt2rdIdEwqOyUMt7Ab7/NsiBeGce/xtOXEauTemQroCzt8e+1
-	nJbeAeB1eRTlUXGMeMPDn5qiUjBwQ49wi0vq2kKG/8p2MEMWToUag3O7gM8k1hjFiHpy48uyQ+2
-	4feZWo5Xjrvb9j7aifTXzmiNmfWo/+ccprJ1O5eT2t7hh2HSv+6YxGp0GkGcIjpVht5e3aJUCGE
-	K5QSIT2KZXlcJDK1dC86RVoMjY20OfLpO5c/fiygvgov4Xc9QNK3jDRc73gJISDoSdbNqOKRgdm
-	a/nQOkWZGSNKg8Ty4AZehFpA6IgZ2gKSkRz7shnM2Qmuv+NKpFlcIisexSdv7gioqM00yyoMJ6e
-	Is8qbk2Klr91CEmuDRQE/n2V2FCib/EdBlqsvtcJ2xKr5y9GXhL1uQOYH8aiVmcHS6nQ+oz4jX/
-	3APQhPM8QoNmH47T94sm/2CdavjjVwk=
-X-Received: by 2002:a05:600c:e557:10b0:4a1:6991:36d7 with SMTP id 5b1f17b1804b1-4a1fdd20ca2mr65770655e9.10.1792676426409;
-        Thu, 22 Oct 2026 06:40:26 -0700 (PDT)
+        bh=CcluD7lcF+2pNqOt6BvJNcvOfp2xS3ypgtHRa3vyDWY=;
+        b=XSgSO+08Ux0h+iy6RM1LtR9wBrMFBb8cXnH6SGXVaVKxJNdIxAsgjIsDWm0Q8xOr2j
+         fyb4E9H2G5WSxesK+8lihNq1/0LApBWrnqQid7Y1Pt7lZze6DyXervUmHjxENs/0GIw2
+         IP6B72bysw9oio/HL1OXW+90UBJfB3aLTfExbbOT9eNndDfDyUEekK00ADBd+eaO+PAy
+         HOtSxiHhyMy+RrVT6prf201T0ZorHxbAC68kXPcmx/nf5TcjdjE4GJBUkUGpXB1ARDeS
+         yWrRyqf4Tada1l1BFqYSoSKWm4NgjlgJx8hmKEvgZz2+mXHzHWOTQHbEDljbnt3nvaJL
+         ZlJg==
+X-Gm-Message-State: AFq9FYIKy28bBwhkHcCU0kVkmh5d2mBdwJ4eZQKVrRFSbXXgi3Isqg44
+	sAqi9RlUbMfh9jbZSXmUS4ETrh4BMaJL8duY1yMwEy3npE693vFczuUGSBI8mg==
+X-Gm-Gg: AYBFou1qMJH+hVECwQAWlqClScDKuJVrW7eQX/oobc1I0MaMBv+QkMrHJ6pbRo3Tpup
+	I9rLh1shh8rXOZUNfEEYy1tbhud0BHDncQa3ar7cr3kOzWbX79ZrldA0q6iO+S7mr0UPrCXrTkA
+	CXSOQAMYCb6MxHrHvFSaFeqbd6SSI+VW/8XsgmKZL2a1X1VA1pa/nCsExrAjvS5P8i1yVzUQi0I
+	Dky3boWInGs++dstZgsY1RDK9jsiHABwSyCt93ndpl1Ekg6zmTfhOYjrFGYHMHl6pomLanYzAds
+	Kc+DeGzRjxX+Z9gRGqt2d6cdOp8/p84aDkYpCTFG5b9t3yiJuWOl5OSjHe/3s2uHtHmg2qi7s8F
+	NkOt5KcYb7UGSCsuPl5E7ZMed0m6eZyWE2xU2NoCGCV+hWXjnCNGI+1wBcUXGLk3pRWowsfi1MY
+	WL08l0ajZubHxY9K+IQ0jKkRsYS5kiUfpx64gziko6GWWsda+e+RSbWci0fmKSI01h9IcXdFl0T
+	DjhQg5m6xVQLRObLnB3EDDPQ7X4UQ8k7l8msTYOPIasEEMKJSYS5iLNpgtBd58nQzoujqc6QDr5
+	XwQpw7il5VEhyp7c6/V5MIl+uAsSxg==
+X-Received: by 2002:a05:600c:3e0c:b0:49f:c5aa:9ef4 with SMTP id 5b1f17b1804b1-4a204b042e5mr42763355e9.8.1792676427196;
+        Thu, 22 Oct 2026 06:40:27 -0700 (PDT)
 Return-Path: <biju.das.au@gmail.com>
 Received: from localhost.localdomain ([2a00:23c4:a702:d301:3c4e:ba43:9a8e:7e31])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a203963f3fsm82888415e9.2.2026.10.22.06.40.25
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a203963f3fsm82888415e9.2.2026.10.22.06.40.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Oct 2026 06:40:25 -0700 (PDT)
+        Thu, 22 Oct 2026 06:40:26 -0700 (PDT)
 From: Biju Das <biju.das.au@gmail.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
 	Pavel Machek <pavel@nabladev.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 2/5] serial: sh-sci: Add support for RZ/G3L RSCI
-Date: Thu, 22 Oct 2026 14:40:11 +0100
-Message-ID: <20261022134021.217964-3-biju.das.au@gmail.com>
+Subject: [PATCH 6.12.y-cip 3/5] arm64: dts: renesas: r9a08g046: Add rsci{0..3} device nodes
+Date: Thu, 22 Oct 2026 14:40:12 +0100
+Message-ID: <20261022134021.217964-4-biju.das.au@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261022134021.217964-1-biju.das.au@gmail.com>
 References: <20261022134021.217964-1-biju.das.au@gmail.com>
@@ -65,148 +65,119 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Thu, 22 Oct 2026 13:40:34 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24511
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24512
 Content-Type: text/plain; charset="utf-8"
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-[ Upstream commit 8f18d3cbd92065146147e958afa912ca94a237b0 ]
+[ Upstream commit daae3ecaeb1b14ba06fe7c0ca1c1d88bdf094d07 ]
 
-Add support for RZ/G3L RSCI. The RSCI IP found on the RZ/G3L SoC is
-similar to RZ/G3E, but it has 3 clocks (2 module clocks + 1 external
-clock) instead of 6 clocks (5 module clocks + 1 external clock) on the
-RZ/G3E. Both RZ/G3L and RZ/G3E have a 32-bit FIFO, but RZ/G3L has a
-single TCLK with internal dividers, whereas the RZ/G3E has explicit
-clocks for TCLK and its dividers. Add a new port type
-RSCI_PORT_SCIF32_SINGLE_TCLK to handle this clock difference.
+Add rsci{0..3} device nodes to the RZ/G3L ("R9A08G046") SoC DTSI.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20260312082708.98835-3-biju.das.jz@bp.renesas.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Link: https://patch.msgid.link/20260519100022.116318-2-biju.das.jz@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/tty/serial/rsci.c          | 13 +++++++++++++
- drivers/tty/serial/rsci.h          |  1 +
- drivers/tty/serial/sh-sci-common.h |  1 +
- drivers/tty/serial/sh-sci.c        | 14 +++++++++++---
- 4 files changed, 26 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/renesas/r9a08g046.dtsi | 84 ++++++++++++++++++++++
+ 1 file changed, 84 insertions(+)
 
-diff --git a/drivers/tty/serial/rsci.c b/drivers/tty/serial/rsci.c
-index 4dea8ddf6665d..56d12d8a822c2 100644
---- a/drivers/tty/serial/rsci.c
-+++ b/drivers/tty/serial/rsci.c
-@@ -695,6 +695,13 @@ struct sci_of_data of_rsci_rzg3e_data = {
- 	.params = &rsci_rzg3e_port_params,
- };
+diff --git a/arch/arm64/boot/dts/renesas/r9a08g046.dtsi b/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
+index 57c63f7ab6d83..c63a857f0e5b0 100644
+--- a/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
+@@ -427,6 +427,90 @@ rspi2: spi@100ea000 {
+ 			status = "disabled";
+ 		};
  
-+struct sci_of_data of_rsci_rzg3l_data = {
-+	.type = RSCI_PORT_SCIF32_SINGLE_TCLK,
-+	.ops = &rsci_port_ops,
-+	.uart_ops = &rsci_uart_ops,
-+	.params = &rsci_rzg3e_port_params,
-+};
++		rsci0: serial@100b8000 {
++			compatible = "renesas,r9a08g046-rsci";
++			reg = <0 0x100b8000 0 0x1000>;
++			interrupts = <GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 417 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 418 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 419 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 420 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 421 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "eri", "rxi", "txi", "tei",
++					  "aed", "bfd";
++			clocks = <&cpg CPG_MOD R9A08G046_RSCI0_TCLK>,
++				 <&cpg CPG_MOD R9A08G046_RSCI0_PCLK>;
++			clock-names = "operation", "bus";
++			power-domains = <&cpg>;
++			resets = <&cpg R9A08G046_RSCI0_PRESETN>,
++				 <&cpg R9A08G046_RSCI0_TRESETN>;
++			reset-names = "presetn", "tresetn";
++			status = "disabled";
++		};
 +
- struct sci_of_data of_rsci_rzt2h_data = {
- 	.type = RSCI_PORT_SCIF16,
- 	.ops = &rsci_port_ops,
-@@ -703,6 +710,11 @@ struct sci_of_data of_rsci_rzt2h_data = {
- };
- 
- #ifdef CONFIG_SERIAL_SH_SCI_EARLYCON
-+static int __init rsci_rzg3l_early_console_setup(struct earlycon_device *device,
-+						 const char *opt)
-+{
-+	return scix_early_console_setup(device, &of_rsci_rzg3l_data);
-+}
- 
- static int __init rsci_rzg3e_early_console_setup(struct earlycon_device *device,
- 						 const char *opt)
-@@ -716,6 +728,7 @@ static int __init rsci_rzt2h_early_console_setup(struct earlycon_device *device,
- 	return scix_early_console_setup(device, &of_rsci_rzt2h_data);
- }
- 
-+OF_EARLYCON_DECLARE(rsci, "renesas,r9a08g046-rsci", rsci_rzg3l_early_console_setup);
- OF_EARLYCON_DECLARE(rsci, "renesas,r9a09g047-rsci", rsci_rzg3e_early_console_setup);
- OF_EARLYCON_DECLARE(rsci, "renesas,r9a09g077-rsci", rsci_rzt2h_early_console_setup);
- 
-diff --git a/drivers/tty/serial/rsci.h b/drivers/tty/serial/rsci.h
-index 2aa2ba3973ee6..0985fd1b3348e 100644
---- a/drivers/tty/serial/rsci.h
-+++ b/drivers/tty/serial/rsci.h
-@@ -6,6 +6,7 @@
- #include "sh-sci-common.h"
- 
- extern struct sci_of_data of_rsci_rzg3e_data;
-+extern struct sci_of_data of_rsci_rzg3l_data;
- extern struct sci_of_data of_rsci_rzt2h_data;
- 
- #endif /* __RSCI_H__ */
-diff --git a/drivers/tty/serial/sh-sci-common.h b/drivers/tty/serial/sh-sci-common.h
-index f363a659c46a0..01ff9fced8033 100644
---- a/drivers/tty/serial/sh-sci-common.h
-+++ b/drivers/tty/serial/sh-sci-common.h
-@@ -9,6 +9,7 @@
- enum SCI_PORT_TYPE {
- 	RSCI_PORT_SCIF16 = BIT(7) | 0,
- 	RSCI_PORT_SCIF32 = BIT(7) | 1,
-+	RSCI_PORT_SCIF32_SINGLE_TCLK = BIT(7) | 2,
- };
- 
- enum SCI_CLKS {
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 515e9f0bb82a4..c31fbc99a6659 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1184,7 +1184,8 @@ static int sci_handle_errors(struct uart_port *port)
- 
- static bool sci_is_rsci_type(u8 type)
- {
--	return (type == RSCI_PORT_SCIF16 || type == RSCI_PORT_SCIF32);
-+	return (type == RSCI_PORT_SCIF16 || type == RSCI_PORT_SCIF32 ||
-+		type == RSCI_PORT_SCIF32_SINGLE_TCLK);
- }
- 
- static int sci_handle_fifo_overrun(struct uart_port *port)
-@@ -3182,7 +3183,8 @@ static int sci_init_clocks(struct sci_port *sci_port, struct device *dev)
- 
- 	if (sci_port->type == PORT_HSCIF) {
- 		clk_names[SCI_SCK] = "hsck";
--	} else if (sci_port->type == RSCI_PORT_SCIF16) {
-+	} else if (sci_port->type == RSCI_PORT_SCIF16 ||
-+		   sci_port->type == RSCI_PORT_SCIF32_SINGLE_TCLK) {
- 		clk_names[SCI_FCK] = "operation";
- 		clk_names[SCI_BRG_INT] = "bus";
- 	} else if (sci_port->type == RSCI_PORT_SCIF32) {
-@@ -3197,7 +3199,8 @@ static int sci_init_clocks(struct sci_port *sci_port, struct device *dev)
- 		if (IS_ERR(clk))
- 			return PTR_ERR(clk);
- 
--		if (!clk && sci_port->type == RSCI_PORT_SCIF16 &&
-+		if (!clk && (sci_port->type == RSCI_PORT_SCIF16 ||
-+			     sci_port->type == RSCI_PORT_SCIF32_SINGLE_TCLK) &&
- 		    (i == SCI_FCK || i == SCI_BRG_INT))
- 			return dev_err_probe(dev, -ENODEV, "failed to get %s\n", name);
- 
-@@ -3331,6 +3334,7 @@ static int sci_init_single(struct platform_device *dev,
- 		break;
- 	case PORT_SCIFA:
- 	case RSCI_PORT_SCIF32:
-+	case RSCI_PORT_SCIF32_SINGLE_TCLK:
- 		sci_port->rx_trigger = 32;
- 		break;
- 	case PORT_SCIF:
-@@ -3664,6 +3668,10 @@ static const struct of_device_id of_sci_match[] __maybe_unused = {
- 		.data = &of_sci_scif_rzv2h,
- 	},
- #ifdef CONFIG_SERIAL_RSCI
-+	{
-+		.compatible = "renesas,r9a08g046-rsci",
-+		.data = &of_rsci_rzg3l_data,
-+	},
- 	{
- 		.compatible = "renesas,r9a09g047-rsci",
- 		.data = &of_rsci_rzg3e_data,
++		rsci1: serial@100f1000 {
++			compatible = "renesas,r9a08g046-rsci";
++			reg = <0 0x100f1000 0 0x1000>;
++			interrupts = <GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 423 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 424 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 426 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 427 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "eri", "rxi", "txi", "tei",
++					  "aed", "bfd";
++			clocks = <&cpg CPG_MOD R9A08G046_RSCI1_TCLK>,
++				 <&cpg CPG_MOD R9A08G046_RSCI1_PCLK>;
++			clock-names = "operation", "bus";
++			power-domains = <&cpg>;
++			resets = <&cpg R9A08G046_RSCI1_PRESETN>,
++				 <&cpg R9A08G046_RSCI1_TRESETN>;
++			reset-names = "presetn", "tresetn";
++			status = "disabled";
++		};
++
++		rsci2: serial@100f2000 {
++			compatible = "renesas,r9a08g046-rsci";
++			reg = <0 0x100f2000 0 0x1000>;
++			interrupts = <GIC_SPI 428 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 429 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 430 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 431 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 432 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 433 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "eri", "rxi", "txi", "tei",
++					  "aed", "bfd";
++			clocks = <&cpg CPG_MOD R9A08G046_RSCI2_TCLK>,
++				 <&cpg CPG_MOD R9A08G046_RSCI2_PCLK>;
++			clock-names = "operation", "bus";
++			power-domains = <&cpg>;
++			resets = <&cpg R9A08G046_RSCI2_PRESETN>,
++				 <&cpg R9A08G046_RSCI2_TRESETN>;
++			reset-names = "presetn", "tresetn";
++			status = "disabled";
++		};
++
++		rsci3: serial@100f3000 {
++			compatible = "renesas,r9a08g046-rsci";
++			reg = <0 0x100f3000 0 0x1000>;
++			interrupts = <GIC_SPI 434 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 435 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 436 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 437 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 438 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 439 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "eri", "rxi", "txi", "tei",
++					  "aed", "bfd";
++			clocks = <&cpg CPG_MOD R9A08G046_RSCI3_TCLK>,
++				 <&cpg CPG_MOD R9A08G046_RSCI3_PCLK>;
++			clock-names = "operation", "bus";
++			power-domains = <&cpg>;
++			resets = <&cpg R9A08G046_RSCI3_PRESETN>,
++				 <&cpg R9A08G046_RSCI3_TRESETN>;
++			reset-names = "presetn", "tresetn";
++			status = "disabled";
++		};
++
+ 		canfd: can@100c0000 {
+ 			reg = <0 0x100c0000 0 0x20000>;
+ 			/* placeholder */
 -- 
 2.43.0
 
