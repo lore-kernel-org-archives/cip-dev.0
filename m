@@ -1,86 +1,102 @@
 Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.812.1792698364988715250
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.1142.1792699333669997605
  for <cip-dev@lists.cip-project.org>;
- Thu, 22 Oct 2026 12:46:05 -0700
+ Thu, 22 Oct 2026 13:02:14 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=bO+ZCZ5F;
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=MfehPErU;
  spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6DEDC10AB40
-	for <cip-dev@lists.cip-project.org>; Thu, 22 Oct 2026 21:45:57 +0200 (CEST)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9DE52104F6D;
+	Thu, 22 Oct 2026 22:02:05 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1792698358; h=from:subject:date:message-id:to:mime-version:content-type;
-	bh=5jNfA3Sd3P3d0QCoJ/Bizat40bFiCxsranggiI5kITI=;
-	b=bO+ZCZ5FRJCKg4BEe05+oQq3GJsZHBMS8jKU40dfXqm6j8Xm3lmKcdH++NHoNbM+IhdWjV
-	vZD2JujVwlA6Tkl5ZOeEFmIhuFppaiwlLHPerb8vJy+Fn8cc+zdeNJ38eGkDi3Y/9frbia
-	YwTCnuFfQyIRpydLgYURtNostPyaZA/Je24FvzIP90XsEY3sE81CrytUUL5TumTummpfUC
-	wMmsE5nbtgodvsz50/vxkti2Rvlmf0UuJQ49qmqUYbXR1KFfhtKrAL/hydzW2JCt2IbaQc
-	1TDf8WreK9MKqvFtSkDTgqCDNC4XkLlyUei/SORt6mdlNnR7gzckaXBbPUtvPQ==
-Date: Thu, 22 Oct 2026 21:45:55 +0200
+	s=dkim; t=1792699327;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=fbyjyBeZNIOQhHr/Au5IuS8JVcPRc1pMvuloioCbQOE=;
+	b=MfehPErU/35wtyNpIqZBAK2IpU+1QYVt0bdspHM7tTwzWZWjpRwVgUnHon9zAmaiiAuxWa
+	TljZweL1QTL3Dk0Wcn7gxfUlWBKL9Sq60svvwHL73gDYFlFcbVOzWYdKgQ2e118v16IKRc
+	37f69BMxHQN+ilEiPfspL0Cj/PHdCA4Jrl9XIJWC44BO3gSFYmWOpq/4DWV4zsQcXRoYWl
+	q+5ic2cK5pkwxA9ouzWjajXpefnHYudwgcafi5iuhcmAk6cCuMXHCt737Cq1NV+xa/7YPb
+	k/1E3uBGCZebsMDVFxHhOtcSrgBMHOY+8cz7MJJBr1h57+jbZHGbinRXdNPZ5g==
+Date: Thu, 22 Oct 2026 22:02:04 +0200
 From: Pavel Machek <pavel@nabladev.com>
-To: cip-dev@lists.cip-project.org
-Subject: CVE-2026-99999: pwnescape -- bug in IP checksumming allows KVM
- priviledge escalation
-Message-ID: <atpn809_xK8l4EmO@duo.ucw.cz>
+To: Biju Das <biju.das.au@gmail.com>
+Cc: cip-dev@lists.cip-project.org,
+	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
+	Pavel Machek <pavel@nabladev.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 6.12.y-cip 4/5] arm64: dts: renesas: r9a08g046l48-smarc:
+ Enable rsci{1,2,3} nodes
+Message-ID: <atprvF6_zDyUihQD@duo.ucw.cz>
+References: <20261022134021.217964-1-biju.das.au@gmail.com>
+ <20261022134021.217964-5-biju.das.au@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ATAmT5PkUNCfv0fF"
+	protocol="application/pgp-signature"; boundary="u13IDYk1bNs5PYQr"
 Content-Disposition: inline
+In-Reply-To: <20261022134021.217964-5-biju.das.au@gmail.com>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Thu, 22 Oct 2026 19:46:08 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24515
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Thu, 22 Oct 2026 20:02:28 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24516
 
 
---ATAmT5PkUNCfv0fF
+--u13IDYk1bNs5PYQr
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-There's a new CVE, with a nice name and nice number. If you are
-running untrusted code in KVM sandbox (you really should not) this is
-important for you, and you should really let us know ASAP.
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+>=20
+> [ Upstream commit 4fb32d9e4836c33ea9861f7c3e57beab6f546eb1 ]
+>=20
+> Enable rsci{1,2,3} device nodes for the RZ/G3L SMARC EVK.
+>=20
+> ---
+>  .../boot/dts/renesas/r9a08g046l48-smarc.dts   | 59 +++++++++++++++++++
+>  1 file changed, 59 insertions(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts b/arch/ar=
+m64/boot/dts/renesas/r9a08g046l48-smarc.dts
+> index c1c36f7529597..5289efd1a430a 100644
+> --- a/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
+> +++ b/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
+> @@ -134,6 +138,30 @@ i2c3_pins: i2c3 {
+>  			 <RZG3L_PORT_PINMUX(2, 1, 4)>; /* RIIC3_SDA */
+>  	};
+> =20
+> +	rsci1_pins: rsci1 {
+> +		pinmux =3D <RZG3L_PORT_PINMUX(D, 4, 5)>, /* RSCI1_RXD_MISO_SCL */
+> +			 <RZG3L_PORT_PINMUX(D, 5, 5)>, /* RSCI1_TXD_MOSI_SDA */
+> +			 <RZG3L_PORT_PINMUX(D, 6, 6)>, /* RSCI1_CTS */
+> +			 <RZG3L_PORT_PINMUX(D, 7, 5)>; /* RSCI1_SS_CTS#_RTS# */
+> +		bias-pull-up;
+> +	};
 
-Description from security researchers is at
-https://pwn.ai/blog/pwnescape . Logo is not too cool this time.
+I just want to verify power-souce is not required here?
 
-Commit 6785011f8b16abf40b1e9d8b2e332232b3e68822 "ipv4: validate
-checksum_start before completing checksum" in mainline should stop the
-exploit, but states more work is pending:
 
-"We really shouldn't allow such packets in, but as a defence
-in depth measure, let's also check before we complete the checksum.
-
-A more complete validation at input is forthcoming, but needs more work."
-
-Stable kernels should be fixed, down to 5.10.272; that was released on
-Oct 15. Unfortunately, we did releases soon after that, so the fix is
-not there:
-
-v6.12.112-cip33: does not contain the fix
-linux-6.1.y-cip: does not contain the fix
-v5.10.271-cip78: does not contain the fix
-
-I believe we don't need to do early -cip-rt releases for this.
-
-I'd be inclined not to do early -cip releases, either, but that is
-less clear, and others feel otherwise (on irc: iwamatsu> I think a
-special release is necessary.). I can help with early -cip releases if
-we decide to do them.
-
-If you rely on KVM sandboxing for any -cip or -cip-rt version, please let
-us know, and we will simply do the releases.
+> +	rsci2_pins: rsci2 {
+> +		pinmux =3D <RZG3L_PORT_PINMUX(7, 6, 5)>, /* RSCI2_RXD_MISO_SCL */
+> +			 <RZG3L_PORT_PINMUX(7, 7, 5)>, /* RSCI2_TXD_MOSI_SDA */
+> +			 <RZG3L_PORT_PINMUX(8, 0, 6)>, /* RSCI2_CTS */
+> +			 <RZG3L_PORT_PINMUX(8, 1, 5)>; /* RSCI2_SS_CTS#_RTS# */
+> +		bias-pull-up;
+> +		power-source =3D <1800>;
+> +	};
 
 Best regards,
 								Pavel
---ATAmT5PkUNCfv0fF
+
+--u13IDYk1bNs5PYQr
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCatpn8wAKCRAw5/Bqldv6
-8gyRAKCQAFtG4cXDFMCYDU1XT18Bp8ccDQCdHyoXdBj2U5dyTJbq0WtdnasG+UE=
-=mHK6
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCatprvAAKCRAw5/Bqldv6
+8tzRAKDBCCx0IFLbbHRHCqvuzL2erzYfWACcCDJ81hK4xPbIuRPQJoPNjMA4DJU=
+=ffDp
 -----END PGP SIGNATURE-----
 
---ATAmT5PkUNCfv0fF--
+--u13IDYk1bNs5PYQr--
