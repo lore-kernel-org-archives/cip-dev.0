@@ -1,90 +1,94 @@
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.152])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.34128.1792979294973440591
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.132])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.34495.1792979296510159998
  for <cip-dev@lists.cip-project.org>;
- Sun, 25 Oct 2026 18:48:15 -0700
+ Sun, 25 Oct 2026 18:48:16 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.s=key2.smx header.b=OXPQ5KDQ;
- spf=pass (domain: mail.toshiba, ip: 210.130.202.152, mailfrom: nobuhiro.iwamatsu.x90@mail.toshiba)
+ dkim=pass header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.s=key2.smx header.b=tHoWrpYY;
+ spf=pass (domain: mail.toshiba, ip: 210.130.202.132, mailfrom: nobuhiro.iwamatsu.x90@mail.toshiba)
 DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=mail.toshiba;h=From:To:Cc:
 	Subject:Date:Message-Id:In-Reply-To:References;i=
-	nobuhiro.iwamatsu.x90@mail.toshiba;s=key2.smx;t=1792979289;x=1794188889;bh=dh
-	fwZCjzU4smZZVuDt5IPtoNlCIqm0tWrWLfqSn00pI=;b=OXPQ5KDQ9tT1VQPOgsZ9dFRnaeO7fz7B
-	ruOcd2Lz7fviJDPoPabEPIxkCB/z4C7tFIjJkFGIRzALcidvhaDm6Z3D4efYyk/Eu5IymGBvVo76S
-	eRDUIkyeiD5nygj15Z7UkmApxTWTjeTQhn8PZAK12533cfmbE5Meg5aBe+KAM6GoHGr+QiNjVgSfD
-	kNUWof3QUVIk841NI8S3uUVEZHDgM4mrk6xnaH7W5q9/t5Sa26ZLsKvVIrgUAvxPDrb1PVyNISXyr
-	I/AgwpHi25HHzkoSrUVNISjxq97WTmFU7xjPjtXo8CJKSIxgszzTV6YvXK4Y0uunFmzHjnkoi6Zl4
-	Cg==;
-Received: by mo-csw.securemx.jp (mx-mo-csw1802) id 69Q1m9Po3877404; Mon, 26 Oct 2026 10:48:09 +0900
-X-Iguazu-Qid: 2yAaKKNbLebbYVsNWd
-X-Iguazu-QSIG: v=2; s=1; t=1792979288; q=2yAaKKNbLebbYVsNWd; m=BscDdVg3nw+SGvY9CXJceHZm0g1F6f6+qtikpbyjkBo=
+	nobuhiro.iwamatsu.x90@mail.toshiba;s=key2.smx;t=1792979289;x=1794188889;bh=eQ
+	uWEpbr4OvPmxavNSe8Mdj7Wwh4M52PG1iopKdJ0nM=;b=tHoWrpYY5kCR3sJO85NmBUfVDUZ6SdiI
+	YU7aRCy2g7gVeIT2XPgV1QFnW5xzDOSeCPOrPzOoiHV8mSWnTl1mGf46ntB+PcDknBrHGS+O0mDj9
+	ETti6JImEkjeS6KKgBbEHTbIB4wA0pnyYA0OaNc0Btp5Zxb/T2koODFfoLa8x8N46Ire2gONdFphA
+	kL/jLM0my5UmPxOZ43A252jm30359EiIJda+V8JYGFlATHEsznirtKrfJnVgxmXvX7L0I1S7r2/ur
+	fyWijhAl8ioZC75DUTviud4slHPCqOZjVyD1lHTdpO0gUQL9NySHZCU4clVBkbRSaLBzKQdvzlznC
+	yw==;
+Received: by mo-csw.securemx.jp (mx-mo-csw1121) id 69Q1m9ZQ683540; Mon, 26 Oct 2026 10:48:09 +0900
+X-Iguazu-Qid: 2rWg7mGwsmUYtifoft
+X-Iguazu-QSIG: v=2; s=1; t=1792979289; q=2rWg7mGwsmUYtifoft; m=bCKeUfrfLD/iK2GJwphu3/waXR+CYxvot+ZpPk7ugLg=
 Received: from imx12-a.toshiba.co.jp (unknown [38.106.60.135])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	 id 4jCc2v6JXvz1xnZ; Mon, 26 Oct 2026 10:48:07 +0900 (JST)
+	 id 4jCc2w1wdSz1xnj; Mon, 26 Oct 2026 10:48:08 +0900 (JST)
 From: Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
 To: cip-dev@lists.cip-project.org
 Cc: pavel@nabladev.com, uli@fpond.eu, tommaso.merciai.xr@bp.renesas.com,
         claudiu.beznea.uj@bp.renesas.com,
         Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
-Subject: [PATCH 6.12.y-cip 2/2] iio: adc: rzg2l_adc: Set driver data before enabling runtime PM
-Date: Mon, 26 Oct 2026 10:48:06 +0900
+Subject: [PATCH 6.12.y-cip 1/2] i3c: master: renesas: Fix memory leak in renesas_i3c_i3c_xfers()
+Date: Mon, 26 Oct 2026 10:48:05 +0900
 X-TSB-HOP2: ON
-Message-Id: <1792979286-32200-3-git-send-email-nobuhiro.iwamatsu.x90@mail.toshiba>
+Message-Id: <1792979286-32200-2-git-send-email-nobuhiro.iwamatsu.x90@mail.toshiba>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1792979286-32200-1-git-send-email-nobuhiro.iwamatsu.x90@mail.toshiba>
 References: <1792979286-32200-1-git-send-email-nobuhiro.iwamatsu.x90@mail.toshiba>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Mon, 26 Oct 2026 01:48:18 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24532
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24533
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Felix Gu <ustc.gu@gmail.com>
 
-commit c69e13965f26b8058f538ea8bdbd2d7718cf1fbe upstream.
+commit d7665c3b4f575251e449e2656879392346ca612b upstream.
 
-When stress-testing the system by repeatedly unbinding and binding the ADC
-device in a loop, and the ADC is a supplier for another device (e.g., a
-thermal hardware block that reads temperature through the ADC), it may
-happen that the ADC device is runtime-resumed immediately after runtime PM
-is enabled, triggered by its consumer. At this point, since drvdata is not
-yet set and the driver's runtime PM callbacks rely on it, a crash can
-occur. To avoid this, set drvdata just after it was allocated.
+The xfer structure allocated by renesas_i3c_alloc_xfer() was never freed
+in the renesas_i3c_i3c_xfers() function. Use the __free(kfree) cleanup
+attribute to automatically free the memory when the variable goes out of
+scope.
 
-Fixes: 89ee8174e8c8 ("iio: adc: rzg2l_adc: Simplify the runtime PM code")
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://patch.msgid.link/20250810123328.800104-3-claudiu.beznea.uj@bp.renesas.com
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Fixes: d028219a9f14 ("i3c: master: Add basic driver for the Renesas I3C controller")
+Tested-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Reviewed-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+Signed-off-by: Felix Gu <ustc.gu@gmail.com>
+Link: https://patch.msgid.link/20260406-renesas-v3-1-4b724d7708f4@gmail.com
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
 ---
- drivers/iio/adc/rzg2l_adc.c | 4 ++--
+ drivers/i3c/master/renesas-i3c.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
-index 6dc97fac0e7f6a..8f9534c1c9a715 100644
---- a/drivers/iio/adc/rzg2l_adc.c
-+++ b/drivers/iio/adc/rzg2l_adc.c
-@@ -441,6 +441,8 @@ static int rzg2l_adc_probe(struct platform_device *pdev)
- 	if (!indio_dev)
+diff --git a/drivers/i3c/master/renesas-i3c.c b/drivers/i3c/master/renesas-i3c.c
+index 4c725653ae0c5f..8e8b78fb233b8f 100644
+--- a/drivers/i3c/master/renesas-i3c.c
++++ b/drivers/i3c/master/renesas-i3c.c
+@@ -8,6 +8,7 @@
+ 
+ #include <linux/bitfield.h>
+ #include <linux/bitops.h>
++#include <linux/cleanup.h>
+ #include <linux/clk.h>
+ #include <linux/completion.h>
+ #include <linux/err.h>
+@@ -817,13 +818,12 @@ static int renesas_i3c_priv_xfers(struct i3c_dev_desc *dev, struct i3c_priv_xfer
+ 	struct i3c_master_controller *m = i3c_dev_get_master(dev);
+ 	struct renesas_i3c *i3c = to_renesas_i3c(m);
+ 	struct renesas_i3c_i2c_dev_data *data = i3c_dev_get_master_data(dev);
+-	struct renesas_i3c_xfer *xfer;
+ 	int i;
+ 
+ 	/* Enable I3C bus. */
+ 	renesas_i3c_bus_enable(m, true);
+ 
+-	xfer = renesas_i3c_alloc_xfer(i3c, 1);
++	struct renesas_i3c_xfer *xfer __free(kfree) = renesas_i3c_alloc_xfer(i3c, 1);
+ 	if (!xfer)
  		return -ENOMEM;
  
-+	platform_set_drvdata(pdev, indio_dev);
-+
- 	adc = iio_priv(indio_dev);
- 
- 	adc->hw_params = device_get_match_data(dev);
-@@ -495,8 +497,6 @@ static int rzg2l_adc_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	platform_set_drvdata(pdev, indio_dev);
--
- 	ret = rzg2l_adc_hw_init(dev, adc);
- 	if (ret)
- 		return dev_err_probe(&pdev->dev, ret,
 -- 
 2.55.0
 
