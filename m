@@ -1,88 +1,91 @@
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.131])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.34490.1792979253884698597
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.152])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.34128.1792979294973440591
  for <cip-dev@lists.cip-project.org>;
- Sun, 25 Oct 2026 18:47:34 -0700
+ Sun, 25 Oct 2026 18:48:15 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.s=key2.smx header.b=DCrUnzA0;
- spf=pass (domain: mail.toshiba, ip: 210.130.202.131, mailfrom: nobuhiro.iwamatsu.x90@mail.toshiba)
+ dkim=pass header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.s=key2.smx header.b=OXPQ5KDQ;
+ spf=pass (domain: mail.toshiba, ip: 210.130.202.152, mailfrom: nobuhiro.iwamatsu.x90@mail.toshiba)
 DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=mail.toshiba;h=From:To:Cc:
-	Subject:Date:Message-Id;i=nobuhiro.iwamatsu.x90@mail.toshiba;s=key2.smx;t=
-	1792979246;x=1794188846;bh=/xBbiR+lpULiUO/lnLogY3DPbywlpo41+o8F2X+FTKw=;b=DCr
-	UnzA0zwL302zf55F/yxwuiqrFyBSI+aBs+yPWoR+aTifw+t+/C0n9YWFP8o5aUdLVsgEzUTksdSdN
-	xS77Os/bhxpibTHWQB65am39g1M6HT46d/V3QCl0wvgUbh/UZtuv0vAIUNQ1pNAqAp2yjbXbQhEIt
-	sdo/KCLlzQxOkDixAZOaOtOnvKdtZCBGOgoUQwViTs0C80UCp2b573CyQxBK7qy2xH2a6NAN8Ej2r
-	CQZug5on3Xd4Vaxod7e+QuDM7N3SgJECvq8T79tE9FNokVFDt+c3rYLUiMiRbwWi9QzzYXR+LibpY
-	HR0Qaa4feZCF59RygrwqsiVO/LNzCLg==;
-Received: by mo-csw.securemx.jp (mx-mo-csw1120) id 69Q1lPOr773060; Mon, 26 Oct 2026 10:47:25 +0900
-X-Iguazu-Qid: 2rWgw8g3r5cHXPAAhQ
-X-Iguazu-QSIG: v=2; s=1; t=1792979244; q=2rWgw8g3r5cHXPAAhQ; m=UvEL6MfGVcR+k+1rChn0AmiwB69nTBZguQAhccm6Izs=
+	Subject:Date:Message-Id:In-Reply-To:References;i=
+	nobuhiro.iwamatsu.x90@mail.toshiba;s=key2.smx;t=1792979289;x=1794188889;bh=dh
+	fwZCjzU4smZZVuDt5IPtoNlCIqm0tWrWLfqSn00pI=;b=OXPQ5KDQ9tT1VQPOgsZ9dFRnaeO7fz7B
+	ruOcd2Lz7fviJDPoPabEPIxkCB/z4C7tFIjJkFGIRzALcidvhaDm6Z3D4efYyk/Eu5IymGBvVo76S
+	eRDUIkyeiD5nygj15Z7UkmApxTWTjeTQhn8PZAK12533cfmbE5Meg5aBe+KAM6GoHGr+QiNjVgSfD
+	kNUWof3QUVIk841NI8S3uUVEZHDgM4mrk6xnaH7W5q9/t5Sa26ZLsKvVIrgUAvxPDrb1PVyNISXyr
+	I/AgwpHi25HHzkoSrUVNISjxq97WTmFU7xjPjtXo8CJKSIxgszzTV6YvXK4Y0uunFmzHjnkoi6Zl4
+	Cg==;
+Received: by mo-csw.securemx.jp (mx-mo-csw1802) id 69Q1m9Po3877404; Mon, 26 Oct 2026 10:48:09 +0900
+X-Iguazu-Qid: 2yAaKKNbLebbYVsNWd
+X-Iguazu-QSIG: v=2; s=1; t=1792979288; q=2yAaKKNbLebbYVsNWd; m=BscDdVg3nw+SGvY9CXJceHZm0g1F6f6+qtikpbyjkBo=
 Received: from imx12-a.toshiba.co.jp (unknown [38.106.60.135])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	 id 4jCc240dpjz4vym; Mon, 26 Oct 2026 10:47:24 +0900 (JST)
+	 id 4jCc2v6JXvz1xnZ; Mon, 26 Oct 2026 10:48:07 +0900 (JST)
 From: Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
 To: cip-dev@lists.cip-project.org
 Cc: pavel@nabladev.com, uli@fpond.eu, tommaso.merciai.xr@bp.renesas.com,
-        fabrizio.castro.jz@renesas.com, claudiu.beznea.uj@bp.renesas.com,
-        cosmin-gabriel.tanislav.xa@renesas.com
-Subject: [PATCH 6.1.y-cip 0/5] Fix CVEs related to patches backported to the CIP kernel
-Date: Mon, 26 Oct 2026 10:47:17 +0900
+        claudiu.beznea.uj@bp.renesas.com,
+        Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
+Subject: [PATCH 6.12.y-cip 2/2] iio: adc: rzg2l_adc: Set driver data before enabling runtime PM
+Date: Mon, 26 Oct 2026 10:48:06 +0900
 X-TSB-HOP2: ON
-Message-Id: <1792979242-32127-1-git-send-email-nobuhiro.iwamatsu.x90@mail.toshiba>
+Message-Id: <1792979286-32200-3-git-send-email-nobuhiro.iwamatsu.x90@mail.toshiba>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1792979286-32200-1-git-send-email-nobuhiro.iwamatsu.x90@mail.toshiba>
+References: <1792979286-32200-1-git-send-email-nobuhiro.iwamatsu.x90@mail.toshiba>
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Mon, 26 Oct 2026 01:47:38 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24530
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Mon, 26 Oct 2026 01:48:18 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24532
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-Hi all,
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-This is a patch series that fixes CVEs related to patches backported to
-CIP kernel.
-The following CVEs and commits are addressed in this:
+commit c69e13965f26b8058f538ea8bdbd2d7718cf1fbe upstream.
 
-- CVE-2026-53030:
-    introduced-commits:
-    - 0bea5c0e39992654677bb6e94d276c14bf75c2f8
-- CVE-2025-71187:
-    introduced-commits:
-    - 282d5dfb9147694b8ba1a6528d38450d2f7addda
-- CVE-2025-39774:
-    introduced-commits:
-    - ffe4a44bf16c17a26124536533179c12239668de
-- CVE-2026-31740:
-    introduced-commits:
-    - 6ae52685cb60989ed37870bb7f9d2e2d96a6e509
-- CVE-2026-31741:
-    introduced-commits:
-    - 6ae52685cb60989ed37870bb7f9d2e2d96a6e509
+When stress-testing the system by repeatedly unbinding and binding the ADC
+device in a loop, and the ADC is a supplier for another device (e.g., a
+thermal hardware block that reads temperature through the ADC), it may
+happen that the ADC device is runtime-resumed immediately after runtime PM
+is enabled, triggered by its consumer. At this point, since drvdata is not
+yet set and the driver's runtime PM callbacks rely on it, a crash can
+occur. To avoid this, set drvdata just after it was allocated.
 
-Best regards,
-  Nobuhiro
+Fixes: 89ee8174e8c8 ("iio: adc: rzg2l_adc: Simplify the runtime PM code")
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Link: https://patch.msgid.link/20250810123328.800104-3-claudiu.beznea.uj@bp.renesas.com
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
+---
+ drivers/iio/adc/rzg2l_adc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Claudiu Beznea (1):
-  iio: adc: rzg2l_adc: Set driver data before enabling runtime PM
-
-Cosmin Tanislav (2):
-  counter: rz-mtu3-cnt: prevent counter from being toggled multiple
-    times
-  counter: rz-mtu3-cnt: do not use struct rz_mtu3_channel's dev member
-
-Felix Gu (1):
-  i3c: master: renesas: Fix memory leak in renesas_i3c_i3c_xfers()
-
-Johan Hovold (1):
-  dmaengine: sh: rz-dmac: fix device leak on probe failure
-
- drivers/counter/rz-mtu3-cnt.c    | 67 +++++++++++++++++---------------
- drivers/dma/sh/rz-dmac.c         | 13 ++++++-
- drivers/i3c/master/renesas-i3c.c |  4 +-
- drivers/iio/adc/rzg2l_adc.c      |  4 +-
- 4 files changed, 50 insertions(+), 38 deletions(-)
-
+diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
+index 6dc97fac0e7f6a..8f9534c1c9a715 100644
+--- a/drivers/iio/adc/rzg2l_adc.c
++++ b/drivers/iio/adc/rzg2l_adc.c
+@@ -441,6 +441,8 @@ static int rzg2l_adc_probe(struct platform_device *pdev)
+ 	if (!indio_dev)
+ 		return -ENOMEM;
+ 
++	platform_set_drvdata(pdev, indio_dev);
++
+ 	adc = iio_priv(indio_dev);
+ 
+ 	adc->hw_params = device_get_match_data(dev);
+@@ -495,8 +497,6 @@ static int rzg2l_adc_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	platform_set_drvdata(pdev, indio_dev);
+-
+ 	ret = rzg2l_adc_hw_init(dev, adc);
+ 	if (ret)
+ 		return dev_err_probe(&pdev->dev, ret,
 -- 
 2.55.0
+
 
