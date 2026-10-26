@@ -1,161 +1,90 @@
-Received: from mailout7.zih.tu-dresden.de (mailout7.zih.tu-dresden.de [141.76.32.220])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.6581.1792849885932497138
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.152])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.34080.1792979116153729704
  for <cip-dev@lists.cip-project.org>;
- Sat, 24 Oct 2026 06:51:27 -0700
+ Sun, 25 Oct 2026 18:45:17 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tu-dresden.de header.s=dkim2022 header.b=GkR+V+s9;
- spf=pass (domain: tu-dresden.de, ip: 141.76.32.220, mailfrom: muhammad_usama.sardar@tu-dresden.de)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=tu-dresden.de; s=dkim2022; h=Content-Type:In-Reply-To:From:CC:References:To
-	:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=kxLoq6+h/SxLtObvn3TErvguPtTwjggB045T8yVXdek=; b=GkR+V+s9w0bG2maBTQaP2ZLmoy
-	wcyi67DpDt4rs/aDBB8rSJmpv3g3ergl+F+qx8rito6JtOgCvud/ySdW/dUfMVOroMvr7DZTMQxR8
-	h5H0oGL/Xo18lJJJ5MPcU+aIC5L5DHT3gNgGmMC2Xj8nr/+IkVc46G4+7LoZZwe+F7mbcKHqBxbQ4
-	6BPcVwXdPCN7yVfVe7fcX3UmkqTO0bOuCgwSSj8dHpf7tEzW7c7QIx0DWdobrSbW+K/DH8Qnbj6Dx
-	cq00z4RB8+GI3jOpzmzcDBmAZ4vsW35KCeL3eKodwf+vHCm5Sv1Zu2YMKonpEihzg6fYv7w6q6Ehc
-	0xKourQA==;
-Received: from msx-l420.msx.ad.zih.tu-dresden.de ([172.26.34.140] helo=msx.tu-dresden.de)
-	by mailout7.zih.tu-dresden.de with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <muhammad_usama.sardar@tu-dresden.de>)
-	id 1xKc9X-00DBLJ-1u;
-	Sat, 24 Oct 2026 15:51:24 +0200
-Received: from [10.12.5.228] (141.76.13.149) by
- msx-l420.msx.ad.zih.tu-dresden.de (172.26.34.140) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.53; Sat, 24 Oct 2026 15:51:11 +0200
-Message-ID: <1de7fa57-b787-44d7-8358-e52821bf93e6@tu-dresden.de>
-Date: Sat, 24 Oct 2026 15:51:10 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: =?UTF-8?Q?Re=3A_=5Bcip-dev=5D_Contribution=3A_EarlyAttestationTsch?=
- =?UTF-8?Q?=C3=BCss_=28EAT=29=3A_8+_Critical-Severity_Vulnerabilities_of_CVS?=
- =?UTF-8?Q?S_9=2E1_in_Early_Attestation_Exposed_by_Formal_Analysis_in_ProVer?=
- =?UTF-8?Q?if?=
-To: Pavel Machek <pavel@nabladev.com>
-References: <49bffea3-63e0-4151-ad98-1710231f6b27@tu-dresden.de>
- <atdnVlo5i7MERcar@duo.ucw.cz>
-Content-Language: en-US
-CC: <cip-dev@lists.cip-project.org>
-From: Muhammad Usama Sardar <muhammad_usama.sardar@tu-dresden.de>
-In-Reply-To: <atdnVlo5i7MERcar@duo.ucw.cz>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature";
-	micalg=sha-512; boundary="------------ms000501080903060904050700"
-X-ClientProxiedBy: MSX-L414.msx.ad.zih.tu-dresden.de (172.26.34.134) To
- msx-l420.msx.ad.zih.tu-dresden.de (172.26.34.140)
-X-TUD-Virus-Scanned: mailout7.zih.tu-dresden.de
+ dkim=pass header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.s=key2.smx header.b=fPfMbu6y;
+ spf=pass (domain: mail.toshiba, ip: 210.130.202.152, mailfrom: nobuhiro.iwamatsu.x90@mail.toshiba)
+DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=mail.toshiba;h=From:To:Cc:
+	Subject:Date:Message-Id:In-Reply-To:References;i=
+	nobuhiro.iwamatsu.x90@mail.toshiba;s=key2.smx;t=1792979108;x=1794188708;bh=Db
+	kLtzVnFvHEkxWB2WcOA7g3xO1kMT8VcxVz/LbyyNU=;b=fPfMbu6yAhMGq4Sq9ccnAAab8rWzj+64
+	vptcHbhmDELSQpbJPsSPZ9NI+ic8kkXkWhauZQl5WAn6b3J1kk2AxN6Zel8+QBi4xsW2k1QpmOpwb
+	VjgaQLueIQPylkUMyEFs8nxfffOOZpK7Wz6lr6XsZzQvh+djvYWOM2f8n1Nz9w5o4M/GufnUskR9z
+	/iKW45iuZP/mQ/RlPPfKbVY96RgEDECMLdArYHqOZMKlj/lr23qZi4jfIXxqLemEhwQ/7p5DaA905
+	OOwCiZRNUNYvhzlqu6e7UGguTjypA0B3T6/oLOQ5yG8vJIVKc9KNLn4jYjRadcOR04KWtrkft1pRo
+	Zg==;
+Received: by mo-csw.securemx.jp (mx-mo-csw1802) id 69Q1j70u3864285; Mon, 26 Oct 2026 10:45:07 +0900
+X-Iguazu-Qid: 2yAaPpRdHDRVfCyYQo
+X-Iguazu-QSIG: v=2; s=1; t=1792979107; q=2yAaPpRdHDRVfCyYQo; m=av4+OvF9zvh8l0jIyC1Ea+oGFYvzYAXHVjoYcdu52uE=
+Received: from imx12-a.toshiba.co.jp (unknown [38.106.60.135])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	 id 4jCbzQ4LQPz1xnZ; Mon, 26 Oct 2026 10:45:06 +0900 (JST)
+From: Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
+To: cip-dev@lists.cip-project.org
+Cc: pavel@nabladev.com, uli@fpond.eu, claudiu.beznea.uj@bp.renesas.com,
+        Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
+Subject: [PATCH 5.10.y-cip 1/1] iio: adc: rzg2l_adc: Set driver data before enabling runtime PM
+Date: Mon, 26 Oct 2026 10:45:04 +0900
+X-TSB-HOP2: ON
+Message-Id: <1792979104-32023-2-git-send-email-nobuhiro.iwamatsu.x90@mail.toshiba>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1792979104-32023-1-git-send-email-nobuhiro.iwamatsu.x90@mail.toshiba>
+References: <1792979104-32023-1-git-send-email-nobuhiro.iwamatsu.x90@mail.toshiba>
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Sat, 24 Oct 2026 13:51:34 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24522
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Mon, 26 Oct 2026 01:45:18 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24524
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
---------------ms000501080903060904050700
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-SGkgUGF2ZWwsDQoNCkkgd2FzIHdvbmRlcmluZyBpZiB5b3UgbWlzc2VkIG91ciBwcmV2aW91
-cyBjb250cmlidXRpb24gWzBdLCB3aGVyZSBJIA0KbWVudGlvbmVkIGhvdyBJIG1ldCB5b3Vy
-IHByb2plY3QgbWVtYmVycyBhbmQgR0E0R0ggd291bGQgbGlrZSB0byBleHBsb3JlIA0KcG9z
-c2liaWxpdHkgb2YgY29sbGFib3JhdGlvbiBhbmQgY29udHJpYnV0aW9uLg0KDQpCZXN0IHJl
-Z2FyZHMsDQoNCi1Vc2FtYQ0KDQpbMF0gaHR0cHM6Ly9saXN0cy5jaXAtcHJvamVjdC5vcmcv
-Zy9jaXAtZGV2L21lc3NhZ2UvMjQ0NDINCg0KDQo=
+commit c69e13965f26b8058f538ea8bdbd2d7718cf1fbe upstream.
 
---------------ms000501080903060904050700
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+When stress-testing the system by repeatedly unbinding and binding the ADC
+device in a loop, and the ADC is a supplier for another device (e.g., a
+thermal hardware block that reads temperature through the ADC), it may
+happen that the ADC device is runtime-resumed immediately after runtime PM
+is enabled, triggered by its consumer. At this point, since drvdata is not
+yet set and the driver's runtime PM callbacks rely on it, a crash can
+occur. To avoid this, set drvdata just after it was allocated.
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgMFADCABgkqhkiG9w0BBwEAAKCC
-DlwwggbmMIIEzqADAgECAhAxAnDUNb6bJJr4VtDh4oVJMA0GCSqGSIb3DQEBDAUAMIGIMQsw
-CQYDVQQGEwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkx
-HjAcBgNVBAoTFVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJT
-QSBDZXJ0aWZpY2F0aW9uIEF1dGhvcml0eTAeFw0yMDAyMTgwMDAwMDBaFw0zMzA1MDEyMzU5
-NTlaMEYxCzAJBgNVBAYTAk5MMRkwFwYDVQQKExBHRUFOVCBWZXJlbmlnaW5nMRwwGgYDVQQD
-ExNHRUFOVCBQZXJzb25hbCBDQSA0MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA
-s0riIl4nW+kEWxQENTIgFK600jFAxs1QwB6hRMqvnkphfy2Q3mKbM2otpELKlgE8/3AQPYBo
-7p7yeORuPMnAuA+oMGRb2wbeSaLcZbpwXgfCvnKxmq97/kQkOFX706F9O7/h0yehHhDjUdyM
-yT0zMs4AMBDRrAFn/b2vR3j0BSYgoQs16oSqadM3p+d0vvH/YrRMtOhkvGpLuzL8m+LTAQWv
-QJ92NwCyKiHspoP4mLPJvVpEpDMnpDbRUQdftSpZzVKTNORvPrGPRLnJ0EEVCHR82LL6oz91
-5WkrgeCY9ImuulBn4uVsd9ZpubCgM/EXvVBlViKqusChSsZEn7juIsGIiDyaIhhLsd3amm8B
-S3bgK6AxdSMROND6hiHT182Lmf8C+gRHxQG9McvG35uUvRu8v7bPZiJRaT7ZC2f50P4lTlnb
-LvWpXv5yv7hheO8bMXltiyLweLB+VNvg+GnfL6TW3Aq1yF1yrZAZzR4MbpjTWdEdSLKvz8+0
-wCwscQ81nbDOwDt9vyZ+0eJXbRkWZiqScnwAg5/B1NUD4TrYlrI4n6zFp2pyYUOiuzP+as/A
-Znz63GvjFK69WODR2W/TK4D7VikEMhg18vhuRf4hxnWZOy0vhfDR/g3aJbdsGac+diahjEwz
-yB+UKJOCyzvecG8bZ/u/U8PsEMZg07iIPi8CAwEAAaOCAYswggGHMB8GA1UdIwQYMBaAFFN5
-v1qqK0rPVIDh2JvAnfKyA2bLMB0GA1UdDgQWBBRpAKHHIVj44MUbILAK3adRvxPZ5DAOBgNV
-HQ8BAf8EBAMCAYYwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHSUEFjAUBggrBgEFBQcDAgYI
-KwYBBQUHAwQwOAYDVR0gBDEwLzAtBgRVHSAAMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2Vj
-dGlnby5jb20vQ1BTMFAGA1UdHwRJMEcwRaBDoEGGP2h0dHA6Ly9jcmwudXNlcnRydXN0LmNv
-bS9VU0VSVHJ1c3RSU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDB2BggrBgEFBQcBAQRq
-MGgwPwYIKwYBBQUHMAKGM2h0dHA6Ly9jcnQudXNlcnRydXN0LmNvbS9VU0VSVHJ1c3RSU0FB
-ZGRUcnVzdENBLmNydDAlBggrBgEFBQcwAYYZaHR0cDovL29jc3AudXNlcnRydXN0LmNvbTAN
-BgkqhkiG9w0BAQwFAAOCAgEACgVOew2PHxM5AP1v7GLGw+3tF6rjAcx43D9Hl110Q+BABABg
-lkrPkES/VyMZsfuds8fcDGvGE3o5UfjSno4sij0xdKut8zMazv8/4VMKPCA3EUS0tDUoL01u
-gDdqwlyXuYizeXyH2ICAQfXMtS+raz7mf741CZvO50OxMUMxqljeRfVPDJQJNHOYi2pxuxgj
-KDYx4hdZ9G2o+oLlHhu5+anMDkE8g0tffjRKn8I1D1BmrDdWR/IdbBOj6870abYvqys1qYlP
-otv5N5dm+XxQ8vlrvY7+kfQaAYeO3rP1DM8BGdpEqyFVa+I0rpJPhaZkeWW7cImDQFerHW9b
-KzBrCC815a3WrEhNpxh72ZJZNs1HYJ+29NTB6uu4NJjaMxpk+g2puNSm4b9uVjBbPO9V6sFS
-G+IBqE9ckX/1XjzJtY8Grqoo4SiRb6zcHhp3mxj3oqWi8SKNohAOKnUc7RIP6ss1hqIFyv0x
-XZor4N9tnzD0Fo0JDIURjDPEgo5WTdti/MdGTmKFQNqxyZuT9uSI2Xvhz8p+4pCYkiZqpahZ
-lHqMFxdw9XRZQgrP+cgtOkWEaiNkRBbvtvLdp7MCL2OsQhQEdEbUvDM9slzZXdI7NjJokVBq
-3O4pls3VD2z3L/bHVBe0rBERjyM2C/HSIh84rfmAqBgklzIOqXhd+4RzadUwggduMIIFVqAD
-AgECAhA/YCOTOabjcS/HTP8f2MRxMA0GCSqGSIb3DQEBDAUAMEYxCzAJBgNVBAYTAk5MMRkw
-FwYDVQQKExBHRUFOVCBWZXJlbmlnaW5nMRwwGgYDVQQDExNHRUFOVCBQZXJzb25hbCBDQSA0
-MB4XDTI0MTExOTAwMDAwMFoXDTI2MTExOTIzNTk1OVowgdoxCzAJBgNVBAYTAkRFMRAwDgYD
-VQQIEwdTYWNoc2VuMSgwJgYDVQQKEx9UZWNobmlzY2hlIFVuaXZlcnNpdGFldCBEcmVzZGVu
-MREwDwYDVQRhEwhHT1ZERStTTjEyMDAGCSqGSIb3DQEJARYjbXVoYW1tYWRfdXNhbWEuc2Fy
-ZGFyQHR1LWRyZXNkZW4uZGUxDzANBgNVBAQTBlNhcmRhcjEXMBUGA1UEKhMOTXVoYW1tYWQg
-VXNhbWExHjAcBgNVBAMTFU11aGFtbWFkIFVzYW1hIFNhcmRhcjCCAiIwDQYJKoZIhvcNAQEB
-BQADggIPADCCAgoCggIBAKhTeUVDqbjfDFmkVrgQMFC3S4O0vjW9zjlrkD8FrZ2ipCLuiNE2
-XHibuTw57N2lrcWMRqjw/Tv7WqpasIHjIlvE5SJ+VuOzu5P0xLqfroT4MSlKIq1LyXkL1u09
-A9EuCUxhf4Uc3Ir17VYzjS7meqv4+4yoVhnL9zepze8f0FG3EJmGJlBSJ8sD6dVxGQkDLWMf
-NNt/I8wkaQSFkzvd+KppPOjc4t4JtQWIHKPMKS3lbXv8RLO1jaPO9Fdfg4D/dq5I8fsnfg6y
-gmCL+nTsHWAXqgX8vcDVG5tz5ONzHgODtItrQWO+m4d8W16JWCbMMCFIqscZ5weRfS5dSFZk
-sptipqIm5tzUL3y2/VOFCiL/tofo7yA1bHnFXUGm2LkJVNx6pDZFh1G9OYPqmrjjSxL9E/ed
-xQ1lIe3GmBJGBUFldlP8STm3WapaatgNcuQ6HXX1HexWF14NBIguNajgOR17JxX0JS4t9o5f
-3Po+Nqa/Als1Mm9Q6PACcVRhm7yH4vj3UqGcjAps6YM/HDkNoA2qsHmqZ/ya15eIORADN+ZQ
-O7hJYBH5TJprVdGXL7aTLNJh6xEn5V9TFcsT017ocQ5bJteN6caUay/0zPenwtabuSLR6y7e
-gmx8gTF4oPDUlgkaNcKAmkyzwM+IzPNIJvyxq/NI1pQRyTGUQJYyExO7AgMBAAGjggHBMIIB
-vTAfBgNVHSMEGDAWgBRpAKHHIVj44MUbILAK3adRvxPZ5DAdBgNVHQ4EFgQU4R79RPVSVexS
-+el1ZxCchmYs1akwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYI
-KwYBBQUHAwQGCCsGAQUFBwMCMFAGA1UdIARJMEcwOgYMKwYBBAGyMQECAQoEMCowKAYIKwYB
-BQUHAgEWHGh0dHBzOi8vc2VjdGlnby5jb20vU01JTUVDUFMwCQYHZ4EMAQUDAjBCBgNVHR8E
-OzA5MDegNaAzhjFodHRwOi8vR0VBTlQuY3JsLnNlY3RpZ28uY29tL0dFQU5UUGVyc29uYWxD
-QTQuY3JsMHgGCCsGAQUFBwEBBGwwajA9BggrBgEFBQcwAoYxaHR0cDovL0dFQU5ULmNydC5z
-ZWN0aWdvLmNvbS9HRUFOVFBlcnNvbmFsQ0E0LmNydDApBggrBgEFBQcwAYYdaHR0cDovL0dF
-QU5ULm9jc3Auc2VjdGlnby5jb20wLgYDVR0RBCcwJYEjbXVoYW1tYWRfdXNhbWEuc2FyZGFy
-QHR1LWRyZXNkZW4uZGUwDQYJKoZIhvcNAQEMBQADggIBAIxymCHDahevSfae44bVKxAKDRLh
-ZVraNygdRQ2RQOkz8v8b/cl5yuWR/l3yMpIrwiDWT37UQibNuoPxaZeRBjDh8ItcUP51sOAV
-7zd3GwfyUJNYKmgd6LjfE8+mkXrVU2JffVjRUgiyy7eBTzvTz5PFUQh2oqWfTh/Oz3pFXV+/
-0K3eP+fNkr0gljmEZi/h0ici5cJ+Q9J/Zx6Vg9ke2qb6PIh+zeb5oL40i7FR875NX/WGKMib
-ojTopS5xPbo0KmN64FqgasfJW03t0wyTtcYOap6tw2RcfVpjfsXQqEfjdjyrNHH6l/TDxUoL
-cNlu0zkYHMYmJ6MJ6VwaHWB5hou9N0WWrcQotsfkpf7lGZSlum9jG5/uB+d3FLK00QM99XN7
-RhLbLOKKuw2Xri3MEcN/LvIRDIHef4uoONAI+4bOW+1wFmGwqpHYxA/JoUXoRjojuAon8lCF
-uVf3tFAkQ/V8zuPxCX36gEOsyQuK3IAeS8R8qhV5Cc+dcYDKid61AluluBcUSxfKxmoK19Mm
-f39FTD+bJpBCiEAdJuZfP6TD0dtBVcgJ4dBLZ4H13WBeVZRDXcxghYJcNWFHPa/qi20jmuUs
-CvcD4z2+LBFnVrwhOeBefYjm6zy7+9IbuomR11B4+AnLkjzTBZxcX17UMWyqVe4hZN2CsVS0
-7doWTJJYMYIEWDCCBFQCAQEwWjBGMQswCQYDVQQGEwJOTDEZMBcGA1UEChMQR0VBTlQgVmVy
-ZW5pZ2luZzEcMBoGA1UEAxMTR0VBTlQgUGVyc29uYWwgQ0EgNAIQP2Ajkzmm43Evx0z/H9jE
-cTANBglghkgBZQMEAgMFAKCCAc8wGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG
-9w0BCQUxDxcNMjYxMDI0MTM1MTEwWjBPBgkqhkiG9w0BCQQxQgRATI536i2i6jnEVSGO9KFb
-u/kom2ItxtAgOHAuo3AgJSepBhsWxJg/wro9QIOa4X0MM+CDfn4Q1vsIbdR1zR+mmjBpBgkr
-BgEEAYI3EAQxXDBaMEYxCzAJBgNVBAYTAk5MMRkwFwYDVQQKExBHRUFOVCBWZXJlbmlnaW5n
-MRwwGgYDVQQDExNHRUFOVCBQZXJzb25hbCBDQSA0AhA/YCOTOabjcS/HTP8f2MRxMGsGCyqG
-SIb3DQEJEAILMVygWjBGMQswCQYDVQQGEwJOTDEZMBcGA1UEChMQR0VBTlQgVmVyZW5pZ2lu
-ZzEcMBoGA1UEAxMTR0VBTlQgUGVyc29uYWwgQ0EgNAIQP2Ajkzmm43Evx0z/H9jEcTBsBgkq
-hkiG9w0BCQ8xXzBdMAsGCWCGSAFlAwQBKjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwDgYI
-KoZIhvcNAwICAgCAMA0GCCqGSIb3DQMCAgFAMAcGBSsOAwIHMA0GCCqGSIb3DQMCAgEoMA0G
-CSqGSIb3DQEBAQUABIICAKBaHcExjjqKquaSAgKErsRCEPvhw677DL77jsBsECmn5BaX7sxe
-9SG47V+z7I3L10uMhVsB1u4qtCkoKhKStu/ZFjvfB7vjKnt7b2LuvfK6zV2RMSee6Is3p5Jt
-5CXNScUqt1IKR+3aV4CggPKhzqvK3ObHRLvuDB8HBHuyO1hwaMO24j93GbvqovrC8MpypVY1
-JUD09S64d7Q7fnONHynLLn/0XjAwRUGU+mLrbwRInuhX3TExVhGjk46wP9J9XCA3vuKxXxPv
-kKwR/uxT7ShsbJ4AKLyEeCqWvGroy9xWBY0P4u5ci/OWdB69YCk9KJHxpM6PhRwUpsKzmPRl
-1SnVYDvBpma6b6H264YbquEO4a0u1pC+hCx6Z+0ZFtyzmXkeGquaOqctlPtGXgkfRkYv2zEF
-DPOGdD/gqdH6H0Avt5gXjrdHYJv0JZz6rM/OEcDlAfIoQEdsYLaYy5vP9UL0VruPmLsPc++C
-7ZICWlfoOANH+ofwUvZgKESQJZzf6vbJx2LLcz5ZiudfA5/Va/Lg5xYZtiKnpIxK9PJ2x50G
-/YfBAMwlwh0WSaeltZT1a2Uvi8Prid3A+yZMMxwyemGXEtyEPylTXZqxX4Hyyi88KL2iIdzB
-PgHy+w8lt4o/uYD/VWRsMzJ9vKn/haBaKWtRFua207enN0iZgYygd0uJAAAAAAAA
---------------ms000501080903060904050700--
+Fixes: 89ee8174e8c8 ("iio: adc: rzg2l_adc: Simplify the runtime PM code")
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Link: https://patch.msgid.link/20250810123328.800104-3-claudiu.beznea.uj@bp.renesas.com
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
+---
+ drivers/iio/adc/rzg2l_adc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
+index d48aec92add9ac..418211c06f1fe2 100644
+--- a/drivers/iio/adc/rzg2l_adc.c
++++ b/drivers/iio/adc/rzg2l_adc.c
+@@ -436,6 +436,8 @@ static int rzg2l_adc_probe(struct platform_device *pdev)
+ 	if (!indio_dev)
+ 		return -ENOMEM;
+ 
++	platform_set_drvdata(pdev, indio_dev);
++
+ 	adc = iio_priv(indio_dev);
+ 
+ 	adc->hw_params = device_get_match_data(dev);
+@@ -490,8 +492,6 @@ static int rzg2l_adc_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	platform_set_drvdata(pdev, indio_dev);
+-
+ 	ret = rzg2l_adc_hw_init(dev, adc);
+ 	if (ret)
+ 		return dev_err_probe(&pdev->dev, ret,
+-- 
+2.55.0
+
+
