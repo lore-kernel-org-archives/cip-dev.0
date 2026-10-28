@@ -1,55 +1,70 @@
 Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.6251.1793219337247393477
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.8768.1793226169700013347
  for <cip-dev@lists.cip-project.org>;
- Wed, 28 Oct 2026 13:28:57 -0700
+ Wed, 28 Oct 2026 15:22:50 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=NPyHBhha;
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=YCtrH1WD;
  spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6F04B105884;
-	Wed, 28 Oct 2026 21:28:52 +0100 (CET)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B1C2A1083F7;
+	Wed, 28 Oct 2026 23:22:40 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1793219334; h=from:subject:date:message-id:to:mime-version:content-type;
-	bh=8HmFcrfUvHpHmiOCr/KwoL+4s+oCZzdab8VzIl9sh9Y=;
-	b=NPyHBhha3EYtKoCOxB8NwGVC5uXKRXlTrX71eEVSN/c3Ih9YoZ5isg57fGvFHSXyMpBG7t
-	TbXOkFrVF2J4UhXRBuolQ9+VgR+jqXoUjn2d2HBZHEuV9xGbYvkP0RuvPaE8+qppcoLBxt
-	2tT2YOVahHX7lTNOg71UmixQHz+3Tw6jUJ2zyv5L+9MF4TEoU7EER7vLAC3bn8hUbE9LTV
-	Ble2hLguObeTtAhF6CmgdPNklsyRDRjpQU3L2jRPhnbfVlH0b8pxRV9t8D6v6fQ2lCIbqe
-	7ojJl/pG/bvwZCJUJudb20vnzijOpQZMIqG24iGBh7q9dnD6nwQA2tqhAbpKZw==
-Date: Wed, 28 Oct 2026 21:28:51 +0100
+	s=dkim; t=1793226162;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=QAa2BKTiZdH2NPf1kG1vRLf3Jv8OdD3BNvq0kk9zTOo=;
+	b=YCtrH1WDhNIQZe8Zpa1MRIVx4QqJZ0CXPsY8Gf40uBjHXtmLYAb0zcM7kANlAuqc4koCv0
+	UVQuqiMxvzSITLrYNg4QGxFlusE9da/zBTTc141Nwc7JxjLzX4t33/kxWMav7O0DeAMcEC
+	S/y0gGWkpyg590buuRBj3N+IhCvx7K9lUBhSlLqx1ovWS75C2+OrmLbD8FAS9MK7eY05xF
+	FrlofrHM2GCNukmsiPJXxtLyLRbbZHv5eEzCAcLAIGKafw7qdMU4RdTPTbAHQBRjEqU49Q
+	Wr1C0kYaQPNIdCxRaghqKF31Qwbfhq+CBtAfb4ZqWJfTUsuDOjBknCuZ6QsxtQ==
+Date: Wed, 28 Oct 2026 23:22:39 +0100
 From: Pavel Machek <pavel@nabladev.com>
-To: cip-dev@lists.cip-project.org, nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: IRC meeting & daylight saving time
-Message-ID: <auJbAxG7BR1g-Gqd@duo.ucw.cz>
+To: Garpur Hnefill Emiliuson <garpurhnefill.emiliuson.d47@mail.toshiba>
+Cc: nobuhiro.iwamatsu.x90@mail.toshiba, pavel@nabladev.com, uli@fpond.eu,
+	claudiu.beznea.uj@bp.renesas.com, cip-dev@lists.cip-project.org
+Subject: Re: [PATCH 6.12.y-cip] PM: domains: Mark
+ dev_pm_domain_allow_detach_on_unbind_cleanup() as inline
+Message-ID: <auJ1r4H8R_vnwy5O@duo.ucw.cz>
+References: <1793085576-6789-1-git-send-email-garpurhnefill.emiliuson.d47@mail.toshiba>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="hwb1xHk//0dm8Zsr"
+	protocol="application/pgp-signature"; boundary="Qakt/ht8+QXELz2k"
 Content-Disposition: inline
+In-Reply-To: <1793085576-6789-1-git-send-email-garpurhnefill.emiliuson.d47@mail.toshiba>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Wed, 28 Oct 2026 20:29:03 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24560
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Wed, 28 Oct 2026 22:23:00 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24561
 
 
---hwb1xHk//0dm8Zsr
+--Qakt/ht8+QXELz2k
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-There was dst change in europe this weekend. I believe meeting is
-still Thursday, 12:00 UTC, which will mean 13h MET.
+> Building with CONFIG_PM=3Dn and CONFIG_PREEMPT_RT=3Dy triggers a
+> -Wunused-function warning for the stub implementation of
+> dev_pm_domain_allow_detach_on_unbind_cleanup() in pm_domain.h.
+>=20
+> This issue only affects the -cip tree. Unlike the surrounding stub
+> helpers, this function was not declared inline. Mark the stub
+> implementation as inline so unused configurations do not trigger
+> compiler warnings.
+
+Thank you, applied.
 
 Best regards,
 								Pavel
 
---hwb1xHk//0dm8Zsr
+--Qakt/ht8+QXELz2k
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCauJbAwAKCRAw5/Bqldv6
-8jYoAKC+zxQDiURq93+NwZN3q5oDzzuQmQCgmt26UVEOLB4QGbpGYICSx5l8Q7I=
-=pY3l
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCauJ1rwAKCRAw5/Bqldv6
+8sgnAJwKlhmc0KAI/NUu++4zLGM1OEKMegCfRUYznMWZBT8TDLIy3s78F4bOz1c=
+=UwBi
 -----END PGP SIGNATURE-----
 
---hwb1xHk//0dm8Zsr--
+--Qakt/ht8+QXELz2k--
