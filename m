@@ -1,67 +1,64 @@
-Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.39262.1793180959796223693
+Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.3849.1793213069853595227
  for <cip-dev@lists.cip-project.org>;
- Wed, 28 Oct 2026 02:49:20 -0700
+ Wed, 28 Oct 2026 11:44:30 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=OjYCGLUd;
- spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EFC80108965;
-	Wed, 28 Oct 2026 10:49:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1793180953;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=yf0lhPUKQRBTuuBR1NrW1nrREbV/pLYzV363IZYpUB8=;
-	b=OjYCGLUd91HYUBVAKDI6DsbqTj5+O1qxt755evT2vOc3ffhEtle4FaI7Fsqv+LpznjpvJ8
-	nXYTjKN1CFowWS+1OBDe5e1gBbis1e3C5XhbLRcS7jSNmzDPOnnW/epeAjewSfkIxJfsP/
-	nBrdbrYhdLbPdrsMj5lQdM2TrY1ufiuOBFN76n0LIMy4LEjArn6sXwg9+9hT7cnhGb2Raf
-	JkIRaR+34dAYna24Yobak4TPcbIyOKVwWnXACKU3m/c90MaWjV9SiGhdydtWey5u+OMAQD
-	KSVpnQItTTnrfzp+zzO5/pCTGF5FUFHCErJXiUq/ymSUbrQdzCQtLYPJvaJ81w==
-Date: Wed, 28 Oct 2026 10:49:09 +0100
-From: Pavel Machek <pavel@nabladev.com>
-To: nobuhiro.iwamatsu.x90@mail.toshiba
-Cc: cip-dev@lists.cip-project.org, pavel@nabladev.com, uli@fpond.eu,
-	tommaso.merciai.xr@bp.renesas.com, claudiu.beznea.uj@bp.renesas.com
-Subject: Re: [cip-dev] [PATCH 6.12.y-cip 0/2] Fix CVEs related to patches
- backported to the CIP kernel
-Message-ID: <auHFFfOyzM0zZGwl@duo.ucw.cz>
-References: <1792979286-32200-1-git-send-email-nobuhiro.iwamatsu.x90@mail.toshiba>
+ dkim=pass header.i=alexander.heinisch@siemens.com header.s=fm2 header.b=DZSO31Ra;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.225, mailfrom: fm-1330684-202610281844263794c7c429000207c7-zhmq3l@rts-flowmailer.siemens.com)
+Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 202610281844263794c7c429000207c7
+        for <cip-dev@lists.cip-project.org>;
+        Wed, 28 Oct 2026 19:44:27 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
+ d=siemens.com; i=alexander.heinisch@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=85wNk50qezem2xoK4bCSnKUpsyi5LjRxt3yny9JqZzk=;
+ b=DZSO31RawKQTpiFfM8iwT18HdOs8mIUEXWtq64CiX2RAtXa0wrE3o0wpLv1j2VlsOqMYWo
+ X33GwJUeOI7BSv+72Zdj7P97x+ZAJSrWG+KIjylRqIifSXeGCswtFmov6aHpkf8DITcYm+mN
+ fnFpVpLb0NBAQX5SOId2NniclkTtMZKI+3h+mO46tEtik2JopGh0ak3Ryt1sNsoK9DWur6Lx
+ wdBamW21gQqtTEg+FIWvNkY/YzUkOp5JlfWRr6Noddhsp5vU70oQ0UoWn4wMTejVEokwBk6m
+ f09aQZfvtMM9muDailcgxlZmZCs00sQ1kaB8/dt11klV774HATGPKDIA==;
+From: alexander.heinisch@siemens.com
+To: cip-dev@lists.cip-project.org
+Cc: jan.kiszka@siemens.com,
+	Alexander Heinisch <alexander.heinisch@siemens.com>
+Subject: [isar-cip-core][PATCH 0/2] Add out of tree signing for swu files
+Date: Wed, 28 Oct 2026 19:44:01 +0100
+Message-ID: <20261028184403.301959-1-alexander.heinisch@siemens.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="MbzVIYXAIxdlg/Ae"
-Content-Disposition: inline
-In-Reply-To: <1792979286-32200-1-git-send-email-nobuhiro.iwamatsu.x90@mail.toshiba>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1330684:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Wed, 28 Oct 2026 09:49:22 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24556
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Wed, 28 Oct 2026 18:44:31 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24557
+Content-Type: text/plain; charset="utf-8"
 
+From: Alexander Heinisch <alexander.heinisch@siemens.com>
 
---MbzVIYXAIxdlg/Ae
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+  Following up a request from [1] I added scripts to sign existing SWU files out of tree.
+  A rework of the existing sign-swu-cms was needed to allow reuse in out of tree signing.
 
-Hi!
+  The script interface is:
+      sign-swu.sh [OPTIONS] SWU_FILE [-- SIGNER_SCRIPT [SIGNER_ARGS...]]
 
-> Claudiu Beznea (1):
->   iio: adc: rzg2l_adc: Set driver data before enabling runtime PM
->=20
-> Felix Gu (1):
->   i3c: master: renesas: Fix memory leak in renesas_i3c_i3c_xfers()
+  where the SIGNER_SCRIPT interface follows:
+      SIGNER_SCRIPT [SIGNER_ARGS...] SIGNEE SIGNED
 
-Thank you, applied. Thanks for Claudiu for review.
+  SIGNEE and SIGNED are provided by sign-swu.sh
 
-Best regards,
-								Pavel
+  1: https://lists.cip-project.org/g/cip-dev/message/24534
 
---MbzVIYXAIxdlg/Ae
-Content-Type: application/pgp-signature; name="signature.asc"
+Alexander Heinisch (2):
+  sign-swu-cms: Refactor signing script to be reusable for out of build
+    signing.
+  swupdate: Add out of tree signing script for swu files.
 
------BEGIN PGP SIGNATURE-----
+ .../swupdate-signer/files/sign-swu-cms        |  99 +++++++++++---
+ scripts/sign-swu.sh                           | 128 ++++++++++++++++++
+ 2 files changed, 210 insertions(+), 17 deletions(-)
+ mode change 100644 => 100755 recipes-devtools/swupdate-signer/files/sign-swu-cms
+ create mode 100755 scripts/sign-swu.sh
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCauHFFQAKCRAw5/Bqldv6
-8pQVAJ9Qe30aqZTO3QsMwX+KRKrEjwofZACgrVimodcsRiGUQur+aWsvcICtHyQ=
-=6mlA
------END PGP SIGNATURE-----
+-- 
+2.47.3
 
---MbzVIYXAIxdlg/Ae--
