@@ -1,231 +1,115 @@
-Received: from MRWPR03CU001.outbound.protection.outlook.com (MRWPR03CU001.outbound.protection.outlook.com [40.107.130.43])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.14631.1793287559694957191
+Received: from mail-yx1-f53.google.com (mail-yx1-f53.google.com [74.125.224.53])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.770.1793316309981700590
  for <cip-dev@lists.cip-project.org>;
- Thu, 29 Oct 2026 08:26:00 -0700
+ Thu, 29 Oct 2026 16:25:10 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=hSL6b8ut;
- spf=pass (domain: siemens.com, ip: 40.107.130.43, mailfrom: alexander.heinisch@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=O5IFgbh6aq9EPesQwhB+7aq4q+DBAWuDiY/USpkMlJACrdb9ThSCOUg88Qzu94s8SleG+ErnARp0EO5x0E9KN7vaUmj7v0L8nnPEfPkAZxkg5VphKbPldRtQavJEZigao6t80XK4s03//FnKIwzH/0yYlgXMS1dR8vFFvXikOgWsHaazQ4Vytp8qrQBED2hfsOFPxapgGnAf6o9xQTMPSIxK7nslk75ZxU2nQi7NtamI8I3AlCfWWmDKNk+CcQOyGro6aMUlH/f3/o6JZ4FoFJU1vhXSxtJelBAzd2T/v9cwWcH/2gaBAmmbgA/wL/xtjs3jMf94p/bpMqluVyzjNw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=S2YqwwugZQm8NLN4xdm1VgMh66y5sfkEevSpciLBBI8=;
- b=HwiMTulL8YNuxeLQ67CA70kMi/KleO/0NG6Ex3PygWeEp2L/hLj4kxFW6cPx+/mdgJ+2/us1duFx5kwyofh3aOiFUU5poiS839SgGB/3j9IK+49P9PdDx0DY/0Eo/lMmZDoIkGBkGxb2EULFiyEgEuyqIYKf2NoBQ9lp+0bVGFzAdHaGMdTwi3UUcGoXnuHFMTa2c/URumZqItRsg5rRGQ78ehdBADaRFr4PN9Won2RmbkgHXbF307cqk7H1THhquuizlT6qFSpLxl80g+WqHcBRHXFiGl6sbjDAUvrFcSwkltUWg4kWNfx0YZoDtlxbBzxIHZgj2al1p0I/6Cw7pQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=S2YqwwugZQm8NLN4xdm1VgMh66y5sfkEevSpciLBBI8=;
- b=hSL6b8utASneUAAfeqKk+06ICI9DmQR8WwlL9xsGFNWjZT2iofIvXf1ivMK4gL95gmDToIb+UFEl/mNqB5qn8dldbn8oRz9XxbOeUIxBhx9hBn1A/id1nzewPsMHJDsEgP0gWFSaJLYYwDYVwM4AcwqjsnJ11GTD3qwYZrbTj0n4o2DdnoG+CGZ0/5dr/ChMhFT6PmtH2uF+zch0JDosXi68wo+02at/ZiKRBYxnKwN5OFXDoMyVNEzINur+tUSiBZnjJvWEi+wdujZmdCpjgt2u1bPIV+me49B9p+4JzaD0t4z76hhwxmlDVDiifYbV08Ryvyy2oLO/8gtRieHpuw==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from DB9PR10MB8045.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:4ed::14)
- by VI0PR10MB8523.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:800:237::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.8; Thu, 29 Oct
- 2026 15:25:55 +0000
-Received: from DB9PR10MB8045.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::2339:186:874d:c405]) by DB9PR10MB8045.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::2339:186:874d:c405%6]) with mapi id 15.21.0569.008; Thu, 29 Oct 2026
- 15:25:54 +0000
-Message-ID: <93908048-366b-499e-a3b5-6a181d6694d0@siemens.com>
-Date: Thu, 29 Oct 2026 16:25:52 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [cip-dev][isar-cip-core][PATCH v2] customiziations: use Isar
- hostname-costomization for HOSTNAME
-To: quirin.gylstorff@siemens.com, cip-dev@lists.cip-project.org
-References: <20261029143637.404080-1-quirin.gylstorff@siemens.com>
- <13222d26-e9e3-4d18-b542-97f5b04e85db@siemens.com>
-From: "Heinisch, Alexander (FT RPD CED SES-AT)"
- <alexander.heinisch@siemens.com>
-In-Reply-To: <13222d26-e9e3-4d18-b542-97f5b04e85db@siemens.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: VIUP296CA0110.AUTP296.PROD.OUTLOOK.COM
- (2603:10a6:800:351::13) To DB9PR10MB8045.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:10:4ed::14)
-Return-Path: alexander.heinisch@siemens.com
+ dkim=pass header.i=@miraclelinux-com.20260707.gappssmtp.com header.s=20260707 header.b=SpPAaWS8;
+ spf=pass (domain: miraclelinux.com, ip: 74.125.224.53, mailfrom: masami.ichikawa@miraclelinux.com)
+Received: by mail-yx1-f53.google.com with SMTP id 956f58d0204a3-679965fb848so131664d50.1
+        for <cip-dev@lists.cip-project.org>; Thu, 29 Oct 2026 16:25:09 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1793316309; cv=none;
+        d=google.com; s=arc-20260327;
+        b=e8bQ4MOvCsXOKLBwk3nRW92MyhyzonVry41zoELNIrPTWmWI4jHQxGJTGJtNkHS5dq
+         HEYa2b1Yxay5A2lZGaMU8JZpLUXKSKyJa2G1yzpfSW9XgPnLNzXi3OJygsuUEWhzLXuo
+         +thISZNP1aLjCLTa4oSIeD/hwSEEc/3daU2kLwcxqNEVkULRzCw13vV9DlKmYBBtFKOU
+         L/lNRAoS37Pw8UVnh2MX1mdJROfGTO01JpOmegp0FbMfmLS2RK3/NQqOH/oAqJ9aDFtI
+         aNBbP6s929H164i3rNDpFC8pQrrYcBk6jouq0xGjrX0QKf4pJDCV2hgTVUJJpNAKpKT7
+         fRdQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=to:subject:message-id:date:from:mime-version:dkim-signature;
+        bh=RaDpNpADj4zVqZ3ktOkQQA4RQzX5/gPSVxFQb/8NaSc=;
+        fh=pMdhRv1kyG5MNR0BUSVIPLHum9zPZW2mYB9oYwYp5mc=;
+        b=JNCS002a2qcLoOUTtd2diNHQGX1c6NBIAXzx39kR1cJZtbbJhtJ2JLJUz34XNRH44Q
+         CnuVg67t1eUU0DlhImD0fZKFg1GM77j4jZiFma1I+kDIHczkZlj5CGB1tOrydlzSeGOe
+         /CMuPyewrMGjzAlzx4D91FEyL1InGkKGtWa3XUxjK7XH69FMA+4lW8earRHMBK+XNJ2H
+         qAVn2FGnzO3QoCXW1c5d5ZyQSf3pdof+IJR9wLQwn6zlF3EHZ1Ey9x0fdxFSxR7EKf46
+         jfS1uW7E9AMPuG8cxgCw0prt1fFKKz+ibVtmK9066F9Mx8rf+GQz6sGCBohb2tXbCG0u
+         obvQ==;
+        darn=lists.cip-project.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=miraclelinux-com.20260707.gappssmtp.com; s=20260707; t=1793316309; x=1793921109; darn=lists.cip-project.org;
+        h=content-type:to:subject:message-id:date:from:mime-version:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=RaDpNpADj4zVqZ3ktOkQQA4RQzX5/gPSVxFQb/8NaSc=;
+        b=SpPAaWS8foSnjs/FhoOVTlNYdyBGpLTpS12+yLJsvKHhWuSnfxxhCwDZIdPoBrvhP2
+         Kba5mV2NU5n95Xv6FPsjp56iF0FMgHUdo0RqL3QuewAZ1Yix1rQywyVJC6g4aroeJd0k
+         mUvy/TXQrRs9Ml7TlE1wZ5102ZYepelkEBPPxneUnT2+yBbbFybnrRtN3QvcLwBfR6+0
+         7Pk4qmIsw+NyPXEi8GvuppPf3JmczzSbOEXQK/HuMOUJMdsYH9W0r2raQ2Gr1RZb6EqB
+         LEMPJnxjB9qTjxmd5V46qeBf3YhuY5b4Fn/5fJqWRuNVGazjHV0yaQXdSpbvOVUm1FCd
+         15WA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793316309; x=1793921109;
+        h=content-type:to:subject:message-id:date:from:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=RaDpNpADj4zVqZ3ktOkQQA4RQzX5/gPSVxFQb/8NaSc=;
+        b=134eEyi/X2K6OsHp7e1ApCnCmjVrKTxaHrl4DFLyMj1euRQlghOOLMimwxVjjotoHn
+         n/cgmu4KZrCE5M5dsIR4jcItnIt0SOeekvkPOos+oYpAKdqKHzek76f2nl8K3hsQZQFs
+         O0h70pZsvnc33Bi0RREvPAocucO7c/SS7CN1JVcsxWd8GT49WM/nsANyXN928IZ+Yfda
+         +K3kosYr2GIEhcf+yEpREm6H58W+IZaNUiVlgyK9GNW+sR6rjRaW94Ne99ysjpCBEfdn
+         M3DrGj98E46DtTX0x1NhZG1UOD1ievNd+juhe7n6dKKu/MYtoUyO8S0K/z69A+1X5ZfO
+         7bzw==
+X-Gm-Message-State: AFq9FYLlYF7jH1LKQstIF6YbUoXc7zszNPvUg7uXPZXhuZeWtDsAekez
+	w31/pzaCuKusTuJeK2jF01+Nxv6fRkpk7xRGbTo4v9yDDLlS7FKbwijVWO8Vjv1MICGD3jLq9Gg
+	Xg17WSubJDPQA5nV33wMFw/ELrhKKc4JUWwoCIBXffn6meGYjDP6xm+Gk8g==
+X-Gm-Gg: AYBFou3ufP+ZaXTr0iEQB9JKsYny6VauXii/P+/TQhczpznK0mw+zpBxIti+vFsFv+x
+	CgDI6/XTs6v4d0+hNwt22TkBGB7KDZ+yIWBXmh4kyQMHVrxRB0hgLjvwLIw7e1P8EJoMalDHp4H
+	TKDLyUR2QcadWZilpCyw+yRPWnWic1VLKSESNZ9PYcgEQMuI6lGW7vUVELL3AndOn7TMgxwi0j0
+	XwaYNg5jqbotWa77ZqB5CesCkZo7dCN7zx1gp7qlD0vJi+R1ZLiacu8cZ1K2GzTbOtqsLcR2xxe
+	bAOL4G+qe5eQYkTsL8drsxvjQTwWoeGps/mbuuTLiC2mzWlzmGhuzLSpbaBSYl+YwOhnsaIFjUV
+	RacGZAPfM6qbceqIrsayyfuUOtML2vhE7GJL/kXAG3yw5K81vnFk/vsB/ZD1K3a9HwgDhUU1Z5+
+	E0RYDBNpy46w==
+X-Received: by 2002:a05:690e:12cd:b0:67a:8c43:753 with SMTP id
+ 956f58d0204a3-67ba504891emr333959d50.97.1793316308484; Thu, 29 Oct 2026
+ 16:25:08 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR10MB8045:EE_|VI0PR10MB8523:EE_
-X-MS-Office365-Filtering-Correlation-Id: 11e5626c-a440-4b64-fad4-08df35d0ec84
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|23010399003|376014|366016|1800799024|4022899009|4143699003|11063799006|56012099006|261009223027099003|261028144727099003|261026140227099003|261026121527099003|261022115727099003|261021121427099003|261021123027099003|261022105027099003|261022075727099003|10067099003|55112099003|22082099003|18002099003|6133799003;
-X-Microsoft-Antispam-Message-Info: KOb8XyFCihQ9b2x6o0JKJSu83IC5SaPmNAIQqhNeBTsAUOnhRM5aAt+VO4ykCJgq2Q6viOkaDDx/vyz+w5OxZE1n13vZTYzzEW12CAphUNiCgaO+WN9l6e/LRzfe5/pq3KqK6j7nHMQ1ya16Z3zCndy3we7uiaQiupE08gi46FBDzy1VFOqXHLmRBPSJ4T9eVi+Pac7nZo02XVfhuviViWw0iq+2RlSzAF1BJVwNHLcdXt8uk+ObdjuswyyqykoAttucCFzt9bT5/yLs5EGKhURsrtyXFkDPxAJlxim57CUxqAnk9znl7D6UiiKP50k6R03MBeYb8ji+eeSXx0xbQ0FLwNcgIqJMUDCylrcAxwZtBxKTrhctVD1mw381KPmb3fgYg4snxQJexcgLDY18pRgDGuu5N+nTBmBy37Sp+wyfYo4dx8kCfWmkNJbBlyZTtkmoqR7uWgtk/HcTwCMsOZdjxEbfnRkZ05d0vN6LdKwrWsIIIWPqiGGc4INpfXyprpuwACDeN3j16EUOdRw+H9dn7GBYmxlKv/SwBQ3SI2hz/VNPlBfSlfZr7rBaZ079HM82gczXSCKwinXTK6PB20e355h00UM3lzBhOEym1fE=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR10MB8045.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(376014)(366016)(1800799024)(4022899009)(4143699003)(11063799006)(56012099006)(261009223027099003)(261028144727099003)(261026140227099003)(261026121527099003)(261022115727099003)(261021121427099003)(261021123027099003)(261022105027099003)(261022075727099003)(10067099003)(55112099003)(22082099003)(18002099003)(6133799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?EG+HiLgdS+owDrxAvmrLcJ4Asvzeuz1e3Ji0ra4Ly/p0aSwdETXfH4BgCTHk?=
- =?us-ascii?Q?lWRoQezAaHoBFhxWqVBvoAyZstWrodtIl2AicLs4lFcI2xHVuELgZGi2TX5W?=
- =?us-ascii?Q?CvbG4OsAz+6SsWkG8flN6u3/ceuDr75hHbkMbwPIzEEMnYa5h33JI7TqCu24?=
- =?us-ascii?Q?IcuY4G/+AA1BnPIwO7d6CfGzrnCAcTJTqD5a0KV9xknJhlIboJ6U7TDof8Yv?=
- =?us-ascii?Q?T0cSBHRAqeUEmXUe1iCgctjUADS3U7Woa6xFQqbH+36x2tZXN3NgDnga9MAd?=
- =?us-ascii?Q?qq/8DwWdgg0uqQt3J7su/veRHVV4BOCKu2l0ekCpJEruKX2Fx2Qqrk3xKucH?=
- =?us-ascii?Q?TMMi8kdv+ar56I6xqyzqG5RhIbwOuLvu42l88YHOt3ZlNdBecLV7co5x06ek?=
- =?us-ascii?Q?X5aJe0nbu1acKWhWha3XH60Za1iTObGTRnPYEEb/OJDy6RW4m5JMzJrgop3T?=
- =?us-ascii?Q?CDEon68fz/C/SSoT8bzzPYhhM0Q4aT/ZnrMQUJ1E4QC/jjwzAk9Wpnz1xnAN?=
- =?us-ascii?Q?0CoQ5ZzNrwgSyWUpiwYbqzYPk3NiXfoaAMEBe4TjjFkV+b5KMsmZK6I+DO8D?=
- =?us-ascii?Q?laCJX99l4AkYKBQt87Uc7wYPzLTqGgzv1F06+u0ys5Qcnig0C3zfaclod3lZ?=
- =?us-ascii?Q?rPJS38xm/EbQpwK+HEdJLHQBxlPGL1NpiV1W9wlrgbNze2GDdzrGswvKS8y8?=
- =?us-ascii?Q?dXUa8E/SwyZc2KyQLCKclfjpD7Kj+8jvzE5JlY13lV8f1qyInvM+ZAFH3iUf?=
- =?us-ascii?Q?BhSijdFT61xDuMVsZKOiUqWrEsGgkIDPF+3DQ9P3X8po52XBeUI06RS42XPn?=
- =?us-ascii?Q?IqzAUx06MzdSR/UsAWdfi+uOVjSrCxkDcDOaEgvk5Zkx9mQ0LwzSAng2FQkZ?=
- =?us-ascii?Q?/EPUJ1T0xLEtRpabLaMACvfTDq0kijzby9X68WmsAATAlMZJ8BRzWoTEhWf+?=
- =?us-ascii?Q?XwD1xnPnk736B05ssJBUOD6El5CkejU3g09r0Zn2qGsE4L7Nxipp4a98gMG9?=
- =?us-ascii?Q?izGmBWVOCEcWKQ97UBcalkduCdWDOeQCyMXdgkSFKSiWv8y0mO/KXqPQWFnU?=
- =?us-ascii?Q?uvXNlhRByJbERDTCzC7kWbvVHh27bNNzh0+/zXa8GICfc4iKV63Ja/vlddvF?=
- =?us-ascii?Q?hTincixn+QGayt091tb81Qjq4ywSHvQ5ysgbxac5iIxuF8l5y22uQJEMcZcg?=
- =?us-ascii?Q?YqrjkMiLMBRpj4AbM5YrXDkX+sU1rbABGxPSmFvCEh+u85g8IR0fxkN1wC1a?=
- =?us-ascii?Q?gvW8NcsNBPGofcknHpPWdw5AvxXtO1ebubfHkKZu9sG3Zp3UEd5KHrC0aApE?=
- =?us-ascii?Q?8uog1MTSqZimII29xBraHR2qhTibbL+6YC5YN4eMouF7FXXI7Z16H9uzgy/Z?=
- =?us-ascii?Q?JJNmp3lZkXJRSVv/XFBhuVbbnHeqklSppeY7ZKZiTGlA02lJl4GOdb3JW2+J?=
- =?us-ascii?Q?muxnrZ3fjCSHyztiVaDCZ9T58GM9/ChCJCHPsFoZCc1T/ZkHx3F2lVzGgpmr?=
- =?us-ascii?Q?h3D3Y+jQvT6dgr6mEagiiCCrIQJDdG62quDWdVs8OizVPmoSbHQ1/de4vH1c?=
- =?us-ascii?Q?dkbnkxnMlHvYWIeHopdB2gr56K5uVufS2rsfCuQI04YkRkeQuwRXol8V+qvX?=
- =?us-ascii?Q?L2YcAETWk2WFt28CcOLUWMw4k84vtUQ7aej9uHUFLcC2BAYPhq0580eFOPK5?=
- =?us-ascii?Q?WEP8jpmmf0ZayxXbMarZBJC3aaSmjCDvvp0rOGZ/7LPe/7GNVrnJvuMmh2BA?=
- =?us-ascii?Q?ixfo7plfvdKORu5mg8ocDTjTMkCBBNA=3D?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 11e5626c-a440-4b64-fad4-08df35d0ec84
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR10MB8045.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2026 15:25:54.8550
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: L/efov0vX3eBAnvrzPrHwhoZdqUZIKqHnvji2WprcFJ2HcvGr7bxdvcziJWJmOgi8KorVNVr+CCuLfugc10U/UHnPIBvKQ93GZJhDLiylBc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR10MB8523
+From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+Date: Fri, 30 Oct 2026 08:24:31 +0900
+X-Gm-Features: AclHuK8u7El_m0ampsHBw2Y8KMBrbJwm2xqG85PispXR1ElwD-IQwxBhDrqPR-4
+Message-ID: <CAODzB9rMsTzkUBdus6m6u2Aa_5vu-7GUhjdKskk88akgo1JpUQ@mail.gmail.com>
+Subject: CVE-2026-98432: Remote code execution in Linux MPTCP feature
+To: cip-dev <cip-dev@lists.cip-project.org>
+Content-Type: text/plain; charset="UTF-8"
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Thu, 29 Oct 2026 15:26:07 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24576
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Thu, 29 Oct 2026 23:25:15 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24577
 
+Hi,
 
+Anthropic reported CVE-2026-98432 as remote code execution in Linux
+MPTCP feature[1].
+They said that "After initial prompting, Claude wrote an exploit that
+allows a remote attacker to send packets to Linux servers with a
+multipath TCP listener to run arbitrary commands as root, without any
+credentials or user interaction. The underlying vulnerability is a
+race condition-induced UAF bug in the kernel networking stack." so
+that an attacker can attack anywhere without any credentials.
+The CVSS is 9.8 by Linux CNA[2].
+It seems as if PoC has not been published yet.
 
-Am 29.10.2026 um 15:59 schrieb Quirin Gylstorff via lists.cip-project.org:
->=20
->=20
-> On 10/29/26 3:36 PM, Quirin Gylstorff via lists.cip-project.org wrote:
->> This removes the postinst template of the cip-core customizations
->> and also allows to reuse the `recipe-core/customization/common.inc`.
->>
->> Also add `#DEBHELPER#` to postinst to add the by debhelper generated
->> code.
->>
->> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
->> ---
->> Changes since v1:
->> =C2=A0 - Use CUSTOMIZATIONS in image instead of Dependency in common.inc
->> =C2=A0 - fix missing space in IMAGE_INSTALL:append:factory-reset
->=20
-> After play around with CUSTOMIZATIONS I would not apply that patch. In=20
-> my opinion this feature should be removed from ISAR and replaced with=20
-> debian packages or IMAGE_FEATURES and the HOSTNAME should be set in=20
-> IMAGE_POSTPROCESSING.
+This vulnerability is introduced in Linux 4.4.
+The mainline and stable trees are fixed by following commits.
 
-d'accord,
+mainline: e3f33b0a1d89d738e2b913dab519226eaf76e15b
+stable/5.10: b3b027ef0cd322bfa839b9aaf5b27551eea54cf6
+stable/5.15: 95a8c8fa9f27dce64c40c41c062de7728bf34ab5
+stable/6.1: 89b5b1eb7d633c33832b7ff2c02e19a144705036
+stable/6.12: 11a03ce3c4a62d84c10ccdfe47f8075006498568
+stable/6.18: a47406c769f72c070386985488f1c4d057df86b2
+stable/6.6: 742f73df544e03744f2981c467d6542fe8172a2a
+stable/7.2: 26d4c36d318cffbbd160884a0e4cec0da4da4936
 
+For more information, you can read an article by thehackers.com[3].
 
+[1]: https://www.anthropic.com/research/discovering-vulnerabilities-with-claude
+[2]: https://www.cve.org/CVERecord?id=CVE-2026-98432
+[3]: https://thehackernews.com/2026/10/linux-kernel-tcp-flaw-with-98-cvss.html
 
-... that way HOSTNAME set in image recipe actually has effect :-)
+Regards,
+-- 
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
 
-To be continued on ISAR mailinglist...
-
->=20
-> Quirin>
->> =C2=A0 recipes-core/customizations/common.inc=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 4 ----
->> =C2=A0 recipes-core/customizations/customizations.bb=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | =
-1 +
->> =C2=A0 .../customizations/files/{postinst.tmpl =3D> postinst}=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 4 +---
->> =C2=A0 recipes-core/images/cip-core-image.inc=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 5 ++++-
->> =C2=A0 4 files changed, 6 insertions(+), 8 deletions(-)
->> =C2=A0 rename recipes-core/customizations/files/{postinst.tmpl =3D> post=
-inst}=20
->> (70%)
->>
->> diff --git a/recipes-core/customizations/common.inc b/recipes-core/=20
->> customizations/common.inc
->> index 0fd3d4f8..60bc5245 100644
->> --- a/recipes-core/customizations/common.inc
->> +++ b/recipes-core/customizations/common.inc
->> @@ -16,17 +16,13 @@ MAINTAINER =3D "cip-dev <cip-dev@lists.cip-=20
->> project.org>"
->> =C2=A0 FILESPATH:append :=3D ":${FILE_DIRNAME}/files"
->> =C2=A0 SRC_URI =3D " \
->> -=C2=A0=C2=A0=C2=A0 file://postinst.tmpl \
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 file://ethernet \
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 file://99-silent-printk.conf \
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 file://99-watchdog.conf"
->> -CUSTOM_HOSTNAME ??=3D "demo"
->> =C2=A0 WIRELESS_FIRMWARE_PACKAGE ?=3D ""
->> =C2=A0 INSTALL_WIRELESS_TOOLS ??=3D "0"
->> -TEMPLATE_FILES +=3D "postinst.tmpl"
->> -TEMPLATE_VARS +=3D "CUSTOM_HOSTNAME"
->> =C2=A0 DEPENDS +=3D "sshd-regen-keys change-root-homedir"
->> diff --git a/recipes-core/customizations/customizations.bb b/recipes-=20
->> core/customizations/customizations.bb
->> index bf6e7175..3f931b8c 100644
->> --- a/recipes-core/customizations/customizations.bb
->> +++ b/recipes-core/customizations/customizations.bb
->> @@ -13,6 +13,7 @@ require common.inc
->> =C2=A0 SRC_URI +=3D "file://ssh-permit-root.conf"
->> =C2=A0 SRC_URI:remove:security =3D "file://ssh-permit-root.conf"
->> +SRC_URI +=3D "file://postinst"
->> =C2=A0 DEBIAN_DEPENDS:append:secureboot =3D ", efitools"
->> diff --git a/recipes-core/customizations/files/postinst.tmpl b/=20
->> recipes-core/customizations/files/postinst
->> similarity index 70%
->> rename from recipes-core/customizations/files/postinst.tmpl
->> rename to recipes-core/customizations/files/postinst
->> index 62e9a1a2..c65e2d36 100644
->> --- a/recipes-core/customizations/files/postinst.tmpl
->> +++ b/recipes-core/customizations/files/postinst
->> @@ -14,6 +14,4 @@ set -e
->> =C2=A0 echo "CIP Core Demo & Test Image (login: root/root)" > /etc/issue
->> -HOSTNAME=3D"${CUSTOM_HOSTNAME}"
->> -echo "$HOSTNAME" > /etc/hostname
->> -echo "127.0.0.1 $HOSTNAME" >> /etc/hosts
->> +#DEBHELPER#
->> diff --git a/recipes-core/images/cip-core-image.inc b/recipes-core/=20
->> images/cip-core-image.inc
->> index f6162cd7..ba942a0b 100644
->> --- a/recipes-core/images/cip-core-image.inc
->> +++ b/recipes-core/images/cip-core-image.inc
->> @@ -11,6 +11,9 @@
->> =C2=A0 inherit image
->> -IMAGE_INSTALL:append:factory-reset =3D "factory-reset-helper"
->> +IMAGE_INSTALL:append:factory-reset =3D " factory-reset-helper"
->> =C2=A0 ISAR_RELEASE_CMD =3D "git -C ${LAYERDIR_cip-core} describe --tags=
- --=20
->> dirty --always --match 'v[0-9].[0-9]*'"
->> +
->> +CUSTOMIZATIONS +=3D "hostname"
->> +HOSTNAME ??=3D "demo"
->>
->>
->>
->>
->>
->=20
->=20
->=20
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#24575): https://lists.cip-project.org/g/cip-dev/messa=
-ge/24575
-> Mute This Topic: https://lists.cip-project.org/mt/121994979/8886423
-> Group Owner: cip-dev+owner@lists.cip-project.org
-> Unsubscribe: https://lists.cip-project.org/g/cip-dev/unsub [alexander.hei=
-nisch@siemens.com]
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-
+Email :masami.ichikawa@cybertrust.co.jp
+          :masami.ichikawa@miraclelinux.com
