@@ -1,100 +1,79 @@
-Received: from mta-64-228.siemens.flowmailer.net (mta-64-228.siemens.flowmailer.net [185.136.64.228])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.9608.1793361360004457708
+Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.10775.1793365020221341379
  for <cip-dev@lists.cip-project.org>;
- Fri, 30 Oct 2026 04:56:00 -0700
+ Fri, 30 Oct 2026 05:57:00 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=alexander.heinisch@siemens.com header.s=fm2 header.b=nvrhkFJG;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.228, mailfrom: fm-1330684-20261030115557756737da1c00020756-rny85c@rts-flowmailer.siemens.com)
-Received: by mta-64-228.siemens.flowmailer.net with ESMTPSA id 20261030115557756737da1c00020756
-        for <cip-dev@lists.cip-project.org>;
-        Fri, 30 Oct 2026 12:55:57 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
- d=siemens.com; i=alexander.heinisch@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=INYPqSDVUQE+zS5WXgp++NPc3Zq4LVkNo68vhFXBjS4=;
- b=nvrhkFJGV/tbLma848/G+JOuyP/KHiy1GkmJe1/tLPZvvID9wTzFG3wCI2bK7Ie4SKYM7K
- Sz3sCGwGDpywWkQlV0HySMnLfuQ4GLQO/3YZkz7B++iSEKyAwXs1sqr8VP9MnZnEXZy1npf2
- +gbcwJMT218WkAXN5KRRT1IAQOL1otKKr+judr1jBOJ8DGA8b8+7lUwPsiyRYjwTvYPVGqm5
- koZcX0A7cUBqxFQOrs2jwynfcWLFObxxLci2hmQexhQcjglZN6SfkUbvAJrd577S4HNmuj1k
- UXtF5Z6ARdDU54xM9Cx36LDLenknL73ibKNeCibd7IF5VcBqXeEnAunA==;
-From: alexander.heinisch@siemens.com
-To: cip-dev@lists.cip-project.org
-Cc: jan.kiszka@siemens.com,
-	Alexander Heinisch <alexander.heinisch@siemens.com>
-Subject: [isar-cip-core][PATCH v2 4/4] README.signing: Added section on out-of-tree signing for updates.
-Date: Fri, 30 Oct 2026 12:55:43 +0100
-Message-ID: <20261030115543.111644-5-alexander.heinisch@siemens.com>
-In-Reply-To: <20261030115543.111644-1-alexander.heinisch@siemens.com>
-References: <20261030115543.111644-1-alexander.heinisch@siemens.com>
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=VIa4fOQ1;
+ spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 921F4106715;
+	Fri, 30 Oct 2026 13:56:51 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
+	s=dkim; t=1793365013;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=6A/qHSmEOQeHrCbCuUMfYeGECA+jv/s1+UOErmIi24E=;
+	b=VIa4fOQ1w6QyrmAMJLpisxjGTo16UeuCR/jZtuEih1UQaupQQ8jJlijq4iJheqs6CWGGvV
+	yNehKsBh8SZSDrgbfWiG0/8FX6wQK5qWAi4HOYaQzxTJpGO5RHP+p+LN7WuZhGjNJrDskJ
+	9pvz00Uw7LagI86brUDEkCCbAYwn8V2zPqw/gTQ2Wbg2kzvsZ4ZSRfTJmjfDr4iJIG41mR
+	TC9oAYFlGzivI/DjaHTIq+c6iFBI9RMzd70q7Gjun9/TOUNrIBxwysYJ+bsnfHzy7VjEJp
+	63AN+5Inc24ni9Su7sKkaGaGgVoF11J2ncvEGlL+wFOMsT2wifnck1oO+PwR2g==
+Date: Fri, 30 Oct 2026 13:56:50 +0100
+From: Pavel Machek <pavel@nabladev.com>
+To: nobuhiro.iwamatsu.x90@mail.toshiba
+Cc: pavel@nabladev.com, cip-dev@lists.cip-project.org, uli@fpond.eu,
+	biju.das.jz@bp.renesas.com
+Subject: Re: [cip-dev] [PATCH 6.12.y-cip] irqchip/renesas-rzv2h: Restore
+ function parameter for suspend/resume
+Message-ID: <auSUEvghM0rgNVT5@duo.ucw.cz>
+References: <1793341067-15723-1-git-send-email-nobuhiro.iwamatsu.x90@mail.toshiba>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-1330684:519-21489:flowmailer
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="uvU9C4JicXqLC2lQ"
+Content-Disposition: inline
+In-Reply-To: <1793341067-15723-1-git-send-email-nobuhiro.iwamatsu.x90@mail.toshiba>
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Fri, 30 Oct 2026 11:56:04 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24591
-Content-Type: text/plain; charset="utf-8"
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Fri, 30 Oct 2026 12:57:04 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24592
 
-From: Alexander Heinisch <alexander.heinisch@siemens.com>
 
-Signed-off-by: Alexander Heinisch <alexander.heinisch@siemens.com>
----
- doc/README.signing.md | 42 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+--uvU9C4JicXqLC2lQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/doc/README.signing.md b/doc/README.signing.md
-index f9d14efb..20754f1d 100644
---- a/doc/README.signing.md
-+++ b/doc/README.signing.md
-@@ -27,6 +27,48 @@ The default implementation of isar-cip-core is `recipes-devtools/swupdate-signer
- To validate a signed *.swu the image needs to contain the public part of the certificate which
- is stored in the recipe `recipes-devtools/swupdate-certificates/swupdate-certificates_0.2.bb`
- 
-+### Out-of-tree signing
-+
-+Sometimes an update cannot be signed during the build, for example because access to the signing infrastructure is restricted, or because signing requires a second factor that cannot easily be integrated into the build environment.
-+In that case, build the `.swu` image as usual and sign it afterwards with
-+`scripts/sign-swu.sh`.
-+
-+This should remain the exception; prefer signing during the build where possible (see [Replace signing scripts](#replace-signing-scripts)). The script is also handy for trying out different signers, keys or signature modifications without changing the build environment.
-+
-+#### Usage
-+
-+```
-+scripts/sign-swu.sh [OPTIONS] SWU_FILE [-- SIGNER_SCRIPT [SIGNER_ARGS...]]
-+```
-+
-+The script
-+
-+1. extracts `SWU_FILE` into a temporary directory,
-+2. calls the signer to create a new `sw-description.sig` for `sw-description`
-+   (an existing signature is replaced), and
-+3. repacks the image to `<name>.signed.swu` next to `SWU_FILE`, or to the file
-+   given with `-o`/`--output`. The original image is not modified.
-+
-+Everything after `--` is the signer command line. If it is omitted,
-+`recipes-devtools/swupdate-signer/files/sign-swu-cms` is used with the Debian
-+snake-oil key and certificate from this repository. This is suitable for
-+testing only.
-+
-+`SIGNER_SCRIPT` is any script that can be invoked like:
-+
-+```
-+SIGNER_SCRIPT [SIGNER_ARGS...] SIGNEE SIGNED
-+```
-+
-+where `SIGNEE` and `SIGNED` are provided by `sign-swu.sh` automatically.
-+
-+#### Example
-+```
-+scripts/sign-swu.sh -o signed-update.swu <image>.swu -- \
-+    recipes-devtools/swupdate-signer/files/sign-swu-cms -k project.key -c project-ca.pem
-+```
-+
-+
- ## Signing an EFI binary
- 
- EFI binaries are signed with the script `/usr/bin/sign_secure_image.sh`.
--- 
-2.47.3
+Hi!
 
+> Commit 20a4a45ee35f ("syscore: Pass context data to callbacks") modified
+> the callback functionality in `syscore`. This commit also included updates
+> to the relevant drivers; however, irqchip/renesas-rzv2h was not included =
+in
+> these changes and therefore requires its own fix.
+> This restore function parameter for rzv2h_irqc_irq_{suspend,resume}(), and
+> use register_syscore() instead of register_syscore_ops().
+>=20
+> Fixes: f443abb80780 ("irqchip/renesas-rzv2h: Add suspend/resume support")
+> Signed-off-by: Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
+> ---
+>=20
+> NOTE: This is an issue that occurs after merging v6.12.114.
+
+As this depends on 6.12.114, it can't be (easily) tested now, and
+should not be applied now, but I'm okay with applying it after
+dependencies are merged.
+
+Reivewed-by: Pavel Machek <pavel@nabladev.com>
+
+Thanks,
+								Pavel
+
+--uvU9C4JicXqLC2lQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCauSUEgAKCRAw5/Bqldv6
+8mjTAKCHBbnk5WaIBelO4uCfx70Ck5/1AgCeLVJPTI/YAucJequDNOvS/Zy3nRg=
+=Phi6
+-----END PGP SIGNATURE-----
+
+--uvU9C4JicXqLC2lQ--
