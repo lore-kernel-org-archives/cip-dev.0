@@ -1,76 +1,94 @@
 Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.10169.1793617348474700152
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.10731.1793619388044583055
  for <cip-dev@lists.cip-project.org>;
- Mon, 02 Nov 2026 03:02:29 -0800
+ Mon, 02 Nov 2026 03:36:28 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=JxzxXAzf;
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=iTyplz+X;
  spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 160761099A0
-	for <cip-dev@lists.cip-project.org>; Mon, 02 Nov 2026 12:02:21 +0100 (CET)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7DAFC105C9B;
+	Mon, 02 Nov 2026 12:36:19 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1793617342; h=from:subject:date:message-id:to:mime-version:content-type;
-	bh=NSlGlGQltcDXDyL+WDJ0s6KKE25RAgjWes31tKk2P3Q=;
-	b=JxzxXAzfX6yWhe5avbLBj9ysy5j7+oiblSuVQ2DxwbcN/uHjMmZAPZYyhVfFcUxir4FfaE
-	fu6/dWQFTKSrdt9N+T3VbUDQbWG3WPjWvlJO2wTwgFeEP6QxztpENme4So9uTWMO3LcXnC
-	CgIzuc5OZ73jg60tbyvpDhhFul/wDGdvpBNy4p8TQ6/KTHvt/10wN+JUmd/kgZQ866dEY8
-	uO/yoL4EybA5I07GyIV3KXWai58UOjsjgPkJKg4qcyxFrNRgkKFIEzqK4fvOidliytqmsY
-	R7pMLboUnzgYhzLw9tUvUfIVcZrDZBvazF2OtBkQ470igvPKH8JcGdlX9SPZTA==
-Date: Mon, 2 Nov 2026 12:02:19 +0100
+	s=dkim; t=1793619381;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=AvJ8Qse3MwICuxagsv3z9G9u1Be3Oi+6oefMoBNpht8=;
+	b=iTyplz+XYwipJWEfbTo6ftLyTtKHEaVujzeT53X2w+c+CrninUM3kBHSs3U9+ezVDTNHql
+	ZmXN9Zk55A7FzlHWzkJd/EGMMp5JENviQ+ymKD+W4Jr148pCCvPcreNvxYkEyVJy4MojOF
+	69j1ZWayypB0lYUCHBwYEGPuL+/v7U7w9x8+pfG78RMNWrLdFsQHO8A/hNGzLwoe5wKhTA
+	t0nBfcl6e5HI+d5cKu17BEYiYnxwHaWcuOznQVaTNHws6iWGDGTJYd/yzULM7lcm08KcQA
+	YLw4sPc9pZxU7ioq1oB/Svzy1ZfSWjrHOa2gk1MkU0+Qr7Zd4iofpZWWRonUzQ==
+Date: Mon, 2 Nov 2026 12:36:17 +0100
 From: Pavel Machek <pavel@nabladev.com>
-To: cip-dev@lists.cip-project.org
-Subject: CVE-2026-99999, CVE-2026-98432: status in cip branches
-Message-ID: <auhtu6LQDZuPFP_N@duo.ucw.cz>
+To: Ulrich Hecht <uli@fpond.eu>
+Cc: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+	"pavel@nabladev.com" <pavel@nabladev.com>,
+	"nobuhiro.iwamatsu.x90@mail.toshiba" <nobuhiro.iwamatsu.x90@mail.toshiba>
+Subject: Re: Request for review for 4.19-st21, 4.19-cip137
+Message-ID: <auh1sRkdmg3AWRbt@duo.ucw.cz>
+References: <1931298540.80350.1793132613065@webmail.strato.de>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="/uTj3i0aCfgR3GV+"
+	protocol="application/pgp-signature"; boundary="rXpsXlEtOX4PakcE"
 Content-Disposition: inline
+In-Reply-To: <1931298540.80350.1793132613065@webmail.strato.de>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Mon, 02 Nov 2026 11:02:31 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24600
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Mon, 02 Nov 2026 11:36:31 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24601
 
 
---/uTj3i0aCfgR3GV+
+--rXpsXlEtOX4PakcE
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-CVE-2026-98432 is fixed by e3f33b0a1d89d738e2b913dab519226eaf76e15b
-"ipv4: free inet_opt and ireq_opt after an RCU grace period"
+>=20
+> Here are the adapted backports for the upcoming 4.19 kernel release. Ther=
+e's a total of 95; 1 written by me, 2 by Qwen-3.8-27B and 92 by Qwen-3.8-Fl=
+ash-Next. (The latter are labeled with "Assisted-by: SLTR:qwen-3.8" and "As=
+sisted-by: SLTR:qwen-3.8-flash-next", respectively.)
+>=20
+> As always they can be found in https://git.kernel.org/pub/scm/linux/kerne=
+l/git/cip/linux-cip.git/log/?h=3Dlinux-4.19.y-st-rc
+>
 
-Exploit for CVE-2026-99999 is stopped by
-6785011f8b16abf40b1e9d8b2e332232b3e68822 "ipv4: validate
-checksum_start before completing checksum"
+These look ok to me:
 
-6.12-cip: we have v6.12.114-cip34 with both patches.
+Reviewed-by: Pavel Machek <pavel@nabladev.com>
 
-6.1-cip: last commit is Oct 26, last release is Oct 14,
-v6.1.189-cip61. Does not have e3f3 or 6785. 6.1.190 has e3f3 and 6785.
+a this is not easy to validate > 0f9dd2fd36dc88 ipv4: validate checksum_sta=
+rt before completing checksum
+a > 1aef1ed67bf592 netfilter: ip6t_rt: fix zero-address non-strict match ou=
+t-of-bounds read
+a > 1772d2f27fe10f net: openvswitch: conntrack: avoid modifying shared unco=
+nfirmed ct entry
+a > 994be280b21cd2 net/sched: reject IDR error pointers when deleting actio=
+ns
+a > 2548133fd1bde9 drm/nouveau: Fix gem reference leak in validate_init()
+a > 893066ca3560ef drm/nouveau: fix double-free in nvif_vmm_dtor
+> a91fd56ecf47a4 gpio: zynq: fix runtime PM leak on request error path
 
-5.10-cip: last commit os Oct 26, last release is Oct 15,
-v5.10.271-cip78. Does not have e3f3 or 6785. 5.10.272 has e3f3 and
-6785.
+So this is common pattern and quite a common mistake. As it only
+happens in error paths, we may want to simply ignore this one.
 
-I guess we could do early releases of -cip at this point. I don't
-think embedded users should be affected by either of them (one is KVM,
-one is MPTCP, basically), but both are getting some publicity and we
-were already thinking about early releases when CVE-2026-99999
-appeared.
+If we wanted this fixed, we should probably introduce
+pm_runtime_resume_and_get(). We already have two users of the
+non-existing function in the tree, so two compile errors waiting to happen.
+
+drivers/irqchip/irq-gic-pm.c:   ret =3D pm_runtime_resume_and_get(dev);
+sound/ac97/bus.c:       ret =3D pm_runtime_resume_and_get(dev);
 
 Best regards,
 								Pavel
-
-
-
---/uTj3i0aCfgR3GV+
+--rXpsXlEtOX4PakcE
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCauhtuwAKCRAw5/Bqldv6
-8n20AJ0cMt7tYDuRVGAss75kapjUJ9dB/wCgmQvUN0WYVY25yd00mJXvvs4lRJ4=
-=FqQw
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCauh1sQAKCRAw5/Bqldv6
+8oafAKCDnIQJ81vV5vB5P0SWTScQfEffewCgguqOJX/zUkgnnne9OmXPsLKUME4=
+=cto6
 -----END PGP SIGNATURE-----
 
---/uTj3i0aCfgR3GV+--
+--rXpsXlEtOX4PakcE--
