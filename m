@@ -1,17 +1,17 @@
-Received: from TY3P286CU002.outbound.protection.outlook.com (TY3P286CU002.outbound.protection.outlook.com [52.101.229.60])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.12026.1793624542050635190
+Received: from TYVP286CU001.outbound.protection.outlook.com (TYVP286CU001.outbound.protection.outlook.com [52.101.125.45])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.12030.1793624548320008876
  for <cip-dev@lists.cip-project.org>;
- Mon, 02 Nov 2026 05:02:22 -0800
+ Mon, 02 Nov 2026 05:02:28 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=fQul1YGj;
- spf=pass (domain: bp.renesas.com, ip: 52.101.229.60, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=SNmPYPcH;
+ spf=pass (domain: bp.renesas.com, ip: 52.101.125.45, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rDSyMXYbBQ8DC9sUCb4vLdlTKrxg/raGAFcvlwYoGv7bUKpibmULoa57/BG+tNqSnx6GsPGw0oj4L7R88bG4er94x5XTVgaQMAbiMjKiNXbrST6L4ZKbXeCyBhnGhJStRpb7kQPrE/b/dsaDQvSCIS4e2A9d3pUnAU5hMYxNkUcgjqtINVKxQnQ1J93SxZHUX4eXplLEyCalxaLUZPkBHsA/u45oDMeYqs5ZMVfZyhhqmjYCKMtmIzOZ+IQBOqk9PdlomxjOwiISoJ85wypL7st2rgNjNv0r3l6gy5vODtkzO2l+T3+Kv61BD49N8BOD/jSGxHAQ0okPtrnbsZiodw==
+ b=K5ABGyXj5T9EIo3CgYOay9EDzXmqaL6BSFXNu82GQL1AJDPHA88X3jc80pxmOyfQJlLE2cmNjXqPb4FKjzhgzxyqsGn+pEVZ93vj1yi8voIYEaJ7VFkyAzZI2jVFm6J78Sl0pG5idtr7LRR8KV/KVZFRXj/E9MoFvPoGTqqTpWbhNjzuop26axib6KtmDUUuOUSTqjwqRerXUurgm3QzQpE7yCb8/TNbkk46Nt+PGg5S4RDRFMXdl5XGsR3ymeuGeQbP+HZu7IuMk7iKHTq4qBTledWJtWIOg9z4stvq8+pLAOOOoE++hrtgwxc+glUD9lc26aFZAmLdRKo9m7fXfg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sbtovbhhq98XlQ6hYvzsjQqvOdds0hUdiPUsSigi5w0=;
- b=DQWHx5BaU0cjxsXG7SSJFrJnADsOUmPXjvV/2GuOhXR3IqD57yJ8J2wcYn/sIEqL9yuYLyOLxCYgd0ZmEnctH5emNxvT6clZxQ6UkeCWe5yI/APUp5s/tRJ+Y6+32nIAB8uEoaWtR6EHG1CUQLk1dSjZl9C65SYKfkv/nKzvpLPxivqGIICyVZ//wRgQXNkSExl8vsxYLDbhwPAv5HpV2JLayAj/ndkw4x8K7Wh8JCj0ekD/fQX4LVbWwXOlQVu+JZ/rNs2ddsGg3+c8iS+qMspnkDpqN5Si74JNs3HBlRHBWsGt145+3QIJPpJIhQmD55aIqq3aT1G038sIf473Jg==
+ bh=XDFv+g9xUVdbI6crHjT90pesJBeactCm/rXjfP6ePTs=;
+ b=WmsYZM+VsMTUaUv5tMKd5miQm/BNcyMEzPCnVLmRrv29eaJbP1DH8AFsGvakOPGdDXPDvGXywbQksecnORvgF87oPA7ekwtKd3iqp9NrdOfKJVPgydJYOA8uGWuKSXHKrZnaLDv1sHfvOIvaa+3qTjsUWDnbtETnlts8sln7ZZQJ4L4oDPGCry1PEOad7IiL85YvbV9QVKFQSE/lN6RGqQSHNwhPLfZqX4MqvCH776cfV0VIyUheLJZAWf5oUvqapTrw5O1pL0l0vgGgZlQHBxGCzApA4lL9AZKusd3IKzX0/8wvzUupaHW5u9Q5SspSiaKvb0P4K1BKKI+pphQUWA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  8.62.32.50) smtp.rcpttodomain=bp.renesas.com smtp.mailfrom=bp.renesas.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=bp.renesas.com;
@@ -19,18 +19,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sbtovbhhq98XlQ6hYvzsjQqvOdds0hUdiPUsSigi5w0=;
- b=fQul1YGj9OrtkuIF3F9ujQ91eYHW225WPRhR/+9XjZopSWXh5iN+SCjqiX5YMlCzjsnOiC4yWddT9KQM0BXQbVXInH3ED3DpJmOA6rmRsmT6wlLJYDVQCqFbjtVVmYmiYhXuhYsuEbgdmDx89B1BNX0eh77GJ7NjXNEfCNBiapU=
-Received: from OS3P286CA0070.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:201::11)
- by OS3PR01MB8603.jpnprd01.prod.outlook.com (2603:1096:604:19b::5) with
+ bh=XDFv+g9xUVdbI6crHjT90pesJBeactCm/rXjfP6ePTs=;
+ b=SNmPYPcHY3yDxHJusGqz5QWMRx+iv3p1ZOLsPl6OBMvOVxzEJiftD0hdUlricnMFqS9gnTHNgYRpZ3A+uyjCoPAigkme7qeYBP+R8vgmxuOJIPF0hDroMeNBAKraCIsE7ks2dlhtcK4AFphQLHYxsU7QTNHC/6eh7bVvwUGDLds=
+Received: from TYCP301CA0048.JPNP301.PROD.OUTLOOK.COM (2603:1096:400:384::17)
+ by TYYPR01MB12708.jpnprd01.prod.outlook.com (2603:1096:405:15f::8) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.12; Mon, 2 Nov
- 2026 13:02:15 +0000
-Received: from OS3PEPF0000003B.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:604:201:cafe::39) by OS3P286CA0070.outlook.office365.com
- (2603:1096:604:201::11) with Microsoft SMTP Server (version=TLS1_3,
+ 2026 13:02:21 +0000
+Received: from TY1PEPF00046B4D.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:384:cafe::d) by TYCP301CA0048.outlook.office365.com
+ (2603:1096:400:384::17) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.21.569.12 via Frontend Transport; Mon, 2
- Nov 2026 13:02:15 +0000
+ Nov 2026 13:02:21 +0000
 X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
  is 8.62.32.50) smtp.mailfrom=bp.renesas.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=bp.renesas.com;
@@ -38,86 +38,193 @@ Received-SPF: Pass (protection.outlook.com: domain of bp.renesas.com
  designates 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
  client-ip=8.62.32.50; helo=ejcrelay004p.adwin.renesas.com; pr=E
 Received: from ejcrelay004p.adwin.renesas.com (8.62.32.50) by
- OS3PEPF0000003B.mail.protection.outlook.com (10.167.240.4) with Microsoft
+ TY1PEPF00046B4D.mail.protection.outlook.com (10.167.253.37) with Microsoft
  SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.592.5
- via Frontend Transport; Mon, 2 Nov 2026 13:02:15 +0000
+ via Frontend Transport; Mon, 2 Nov 2026 13:02:21 +0000
 Received: from Ubuntu-22.. (ed-eng-lt-dbi.diasemi.com [10.24.1.66])
-	by ejcrelay004p.adwin.renesas.com (Postfix) with ESMTP id DCCE13001283;
-	Mon,  2 Nov 2026 22:02:13 +0900 (JST)
+	by ejcrelay004p.adwin.renesas.com (Postfix) with ESMTP id D895B3000230;
+	Mon,  2 Nov 2026 22:02:19 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
 	Pavel Machek <pavel@nabladev.com>
 CC: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 0/7] Add PCIe support to Renesas RZ/V2H(P) SoC
-Date: Mon,  2 Nov 2026 13:02:05 +0000
-Message-ID: <20261102130212.8115-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 3/7] PCI: rzg3s-host: Prepare System Controller handling for multiple controllers
+Date: Mon,  2 Nov 2026 13:02:08 +0000
+Message-ID: <20261102130212.8115-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261102130212.8115-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20261102130212.8115-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Return-Path: prabhakar.mahadev-lad.rj@bp.renesas.com
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OS3PEPF0000003B:EE_|OS3PR01MB8603:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8ce68376-7857-4a35-8689-08df38e184bf
+X-MS-TrafficTypeDiagnostic: TY1PEPF00046B4D:EE_|TYYPR01MB12708:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2054d045-92fd-4faa-1a47-08df38e1884b
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|23010399003|376014|1800799024|36860700016|82310400026|261021121427099003|56012099006|11063799006|261009221227099003|261009223027099003|261028144727099003|261021123027099003|261022105027099003|261026140227099003|261026121527099003|10067099003|18002099003;
-X-Microsoft-Antispam-Message-Info: cHlEJ6EgBz/acAuXQ7gFVtVead6A6qHbxbIEn7qU/b4y1g/Btgq8Wy+mHnMlw+k65EFfJnayP8xEKSIixAwHqi+GHEpFdx8YbMr0xHOD5HiOGwu1zVP/ZZbvdKDhzbnNN8U2KT40dsNl3h/rqIBxG+mULHYCvWOH4/oRj/nOVLW/NUyJyJo7DpjSpUtZf7IDOuJhRqkFf95ryd4kvUMjCazpmfwHP3oYMr/Cv4+RpVW3roait9y2Cit+ScuwbBNJ4afjDRbvYU2roPwp1ARNYMoaA2NCT1CIlCtt2kUrlq83owQNrr4+m4BNEVINlS0TXOnilE+AdO61Nd5zNW+3rfJ/ROdANUl7I7dog+OXKT8viDLIq+FFG/gSl5ORg+4FvTVPsMGiY5xQBXyliuTJdlWlo894mJpH4WCMWY3eEZ2A6j1uhkepAiVC5zC+ffdUkI+svq8eLfwEYS7RrvP5OqpVhkVVjPKIdwFXsd/Vc4H0rlwnkPzDsiWjxvuW4Ey5W8SCuG4cF7mNkeAPeNwwF7gov+8/GntED4qUvzL/SEi4r+KCWjuaKqVkCGL4GnE0QjOHDVLvuEQkljhzZjbFrH59acSgd5PQ7i0S0v9Ulgmikf+0Bn9n2X/apF3cgCRLFIpWPtMULwIsh0WTlj936XsiNXSlHWXYm27MFg96kJZgh1oJNO6qcCC6BRAjT/s84w2gtF0IQr9cCY3FedJhTA==
-X-Forefront-Antispam-Report: CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay004p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(23010399003)(376014)(1800799024)(36860700016)(82310400026)(261021121427099003)(56012099006)(11063799006)(261009221227099003)(261009223027099003)(261028144727099003)(261021123027099003)(261022105027099003)(261026140227099003)(261026121527099003)(10067099003)(18002099003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|36860700016|82310400026|1800799024|23010399003|6133799003|10067099003|18002099003|22082099003|13003099007|56012099006|11063799006|261021121427099003|261022075727099003|261022105027099003|261026140227099003|261009221227099003|261009223027099003|261028144727099003|261021123027099003;
+X-Microsoft-Antispam-Message-Info: 4h+rpVovxsCCG1vLvw+Ea1GIqxEpK/P5Pa8eyujrq5XanCslxEjah5w1Gwo3BuEygQRha54RfQAmWfCqPY3PFLofdbjhd+aCXg2lzjDlj4GirnJVvRD95KLJertICH05PUqrmC2S2CdhVLgOvkwW/5yqQV7SYduXm0Fjr2NrT8SNKfXXH3yz5IO8oM+bBnPfy62VeJckyzPE10tiy/lozjYAkSoGUXYOYzXsDHq6jTsmcF1cTu1qyl1nbVf0ZP8BIVUNIv+6vEKeMPIUOr83U0nYiYa7wqhsp2C26atMhtBiw0SdtFvZnWeAJYjJ0BhA5MhRUrd+lIrUALfxVx6+jV3W30SfAUkD7jgmWUEm2vcpV6VaMbVtdtRiL/k8a4p/6P2zYXxNo0jb+JQT7jBbVKjthiOnHcaI3xzyelLeOgyC8HBfTrNxsdP2xjLa7g6iwgYJ2frtt2kQlEOagm5xr1Auv1YBUrxgH6swv9TbRfc8psH0dt4GwYja/TLrm18fq/LEf5JKUwR5eNweebU4VIyMeZ5srNraMSH7v28wIwGJuaGdlMv47aJTJhaTe3VfC9O6Argfjzbnp2iHhejwTssMjhWgif9Q2wQZusn6Efw4m5OpNc5EJxeAtsAJGT1kF90nkwYgt5bfupKlXm4t0MIuEETtDq0e2i1QX0uTkRc=
+X-Forefront-Antispam-Report: CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay004p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700016)(82310400026)(1800799024)(23010399003)(6133799003)(10067099003)(18002099003)(22082099003)(13003099007)(56012099006)(11063799006)(261021121427099003)(261022075727099003)(261022105027099003)(261026140227099003)(261009221227099003)(261009223027099003)(261028144727099003)(261021123027099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: av90omoPLvjIo3DJD6GAfUwXROj/WtZdRdjNI87ddkmTDGBzm2tBkr+OmYKT5zjrQkj0D4ncz35n8G2WmhLMnEBx3a1NIgp0/M0VFk0bfHg1VNtesGy1RTX66Or0d94Spg4qMSwlmEmq830WbXj/h9ThLRsB9MM5tjNmBDVbp3eBNGYwCFTfEEMSQnHItAQz+5uoqlAXS2C3ROKuo8MeNkrSPIp3EmkZ4a8j6RchRVwvSgdH212GRN3vSXH4M/pbL5Vo3k7BgqHJyyZivUrI6nYkT0fFCrjAVfjUnd9lnd1G3a+p3cChMltiHtmPyxiCO1ZhBTGUtdfjojMurzgoaqQ26MOMxmNIMEB3PED6CwcxQ1mRcWHKbK+sfM5MsUae9VEWX0g5X1f2I/U2r/KIt0KgLQHBaflwDh5jv4ew/0jTOM97m56USmVrlnPpeGFU
+X-MS-Exchange-AntiSpam-MessageData-0: ULsw9vCNWmvhCJPKc3UkhH9lWltBbss79TGliYHHtTlwcoK0Xs2lNu9KgiXts+UDIbdXPT/jhQxOTiGcoLXotjy7xYURIQ9XxvwZ+Jw4xN9E343IAroxERi+kncIH6u+ACFhKZA6RK133IpUW1obG2MH93q5XB42r+1PV3nU08lTaQAxXSfzQC5vmyGq9gG7BQkdoieNVo+kGJHeIq7sY+KtyzlZkdUFy9kmvW2t/Uhrc9J/xJeYEj2To2NykUIOQkHmdk8xGqxS8ZjHTm7CizL82/zTO+xPZ9bzYQDnJSRR99W6cySXU/n3v/usa39qJK7LvXhiuFklNeV2cx5KM/LQ6RvzdUWgymXGhfL/CqgMQiv9CmaYAsdAyuvvF6wGpE5Gh+5D/4NlEIiF6qZfPKyuyeAuWMQPt30fMO9Wq/WyAGXCRsaFf7xr782PMWnK
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Nov 2026 13:02:15.5191
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Nov 2026 13:02:21.4782
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8ce68376-7857-4a35-8689-08df38e184bf
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2054d045-92fd-4faa-1a47-08df38e1884b
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay004p.adwin.renesas.com]
-X-MS-Exchange-CrossTenant-AuthSource: OS3PEPF0000003B.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthSource: TY1PEPF00046B4D.JPNP286.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB8603
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB12708
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Mon, 02 Nov 2026 13:02:32 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24610
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Mon, 02 Nov 2026 13:02:33 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24613
 Content-Type: text/plain; charset="utf-8"
 
-Hi all,
+commit 9f2ed7c3de5dc4ccd223784d8ad80909a7bae884 upstream.
 
-This series backports PCIe support for the RZ/V2H(P) SoC and its EVK to
-the v6.12 CIP kernel.
+Prepare the driver to handle multiple PCIe controllers with distinct
+System Controller (SYSC) register sets, as required by RZ/V2H(P). The
+current design stores a single sysc_info structure per SoC, which is
+insufficient for multi-controller configurations.
 
-The series adds the PCIe DT binding support, updates the RZ/G3S host
-driver for shared reset controls and multiple controllers, and adds
-RZ/V2H(P)-specific lane and system-controller handling. It also adds
-the required clocks and resets, describes the PCIe controllers in the
-SoC DTS, and enables the ports on the EVK.
+Introduce controller identifiers and extend struct rzg3s_pcie_soc_data
+to hold a sysc_info array indexed per PCIe controller. Add a
+controller_id field to struct rzg3s_pcie_host and select the appropriate
+System Controller information during probe based on the hardware
+instance.
 
-The EVK DTS uses a fixed 100 MHz reference-clock node because the
-Versa3 clock-generator node is not present in this tree.
+Keep existing single-controller SoCs functionally unchanged while
+preparing the driver for RZ/V2H(P) multi-controller support.
 
-Regards,
-Lad Prabhakar
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Signed-off-by: Manivannan Sadhasivam <mani@kernel.org>
+Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Link: https://patch.msgid.link/20260629220932.861445-4-prabhakar.mahadev-la=
+d.rj@bp.renesas.com
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/pci/controller/pcie-rzg3s-host.c | 48 ++++++++++++++++--------
+ 1 file changed, 33 insertions(+), 15 deletions(-)
 
-Lad Prabhakar (7):
-  dt-bindings: PCI: renesas,r9a08g045-pcie: Add RZ/V2H(P) support
-  PCI: rzg3s-host: Use shared reset controls for power domain resets
-  PCI: rzg3s-host: Prepare System Controller handling for multiple
-    controllers
-  PCI: rzg3s-host: Add support for RZ/V2H(P) SoC
-  clk: renesas: r9a09g057: Add PCIe clocks and reset
-  arm64: dts: renesas: r9a09g057: Add PCIe nodes
-  arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Enable PCIe
-
- .../bindings/pci/renesas,r9a08g045-pcie.yaml  |  34 ++-
- arch/arm64/boot/dts/renesas/r9a09g057.dtsi    | 140 +++++++++++
- .../dts/renesas/r9a09g057h44-rzv2h-evk.dts    |  24 ++
- drivers/clk/renesas/r9a09g057-cpg.c           |   5 +
- drivers/pci/controller/pcie-rzg3s-host.c      | 233 ++++++++++++++++--
- 5 files changed, 416 insertions(+), 20 deletions(-)
-
-
-base-commit: f0ff96b9db4c6dd62a05fb58babf7d08c83909de
+diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/control=
+ler/pcie-rzg3s-host.c
+index d6fe72e11f4cc..9b24da8da23c1 100644
+--- a/drivers/pci/controller/pcie-rzg3s-host.c
++++ b/drivers/pci/controller/pcie-rzg3s-host.c
+@@ -242,6 +242,18 @@ struct rzg3s_pcie_msi {
+ 	int irq;
+ };
+=20
++/**
++ * enum rzg3s_pcie_controller_id - RZ/G3S PCIe controller IDs
++ * @RZG3S_PCIE_CONTROLLER_ID_0: PCIe controller 0
++ * @RZG3S_PCIE_CONTROLLER_ID_1: PCIe controller 1
++ * @RZG3S_PCIE_CONTROLLER_ID_MAX: Max PCIe controllers
++ */
++enum rzg3s_pcie_controller_id {
++	RZG3S_PCIE_CONTROLLER_ID_0,
++	RZG3S_PCIE_CONTROLLER_ID_1,
++	RZG3S_PCIE_CONTROLLER_ID_MAX,
++};
++
+ struct rzg3s_pcie_host;
+=20
+ /**
+@@ -254,7 +266,7 @@ struct rzg3s_pcie_host;
+  *                power-on
+  * @cfg_resets: array with the resets that need to be de-asserted after
+  *              configuration
+- * @sysc_info: SYSC info
++ * @sysc_info: System Controller info for each controller
+  * @num_power_resets: number of power resets
+  * @num_cfg_resets: number of configuration resets
+  */
+@@ -265,7 +277,7 @@ struct rzg3s_pcie_soc_data {
+ 	int (*config_deinit)(struct rzg3s_pcie_host *host);
+ 	const char * const *power_resets;
+ 	const char * const *cfg_resets;
+-	struct rzg3s_sysc_info sysc_info;
++	struct rzg3s_sysc_info sysc_info[RZG3S_PCIE_CONTROLLER_ID_MAX];
+ 	u8 num_power_resets;
+ 	u8 num_cfg_resets;
+ };
+@@ -297,6 +309,7 @@ struct rzg3s_pcie_port {
+  * @hw_lock: lock for access to the HW resources
+  * @intx_irqs: INTx interrupts
+  * @max_link_speed: maximum supported link speed
++ * @controller_id: PCIe controller identifier, used for System Controller =
+access
+  */
+ struct rzg3s_pcie_host {
+ 	void __iomem *axi;
+@@ -312,6 +325,7 @@ struct rzg3s_pcie_host {
+ 	raw_spinlock_t hw_lock;
+ 	int intx_irqs[PCI_NUM_INTX];
+ 	int max_link_speed;
++	enum rzg3s_pcie_controller_id controller_id;
+ };
+=20
+ #define rzg3s_msi_to_host(_msi)	container_of(_msi, struct rzg3s_pcie_host,=
+ msi)
+@@ -1722,7 +1736,7 @@ static int rzg3s_pcie_probe(struct platform_device *p=
+dev)
+ 		return -ENOMEM;
+=20
+ 	sysc =3D host->sysc;
+-	sysc->info =3D &host->data->sysc_info;
++	sysc->info =3D &host->data->sysc_info[host->controller_id];
+=20
+ 	host->axi =3D devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(host->axi))
+@@ -1915,10 +1929,12 @@ static const struct rzg3s_pcie_soc_data rzg3s_soc_d=
+ata =3D {
+ 	.config_deinit =3D rzg3s_pcie_config_deinit,
+ 	.init_phy =3D rzg3s_soc_pcie_init_phy,
+ 	.sysc_info =3D {
+-		.functions =3D {
+-			[RZG3S_SYSC_FUNC_ID_RST_RSM_B] =3D {
+-				.offset =3D 0xd74,
+-				.mask =3D BIT(0),
++		[RZG3S_PCIE_CONTROLLER_ID_0] =3D {
++			.functions =3D {
++				[RZG3S_SYSC_FUNC_ID_RST_RSM_B] =3D {
++					.offset =3D 0xd74,
++					.mask =3D BIT(0),
++				},
+ 			},
+ 		},
+ 	},
+@@ -1933,14 +1949,16 @@ static const struct rzg3s_pcie_soc_data rzg3e_soc_d=
+ata =3D {
+ 	.config_post_init =3D rzg3e_pcie_config_post_init,
+ 	.config_deinit =3D rzg3e_pcie_config_deinit,
+ 	.sysc_info =3D {
+-		.functions =3D {
+-			[RZG3S_SYSC_FUNC_ID_L1_ALLOW] =3D {
+-				.offset =3D 0x1020,
+-				.mask =3D BIT(0),
+-			},
+-			[RZG3S_SYSC_FUNC_ID_MODE] =3D {
+-				.offset =3D 0x1024,
+-				.mask =3D BIT(0),
++		[RZG3S_PCIE_CONTROLLER_ID_0] =3D {
++			.functions =3D {
++				[RZG3S_SYSC_FUNC_ID_L1_ALLOW] =3D {
++					.offset =3D 0x1020,
++					.mask =3D BIT(0),
++				},
++				[RZG3S_SYSC_FUNC_ID_MODE] =3D {
++					.offset =3D 0x1024,
++					.mask =3D BIT(0),
++				},
+ 			},
+ 		},
+ 	},
 --=20
 2.43.0
 
