@@ -1,146 +1,192 @@
-Received: from GVXPR05CU001.outbound.protection.outlook.com (GVXPR05CU001.outbound.protection.outlook.com [52.101.83.52])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.9846.1793708045045636283
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.10469.1793710460807417510
  for <cip-dev@lists.cip-project.org>;
- Tue, 03 Nov 2026 04:14:07 -0800
+ Tue, 03 Nov 2026 04:54:21 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=BhJWKPjb;
- spf=pass (domain: siemens.com, ip: 52.101.83.52, mailfrom: quirin.gylstorff@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fR9ZQID1HvikPb2pHPy9dCA6Ttcw+6J7O5opmQRUEVCpTf0lEatEWo/l6iLYK06Fz95p7FbreNv19GlnOBrSnU1HByCaNrNCuV/cIBkLH5ggnBNCjLb+jzWsvAWfjvxuG0Q7vV68zFQDdIygc1phtWRGwgZSHYIIHUnCB4HyM+RfbVpmk50ujCUzHZQNzW1TRjTWRkRcE6Hdr7xDfrxylVNiCEHZvZ7sba9VPwDvwMe0k59Ev8qjqkHqgZTcegnF5wkAvAztpdr1po0+GQzyfa8ifOrbKH+mq8iey8Y5HqNI5fZQhtmSVs1SaHHiGhGjvP1Za56K3dLL8uH8iD9yBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1U3vJtvwhV8rV7yUsiyy2WrJsTTabdZaIsckWJQnkQo=;
- b=hjTWVHx6wEiiRtrfmn8xaFFmnNa2i9it1C+I5Vln3uUUGnj+Ak2+/RXYd0J1TiIuUwMM84FxAdjdFr8HoOYBxcSzayqEgmAZ7b8R0Jmk0A5jbXvjIcsnP3in982Ruya3id/cc0o7vyN0IwAfs3wCDIVwLdwf6ZcVlasMSdYPCoySJsrBd8srxy0m5j8ggp50o9dv9/Fq9LRrhJuDuyOmnjSjQOmmZehsmZkmUNGqNb09s0iwXeUrfSDfDopAxQPjzaRVkfkrCg9SsEj1suzobrMsjVb4kAmq0BsKBrWy5LEOTfKNtkn7s3IsXPUMGq3mh3Y9QMNk0L+DHrAZ81DevA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1U3vJtvwhV8rV7yUsiyy2WrJsTTabdZaIsckWJQnkQo=;
- b=BhJWKPjb7TynuT/SOpMu6XP9N6LQ6/gpnZDKzkGrtP0BLbpG62kWGlS/86I1OiyyTSrnsoPkEaSEJhHFtJ/6NgmQjG0bObBSzuemW3POpApXbCtvOjELPn05Zzps9L6/TX27pe0X9KYIdDKJLDVSFWqp4byfCnoY15GnC8SmKMY1LgpqdPZvwYEm3rojo/nAUUZ0qMT/+WTztAAzFLRdJw8X2bm2AwrbXu3JG7g5fmStdy5fnaRJzdorQXCqorwzC+q4sDp9no+xEDsdexj7wyQb+wf8CsBBFL+/KX9ehTvLb09a689dJBvQeD7cToQ/2mQc4RAXGgZfw3uIUS405Q==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:113::12)
- by VI1PR10MB8064.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:800:1d2::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.8; Tue, 3 Nov 2026
- 12:13:54 +0000
-Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::ae26:d131:7cff:4001]) by DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::ae26:d131:7cff:4001%3]) with mapi id 15.21.0592.007; Tue, 3 Nov 2026
- 12:13:54 +0000
-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-To: cip-dev@lists.cip-project.org,
-	jan.kiszka@siemens.com
-Subject: [cip-dev][isar-cip-core][PATCH] fix forky tests adduser is not installed automatically
-Date: Tue,  3 Nov 2026 13:13:39 +0100
-Message-ID: <20261103121347.278803-1-quirin.gylstorff@siemens.com>
-X-Mailer: git-send-email 2.55.0
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: FR4P281CA0087.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:cd::11) To DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:10:113::12)
-Return-Path: quirin.gylstorff@siemens.com
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=KIeofMoX;
+ spf=pass (domain: tuxon.dev, ip: 209.85.221.50, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-48e10a70540so2347832f8f.1
+        for <cip-dev@lists.cip-project.org>; Tue, 03 Nov 2026 04:54:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1793710459; x=1794315259; darn=lists.cip-project.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=C+s9RgHW86aPZH4cNGnQ6uR2ZwV1QElnDNVUTDmWNpo=;
+        b=KIeofMoX7ZzfalI3il9O5Pv0swkFpSHr1RF9Ba21onuNV6l40Ca8ZvOW2PGY5lx4VD
+         G0SIRmnEA08g2PiTYPVp9qZMA2kj65VhdMlI+khRyDKCK5I6KZwG7LG0doDhxMLAb7P+
+         60HRYJ9B8WNGs7C5dAjqu07ax98V16/LmRTafpyktGFrbIU+JaKELI+9mlMLN+xzGiy7
+         JC7kXpZexypDicAthNkS4xV6c5ytPiKP2Zo9UYi2jv58xhD9FKnBI2w5cRW7m0S6TteD
+         0pQmI/c3H8y6VTclhW+N6zvbIKMh9aPeiXIjBwEUv1oem6VEqD+m76QDbKf6ouT1bcY7
+         Dh4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793710459; x=1794315259;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=C+s9RgHW86aPZH4cNGnQ6uR2ZwV1QElnDNVUTDmWNpo=;
+        b=mRNyliWbR7/hiKHFf44e5wFpcFqZgCXXInIFMH7SR6FW+skBtHod67psb1OhnRZFAZ
+         kOqLk/uJyTBso3Jf3gC72ftsCeP0cds2d8t87Tz4MndQThfwrX5EVl05z1ccbQvjmWDf
+         tNx91NdYaMY/Rs5GYTsegr7wjbnthUoO/ojXKaumjsB04iKx9eZbxgPJMn2lHwwIyjR9
+         k0NgSPvJsa3GSuX+O2rZKKnXCeHj75x1RS08lX5qStXss01YomK9RpHs+zQKzTLdB0Yp
+         O1/q9et1udwXWozMfGnJZtO+RwSj+Na8WEaS6Ch0OYwirhlZi1nz85F8PdQ+BqCt4b3u
+         S0HA==
+X-Gm-Message-State: APuU4Z8ZQ50N21yQU02BHDDal2QykotdR9Hb7j+VVXdPXzzShfKJ7FOr
+	0+K3kM1U+5C7wBKds2lC+JJe9sQIQg7BM8o6BPlh4eI2cSXSsaEPZln+GXI3Q7+G1kE=
+X-Gm-Gg: AYBFou11KjAZYt8HWvNYXCQxNaH2HwouyhRjFOGWl7+CbMPnCzW5ZYJuKrFKhsWEhnH
+	abHdNlmQiJFSq70rs8tKGxpGQfKJn2JJH7V3lyA7yn8lUzeY8ypW8B9/tdzO6L+x6QhTfCE/iFI
+	S00/5qK3YfoNs9/VNDAomdTQI11M7VWliaByuZz/psWWDInZoTmWPPj6crnU+lSiBy/V5FfF+Fe
+	VX4y3vDtNH0DcM1E/djDyZEeRCkUMhL+wfNToTUOkDRV73Hlcz8HTIEUAr1xJpnFFMEwlJb69Vk
+	ZSllC2QR4ok6RG7BHQbyKZTRYEAP4tv0E65UCiq1DMeL1WfyroZYHXCosGY/wtNIqLZ3bvhBZfP
+	brHToEGjxoraBalPgdJ/d87vqT/T8G7ZDTJ6vfHLOFeaCNcXdjNuyB+vcV85nRhGFKl2LrdYzPi
+	cCu1CER1uJLvGk3Nwn7GzVMpYdHoWvftQAgTzo5YohfTdg2Mvu48a5CwWSVNP7Ntd+dM7hDq/4g
+	RNbuIph9udm0p/AdaB5W1bYWR7fNLbnZFOfng/7PWkrGlt3NIt0+CEl48gz6365k37A2wBGkNVS
+	minQgsAi8LiwNOksjCSI1Q956oPmHsFj4Pc=
+X-Received: by 2002:adf:e003:0:20b0:48b:5e2:52dd with SMTP id ffacd0b85a97d-48e6e2f66e4mr21619650f8f.11.1793710458902;
+        Tue, 03 Nov 2026 04:54:18 -0800 (PST)
+Return-Path: <claudiu.beznea@tuxon.dev>
+Received: from [192.168.50.4] ([82.78.167.49])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e71b78f95sm23371233f8f.28.2026.11.03.04.54.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Nov 2026 04:54:18 -0800 (PST)
+Message-ID: <a348a282-7a6f-41c0-b564-b0aa65fdae9d@tuxon.dev>
+Date: Tue, 3 Nov 2026 14:54:16 +0200
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB8PR10MB3178:EE_|VI1PR10MB8064:EE_
-X-MS-Office365-Filtering-Correlation-Id: b96b3886-b27e-4b2a-fedb-08df39a3eda5
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|23010399003|6133799003|18002099003|55112099003|10067099003|56012099006|261102123227099003|261009223027099003|261021123027099003|261021121427099003|261022075727099003|11063799006|261026121527099003;
-X-Microsoft-Antispam-Message-Info: yW0FaePX8chMtku9d6GPF3IP9R2nDkod9zQ8hgI5oUl1GkNDVm19j4Cl/XX6J9OqtZlcJcOzr7sexg6gLXkSnSjRHTODIttoyUJJDku6jRLXSNMgjEareknTd5DMZrg8BKvddrjmXnCwWlaYzvNBSvN3H0tCnHc7o6/c6zwCTN558aFGPu04jnamSzLInvDbvZDDtErpFup+xpsbbKqt/Pji2DugKXqTlqbrGWGD2HPSAGCD/m6ivcaP4no7XXnh+lT54dxuLTZasv96x36O0wJCUIEVVeCrErsyINrhthqqKHtvbcLGrLbevMYd5u3gPlN5qIk4/S+WZ6LbP0m+FCmwv+2YNJOb7GYkUis0FZaT3qAuf6NqfqpRzD1eJ5mGANqM+/3f+iJN5Acg/f9Nd8XWu/9m13C99UTCiaqUlEMuSrgR/e05485WDeOwxqQsgcgvgrkfM5vfT8hBqPwz9h1KDrzrCbT64llVIn4aqkZbAGpa6QzT2JhCp9Dwm0dPoyThEVuP8xSrPQxZfDm1NTT210zX5TNXUpvpZeh1u+6eZUvNXXZOQwwa1wBizoCNSnpekRkJ5wBFcaGe3dJYswHgkwzppWpklLxS6DA19PM=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(23010399003)(6133799003)(18002099003)(55112099003)(10067099003)(56012099006)(261102123227099003)(261009223027099003)(261021123027099003)(261021121427099003)(261022075727099003)(11063799006)(261026121527099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?yrIrsd3ao3t5/01ZCUbCxrMdTj49w7f/3wgOCSJtlpJbSR+fqgO38H+bfEvL?=
- =?us-ascii?Q?1TFTHYLi9RiKhXLUXF//0h+KbwNcsd8vU4W4X56Rmxqw53/Cc/XmrDGc7LbM?=
- =?us-ascii?Q?3X1frggqoPh0FbhwjzpYUbtwagxGbo1ATIv0mgO3ER3kJobWcpD6003DcvNN?=
- =?us-ascii?Q?RcRhvEjkrBBwPwnDP0aMgeX7Bgll7jy6Mdc/4txVQKF95N7XItgOyv42edBN?=
- =?us-ascii?Q?+ZdPzeTcKVVA/qZH+3pZJJQ+G9WRXUJl1F7Pk7DtC056RRsyEiTZU2MQGqe9?=
- =?us-ascii?Q?3GmeLZUc2EgI4+dcglUxwR5NPVeeCcbqvynqPQlptbiIipzgrAg8ydHbELe6?=
- =?us-ascii?Q?Tj0T6znu6t8TQPF69dFWPGwYI+zRRN8wckWIbR603HJq3ftcO3dIe3Kem3yr?=
- =?us-ascii?Q?NLDBih6h5wqgVKesEQOecFaTO/VFfE8enNbavNw7a8k62E+Ngw5qfQ7ctegV?=
- =?us-ascii?Q?rkRD9nj6irt/xv/0J/LwzPXdwWcq1byPWDlZ/mLcErmOJUdLXXf37Guz1UyL?=
- =?us-ascii?Q?FvsE+JJTrc4rwlq6KCVcWA0rtTbZ41wc5dYxDpC/hZ0mT2oQmssoDZOs9xgO?=
- =?us-ascii?Q?YIvTJCsZ0qKpiottIsAwCIwl4OiAyP/VS90cGzzW8T8W1g/jGCLu8QaNYNsF?=
- =?us-ascii?Q?RAl9W6YANiVEkSWZKVJGUKftQzf24wRkDG70h5ezMzbkaUNixtQW7Oerv7h/?=
- =?us-ascii?Q?LmAdZWguEkcjYtCZIY1Xeyg9yUNWwgvmJR1kNRmB3gg4r5s+PpWiRqC3dRKD?=
- =?us-ascii?Q?y3D2+kDySHFlW3Zd+nrcdgd8IvLt39AOKIDrwIpgyfl9jLr1gv8qaFvldZ0q?=
- =?us-ascii?Q?rT/ZlgpRha0ny/NsU4G6BNCzvwEYrHN3hGlj+Tl3f3He1r+BbOoP36krXihp?=
- =?us-ascii?Q?paRp1Awkw32vtSTskGktZsnwvFhvXL/qp03NbzDvzzVv3jwU5QOzZMsaz3TQ?=
- =?us-ascii?Q?4/QLRDvKz8Fn8INxhCv89YshZ0iucguklHeoTlkf4m4x+7bBZ0UjxOfpy9Wd?=
- =?us-ascii?Q?BDwcUhECrrkUzEgQwsmC9aZBsqa9RMNC/YFlMVixjUsqcgfsOFAIN+dRV+gz?=
- =?us-ascii?Q?dtLrXA/Febo6JY1FODV1D0DNDp+Z+75y+YzP6ZrSPSk9wmWtxRHDyv/xZDfO?=
- =?us-ascii?Q?/rUxAQZkS6TFf3Iuezqx8sHmu4x0Sa1ThfxrJtnkB+Y5yHLXoTwqMu4FCA5G?=
- =?us-ascii?Q?wQv/wSIBLulLY8U2OoUlOY2gzKkuB7eqwdbFLNY8/QD5LqEZhaxovwsJhOUx?=
- =?us-ascii?Q?hF8c7H6Cx0FJ0x7L6PxMgZeF0kLJXYYhIKtMnFPuHUFT9nGI0iPgvdaeSpWW?=
- =?us-ascii?Q?SCpH/gCQkZCGC4yoOybEe583i6CgJa/dhVLIoID5yOXD1q2CAU5YdLYhS9mg?=
- =?us-ascii?Q?5JIqQLvn3vYd5tbpjrEB9N+L7ZAwS9eK3fy65eMg5qEiLJHYVQ3oEIMxHpBX?=
- =?us-ascii?Q?JMAWcj8KzBcp+0L4stX2mJJuWZrhyvPuQ7asbWgTqx8gJXNJseQ6s4h4X+zY?=
- =?us-ascii?Q?vZIXBa9nCKhg7Au47bGU2DlSr4CTW1vmRvyP94BS6KjGfORbfYRAWMCJu8UN?=
- =?us-ascii?Q?UZNkFHQ3LqzOHv3SEscZRgr1S75RuUc0lEoI1fTZ0q3gbOZdSgXkq34BvNin?=
- =?us-ascii?Q?30AaSO4HtSNo5zuRTdPbnG03AukXeOULLazhL8/1iPQJRzz2qDmGmwc76iJB?=
- =?us-ascii?Q?SnS1wQ76jOrAzrSBqnJXlJQ4xk3CBKOdbKb06Wj52aduvBRmO3McitvFlajp?=
- =?us-ascii?Q?6YlsHDoCT6JMiQNoUGzfaH/ZvWs7rUU=3D?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b96b3886-b27e-4b2a-fedb-08df39a3eda5
-X-MS-Exchange-CrossTenant-AuthSource: DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2026 12:13:54.0990
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9EtsU3VXnfwcV3FLhR+C/7li/eO75PiSXeg04cPWNwmw3HjzXiPGpIRLRWYGgmHF4Ma2PMwYCOFFteE/iSyGsEpzWR63X+FkUwzTuPpXz/0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB8064
+User-Agent: Mozilla Thunderbird
+Subject: Re: [cip-dev] [PATCH 5.10.y-cip 1/1] iio: adc: rzg2l_adc: Set driver
+ data before enabling runtime PM
+To: pavel@nabladev.com, nobuhiro.iwamatsu.x90@mail.toshiba
+Cc: cip-dev@lists.cip-project.org, uli@fpond.eu,
+ claudiu.beznea.uj@bp.renesas.com
+References: <1792979104-32023-1-git-send-email-nobuhiro.iwamatsu.x90@mail.toshiba>
+ <1792979104-32023-2-git-send-email-nobuhiro.iwamatsu.x90@mail.toshiba>
+ <at-DUZn8PsBDbxxQ@duo.ucw.cz>
+Content-Language: en-US
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <at-DUZn8PsBDbxxQ@duo.ucw.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 03 Nov 2026 12:14:10 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24631
-Content-Type: text/plain; charset="utf-8"
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 03 Nov 2026 12:54:31 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24632
 
-This adds the pacakge adduser to common to run the forky tests[1]:
+Hi, Pavel,
 
-```
-<LAVA_SIGNAL_TESTCASE TEST_CASE_ID=3DTC_CR1.1-RE1_1 RESULT=3Dpass>
-TC_CR1.10
-preTest: TC_CR1.10 Authenticator feedback
-INFO: openssh-server Package  is installed!
-INFO: openssh-client Package  is installed!
-INFO: check_user: 'user1' exist
-INFO: Deleting user 'user1'
-../../lib/common-lib: line 93: /usr/sbin/deluser: No such file or directory
-ERROR: del_user: Could not delete 'user1'
-postTest: TC_CR1.10 Authenticator feedback
-INFO: check_user: 'user1' exist
-INFO: Deleting user 'user1'
-../../lib/common-lib: line 93: /usr/sbin/deluser: No such file or directory
-```
-[1](https://lava.ciplatform.org/scheduler/job/1538035#L1072)
+On 10/26/26 18:44, Pavel Machek via lists.cip-project.org wrote:
+> Hi!
+> 
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> commit c69e13965f26b8058f538ea8bdbd2d7718cf1fbe upstream.
+>>
+>> When stress-testing the system by repeatedly unbinding and binding the ADC
+>> device in a loop, and the ADC is a supplier for another device (e.g., a
+>> thermal hardware block that reads temperature through the ADC), it may
+>> happen that the ADC device is runtime-resumed immediately after runtime PM
+>> is enabled, triggered by its consumer. At this point, since drvdata is not
+>> yet set and the driver's runtime PM callbacks rely on it, a crash can
+>> occur. To avoid this, set drvdata just after it was allocated.
+> 
+> I'm not sure this was diagnosed properly. Ok, I guess that fixes
+> immediate problem.
+> 
+> We now publish indo_dev pointer before ->hw_params is initialized,
+> before mutex is initialized, and before ioremap is done (and
+> others).
 
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
----
- recipes-core/customizations/common.inc | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I may be missing some bits here but, at the moment we set the indio_dev as 
+platform data it is just allocated though IIO specific calls. An IIO device is 
+registered for the allocated indio_dev at the end of the probe. Until the 
+devm_iio_device_register() is called there should be no IIO subsystem call 
+reaching the driver code.
 
-diff --git a/recipes-core/customizations/common.inc b/recipes-core/customiz=
-ations/common.inc
-index 0fd3d4f8..7f0e8a0c 100644
---- a/recipes-core/customizations/common.inc
-+++ b/recipes-core/customizations/common.inc
-@@ -31,7 +31,7 @@ TEMPLATE_VARS +=3D "CUSTOM_HOSTNAME"
- DEPENDS +=3D "sshd-regen-keys change-root-homedir"
-=20
- DEBIAN_DEPENDS =3D " \
--    ifupdown, dhcpcd-base | dhcpcd5, net-tools, iputils-ping, ssh, sshd-re=
-gen-keys, \
-+    adduser, ifupdown, dhcpcd-base | dhcpcd5, net-tools, iputils-ping, ssh=
-, sshd-regen-keys, \
-     change-root-homedir \
-     ${@(', iw, wireless-regdb, ' + d.getVar('WIRELESS_FIRMWARE_PACKAGE')) =
-\
- 	if d.getVar('INSTALL_WIRELESS_TOOLS') =3D=3D '1' else ''}"
---=20
-2.55.0
+> If that races with PM callbacks, bad things are going to
+> happen.
+
+The PM callbacks should be called only after devm_pm_runtime_enable() is called.
+
+device_initialize() ->
+   pm_runtime_init() ->
+     // ...
+     dev->power.disable_depth = 1;
+
+and rpm_resume() returns if disable_depth > 0.
+
+pm_runtime_enable() decrements disable_depth.
+
+Please let me know if I'm missing something.
+
+> 
+> Actually I'm not 100% convinced that this patch solves all the
+> problems, are suspend/resume callbacks fine running while
+> adc_hw_init() is running / before irq is initialized?
+
+adc_hw_init() calls pm_runtime_resume_and_get() on its own. That should 
+increment the RPM counter and avoid powering off the HW while any adc_hw_init() 
+operations are in progress.
+
+If there is conversion started before the hw_init (e.g. by previous 
+applications), runtime resuming the device at that time should not trigger 
+anything to Linux since the IRQ is not requested.
+
+> 
+> What happens if PM callbacks are running, then devm_request_irq()
+> fails and device is unregistered racing with callbacks?
+
+I expect this is properly handled by the subsystem: it should detect when a 
+parent device got unregistered or fail to complete registration.
+
+> 
+>> diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
+>> index d48aec92add9ac..418211c06f1fe2 100644
+>> --- a/drivers/iio/adc/rzg2l_adc.c
+>> +++ b/drivers/iio/adc/rzg2l_adc.c
+>> @@ -436,6 +436,8 @@ static int rzg2l_adc_probe(struct platform_device *pdev)
+>>   	if (!indio_dev)
+>>   		return -ENOMEM;
+>>   
+>> +	platform_set_drvdata(pdev, indio_dev);
+>> +
+>>   	adc = iio_priv(indio_dev);
+>>   
+>>   	adc->hw_params = device_get_match_data(dev);
+>> @@ -490,8 +492,6 @@ static int rzg2l_adc_probe(struct platform_device *pdev)
+>>   	if (ret)
+>>   		return ret;
+>>   
+>> -	platform_set_drvdata(pdev, indio_dev);
+>> -
+>>   	ret = rzg2l_adc_hw_init(dev, adc);
+>>   	if (ret)
+>>   		return dev_err_probe(&pdev->dev, ret,
+> 
+> Consider moving platform_set_drvdata() immediately before
+> pm_runtime_set_autosuspend_delay().
+
+That can be done but, unless I'm missing something, that should not influence 
+the behavior currently present with this patch.
+
+Please let me know otherwise.
+
+Thank you,
+Claudiu
+
+> 
+> I'm okay with taking this patch, but someone should take second look
+> at the mainline.
+> 
+> Best regards,
+> 								Pavel
+> 
+> 
+> 
+> -=-=-=-=-=-=-=-=-=-=-=-
+> Links: You receive all messages sent to this group.
+> View/Reply Online (#24546): https://lists.cip-project.org/g/cip-dev/message/24546
+> Mute This Topic: https://lists.cip-project.org/mt/121936051/8377987
+> Group Owner: cip-dev+owner@lists.cip-project.org
+> Unsubscribe: https://lists.cip-project.org/g/cip-dev/unsub [claudiu.beznea@tuxon.dev]
+> -=-=-=-=-=-=-=-=-=-=-=-
 
