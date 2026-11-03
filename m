@@ -1,69 +1,77 @@
 Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.7326.1793698453492676101
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.7406.1793699161279103009
  for <cip-dev@lists.cip-project.org>;
- Tue, 03 Nov 2026 01:34:14 -0800
+ Tue, 03 Nov 2026 01:46:01 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=i+lcS7wu;
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=EjFkhr5p;
  spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C107A10C4D0;
-	Tue, 03 Nov 2026 10:34:04 +0100 (CET)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D76FF10C6C3;
+	Tue, 03 Nov 2026 10:45:52 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1793698447; h=from:subject:date:message-id:to:mime-version:content-type;
-	bh=5Duj/paR/ZGOl5NiE/rWZw03xEj20wR67RziWKxS0B4=;
-	b=i+lcS7wuh/B/t9arMVG19owWAFnL2C6SX8Ng3O8cPXMHhtZUiBgo53bBW2nzjv/BRKXtWI
-	KsFKX+nDibYIKSgdvXUEAnz5DMq0uyGf5AXNZWVOK3VIHiw2esFH4K1ITP5hFL0rJISLL4
-	7LIK1X+vZZeEs6fiNd2DcgZ6Jl4XaGVZ2xHnfz8BV718cTcAnZIun5lzRo0oP/Grz9G5MQ
-	s9QgGwRofuFoCj9+vkUllkGl4JGnGaiH02zxM6UPCNFWrB6NwIb4EyAxHob7+ARDo5Q23j
-	fD8BHBGrqZISLuEBO0bWPd+nBwuT8GPJpc4urAo36yQdoGNWI8JMdM7SE2JfIQ==
-Date: Tue, 3 Nov 2026 10:34:03 +0100
+	s=dkim; t=1793699155;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=ze8zWCTJv7hraTTCUffxY5vh/ZBVQkpWunjrNV2fgek=;
+	b=EjFkhr5pqq5cXRsFBLt3ZE4F5q6+dSmbKnNLR0uVdYDa+PKGFoVZHfWwVBgOfFz0xhrrEf
+	epATwUh2XcOsAbvt0OT8sFdFGqinQssWZggRFAetW8IKXFqiBV4EMarUn9EbHiJ8JwbP1V
+	LkvSGeX3KrsvSsFtI/vzmscHYFrnWtOMLwzm3CdiVygOWHO+hXhUgtZQP0OChSCyVlYmsf
+	5NCjrA7Dl0rkIIWbz9FNZ98ZOA+I12HQ+SIByeTxDPUalxuuiZjGdzg5rx5lsSi4x+VFUJ
+	2KH3jUUSYq2LzncqnHxsT8S80kZp++YWGGu0Irrc8HwNfj0zBspzLHL7JriPbg==
+Date: Tue, 3 Nov 2026 10:45:51 +0100
 From: Pavel Machek <pavel@nabladev.com>
-To: .kiszka@siemens.com, cip-dev@lists.cip-project.org,
-	Chris.Paterson2@renesas.com, nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [ANNOUNCE] v6.1.190-cip62
-Message-ID: <aumqi3umuBv2PxG2@duo.ucw.cz>
+To: nobuhiro.iwamatsu.x90@mail.toshiba
+Cc: pavel@nabladev.com, cip-dev@lists.cip-project.org, uli@fpond.eu,
+	claudiu.beznea.uj@bp.renesas.com
+Subject: Re: [cip-dev] [PATCH 5.10.y-cip 1/1] iio: adc: rzg2l_adc: Set driver
+ data before enabling runtime PM
+Message-ID: <aumtTx3OmX-omdaW@duo.ucw.cz>
+References: <1792979104-32023-1-git-send-email-nobuhiro.iwamatsu.x90@mail.toshiba>
+ <1792979104-32023-2-git-send-email-nobuhiro.iwamatsu.x90@mail.toshiba>
+ <at-DUZn8PsBDbxxQ@duo.ucw.cz>
+ <TY7PR01MB1481833F5CB169A124842DCB0CD6E2@TY7PR01MB14818.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="BuhhVr5k2FwZEVyP"
+	protocol="application/pgp-signature"; boundary="sNlUeh8CqshXqEv+"
 Content-Disposition: inline
+In-Reply-To: <TY7PR01MB1481833F5CB169A124842DCB0CD6E2@TY7PR01MB14818.jpnprd01.prod.outlook.com>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 03 Nov 2026 09:34:20 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24629
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 03 Nov 2026 09:46:10 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24630
 
 
---BuhhVr5k2FwZEVyP
+--sNlUeh8CqshXqEv+
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-New -cip release should be available at kernel.org. It is related to
-two "famous" CVEs, CVE-2026-99999, CVE-2026-98432. They may or may not
-affect embedded use, but now you can just tick them off your bingo
-cards as "fixed" without extensive investigation.
+> > > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > >
+> > Consider moving platform_set_drvdata() immediately before
+> > pm_runtime_set_autosuspend_delay().
+> >=20
+> > I'm okay with taking this patch, but someone should take second look at=
+ the
+> > mainline.
+>=20
+> +1, that proposed change sounds good.
+> Moving it to just before runtime PM is enabled would be safer.
 
-Trees are available at
-
-https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-6.1.y-cip
-https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-6.1.y-cip-rebase
-
-And their content should be identical.
-
-There are also tar archives, at:
-
-https://mirrors.edge.kernel.org/pub/linux/kernel/projects/cip/
+I applied the patch. I would still like for someone to take a look at
+the mainline, as the code is quite confusing.
 
 Best regards,
-                                                                Pavel
+								Pavel
 
---BuhhVr5k2FwZEVyP
+--sNlUeh8CqshXqEv+
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaumqiwAKCRAw5/Bqldv6
-8ofLAJ0Q/1WCe1XE8xtom6XLbbIVLbApZQCfe2dEK/DE+NmZuiQXdq5RdxAm0X0=
-=43MY
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaumtTwAKCRAw5/Bqldv6
+8r+/AKCrAc42/Xk+JQv46IITCgwMB6hJ+QCgluWEasnXihK+F8PCDMxGoDp23s0=
+=KO06
 -----END PGP SIGNATURE-----
 
---BuhhVr5k2FwZEVyP--
+--sNlUeh8CqshXqEv+--
