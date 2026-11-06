@@ -1,1240 +1,141 @@
 Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.132])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.2315.1793956081799506690
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.2369.1793956403267334253
  for <cip-dev@lists.cip-project.org>;
- Fri, 06 Nov 2026 01:08:03 -0800
+ Fri, 06 Nov 2026 01:13:24 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.s=key2.smx header.b=fdxk33px;
+ dkim=pass header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.s=key2.smx header.b=qC2eVx1A;
  spf=pass (domain: mail.toshiba, ip: 210.130.202.132, mailfrom: nobuhiro.iwamatsu.x90@mail.toshiba)
-DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=mail.toshiba;h=From:To:Cc:
-	Subject:Date:Message-Id:In-Reply-To:References;i=
-	nobuhiro.iwamatsu.x90@mail.toshiba;s=key2.smx;t=1793956079;x=1795165679;bh=cE
-	rZI0ZXd4pa+1iC39BP3tciGnkKP0FU9ZNzNwa2IkY=;b=fdxk33pxHhmmXuXoo3VrOJ7eWFpMpyjN
-	50uLGTkJWzvTyVu9weqeHGfdCBAK6JiU5583VWdT5OwogEV1fkuEcLxiMxC3RvefepIA6gXKpdVhS
-	1RMv/vfcTeqKZ0fQxvymuo7tJjSeblTPbcLtveaC+mxvFF5Lgo90AHgiag6uct2v4uG1JRp2wgb6g
-	lFmuBwURl/q9IThMqPdOf0WV+nATlDGGGY3rlprfsypJRC5SXPZDxg6oCoMDBMF1fyWgwVcDa33df
-	vd2RQBPS+9G5ygqKpkgXbvzXxDGw8aqRwMt27n8pjifkd/8FAgEMtwrd5AlNtCt/wY63NlZqsIMJ5
-	2w==;
-Received: by mo-csw.securemx.jp (mx-mo-csw1121) id 6A697wPR2484845; Fri, 6 Nov 2026 18:07:59 +0900
-X-Iguazu-Qid: 2rWgYSPephRzOqIyRM
-X-Iguazu-QSIG: v=2; s=1; t=1793956078; q=2rWgYSPephRzOqIyRM; m=0ft1USjBPXpokB8SIK5+DKOXWEwX5EKjoFY0mSO9dOE=
-Received: from imx12-a.toshiba.co.jp (unknown [38.106.60.135])
+DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=mail.toshiba;h=From:To:CC:
+	Subject:Date:Message-ID:References:In-Reply-To:Content-Type:
+	Content-Transfer-Encoding:MIME-Version;i=nobuhiro.iwamatsu.x90@mail.toshiba;
+	s=key2.smx;t=1793956400;x=1795166000;bh=qlE1UCgxcogIbFGp/ICqAKkuvY13IoTn1NF7N
+	YAFriI=;b=qC2eVx1Apt0nx3Jtx7WOLh8ayKRoAk6M4xh0Gux5vWbk7WGIEVJgKL/ddjFyWENJkbX
+	gxiB5Xg7Rkj+08A9+zwfFOKDPGqJz08EVR6r8GiZGc/CdSthCJIa9NqiERxnF+3FY3SFkaPMzCdA/
+	oeb93UJ5reUSLZfDI1tj6UHUxvTLSffxtQTQee/R18cYgvjgAcVizvE/N+oRp3hTMQlx50DcebTn0
+	tx8a0LySadQwxKUW7jRUp8snyn79TQ8xokYaewueSNWSUG+jExT6aANAWkw0aSCmxXQm6ssgdIwTD
+	dgOiilGPWwIwBFKmAJyYoXuloNwZUVrSMoDwIeAalfkQ==;
+Received: by mo-csw.securemx.jp (mx-mo-csw1121) id 6A69DK0w2503785; Fri, 6 Nov 2026 18:13:20 +0900
+X-Iguazu-Qid: 2rWgRCuG5SYJd1MyJu
+X-Iguazu-QSIG: v=2; s=1; t=1793956400; q=2rWgRCuG5SYJd1MyJu; m=fM2hUMPJou+qblEJPRC0yhVDI4BIAF8y9Zgfdthyaac=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	 id 4jLYHL0d4tz4vys; Fri,  6 Nov 2026 18:07:57 +0900 (JST)
-From: Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
-To: jan.kiszka@siemens.com
-Cc: cip-dev@lists.cip-project.org,
-        Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
-Subject: [isar-cip-core][RFC PATCH 2/4] u-boot: Revert 2025.07
-Date: Fri,  6 Nov 2026 18:07:43 +0900
+	 id 4jLYPX1hlKz4vyn; Fri,  6 Nov 2026 18:13:20 +0900 (JST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=u3hki8bUb7Pvl8qimsRxKNH/L3Z3AI2XWxUs5XN3pBVZgqmdtSvx91aXzPM403tW2FYHZxoYNdxF/OjSOxCji6av7s/DA9teBSOcbY7tCB8cseauXX2jEaiE2SOjeVzsP25DmOu9ypL0CuA0WWojdpYbDaUyNLzDgSP3w4Ei/IvqVxGp6gYQyrJyLn56bKPMM2mRNnC/o9OzKyY5CKLNlEaTplJcfcWfnDX0TKcy67NTPFiNdijah3ynLx1fpDL8QZ6JBKqNbdmJvvlgbDHh9Q1kmflH7gZM3m5QHmynocZacpsrMcUnzIveSIO9jkyUTbuXlr/6U45wOF8qFso+YA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qlE1UCgxcogIbFGp/ICqAKkuvY13IoTn1NF7NYAFriI=;
+ b=QiOs9qoZoDjSDxA6Z1vHbRBy3utfdgZnkcNz+rtVc4fooANKjhG7eGvlAtVI6v6pBB7UJTLtKNLXN7sXwSNphuJZk/r8SXArSrePDBgWQ/4gmdmzBEOw+ZnSwbXr9No0Wm5jT3745N9l/YCOBd/yQoNWRqFSThfZlpVE9M00VhO/MuMt8S8VYxiBS/OpSSAPWBTSzTcIounyynATjlYM2gyiTIBsOlugib3E4PgZfj2PYD5knpO/LI4sO4N3ei5VVF6zlzbrY4uowY43spvjtd8XLmYVWmszLCQkCEgj2GuEya2K37a/50WlBSy3V3VOuiZVWQwgi1izoggrqR75lw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mail.toshiba; dmarc=pass action=none header.from=mail.toshiba;
+ dkim=pass header.d=mail.toshiba; arc=none
+From: <nobuhiro.iwamatsu.x90@mail.toshiba>
+To: <jan.kiszka@siemens.com>
+CC: <cip-dev@lists.cip-project.org>
+Subject: RE: [isar-cip-core][PATCH] u-boot: Change the mirror URL to
+ u-boot-project.org
+Thread-Topic: [isar-cip-core][PATCH] u-boot: Change the mirror URL to
+ u-boot-project.org
+Thread-Index: AQHdbO8brdXF3XCkF0K3KjYhx0kUsbcfB++AgACfpACAAJaHgIAAfkEAgAAGe+A=
+Date: Fri, 6 Nov 2026 09:13:11 +0000
 X-TSB-HOP2: ON
-Message-Id: <1793956065-3316-3-git-send-email-nobuhiro.iwamatsu.x90@mail.toshiba>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1793956065-3316-1-git-send-email-nobuhiro.iwamatsu.x90@mail.toshiba>
-References: <1793956065-3316-1-git-send-email-nobuhiro.iwamatsu.x90@mail.toshiba>
-List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Fri, 06 Nov 2026 09:08:12 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24659
-MIME-Version: 1.0
+Message-ID: <TY7PR01MB1481876B57D2ABFD456CDCF4ECD762@TY7PR01MB14818.jpnprd01.prod.outlook.com>
+References: <1793860204-10428-1-git-send-email-nobuhiro.iwamatsu.x90@mail.toshiba>
+ <427d1f20-29a1-4772-81f0-35eadb4d7f81@siemens.com>
+ <3013916d-0b1c-4976-87fd-1bd2c8414ce6@siemens.com>
+ <TY7PR01MB14818EA78FCE275C31089389BCD762@TY7PR01MB14818.jpnprd01.prod.outlook.com>
+ <3ff69438-414f-462f-816d-5c79dba37cc5@siemens.com>
+In-Reply-To: <3ff69438-414f-462f-816d-5c79dba37cc5@siemens.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mail.toshiba;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY7PR01MB14818:EE_|TY7PR01MB13706:EE_
+x-ms-office365-filtering-correlation-id: 46a5ca97-a909-4c72-0d78-08df3be62e1d
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|23010399003|376014|10067099003|22082099003|18002099003|38070700021|56012099006|4143699003|11063799006|261026140227099003|261022115727099003|261028144727099003|261022075727099003|261026121527099003|261102123227099003|261022105027099003|261021121427099003;
+x-microsoft-antispam-message-info: zTCKbtg85R7QKxkmpExJjnyfBUuKaMDPxHEwbJip7k+yPORlwe/tFxcSyiK6Z7FfevlwM+IJnQTG+zL+QeYgJLM03vcTfTTFHKB2dB37Q5acpz92dYIg3iwqYY6vOV8m/i/zEVSKzUosodsy/E9StOuRYPhwRUo1bXQRJwOCcr7w+TrqWYMAIWw85Kk16LAebHduz2hyKPkfjhK+nVFP7DyeBwnOfMkl4NctZWVMX40r8DQ8bBpNi+BuS1l/g3+w3z9NhG7y9NvLYy7AUi8W78DqF51k3zD5mm9+Oj9RaWGF94TScz/RvA8qZTuOXg32wWw3+EWBVa8asMNHVYhfIxGjCGLTqOcgf2vYSapUUM93GH6vACVu5K+98UhbIa7tIKaez2k24mYfWEtjUJUtG718IBKHm+XT4o2RMEU8+gkPHuz9VV3N/Y9Fjr2xXZteaOxdC0sIHHf8bTLQKhAzfKGt1iro+96PtRua/ZdcXyqDHfZ00z1pVp+CIy3dDPa5i7NKeNPW9FCun+BvhuVWzhK1GCUtgoqLSAjCiUjkbcB0ATBL36NgM8Ui6uTKr8WtGyZUFglHRJiF6LfikccMP/mb4pMsimirBBaET4DiLKnR2ic3Gr9UfEQ7X6HgdpnqSUPhD+VYKgmtdcubaY3QAOd156DcacJBqQcFiCvvbgsuiZG94uwWz2TSOvUDncWGBcPTMK+crGUmghlLeOvVgfTdOzAOZO+4iKpowy7GV4I=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7PR01MB14818.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(23010399003)(376014)(10067099003)(22082099003)(18002099003)(38070700021)(56012099006)(4143699003)(11063799006)(261026140227099003)(261022115727099003)(261028144727099003)(261022075727099003)(261026121527099003)(261102123227099003)(261022105027099003)(261021121427099003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?QmZ3WnUwdC9TT3YxUUJTVUx4ZmlvUXNZNGt5VzlSNERuUnRhNXd2YWJocTU5?=
+ =?utf-8?B?ZHdVb2JjN1I5bGhEWGtPNVdiMG5YTDR1RVRkOENaYlRraXRoeWhtN0dEbTRm?=
+ =?utf-8?B?TWpXK2todllUL25FYlNDSkdETXJ4L3N0a3lNWTg4TnVCRlB5bXFMQW5uZTR6?=
+ =?utf-8?B?ZEJSdkVoVmdaYWZHcXJ5S3dKaFlxdkdJbUJhN0R6ZHFlNVZRYXZsbitlV3NL?=
+ =?utf-8?B?NGovUGZMTURwdlZVb1dGbGhmeFR4enlqWFFkQzRFSytWKzAvbjhlRU9GNFdT?=
+ =?utf-8?B?YnJLMDh3VXBOLzNwUkV3WTVMdjdiczd2SnROelRKK2hWWjRFR0pyVnJSSXIy?=
+ =?utf-8?B?cmdGUlg4SUZTUjdVclJObFVENXZyRkRka0pKWDVId0hOWVNReFZYdnNleVhv?=
+ =?utf-8?B?RWlkVHhhRXF5M2dBS05ZRUtYWEk5eVpNYlJUTWE1Z2tvbDFqOUVzbmtDUENL?=
+ =?utf-8?B?U0k2TUFlOE02VVJjdUJsVG1nckU0cGp2eGxYQ21RNEFyK2hFVURZL2Fnc0Zp?=
+ =?utf-8?B?V1NMeXpPekdDN0RwMGVLZnM2djNXWjF6VnJCSm5MZ1FnRjQ3TjVrUDRjS0x0?=
+ =?utf-8?B?RjAvSjVURHpPVnd6ckZJdXJvYmNzK1BSY0pqSDF3azVYOXlKd1ZRZnBDSWxt?=
+ =?utf-8?B?dGZRdU5ROURHemNHWHRhaklNSm10Tk9HU09GTzVLUE5lOXRaZ2dkZ3BEVU9r?=
+ =?utf-8?B?RXY5cjN1Slp3MHZWQ1plT3hsU29FMENsMlQ1ZkZhVUt2TXJCblRpREVIZUxV?=
+ =?utf-8?B?UzZGSUtmRkRtZkRUdFdIQkNNaWhWaStSWVpHQ2NVaU5TRDM3aDJFL3RoMGYy?=
+ =?utf-8?B?QWV1bnJSOEFnaFFMK1RqTmNMbzV5UHRFMStDTmtBZlpWY2h4TTBjUDRzMmZa?=
+ =?utf-8?B?VTFuUE5GYkdIMWd0QmlsWGV1Y1M5M2syaThSbllsdGJKMXgrZzNtSmNTTFBG?=
+ =?utf-8?B?ald1OTRUNGtOSldxczVZYTRiSWFpZVB0cEVCNVB2YmNXYlJZQnlpa0xyazNQ?=
+ =?utf-8?B?Mms3bmJuUmJ0dzFKMno2d3UvVWhwaElVYjFJdlBGTVI3UHZzaDB1NkgyN2c1?=
+ =?utf-8?B?M3RZQ1NqSXEyMEY5Y1d2WkVQZERqcnQ3NWwvY3RuTURtbXpkN3M4bXNJeUVN?=
+ =?utf-8?B?WDljRFdkdFdleUxjNHZuOGVyYWhYenpkRFA5ZDVCSzBxOUJoc3lSRTVpT0I0?=
+ =?utf-8?B?WS8rbDFCZm52OXl2bkxHVmVJSmpWN0k5cllweTdmZFk4dGV2WnN4ZXVtUVNX?=
+ =?utf-8?B?UHRHWGRuQitKVWhZZytabFpCd3BsNFYzVDV5bWE0VnJrNm1NckRXemowQ3g3?=
+ =?utf-8?B?ekxLYjJIN3c1KzMweU1ILzVZTElJMVR4RHN4RjFaRjY1Mi94Tkp6aXQ3Q1dj?=
+ =?utf-8?B?UlU4MERNb0JEUVJneGFqWEVLVDV3SFFOTWFDemtZZ2lvWFRGNGk3NFhCYjhF?=
+ =?utf-8?B?YXo3cEJudStJYXF4MFpQS3lrMnFMRXJWOCtwV1hrYUZPZllHN25PYU1GYU5K?=
+ =?utf-8?B?Wjltd3QvaW1scFV6ZW4ya1RSWnJzUitiNnEzNnhITnNWeHdITkw4RFNacW1U?=
+ =?utf-8?B?NzcvQ0RoZkFReDkzM2tBdlhRbjJtbk9SbEpuY3h3UVprOENYTVg4U3pHQk1W?=
+ =?utf-8?B?NGpSV0JVa0FUU1hKRUFNY2RINUN5ek9WbGNjUVI0VW84R25Na202NEloOXZx?=
+ =?utf-8?B?azJlRlBtZDYvRTM1RHF4bkpHbGQzNVkwSnRCam1YeHU2Rm4vd2FJVDFyZnQw?=
+ =?utf-8?B?UVMvUW1haTNPTnBEcnFrdm85cTkyVjBaR1NHeHdrTnBwMkVQdG5TQ3ZiaGMr?=
+ =?utf-8?B?Y0RKcWs3WUUvb0ZYWnAyVE5yY0l5UzY5ZTJ4blczOE9PMC9lT0Y2alQ2NFF4?=
+ =?utf-8?B?S2huL2VBekFWc2d0OVZGRXZBUENRS0d4VzNvR0VERHprWU5WYVZzRDNVSkps?=
+ =?utf-8?B?RFV2TmZ0bkhVb0NGcVBzT1NXZE5vQnU4MUMzUUNvNXRBa0d3SmNhZ0xKdTZj?=
+ =?utf-8?B?UTRYQUJwVXBac3RBTDA2Z293VkY3SzdnRGFZUWI0azV6aGtubERZUytGVXlh?=
+ =?utf-8?B?UFBBVGRYMzdmRCswZEJsRlM1eFdFbGRXNlFYNFI5TXU3ZXV5UXRzS1dIcGdN?=
+ =?utf-8?B?VTZWWk1TcWcvbklJQStXWlF1Yy83anExMDhZN1BhRk56VjJ1WXRQa3pPYzNi?=
+ =?utf-8?B?WHF3Y0huNXNRaE1wWlBxejJlckJvYVJ4c2MvczY2YW83WHJQZ3l4VHZrbTZi?=
+ =?utf-8?B?ZTMyV2ZUV1ZHRnFDRDBIUW41MGFBTWdoWkQ5TTJMZmNHTHNYczFJc29BT0tP?=
+ =?utf-8?B?aXlMd0dvUjhsTzhaR3FDREM1VWpYTWpITFNhVWgzQjM4VDRJbXlPTytPbzVZ?=
+ =?utf-8?Q?2T6vNuyTbfBq8B70=3D?=
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-Exchange-RoutingPolicyChecked: ZS0S6fCfScQ+GDO+Io+dVd3649fJQw1RBlIYJwMwmy1suVCMzJI3ARSBpEjKRBwpKilYwRqeMcbxSBe1rXYijBBrC6N2wXI8mHCk1R2DNXU8g9b9rG+VgXdeJPs6yF6AbEQ4CH11LekrlBVaWkgFAMVF8/RAzr5ySAn6F/3jMCTNhIioSQhsWKEGxxNI8eyB1WuEytbx7RQTLFQavRxW5EGR7b/vBXB2gmKvRIJLMIKKHPvZ1Z0N0xkDUICBIK8O/VTFr4mVdAQiEceYbrGmqPG2RqZI0BAvs79FU5BQl75nUjAAbC4kay3OBmb3fOftjnFen0GWJg3f0Qz+ddMmEw==
+X-OriginatorOrg: mail.toshiba
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY7PR01MB14818.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 46a5ca97-a909-4c72-0d78-08df3be62e1d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Nov 2026 09:13:11.1982
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: mL5lSKlsIXBQdlNgUuMtkP13lgrZbI+mWlr5ifHPX++TuJ11qWeQ9K//A41nNFIkH+gqhqz9ZaG6u2GqT4pgbBRHpqfYyeLia/60R7mna5MYX35Kn0N47bRtIQv4KCf4
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY7PR01MB13706
+List-Id: <cip-dev.lists.cip-project.org>
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Fri, 06 Nov 2026 09:13:32 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24661
 
-U-Boot version 2026.01 cannot be built in a 'buster' environment.
-Therefore, we are reverting to the previous version, 2025.07, to provide
-U-Boot for 'buster' environment.
-
-Signed-off-by: Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
----
- ...onvert-SYS_EARLY_PCI_INIT-to-Kconfig.patch |  37 +++
- ...-mach-socfpga-Fix-non-Agilex-targets.patch |  97 ++++++++
- ...KASLR-OPTEE-RNG-support-for-K3-devic.patch |  38 +++
- ...ot-generate-logo-when-cross-building.patch |  33 +++
- ...arm-Select-CONFIG_SYS_EARLY_PCI_INIT.patch |  28 +++
- ...sector-value-passed-to-mmc_load_imag.patch |  39 +++
- ...for-SYS_MMCSD_RAW_MODE_U_BOOT_USE_PA.patch |  90 +++++++
- .../0003-test-Fix-optee-unit-test.patch       | 134 ++++++++++
- ...cfpga-Adjust-a-raw-sectors-for-MMC-l.patch |  44 ++++
- ...onfigs-socfpga-Fix-de0_nano_soc-boot.patch |  31 +++
- ...6-configs-socfpga-Permit-EFI-booting.patch | 229 ++++++++++++++++++
- recipes-bsp/u-boot/u-boot-bbb_2025.07.bb      |  27 +++
- recipes-bsp/u-boot/u-boot-common-2025.07.inc  |  71 ++++++
- .../u-boot/u-boot-de0-nano-soc_2025.07.bb     |  26 ++
- .../u-boot/u-boot-qemu-arm64_2025.07.bb       |  17 ++
- recipes-bsp/u-boot/u-boot-qemu-arm_2025.07.bb |  17 ++
- .../u-boot/u-boot-qemu-riscv64_2025.07.bb     |  20 ++
- .../u-boot/u-boot-ti-am62px-sk_2025.07.bb     |  64 +++++
- 18 files changed, 1042 insertions(+)
- create mode 100644 recipes-bsp/u-boot/files/2025.07/0001-Kconfig-Convert-SYS_EARLY_PCI_INIT-to-Kconfig.patch
- create mode 100644 recipes-bsp/u-boot/files/2025.07/0001-arch-arm-mach-socfpga-Fix-non-Agilex-targets.patch
- create mode 100644 recipes-bsp/u-boot/files/2025.07/0001-configs-KASLR-OPTEE-RNG-support-for-K3-devic.patch
- create mode 100644 recipes-bsp/u-boot/files/2025.07/0001-tools-Do-not-generate-logo-when-cross-building.patch
- create mode 100644 recipes-bsp/u-boot/files/2025.07/0002-qemu_arm-Select-CONFIG_SYS_EARLY_PCI_INIT.patch
- create mode 100644 recipes-bsp/u-boot/files/2025.07/0002-spl-mmc-Respect-sector-value-passed-to-mmc_load_imag.patch
- create mode 100644 recipes-bsp/u-boot/files/2025.07/0003-spl-mmc-Account-for-SYS_MMCSD_RAW_MODE_U_BOOT_USE_PA.patch
- create mode 100644 recipes-bsp/u-boot/files/2025.07/0003-test-Fix-optee-unit-test.patch
- create mode 100644 recipes-bsp/u-boot/files/2025.07/0004-arch-arm-mach-socfpga-Adjust-a-raw-sectors-for-MMC-l.patch
- create mode 100644 recipes-bsp/u-boot/files/2025.07/0005-configs-socfpga-Fix-de0_nano_soc-boot.patch
- create mode 100644 recipes-bsp/u-boot/files/2025.07/0006-configs-socfpga-Permit-EFI-booting.patch
- create mode 100644 recipes-bsp/u-boot/u-boot-bbb_2025.07.bb
- create mode 100644 recipes-bsp/u-boot/u-boot-common-2025.07.inc
- create mode 100644 recipes-bsp/u-boot/u-boot-de0-nano-soc_2025.07.bb
- create mode 100644 recipes-bsp/u-boot/u-boot-qemu-arm64_2025.07.bb
- create mode 100644 recipes-bsp/u-boot/u-boot-qemu-arm_2025.07.bb
- create mode 100644 recipes-bsp/u-boot/u-boot-qemu-riscv64_2025.07.bb
- create mode 100644 recipes-bsp/u-boot/u-boot-ti-am62px-sk_2025.07.bb
-
-diff --git a/recipes-bsp/u-boot/files/2025.07/0001-Kconfig-Convert-SYS_EARLY_PCI_INIT-to-Kconfig.patch b/recipes-bsp/u-boot/files/2025.07/0001-Kconfig-Convert-SYS_EARLY_PCI_INIT-to-Kconfig.patch
-new file mode 100644
-index 0000000..36c0ea8
---- /dev/null
-+++ b/recipes-bsp/u-boot/files/2025.07/0001-Kconfig-Convert-SYS_EARLY_PCI_INIT-to-Kconfig.patch
-@@ -0,0 +1,37 @@
-+From d3403a731b5b194a9e4e2ba67911e760dcd89207 Mon Sep 17 00:00:00 2001
-+From: Fabio Estevam <festevam@gmail.com>
-+Date: Thu, 14 Aug 2025 20:14:35 +0200
-+Subject: [PATCH 1/3] Kconfig: Convert SYS_EARLY_PCI_INIT to Kconfig
-+
-+The CONFIG_SYS_EARLY_PCI_INIT symbol is currently not supported
-+by Kconfig.
-+
-+Make it a Kconfig symbol so that users could select it via defconfig.
-+
-+Signed-off-by: Fabio Estevam <festevam@gmail.com>
-+Reviewed-by: Tom Rini <trini@konsulko.com>
-+---
-+ common/Kconfig | 7 +++++++
-+ 1 file changed, 7 insertions(+)
-+
-+diff --git a/common/Kconfig b/common/Kconfig
-+index a2f653f7e72..cb17f056153 100644
-+--- a/common/Kconfig
-++++ b/common/Kconfig
-+@@ -833,6 +833,13 @@ config PCI_INIT_R
-+ 	  case of DM PCI-based Ethernet devices, which will not be detected
-+ 	  without having the enumeration performed earlier.
-+ 
-++config SYS_EARLY_PCI_INIT
-++	bool "Enumerate PCI buses early during init"
-++	depends on PCI
-++	help
-++	  Do early PCI configuration before the eMMC gets initialised,
-++	  because PCI resources are crucial for eMMC access on some boards.
-++
-+ config RESET_PHY_R
-+ 	bool "Reset ethernet PHY during init"
-+ 	help
-+-- 
-+2.51.0
-+
-diff --git a/recipes-bsp/u-boot/files/2025.07/0001-arch-arm-mach-socfpga-Fix-non-Agilex-targets.patch b/recipes-bsp/u-boot/files/2025.07/0001-arch-arm-mach-socfpga-Fix-non-Agilex-targets.patch
-new file mode 100644
-index 0000000..2c05d5c
---- /dev/null
-+++ b/recipes-bsp/u-boot/files/2025.07/0001-arch-arm-mach-socfpga-Fix-non-Agilex-targets.patch
-@@ -0,0 +1,97 @@
-+From c02c7bbadf6d97f3d178289909495483b66a921f Mon Sep 17 00:00:00 2001
-+From: Jan Kiszka <jan.kiszka@siemens.com>
-+Date: Fri, 14 Nov 2025 12:42:46 +0100
-+Subject: [PATCH 1/6] arch: arm: mach-socfpga: Fix non-Agilex targets
-+
-+The Altera system manager device is only provided for the Agilex
-+targets. All others were left with an uninitialized socfpga_sysmgr_base
-+after that refactoring, breaking any boot attempts already in SPL.
-+
-+Tested only on Cyclone5 / DE0-Nano-SoC.
-+
-+Fixes: 35638172f99a ("arm: socfpga: agilex5: Add new driver model for system manager in Agilex5")
-+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-+---
-+ arch/arm/mach-socfpga/misc.c     | 7 +++++++
-+ arch/arm/mach-socfpga/spl_a10.c  | 1 +
-+ arch/arm/mach-socfpga/spl_gen5.c | 1 +
-+ arch/arm/mach-socfpga/spl_n5x.c  | 1 +
-+ arch/arm/mach-socfpga/spl_s10.c  | 1 +
-+ 5 files changed, 11 insertions(+)
-+
-+diff --git a/arch/arm/mach-socfpga/misc.c b/arch/arm/mach-socfpga/misc.c
-+index 97e01140513..dee822fa870 100644
-+--- a/arch/arm/mach-socfpga/misc.c
-++++ b/arch/arm/mach-socfpga/misc.c
-+@@ -277,6 +277,8 @@ void socfpga_get_managers_addr(void)
-+ void socfpga_get_sys_mgr_addr(const char *compat)
-+ {
-+ 	int ret;
-++#if defined(CONFIG_TARGET_SOCFPGA_AGILEX) || \
-++    defined(TARGET_SOCFPGA_AGILEX7M) || defined(TARGET_SOCFPGA_AGILEX5)
-+ 	struct udevice *sysmgr_dev;
-+ 
-+ 	ret = uclass_get_device_by_name(UCLASS_NOP, compat, &sysmgr_dev);
-+@@ -286,6 +288,11 @@ void socfpga_get_sys_mgr_addr(const char *compat)
-+ 	} else {
-+ 		socfpga_sysmgr_base = (phys_addr_t)dev_read_addr(sysmgr_dev);
-+ 	}
-++#else
-++	ret = socfpga_get_base_addr("altr,sys-mgr", &socfpga_sysmgr_base);
-++	if (ret)
-++		hang();
-++#endif
-+ }
-+ 
-+ phys_addr_t socfpga_get_rstmgr_addr(void)
-+diff --git a/arch/arm/mach-socfpga/spl_a10.c b/arch/arm/mach-socfpga/spl_a10.c
-+index c20376f7f8e..6722c9cef3f 100644
-+--- a/arch/arm/mach-socfpga/spl_a10.c
-++++ b/arch/arm/mach-socfpga/spl_a10.c
-+@@ -250,6 +250,7 @@ void board_init_f(ulong dummy)
-+ 	if (spl_early_init())
-+ 		hang();
-+ 
-++	socfpga_get_sys_mgr_addr(NULL);
-+ 	socfpga_get_managers_addr();
-+ 
-+ 	dcache_disable();
-+diff --git a/arch/arm/mach-socfpga/spl_gen5.c b/arch/arm/mach-socfpga/spl_gen5.c
-+index df79cfe0f7f..cd8b09d7a8d 100644
-+--- a/arch/arm/mach-socfpga/spl_gen5.c
-++++ b/arch/arm/mach-socfpga/spl_gen5.c
-+@@ -72,6 +72,7 @@ void board_init_f(ulong dummy)
-+ 	if (ret)
-+ 		hang();
-+ 
-++	socfpga_get_sys_mgr_addr(NULL);
-+ 	socfpga_get_managers_addr();
-+ 
-+ 	/*
-+diff --git a/arch/arm/mach-socfpga/spl_n5x.c b/arch/arm/mach-socfpga/spl_n5x.c
-+index 81283ef7162..2b6a443e989 100644
-+--- a/arch/arm/mach-socfpga/spl_n5x.c
-++++ b/arch/arm/mach-socfpga/spl_n5x.c
-+@@ -31,6 +31,7 @@ void board_init_f(ulong dummy)
-+ 	if (ret)
-+ 		hang();
-+ 
-++	socfpga_get_sys_mgr_addr(NULL);
-+ 	socfpga_get_managers_addr();
-+ 
-+ 	/* Ensure watchdog is paused when debugging is happening */
-+diff --git a/arch/arm/mach-socfpga/spl_s10.c b/arch/arm/mach-socfpga/spl_s10.c
-+index fa83ff96adc..379e5642b2a 100644
-+--- a/arch/arm/mach-socfpga/spl_s10.c
-++++ b/arch/arm/mach-socfpga/spl_s10.c
-+@@ -33,6 +33,7 @@ void board_init_f(ulong dummy)
-+ 	if (ret)
-+ 		hang();
-+ 
-++	socfpga_get_sys_mgr_addr(NULL);
-+ 	socfpga_get_managers_addr();
-+ 
-+ 	/* Ensure watchdog is paused when debugging is happening */
-+-- 
-+2.51.0
-+
-diff --git a/recipes-bsp/u-boot/files/2025.07/0001-configs-KASLR-OPTEE-RNG-support-for-K3-devic.patch b/recipes-bsp/u-boot/files/2025.07/0001-configs-KASLR-OPTEE-RNG-support-for-K3-devic.patch
-new file mode 100644
-index 0000000..d831b21
---- /dev/null
-+++ b/recipes-bsp/u-boot/files/2025.07/0001-configs-KASLR-OPTEE-RNG-support-for-K3-devic.patch
-@@ -0,0 +1,38 @@
-+From 7d4136397715d2c08161a32a873c052dd1bb8b6c Mon Sep 17 00:00:00 2001
-+From: Gokul Praveen <g-praveen@ti.com>
-+Date: Thu, 10 Jul 2025 15:29:22 +0530
-+Subject: [PATCH] configs: KASLR OPTEE RNG support for K3 devices
-+
-+KASLR, or Kernel Address Space Layout Randomization, is a security
-+feature in the Linux kernel that randomizes the memory location
-+where the kernel is loaded during boot.
-+
-+OP-TEE RNG is a Random Number Generator (RNG) component within the
-+Open Portable Trusted Execution Environment (OP-TEE) which provides
-+a random number to U-BOOT and U-BOOT provides this random number
-+as seed value to the LINUX kernel for KASLR.
-+
-+Add KASLR OPTEE RNG support across K3 devices by enabling the required
-+configs.
-+
-+Signed-off-by: Gokul Praveen <g-praveen@ti.com>
-+Reviewed-by: Bryan Brattlof <bb@ti.com>
-+Reviewed-by: Manorit Chawdhry <m-chawdhry@ti.com>
-+---
-+ arch/arm/Kconfig | 3 +++
-+ 1 file changed, 3 insertions(+)
-+
-+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-+index 5872455a0fe5..4e7593616d8a 100644
-+--- a/arch/arm/Kconfig
-++++ b/arch/arm/Kconfig
-+@@ -835,6 +835,9 @@ config ARCH_K3
-+ 	select FIT_SIGNATURE if ARM64
-+ 	select LTO
-+ 	imply TI_SECURE_DEVICE
-++	imply DM_RNG if ARM64
-++	imply TEE if ARM64
-++	imply OPTEE if ARM64
-+ 
-+ config ARCH_OMAP2PLUS
-+ 	bool "TI OMAP2+"
-diff --git a/recipes-bsp/u-boot/files/2025.07/0001-tools-Do-not-generate-logo-when-cross-building.patch b/recipes-bsp/u-boot/files/2025.07/0001-tools-Do-not-generate-logo-when-cross-building.patch
-new file mode 100644
-index 0000000..16b219f
---- /dev/null
-+++ b/recipes-bsp/u-boot/files/2025.07/0001-tools-Do-not-generate-logo-when-cross-building.patch
-@@ -0,0 +1,33 @@
-+From 371a76e845504c9ba7ca216b6edfb4ae4ec14e56 Mon Sep 17 00:00:00 2001
-+From: Jan Kiszka <jan.kiszka@siemens.com>
-+Date: Sat, 23 Aug 2025 17:21:09 +0200
-+Subject: [PATCH] tools: Do not generate logo when cross-building
-+
-+This cannot work (unless qemu-user is registered in binfmt_misc) as the
-+tools will be for a different architecture.
-+
-+Fixes "make cross_tools" in case CONFIG_VIDEO_LOGO is enabled.
-+
-+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-+Reviewed-by: Tom Rini <trini@konsulko.com>
-+---
-+ tools/Makefile | 2 ++
-+ 1 file changed, 2 insertions(+)
-+
-+diff --git a/tools/Makefile b/tools/Makefile
-+index 7eb17f92116..ae6a3052646 100644
-+--- a/tools/Makefile
-++++ b/tools/Makefile
-+@@ -333,7 +333,9 @@ HOST_EXTRACFLAGS += -include $(srctree)/include/compiler.h \
-+ 		-D__KERNEL_STRICT_NAMES \
-+ 		-D_GNU_SOURCE
-+ 
-++ifeq ($(CROSS_BUILD_TOOLS),)
-+ __build:	$(LOGO-y)
-++endif
-+ 
-+ $(LOGO_H):	$(obj)/bmp_logo $(LOGO_BMP)
-+ 	$(obj)/bmp_logo --gen-info $(LOGO_BMP) > $@
-+-- 
-+2.51.0
-+
-diff --git a/recipes-bsp/u-boot/files/2025.07/0002-qemu_arm-Select-CONFIG_SYS_EARLY_PCI_INIT.patch b/recipes-bsp/u-boot/files/2025.07/0002-qemu_arm-Select-CONFIG_SYS_EARLY_PCI_INIT.patch
-new file mode 100644
-index 0000000..ec82a32
---- /dev/null
-+++ b/recipes-bsp/u-boot/files/2025.07/0002-qemu_arm-Select-CONFIG_SYS_EARLY_PCI_INIT.patch
-@@ -0,0 +1,28 @@
-+From b93d9e7cc2b39a6d16356d391d2d7832ed4b9202 Mon Sep 17 00:00:00 2001
-+From: Fabio Estevam <festevam@gmail.com>
-+Date: Thu, 14 Aug 2025 20:14:36 +0200
-+Subject: [PATCH 2/3] qemu_arm: Select CONFIG_SYS_EARLY_PCI_INIT
-+
-+Select CONFIG_SYS_EARLY_PCI_INIT so that eMMC emulation can
-+work.
-+
-+Signed-off-by: Fabio Estevam <festevam@gmail.com>
-+---
-+ board/emulation/qemu-arm/Kconfig | 1 +
-+ 1 file changed, 1 insertion(+)
-+
-+diff --git a/board/emulation/qemu-arm/Kconfig b/board/emulation/qemu-arm/Kconfig
-+index 80ab9d8e1c3..447061b25cd 100644
-+--- a/board/emulation/qemu-arm/Kconfig
-++++ b/board/emulation/qemu-arm/Kconfig
-+@@ -8,6 +8,7 @@ config BOARD_SPECIFIC_OPTIONS # dummy
-+ 	select HAS_CUSTOM_SYS_INIT_SP_ADDR
-+ 	select QFW if ACPI
-+ 	select QFW_MMIO if CMD_QFW
-++	imply SYS_EARLY_PCI_INIT
-+ 	imply VIRTIO_MMIO
-+ 	imply VIRTIO_PCI
-+ 	imply VIRTIO_NET
-+-- 
-+2.51.0
-+
-diff --git a/recipes-bsp/u-boot/files/2025.07/0002-spl-mmc-Respect-sector-value-passed-to-mmc_load_imag.patch b/recipes-bsp/u-boot/files/2025.07/0002-spl-mmc-Respect-sector-value-passed-to-mmc_load_imag.patch
-new file mode 100644
-index 0000000..1b9cb52
---- /dev/null
-+++ b/recipes-bsp/u-boot/files/2025.07/0002-spl-mmc-Respect-sector-value-passed-to-mmc_load_imag.patch
-@@ -0,0 +1,39 @@
-+From 27441e4cad3bcb2fd0c83c85f29a71e68f5a8c2d Mon Sep 17 00:00:00 2001
-+From: Jan Kiszka <jan.kiszka@siemens.com>
-+Date: Fri, 14 Nov 2025 13:34:48 +0100
-+Subject: [PATCH 2/6] spl: mmc: Respect sector value passed to
-+ mmc_load_image_raw_partition
-+
-+This function and the sector parameter evolved over the time. By now,
-+sector is influenced by spl_mmc_get_uboot_raw_sector which allows to
-+adjust the read sector with an offset that U-Boot proper may have inside
-+the partition. That used to work by chance if both
-+CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_USE_SECTOR and
-+CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_USE_PARTITION were enabled. Since
-+2a00d73d081a they are a choice, and we need to drop the condition to
-+maintain this feature.
-+
-+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-+---
-+ common/spl/spl_mmc.c | 4 ----
-+ 1 file changed, 4 deletions(-)
-+
-+diff --git a/common/spl/spl_mmc.c b/common/spl/spl_mmc.c
-+index d06f9f0dee6..81415ae7594 100644
-+--- a/common/spl/spl_mmc.c
-++++ b/common/spl/spl_mmc.c
-+@@ -137,11 +137,7 @@ static int mmc_load_image_raw_partition(struct spl_image_info *spl_image,
-+ 		return ret;
-+ 	}
-+ 
-+-#ifdef CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_USE_SECTOR
-+ 	return mmc_load_image_raw_sector(spl_image, bootdev, mmc, info.start + sector);
-+-#else
-+-	return mmc_load_image_raw_sector(spl_image, bootdev, mmc, info.start);
-+-#endif
-+ }
-+ #endif
-+ 
-+-- 
-+2.51.0
-+
-diff --git a/recipes-bsp/u-boot/files/2025.07/0003-spl-mmc-Account-for-SYS_MMCSD_RAW_MODE_U_BOOT_USE_PA.patch b/recipes-bsp/u-boot/files/2025.07/0003-spl-mmc-Account-for-SYS_MMCSD_RAW_MODE_U_BOOT_USE_PA.patch
-new file mode 100644
-index 0000000..4e73571
---- /dev/null
-+++ b/recipes-bsp/u-boot/files/2025.07/0003-spl-mmc-Account-for-SYS_MMCSD_RAW_MODE_U_BOOT_USE_PA.patch
-@@ -0,0 +1,90 @@
-+From 2695758ae0f8184f6093086c0f2d4a152273d674 Mon Sep 17 00:00:00 2001
-+From: Jan Kiszka <jan.kiszka@siemens.com>
-+Date: Fri, 14 Nov 2025 13:40:20 +0100
-+Subject: [PATCH 3/6] spl: mmc: Account for
-+ SYS_MMCSD_RAW_MODE_U_BOOT_USE_PARTITION_TYPE being a choice
-+
-+Add SYS_MMCSD_RAW_MODE_U_BOOT_USE_PARTITION_TYPE as condition where so
-+far SYS_MMCSD_RAW_MODE_U_BOOT_USE_PARTITION was enough - though often
-+by chance as both options were enabled.
-+
-+We also need to explicitly select SPL_LOAD_BLOCK when UES_PARTITION_TYPE
-+is enabled, just like the other choices do.
-+
-+Fixes: 2a00d73d081a ("spl: mmc: Try to clean up raw-mode options")
-+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-+---
-+ common/spl/Kconfig   |  1 +
-+ common/spl/spl_mmc.c | 16 ++++++++--------
-+ include/part.h       |  3 ++-
-+ 3 files changed, 11 insertions(+), 9 deletions(-)
-+
-+diff --git a/common/spl/Kconfig b/common/spl/Kconfig
-+index 77cf04d38ed..b757d14fbf1 100644
-+--- a/common/spl/Kconfig
-++++ b/common/spl/Kconfig
-+@@ -563,6 +563,7 @@ config SYS_MMCSD_RAW_MODE_U_BOOT_USE_PARTITION
-+ 
-+ config SYS_MMCSD_RAW_MODE_U_BOOT_USE_PARTITION_TYPE
-+ 	bool "MMC raw mode: by partition type"
-++	select SPL_LOAD_BLOCK
-+ 	depends on DOS_PARTITION
-+ 	help
-+ 	  Use partition type for specifying U-Boot partition on MMC/SD in
-+diff --git a/common/spl/spl_mmc.c b/common/spl/spl_mmc.c
-+index 81415ae7594..34fe362d97e 100644
-+--- a/common/spl/spl_mmc.c
-++++ b/common/spl/spl_mmc.c
-+@@ -107,7 +107,8 @@ static int spl_mmc_find_device(struct mmc **mmcp, int mmc_dev)
-+ 	return 0;
-+ }
-+ 
-+-#ifdef CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_USE_PARTITION
-++#if defined(CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_USE_PARTITION) || \
-++    defined(CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_USE_PARTITION_TYPE)
-+ static int mmc_load_image_raw_partition(struct spl_image_info *spl_image,
-+ 					struct spl_boot_device *bootdev,
-+ 					struct mmc *mmc, int partition,
-+@@ -392,19 +393,18 @@ int spl_mmc_load(struct spl_image_info *spl_image,
-+ 
-+ 		raw_sect = spl_mmc_get_uboot_raw_sector(mmc, raw_sect);
-+ 
-+-#ifdef CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_USE_PARTITION
-+-		ret = mmc_load_image_raw_partition(spl_image, bootdev,
-+-						   mmc, raw_part,
-+-						   raw_sect);
-+-		if (!ret)
-+-			return 0;
-+-#endif
-+ #ifdef CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_USE_SECTOR
-+ 		ret = mmc_load_image_raw_sector(spl_image, bootdev, mmc,
-+ 						raw_sect +
-+ 						spl_mmc_raw_uboot_offset(part));
-+ 		if (!ret)
-+ 			return 0;
-++#else
-++		ret = mmc_load_image_raw_partition(spl_image, bootdev,
-++						   mmc, raw_part,
-++						   raw_sect);
-++		if (!ret)
-++			return 0;
-+ #endif
-+ 		/* If RAW mode fails, try FS mode. */
-+ 		fallthrough;
-+diff --git a/include/part.h b/include/part.h
-+index fcb3c13dea4..6d16bf7ff85 100644
-+--- a/include/part.h
-++++ b/include/part.h
-+@@ -443,7 +443,8 @@ ulong disk_blk_erase(struct udevice *dev, lbaint_t start, lbaint_t blkcnt);
-+ #ifdef CONFIG_XPL_BUILD
-+ # define part_print_ptr(x)	NULL
-+ # if defined(CONFIG_SPL_FS_EXT4) || defined(CONFIG_SPL_FS_FAT) || \
-+-	defined(CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_PARTITION)
-++	defined(CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_USE_PARTITION) || \
-++	defined(CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_USE_PARTITION_TYPE)
-+ #  define part_get_info_ptr(x)	x
-+ # else
-+ #  define part_get_info_ptr(x)	NULL
-+-- 
-+2.51.0
-+
-diff --git a/recipes-bsp/u-boot/files/2025.07/0003-test-Fix-optee-unit-test.patch b/recipes-bsp/u-boot/files/2025.07/0003-test-Fix-optee-unit-test.patch
-new file mode 100644
-index 0000000..ed928f6
---- /dev/null
-+++ b/recipes-bsp/u-boot/files/2025.07/0003-test-Fix-optee-unit-test.patch
-@@ -0,0 +1,134 @@
-+From a7ff306c8ea79743552992638b8d228818cd9975 Mon Sep 17 00:00:00 2001
-+From: Jan Kiszka <jan.kiszka@siemens.com>
-+Date: Mon, 15 Sep 2025 07:50:26 +0200
-+Subject: [PATCH 3/3] test: Fix optee unit test
-+
-+This was apparently not built for several years: Since a2535243e011,
-+optee_copy_fdt_nodes implicitly works against the U-Boot dt. We
-+therefore have to tweak its reference before using the function and
-+restore things afterwards.
-+
-+If it had been built, actually trying it out would have failed next: We
-+need CONFIG_OPTEE_LIB to actually build the function that is primarily
-+being tested here. And we need to re-initialize target fdt, now that the
-+tests may run in random order.
-+
-+Fixes: a2535243e011 ("lib: optee: migration optee_copy_fdt_nodes for OF_LIVE support")
-+Fixes: ba2feaf41435 ("test: Split optee tests into three functions")
-+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-+---
-+ test/optee/Kconfig |  1 +
-+ test/optee/optee.c | 42 +++++++++++++++++++++++++++++++-----------
-+ 2 files changed, 32 insertions(+), 11 deletions(-)
-+
-+diff --git a/test/optee/Kconfig b/test/optee/Kconfig
-+index 63e2cbf79c7..ebf8d07c41c 100644
-+--- a/test/optee/Kconfig
-++++ b/test/optee/Kconfig
-+@@ -1,6 +1,7 @@
-+ config UT_OPTEE
-+ 	bool "Enable OP-TEE Unit Tests"
-+ 	depends on OF_CONTROL && OPTEE
-++	select OPTEE_LIB
-+ 	default y
-+ 	help
-+ 	  This enables the 'ut optee' command which runs a series of unit
-+diff --git a/test/optee/optee.c b/test/optee/optee.c
-+index 658621fa2fa..7e1c8d04a11 100644
-+--- a/test/optee/optee.c
-++++ b/test/optee/optee.c
-+@@ -5,16 +5,20 @@
-+ 
-+ #include <command.h>
-+ #include <errno.h>
-++#include <fdtdec.h>
-+ #include <fdt_support.h>
-+ #include <log.h>
-+ #include <malloc.h>
-+ #include <tee/optee.h>
-++#include <asm/global_data.h>
-+ 
-+ #include <linux/sizes.h>
-+ 
-+ #include <test/ut.h>
-+ #include <test/optee.h>
-+ 
-++DECLARE_GLOBAL_DATA_PTR;
-++
-+ /* 4k ought to be enough for anybody */
-+ #define FDT_COPY_SIZE	(4 * SZ_1K)
-+ 
-+@@ -40,14 +44,6 @@ static int optee_test_init(struct unit_test_state *uts)
-+ 	if (!fdt)
-+ 		return ret;
-+ 
-+-	/*
-+-	 * Resize the FDT to 4k so that we have room to operate on
-+-	 *
-+-	 * (and relocate it since the memory might be mapped
-+-	 * read-only)
-+-	 */
-+-	ut_assertok(fdt_open_into(fdt_base, fdt, FDT_COPY_SIZE));
-+-
-+ 	return 0;
-+ }
-+ OPTEE_TEST_INIT(optee_test_init, 0);
-+@@ -127,9 +123,21 @@ static int optee_fdt_protected_memory(struct unit_test_state *uts)
-+ static int optee_fdt_copy_empty(struct unit_test_state *uts)
-+ {
-+ 	void *fdt_no_optee = &__dtb_test_optee_no_optee_begin;
-++	const void *fdt_blob = gd->fdt_blob;
-++
-++	/*
-++	 * Resize the FDT to 4k so that we have room to operate on
-++	 *
-++	 * (and relocate it since the memory might be mapped
-++	 * read-only)
-++	 */
-++	ut_assertok(fdt_open_into(&__dtb_test_optee_base_begin, fdt,
-++				  FDT_COPY_SIZE));
-+ 
-+ 	/* This should still run successfully */
-+-	ut_assertok(optee_copy_fdt_nodes(fdt_no_optee, fdt));
-++	gd->fdt_blob = fdt_no_optee;
-++	ut_assertok(optee_copy_fdt_nodes(fdt));
-++	gd->fdt_blob = fdt_blob;
-+ 
-+ 	expect_success = false;
-+ 	ut_assertok(optee_fdt_firmware(uts));
-+@@ -143,8 +151,14 @@ OPTEE_TEST(optee_fdt_copy_empty, 0);
-+ static int optee_fdt_copy_prefilled(struct unit_test_state *uts)
-+ {
-+ 	void *fdt_optee = &__dtb_test_optee_optee_begin;
-++	const void *fdt_blob = gd->fdt_blob;
-+ 
-+-	ut_assertok(optee_copy_fdt_nodes(fdt_optee, fdt));
-++	ut_assertok(fdt_open_into(&__dtb_test_optee_base_begin, fdt,
-++				  FDT_COPY_SIZE));
-++
-++	gd->fdt_blob = fdt_optee;
-++	ut_assertok(optee_copy_fdt_nodes(fdt));
-++	gd->fdt_blob = fdt_blob;
-+ 
-+ 	expect_success = true;
-+ 	ut_assertok(optee_fdt_firmware(uts));
-+@@ -158,9 +172,15 @@ OPTEE_TEST(optee_fdt_copy_prefilled, 0);
-+ static int optee_fdt_copy_already_filled(struct unit_test_state *uts)
-+ {
-+ 	void *fdt_optee = &__dtb_test_optee_optee_begin;
-++	const void *fdt_blob = gd->fdt_blob;
-++
-++	ut_assertok(fdt_open_into(&__dtb_test_optee_base_begin, fdt,
-++				  FDT_COPY_SIZE));
-+ 
-+ 	ut_assertok(fdt_open_into(fdt_optee, fdt, FDT_COPY_SIZE));
-+-	ut_assertok(optee_copy_fdt_nodes(fdt_optee, fdt));
-++	gd->fdt_blob = fdt_optee;
-++	ut_assertok(optee_copy_fdt_nodes(fdt));
-++	gd->fdt_blob = fdt_blob;
-+ 
-+ 	expect_success = true;
-+ 	ut_assertok(optee_fdt_firmware(uts));
-+-- 
-+2.51.0
-+
-diff --git a/recipes-bsp/u-boot/files/2025.07/0004-arch-arm-mach-socfpga-Adjust-a-raw-sectors-for-MMC-l.patch b/recipes-bsp/u-boot/files/2025.07/0004-arch-arm-mach-socfpga-Adjust-a-raw-sectors-for-MMC-l.patch
-new file mode 100644
-index 0000000..bdbb4d1
---- /dev/null
-+++ b/recipes-bsp/u-boot/files/2025.07/0004-arch-arm-mach-socfpga-Adjust-a-raw-sectors-for-MMC-l.patch
-@@ -0,0 +1,44 @@
-+From 93a35b8a962d4f8d9e211c55e2d85b12d2ccce4b Mon Sep 17 00:00:00 2001
-+From: Jan Kiszka <jan.kiszka@siemens.com>
-+Date: Fri, 14 Nov 2025 13:53:25 +0100
-+Subject: [PATCH 4/6] arch: arm: mach-socfpga: Adjust a raw sectors for MMC
-+ loading of U-Boot from SPL
-+
-+If U-Boot is located on MMC, SPL and U-Boot proper are glued together.
-+More precisely, SPL is stored 4 times. Take this and its padding into
-+account and adjust sector number via board_spl_mmc_get_uboot_raw_sector.
-+This allows loading from a partition, without the need to hard-code the
-+offset via SYS_MMCSD_RAW_MODE_U_BOOT_USE_SECTOR
-+
-+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-+---
-+ arch/arm/mach-socfpga/board.c | 9 +++++++++
-+ 1 file changed, 9 insertions(+)
-+
-+diff --git a/arch/arm/mach-socfpga/board.c b/arch/arm/mach-socfpga/board.c
-+index 8506d510413..a7598e79362 100644
-+--- a/arch/arm/mach-socfpga/board.c
-++++ b/arch/arm/mach-socfpga/board.c
-+@@ -13,6 +13,7 @@
-+ #include <hang.h>
-+ #include <handoff.h>
-+ #include <image.h>
-++#include <spl.h>
-+ #include <usb.h>
-+ #include <usb/dwc2_udc.h>
-+ #include <asm/global_data.h>
-+@@ -208,3 +209,11 @@ void lmb_arch_add_memory(void)
-+ 	}
-+ }
-+ #endif
-++
-++#ifdef CONFIG_SPL
-++unsigned long board_spl_mmc_get_uboot_raw_sector(struct mmc *mmc,
-++						 unsigned long raw_sect)
-++{
-++	return (CONFIG_SPL_PAD_TO * 4) / 512 + raw_sect;
-++}
-++#endif
-+-- 
-+2.51.0
-+
-diff --git a/recipes-bsp/u-boot/files/2025.07/0005-configs-socfpga-Fix-de0_nano_soc-boot.patch b/recipes-bsp/u-boot/files/2025.07/0005-configs-socfpga-Fix-de0_nano_soc-boot.patch
-new file mode 100644
-index 0000000..295a0e2
---- /dev/null
-+++ b/recipes-bsp/u-boot/files/2025.07/0005-configs-socfpga-Fix-de0_nano_soc-boot.patch
-@@ -0,0 +1,31 @@
-+From fdd7059526064d130b6797c7e62ed26b25bd2f77 Mon Sep 17 00:00:00 2001
-+From: Jan Kiszka <jan.kiszka@siemens.com>
-+Date: Thu, 13 Nov 2025 18:38:28 +0100
-+Subject: [PATCH 5/6] configs: socfpga: Fix de0_nano_soc boot
-+
-+By default, the de0_nano_soc used raw sectors, but the address became
-+invalid due the raw-mode refactorings. With loading via partition type
-+fixed, we can switch to that mode which is in line with what the ROM
-+loader does.
-+
-+Fixes: 2a00d73d081a ("spl: mmc: Try to clean up raw-mode options")
-+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-+---
-+ configs/socfpga_de0_nano_soc_defconfig | 1 +
-+ 1 file changed, 1 insertion(+)
-+
-+diff --git a/configs/socfpga_de0_nano_soc_defconfig b/configs/socfpga_de0_nano_soc_defconfig
-+index 7188c46d98e..0bcc970728f 100644
-+--- a/configs/socfpga_de0_nano_soc_defconfig
-++++ b/configs/socfpga_de0_nano_soc_defconfig
-+@@ -28,6 +28,7 @@ CONFIG_SPL_NO_BSS_LIMIT=y
-+ # CONFIG_SPL_RAW_IMAGE_SUPPORT is not set
-+ # CONFIG_SPL_SHARES_INIT_SP_ADDR is not set
-+ CONFIG_SPL_HAVE_INIT_STACK=y
-++CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_USE_PARTITION_TYPE=y
-+ CONFIG_SPL_SPI_LOAD=y
-+ CONFIG_SYS_SPI_U_BOOT_OFFS=0x40000
-+ CONFIG_SYS_MAXARGS=32
-+-- 
-+2.51.0
-+
-diff --git a/recipes-bsp/u-boot/files/2025.07/0006-configs-socfpga-Permit-EFI-booting.patch b/recipes-bsp/u-boot/files/2025.07/0006-configs-socfpga-Permit-EFI-booting.patch
-new file mode 100644
-index 0000000..31d51f2
---- /dev/null
-+++ b/recipes-bsp/u-boot/files/2025.07/0006-configs-socfpga-Permit-EFI-booting.patch
-@@ -0,0 +1,229 @@
-+From bd234afd41c8c21ac9caa7992c3e0b8292cca8b0 Mon Sep 17 00:00:00 2001
-+From: Jan Kiszka <jan.kiszka@siemens.com>
-+Date: Fri, 14 Nov 2025 16:18:14 +0100
-+Subject: [PATCH 6/6] configs: socfpga: Permit EFI booting
-+
-+Commit f369e1564cf4 turned those off because the SPL size grew too
-+large. It also argued that those boards would never support EFI booting.
-+The former is correct, therefore keep CONFIG_SPL_EFI_PARTITION off.
-+CONFIG_SPL_ISO_PARTITION is default off. What is not correct is that
-+those boards are limited to legacy boot - you just need a hybrid
-+partition table to make both the bootrom and UEFI happy.
-+
-+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-+---
-+ configs/socfpga_agilex5_defconfig       | 3 +--
-+ configs/socfpga_arria5_defconfig        | 3 +--
-+ configs/socfpga_cyclone5_defconfig      | 3 +--
-+ configs/socfpga_de0_nano_soc_defconfig  | 3 +--
-+ configs/socfpga_de10_nano_defconfig     | 3 +--
-+ configs/socfpga_de10_standard_defconfig | 3 +--
-+ configs/socfpga_de1_soc_defconfig       | 3 +--
-+ configs/socfpga_is1_defconfig           | 3 +--
-+ configs/socfpga_mcvevk_defconfig        | 3 +--
-+ configs/socfpga_secu1_defconfig         | 3 +--
-+ configs/socfpga_sockit_defconfig        | 3 +--
-+ configs/socfpga_socrates_defconfig      | 3 +--
-+ configs/socfpga_sr1500_defconfig        | 3 +--
-+ configs/socfpga_vining_fpga_defconfig   | 3 +--
-+ 14 files changed, 14 insertions(+), 28 deletions(-)
-+
-+diff --git a/configs/socfpga_agilex5_defconfig b/configs/socfpga_agilex5_defconfig
-+index 4ac0a5d9b99..4cb9d1fa4c2 100644
-+--- a/configs/socfpga_agilex5_defconfig
-++++ b/configs/socfpga_agilex5_defconfig
-+@@ -64,8 +64,7 @@ CONFIG_CMD_WDT=y
-+ CONFIG_CMD_CACHE=y
-+ CONFIG_CMD_TIMER=y
-+ CONFIG_CMD_UBI=y
-+-# CONFIG_ISO_PARTITION is not set
-+-# CONFIG_EFI_PARTITION is not set
-++# CONFIG_SPL_EFI_PARTITION is not set
-+ CONFIG_OF_LIST=""
-+ CONFIG_ENV_IS_IN_UBI=y
-+ CONFIG_ENV_UBI_PART="root"
-+diff --git a/configs/socfpga_arria5_defconfig b/configs/socfpga_arria5_defconfig
-+index f3c142300f2..4685314fbb1 100644
-+--- a/configs/socfpga_arria5_defconfig
-++++ b/configs/socfpga_arria5_defconfig
-+@@ -44,8 +44,7 @@ CONFIG_CMD_EXT4_WRITE=y
-+ CONFIG_MTDIDS_DEFAULT="nor0=ff705000.spi.0"
-+ CONFIG_MTDPARTS_DEFAULT="mtdparts=ff705000.spi.0:1m(u-boot),256k(env1),256k(env2),14848k(boot),16m(rootfs),-@1536k(UBI)"
-+ CONFIG_CMD_UBI=y
-+-# CONFIG_ISO_PARTITION is not set
-+-# CONFIG_EFI_PARTITION is not set
-++# CONFIG_SPL_EFI_PARTITION is not set
-+ CONFIG_ENV_IS_IN_MMC=y
-+ CONFIG_SYS_RELOC_GD_ENV_ADDR=y
-+ CONFIG_VERSION_VARIABLE=y
-+diff --git a/configs/socfpga_cyclone5_defconfig b/configs/socfpga_cyclone5_defconfig
-+index 97e5fae0f53..ae92bd2feb3 100644
-+--- a/configs/socfpga_cyclone5_defconfig
-++++ b/configs/socfpga_cyclone5_defconfig
-+@@ -44,8 +44,7 @@ CONFIG_CMD_EXT4_WRITE=y
-+ CONFIG_MTDIDS_DEFAULT="nor0=ff705000.spi.0"
-+ CONFIG_MTDPARTS_DEFAULT="mtdparts=ff705000.spi.0:1m(u-boot),256k(env1),256k(env2),14848k(boot),16m(rootfs),-@1536k(UBI)"
-+ CONFIG_CMD_UBI=y
-+-# CONFIG_ISO_PARTITION is not set
-+-# CONFIG_EFI_PARTITION is not set
-++# CONFIG_SPL_EFI_PARTITION is not set
-+ CONFIG_ENV_IS_IN_MMC=y
-+ CONFIG_SYS_RELOC_GD_ENV_ADDR=y
-+ CONFIG_VERSION_VARIABLE=y
-+diff --git a/configs/socfpga_de0_nano_soc_defconfig b/configs/socfpga_de0_nano_soc_defconfig
-+index 0bcc970728f..a5f8258eaaf 100644
-+--- a/configs/socfpga_de0_nano_soc_defconfig
-++++ b/configs/socfpga_de0_nano_soc_defconfig
-+@@ -46,8 +46,7 @@ CONFIG_CMD_EXT4_WRITE=y
-+ CONFIG_MTDIDS_DEFAULT="nor0=ff705000.spi.0"
-+ CONFIG_MTDPARTS_DEFAULT="mtdparts=ff705000.spi.0:1m(u-boot),256k(env1),256k(env2),14848k(boot),16m(rootfs),-@1536k(UBI)"
-+ CONFIG_CMD_UBI=y
-+-# CONFIG_ISO_PARTITION is not set
-+-# CONFIG_EFI_PARTITION is not set
-++# CONFIG_SPL_EFI_PARTITION is not set
-+ CONFIG_ENV_IS_IN_MMC=y
-+ CONFIG_SYS_RELOC_GD_ENV_ADDR=y
-+ CONFIG_VERSION_VARIABLE=y
-+diff --git a/configs/socfpga_de10_nano_defconfig b/configs/socfpga_de10_nano_defconfig
-+index 102e781f5c1..2ea0852824b 100644
-+--- a/configs/socfpga_de10_nano_defconfig
-++++ b/configs/socfpga_de10_nano_defconfig
-+@@ -42,8 +42,7 @@ CONFIG_CMD_USB_MASS_STORAGE=y
-+ CONFIG_CMD_CACHE=y
-+ CONFIG_CMD_EXT4_WRITE=y
-+ CONFIG_MTDIDS_DEFAULT="nor0=ff705000.spi.0"
-+-# CONFIG_ISO_PARTITION is not set
-+-# CONFIG_EFI_PARTITION is not set
-++# CONFIG_SPL_EFI_PARTITION is not set
-+ CONFIG_ENV_IS_IN_MMC=y
-+ CONFIG_SYS_RELOC_GD_ENV_ADDR=y
-+ CONFIG_VERSION_VARIABLE=y
-+diff --git a/configs/socfpga_de10_standard_defconfig b/configs/socfpga_de10_standard_defconfig
-+index fe3eaad12a3..c903d3669e4 100644
-+--- a/configs/socfpga_de10_standard_defconfig
-++++ b/configs/socfpga_de10_standard_defconfig
-+@@ -42,8 +42,7 @@ CONFIG_CMD_USB_MASS_STORAGE=y
-+ CONFIG_CMD_CACHE=y
-+ CONFIG_CMD_EXT4_WRITE=y
-+ CONFIG_MTDIDS_DEFAULT="nor0=ff705000.spi.0"
-+-# CONFIG_ISO_PARTITION is not set
-+-# CONFIG_EFI_PARTITION is not set
-++# CONFIG_SPL_EFI_PARTITION is not set
-+ CONFIG_ENV_IS_IN_MMC=y
-+ CONFIG_SYS_RELOC_GD_ENV_ADDR=y
-+ CONFIG_VERSION_VARIABLE=y
-+diff --git a/configs/socfpga_de1_soc_defconfig b/configs/socfpga_de1_soc_defconfig
-+index 19e4ab98d59..c1c4b4466d8 100644
-+--- a/configs/socfpga_de1_soc_defconfig
-++++ b/configs/socfpga_de1_soc_defconfig
-+@@ -42,8 +42,7 @@ CONFIG_CMD_CACHE=y
-+ CONFIG_CMD_TIME=y
-+ CONFIG_CMD_EXT4_WRITE=y
-+ CONFIG_MTDIDS_DEFAULT="nor0=ff705000.spi.0"
-+-# CONFIG_ISO_PARTITION is not set
-+-# CONFIG_EFI_PARTITION is not set
-++# CONFIG_SPL_EFI_PARTITION is not set
-+ CONFIG_ENV_IS_IN_MMC=y
-+ CONFIG_SYS_RELOC_GD_ENV_ADDR=y
-+ CONFIG_VERSION_VARIABLE=y
-+diff --git a/configs/socfpga_is1_defconfig b/configs/socfpga_is1_defconfig
-+index 38286f71f84..523b0f8e09a 100644
-+--- a/configs/socfpga_is1_defconfig
-++++ b/configs/socfpga_is1_defconfig
-+@@ -44,8 +44,7 @@ CONFIG_CMD_EXT4_WRITE=y
-+ CONFIG_MTDIDS_DEFAULT="nor0=ff705000.spi.0"
-+ CONFIG_MTDPARTS_DEFAULT="mtdparts=ff705000.spi.0:1m(u-boot),256k(env1),256k(env2),14848k(boot),16m(rootfs),-@1536k(UBI)"
-+ CONFIG_CMD_UBI=y
-+-# CONFIG_ISO_PARTITION is not set
-+-# CONFIG_EFI_PARTITION is not set
-++# CONFIG_SPL_EFI_PARTITION is not set
-+ CONFIG_ENV_IS_IN_SPI_FLASH=y
-+ CONFIG_SYS_RELOC_GD_ENV_ADDR=y
-+ CONFIG_USE_BOOTFILE=y
-+diff --git a/configs/socfpga_mcvevk_defconfig b/configs/socfpga_mcvevk_defconfig
-+index f61a63d835a..2e43ef68eba 100644
-+--- a/configs/socfpga_mcvevk_defconfig
-++++ b/configs/socfpga_mcvevk_defconfig
-+@@ -42,8 +42,7 @@ CONFIG_CMD_USB=y
-+ CONFIG_CMD_USB_MASS_STORAGE=y
-+ CONFIG_CMD_CACHE=y
-+ CONFIG_CMD_EXT4_WRITE=y
-+-# CONFIG_ISO_PARTITION is not set
-+-# CONFIG_EFI_PARTITION is not set
-++# CONFIG_SPL_EFI_PARTITION is not set
-+ CONFIG_ENV_OVERWRITE=y
-+ CONFIG_ENV_IS_IN_MMC=y
-+ CONFIG_SYS_RELOC_GD_ENV_ADDR=y
-+diff --git a/configs/socfpga_secu1_defconfig b/configs/socfpga_secu1_defconfig
-+index f7ae13c891b..e1338cddd0c 100644
-+--- a/configs/socfpga_secu1_defconfig
-++++ b/configs/socfpga_secu1_defconfig
-+@@ -63,8 +63,7 @@ CONFIG_MTDIDS_DEFAULT="nand0=denali-nand"
-+ CONFIG_MTDPARTS_DEFAULT="mtdparts=denali-nand:512k(nand.4spl),512k(nand.uboot),128k(nand.env1),128k(nand.env2),0x1000000(nand.rec),0x3ee40000(nand.ubi),0x80000@0x3ff80000(nand.bbt)"
-+ CONFIG_CMD_UBI=y
-+ # CONFIG_CMD_UBIFS is not set
-+-# CONFIG_ISO_PARTITION is not set
-+-# CONFIG_EFI_PARTITION is not set
-++# CONFIG_SPL_EFI_PARTITION is not set
-+ CONFIG_ENV_OVERWRITE=y
-+ CONFIG_ENV_IS_IN_NAND=y
-+ CONFIG_SYS_REDUNDAND_ENVIRONMENT=y
-+diff --git a/configs/socfpga_sockit_defconfig b/configs/socfpga_sockit_defconfig
-+index 96ce2485a02..66d29245c18 100644
-+--- a/configs/socfpga_sockit_defconfig
-++++ b/configs/socfpga_sockit_defconfig
-+@@ -44,8 +44,7 @@ CONFIG_CMD_EXT4_WRITE=y
-+ CONFIG_MTDIDS_DEFAULT="nor0=ff705000.spi.0"
-+ CONFIG_MTDPARTS_DEFAULT="mtdparts=ff705000.spi.0:1m(u-boot),256k(env1),256k(env2),14848k(boot),16m(rootfs),-@1536k(UBI)"
-+ CONFIG_CMD_UBI=y
-+-# CONFIG_ISO_PARTITION is not set
-+-# CONFIG_EFI_PARTITION is not set
-++# CONFIG_SPL_EFI_PARTITION is not set
-+ CONFIG_ENV_IS_IN_MMC=y
-+ CONFIG_SYS_RELOC_GD_ENV_ADDR=y
-+ CONFIG_VERSION_VARIABLE=y
-+diff --git a/configs/socfpga_socrates_defconfig b/configs/socfpga_socrates_defconfig
-+index d14dc86a742..73a11ef5019 100644
-+--- a/configs/socfpga_socrates_defconfig
-++++ b/configs/socfpga_socrates_defconfig
-+@@ -44,8 +44,7 @@ CONFIG_CMD_EXT4_WRITE=y
-+ CONFIG_MTDIDS_DEFAULT="nor0=ff705000.spi.0"
-+ CONFIG_MTDPARTS_DEFAULT="mtdparts=ff705000.spi.0:1m(u-boot),256k(env1),256k(env2),14848k(boot),16m(rootfs),-@1536k(UBI)"
-+ CONFIG_CMD_UBI=y
-+-# CONFIG_ISO_PARTITION is not set
-+-# CONFIG_EFI_PARTITION is not set
-++# CONFIG_SPL_EFI_PARTITION is not set
-+ CONFIG_ENV_IS_IN_MMC=y
-+ CONFIG_SYS_RELOC_GD_ENV_ADDR=y
-+ CONFIG_VERSION_VARIABLE=y
-+diff --git a/configs/socfpga_sr1500_defconfig b/configs/socfpga_sr1500_defconfig
-+index 820b935b70a..3a5d3478357 100644
-+--- a/configs/socfpga_sr1500_defconfig
-++++ b/configs/socfpga_sr1500_defconfig
-+@@ -51,8 +51,7 @@ CONFIG_CMD_EXT4_WRITE=y
-+ CONFIG_MTDIDS_DEFAULT="nor0=ff705000.spi.0"
-+ CONFIG_MTDPARTS_DEFAULT="mtdparts=ff705000.spi.0:1m(u-boot),256k(env1),256k(env2),14848k(boot),16m(rootfs),-@1536k(UBI)"
-+ CONFIG_CMD_UBI=y
-+-# CONFIG_ISO_PARTITION is not set
-+-# CONFIG_EFI_PARTITION is not set
-++# CONFIG_SPL_EFI_PARTITION is not set
-+ CONFIG_ENV_IS_IN_SPI_FLASH=y
-+ CONFIG_SYS_REDUNDAND_ENVIRONMENT=y
-+ CONFIG_SYS_RELOC_GD_ENV_ADDR=y
-+diff --git a/configs/socfpga_vining_fpga_defconfig b/configs/socfpga_vining_fpga_defconfig
-+index b4e303ed6dd..37f2b070c7f 100644
-+--- a/configs/socfpga_vining_fpga_defconfig
-++++ b/configs/socfpga_vining_fpga_defconfig
-+@@ -58,8 +58,7 @@ CONFIG_CMD_EXT4_WRITE=y
-+ CONFIG_MTDIDS_DEFAULT="nor0=ff705000.spi.0"
-+ CONFIG_MTDPARTS_DEFAULT="mtdparts=ff705000.spi.0:1m(u-boot),64k(env1),64k(env2),256k(softing1),256k(softing2),-(rcvrfs);"
-+ CONFIG_CMD_UBI=y
-+-# CONFIG_ISO_PARTITION is not set
-+-# CONFIG_EFI_PARTITION is not set
-++# CONFIG_SPL_EFI_PARTITION is not set
-+ CONFIG_ENV_IS_IN_SPI_FLASH=y
-+ CONFIG_SYS_REDUNDAND_ENVIRONMENT=y
-+ CONFIG_SYS_RELOC_GD_ENV_ADDR=y
-+-- 
-+2.51.0
-+
-diff --git a/recipes-bsp/u-boot/u-boot-bbb_2025.07.bb b/recipes-bsp/u-boot/u-boot-bbb_2025.07.bb
-new file mode 100644
-index 0000000..f886d05
---- /dev/null
-+++ b/recipes-bsp/u-boot/u-boot-bbb_2025.07.bb
-@@ -0,0 +1,27 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2022-2025
-+#
-+# Authors:
-+#  Jan Kiszka <jan.kiszka@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+#
-+
-+require u-boot-common-${PV}.inc
-+
-+SRC_URI += "file://no-grub-workaround.cfg"
-+
-+COMPATIBLE_MACHINE = "^(bbb)$"
-+
-+U_BOOT_CONFIG = "am335x_evm_defconfig"
-+U_BOOT_BIN = "all"
-+
-+do_prepare_build:append() {
-+    sed -ni '/### Disable grub workaround/q;p' ${S}/configs/${U_BOOT_CONFIG}
-+    cat ${WORKDIR}/no-grub-workaround.cfg >> ${S}/configs/${U_BOOT_CONFIG}
-+
-+    echo "MLO u-boot.img /usr/lib/u-boot/${MACHINE}" > \
-+        ${S}/debian/u-boot-${MACHINE}.install
-+}
-diff --git a/recipes-bsp/u-boot/u-boot-common-2025.07.inc b/recipes-bsp/u-boot/u-boot-common-2025.07.inc
-new file mode 100644
-index 0000000..bfd63bd
---- /dev/null
-+++ b/recipes-bsp/u-boot/u-boot-common-2025.07.inc
-@@ -0,0 +1,71 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2022-2025
-+#
-+# Authors:
-+#  Jan Kiszka <jan.kiszka@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+#
-+
-+inherit u-boot
-+
-+MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
-+
-+FILESPATH:append := ":${FILE_DIRNAME}/files"
-+
-+SRC_URI += " \
-+    https://git.u-boot-project.org/u-boot/u-boot/-/archive/v${PV}/u-boot-v${PV}.tar.bz2 \
-+    file://${PV}/0001-tools-Do-not-generate-logo-when-cross-building.patch \
-+    file://${PV}/0001-Kconfig-Convert-SYS_EARLY_PCI_INIT-to-Kconfig.patch \
-+    file://${PV}/0002-qemu_arm-Select-CONFIG_SYS_EARLY_PCI_INIT.patch \
-+    file://${PV}/0003-test-Fix-optee-unit-test.patch \
-+    file://${PV}/0001-arch-arm-mach-socfpga-Fix-non-Agilex-targets.patch \
-+    file://${PV}/0002-spl-mmc-Respect-sector-value-passed-to-mmc_load_imag.patch \
-+    file://${PV}/0003-spl-mmc-Account-for-SYS_MMCSD_RAW_MODE_U_BOOT_USE_PA.patch \
-+    file://${PV}/0004-arch-arm-mach-socfpga-Adjust-a-raw-sectors-for-MMC-l.patch \
-+    file://${PV}/0005-configs-socfpga-Fix-de0_nano_soc-boot.patch \
-+    file://${PV}/0006-configs-socfpga-Permit-EFI-booting.patch \
-+    file://rules.tmpl;subdir=debian"
-+SRC_URI[sha256sum] = "26815925b0c287086c77c5ef6e67f41ea598261353cc0c7d6ca136a212c8246d"
-+
-+SRC_URI:append:ftpm-stmm = " \
-+    file://ftpm-stmm.cfg"
-+
-+SRC_URI:append:secureboot = " \
-+    file://secure-boot.cfg"
-+
-+S = "${WORKDIR}/u-boot-v${PV}"
-+
-+DEBIAN_BUILD_DEPENDS += ", libssl-dev:native, libssl-dev:${DISTRO_ARCH}, \
-+    libgnutls28-dev:native, libgnutls28-dev:${DISTRO_ARCH}"
-+
-+U_BOOT_EXTRA_BUILDCMD ?= ""
-+
-+TEMPLATE_VARS += "U_BOOT_EXTRA_BUILDCMD"
-+
-+STATIC_KEYS_BUILD_DEPENDS = ", \
-+    openssl, efivar, secure-boot-secrets, python3-openssl:native"
-+STATIC_KEYS_BUILD_DEPENDS:append:buster   = ", pesign"
-+STATIC_KEYS_BUILD_DEPENDS:append:bullseye = ", pesign"
-+STATIC_KEYS_BUILD_DEPENDS:append:bookworm = ", pesign"
-+STATIC_KEYS_DEPENDS = " secure-boot-secrets"
-+
-+SECURE_BOOT_BUILD_DEPENDS = "${STATIC_KEYS_BUILD_DEPENDS}"
-+SECURE_BOOT_BUILD_DEPENDS:ftpm-stmm = ""
-+SECURE_BOOT_DEPENDS = "${STATIC_KEYS_DEPENDS}"
-+SECURE_BOOT_DEPENDS:ftpm-stmm = ""
-+
-+DEBIAN_BUILD_DEPENDS:append:secureboot = "${SECURE_BOOT_BUILD_DEPENDS}"
-+DEPENDS:append:secureboot = "${SECURE_BOOT_DEPENDS}"
-+
-+do_prepare_build:append:ftpm-stmm() {
-+    sed -ni '/### Enable OPTEE, fTPM and StMM/q;p' ${S}/configs/${U_BOOT_CONFIG}
-+    cat ${WORKDIR}/ftpm-stmm.cfg >> ${S}/configs/${U_BOOT_CONFIG}
-+}
-+
-+do_prepare_build:append:secureboot() {
-+    sed -ni '/### Secure boot config/q;p' ${S}/configs/${U_BOOT_CONFIG}
-+    cat ${WORKDIR}/secure-boot.cfg >> ${S}/configs/${U_BOOT_CONFIG}
-+}
-diff --git a/recipes-bsp/u-boot/u-boot-de0-nano-soc_2025.07.bb b/recipes-bsp/u-boot/u-boot-de0-nano-soc_2025.07.bb
-new file mode 100644
-index 0000000..b8cba97
---- /dev/null
-+++ b/recipes-bsp/u-boot/u-boot-de0-nano-soc_2025.07.bb
-@@ -0,0 +1,26 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2025
-+#
-+# Authors:
-+#  Jan Kiszka <jan.kiszka@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+#
-+
-+require u-boot-common-${PV}.inc
-+
-+COMPATIBLE_MACHINE = "^(de0-nano-soc)$"
-+
-+U_BOOT_CONFIG = "socfpga_de0_nano_soc_defconfig"
-+U_BOOT_BIN = "u-boot-with-spl.sfp"
-+
-+do_prepare_build:append() {
-+    sed -ni '/### DE0 Nano SoC extra config/q;p' ${S}/configs/${U_BOOT_CONFIG}
-+    cat <<EOF >> ${S}/configs/${U_BOOT_CONFIG}
-+### DE0 Nano SoC extra config
-+CONFIG_USE_BOOTCOMMAND=y
-+CONFIG_BOOTCOMMAND="bootefi bootmgr"
-+EOF
-+}
-diff --git a/recipes-bsp/u-boot/u-boot-qemu-arm64_2025.07.bb b/recipes-bsp/u-boot/u-boot-qemu-arm64_2025.07.bb
-new file mode 100644
-index 0000000..a3742ed
---- /dev/null
-+++ b/recipes-bsp/u-boot/u-boot-qemu-arm64_2025.07.bb
-@@ -0,0 +1,17 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2022-2025
-+#
-+# Authors:
-+#  Jan Kiszka <jan.kiszka@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+#
-+
-+require u-boot-common-${PV}.inc
-+require u-boot-qemu-common.inc
-+
-+COMPATIBLE_MACHINE = "^(qemu-arm64)$"
-+
-+U_BOOT_CONFIG = "qemu_arm64_defconfig"
-diff --git a/recipes-bsp/u-boot/u-boot-qemu-arm_2025.07.bb b/recipes-bsp/u-boot/u-boot-qemu-arm_2025.07.bb
-new file mode 100644
-index 0000000..11f32dc
---- /dev/null
-+++ b/recipes-bsp/u-boot/u-boot-qemu-arm_2025.07.bb
-@@ -0,0 +1,17 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2022-2025
-+#
-+# Authors:
-+#  Jan Kiszka <jan.kiszka@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+#
-+
-+require u-boot-common-${PV}.inc
-+require u-boot-qemu-common.inc
-+
-+COMPATIBLE_MACHINE = "^(qemu-arm)$"
-+
-+U_BOOT_CONFIG = "qemu_arm_defconfig"
-diff --git a/recipes-bsp/u-boot/u-boot-qemu-riscv64_2025.07.bb b/recipes-bsp/u-boot/u-boot-qemu-riscv64_2025.07.bb
-new file mode 100644
-index 0000000..ac0a28f
---- /dev/null
-+++ b/recipes-bsp/u-boot/u-boot-qemu-riscv64_2025.07.bb
-@@ -0,0 +1,20 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2022-2025
-+#
-+# Authors:
-+#  Jan Kiszka <jan.kiszka@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+#
-+
-+require u-boot-common-${PV}.inc
-+require u-boot-qemu-common.inc
-+
-+COMPATIBLE_MACHINE = "^(qemu-riscv64)$"
-+
-+# we run as OpenSBI payload, hence use smode
-+U_BOOT_CONFIG = "${MACHINE}_smode_defconfig"
-+
-+U_BOOT_BIN = "u-boot.bin"
-diff --git a/recipes-bsp/u-boot/u-boot-ti-am62px-sk_2025.07.bb b/recipes-bsp/u-boot/u-boot-ti-am62px-sk_2025.07.bb
-new file mode 100644
-index 0000000..622f429
---- /dev/null
-+++ b/recipes-bsp/u-boot/u-boot-ti-am62px-sk_2025.07.bb
-@@ -0,0 +1,64 @@
-+#
-+# Copyright (c) Texas Instruments Incorporated, 2025
-+#
-+# Authors:
-+#  Sai Sree Kartheek Adivi <s-adivi@ti.com>
-+#
-+# SPDX-License-Identifier: MIT
-+#
-+
-+require u-boot-common-${PV}.inc
-+
-+TI_FIRMWARE_PV = "11.01.16"
-+
-+SRC_URI += " \
-+	https://github.com/TexasInstruments/ti-linux-firmware/raw/refs/tags/${TI_FIRMWARE_PV}/ti-sysfw/ti-fs-firmware-am62px-hs-fs-cert.bin;downloadfilename=ti-fs-firmware-am62px-hs-fs-cert.bin;name=am62p-sysfw-cert-hs-fs \
-+	https://github.com/TexasInstruments/ti-linux-firmware/raw/refs/tags/${TI_FIRMWARE_PV}/ti-sysfw/ti-fs-firmware-am62px-hs-fs-enc.bin;downloadfilename=ti-fs-firmware-am62px-hs-fs-enc.bin;name=am62p-sysfw-enc-hs-fs \
-+	https://github.com/TexasInstruments/ti-linux-firmware/raw/refs/tags/${TI_FIRMWARE_PV}/ti-sysfw/ti-fs-stub-firmware-am62px-hs-cert.bin;downloadfilename=ti-fs-stub-firmware-am62px-hs-cert.bin;name=am62p-sysfw-stub-cert \
-+	https://github.com/TexasInstruments/ti-linux-firmware/raw/refs/tags/${TI_FIRMWARE_PV}/ti-sysfw/ti-fs-stub-firmware-am62px-hs-enc.bin;downloadfilename=ti-fs-stub-firmware-am62px-hs-enc.bin;name=am62p-sysfw-stub-enc \
-+	https://github.com/TexasInstruments/ti-linux-firmware/raw/refs/tags/${TI_FIRMWARE_PV}/ti-sysfw/ti-fs-firmware-am62px-hs-cert.bin;downloadfilename=ti-fs-firmware-am62px-hs-cert.bin;name=am62p-sysfw-cert-hs \
-+	https://github.com/TexasInstruments/ti-linux-firmware/raw/refs/tags/${TI_FIRMWARE_PV}/ti-sysfw/ti-fs-firmware-am62px-hs-enc.bin;downloadfilename=ti-fs-firmware-am62px-hs-enc.bin;name=am62p-sysfw-enc-hs \
-+	https://github.com/TexasInstruments/ti-linux-firmware/raw/refs/tags/${TI_FIRMWARE_PV}/ti-dm/am62pxx/ipc_echo_testb_mcu1_0_release_strip.xer5f;downloadfilename=ipc_echo_testb_mcu1_0_release_strip.xer5f;name=am62p-dm \
-+	file://rules-${MACHINE} \
-+	file://ti-extra.cfg \
-+	file://0001-configs-KASLR-OPTEE-RNG-support-for-K3-devic.patch \
-+	"
-+
-+SRC_URI[am62p-dm.sha256sum] = "85ba372a3c9cd0d09c84f9bbe46a72c7e4d6fdaff67df3ee7fbec3996965f044"
-+SRC_URI[am62p-sysfw-cert-hs-fs.sha256sum] = "7781f2e7cc6741077f502692a93f435e7aa185de14d6aa8bb33d4f32f998f47a"
-+SRC_URI[am62p-sysfw-enc-hs-fs.sha256sum] = "4563a2b22568581e04eeacc468feef5e204020c0d09a53351fd62d109e72b88f"
-+SRC_URI[am62p-sysfw-stub-cert.sha256sum] = "dc45dcbc3dec319a9f3400a7051b692fe3c5e2369b33a46e8ef8c81419557eaa"
-+SRC_URI[am62p-sysfw-stub-enc.sha256sum] = "9d6537148e7071f7ffbe33231c2e8ba1f17db398dff96c0a423baa8afd9e0bc8"
-+SRC_URI[am62p-sysfw-cert-hs.sha256sum] = "ec3a7783d7dc6aab1085dfd131cbd08ad5f895b7f22530c90a93333c4cd22603"
-+SRC_URI[am62p-sysfw-enc-hs.sha256sum] = "4d0ed21a36dd57ada78307506403204e179d81dd1f05b3db384d4b24e17c5b9d"
-+
-+S = "${WORKDIR}/u-boot-${PV}"
-+TI_LINUX_FIRMWARE = "${S}/ti-linux-firmware"
-+
-+COMPATIBLE_MACHINE = "^(ti-am62px-sk)$"
-+
-+U_BOOT_R5_CONFIG = "am62px_evm_r5_defconfig"
-+U_BOOT_A53_CONFIG = "am62px_evm_a53_defconfig"
-+U_BOOT_CONFIG = "${U_BOOT_A53_CONFIG}"
-+
-+U_BOOT_BIN_INSTALL = "tiboot3-am62px-hs-fs-evm.bin tispl.bin u-boot.img"
-+
-+OVERRIDES .= ":ftpm-stmm"
-+
-+DEPENDS += "trusted-firmware-a-ti-k3 optee-os-ti-k3"
-+DEBIAN_BUILD_DEPENDS =. "gcc-arm-linux-gnueabihf, \
-+    swig, python3-dev:native, python3-setuptools, python3-pyelftools, \
-+    python3-jsonschema:native, yamllint:native, \
-+    trusted-firmware-a-ti-k3, optee-os-ti-k3,"
-+
-+do_prepare_build:append() {
-+    mkdir -p ${TI_LINUX_FIRMWARE}/ti-sysfw
-+    cp ${WORKDIR}/ti-fs-*firmware-am62px-hs*.bin ${TI_LINUX_FIRMWARE}/ti-sysfw
-+    mkdir -p ${TI_LINUX_FIRMWARE}/ti-dm/am62pxx
-+    cp ${WORKDIR}/ipc_echo_testb_mcu1_0_release_strip.xer5f ${TI_LINUX_FIRMWARE}/ti-dm/am62pxx
-+
-+    cp ${WORKDIR}/rules-${MACHINE} ${S}/debian/rules
-+
-+    sed -ni '/### TI extra config/q;p' ${S}/configs/${U_BOOT_CONFIG}
-+    cat ${WORKDIR}/ti-extra.cfg >> ${S}/configs/${U_BOOT_CONFIG}
-+}
--- 
-2.55.0
-
+SGkgSmFuLA0KDQo+ID4gQlRXIGRlMCdzIHUtYm9vdCBidWlsZCBmYWlscyBpbiB0aGUgRGViaWFu
+IDEwIChidXN0ZXIpIGVudmlyb25tZW50Lg0KPiANCj4gUHJvYmFibHkgdGhlIHNhbWUgaXNzdWUg
+d2l0aCBiYmIgYXMgd2VsbC4NCj4gDQo+ID4gVGhpcyBpcyBiZWNhdXNlIFUtQm9vdCBkb2Vzbid0
+IHN1cHBvcnQgb2xkZXIgR0NDIHZlcnNpb25zLiBJIHRoaW5rDQo+ID4gaXQncyBuZWNlc3Nhcnkg
+dG8gaGF2ZSBydWxlcyBsaWtlIG5vdCB1cGdyYWRpbmcgdGhlIG92ZXJhbGwgVS1Cb290DQo+ID4g
+dmVyc2lvbiBhbmQgZml4aW5nIGl0IGZvciBlYWNoIE9TIHZlcnNpb24uDQo+ID4NCj4gPiBEbyB5
+b3UgaGF2ZSBhbnkgdGhvdWdodHMgb24gdGhpcz8NCj4gDQo+IEhtbS4gTm9uZSBvZiB0aGVzZSBi
+b2FyZHMgYXJlIHByZXBhcmVkIHRvIHRlc3QgZnVsbCBpbWFnZXMgaW4gb3VyIGxhYnMuDQo+IFdl
+IGNvdWxkIGZpeCB0aGVpciBib290IGJ5IHByb3ZpZGluZyBsZXNzIG9yIHVucGF0Y2hlZCBvbGRl
+ciB1LWJvb3QgdmVyc2lvbnMuDQo+IEhvd2V2ZXIsIHRoYXQgd291bGQgbWVhbiBtYW51YWwgdGVz
+dGluZy4gSSdtIGFsbW9zdCBpbmNsaW5lZCB0byBkcm9wIHRoZW0NCj4gZnJvbSBidXN0ZXIgYnVp
+bGRzLg0KDQpJdCdzIGVhc3kgdG8gcmVtb3ZlIGl0IGZyb20gdGhlIGJ1aWxkIHRhcmdldCwgYnV0
+IHdoYXQgYWJvdXQgbG9uZy10ZXJtIG1haW50ZW5hbmNlDQpmb3IgcmVmZXJlbmNlIEhXPw0KDQpJ
+IGNyZWF0ZWQgcGF0Y2hlcyB0byBzb2x2ZSB0aGUgcHJvYmxlbS4gQ291bGQgeW91IHJldmlldyBp
+dD8NCg0KQmVzdCByZWdhcmRzLA0KICBOb2J1aGlybw0K
 
