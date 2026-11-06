@@ -1,140 +1,129 @@
-Received: from mail-ej2-f3.google.com (mail-ej2-f3.google.com [74.125.228.131])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.12612.1794488353328205070
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.4972.1793968689582076762
  for <cip-dev@lists.cip-project.org>;
- Thu, 12 Nov 2026 04:59:13 -0800
+ Fri, 06 Nov 2026 04:38:09 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@fairphone.com header.s=fair header.b=5pkD0xe1;
- spf=pass (domain: fairphone.com, ip: 74.125.228.131, mailfrom: luca.weiss@fairphone.com)
-Received: by mail-ej2-f3.google.com with SMTP id a640c23a62f3a-c50485c0cb8so170167466b.0
-        for <cip-dev@lists.cip-project.org>; Thu, 12 Nov 2026 04:59:13 -0800 (PST)
+ dkim=pass header.i=@intwineconnect.com header.s=google header.b=ayT2tzCz;
+ spf=pass (domain: intwineconnect.com, ip: 209.85.208.41, mailfrom: lnasby@intwineconnect.com)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6b579003f29so848303a12.0
+        for <cip-dev@lists.cip-project.org>; Fri, 06 Nov 2026 04:38:09 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1793968688; cv=none;
+        d=google.com; s=arc-20260327;
+        b=X1IoZmPaNtbz9MtgQgIweu3YxTIFJMR7WzuI/rkFlOlOJHZMX/qvAy0xFTppcnpU+8
+         OTrRJF0sv3ozf8vG+hukkKhjla3y2A35qTfccOfQxcLKlGUBu+KsVuXHYN+qA/g19CvK
+         sqgOr09iaj10USFHNTWlf62YxV9rn85D46I4CO0c97r5B3JnQpsq1KAJy+hADNCnulCw
+         1PKbg8I1/sC9qiI3KbDG/D4xY6LuEloQaR6ao1KasoqUizjEvYPm9349bNg+bUHR54I6
+         XaWYh3GxxCkgUWvXVt8JE17iw6DBdiPnmTLfNxR+BhWKwjAmwwNlaCUV4deWxlWX7NOX
+         g4QA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=to:subject:message-id:date:from:mime-version:dkim-signature;
+        bh=E5cRSh8WPMIsb5WjFEbxl2LuLdSyf8980GXS4EHJRWM=;
+        fh=RaKH4vXZgYv/1PYcQkfLRK5D2CnBMLe+KcXQA6BQxAs=;
+        b=Gy7hDGyqOoMK12yneMaBih2EQqk/1tsDz9RX5aWob99VvgbQFyF5gmocRp34GCUDKj
+         ngAhpx8s3gnia1A5/Cyr9pDaDBhruXiZQPsn41AXz8SMpZ9SaJrB1AN0SQ07tdaynDVQ
+         qwc8qT8biLMbawhjNXhe3XuQb15cBeYte/nUO/V3lx+fwbnrsM/Td2rGAM+tAxpF1pHG
+         TttTsfpFN3q4kWjCYoCoFcDsL3GFm+fzx6W3Gl43NeWeZm4wL44wjSFn+xRkLpBBMW4a
+         JVEhf7rZSHOI72yqSxQixT5KKtW+Twx43WBHlbH/eZpQeKuSrtNL7OLK3MIiW9jvDzbg
+         CTDQ==;
+        darn=lists.cip-project.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1794488351; x=1795093151; darn=lists.cip-project.org;
-        h=to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=Gt3zlIOqmzGm5Db219SO3epyXaLzlbmsmJHfpNTAouc=;
-        b=5pkD0xe1v/HuOmeqttQ7OySDt/hev6etvwZcNBPwDOJXjy30qWLFiQIOFYj8tuO2e1
-         fyLph9von635+Gf8g0kQuMQR1A4EnOaKz336Cg+kNn1hAzYw2hvmYnH+dG48MIgllt4o
-         C9WGVUogrOn+A5H2CsgZEh0YS8FsCPcAIukZnsGKxk71+0Erv4+aa2oLRgExD5LuHpPK
-         5Raf5UV1Hpq0geMnLhy3uEbBiEyW99RlvxXI46wo8KHRrfzG0xmwKTYo0O/Ry3cpZnem
-         Ol37SrnAvMziHU8i4Quw5RdCX1kFrsF4wz0JjzvtWhqWggE0nS0b727j7Q6cdts2gVoU
-         ne7g==
+        d=intwineconnect.com; s=google; t=1793968688; x=1794573488; darn=lists.cip-project.org;
+        h=content-type:to:subject:message-id:date:from:mime-version:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=E5cRSh8WPMIsb5WjFEbxl2LuLdSyf8980GXS4EHJRWM=;
+        b=ayT2tzCzIQrq7aAMbMOZucz7aX0zykDdMhTJs6EsvSTqgBQrGTSE9rK1uAPg79ZGmp
+         OhEqBkp2PqulIFmKtZW1yiVGVu8Awf6C3uugc1TGPYuhkRNm/RDEjp/NXwle6BKyz2YH
+         lamfm00LeBc0IRgQDrKfPk5W8wmqAuD0tOFjYa8282YpSN9Im3ZqyEnlcZvY7VCo4AZK
+         TdM61vBrUZhoLVEy3mKXOPvNp1e0BfMFr+RyMUlPxHn9dY+unH+ze25nVMmuN4rvit1y
+         dwVPUwNCTPg0uIueohyIXZKGWYIHRlO17L0CGMAvxJjFhNyQSmmymiVK+znUzvkMoZEj
+         M08w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794488351; x=1795093151;
-        h=to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
+        d=1e100.net; s=20260707; t=1793968688; x=1794573488;
+        h=content-type:to:subject:message-id:date:from:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=Gt3zlIOqmzGm5Db219SO3epyXaLzlbmsmJHfpNTAouc=;
-        b=Ad2L4CpB/Wq6xouzz4V/4ZL9McBiISZx6czf0m0AGTMLSjVyW/7/FuWVwx9Ay4icRk
-         0j4Bk0RzbimXCM+xCbMUUyvJw86tBMDqyMrmatAbofGlLnALnxsRTwCcDJyXVXDtBTgK
-         NXvURqGeTW0SBAq5vdN3tvmJU6S46sTqe/NS75ZYYMSiL/AjiUPX60jGPy8LWQAkPpYS
-         vD4FizyPl4por9FQYt+uxzi+2i8PoYCTQAs0/zyKgSBAkQyA2jLSEHuAYy4f67wy0yYk
-         tkkSAHUnOXV4Tjqz/x2n/88IGwfivMeMApphs6sEx2MM54K40U7vSPugZtNiuwKn8Qg9
-         QTxg==
-X-Gm-Message-State: APuU4Z86sK8IRdxHRvNfjUPyK1KT8qloKBh4rIVdwKOcj3jm0wo3EIol
-	0DbkT7ory24mp5DR0eXNKarTO6FUFRLQq0OlDk0IHYlYWk8G1k+hYWsV+0/JywyQ+1VRKp9whVF
-	rzqtM99Kl2A==
-X-Gm-Gg: AYBFou0u9XlskHTdm2TzmfCqxYXvicCF+ezWd0rIx3BKyM9hx+/etNCO7K8gQeFAbzG
-	Ietomn9FtK0A5TWk1wpqRP9Xe7dZKhw1szn60gqaNOR02M5wosakrgO2zWjfVBlFb72hUDw9Hq/
-	tb6dLJm5TMJSeHAD2E9VoLdWXjh9K3kkgrOAyVXFOmIIYm2n+5ce/tOsWSxWPJzRzufVRZqQjnr
-	snARCTdXj2Z7GQQoRLejW5a3ITjHW0rAArjfRELFeCrlfJwiBs6B+BOUkQG2zY//4lSzXd2tFwp
-	sdCJYaG/kRQ1IfwjJmcqB6jGrm9gmKbefR+AA9gG7O+wZSCxewLl7YucIyPePfKcb0Y3FzyQo8K
-	FwzK6s+SFGya+SE+rP1zpC1f8odXDeNhNPs3a3Q/loAxMu/2rTA0bAt46hGo2GrrH46Rg1TlluQ
-	tv4ZbWRnGF741/WPgkRLgFEajOHf9tyDKgnp9qBu1HkqoYjLCXkq8LRRr9bM6Zd1wgEZX1wxqtX
-	Y5Cf3J5IIfAzSxH8LCMjN91SITFzuySLpZnVa3lG+OUWoKmC+cHJMTO2uuobFV4CF+X808NWoCa
-	VSeVINkW1u/P5i71P/24093w2Mak8hio/7zT4+OU/HmAJZr/+YzoBvBpls1QcJR688HFIq4lG0r
-	lVudA4Zc=
-X-Received: by 2002:a17:907:968e:b0:c37:8c7c:a840 with SMTP id a640c23a62f3a-c5066ad0a38mr458781766b.18.1794487854267;
-        Thu, 12 Nov 2026 04:50:54 -0800 (PST)
-Return-Path: <luca.weiss@fairphone.com>
-Received: from [172.16.220.101] (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c504a63f8bbsm336768666b.60.2026.11.12.04.50.53
-        for <cip-dev@lists.cip-project.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Nov 2026 04:50:54 -0800 (PST)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Thu, 12 Nov 2026 13:50:45 +0100
-Subject: [PATCH 4.19.y-cip 4/4] extract-cert: Wrap key_pass with '#ifdef USE_PKCS11_ENGINE'
+        bh=E5cRSh8WPMIsb5WjFEbxl2LuLdSyf8980GXS4EHJRWM=;
+        b=hvOQ3EpWd460yqah86aO0CNhW+FKdKpjC8vOpK7cF7XccBRjBJ10N7+OasKylPbKvu
+         FqfgRvy5X0vC+nITp1oqgCTXa7laVnPycaY4+bsfACa3YzHpOfmmTGAopH0q1vpiz6Ut
+         PIXrVvq6YwayjUy5wxBoL1ZEPnHWb2N9/aeCK+uz+Whuwld3sqz3wDw4NT6rUf4Pq5pa
+         uZQ1V8+pVNvxIwrulyb9AtC+M99YFKi53PgUhq5TQVAhz/tgd0v5/9ixIgFRaiiemSV1
+         eyJfO9DImgJDsx8wV/IdybnIUGRjjLPRPr4+SIt6pyVGzFK0VrneMa/MmXAddngZGdVv
+         mdlg==
+X-Gm-Message-State: APuU4Z+BViAJPMcrPWAzX1NvsZQswQSpcEYscoxoFKTRbt9hzixiqPQd
+	Gi1Ry2RtifF4dZ7dh/kG5lqoPrCMDtNFWl5oUBvUCdgnhDOJiqPVgkb3GWE6u0JmajF943vT6OI
+	cCtJapX5rxJPvvLSwIowQ501DTK9DtWUUM4s5C87zqel/o4bEv1GERrs=
+X-Gm-Gg: AYBFou3AAxxHaTSneZzCPAHcyl7DcrsHQjDqplUVjq64HgB0yYNOkyOBzXMIIk17Gme
+	V0XALZA2t4t4wSFSL2HS1OmYmvq1GJAr+hHY0hFxNjVUu82dHgSoV8IptBGC1AVw9OLgmw2pfjk
+	EpqH/7AJ29BQBKDXFjTmoGzhgtjEcy4lY+K4t0u4DUjo8NVr6At8z+HUErahZNHsD/lId2J0uxV
+	ovr1WU87maSh9uzGn1hAwjEsZgJuzijan8ZUWLAm3opdqqrlXrTZKK5Mz5nlu4BXll7AzPISdG4
+	BWM6qVR5wU90hAhkiSypE5+WQNABgoLTdS2ZbjWIy14s5iDIyy1jT8oZREua2s+zJKiA7xgra/w
+	wkCnEC71Q0lEXvAZKTMuNGVMDddQTC/Dk/U8oN+numnY+2F6CfIdj98Pk3IttBtQTmSAZEDNaFT
+	uESEtNb5YUZmBntXtzJ+Z6pg==
+X-Received: by 2002:a05:6000:4685:b0:48e:3d2:44b1 with SMTP id
+ ffacd0b85a97d-492775f0487mr3306155f8f.52.1793968218374; Fri, 06 Nov 2026
+ 04:30:18 -0800 (PST)
 MIME-Version: 1.0
-Message-Id: <20261112-openssl4-419cip-v1-4-2f56859669bb@fairphone.com>
-References: <20261112-openssl4-419cip-v1-0-2f56859669bb@fairphone.com>
-In-Reply-To: <20261112-openssl4-419cip-v1-0-2f56859669bb@fairphone.com>
+From: Luke Nasby <lnasby@intwineconnect.com>
+Date: Fri, 6 Nov 2026 13:30:07 +0100
+X-Gm-Features: AclHuK_qjpw9fWA5pH0jgRoW-gMz2vOuVyp9LwQ7h5PwAtdkinvpcfnscKwVSaM
+Message-ID: <CAJ6VbXKXLDH1cQ2C7kFOrOmH1Jtdq6DYYK1L2YYaHE=_WqynMQ@mail.gmail.com>
+Subject: Question about the 4.19.325-cip137 release
 To: cip-dev@lists.cip-project.org
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1794487852; l=2338;
- i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
- bh=rLYFj+u00+QOm3MPdK+q7SUXUpD8KFg+HpJ2SH0G3RI=;
- b=gm64jlNT09w3Ieln9V9vxiGL6zBU6bAodjDYomCPj+BuVawk19ZmtrI3K/3CF+KrCujXvG2eV
- NXfjaejayfTBYz1SfS9u5n7U4YQyZjuyeG9NiG1j+o8rjNmD+52XtKt
-X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
- pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/alternative; boundary="0000000000006517d6065f9ac6da"
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 17 Nov 2026 07:57:30 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24818
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 17 Nov 2026 07:59:40 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24819
 
-From: Nathan Chancellor <nathan@kernel.org>
+--0000000000006517d6065f9ac6da
+Content-Type: text/plain; charset="UTF-8"
 
-commit 4f96b7c68a9904e01049ef610d701b382dca9574 upstream.
+Hello,
 
-A recent strengthening of -Wunused-but-set-variable (enabled with -Wall)
-in clang under a new subwarning, -Wunused-but-set-global, points out an
-unused static global variable in certs/extract-cert.c:
+Do you have a general timeline on when cip137 will be released? There is no
+rush, mostly just curious based on the normal rate of cip releases.
 
-  certs/extract-cert.c:46:20: error: variable 'key_pass' set but not used [-Werror,-Wunused-but-set-global]
-     46 | static const char *key_pass;
-        |                    ^
+As an unrelated question: are modules like CONFIG_WIREGUARD or similar
+things expected to work on this kernel? When we try it on our
+installations, we get issues like:
+'
+arm64/crypto/sha1-ce-glue.c: In function 'sha1_ce_update':
+arch/arm64/crypto/sha1-ce-glue.c:41:2: error: implicit declaration of
+function 'kernel_neon_begin_partial' [-Werror=implicit-function-declaration]
+  kernel_neon_begin_partial(16);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~
+cc1: some warnings being treated as errors
+scripts/Makefile.build:333: recipe for target
+'arch/arm64/crypto/sha1-ce-glue.o' failed
+make[1]: *** [arch/arm64/crypto/sha1-ce-glue.o] Error 1
+make[1]: *** Waiting for unfinished jobs....
+'
+Due to seemingly out of date crypto functions required for those to run. Is
+this a known issue? Or something that is only a problem on our end?
 
-After commit 558bdc45dfb2 ("sign-file,extract-cert: use pkcs11 provider
-for OPENSSL MAJOR >= 3"), key_pass is only used with the OpenSSL engine
-API, not the new provider API. Wrap key_pass's declaration and
-assignment with '#ifdef USE_PKCS11_ENGINE' so that it is only included
-with its use to clear up the warning. While this is a little uglier than
-just marking key_pass with the unused attribute, this will make it
-easier to clean up all code associated with the use of the engine API if
-it were ever removed in the future. While in the area, use a tab for
-the key_pass assignment line to match the rest of the file.
+Thanks for your time,
+- Luke Nasby
 
-Cc: stable@vger.kernel.org
-Fixes: 558bdc45dfb2 ("sign-file,extract-cert: use pkcs11 provider for OPENSSL MAJOR >= 3")
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Tested-by: Nick Desaulniers <ndesaulniers@google.com>
-Link: https://patch.msgid.link/20260325-certs-extract-cert-key_pass-unused-but-set-global-v1-1-ecf94326d532@kernel.org
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
- scripts/extract-cert.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+--0000000000006517d6065f9ac6da
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/scripts/extract-cert.c b/scripts/extract-cert.c
-index 73364ed31fd2..21d5013a367b 100644
---- a/scripts/extract-cert.c
-+++ b/scripts/extract-cert.c
-@@ -43,7 +43,9 @@ void format(void)
- 	exit(2);
- }
- 
-+#ifdef USE_PKCS11_ENGINE
- static const char *key_pass;
-+#endif
- static BIO *wb;
- static char *cert_dst;
- int kbuild_verbose;
-@@ -132,7 +134,9 @@ int main(int argc, char **argv)
- 
- 	kbuild_verbose = atoi(getenv("KBUILD_VERBOSE")?:"0");
- 
--        key_pass = getenv("KBUILD_SIGN_PIN");
-+#ifdef USE_PKCS11_ENGINE
-+	key_pass = getenv("KBUILD_SIGN_PIN");
-+#endif
- 
- 	if (argc != 3)
- 		format();
+<div dir=3D"ltr"><div>Hello,</div><div><br></div><div>Do you have a general=
+ timeline on when cip137 will be released? There is no rush, mostly just cu=
+rious based on the normal rate of cip releases.</div><div><br></div><div>As=
+ an unrelated question: are modules like CONFIG_WIREGUARD or similar things=
+ expected to work on this kernel? When we try it on our installations, we g=
+et issues like:<br>&#39;</div><div>arm64/crypto/sha1-ce-glue.c: In function=
+ &#39;sha1_ce_update&#39;:<br>arch/arm64/crypto/sha1-ce-glue.c:41:2: error:=
+ implicit declaration of function &#39;kernel_neon_begin_partial&#39; [-Wer=
+ror=3Dimplicit-function-declaration]<br>=C2=A0 kernel_neon_begin_partial(16=
+);<br>=C2=A0 ^~~~~~~~~~~~~~~~~~~~~~~~~<br>cc1: some warnings being treated =
+as errors<br>scripts/Makefile.build:333: recipe for target &#39;arch/arm64/=
+crypto/sha1-ce-glue.o&#39; failed<br>make[1]: *** [arch/arm64/crypto/sha1-c=
+e-glue.o] Error 1<br>make[1]: *** Waiting for unfinished jobs....<br>&#39;<=
+/div><div>Due to seemingly out of date crypto functions required for those =
+to run. Is this a known issue? Or something that is only a problem on our e=
+nd?</div><div><br></div><div>Thanks for your time,</div><div>- Luke Nasby</=
+div></div>
 
--- 
-2.56.1
-
+--0000000000006517d6065f9ac6da--
