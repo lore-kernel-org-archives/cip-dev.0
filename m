@@ -1,403 +1,350 @@
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (DB3PR0202CU003.outbound.protection.outlook.com [52.101.84.9])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.2834.1794217160199813170
+Received: from AM0PR83CU005.outbound.protection.outlook.com (AM0PR83CU005.outbound.protection.outlook.com [52.101.69.27])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.2867.1794217801115826254
  for <cip-dev@lists.cip-project.org>;
- Mon, 09 Nov 2026 01:39:20 -0800
+ Mon, 09 Nov 2026 01:50:01 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=HmGzqv+H;
- spf=pass (domain: siemens.com, ip: 52.101.84.9, mailfrom: quirin.gylstorff@siemens.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=lEX+p1N1;
+ spf=pass (domain: siemens.com, ip: 52.101.69.27, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EccCK7ivf/42iyPzFxX5S9d6006gTsXFvzUmpWU93u42fY+nogoT8XAENYErISOVh8jxS1NSWwuhx+k8364+nmS/D+asuQBira10QCQUrREugZDRu/5tyGGb5jAv70cxJWmoVLF2DosHKoxnLw+Av5oVad6+ioWWM3vidkPQWfO5A3DSMfdzjM/pscFEELfKTwgD0AsTmfNpIwP6uA9K/40FX+ccRGljvkPJ6GresiK29oYy0LFKLYcfIq7O3f4UY4ajkQuIOjuzmAFsNezGpk3AKu0ulTQWYqbLgo2NlqnY6S+AZdhhNwW+moTHwSEjd3QMWWBDwOBspqbzmxd4Uw==
+ b=fiYmubB4QW+e7OkUG52IuomPWVuS72G5/d9+PJpoB63tGrGGbYbPQerNDKtpjYl1fbzSJNyX/iDYMUXIQP1AurmxdHo4L/SxSaZbn8JmlVBMXBO+onaW6FQ0YdeVnHNkypCzWYwyCai09YF1yNU+RrVySDhpFDTeMOAFTf6QTJr37pCaW6cVM4pu7C/PkRaOC1nswZAAPs+NYPHQF7PZqK++9om0/O9+yXC5d/aGB4bC8X5BJhAtxGoOuwlF4QxxwV6Pi7QPBgC4Om4Ado7wOpjXBRALpUWy9S+THaiDR8SpuKLvbPkxAHmIgIbF2j3k5HbYU0YykTo/iJzPlvfzFg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YUZnUeA0XP+mdsylMQiKTO1lVcyKZFotZCWx4tOtkP8=;
- b=OKUkXEKPBkB7/9r185QOeajliSt6SLw1rXnJgt622LZ7CzVqGvgf+uhkxKUEOnYreHEdhb/M8ia9TtaKGzevnSV5sN18NL3ehzn5VczXKkon+OtA1/tKgkxEHJxsDCu9D9xX9OSHEKAg0iEaxz37NJZ5qRQnWGIOAKcnBSTBOeSQc49gNf7cBrePSYaQv/xvRbZXvd3sG6xFXYGHdQW6rEebMp8ZV9UxfRjw0GCHiPgijpH0cSxCL+f9tQbb61M6y2N0VXBxBaPWe7Fdl+P+AgSEQY1Ql/tZ42u3YYHQaw/3jbHPjKMwVbkaXWCy2Z6VICq+JdMuZH7rjaB1PNZgsg==
+ bh=emjfCB3SBNQ8HMO98y+QZaHlKuNlhmXZYidBYpEYf+0=;
+ b=cz91NIE97HCJh1DohWJPFOP5ng+7VoSnorW5A2ga0GxkIdar8d/yS6haJns/Kc+UCMsFpVzGaWWMUuKUA2vQ88RXAENDbvTXUqTdltHRM3rTJMkaLUyfBayWFZqKLhIIxknMQRQF/skV9bz8/tKUf/7FJxFnk0HYbtbFe4a4q6LjuoBq2ycjaWI0Nol+4J+8l+kUfJKZ81BaHAEIZAMXHFETojH+diuVta5XVZfhzmC3w9uojKChC59Nx+dDeeiIaQQdkwZqpPRb7xnSBfLmuS9diHUx83gCWHqknQaPgeknnYwGv6wLiMF8Bb7uG/3eb+VszAb5rprVur7nr8GQXA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YUZnUeA0XP+mdsylMQiKTO1lVcyKZFotZCWx4tOtkP8=;
- b=HmGzqv+Hq1p46basL9Aqs90+LoAYFK9QuX4ky0+LAWf2Ru5bNGoVJ/4bAmvZnDkJhMgUju4AfT4LqthvSONxye1ncG3rjif/JSujjlxC5ahNKZzpf1/wsZfXpWJGkIZPRzxXQE3gFbVHZJAN2YiYbnMWcGo3VFCg4etXlBMHzK15tlgmCC/EQYgVxEnwbU6yK/2iejlwbCsQbBkuOFPng/JbEsJTmoSR7xNAl/oJrsbixi88/5IdmBkoFwfUxRQ6ZKM0LnNAkEPHrx9N9wMQPhL89+rAJBbrld1zzGrL/K5RS4CHqT15INnSfXKhD+UBvqN0Vvq4jA9aUrSEVDiBrQ==
+ bh=emjfCB3SBNQ8HMO98y+QZaHlKuNlhmXZYidBYpEYf+0=;
+ b=lEX+p1N1zvlZPhGHk2wnixI7p7MxCJBGbxu2otbgAovBzVOJ3hIHEq4hcfYfGT/zOeFY70kZrMoqwBYNrHd22wDb0IvTC82vKnlbgPMqmR9BWdSdnMUzwv1+z91vYVYx+xQ1B1HPqE+nQs8WsN37L3mILg+3Ma9XrZdTZ19mf/o5dSCKJxiIkvAU9zlyHrVgraHdp3Y6vBuOCR3CS8J7qxIgeqoZywH+3Fe8jA53nbAo3meyj5NqzDtdpUDE/J9KNjCqZAjipNgAi/HSwqJWshFwoEIhuDPrx7+CmwMEv8dsxdKvss4f1Ocq0OObl5oZIMxYvXYU+CTw4V5bdSUdlQ==
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:113::12)
- by PA1PR10MB8628.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:445::16) with
- Microsoft SMTP Server (version=TLS1_2,
+Received: from AMCPR10MB992291.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:785::10) by AS8PR10MB5952.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:52f::15) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.615.7; Mon, 9 Nov 2026
- 09:39:16 +0000
-Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::ae26:d131:7cff:4001]) by DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::ae26:d131:7cff:4001%3]) with mapi id 15.21.0615.007; Mon, 9 Nov 2026
- 09:39:16 +0000
-Message-ID: <3f24acdb-22d3-43b8-b30f-91c5fadc47a5@siemens.com>
-Date: Mon, 9 Nov 2026 10:39:15 +0100
+ 09:49:56 +0000
+Received: from AMCPR10MB992291.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::fbce:789a:27cf:d1e]) by AMCPR10MB992291.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::fbce:789a:27cf:d1e%5]) with mapi id 15.21.0615.007; Mon, 9 Nov 2026
+ 09:49:56 +0000
+Message-ID: <762143b1-f894-4b6d-86d0-e7e5fd29cda5@siemens.com>
+Date: Mon, 9 Nov 2026 10:49:54 +0100
 User-Agent: Mozilla Thunderbird
-Subject: Re: [cip-dev][isar-cip-core][PATCH v2 12/12]
- cip-core-initramfs-dracut: load watchdog drivers early via force drivers
-To: Jan Kiszka <jan.kiszka@siemens.com>, felix.moessbauer@siemens.com,
- cip-dev@lists.cip-project.org
+Subject: Re: [cip-dev][isar-cip-core][PATCH v2 02/12] efibootguard-boot: emit
+ systemd verity cmdline for dracut
+To: Quirin Gylstorff <quirin.gylstorff@siemens.com>,
+ felix.moessbauer@siemens.com, cip-dev@lists.cip-project.org
 References: <20261019102541.672620-1-quirin.gylstorff@siemens.com>
- <20261019102541.672620-13-quirin.gylstorff@siemens.com>
- <d8f8bec3-8512-4494-8a9f-b3d8d92e6fb0@siemens.com>
-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+ <20261019102541.672620-3-quirin.gylstorff@siemens.com>
+ <03a9b0ce-4087-43b5-aeae-a62e6038ca2f@siemens.com>
+ <53e47dc4-32d4-4c1e-a0f7-c454e8908d98@siemens.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
 Content-Language: en-US
-Autocrypt: addr=quirin.gylstorff@siemens.com; keydata=
- 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
- Z2NBPBZUysw=
-In-Reply-To: <d8f8bec3-8512-4494-8a9f-b3d8d92e6fb0@siemens.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR0P281CA0039.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:48::22) To DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:10:113::12)
-Return-Path: quirin.gylstorff@siemens.com
+Autocrypt: addr=jan.kiszka@siemens.com; keydata=
+ xsFNBGZY+hkBEACkdtFD81AUVtTVX+UEiUFs7ZQPQsdFpzVmr6R3D059f+lzr4Mlg6KKAcNZ
+ uNUqthIkgLGWzKugodvkcCK8Wbyw+1vxcl4Lw56WezLsOTfu7oi7Z0vp1XkrLcM0tofTbClW
+ xMA964mgUlBT2m/J/ybZd945D0wU57k/smGzDAxkpJgHBrYE/iJWcu46jkGZaLjK4xcMoBWB
+ I6hW9Njxx3Ek0fpLO3876bszc8KjcHOulKreK+ezyJ01Hvbx85s68XWN6N2ulLGtk7E/sXlb
+ 79hylHy5QuU9mZdsRjjRGJb0H9Buzfuz0XrcwOTMJq7e7fbN0QakjivAXsmXim+s5dlKlZjr
+ L3ILWte4ah7cGgqc06nFb5jOhnGnZwnKJlpuod3pc/BFaFGtVHvyoRgxJ9tmDZnjzMfu8YrA
+ +MVv6muwbHnEAeh/f8e9O+oeouqTBzgcaWTq81IyS56/UD6U5GHet9Pz1MB15nnzVcyZXIoC
+ roIhgCUkcl+5m2Z9G56bkiUcFq0IcACzjcRPWvwA09ZbRHXAK/ao/+vPAIMnU6OTx3ejsbHn
+ oh6VpHD3tucIt+xA4/l3LlkZMt5FZjFdkZUuAVU6kBAwElNBCYcrrLYZBRkSGPGDGYZmXAW/
+ VkNUVTJkRg6MGIeqZmpeoaV2xaIGHBSTDX8+b0c0hT/Bgzjv8QARAQABzSNKYW4gS2lzemth
+ IDxqYW4ua2lzemthQHNpZW1lbnMuY29tPsLBlAQTAQoAPhYhBABMZH11cs99cr20+2mdhQqf
+ QXvYBQJmWPvXAhsDBQkFo5qABQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEGmdhQqfQXvY
+ zPAP/jGiVJ2VgPcRWt2P8FbByfrJJAPCsos+SZpncRi7tl9yTEpS+t57h7myEKPdB3L+kxzg
+ K3dt1UhYp4FeIHA3jpJYaFvD7kNZJZ1cU55QXrJI3xu/xfB6VhCs+VAUlt7XhOsOmTQqCpH7
+ pRcZ5juxZCOxXG2fTQTQo0gfF5+PQwQYUp0NdTbVox5PTx5RK3KfPqmAJsBKdwEaIkuY9FbM
+ 9lGg8XBNzD2R/13cCd4hRrZDtyegrtocpBAruVqOZhsMb/h7Wd0TGoJ/zJr3w3WnDM08c+RA
+ 5LHMbiA29MXq1KxlnsYDfWB8ts3HIJ3ROBvagA20mbOm26ddeFjLdGcBTrzbHbzCReEtN++s
+ gZneKsYiueFDTxXjUOJgp8JDdVPM+++axSMo2js8TwVefTfCYt0oWMEqlQqSqgQwIuzpRO6I
+ ik7HAFq8fssy2cY8Imofbj77uKz0BNZC/1nGG1OI9cU2jHrqsn1i95KaS6fPu4EN6XP/Gi/O
+ 0DxND+HEyzVqhUJkvXUhTsOzgzWAvW9BlkKRiVizKM6PLsVm/XmeapGs4ir/U8OzKI+SM3R8
+ VMW8eovWgXNUQ9F2vS1dHO8eRn2UqDKBZSo+qCRWLRtsqNzmU4N0zuGqZSaDCvkMwF6kIRkD
+ ZkDjjYQtoftPGchLBTUzeUa2gfOr1T4xSQUHhPL8zsFNBGZY+hkBEADb5quW4M0eaWPIjqY6
+ aC/vHCmpELmS/HMa5zlA0dWlxCPEjkchN8W4PB+NMOXFEJuKLLFs6+s5/KlNok/kGKg4fITf
+ Vcd+BQd/YRks3qFifckU+kxoXpTc2bksTtLuiPkcyFmjBph/BGms35mvOA0OaEO6fQbauiHa
+ QnYrgUQM+YD4uFoQOLnWTPmBjccoPuiJDafzLxwj4r+JH4fA/4zzDa5OFbfVq3ieYGqiBrtj
+ tBFv5epVvGK1zoQ+Rc+h5+dCWPwC2i3cXTUVf0woepF8mUXFcNhY+Eh8vvh1lxfD35z2CJeY
+ txMcA44Lp06kArpWDjGJddd+OTmUkFWeYtAdaCpj/GItuJcQZkaaTeiHqPPrbvXM361rtvaw
+ XFUzUlvoW1Sb7/SeE/BtWoxkeZOgsqouXPTjlFLapvLu5g9MPNimjkYqukASq/+e8MMKP+EE
+ v3BAFVFGvNE3UlNRh+ppBqBUZiqkzg4q2hfeTjnivgChzXlvfTx9M6BJmuDnYAho4BA6vRh4
+ Dr7LYTLIwGjguIuuQcP2ENN+l32nidy154zCEp5/Rv4K8SYdVegrQ7rWiULgDz9VQWo2zAjo
+ TgFKg3AE3ujDy4V2VndtkMRYpwwuilCDQ+Bpb5ixfbFyZ4oVGs6F3jhtWN5Uu43FhHSCqUv8
+ FCzl44AyGulVYU7hTQARAQABwsF8BBgBCgAmFiEEAExkfXVyz31yvbT7aZ2FCp9Be9gFAmZY
+ +hkCGwwFCQWjmoAACgkQaZ2FCp9Be9hN3g/8CdNqlOfBZGCFNZ8Kf4tpRpeN3TGmekGRpohU
+ bBMvHYiWW8SvmCgEuBokS+Lx3pyPJQCYZDXLCq47gsLdnhVcQ2ZKNCrr9yhrj6kHxe1Sqv1S
+ MhxD8dBqW6CFe/mbiK9wEMDIqys7L0Xy/lgCFxZswlBW3eU2Zacdo0fDzLiJm9I0C9iPZzkJ
+ gITjoqsiIi/5c3eCY2s2OENL9VPXiH1GPQfHZ23ouiMf+ojVZ7kycLjz+nFr5A14w/B7uHjz
+ uL6tnA+AtGCredDne66LSK3HD0vC7569sZ/j8kGKjlUtC+zm0j03iPI6gi8YeCn9b4F8sLpB
+ lBdlqo9BB+uqoM6F8zMfIfDsqjB0r/q7WeJaI8NKfFwNOGPuo93N+WUyBi2yYCXMOgBUifm0
+ T6Hbf3SHQpbA56wcKPWJqAC2iFaxNDowcJij9LtEqOlToCMtDBekDwchRvqrWN1mDXLg+av8
+ qH4kDzsqKX8zzTzfAWFxrkXA/kFpR3JsMzNmvextkN2kOLCCHkym0zz5Y3vxaYtbXG2wTrqJ
+ 8WpkWIE8STUhQa9AkezgucXN7r6uSrzW8IQXxBInZwFIyBgM0f/fzyNqzThFT15QMrYUqhhW
+ ZffO4PeNJOUYfXdH13A6rbU0y6xE7Okuoa01EqNi9yqyLA8gPgg/DhOpGtK8KokCsdYsTbk=
+In-Reply-To: <53e47dc4-32d4-4c1e-a0f7-c454e8908d98@siemens.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: FR4P281CA0372.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:f8::18) To AMCPR10MB992291.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:785::10)
+Return-Path: jan.kiszka@siemens.com
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB8PR10MB3178:EE_|PA1PR10MB8628:EE_
-X-MS-Office365-Filtering-Correlation-Id: f02669d4-42f7-4859-7827-08df3e45520a
+X-MS-TrafficTypeDiagnostic: AMCPR10MB992291:EE_|AS8PR10MB5952:EE_
+X-MS-Office365-Filtering-Correlation-Id: 79358335-7b7f-4970-8b7f-08df3e46cfb8
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|23010399003|11063799006|4143699003|56012099006|261021121427099003|261022075727099003|261022105027099003|261009221227099003|261009223027099003|261026140227099003|261028144727099003|261026121527099003|261102123227099003|10067099003|55112099003|22082099003|18002099003|6133799003;
-X-Microsoft-Antispam-Message-Info: SMAwoYJIE/C75Nu6/7Ae1ePlzviEdqoGDFlbPW4LYnmQEPXAK8Cv0fKcmGpZjMUHVnj7dMma8I20w2337+RfBzslr+t87iJ/CtXWlLmBxqsElw+TVFMf2WV1jJqce5R5fAvvCV7xQskL9Af8UTa1N9mD4u1QZ7NQkAhzS0vP+HEtoeov6PrPObcKKMuo4V+wgU6CDIzpV8TD4Eb6CQRKDQdENN9ZYfs5tE2jY/XHrZ7adu7RFZ1R/LaRtYYDjIESwSkJ+kgvTeMhY8r9TZf4kk3YNxW/APZUfrqCZJi+nI6OQStmUFw/mNIsV7xArybJUYcmiKnWTGCtAnf0/3FVZ99Eiz2t9UPwmtXFBLVnDFoLXj+enCzuGLAGjLW+Ur207sajrxwlyf0osidyryz8HFOh1rXFuINZBCHGnx5u61AmR0rD9hmKjlNj6px2hxqUuyc2plxsoT8iXfs+ywYDzR/RkkaEXbsYxNCH9m96al1/KQs6HhpkpSa9TGYB0bKNtAlDw3LSznzPL+UP9kc1vFdJ0K2IgF7bN7QWQMYQQDTX401KWfcXzZfGLwFXGrnjaqIS+2GN6Bl0rHjTdqTQhijOKbZKUTHw9fboCIxUIhGRWt3lW7AgiHk36rhCIAcW7t2NsKEG25Q8roAwQdSK28SABAYSFyruz6oInW8PBhc=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(23010399003)(11063799006)(4143699003)(56012099006)(261021121427099003)(261022075727099003)(261022105027099003)(261009221227099003)(261009223027099003)(261026140227099003)(261028144727099003)(261026121527099003)(261102123227099003)(10067099003)(55112099003)(22082099003)(18002099003)(6133799003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|23010399003|376014|1800799024|18002099003|22082099003|6133799003|10067099003|55112099003|4143699003|11063799006|261028144727099003|261102123227099003|261022075727099003|261022105027099003|261022115727099003|261021135927099003|56012099006|261021123027099003|261021121427099003|261026121527099003|261026140227099003|261009223027099003;
+X-Microsoft-Antispam-Message-Info: SO/GfIIWprIHA1aAuZrMJ2vHyS+22IAF8BtZnxqK3EUmQpwu+0H07NIU1CTJMy3d71e2n1UhSYA6kvQWfMqO0XDQUO8SEinS35CHjuhyeTxe+2i6H15fcrQ6Zy0uzclAS4XY8xqXydZuWut8mnFV1iukUsfy3TVlvr1Fl5Mk0q0cRqAcFCgrxYW9MlZM7unoBuuQHgUUUo5ru6EgHVdEQ6lwS4nNGk4uvz+Qh2cu4VdH703Hl3eKKann9AFVV5jvD3OJsA0Y4JOqjgr+Da3zE/afkhQI4Q2BnO7/HrjwHdYbbyg4GyqLtX72JzuTnvbSYo+eYPEOOJJntKt0DNZMfwzu/tXaw5DG48OgVRPxp9jOWjLqwG6rmjSh5hVgKGGU8BI8pHIhFO26mZ3kgUy0N4hUI/OsE+PzkLlrAVQXQj2DikRwg2LQTZMumi/o5UVocmiZ0IE+XLOpbWfVevt7Wj6q279oLU/oFx2zkvJUpykkFDEuWxJ47AGkPEvxysrlS07I//bJCuRiy+aRKtEpXkodF18k13n1Qrz84LvtfQWJWe9Rd332j1240a1/rwXGCOvjtlENUX9fXSve485Rhhd4YS4OjXWJoHq+c8yvD28+CPqjMNYfLI6BfINxNVji4TOA+0Y+lLSjGcznqtm0hS/X/Ue3nmY0TbzzGP8/fLA=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AMCPR10MB992291.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(23010399003)(376014)(1800799024)(18002099003)(22082099003)(6133799003)(10067099003)(55112099003)(4143699003)(11063799006)(261028144727099003)(261102123227099003)(261022075727099003)(261022105027099003)(261022115727099003)(261021135927099003)(56012099006)(261021123027099003)(261021121427099003)(261026121527099003)(261026140227099003)(261009223027099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eHhsMHROUGdnM1ZGTUU1ZFl0RDlzbE9mTGRjMkl1bCtKMCt4SS9ReGRCaWhy?=
- =?utf-8?B?WmUzZU5VVFU3ZTNHTnpHNU1CZ2JmSDZoRzY2ZG5sSnZLbkY5ZkcrT3A4NU4w?=
- =?utf-8?B?MWROS2VZWnBZYXN0WWYvSDZ1NFZXSGd5TEdhTEdpZ01pTEI1WjFmYUI4VXB5?=
- =?utf-8?B?Y0ZQZU44WDlWd1I5U1JTM0psV2VGOE5YMDF0UlQ3WnYrTFJBRk9xaFFCTkow?=
- =?utf-8?B?RVpkdW54aWF4RFFENWhXV3gwVHdXcVIxeXk3dG8rS1R4NkdVeEFWTHBRSmdQ?=
- =?utf-8?B?MVNMVWJKNktoY2YrcGpRT042S0NSVW9rYllBK0oycTNJb3cyeEhKNG9PTlZJ?=
- =?utf-8?B?V2tieGhIL3pMVFVGRk1JaGZORzFBdE9KM2VxR0ZVSWZ2NTNNanZoVGdJR09G?=
- =?utf-8?B?aTNaL3RKdUJGdGw5Y0xzSlVkQlZFS0tLZjZIRkNIa25BMW1LSDdQdUl3NXA5?=
- =?utf-8?B?V1dEMnVCZ3E4MEhub0NmSGp4Z3FNSDdFQUxMbHc5ajJPbkZ0ckxRM1ZQUzla?=
- =?utf-8?B?Q1V2czYxeE1NUmlheFM1NDZITWtaNDJzb0ZjM1QvcWh5bndkbk1xMFljR01E?=
- =?utf-8?B?MEJ6eVdHYjRTQ2xrQm1vTlorU2t5Sko4aHZoK3BOVXIwU2ljWHZqMzN3eUFh?=
- =?utf-8?B?R0QrMGxqeXRYdjlWLzZFNytQbTd0TisrYlRmVFdhRlltcmVZM1Qwa0JQN2xG?=
- =?utf-8?B?aUN0T01CYitTd0lOQ001dEd0eUhIdjU1NHUwKytVbEF0VmtiTml1YUlKNW1o?=
- =?utf-8?B?Q2F6OFJUMHI0SnQ1SnpTS3ZoSGFhNTZtQXpaTTdNbjNpOTB2QjUyRTJIZXl0?=
- =?utf-8?B?d3RKRXRwbnE0dTRqWWJDYkd6MDE3NnRicTVuRk8rUmNhUlVXdENqTEhyQkJF?=
- =?utf-8?B?Z0dYcUVCbUl0VkI0ejFGZVZRSGt1dGhJWkdVdEM0OEFVWGhvd3c0aFZHZjZ4?=
- =?utf-8?B?N2lwOGVpTHR6VlFJZTZ5YlZaMXU3NllsMEIzOVBwRUQwdmtla1NxWExxcUI5?=
- =?utf-8?B?SFBza0JiakVCdWtyeDNWWTNmZ0dyS0NCdEZ3T1BrU3RBaWNmN2dFL2Y5TFNv?=
- =?utf-8?B?UFdYaGxoWFE4cFlrVjF5Q3hNelFhZ1VPSjRWSk1nT1hTSWFhSThLS2cwaEJW?=
- =?utf-8?B?K2ZjSE0xMW0vTUhzbmpuT0diek1kTlZJZVhmSGVvRWdOMmN1TmIrQ09hMGE0?=
- =?utf-8?B?T0xuUVdKRmZCeSt5NWlMVGhMb3pqWnhBL2JJNlhMMDBqSnU5S2l1UThwSGJW?=
- =?utf-8?B?UmNRUkVTWkRuRW1lb1Exd2RxYTJuL3F5MllQTUh3anoxOHYzaVZYdjQ1YjFm?=
- =?utf-8?B?bThmTnF2V1dnQVZsNzFlRXRsL29yN04yeEN4dW5ZdDZtU2xnOFFuck1mOENt?=
- =?utf-8?B?a0FuWjJrK3Y5WDRtQVNURXB4dkFrckR3UFJYZUVXekpndTFGTC8rTmZYVWxI?=
- =?utf-8?B?c3k3YWw4OUppeXgxbEhWcGRwVUJjd1hvMVlBNzIyYzR5N3BDQ1I0dGJOVStE?=
- =?utf-8?B?a3VGT3U3d1hBWGVRKy9MbDRKWlhwVkhRYWJ2OXNVampQSmdHZFRLcVQzK0RX?=
- =?utf-8?B?cEFXRWt3NGRHaDkxR3Q3R1RrLzRHemRJeW5pVnVHUlB5QmNmQ3NGZkpTSE0y?=
- =?utf-8?B?MjM4V2RCeHc4Z2Rsb1VMQUVmRUhGaWxpUHR4Qy83TjhRVGo1SHhhb3N0K1BV?=
- =?utf-8?B?MWVQOGJ5ajM2OENxSmNyVWZOVFQ2ajFGOFVzRkZsNmU5emc0ZGJTYmkwd1FD?=
- =?utf-8?B?RmtuRHpBbUV4S3lCN01SYlB1UE4zWDlXK1g4djFvNWVJRE0xRlVHWUNQOWRJ?=
- =?utf-8?B?OU01Nm5nU2VhVVJoRGdlcVZqS1hnaFI4d0VIOG9lZzh4TWhsTTBjRDZpcHFU?=
- =?utf-8?B?RTRxdDk2ei9ScjYvR2lsZHZYcnFUWkJmenE0cGY3VHAwUGp3eDdlSEx2dEdy?=
- =?utf-8?B?UXQzbVhqRVprTWlMSHJobU9tdXRjTENEU0p0cDhtd292L3dDbExxK2lxcS9B?=
- =?utf-8?B?eWRNb2NPam8ydXhrWHJad0VrQzJYTnErNXhRZm1URndrbDB2bjBuYnlHY3du?=
- =?utf-8?B?YktJQU1TTFJuTzVFeE5SQkhyei9iZjdBVFV3KzBzeGZIbGNYbFpmb0toaTRl?=
- =?utf-8?B?TTgwcEV4bGhrWXFwdTBJUW1vUG9aRHpacWQvNG9kS2VVVmpXMVFtWVpza3h3?=
- =?utf-8?B?WVVPQ2U3dG5kV1JzUHFaR29MY2ZCcmdUVXJiWXBiRlBSdDE2R2pEbTE5dWJx?=
- =?utf-8?B?K3A2L29CUm9FTDRpMk5tT0RId3R6UEJobCtNb2ZGbk5yKzRCc3d4REUxRkhn?=
- =?utf-8?B?ODY5UEFUR01GZStUVVNWeGNnN1dlUytaNHBkTG00a3RtaDF0cU5BK2V1TTNp?=
- =?utf-8?Q?zdPDoeUHlz7Nu/MA=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?RMTVmDDhmgk4p7hAb0co5Nm2hrTANxpK9WY1+6vFXhdS0CNuO/ORJ4sLABWw?=
+ =?us-ascii?Q?lUaJRh/Z1QTeYqmaFPewnv8S1DXWgz7TrX+/lhUE0h8o4QSKbPOZKKxRngWb?=
+ =?us-ascii?Q?2B7VcQ++J8dEY0gVMwxzI3HsTyiKQoAmIa5E+iA8MyMk+wqArhR3nOqSxLp5?=
+ =?us-ascii?Q?UqOt6HpCuVAakPed2V9sSwJjaIWu1Kuc9K4amLfbvRGDdd7bjLTuVhgD13na?=
+ =?us-ascii?Q?ONo4W+86Kd1YG/7h2Kw3QTLmPsSgxNzpsBkBiDPpuChO7e5yvMUKY4no7hHM?=
+ =?us-ascii?Q?c/kWlBfScLA6mTeLh1e0MdoVRKSUeuqmHuX2TtN9ifvzLqxzVvQfbxZWG+uB?=
+ =?us-ascii?Q?UsP9FaOj+kjrH+YjS1D3YkAjsN/Q4Nd3JpOHYbM5Z2oeAqTmYsL8zO6biBDu?=
+ =?us-ascii?Q?NWdl8jxg3QEBxFtv93RJKcS1TyIBy8nLMLJAosUAjJ02KPqm+QmcENET987k?=
+ =?us-ascii?Q?c4KAgh6L7SiDEllt6hrjthR8U4R+JM9ggj+D1t1Pz2BnrSj7ERX+h1PE4Glx?=
+ =?us-ascii?Q?OgvRF6ebNrKvvKRZtsaIUYd8GNFYyMrbzBE2tRP1e44DgKVJqa01Zrkx/BUI?=
+ =?us-ascii?Q?2xgWZRn1q6v64Q/cSlHXIR377dsQYwUhcqJct+qOXjMlFBAVF928Ytc0B14v?=
+ =?us-ascii?Q?+DDvs6W7Kt5dnLOpfguFwsFRhSUefvaTICKPwejBMJXEywzpOsPFcSEkZq0G?=
+ =?us-ascii?Q?hdN5lJmqp6I7ErJi0IvWdVFDQiKzSZR4J4K+8161Pldn/PshPzCEsmauBjDc?=
+ =?us-ascii?Q?ljBIlXPqzNPC1I/ncD1GDaf1AuN22dVlpAuI91bk7PzdypiCaqd5TCE5Ixf+?=
+ =?us-ascii?Q?T8K/fv3vx0s+2vr2QOr8cfcaQXaTh8Z5ZoK2j4vjIesRmvg1zZ0oMVIaDgqg?=
+ =?us-ascii?Q?85NWkv6c/X3AFigceU0tcGFp9JQBwo7HMMWc+84uU4chKr1i/9ekpj137uod?=
+ =?us-ascii?Q?T1HwAi4MhRSWsSalZh/JFp/T1OusZ+GBTUV5QR/Ub3zl/bhtqOYk79GKj3Jj?=
+ =?us-ascii?Q?WvlHsbvHuY6vGi/dX6iZ1JoHXDkQLwBop9qTDcT1//AlecRxC3do94RBz2n8?=
+ =?us-ascii?Q?FI8lQgaU766b9aYu3k8C4EZ+OVuk6D5iNNneOERWpoCl+kx2RF+WR401xRNL?=
+ =?us-ascii?Q?Oeoyer9nRKOBgj+Pr4/2XWbPHmUqXg9Vybn5SzaeTsJahzMRWbdF6wMDy0Bp?=
+ =?us-ascii?Q?EvygkPULtzS8G1o0gVyHt0dIp3TbBiRNN17DuEGEJS6zez2q9UCTIAFoxZpd?=
+ =?us-ascii?Q?46yInoNYvT95PBEQuTP9i8PVGn/WNqHRJUi/WFwNCGHeFYOFfnuuIgg71jwr?=
+ =?us-ascii?Q?2QTpNx/hqlflDDEme+sx5tkY7bGgbek8XjLIV6skSzwcVXnA1fJtXKUr1Y6s?=
+ =?us-ascii?Q?pO6N9HepIk7RLumWKVsmBZ/38uoB41eVhQ6l8Fwejcxr8YaNH/aWojPIeixk?=
+ =?us-ascii?Q?lpQb99hH1SS1dw5jI7NJLXxvZ+qTA8J3NFNdJ5dX0OBlwjwrLCyE98h2jlj0?=
+ =?us-ascii?Q?gUPB6BZhlWwpGo8T44yU9GbX7bu3dnB07Jh0IGKM1h0WJlxKXwmy/T8hZik6?=
+ =?us-ascii?Q?1/+/4aW5PJJlgXifRSu21cuwFHSEcxKVk0N5T8ir59LGzqjFk1hhro0kuPUJ?=
+ =?us-ascii?Q?18uVpb+cuMVPRVpd3lcTXJni9aM1bdviuLQFXz/M49TGTUwi5LTGFlMhf8ac?=
+ =?us-ascii?Q?RvQrxHFZa/7l+LWVMFPSygLmrGn3uuqjWCBJ8IhSYzrWfUUYpg/gUDVOXwks?=
+ =?us-ascii?Q?YxDQBZBWBw=3D=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f02669d4-42f7-4859-7827-08df3e45520a
-X-MS-Exchange-CrossTenant-AuthSource: DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 79358335-7b7f-4970-8b7f-08df3e46cfb8
+X-MS-Exchange-CrossTenant-AuthSource: AMCPR10MB992291.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2026 09:39:16.1317
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2026 09:49:56.4580
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: v/SpMh9BxSEhoHUgk6CMJVE0woRMgkTnZ9kpQB5H5OT+6sHbQf6U04i1/JxKKcjC0A8ALrwVG6CVLXI7ZaApY8SssMJAV67m5Tm2BNi+AFU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR10MB8628
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9XeyjMWI7yw3tF1M0SqhL03/ydzRdUagGfmyZ0lwDn1yWOH4XRerxgL428YXV8KL/x8Ab7oV0LdTAcGzmC567g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB5952
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Mon, 09 Nov 2026 09:39:24 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24692
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Mon, 09 Nov 2026 09:50:05 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24693
 
-
-
-On 11/5/26 10:05 AM, Jan Kiszka wrote:
-> On 19.10.26 12:25, Quirin Gylstorff wrote:
->> On qemu-amd64 the iTCO watchdog is not available in the dracut initrd:
->> iTCO_wdt binds to a platform device created by lpc_ich, and udev does not
->> load these drivers early enough for systemd to service the watchdog.
+On 09.11.26 10:25, Quirin Gylstorff wrote:
+>=20
+>=20
+> On 11/5/26 7:59 AM, Jan Kiszka wrote:
+>> On 19.10.26 12:25, Quirin Gylstorff wrote:
+>>> INITRD_CMDLINE_STYLE selects the kernel command line dialect for
+>>> verity. The default "initramfs-tools" keeps cip.verity_root_options=3D.
+>>> "dracut" emits systemd's native roothash=3D and
+>>> systemd.verity_root_options=3D, with the data and hash device resolved =
+at
+>>> runtime by the cip-verity dracut module (/dev/cip/verity-data), plus
+>>> INITRD_EMERGENCY_CMDLINE (default "rd.shell=3D0 rd.emergency=3Dreboot")=
+, so
+>>> that a failed boot reboots and EFI Boot Guard can roll back.
+>>>
+>>> Also drop the LABEL=3Dvar entry from the generated fstab. /var is mount=
+ed
+>>> by the initramfs (overlay and crypt hooks); the additional fstab entry
+>>> makes systemd manage a second var.mount for the same filesystem.
+>>>
+>>> efibootguard-boot: use verity root for dracut without secure boot
+>>>
+>>> The dracut initramfs has no abrootfs support; dm-verity roothash
+>>> matching is its only A/B root selection. Without secure boot the
+>>> default wic layout (ebg-sysparts.inc) passes abrootfs_root=3Dy, so the
+>>> unified kernel image lacked roothash=3D and the image did not boot.
+>>>
+>>> Promote abrootfs_root=3Dy to the verity root cmdline when
+>>> INITRD_CMDLINE_STYLE is systemd. The wic .inc files cannot be
+>>> parametrized instead, as wic does not expand BitBake variables there.
+>>>
+>>> efibootguard-boot: explain a missing verity env file
+>>> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>>> ---
+>>> =C2=A0 classes-recipe/read-only-rootfs.bbclass=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 |=C2=A0 6 +-
+>>> =C2=A0 .../wic/plugins/source/efibootguard-boot.py=C2=A0=C2=A0 | 67 +++=
+++++++++++++++--
+>>> =C2=A0 2 files changed, 66 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/classes-recipe/read-only-rootfs.bbclass b/classes-
+>>> recipe/read-only-rootfs.bbclass
+>>> index 70152de2..179dcb98 100644
+>>> --- a/classes-recipe/read-only-rootfs.bbclass
+>>> +++ b/classes-recipe/read-only-rootfs.bbclass
+>>> @@ -17,6 +17,11 @@ IMAGE_INITRD =3D "${INITRAMFS_RECIPE}"
+>>> =C2=A0 =C2=A0 do_image_wic[depends] +=3D "${INITRAMFS_RECIPE}:do_build"
+>>> =C2=A0 +INITRD_CMDLINE_STYLE ?=3D "cip-initramfs"
+>>> +
+>>> +INITRD_EMERGENCY_CMDLINE ?=3D "rd.shell=3D0 rd.emergency=3Dreboot"
+>>> +WICVARS +=3D "INITRD_CMDLINE_STYLE INITRD_EMERGENCY_CMDLINE
+>>> RO_ROOTFS_TYPE"
+>>> +
+>>> =C2=A0 WIC_HOME_PARTITION =3D ""
+>>> =C2=A0 WIC_HOME_PARTITION:separate-home-part =3D "part /home --source r=
+ootfs
+>>> --change-directory=3Dhome --fstype=3Dext4 --label home --align 1024=C2=
+=A0 --
+>>> size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid
+>>> c07d5e8f-3448-46dc-9c0f-58904f369524"
+>>> =C2=A0 @@ -76,7 +81,6 @@ image_configure_fstab() {
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 run_privileged tee '${IMAGE_ROOTFS}/etc/=
+fstab' << EOF
+>>> =C2=A0 # Begin /etc/fstab
+>>> =C2=A0 /dev/root=C2=A0=C2=A0=C2=A0 /=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 auto=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 defaults,ro=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0=C2=A0=C2=A0=
+=C2=A0 0
+>>> -LABEL=3Dvar=C2=A0=C2=A0=C2=A0 /var=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 auto=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 defaults=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0=C2=A0=C2=A0=C2=A0 =
+0
+>>> =C2=A0 proc=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /proc=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 proc=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 nosuid,noexec,nodev=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0=C2=A0=
+=C2=A0=C2=A0 0
+>>> =C2=A0 sysfs=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /sys=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sysfs=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 nosuid,noexec,nodev=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
+>>> 0=C2=A0=C2=A0=C2=A0 0
+>>> =C2=A0 devpts=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /dev/pts=C2=A0=
+=C2=A0=C2=A0 devpts=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 gid=3D5,mode=
+=3D620=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
+>>> 0=C2=A0=C2=A0=C2=A0 0
+>>> diff --git a/scripts/lib/wic/plugins/source/efibootguard-boot.py b/
+>>> scripts/lib/wic/plugins/source/efibootguard-boot.py
+>>> index ca97d7d7..5a5ec1c0 100644
+>>> --- a/scripts/lib/wic/plugins/source/efibootguard-boot.py
+>>> +++ b/scripts/lib/wic/plugins/source/efibootguard-boot.py
+>>> @@ -36,6 +36,7 @@ import logging
+>>> =C2=A0 =C2=A0 msger =3D logging.getLogger('wic')
+>>> =C2=A0 +from wic import WicError
+>>> =C2=A0 from wic.pluginbase import SourcePlugin
+>>> =C2=A0 from wic.misc import exec_cmd, get_bitbake_var, BOOTDD_EXTRA_SPA=
+CE
+>>> =C2=A0 @@ -89,11 +90,20 @@ class EfibootguardBootPlugin(SourcePlugin):
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 boot_files =3D s=
+ource_params.get("files", "").split(' ')
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unified_kernel =
+=3D source_params.get("unified-kernel") or 'y'
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cmdline =3D boot=
+loader.append or ''
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cmdline_style =3D get_bitba=
+ke_var("INITRD_CMDLINE_STYLE")
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 root_mode =3D cls._resolve_=
+root_mode(source_params,
+>>> cmdline_style)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if root_mode =3D=3D "verity=
+" and
+>>> source_params.get("verity_root") !=3D 'y':
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 msg=
+er.info("efibootguard-boot: abrootfs_root replaced by "
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "verity_roo=
+t, the dracut initramfs has no
+>>> abrootfs "
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "support")
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 # the verity cmd=
+line format is identical to
+>>> systemd.verity_root_options
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if source_params.get("verit=
+y_root") =3D=3D 'y':
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cmd=
+line +=3D " cip.verity_root_options=3Dpanic-on-
+>>> corruption,%s" \
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 % cls._get_verity_opts()
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if source_params.get("abroo=
+tfs_root") =3D=3D 'y':
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if root_mode =3D=3D "verity=
+":
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if =
+cmdline_style =3D=3D "systemd":
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 cmdline +=3D cls._get_verity_cmdline_dracut()
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 els=
+e:
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 cmdline +=3D " cip.verity_root_options=3Dpanic-on-
+>>> corruption,%s" \
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 % cls._get_verity_opts()
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 elif root_mode =3D=3D "abro=
+otfs":
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 cmdline +=3D " cip.abrootfs_root_options=3D%s" \
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 % cls._get_abrootfs_opts()
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if unified_kerne=
+l =3D=3D 'y':
+>>> @@ -152,6 +162,21 @@ class EfibootguardBootPlugin(SourcePlugin):
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cls._create_img(=
+part_rootfs_dir, part, cr_workdir,
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 native_sysroot, oe_builddir)
+>>> =C2=A0 +=C2=A0=C2=A0=C2=A0 @classmethod
+>>> +=C2=A0=C2=A0=C2=A0 def _resolve_root_mode(cls, source_params, cmdline_=
+style):
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 """
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Return the effective root s=
+election: 'verity', 'abrootfs' or
+>>> None.
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 The dracut initramfs (syste=
+md cmdline style) has no abrootfs
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 support, so abrootfs_root=
+=3Dy is promoted to verity there.
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 """
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if source_params.get("verit=
+y_root") =3D=3D 'y':
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret=
+urn "verity"
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if source_params.get("abroo=
+tfs_root") =3D=3D 'y':
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if =
+cmdline_style =3D=3D "systemd":
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 return "verity"
 >>
->> Add INITRAMFS_FORCE_DRIVERS. If set, the new dracut-cip-force-drivers
->> module installs the listed drivers and loads them early via
->> rd.driver.pre. It uses DRACUT_FORCE_DRIVERS of Isar's dracut-module class,
->> which is carried as a patch until it is merged upstream.
->>
->> qemu-amd64 sets it to lpc_ich and iTCO_wdt.
->>
->> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
->> ---
->>   conf/machine/qemu-amd64.conf                  |   3 +
->>   doc/README.dracut.md                          |  12 ++
->>   ...acut-module-add-DRACUT_FORCE_DRIVERS.patch | 107 ++++++++++++++++++
->>   kas-cip.yml                                   |   4 +
->>   .../cip-core-initramfs-dracut.bb              |   5 +
->>   .../dracut-cip-force-drivers_0.1.bb           |  17 +++
->>   6 files changed, 148 insertions(+)
->>   create mode 100644 isar-patches/0001-dracut-module-add-DRACUT_FORCE_DRIVERS.patch
->>   create mode 100644 recipes-initramfs/dracut-cip-force-drivers/dracut-cip-force-drivers_0.1.bb
->>
->> diff --git a/conf/machine/qemu-amd64.conf b/conf/machine/qemu-amd64.conf
->> index 748aaa33..b85666ee 100644
->> --- a/conf/machine/qemu-amd64.conf
->> +++ b/conf/machine/qemu-amd64.conf
->> @@ -15,3 +15,6 @@ PREFERRED_PROVIDER_factory-reset-helper:swupdate = "factory-reset-helper-efi"
->>   
->>   # when running without kvm (as in CI so far), 60 seconds might be to short
->>   WDOG_TIMEOUT = "120"
->> +
->> +# q35 iTCO watchdog: lpc_ich creates the platform device iTCO_wdt binds to
->> +INITRAMFS_FORCE_DRIVERS ?= "lpc_ich iTCO_wdt"
-> 
-> Doesn't lpc_ich pull iTCO_wdt?
+>> We should better handle this compat case at recipe level, when
+>> invoking wic.
+>=20
+> Currently these params are hardcoded in the wic files and this was an
+> idea to make it compatible to old versions.
+>=20
+> A possible recipe solution would involve a ebg-sysparts-verity.inc and
+> would not be backwards compatible.
+>=20
 
-Only via udev. So it should be enough to force lpc_ich but I need to 
-test it.
+Then deprecate the old pattern, warn about its usage, map it to a
+consistent new one.
 
-Quirin
-> 
-> Jan
-> 
->> diff --git a/doc/README.dracut.md b/doc/README.dracut.md
->> index 2a59cd08..3f26d772 100644
->> --- a/doc/README.dracut.md
->> +++ b/doc/README.dracut.md
->> @@ -58,6 +58,18 @@ default recovery script is used.
->>   
->>   The initramfs is built with `--no-hostonly`, which `cip-crypt` requires.
->>   
->> +`INITRAMFS_FORCE_DRIVERS` lists kernel drivers that are loaded early in the
->> +initrd via `rd.driver.pre`, like dracut's `force_drivers`. Use it for drivers
->> +udev does not load on its own, e.g. the watchdog driver serviced by
->> +`cip-watchdog`. If set, `cip-core-initramfs-dracut` adds the
->> +`dracut-cip-force-drivers` module, which uses `DRACUT_FORCE_DRIVERS` of Isar's
->> +`dracut-module` class. qemu-amd64 sets it to `lpc_ich iTCO_wdt`.
->> +
->> +systemd tries to open the watchdog device when it starts, before the drivers
->> +are loaded. After that failure it retries at most every 5 seconds, so it only
->> +takes over the watchdog if the initrd runs longer than that. Until then the
->> +hardware watchdog keeps running on its own.
->> +
->>   `cip-verity` does not open the verity device itself. It ships a udev rule that
->>   runs `cip-verity-match` against every filesystem partition and publishes the one
->>   whose dm-verity header UUID matches the identity on the kernel command line as
->> diff --git a/isar-patches/0001-dracut-module-add-DRACUT_FORCE_DRIVERS.patch b/isar-patches/0001-dracut-module-add-DRACUT_FORCE_DRIVERS.patch
->> new file mode 100644
->> index 00000000..df652e23
->> --- /dev/null
->> +++ b/isar-patches/0001-dracut-module-add-DRACUT_FORCE_DRIVERS.patch
->> @@ -0,0 +1,107 @@
->> +From 061e42be73d410405bca189e876efa3034cd55df Mon Sep 17 00:00:00 2001
->> +From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
->> +Date: Tue, 13 Oct 2026 14:31:28 +0200
->> +Subject: [PATCH] dracut-module: add DRACUT_FORCE_DRIVERS
->> +
->> +Some drivers are not loaded by udev in the initrd, e.g. watchdog drivers
->> +which have to be serviced by systemd before the root file system is
->> +mounted. dracut provides force_drivers for this, but it is a global
->> +option.
->> +
->> +Add DRACUT_FORCE_DRIVERS to the dracut-module class. The listed drivers
->> +are installed regardless of hostonly mode and loaded early via
->> +rd.driver.pre, same as dracut's force_drivers, but only if the module
->> +is part of the initrd. The module depends on kernel-modules, which
->> +evaluates rd.driver.pre.
->> +
->> +Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
->> +---
->> + doc/user_manual.md                                 |  5 +++++
->> + meta/classes-recipe/dracut-module.bbclass          | 14 ++++++++++++++
->> + .../dracut-module/files/module-setup.sh.tmpl       | 10 ++++++++++
->> + 3 files changed, 29 insertions(+)
->> +
->> +diff --git a/doc/user_manual.md b/doc/user_manual.md
->> +index a134903d..09ac080b 100644
->> +--- a/doc/user_manual.md
->> ++++ b/doc/user_manual.md
->> +@@ -1877,6 +1877,11 @@ It is controlled by following variables:
->> +
->> + - `DRACUT_REQUIRED_BINARIES` defines the binaries required by the module.
->> + - `DRACUT_MODULE_DEPENDENCIES` defines dependencies to other dracut modules.
->> ++- `DRACUT_FORCE_DRIVERS` defines kernel drivers which are installed into the
->> ++initrd regardless of hostonly mode and loaded early via `rd.driver.pre`,
->> ++like dracut's `force_drivers` option. It adds a dependency to the dracut
->> ++module `kernel-modules`. A machine can set it with
->> ++`DRACUT_FORCE_DRIVERS:pn-<recipe> = "lpc_ich iTCO_wdt"`.
->> + - `DRACUT_MODULE_NO` defines the module number which prefixes the module name
->> + to determine the execution order. The default is `50`.
->> + - `DRACUT_MODULE_NAME` defines the name of the module which is used to install the
->> +diff --git a/meta/classes-recipe/dracut-module.bbclass b/meta/classes-recipe/dracut-module.bbclass
->> +index 6fce979a..6d32a4ac 100644
->> +--- a/meta/classes-recipe/dracut-module.bbclass
->> ++++ b/meta/classes-recipe/dracut-module.bbclass
->> +@@ -22,6 +22,9 @@ DRACUT_MODULE_PATH = "${D}/usr/lib/dracut/modules.d/${DRACUT_MODULE_NO}${DRACUT_
->> +
->> + DRACUT_REQUIRED_BINARIES ??= ""
->> + DRACUT_MODULE_DEPENDENCIES ??= ""
->> ++# Kernel drivers installed regardless of hostonly and loaded early via
->> ++# rd.driver.pre (same semantics as dracut's force_drivers)
->> ++DRACUT_FORCE_DRIVERS ??= ""
->> + DRACUT_CHECK_CONTENT_FILE_NAME ??= ""
->> + DRACUT_DEPENDS_CONTENT_FILE_NAME ??= ""
->> + DRACUT_CMDLINE_CONTENT_FILE_NAME ??= ""
->> +@@ -71,7 +74,18 @@ TEMPLATE_FILES:append = " \
->> + TEMPLATE_VARS:append = " \
->> +     DRACUT_REQUIRED_BINARIES \
->> +     DRACUT_MODULE_DEPENDENCIES \
->> ++    DRACUT_FORCE_DRIVERS \
->> ++    DRACUT_MODULE_NAME \
->> +     "
->> ++
->> ++python do_validate_dracut_force_drivers() {
->> ++    import re
->> ++    for drv in (d.getVar('DRACUT_FORCE_DRIVERS') or '').split():
->> ++        if not re.fullmatch(r'[A-Za-z0-9_-]+', drv):
->> ++            bb.fatal(f"Invalid driver name '{drv}' in DRACUT_FORCE_DRIVERS")
->> ++}
->> ++addtask validate_dracut_force_drivers before do_transform_template after do_patch
->> ++
->> + python do_add_additional_dracut_configuration() {
->> +     workdir = os.path.normpath(d.getVar('WORKDIR'))
->> +     module_setup = d.getVar('DRACUT_MODULE_SETUP')
->> +diff --git a/meta/recipes-initramfs/dracut-module/files/module-setup.sh.tmpl b/meta/recipes-initramfs/dracut-module/files/module-setup.sh.tmpl
->> +index b38ae50c..9fc5af93 100644
->> +--- a/meta/recipes-initramfs/dracut-module/files/module-setup.sh.tmpl
->> ++++ b/meta/recipes-initramfs/dracut-module/files/module-setup.sh.tmpl
->> +@@ -15,11 +15,16 @@ check() {
->> + # Module dependency requirements.
->> + depends() {
->> +     echo "${DRACUT_MODULE_DEPENDENCIES}"
->> ++    # rd.driver.pre is evaluated by the kernel-modules module
->> ++    [ -z "${DRACUT_FORCE_DRIVERS}" ] || echo "kernel-modules"
->> +     # ISAR_DRACUT_DEPENDS
->> +     return 0
->> +
->> + }
->> + installkernel() {
->> ++    if [ -n "${DRACUT_FORCE_DRIVERS}" ]; then
->> ++        hostonly='' instmods -c ${DRACUT_FORCE_DRIVERS} || return 1
->> ++    fi
->> +     # ISAR_DRACUT_KERNELINSTALL
->> +     return 0
->> + }
->> +@@ -38,5 +43,10 @@ install() {
->> +             exit 1
->> +         fi
->> +     done
->> ++    for driver in ${DRACUT_FORCE_DRIVERS}; do
->> ++        mkdir -p "$initdir/etc/cmdline.d"
->> ++        echo "rd.driver.pre=$driver" >> \
->> ++            "$initdir/etc/cmdline.d/20-force-drivers-${DRACUT_MODULE_NAME}.conf"
->> ++    done
->> +     # ISAR_DRACUT_INSTALL
->> + }
->> +--
->> +2.47.3
->> +
->> diff --git a/kas-cip.yml b/kas-cip.yml
->> index 13251a75..04345552 100644
->> --- a/kas-cip.yml
->> +++ b/kas-cip.yml
->> @@ -25,6 +25,10 @@ repos:
->>       commit: bbb81cd0eec51f224123efedcd7cd7c9f610a7e7
->>       layers:
->>         meta:
->> +    patches:
->> +      p1:
->> +        repo: cip-core
->> +        path: isar-patches/0001-dracut-module-add-DRACUT_FORCE_DRIVERS.patch
->>   
->>   bblayers_conf_header:
->>     standard: |
->> diff --git a/recipes-initramfs/cip-core-initramfs-dracut/cip-core-initramfs-dracut.bb b/recipes-initramfs/cip-core-initramfs-dracut/cip-core-initramfs-dracut.bb
->> index 8541574e..ccd6b7c1 100644
->> --- a/recipes-initramfs/cip-core-initramfs-dracut/cip-core-initramfs-dracut.bb
->> +++ b/recipes-initramfs/cip-core-initramfs-dracut/cip-core-initramfs-dracut.bb
->> @@ -20,6 +20,11 @@ INITRAMFS_INSTALL += "dracut-config-cip-overlay \
->>                         dracut-config-cip-watchdog"
->>   DRACUT_EXTRA_MODULES += "cip-overlay cip-verity cip-watchdog"
->>   
->> +# Drivers loaded early in the initrd, e.g. for the watchdog
->> +INITRAMFS_FORCE_DRIVERS ??= ""
->> +INITRAMFS_INSTALL += "${@'dracut-cip-force-drivers' if d.getVar('INITRAMFS_FORCE_DRIVERS') else ''}"
->> +DRACUT_EXTRA_MODULES += "${@'cip-force-drivers' if d.getVar('INITRAMFS_FORCE_DRIVERS') else ''}"
->> +
->>   INITRAMFS_INSTALL:append:encrypt-partitions = " dracut-config-cip-crypt"
->>   DRACUT_EXTRA_MODULES:append:encrypt-partitions = " cip-crypt"
->>   
->> diff --git a/recipes-initramfs/dracut-cip-force-drivers/dracut-cip-force-drivers_0.1.bb b/recipes-initramfs/dracut-cip-force-drivers/dracut-cip-force-drivers_0.1.bb
->> new file mode 100644
->> index 00000000..db3815c2
->> --- /dev/null
->> +++ b/recipes-initramfs/dracut-cip-force-drivers/dracut-cip-force-drivers_0.1.bb
->> @@ -0,0 +1,17 @@
->> +#
->> +# CIP Core, generic profile
->> +#
->> +# Copyright (c) Siemens AG, 2026
->> +#
->> +# Authors:
->> +#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
->> +#
->> +# SPDX-License-Identifier: MIT
->> +
->> +inherit dracut-module
->> +
->> +DESCRIPTION = "dracut module loading INITRAMFS_FORCE_DRIVERS early in the initrd"
->> +MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
->> +
->> +INITRAMFS_FORCE_DRIVERS ??= ""
->> +DRACUT_FORCE_DRIVERS = "${INITRAMFS_FORCE_DRIVERS}"
-> 
-> 
+Jan
 
+--=20
+Siemens AG, Foundational Technologies
+Linux Expert Center
