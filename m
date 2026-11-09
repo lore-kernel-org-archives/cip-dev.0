@@ -1,17 +1,17 @@
-Received: from TY3P286CU002.outbound.protection.outlook.com (TY3P286CU002.outbound.protection.outlook.com [52.101.229.25])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.4581.1794226522219503324
+Received: from OS0P286CU011.outbound.protection.outlook.com (OS0P286CU011.outbound.protection.outlook.com [52.101.228.5])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.4583.1794226524550457157
  for <cip-dev@lists.cip-project.org>;
- Mon, 09 Nov 2026 04:15:22 -0800
+ Mon, 09 Nov 2026 04:15:24 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=WXYFb1PQ;
- spf=pass (domain: bp.renesas.com, ip: 52.101.229.25, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=Tplh1weI;
+ spf=pass (domain: bp.renesas.com, ip: 52.101.228.5, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=N/XSHdsAuTHKS7g/JOm8dEl290r11F+0I/yoSP6rkfAgjO4xCv41qLsjb5IEGx2kyWIwB2i7qhCBW3IcdpQ56bNcYo6xNWjuQmditcI7lkCq/1VJ4syeewGtPIGKInxxhPROLiWPV6iG43iqMIB5gDgzHej7AuwUxj2HgkgrvSzigwTIM0LfjeFoPAGNg+XyZ7d31n/Pf5zP4RJ2o9PS6Vbo7lng48HAjlM33eEZfy3WKBtl7lcKbSr5BZpx2CcLu7xdHxvsZSwvNm6VmC42JF1OKw672Ks7Hq2lf4DOmxWdz8FwYQak3rb2Kl4PkZRnwn1f8f5irAp/HJrdSQs//g==
+ b=XaxfZWpaZfvgSqQ6fOMMEnfFjmDXvhNG6tBszEdQDrWyo3cBzuHrTN+yJtDJS8nG1ASo55LQV152P90mShDmJTDzLZpXGvehw7YXOJ+mh+YpfTWY11RZWNetTr0bFhWp1RMfTAqvM791c13JlF4jl/UwY+HWdYrC4fWx/L633Hte3ZZ8LH+0X+cz5NC6s+vUaBvypYRjOo/aLrlcO85AzMI6pZbbb6RsEIxz+I21TwlqyTdBjXbkXPOHjLjKS2QnNHDT1aLpmq/+PXdxEFQVeTKia5dz3mAce0KVVoF5S286UVyUbkA8/pY/Ly2XEgPf8SHXFk/siDordwH07i8tZQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wQ8gGulqRX5ac4pCwhf4+UXcqOkE+8tpNCjJk+3jjtM=;
- b=VtZKPnG5518W9/w1lLdA28pOk0ZdO4elrcA1YTQkgbeGUH864xgwiReYSpWydizmubASUt41e9BzBgXZEwM++X77NymMbc+fW+KStJcci7fsyRDdCdsMghcSD6QhU/UuoDHfzbtfqKpN628lhAT1gtmH4p7WW0Kp4Fo/pst0ExlMB9gzyUKIFsmQeA6Za4xe1v3DVkCOmxQY8XO5lGFqxbhAjvl1BJ0PMdafnrG+YImucsqQpMB24XQLP9DCLlqcraiZN/pOKN6zfb2UUfs1SQGpZ9uV7gDAFOtjFDya6MZzBRHFnhzkN5/tz7tcFs3UV7r03HCvh9pJ5gwBCZMBMA==
+ bh=Z13FAxqsGgQgDq1D5Vmh9tFtu0QfMNYOYQxhoT1yL6Q=;
+ b=IR4znMVxbc/9sGCXYKmpQ0VDMoopPrKSm9snxwW4gtTph7/lmBFG6WZ83hmLjd1mg816coAd71wtCdvIkrcQ8BD1U9T6EYDDUzH1riPNnpD6dnrqUAn6R5OZGkmmnt4pfM47U4WQ80DkuK6isVrhHUqJY/XXEVubxNxxXZD+U0mUBqUak9+APBIqcNU7uD1l/LawuNYQ/xGiY2G2XtoxuQumIwEVOxMbhScfH2vjfUAv8dCDrR7aadDBBpz5hejHOZn781gzm0iOhqHIf1T8W0sx4rJayqfIT2PxXgiBuSDwZOgYD9y+oR5B5/GQ24AfilDeYgXEXKmEyex1bIe50g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  8.62.32.50) smtp.rcpttodomain=bp.renesas.com smtp.mailfrom=bp.renesas.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=bp.renesas.com;
@@ -19,18 +19,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wQ8gGulqRX5ac4pCwhf4+UXcqOkE+8tpNCjJk+3jjtM=;
- b=WXYFb1PQbctNW6PMSE8ARLTmmyyujso1uKqIDVy+bdtPxZP5stlCQaiEbq3EJOgNqn/IAbZZVucupxqJ+rIYF2mpz3LD1Y3B2tkUvztWie22XxGUYk0Vicc8zHhUZS2cR9FzDGgTR5Hrqry6TpfFhZ9n43OOQ2UIDmxRuZw/TXo=
-Received: from OS7P301CA0023.JPNP301.PROD.OUTLOOK.COM (2603:1096:604:26b::12)
- by TY7PR01MB15390.jpnprd01.prod.outlook.com (2603:1096:405:246::5) with
+ bh=Z13FAxqsGgQgDq1D5Vmh9tFtu0QfMNYOYQxhoT1yL6Q=;
+ b=Tplh1weIiSclh3xQrq1PZcxI9JKToGiF4xYWl7Gkcezalwq6EblGNHdwlB9P/XZQB0kvR7idkAu7sFDwAngO40gdVUJcMjaX8+sREfLkqXkHP8z3nh848AoCiKMC6aFpHN0g6CIWfg5IjJwqDDqKoY8dXU3Axw4rdYFir7XG1cQ=
+Received: from TYCP286CA0173.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:3c6::16)
+ by OS3PR01MB7996.jpnprd01.prod.outlook.com (2603:1096:604:1be::7) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.12; Mon, 9 Nov
- 2026 12:15:15 +0000
-Received: from OS1PEPF0000D20E.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:604:26b:cafe::88) by OS7P301CA0023.outlook.office365.com
- (2603:1096:604:26b::12) with Microsoft SMTP Server (version=TLS1_3,
+ 2026 12:15:17 +0000
+Received: from TY2PEPF00005623.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:3c6:cafe::48) by TYCP286CA0173.outlook.office365.com
+ (2603:1096:400:3c6::16) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.21.592.13 via Frontend Transport; Mon, 9
- Nov 2026 12:15:15 +0000
+ Nov 2026 12:15:17 +0000
 X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
  is 8.62.32.50) smtp.mailfrom=bp.renesas.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=bp.renesas.com;
@@ -38,20 +38,20 @@ Received-SPF: Pass (protection.outlook.com: domain of bp.renesas.com
  designates 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
  client-ip=8.62.32.50; helo=ejcrelay004p.adwin.renesas.com; pr=E
 Received: from ejcrelay004p.adwin.renesas.com (8.62.32.50) by
- OS1PEPF0000D20E.mail.protection.outlook.com (10.167.240.37) with Microsoft
+ TY2PEPF00005623.mail.protection.outlook.com (10.167.240.54) with Microsoft
  SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.615.4
- via Frontend Transport; Mon, 9 Nov 2026 12:15:15 +0000
+ via Frontend Transport; Mon, 9 Nov 2026 12:15:17 +0000
 Received: from Ubuntu-22.. (ree-0065929.diasemi.com [10.24.1.30])
-	by ejcrelay004p.adwin.renesas.com (Postfix) with ESMTP id 5352430002A9;
-	Mon,  9 Nov 2026 21:15:14 +0900 (JST)
+	by ejcrelay004p.adwin.renesas.com (Postfix) with ESMTP id 02307300022D;
+	Mon,  9 Nov 2026 21:15:15 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
 	Pavel Machek <pavel@nabladev.com>
 CC: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 13/24] clk: renesas: rzv2h-cpg: Use per-SoC PLL reference frequency for calculations
-Date: Mon,  9 Nov 2026 12:14:40 +0000
-Message-ID: <20261109121451.6042-14-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 14/24] clk: renesas: rzv2h: Add PLLDSI clk mux support
+Date: Mon,  9 Nov 2026 12:14:41 +0000
+Message-ID: <20261109121451.6042-15-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261109121451.6042-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20261109121451.6042-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -60,126 +60,315 @@ Content-Transfer-Encoding: quoted-printable
 Return-Path: prabhakar.mahadev-lad.rj@bp.renesas.com
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OS1PEPF0000D20E:EE_|TY7PR01MB15390:EE_
-X-MS-Office365-Filtering-Correlation-Id: 567be484-75c2-4363-c768-08df3e5b1ce4
+X-MS-TrafficTypeDiagnostic: TY2PEPF00005623:EE_|OS3PR01MB7996:EE_
+X-MS-Office365-Filtering-Correlation-Id: 645a5a2d-8413-4fc6-73a3-08df3e5b1ddc
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|82310400026|1800799024|36860700016|23010399003|376014|18002099003|22082099003|6133799003|10067099003|3023799007|13003099007|11063799006|261028144727099003|261102123227099003|261022075727099003|261022105027099003|261021121427099003|261021123027099003|56012099006|261026140227099003|261009223027099003;
-X-Microsoft-Antispam-Message-Info: c8SFZIIO7zwPLSJ+1uhiRMFaGS7QStDDxxPnHLPqJHnOMKbkE8fosgt/FNVOTAE6bbYOBQkqDin2fPmnLqMfsV5fH4v7sQ3IW6KkeC3GE383HE/pZ7u1B/h28ROKzzQE9MYYWMQWGczRdK+bFrrFigf5NkSFQ4CeRecPA6IP4gr5XPWJtTrQXqIsLI7wzMqBL4vQVhRNn0PzKtfDGp9RaBQc/e1vA2xrFh/dirjy5vOwJmpnpNr2gJ9hBg2k5cZvbkgkDEbYXSqCdDviASghKpFygkCodc+ObQQlSkKQ6YVK8+6N60WWmkCOqdcrKEnyiDEtsc8u2VY4IJ1EAiyqlHgbjGnoiIqI2Wuir2QTq+sy40rsj8bfhXBfTEEgvicVa10fjpw5LwVy2sKIT87gr/6Ytbaoq9pWcBe7ob8hhAiRroahUxFP6X+HzrOamxYoo8N0Kfoc66Bv4ngNdT+f/7EG/aD8ljPSnzfNiAKf4CFI9Gk+YoMaSzgMSnWgOwUOngCIJIvyWbcD6sAz1z/1xIXA6us8XHQJ2suI6Rw9mywdgcqFCAIdmnjXmKWA1MQrqLFuu8CtTOVo5bBakhqwHLDAnWzafH1Rr7GlNeYzoB0LTzFlkgSkDxjsKaCuX0+SL+bbpUyz3EBTWFtnQMNOgV84Z2pxThh3ZjGvqGYaj/w=
-X-Forefront-Antispam-Report: CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay004p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700016)(23010399003)(376014)(18002099003)(22082099003)(6133799003)(10067099003)(3023799007)(13003099007)(11063799006)(261028144727099003)(261102123227099003)(261022075727099003)(261022105027099003)(261021121427099003)(261021123027099003)(56012099006)(261026140227099003)(261009223027099003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|23010399003|376014|1800799024|82310400026|36860700016|260925021911599003|260925022911599003|260925021311599003|11063799006|56012099006|261021121427099003|261022075727099003|261022105027099003|261009223027099003|261026140227099003|261026121527099003|261102130727099003|261028144727099003|261102123227099003|10067099003|18002099003|22082099003|13003099007|3023799007;
+X-Microsoft-Antispam-Message-Info: K/rJGHP5YF5BYxkp1DQcgeHdlMFHHdq0VkU6XdAjrwGwlIajgjUU46R7BdK1Xj7gLS1H2QEddjohM4jzKun07hS/BF+84LMVQELJKxP/v4/tl7492wBK+YaTDI7CT6OqGG88oDClCXQbGkF93iqTMsnD3K2aqy0es32wlIOhbJrAJb+osBJY85PfTKWDXyIMPVG0pJ+rX/NZgM3zonv3XuLb02UzYaQxZDb4el5/BdQ0QyjWp5NMRmFkDaaezqa5ShoGByTT5NiIPtTN/ImqnpSfS2FfPpInB/Utc/GBNxExvrKI4VD8ynV/+ZMP/7aQRzDfjQCBFnwlGhhRumje/H4xn2yaPqtkrH0MLyJcg1bbHb7/f0ejtgVDThlkFuYmcmVn4hMss2pK5pey1bNdBvFU2mMo99qjdjzoqOjwCXNEwbp7wFPVEDoV7NKNVIprfY3vvFvXo4JJtII7v8vGkwdrr7RZu/D+wWznoeFqb6LdPmZAIe1sk4vgXNZLxCb5nNbfeyU/8vpatUW+wCGnwlQTwaZg4p4bc5gLRdnGSz2dRQGF/XWuzEuX/GvWQrFbQTiyWh2PBJ29ktTNAim1NRUiNa+zZdbzdRlEX4ByDKwz+5oaLBKDbm8vEW+ZBsNcFR7o5oxO4cm1JwUxC272uxTf1aOjblD+lVS+lBnEe7A=
+X-Forefront-Antispam-Report: CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay004p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(23010399003)(376014)(1800799024)(82310400026)(36860700016)(260925021911599003)(260925022911599003)(260925021311599003)(11063799006)(56012099006)(261021121427099003)(261022075727099003)(261022105027099003)(261009223027099003)(261026140227099003)(261026121527099003)(261102130727099003)(261028144727099003)(261102123227099003)(10067099003)(18002099003)(22082099003)(13003099007)(3023799007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: GsAJtp/IDLMfYKBnZW7OsKYx8APGaDPrC3W4VdXx+HX7OTTS7dMWm/OMM48dy2QbpxRJOVg6x9zy26SKtw+rr11pNP0NyvZWOChDGOoTvTMdA7YQdvSBMnpPIxod+NnIcaqGGH8XQTF9GhYcHdGbVtpzvwROhfbSSQHbE9bl2exVPxeccvEmxU2FxdR9bPgsDp/kKbSsPcO3s5gSmhzjOJHt6ZNG25W17QEZLPw10ewP9w6tSYggP61itzcViIJfc6RnAGYqBWm4dW7Em/NWYBVEmFboWz6iZuzRUJkWEGhXGclGlj3jl7aB0QjmmSsDayve0uSSPq/hRkQV+3UWlkaRGdEwjEPi8QfO+ebfyM/Oipuvrp6PskFWrjO15VYGbNeK2IJIQl7XV9H86kI7oonPFTcP39xIVcIN3j1TrdDu1lIiqJltYXJMk4/KU6Br
+X-MS-Exchange-AntiSpam-MessageData-0: Pzh5XugI+F+/Yci7XDU31Jn5o08XD6wQZECVCwdf9fPVnUjVxvfrBQRJhdEWIZmC5MGZwrUn6pAeHAnQ/4HqYKf1Tm6jhxDhhzuwgb1/QVrYjKN9K8CkPoIrqagZsLfM38HnIggXlqqapGaKRpgStd16GSRVeXTHzDh6upYbHsyeiUmaE22BIluFNeXvuF6lVe0LVkyniwt8OVCX/z5dqKQiNW9tFL2V+RJ3p20h/BbwyDxQNsaHjDtJu/Zm5PeZ6s5ijCqMi+WCClPKpvAkveqFYRm4aM7Xl6oWQracz4deTtJXIb/Yjr79EaIrHieCSbZE6ysza+KR8yI7FXNycCoNNv+Jq2uv4im0m3SleFg2fhltVgSKarn+9d/lO56UUeMcnFv8J7U3Tv3+anb/5xuIgaggHqM3wvJaA7/1bOsheOBDyQrQCSCQ7V0Dxcrn
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2026 12:15:15.6972
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2026 12:15:17.3328
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 567be484-75c2-4363-c768-08df3e5b1ce4
+X-MS-Exchange-CrossTenant-Network-Message-Id: 645a5a2d-8413-4fc6-73a3-08df3e5b1ddc
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay004p.adwin.renesas.com]
-X-MS-Exchange-CrossTenant-AuthSource: OS1PEPF0000D20E.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthSource: TY2PEPF00005623.JPNP286.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY7PR01MB15390
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB7996
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Mon, 09 Nov 2026 12:15:26 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24717
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24718
 Content-Type: text/plain; charset="utf-8"
 
-commit 4f4230ff5d0aec3a5f3b3d9bab39b3db13800a44 upstream.
+From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 
-Introduce a per-SoC PLL reference input frequency parameter to avoid
-relying on a hardcoded 24MHz constant during PLL configuration math.
+commit 3afccee4a3b88b4ba370916bbb8ab7027221b810 upstream.
 
-Add an input_fref member to struct rzv2h_pll_limits. In the core
-calculation helper rzv2h_get_pll_pars(), derive the base input clock
-rate from limits->input_fref, utilizing the conditional ternary operator
-to fall back to 24MHz if the struct field is left uninitialized (0),
-and drop the obsolete macro RZ_V2H_OSC_CLK_IN_MEGA.
+Add PLLDSI clk mux support to select PLLDSI clock from different clock
+sources.
 
-This abstraction permits the reuse of the common PLL divider logic on
-newer SoC platforms like the RZ/T2H, which feature a 48 MHz PLL reference
-clock input instead of the 24 MHz signal used by RZ/V2H(P), without
-disrupting existing platforms.
+Introduce the DEF_PLLDSI_SMUX() macro to define these muxes and register
+them in the clock driver.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Extend the determine_rate callback to calculate and propagate PLL
+parameters via rzv2h_get_pll_dtable_pars() when LVDS output is selected,
+using a new helper function rzv2h_cpg_plldsi_smux_lvds_determine_rate().
+
+The CLK_SMUX2_DSI{0,1}_CLK clock multiplexers select between two paths
+with different duty cycles:
+
+- CDIV7_DSIx_CLK (LVDS path, parent index 0): asymmetric H/L=3D4/3 duty (4/=
+7)
+- CSDIV_DSIx (DSI/RGB path, parent index 1): symmetric 50% duty (1/2)
+
+Implement rzv2h_cpg_plldsi_smux_{get,set}_duty_cycle clock operations to
+allow the DRM driver to query and configure the appropriate clock path
+based on the required output duty cycle.
+
+Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20260618181949.3036280-2-prabhakar.mahadev-l=
-ad.rj@bp.renesas.com
+Link: https://patch.msgid.link/24d3853ca2522df21e6a071a23e23ba4ca4b7276.177=
+5636898.git.tommaso.merciai.xr@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/clk/renesas/rzv2h-cpg.c | 8 ++++----
- include/linux/clk/renesas.h     | 5 +++++
- 2 files changed, 9 insertions(+), 4 deletions(-)
+ drivers/clk/renesas/rzv2h-cpg.c | 181 ++++++++++++++++++++++++++++++++
+ drivers/clk/renesas/rzv2h-cpg.h |   8 ++
+ 2 files changed, 189 insertions(+)
 
 diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-cp=
 g.c
-index 170dbe452c34e..e309129b73a8f 100644
+index e309129b73a8f..f3ef7b4a21434 100644
 --- a/drivers/clk/renesas/rzv2h-cpg.c
 +++ b/drivers/clk/renesas/rzv2h-cpg.c
-@@ -213,7 +213,6 @@ struct rzv2h_plldsi_div_clk {
- #define to_plldsi_div_clk(_hw) \
- 	container_of(_hw, struct rzv2h_plldsi_div_clk, hw)
+@@ -76,6 +76,11 @@
+ /* On RZ/G3E SoC we have two DSI PLLs */
+ #define MAX_CPG_DSI_PLL		2
 =20
--#define RZ_V2H_OSC_CLK_IN_MEGA		(24 * MEGA)
- #define RZV2H_MAX_DIV_TABLES		(16)
++#define CPG_PLLDSI_SMUX_LVDS_DUTY_NUM		4
++#define CPG_PLLDSI_SMUX_LVDS_DUTY_DEN		7
++#define CPG_PLLDSI_SMUX_DSI_RGB_DUTY_NUM	1
++#define CPG_PLLDSI_SMUX_DSI_RGB_DUTY_DEN	2
++
+ /**
+  * struct rzv2h_pll_dsi_info - PLL DSI information, holds the limits and p=
+arameters
+  *
+@@ -418,6 +423,20 @@ bool rzv2h_get_pll_divs_pars(const struct rzv2h_pll_li=
+mits *limits,
+ }
+ EXPORT_SYMBOL_NS_GPL(rzv2h_get_pll_divs_pars, RZV2H_CPG);
+=20
++/**
++ * struct rzv2h_plldsi_mux_clk - PLL DSI MUX clock
++ *
++ * @priv: CPG private data
++ * @mux: mux clk
++ */
++struct rzv2h_plldsi_mux_clk {
++	struct rzv2h_cpg_priv *priv;
++	struct clk_mux mux;
++};
++
++#define to_plldsi_clk_mux(_mux) \
++	container_of(_mux, struct rzv2h_plldsi_mux_clk, mux)
++
+ static unsigned long rzv2h_cpg_plldsi_div_recalc_rate(struct clk_hw *hw,
+ 						      unsigned long parent_rate)
+ {
+@@ -649,6 +668,165 @@ static int rzv2h_cpg_plldsi_set_rate(struct clk_hw *h=
+w, unsigned long rate,
+ 	return rzv2h_cpg_pll_set_rate(pll_clk, &dsi_info->pll_dsi_parameters.pll,=
+ true);
+ }
+=20
++static u8 rzv2h_cpg_plldsi_smux_get_parent(struct clk_hw *hw)
++{
++	return clk_mux_ops.get_parent(hw);
++}
++
++static int rzv2h_cpg_plldsi_smux_set_parent(struct clk_hw *hw, u8 index)
++{
++	return clk_mux_ops.set_parent(hw, index);
++}
++
++static int rzv2h_cpg_plldsi_smux_lvds_determine_rate(struct rzv2h_cpg_priv=
+ *priv,
++						     struct pll_clk *pll_clk,
++						     struct clk_rate_request *req)
++{
++	struct rzv2h_pll_div_pars *dsi_params;
++	struct rzv2h_pll_dsi_info *dsi_info;
++	u8 lvds_table[] =3D { 7 };
++	u64 rate_millihz;
++
++	dsi_info =3D &priv->pll_dsi_info[pll_clk->pll.instance];
++	dsi_params =3D &dsi_info->pll_dsi_parameters;
++
++	rate_millihz =3D mul_u32_u32(req->rate, MILLI);
++	if (!rzv2h_get_pll_divs_pars(dsi_info->pll_dsi_limits, dsi_params,
++				     lvds_table, ARRAY_SIZE(lvds_table), rate_millihz)) {
++		dev_err(priv->dev, "failed to determine rate for req->rate: %lu\n",
++			req->rate);
++		return -EINVAL;
++	}
++
++	req->rate =3D DIV_ROUND_CLOSEST_ULL(dsi_params->div.freq_millihz, MILLI);
++	req->best_parent_rate =3D req->rate;
++	dsi_info->req_pll_dsi_rate =3D req->best_parent_rate * dsi_params->div.di=
+vider_value;
++
++	return 0;
++}
++
++static int rzv2h_cpg_plldsi_smux_determine_rate(struct clk_hw *hw,
++						struct clk_rate_request *req)
++{
++	struct clk_mux *mux =3D to_clk_mux(hw);
++	struct rzv2h_plldsi_mux_clk *dsi_mux =3D to_plldsi_clk_mux(mux);
++	struct pll_clk *pll_clk =3D to_pll(clk_hw_get_parent(hw));
++	struct rzv2h_cpg_priv *priv =3D dsi_mux->priv;
++
++	/*
++	 * For LVDS output (parent index 0), calculate PLL parameters with
++	 * fixed divider value of 7. For DSI/RGB output (parent index 1) skip
++	 * PLL calculation here as it's handled by determine_rate of the
++	 * divider (up one level).
++	 */
++	if (!clk_mux_ops.get_parent(hw))
++		return rzv2h_cpg_plldsi_smux_lvds_determine_rate(priv, pll_clk, req);
++
++	req->best_parent_rate =3D req->rate;
++	return 0;
++}
++
++static int rzv2h_cpg_plldsi_smux_get_duty_cycle(struct clk_hw *hw,
++						struct clk_duty *duty)
++{
++	u8 parent =3D clk_mux_ops.get_parent(hw);
++
++	/*
++	 * CDIV7_DSIx_CLK - LVDS path (div7) - duty 4/7.
++	 * CSDIV_DSIx - DSI/RGB path (csdiv) - duty 1/2.
++	 */
++	if (parent =3D=3D 0) {
++		duty->num =3D CPG_PLLDSI_SMUX_LVDS_DUTY_NUM;
++		duty->den =3D CPG_PLLDSI_SMUX_LVDS_DUTY_DEN;
++	} else {
++		duty->num =3D CPG_PLLDSI_SMUX_DSI_RGB_DUTY_NUM;
++		duty->den =3D CPG_PLLDSI_SMUX_DSI_RGB_DUTY_DEN;
++	}
++
++	return 0;
++}
++
++static int rzv2h_cpg_plldsi_smux_set_duty_cycle(struct clk_hw *hw,
++						struct clk_duty *duty)
++{
++	struct clk_hw *parent_hw;
++	u8 parent_idx;
++
++	/*
++	 * Select parent based on requested duty cycle:
++	 * - If duty > 50% (num/den > 1/2), select LVDS path (parent 0)
++	 * - Otherwise, select DSI/RGB path (parent 1)
++	 */
++	if (duty->num * CPG_PLLDSI_SMUX_DSI_RGB_DUTY_DEN >
++	    duty->den * CPG_PLLDSI_SMUX_DSI_RGB_DUTY_NUM)
++		parent_idx =3D 0;
++	else
++		parent_idx =3D 1;
++
++	if (parent_idx >=3D clk_hw_get_num_parents(hw))
++		return -EINVAL;
++
++	parent_hw =3D clk_hw_get_parent_by_index(hw, parent_idx);
++	if (!parent_hw)
++		return -EINVAL;
++
++	return clk_hw_set_parent(hw, parent_hw);
++}
++
++static const struct clk_ops rzv2h_cpg_plldsi_smux_ops =3D {
++	.determine_rate =3D rzv2h_cpg_plldsi_smux_determine_rate,
++	.get_parent =3D rzv2h_cpg_plldsi_smux_get_parent,
++	.set_parent =3D rzv2h_cpg_plldsi_smux_set_parent,
++	.get_duty_cycle =3D rzv2h_cpg_plldsi_smux_get_duty_cycle,
++	.set_duty_cycle =3D rzv2h_cpg_plldsi_smux_set_duty_cycle,
++};
++
++static struct clk * __init
++rzv2h_cpg_plldsi_smux_clk_register(const struct cpg_core_clk *core,
++				   struct rzv2h_cpg_priv *priv)
++{
++	struct rzv2h_plldsi_mux_clk *clk_hw_data;
++	struct clk_init_data init;
++	struct clk_hw *clk_hw;
++	struct smuxed smux;
++	int ret;
++
++	smux =3D core->cfg.smux;
++
++	if (smux.shift + smux.width > 16) {
++		dev_err(priv->dev, "mux value exceeds LOWORD field\n");
++		return ERR_PTR(-EINVAL);
++	}
++
++	clk_hw_data =3D devm_kzalloc(priv->dev, sizeof(*clk_hw_data), GFP_KERNEL)=
+;
++	if (!clk_hw_data)
++		return ERR_PTR(-ENOMEM);
++
++	clk_hw_data->priv =3D priv;
++
++	init.name =3D core->name;
++	init.ops =3D &rzv2h_cpg_plldsi_smux_ops;
++	init.flags =3D core->flag;
++	init.parent_names =3D core->parent_names;
++	init.num_parents =3D core->num_parents;
++
++	clk_hw_data->mux.reg =3D priv->base + smux.offset;
++
++	clk_hw_data->mux.shift =3D smux.shift;
++	clk_hw_data->mux.mask =3D clk_div_mask(smux.width);
++	clk_hw_data->mux.flags =3D core->mux_flags;
++	clk_hw_data->mux.lock =3D &priv->rmw_lock;
++
++	clk_hw =3D &clk_hw_data->mux.hw;
++	clk_hw->init =3D &init;
++
++	ret =3D devm_clk_hw_register(priv->dev, clk_hw);
++	if (ret)
++		return ERR_PTR(ret);
++
++	return clk_hw->clk;
++}
++
+ static int rzv2h_cpg_pll_clk_is_enabled(struct clk_hw *hw)
+ {
+ 	struct pll_clk *pll_clk =3D to_pll(hw);
+@@ -1095,6 +1273,9 @@ rzv2h_cpg_register_core_clk(const struct cpg_core_clk=
+ *core,
+ 	case CLK_TYPE_PLLDSI_DIV:
+ 		clk =3D rzv2h_cpg_plldsi_div_clk_register(core, priv);
+ 		break;
++	case CLK_TYPE_PLLDSI_SMUX:
++		clk =3D rzv2h_cpg_plldsi_smux_clk_register(core, priv);
++		break;
+ 	default:
+ 		goto fail;
+ 	}
+diff --git a/drivers/clk/renesas/rzv2h-cpg.h b/drivers/clk/renesas/rzv2h-cp=
+g.h
+index 1f4f1b3dc0a7a..4afcfec92e03a 100644
+--- a/drivers/clk/renesas/rzv2h-cpg.h
++++ b/drivers/clk/renesas/rzv2h-cpg.h
+@@ -201,6 +201,7 @@ enum clk_types {
+ 	CLK_TYPE_SMUX,		/* Static Mux */
+ 	CLK_TYPE_PLLDSI,	/* PLLDSI */
+ 	CLK_TYPE_PLLDSI_DIV,	/* PLLDSI divider */
++	CLK_TYPE_PLLDSI_SMUX,	/* PLLDSI Static Mux */
+ };
+=20
+ #define DEF_TYPE(_name, _id, _type...) \
+@@ -239,6 +240,13 @@ enum clk_types {
+ 		 .dtable =3D _dtable, \
+ 		 .parent =3D _parent, \
+ 		 .flag =3D CLK_SET_RATE_PARENT)
++#define DEF_PLLDSI_SMUX(_name, _id, _smux_packed, _parent_names) \
++	DEF_TYPE(_name, _id, CLK_TYPE_PLLDSI_SMUX, \
++		 .cfg.smux =3D _smux_packed, \
++		 .parent_names =3D _parent_names, \
++		 .num_parents =3D ARRAY_SIZE(_parent_names), \
++		 .flag =3D CLK_SET_RATE_PARENT, \
++		 .mux_flags =3D CLK_MUX_HIWORD_MASK)
 =20
  /**
-@@ -237,6 +236,7 @@ struct rzv2h_plldsi_div_clk {
- bool rzv2h_get_pll_pars(const struct rzv2h_pll_limits *limits,
- 			struct rzv2h_pll_pars *pars, u64 freq_millihz)
- {
-+	unsigned long input_fref =3D limits->input_fref ?: (24 * MEGA);
- 	u64 fout_min_millihz =3D mul_u32_u32(limits->fout.min, MILLI);
- 	u64 fout_max_millihz =3D mul_u32_u32(limits->fout.max, MILLI);
- 	struct rzv2h_pll_pars p, best;
-@@ -249,7 +249,7 @@ bool rzv2h_get_pll_pars(const struct rzv2h_pll_limits *=
-limits,
- 	best.error_millihz =3D S64_MAX;
-=20
- 	for (p.p =3D limits->p.min; p.p <=3D limits->p.max; p.p++) {
--		u32 fref =3D RZ_V2H_OSC_CLK_IN_MEGA / p.p;
-+		u32 fref =3D input_fref / p.p;
- 		u16 divider;
-=20
- 		for (divider =3D 1 << limits->s.min, p.s =3D limits->s.min;
-@@ -330,9 +330,9 @@ bool rzv2h_get_pll_pars(const struct rzv2h_pll_limits *=
-limits,
- 					continue;
-=20
- 				/* PLL_M component of (output * 65536 * PLL_P) */
--				output =3D mul_u32_u32(p.m * 65536, RZ_V2H_OSC_CLK_IN_MEGA);
-+				output =3D mul_u32_u32(p.m * 65536, input_fref);
- 				/* PLL_K component of (output * 65536 * PLL_P) */
--				output +=3D p.k * RZ_V2H_OSC_CLK_IN_MEGA;
-+				output +=3D p.k * input_fref;
- 				/* Make it in mHz */
- 				output *=3D MILLI;
- 				output =3D DIV_U64_ROUND_CLOSEST(output, 65536 * p.p * divider);
-diff --git a/include/linux/clk/renesas.h b/include/linux/clk/renesas.h
-index c360df9fa735c..039cf545a20b6 100644
---- a/include/linux/clk/renesas.h
-+++ b/include/linux/clk/renesas.h
-@@ -53,6 +53,9 @@ static inline void rzg2l_cpg_dsi_div_set_divider(u8 divid=
-er, int target) { }
-  * various parameters used to configure a PLL. These limits ensure
-  * the PLL operates within valid and stable ranges.
-  *
-+ * @input_fref: Reference input frequency to the PLL (in Hz). If set
-+ * to 0, a default value of 24MHz is used.
-+ *
-  * @fout: Output frequency range (in MHz)
-  * @fout.min: Minimum allowed output frequency
-  * @fout.max: Maximum allowed output frequency
-@@ -78,6 +81,8 @@ static inline void rzg2l_cpg_dsi_div_set_divider(u8 divid=
-er, int target) { }
-  * @k.max: Maximum delta-sigma value
-  */
- struct rzv2h_pll_limits {
-+	u32 input_fref;
-+
- 	struct {
- 		u32 min;
- 		u32 max;
+  * struct rzv2h_mod_clk - Module Clocks definitions
 --=20
 2.43.0
 
