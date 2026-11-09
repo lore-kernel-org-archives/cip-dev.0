@@ -1,17 +1,17 @@
-Received: from TY3P286CU002.outbound.protection.outlook.com (TY3P286CU002.outbound.protection.outlook.com [52.101.229.20])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.4682.1794226512814408645
+Received: from TYVP286CU001.outbound.protection.outlook.com (TYVP286CU001.outbound.protection.outlook.com [52.101.125.40])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.4574.1794226512895643533
  for <cip-dev@lists.cip-project.org>;
  Mon, 09 Nov 2026 04:15:13 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=N4WDe93A;
- spf=pass (domain: bp.renesas.com, ip: 52.101.229.20, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=pjVaZ4gn;
+ spf=pass (domain: bp.renesas.com, ip: 52.101.125.40, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=thWqD70L4qpgBtFdw/mLIMoyZrOFtgIXFtlBaXzI8knw7gylR3BxxCfUXrglUqQRU9kuy9F9Xm5hhA3849/rYm6LhAFBe9oef5GyoOdWykjL6MP2kQdXlvsj3SA4czynIfvbfHlrXlvx9Vu5XCUlO5FHEqgZKWBgbnM9TBX4zxvjv/LK7hMlCWC6u1uQbyQznWw61G3fCZurzPpD8BevKzlJLnu6oBO2wByV8C70q+V6K2+MzLOJGmggK7lRl8EOoEavkOlNLp5IxXqd79JpkYDLWLJXpYDlVwzWnm4aIjIVHfTbI8nr5/MHV9o5r6TERf3b3+KZfiTTt0Gf8KMD4w==
+ b=tUNwfWOK9LlxhW0+pQKJ1e9oN+Y+SlsbYqtNR8hHPlSSg3b2hAANeKAOQYOZzV6N2cj9rTEr0HGyGClHIFNIlGBrAMGoa+ogx4tXC46GFxAJG0mJ4UUnnoLi9Q2S3iHP+44oEEXGGyAj8Q1wXiuAAxvhRJu6BMfXTVTgptgW7AZveb+9hWcoc+OJBLlW/Se9lf8e+9a7Jd+T+RUqR99pqRvsioqCLj/Y9UJrOVA2mVvxUdGHIghwaZEHUB1oeJTBdbmpgYsZfKMyJMkUrRyu71crz2unNpvoVGmow3COMAetdEG3aUlIOf46Nf/o3xGMblyfjcmCLEyLQHnYNwxBmw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ILY908bPXZjagmvne5O0kOtlsrXU+0kob5UhLQT+t0Q=;
- b=l3p8qfbSi9ynNnjTUykc0TvG7OCvVKrVmQ92v8GU9N5xcupgr8iWl/XmWQr16BrWtCaZ/yQ/Jn5FBXmMZsKGZCmDxuGLJtx7CML4LgXzhc/k1k7BhmV5mLcNte2M0zWx3eepuYulYL3MY4f5qDRMrnnqQsp1jL/QjfMv9PqtOH/kz8eQcv91TE2AbgbnfdC7yKmslwGddPuYggd9bJbXW1mUmn5o5vv0rxVJjOQ67uuwyzQzsVwK+Repy+e19uP5U9XenXcP1M2U93+9lynsLQoe5bGcalJoJXXZHvgxuyrGikKDVEKQoQ46EgheO8Qs7HMMhArGxs+/23ZUaUJXsw==
+ bh=pbz4xqH6NeGwWYAeer3zrmOrxSg3jd1zej0nujsoMe4=;
+ b=QRTbPh/XiYhbYf8L4GAgHxNcmCllEb6zGDVdKee2T6j9jvZmBgGUHNy0nC9pKDQLB7ZBGXYJpBgJ07+bv2Pp38lKylmiHVNCqyzGv15FDmrVDxz+7LRk5JwnB/BnU/P+NgzZDX82gRvN3H+1x18aFGe9cdl4hkPhChypGquGz2PxG8phG0cG91p7U8I3iEuGpm/wY92GBfVTa/Y6H51Nt45K3NrVDZY0MybFe0hmntEmOU+FzcSFTu+llgkWOwn39lXayLRK36FE7ABX6U1gWBpYWdvkrY/sCTRrICCkh3veQziTxNcHnS2zq1MbpoUUMixRK0NtSrZi6JzBeF3hGA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  8.62.32.50) smtp.rcpttodomain=bp.renesas.com smtp.mailfrom=bp.renesas.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=bp.renesas.com;
@@ -19,18 +19,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ILY908bPXZjagmvne5O0kOtlsrXU+0kob5UhLQT+t0Q=;
- b=N4WDe93AM+HO8XYSNCjfbkdALyBN7LbLkyvZtLCjcjU0Ud83Q96KZrOpBcni/l4Qd677Y1IkcTsdgVQQJtT2WKRLkVh4nFYgpwu8L9Zqe34JC2ZNHLmi5iMv9RDhNY0+iMQ/wIUdFfVZs9gmQ6x9hXLUIDc8dTi5AC48zoAeXlI=
-Received: from OS0P286CA0105.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:b1::20)
- by TYRPR01MB12775.jpnprd01.prod.outlook.com (2603:1096:405:1b1::6) with
+ bh=pbz4xqH6NeGwWYAeer3zrmOrxSg3jd1zej0nujsoMe4=;
+ b=pjVaZ4gnCPQ3EmlhbGXzBmswSXg06EEg/sfBwGnCeHlBdEJTqNKyS6eOeDIRLekzht6KqJwpu+kn/qZ/1bi3axhJPcEgFBzj1qHBOtAqKPlRPrBiIivna/e5S0G3Bh7dVKXiDd7Oneyhz+gSK9jirXx/TWS3RBZj9Vol97hxHU4=
+Received: from TY6P301CA0016.JPNP301.PROD.OUTLOOK.COM (2603:1096:405:3bf::12)
+ by TYWPR01MB12006.jpnprd01.prod.outlook.com (2603:1096:400:3fe::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.12; Mon, 9 Nov
- 2026 12:15:05 +0000
-Received: from OS1PEPF0000D213.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:604:b1:cafe::8) by OS0P286CA0105.outlook.office365.com
- (2603:1096:604:b1::20) with Microsoft SMTP Server (version=TLS1_3,
+ 2026 12:15:07 +0000
+Received: from TY1PEPF0000BAD7.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:405:3bf:cafe::41) by TY6P301CA0016.outlook.office365.com
+ (2603:1096:405:3bf::12) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.21.592.12 via Frontend Transport; Mon, 9
- Nov 2026 12:15:05 +0000
+ Nov 2026 12:15:07 +0000
 X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
  is 8.62.32.50) smtp.mailfrom=bp.renesas.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=bp.renesas.com;
@@ -38,20 +38,20 @@ Received-SPF: Pass (protection.outlook.com: domain of bp.renesas.com
  designates 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
  client-ip=8.62.32.50; helo=ejcrelay004p.adwin.renesas.com; pr=E
 Received: from ejcrelay004p.adwin.renesas.com (8.62.32.50) by
- OS1PEPF0000D213.mail.protection.outlook.com (10.167.240.20) with Microsoft
+ TY1PEPF0000BAD7.mail.protection.outlook.com (10.167.240.36) with Microsoft
  SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.615.4
- via Frontend Transport; Mon, 9 Nov 2026 12:15:05 +0000
+ via Frontend Transport; Mon, 9 Nov 2026 12:15:07 +0000
 Received: from Ubuntu-22.. (ree-0065929.diasemi.com [10.24.1.30])
-	by ejcrelay004p.adwin.renesas.com (Postfix) with ESMTP id 4FFB830002A8;
-	Mon,  9 Nov 2026 21:15:04 +0900 (JST)
+	by ejcrelay004p.adwin.renesas.com (Postfix) with ESMTP id F0FEA300028E;
+	Mon,  9 Nov 2026 21:15:05 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
 	Pavel Machek <pavel@nabladev.com>
 CC: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 07/24] drm: renesas: rz-du: Make DU reset control optional for RZ/T2H support
-Date: Mon,  9 Nov 2026 12:14:34 +0000
-Message-ID: <20261109121451.6042-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 08/24] drm: renesas: rz-du: Move mode_valid logic to per-SoC clock limits
+Date: Mon,  9 Nov 2026 12:14:35 +0000
+Message-ID: <20261109121451.6042-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261109121451.6042-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20261109121451.6042-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -60,61 +60,132 @@ Content-Transfer-Encoding: quoted-printable
 Return-Path: prabhakar.mahadev-lad.rj@bp.renesas.com
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OS1PEPF0000D213:EE_|TYRPR01MB12775:EE_
-X-MS-Office365-Filtering-Correlation-Id: 67ba9481-901e-406a-fd0d-08df3e5b16eb
+X-MS-TrafficTypeDiagnostic: TY1PEPF0000BAD7:EE_|TYWPR01MB12006:EE_
+X-MS-Office365-Filtering-Correlation-Id: e8e9bab6-0b4b-4e77-26b7-08df3e5b17d9
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|23010399003|36860700016|1800799024|82310400026|11063799006|56012099006|261021121427099003|261021123027099003|261022075727099003|261009223027099003|261026121527099003|261102124527099003|261102123227099003|10067099003|18002099003|22082099003|6133799003;
-X-Microsoft-Antispam-Message-Info: YYCh8y3NjMUCzVteAPSP1mZwcaBxUTNo8NcOTHf5OE3lMxydW/Y/PxalnwMSNCQ1QPUbw0fYy/8ZYV15+DwzoTtfhxV2IxdHhxv0HW8dn7RY8QumACFo+LHcBKQLMNx+G+vYm/EUEyHRz0lFMV6UvFSLYWTX11NzD5Y0AECXy5wAn2Kak1gtvvShnXL++f5IehJakj7wriXZlw2o418wPQWJGYJD3vn9WXScJd7QFVAKdmVDSHLCyhUTuy5c+mrPz/3WhPrunohFEUUG4NJVBu0zeGVRc89IrpDZrB3y7Ex6LDwFUJqySj2E9aJn3Ns7QYNPLeU+E9monHx5bs9sjV/8CgBVoe1NjnlFRatVk+j/Hu7PWI9fMtMchhngMXQTbWtImxJkJ4kOD78IqifvL6wlMbtNFmHNUPtHXmHk+hWqrqStUAWL4chH2KNfTfD5Y2HO/3IRf6Qqp/P9DlZXJ6wf7KE2eMa8lIimOISgdxnob0yrkcWi9GpGn0QyHyOr50bqw8gV1w9/Xuksb1v5i1B8UGUrNevIeWEFskhRajF1yY8CHTGXO/aLa5DYXuawMOMsr6HP6eq3HFvCJKAtG04HHTXBThFimd5scJMWrUDXYs3OLKKZMYVoEkK4bq6PEWxm3wk7mnYEwThZ70/d6sQ2n+GGa1Q7ATH6XXQ57so=
-X-Forefront-Antispam-Report: CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay004p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(23010399003)(36860700016)(1800799024)(82310400026)(11063799006)(56012099006)(261021121427099003)(261021123027099003)(261022075727099003)(261009223027099003)(261026121527099003)(261102124527099003)(261102123227099003)(10067099003)(18002099003)(22082099003)(6133799003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|23010399003|36860700016|1800799024|82310400026|5023799004|11063799006|56012099006|261021121427099003|261021123027099003|261022075727099003|261022105027099003|261009223027099003|261026121527099003|261026140227099003|261028144727099003|261102123227099003|10067099003|18002099003|22082099003|3023799007;
+X-Microsoft-Antispam-Message-Info: vlkzl8J8Alpa2Q8VG9aB9FSdAP4h1ctgtGJkL5GE1KgZN/OBpHTs0xe3txxCRebJorMTjAl5InwCyfV7wGHAsB2SJBG4YmPO+PIukbbPQq9r9ebI0DExzf/3l63PCTS9l1IKRfucUsSxDsNxFgkB50rGTCWJzFQhKzmmGJ34Bz2pprY+/Dk9ugiTf6ww+5O4UTbxX2XiL2BtuT4Bz8FLupbXhgr5fI7JFqvkDr3h3sUNM9ZvIO37QGx+n08mKh4XinJ3wuMUOz22f31ZMT3R7BBuKFZ6CVz0Ki1ZDn4gaaQ3pUXgbC9PSaPDg94UmgIz2aj7iH/HdMo2ms35kAPZwzYEbvZdC7CwnVDYIqIQuSMqAm3Bjqk3S7Gy5KLMSIRXj89mq3U6bwVewGQOHxCWi6o0gh1Rx2JeP2ryavXNyWaKzr8CuJZJhf6rfc2y8P+6L+fh74kYa1y1SED6JB8VCFcU7ALCEsUABJegVqbxnJmPRwvpyaaPzVsOLFs8vHwU0f97EIZrA1S1cyIFbbqiut6WPDlv4tzODWBlhXidCkLx/GQ2htjV8+gpbiqBeYfsDDq9d3XFJ8Dle/VKxWwqXi2BGNHWonavTuAE/KKMRVuHl9opKr8xgQopNvBDf+q3polkSc+BJ9rR5NR1DqB/ZQ==
+X-Forefront-Antispam-Report: CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay004p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(23010399003)(36860700016)(1800799024)(82310400026)(5023799004)(11063799006)(56012099006)(261021121427099003)(261021123027099003)(261022075727099003)(261022105027099003)(261009223027099003)(261026121527099003)(261026140227099003)(261028144727099003)(261102123227099003)(10067099003)(18002099003)(22082099003)(3023799007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: poJPUSqZ51N6WQfAwN7byB6gskRpXL/F26vrIG9yd2to+Iyw+z8kBKjYg+pXEyjC5lGrT9DBr5nWKV0XxnHkgmsqzlf6HMlFL9EXRqI6Ovz1PrFiBLwhoSranzqX7H5QFWjBzloRsgS/zo53WmQJfE//nf+2S8cw7O7jJ5Ixgf+Wxpp4iUhCaZyjeezFaktsUGw6Lar85agc7hP0jJQf3euW+xXhbQpPVwb6wVB3eJd3GrK4xWwJLSSOh1Wvm8bMYW8jy+rsg3e5u/c9PQyMSCo+yEbKLZ/NNX20CW/50EVKEJ43Yp7NwirnwklKNVDm19q+IC64v7AfzFsnSWdT33S38EboXDe4s4tSzphHThRtmdHV9LszSyHLETHUAffj+e33ckP5LbuB7uE1xKuJLLEf+PLekfIDJwixKE/ssTHquvYbS01s6vsL3dlhA9Lw
+X-MS-Exchange-AntiSpam-MessageData-0: KcJ3grT32n1q/558zSdokFYPiJZDFk6B4jb4gFRfSJPOlpKHKLboCEuReWttUoj+n4fUFegHPiRg1j1Glwz/ePksTIqGzu8ejPV4tkW59JIc6rSiXD/Jm1vhsuFY/7Y0WX8qamf4a6AWrtqpfcd70gmY65B16hQgLHTRxBR0QQpQvAb2cn/xrlg7w3+jyds496hYSPLErybS7OmVV+rBFrB2+wl2y0MVm8XPMBNtfx30OdczvcYjSKilGCxlW4sf3vJqzwQfvoPzLpdyif+ICmD8q1Y+P0ZvnkgKOL17vMI50XzMW07vh1JAEQfcWEdnL0PWE8MLWZM3rRZRvOW/nZy8nw7yezj6tgIoUtYsWJLsQeGZx8HuHO6JzrqCZojk4GHuuaKUPQAeuxZ+bRy6QbmmKEFWk3M29l2eDYXIRuQCcpZptsLiTUMzPvwUd+i5
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2026 12:15:05.6768
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2026 12:15:07.2446
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 67ba9481-901e-406a-fd0d-08df3e5b16eb
+X-MS-Exchange-CrossTenant-Network-Message-Id: e8e9bab6-0b4b-4e77-26b7-08df3e5b17d9
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay004p.adwin.renesas.com]
-X-MS-Exchange-CrossTenant-AuthSource: OS1PEPF0000D213.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthSource: TY1PEPF0000BAD7.JPNP286.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYRPR01MB12775
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB12006
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Mon, 09 Nov 2026 12:15:15 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24710
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24711
 Content-Type: text/plain; charset="utf-8"
 
-commit 62ca607fcb1f442e909e6729fa9e1e7a18e6ae5d upstream.
+commit 332d72b9513cee25682108b5b37fe9fe9468ba73 upstream.
 
-Update the DU CRTC initialisation to request the reset control using
-devm_reset_control_get_optional_shared(). On RZ/T2H SoCs the DU block does
-not expose a reset line, and treating the reset as mandatory prevents the
-driver from probing on those platforms.
+Move pixel clock validation from a fixed encoder check to per SoC
+constraints stored in rzg2l_du_device_info.
+
+Pixel clock limits differ across SoCs in the RZ DU family and cannot be
+expressed by a single shared rule. For example, RZ/G2UL and RZ/G2L limit
+the DPAD0 pixel clock to a narrow window, while other SoCs such as
+RZ/T2H require a wider operating range.
+
+Add mode_clock_min and mode_clock_max fields to rzg2l_du_device_info to
+describe the supported pixel clock range for each SoC. Update
+rzg2l_du_encoder_mode_valid() to check these bounds when evaluating
+DPAD0 outputs, returning MODE_CLOCK_LOW when the pixel clock falls
+below mode_clock_min and MODE_CLOCK_HIGH when it exceeds mode_clock_max.
+
+Populate the pixel clock limits for both the RZ/G2UL (R9A07G043U) and
+RZ/G2L (R9A07G044) variants to a minimum of 20875 kHz and a maximum of
+83500 kHz.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Link: https://patch.msgid.link/20260519160825.4082566-4-prabhakar.mahadev-l=
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+Link: https://patch.msgid.link/20260519160825.4082566-5-prabhakar.mahadev-l=
 ad.rj@bp.renesas.com
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c     | 6 +++++-
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.h     | 4 ++++
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_encoder.c | 9 ++++++++-
+ 3 files changed, 17 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c b/drivers/gpu/dr=
-m/renesas/rz-du/rzg2l_du_crtc.c
-index 6e7aac6219bed..b917556d14fba 100644
---- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c
-+++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c
-@@ -380,7 +380,7 @@ int rzg2l_du_crtc_create(struct rzg2l_du_device *rcdu)
- 	struct drm_plane *primary;
- 	int ret;
+diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c b/drivers/gpu/drm=
+/renesas/rz-du/rzg2l_du_drv.c
+index c74afd18f70d7..962bd84b87597 100644
+--- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c
++++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c
+@@ -33,6 +33,8 @@ static const struct rzg2l_du_device_info rzg2l_du_r9a07g0=
+43u_info =3D {
+ 			.port =3D 0,
+ 		},
+ 	},
++	.mode_clock_min =3D 20875,
++	.mode_clock_max =3D 83500,
+ };
 =20
--	rcrtc->rstc =3D devm_reset_control_get_shared(rcdu->dev, NULL);
-+	rcrtc->rstc =3D devm_reset_control_get_optional_shared(rcdu->dev, NULL);
- 	if (IS_ERR(rcrtc->rstc)) {
- 		dev_err(rcdu->dev, "can't get cpg reset\n");
- 		return PTR_ERR(rcrtc->rstc);
+ static const struct rzg2l_du_device_info rzg2l_du_r9a07g044_info =3D {
+@@ -46,7 +48,9 @@ static const struct rzg2l_du_device_info rzg2l_du_r9a07g0=
+44_info =3D {
+ 			.possible_outputs =3D BIT(0),
+ 			.port =3D 1,
+ 		}
+-	}
++	},
++	.mode_clock_min =3D 20875,
++	.mode_clock_max =3D 83500,
+ };
+=20
+ static const struct rzg2l_du_device_info rzg2l_du_r9a09g057_info =3D {
+diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.h b/drivers/gpu/drm=
+/renesas/rz-du/rzg2l_du_drv.h
+index 58806c2a8f2bf..885558eb9547f 100644
+--- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.h
++++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.h
+@@ -44,10 +44,14 @@ struct rzg2l_du_output_routing {
+  * struct rzg2l_du_device_info - DU model-specific information
+  * @channels_mask: bit mask of available DU channels
+  * @routes: array of CRTC to output routes, indexed by output (RZG2L_DU_OU=
+TPUT_*)
++ * @mode_clock_min: minimum pixel clock in kHz
++ * @mode_clock_max: maximum pixel clock in kHz
+  */
+ struct rzg2l_du_device_info {
+ 	unsigned int channels_mask;
+ 	struct rzg2l_du_output_routing routes[RZG2L_DU_OUTPUT_MAX];
++	u32 mode_clock_min;
++	u32 mode_clock_max;
+ };
+=20
+ #define RZG2L_DU_MAX_CRTCS		1
+diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_encoder.c b/drivers/gpu=
+/drm/renesas/rz-du/rzg2l_du_encoder.c
+index 564ab4cb3d37d..32ec5350f3a6f 100644
+--- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_encoder.c
++++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_encoder.c
+@@ -30,8 +30,15 @@ rzg2l_du_encoder_mode_valid(struct drm_encoder *encoder,
+ 			    const struct drm_display_mode *mode)
+ {
+ 	struct rzg2l_du_encoder *renc =3D to_rzg2l_encoder(encoder);
++	struct rzg2l_du_device *rcdu =3D to_rzg2l_du_device(renc->base.dev);
++	const struct rzg2l_du_device_info *info =3D rcdu->info;
+=20
+-	if (renc->output =3D=3D RZG2L_DU_OUTPUT_DPAD0 && mode->clock > 83500)
++	if (renc->output !=3D RZG2L_DU_OUTPUT_DPAD0)
++		return MODE_OK;
++
++	if (mode->clock < info->mode_clock_min)
++		return MODE_CLOCK_LOW;
++	if (mode->clock > info->mode_clock_max)
+ 		return MODE_CLOCK_HIGH;
+=20
+ 	return MODE_OK;
 --=20
 2.43.0
 
