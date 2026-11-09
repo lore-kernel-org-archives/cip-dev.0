@@ -1,111 +1,98 @@
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.165])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.1525.1794242973239753944
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.1667.1794243238594728843
  for <cip-dev@lists.cip-project.org>;
- Mon, 09 Nov 2026 08:49:33 -0800
+ Mon, 09 Nov 2026 08:53:59 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@fpond.eu header.s=strato-dkim-0002 header.b=TKhseepI;
- dkim=pass header.i=@fpond.eu header.s=strato-dkim-0003 header.b=OH4NSMUW;
- spf=none, err=permanent DNS error (domain: fpond.eu, ip: 81.169.146.165, mailfrom: uli@fpond.eu)
-ARC-Seal: i=1; a=rsa-sha256; t=1794242965; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=iI1OvCq41U/TF+AI4kJ5Bogakm8BsrPtKuF8LEEgx4xcxG64fgRyk9yudi5Fv9Iy1p
-    utbYNQTzvATL8ii+BEM7tSYVIdKPY2DF524kNSl5t6NlNNYF0GBI2UE1YlLUVBB7IKCq
-    33HJqy619g2ROI5CifST2LFpLCDfU+Y1bY/23RuYhtS3Ax2Rdw2wbbF5Y/8Xuk45m+8Z
-    tueK+yBB0Eo+So5NqVeQs87mIeyQhjN5SUaaiXXa/9BLgsux8HIJx6opx90KtKR/F5aa
-    4kwS6al7j1jzySvSO5MX/PY23bTycEeQT4kxRXmzfi0pNwbZbZWhCewp2YWF/JjgJLO7
-    vC7g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1794242965;
-    s=strato-dkim-0002; d=strato.com;
-    h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=3gfb0caJaY6tN5mMgV/uYkQNlzG9+94dmMjLnd6VWws=;
-    b=l1OHWM0ECC9Oxa9aXIAwdBzDo8Taa7IOH18pds6Z8yRejma65qeaDEk4i4+SAsdUD9
-    PgdhvZAWFAE47Xi/AfAfU3zyLuHU3GHg7H+RFqaDtGDdxcNE07Fhzb0GZ3iCt5sjepow
-    0rVl45zKRelwZc5Jy7mzosK9mk8eX92o+zTSM7u/ENau8RLXb137T1gFOnIbIEPVK4tt
-    IxBqOX88M3P9uyUZhz5Cy2xJdDEhFV8kT2uyeXidff1y3FlBvLgQ2ebfKJljtCxVjJHi
-    ggyQ6H28crdtdkp5Z19SXLMR3kYwH/NRWzVEo8YiwRC7s74QpCBaqEzwNFBIV37FMw2D
-    GvFg==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1794242965;
-    s=strato-dkim-0002; d=fpond.eu;
-    h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=3gfb0caJaY6tN5mMgV/uYkQNlzG9+94dmMjLnd6VWws=;
-    b=TKhseepIZyW0oXg9tKthRbLyBDrT5BqxuN6yIyLyecyxpYT93U9egK1AFzqH/MrFOA
-    4p/TGsEPxmERDNQCQPXn5lvwQAJdtRZXaoIgBP+Zuj+QwZNrv30bHbykksB2G2rwYh6u
-    Q+6GmGXtMiqTt7IHZuxZf+mZVfNOXvFKIbPI1WNQz9V90p3FyXslIcXzNHkBJqWWnkFe
-    i90YnfIKdf7/bNZyzmmIp1N0cjhS+tXtp+/94IeV0QbJUTut/Hg9HFtGCJCJ7jI1+s0m
-    X/0Ci6IgW9DyYM3s79IaynckUEXCktoaIkAPffDhtqySOBPA6y4jfsndrF7YYMZK+VWK
-    HEUg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1794242965;
-    s=strato-dkim-0003; d=fpond.eu;
-    h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=3gfb0caJaY6tN5mMgV/uYkQNlzG9+94dmMjLnd6VWws=;
-    b=OH4NSMUWpqvtaBktAwQNDCtv6nBt6T/TvM0lKPO4t7+iuvokqDWBewyu9w8M4/O3tG
-    IXyeHb0LF8DBdDwV9MDQ==
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzotGZvghOuyX/LuaP4"
-Received: from open-xchange-core-mw-gw-7.open-xchange-core-mw-hazelcast-headless.open-xchange.svc.cluster.local
-    by smtp-ox.front (RZmta 55.6.3 AUTH)
-    with ESMTPSA id z81ed22A9GnPuCN
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256 bits))
-	(Client did not present a certificate);
-    Mon, 9 Nov 2026 17:49:25 +0100 (CET)
-Date: Mon, 9 Nov 2026 17:49:25 +0100 (CET)
-From: Ulrich Hecht <uli@fpond.eu>
-To: "pavel@nabladev.com" <pavel@nabladev.com>
-Cc: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	"nobuhiro.iwamatsu.x90@mail.toshiba" <nobuhiro.iwamatsu.x90@mail.toshiba>
-Message-ID: <280295681.429413.1794242965569@webmail.strato.de>
-In-Reply-To: <au2l9BFnAxo2l_Cq@duo.ucw.cz>
-References: <1931298540.80350.1793132613065@webmail.strato.de>
- <au2l9BFnAxo2l_Cq@duo.ucw.cz>
-Subject: Re: [cip-dev] Request for review for 4.19-st21, 4.19-cip137
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=ZaJNHqZE;
+ spf=pass (domain: tuxon.dev, ip: 209.85.221.47, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-4922dbcee23so586574f8f.0
+        for <cip-dev@lists.cip-project.org>; Mon, 09 Nov 2026 08:53:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1794243237; x=1794848037; darn=lists.cip-project.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=7Vk9W5o8drYGs+rQ01zCVQKcfoBPV/AvNYYyygd7MtY=;
+        b=ZaJNHqZEm30qxlQcmXAoX64kWYQWeBt+MYJwC8ujP5FuL0/i6QAI8UwuQXwT1aQ6UU
+         48KXhPRAfSiTP230uawMr6GNqeIcTZqegLLzdyyn+VfRW2Dnh2GO+7UAK3+N73ZL3lN1
+         4MF2Gk4jVQ+jcFEehcrJfa+x0gnfZpJdbIeKzx4LCBmb3yFdIPFHFVEJoW50/FXll2s7
+         0XhZ5DQNt64ZtV+EaruDtzTJCmBpB5n6imyfQRjSpfTaGSQGGps+dGnODq5qU+W5PZv4
+         e0IRjiG5BlEtuqMobbTdOnF4LQh4P9Cd0I+Wh68Mf/MxOL2bg3nqBo8uGgfklu6eVPZB
+         fX2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794243237; x=1794848037;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=7Vk9W5o8drYGs+rQ01zCVQKcfoBPV/AvNYYyygd7MtY=;
+        b=J+0WWqI51/5IO9M6lJhltQAXWHiRhqaeXea0WX/0erwtd16xaQ9kAkP2lKmLh4bW/q
+         l727fgOqZvlkFOibGa3cWG5uVkNGR0usqQX9OekN5KIxIG+bLz9lhZCww8r44JUq7Dwp
+         GGyf3A1OnMrF3i+Z+QlAa2cjZybLkAukaSHaopGlHzX0yeZEre4T7ikt86lWN8iebqJH
+         yaonj+On8v0NAcWzkk+xu61zFl6AYbLaoy2XptsLMww49vEjv62TtdSHoP0S46yiLpp5
+         c74Z9DVjWgu8XMAgg1hiWMkqY5hvgIhg3nOOfHURHJl0FOZwmufMCpeoV5IKdfi6b5CV
+         scHQ==
+X-Gm-Message-State: APuU4Z9PaN5rTH2oP6nu1XfX9EtsfcdkOE8rzU7kEWmTgmtnau/uDXig
+	KVB+PUyg1N3eXD2DE/pyFQHi+kSUIy4JcosrO4ITf4yl812jxZySaNikgBwHyQAZcfs=
+X-Gm-Gg: AYBFou31ULJawIS6bpu2lpTPhe0BPON2g/LVvRrEVyhSe/x3EkTxfnYCbmlNSrhanOl
+	470bRuDK617BsUEcMwFY9dz6xBGrgtgN031PhNdP6Ykt2tgVghXM3tJHIcOylWH38ge0uPWqnsS
+	7yBMQuCi01r79fyUEcmaOtrOQe/FiK1ul+H2UMKOLlmPScXF4vSRJ+liY3DZtnsGTp6lVSL+HHD
+	oHDVx9EmI1vm9i7eNzAY+Fs9a86nY+hx6x6/WUJ5+3BzBY3K3Id9yUXqeOyiByASrBcxGHou9Ra
+	hUoaVcrx5JJvAtmcXXCdyiYeiuGqElxPU29ZarN5Z5ATJVSzIrHH5HoH7zi+3W4DX9TJg88knTL
+	YVvrMdYduSt4pAYUpm44QBSu+E4pkKDF8t7l+Q/zRp6Ho/O077rO1iJRXJNmbv/gtgzBLXIuIq8
+	sobv9YVMzfFi0TCzyfF0yRq7xWSTCKOHNMi4+e1mCJ3GNQkZKZCPYO1xNBb45yluoMT/Kr1Fkuj
+	zZuK/nBb6AC1YmBjFUZSnuphcs6N0K4oJlJCrBaUYVEkuQIxvBXP982srx3ChUOZc7K7IX/6AOO
+	n/Gyv1k+aPKrpg5ZMONye5I/xdZBXDldzg/b
+X-Received: by 2002:adf:e195:0:b0:48e:75a1:1e38 with SMTP id ffacd0b85a97d-49831cd14b8mr21883f8f.56.1794243236609;
+        Mon, 09 Nov 2026 08:53:56 -0800 (PST)
+Return-Path: <claudiu.beznea@tuxon.dev>
+Received: from [192.168.50.4] ([82.78.167.244])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-495b90701c7sm13883797f8f.10.2026.11.09.08.53.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Nov 2026 08:53:55 -0800 (PST)
+Message-ID: <8780b8c1-1fb8-4d95-b526-4e49bf7f869e@tuxon.dev>
+Date: Mon, 9 Nov 2026 18:53:53 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [cip-dev] [PATCH 6.1.y-cip 0/5] Fix CVEs related to patches
+ backported to the CIP kernel
+To: pavel@nabladev.com, nobuhiro.iwamatsu.x90@mail.toshiba
+Cc: cip-dev@lists.cip-project.org, uli@fpond.eu, biju.das.jz@bp.renesas.com,
+ tommaso.merciai.xr@bp.renesas.com
+References: <1794209954-6205-1-git-send-email-nobuhiro.iwamatsu.x90@mail.toshiba>
+ <avGOCF83NRdd3Nk4@duo.ucw.cz>
+Content-Language: en-US
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <avGOCF83NRdd3Nk4@duo.ucw.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v8.46.154
-X-Originating-Port: 55830
-X-Originating-Client: open-xchange-appsuite
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Mon, 09 Nov 2026 16:49:37 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24730
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Mon, 09 Nov 2026 16:54:07 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24731
 
+Hi, all,
 
-> On 11/06/2026 11:03 AM CET Pavel Machek via cip-dev <pavel=nabladev.com@lists.cip-project.org> wrote:
-> > Here are the adapted backports for the upcoming 4.19 kernel release. There's a total of 95; 1 written by me, 2 by Qwen-3.8-27B and 92 by Qwen-3.8-Flash-Next. (The latter are labeled with "Assisted-by: SLTR:qwen-3.8" and "Assisted-by: SLTR:qwen-3.8-flash-next", respectively.)
-> > 
-> > As always they can be found in https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-4.19.y-st-rc
-> >
+On 11/9/26 11:10, Pavel Machek via cip-dev wrote:
+> Hi!
 > 
-> Some patches are ok, Reviewed-by: Pavel Machek
-> <pavel@nabladev.com>. There are some comments below.
+>> This is patch series that fixes CVEs related to patches backported to
+>> CIP kernel.
+>> The following CVEs and commits are addressed:
 > 
-> e37dae2a4576c5, for example. That was an obvious two-liner, but it is
-> quite significant locking redone after backport. I'm afraid this
-> should get specific testing.
+> Thanks, I will take a look.
+> 
+> I don't see these in 6.12 (c8fba74056). Should we get them into 6.12
+> before merging them to 6.1?
+> 
+>> Claudiu Beznea (2):
+>>    i3c: renesas: Check that the transfer is valid before accessing it
+>>    i3c: renesas: Fix out-of-bounds access for newdevs mask
 
-The reasoning is as follows:
-```
-unlike 5.10 (where SIOCGSTAMP moved to the lockless `.gettstamp` op, which 4.19 lacks), three 4.19 ioctl handlers hold the socket lock around the stamp calls and would self-deadlock with the new inner `lock_sock()`: `ax25_ioctl` (lock over whole switch), `nr_ioctl` (lock per case), `qrtr_ioctl` (lock over whole switch). These callers must be adjusted, mirroring upstream's eventual direction. All other callers (inet, inet6, packet, rose, x25, can, bluetooth, atm, appletalk, ieee802154, compat) run lockless
-```
+Just to let you know, I plan to backport these (along with other renesas-i3c 
+fixes and improvements) on CIP v6.12, v6.1, v5.10. These should be done by the 
+end of the week. If you can wait till then, I can handle it.
 
-As it happens, none of the affected handlers are enabled in any CIP configs, so technically we could also a) drop the additional fixes, or b) leave them in without testing because it doesn't matter anyway.
+Thank you,
+Claudiu
 
-> cbf63e3778be51 is example of different problem. That rmmod path is
-> likely seriously broken in 4.19-st20. That's why it got redesign in
-> mainline. It is still broken in 4.19-st21, that barrier won't fix it
-> with nf_flow_table_module_exit() missing. Nobody should unload modules
-> in production, and this risks regressions.
-
-OK, there's at least two things I don't understand here:
-1. Why is nf_flow_table_module_exit() missing? The patch adds it.
-2. How does that risk a regression if the path doesn't work anyway and is not supposed to be used in production?
-
-CU
-Uli
