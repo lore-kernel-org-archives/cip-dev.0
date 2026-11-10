@@ -1,208 +1,195 @@
-Received: from AM0PR83CU005.outbound.protection.outlook.com (AM0PR83CU005.outbound.protection.outlook.com [52.101.69.2])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.631.1794328442353946061
+Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.3218.1794346050871227349
  for <cip-dev@lists.cip-project.org>;
- Tue, 10 Nov 2026 08:34:02 -0800
+ Tue, 10 Nov 2026 13:27:31 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=avJVvKSB;
- spf=pass (domain: siemens.com, ip: 52.101.69.2, mailfrom: jan.kiszka@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Zf4wToiXmOD0njkMOA8+FAj5Sx/8r5LUQbGNHHLPOQINU7AbtGhjEOIOmbabFJ8uzOOXC7nggKHbDZ7JyLo/eUkK1ylY5sEZhMDG6U4rNe/TpXqtiaFItkxPOmL/aAoggrw4F76NhV1HdqbxyTEfYcW7pJYXdTFaK22eSv4gZvXgOuBxuNHTR+pDfoSP/opRm2Oat0C/24DaLh/I93upYxa2c3r4RpjcapDGPvvkOgUWsTCttHOSWIH3zQjDfZ978cCjHkQv0j3CF48QwrrnnPQNucYqhL8m8ZmRbOtKE+KCot3GhjovwwGt76ikpc1damRqrRQ8OIV0w0QhuXa0KQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+uhGzcMH2eLCQOcV9d4Vbc5kbLz53YsCemKhU/DF74w=;
- b=c/zz4v4GxBN6RTi5NmIVrV3PVy+Pq/Ozq+WrUSs9p/PawkyPfKuQO295MU/Td03EUL7r7aEar2JIEbtlPIwzafY/CxElxxLDdxFuZh/UeLsl1KsEfCVrxHiiggIjicaDzQUjgh9x6Kn63vT2hwVLvQjd58eduiX4Q5hGvUdZeLvhvuq0Fq0HgXjj6FKDhJUa88BIWNonEsdv0CUw4n8i9pCBIibvRKDRDTQ2+883MLuAO3wRo6TnVZbHXYneyIoHU9PlNSxI/J1T/EsurQS+eUpD3wsI9wFd4Z0+u14II7YCcOk1No4BFI+PIqSufVYWkCc6Iyh0V/IRlXTCBkwIuA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+uhGzcMH2eLCQOcV9d4Vbc5kbLz53YsCemKhU/DF74w=;
- b=avJVvKSB2+mrp6nNjBVvThzKHkuTQ/2j6Vx37Bur0Bu+phOhlz6hg+inbZvyBIPVv5aKLdeiCZ5l6MkSe5VX1tigVNXAUnSZg/MUxYypXyylk3QKXYONZNEJeE9Rv9EuEBsbwtrqD8mwxl3Y9zUH/fmpTScgqUxqWz+h1gx3tI4RzQFKHvXGKRvhenEMOB68cAX8QzU7pQrbAWrbRvNFJJk9qnXcboboXdocDj4MvQwzhqBKaKQ/uUScZJKIrtSvAkPx09qNb/1/HbAkIlehG01uZFxsWu7wS40lpdOFHQqLrKHQzAVvzIDwyFs6vF9zDjt98rgPnjDdjS6HcI6EHg==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AMCPR10MB992291.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:785::10) by AS2PR10MB6616.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:55f::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.615.8; Tue, 10 Nov
- 2026 16:33:58 +0000
-Received: from AMCPR10MB992291.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::fbce:789a:27cf:d1e]) by AMCPR10MB992291.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::fbce:789a:27cf:d1e%5]) with mapi id 15.21.0615.007; Tue, 10 Nov 2026
- 16:33:58 +0000
-Message-ID: <87ba589e-3b20-4272-b264-74225378e6e0@siemens.com>
-Date: Tue, 10 Nov 2026 17:33:57 +0100
-User-Agent: Mozilla Thunderbird
-From: Jan Kiszka <jan.kiszka@siemens.com>
-To: cip-dev <cip-dev@lists.cip-project.org>
-Subject: [isar-cip-core][PATCH] u-boot: Use release artifacts instead of
- generated archives
-Content-Language: en-US
-Cc: Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
-Autocrypt: addr=jan.kiszka@siemens.com; keydata=
- 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
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR3P281CA0100.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a1::18) To AMCPR10MB992291.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:785::10)
-Return-Path: jan.kiszka@siemens.com
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=clKqrCk5;
+ spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BA8AE10DBB8;
+	Tue, 10 Nov 2026 22:27:21 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
+	s=dkim; t=1794346044;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=l1jzo6BtIhl60oL9AXuixiZdBW+XLMznTWYaAwwU5vA=;
+	b=clKqrCk5xTroNAO0Ahi7H1hjnREKE1DoAVumsAYIWd/e6b+C1M1X43Yq397/Mxe2adP3Gk
+	f52LjJsdV+4DCr9/z44zm2JPsvSVQBdUZbhnaj9beR0eoxTXYC7WBEFYNFGddr4p1FzrGk
+	TF2Jwf9Upn6vpageKEuSf+DOX5TMoJSzELZAKdoCr8sxVKQcjnOufS0lEdJ/Gv1eyRgSS4
+	IJ5dA411OyFCPjc2lkOPkYt+dTUXubKounM1SUKyF9Hj5WyJCcHSMvxlTaF4WIE6mVD5u3
+	nd3wxDHbg0V0KWu2IFyoAAyNKPe0CRb21TlY37AKmP5bA8JFUODsyWTqE4JWaA==
+Date: Tue, 10 Nov 2026 22:27:19 +0100
+From: Pavel Machek <pavel@nabladev.com>
+To: Ulrich Hecht <uli@fpond.eu>
+Cc: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+	"pavel@nabladev.com" <pavel@nabladev.com>,
+	"nobuhiro.iwamatsu.x90@mail.toshiba" <nobuhiro.iwamatsu.x90@mail.toshiba>
+Subject: Re: Request for review for 4.19-st21, 4.19-cip137
+Message-ID: <avOMN_cVRLv1uH9o@duo.ucw.cz>
+References: <1931298540.80350.1793132613065@webmail.strato.de>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AMCPR10MB992291:EE_|AS2PR10MB6616:EE_
-X-MS-Office365-Filtering-Correlation-Id: 98d0515a-13c6-4902-66a6-08df3f486b57
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|23010399003|376014|1800799024|18002099003|12006099003|10067099003|55112099003|3023799007|11063799006|261028144727099003|261021123027099003|261102123227099003|261021121427099003|261022115727099003|261026121527099003|261026140227099003|261022105027099003|261022075727099003|261009223027099003|56012099006|260925021911599003|260925022911599003|260925021311599003;
-X-Microsoft-Antispam-Message-Info: LvhDXp9ZO5uYGga6vHVMEptXT/R2m6mSKZQQ6mxEHqJ5mj8l0wdAXGaWiwqUiL3Q29ImP8zljPkMx6QGIRLlK8EOAiekoRKR3Gcb9C4JDBXam4q2mvXI3d3tIgxhZRjdANBdcyxdxfn6HA9p0ri4Cb6PqNm4M7jv1ZZx9eLfFJKH6XdqCkFrt6InDTIMPwMD4H5zUPQFCAmI0wksfb2iBIyKibujTdf1m5MfUZFX8kwjWzNxNslJbTqmkPrj8ipWyvLUkTUPqaEybQbOXbwcIYv/Gs5bVZ8ZF3/+DkVfaYNVEWX+0DVVnp22gIK8RV4gMbQEVUT2x3DnA+adC3exqzc+piR5QpBKTlcHsDEJPrGYg/0cVhlsjcyEPAn6FBpV0J09a7gyXh6ySj9X5aEBULDyo7dTKsKKTW6BnMU+zU1FoRRiop0GdsJSS8pJJsG73EworzPexilBDKecG0xgqF8lc6zbdO6cW1siPLUIiGdRT2IiyoXo1dxEZ0Ej1+31YHM5+2uwk9M+cHOX2xZCP+v1HSebC91Hm/J0yQlAlb53Bv1NqFBSYZkX4LokbeKqSxZiTTtlwaH2j68dJ2QpjeahoTQUsD5NjsqA5dLWuT8vrwqKCuhShYA7MRkO5q0u
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AMCPR10MB992291.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(23010399003)(376014)(1800799024)(18002099003)(12006099003)(10067099003)(55112099003)(3023799007)(11063799006)(261028144727099003)(261021123027099003)(261102123227099003)(261021121427099003)(261022115727099003)(261026121527099003)(261026140227099003)(261022105027099003)(261022075727099003)(261009223027099003)(56012099006)(260925021911599003)(260925022911599003)(260925021311599003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NWo0NnRuUndUVnFQVHB5a01zcXJXSFpBUllERmhBTUw5b3dCSFd1Wld5WFpH?=
- =?utf-8?B?N08rSytndWdPaktxWHhaYmpJbEoyYXk1aGR3b3Z1Tjk4czZZSmdHTTIyd3NG?=
- =?utf-8?B?N3M5YldzL1V2SjBmeEljVHBKbnR0cWR5UW82aXNLeTRQaWN6MjBaeWtIQXF6?=
- =?utf-8?B?a2RLR1ZlYmFrOGRQZnF5OHc5SllNNFZWRUVjK1Ira0FWeG1jMzlFSzIxRy9W?=
- =?utf-8?B?RVJPaHkxeG0xMmFxNVlsbHJQaVRSWGZjUXJkRDFjODBkSDRTczgrcVlXcmQ3?=
- =?utf-8?B?eFo1czU5Z3N6bWs0Z1ZsSjZ5TW81eTVFWmdsM3FXcGxwUE5YRUUzRm1HZWpV?=
- =?utf-8?B?NjgxM3NkeVhpbXRHT1VNK1Y2VXBMN2VCZnVpaTZWSHpUSDFKczd0b1JibDdK?=
- =?utf-8?B?VmN2NXl1azRCL0ZDdVhYNW1OVHZGL3hPRXRmSkVOY1NpYVpHRTFpUHJ6MGQv?=
- =?utf-8?B?RDF0N2lvUFc4eEhYanYxK1NybEprOG4xTEh1SVRMenNlVWJhZlRBWnptKzNO?=
- =?utf-8?B?NFRZYnVqVXJSWXA5ZGhpSkVnT0RLZ1R4QW9uTURHeVJJc0JGMXpCamU2Wmp0?=
- =?utf-8?B?RU1JMXRNZVVFL3FpUXhhcGIvbWwwSHFhSnFKaW5xZ2VBdEdJdCtobmZJb01Q?=
- =?utf-8?B?bGNrZFVGSVQ1RGUrVWpPeVZsUWRzYjlnaHVVQms0YWRGZStwZDVycUh6ZjEz?=
- =?utf-8?B?WkRweUtKblRXNnoxYmNjQU50dng1R3c4cWdyY21jUnBFeTUwWlVFTUR4Y2xo?=
- =?utf-8?B?b2Y5S1JkVDdKZlVxUkxyd3h3ZHl6S2hCcVVWaVIzR0hPdUo0ejBBVlp1dnpo?=
- =?utf-8?B?ZVdRS0JkY0VzdTluNFFJaFJEVVpFNExiUGo5dTVRNmtMKzBrTnhHa3JYT25F?=
- =?utf-8?B?QjhtZnRyL2thTzkyWnZVUDU2TWRnNXRWMFRDYVBSaU1iSzBiNDBxdmJRVlUv?=
- =?utf-8?B?RHNYRHZwcDhWQzdTOVNCdG9JemwzMm9zZWhNTUh0Y1ZZMHNONWo1c1k1ZStt?=
- =?utf-8?B?RU9BbzRncHZyeFRYbXVEeGgrZUcyT3N4ODBYTzR2NitBWEZRUHBOMDh5d3N0?=
- =?utf-8?B?QnJ6d0tKYUdEdGhiMTNsMTZQQlpzejRuNG45cGRkOS9kYlRobC8rR1VFZzE0?=
- =?utf-8?B?MmVUdW5IZ1JWMVpNZnZXVXZxMmxJNEZ0OC9WbXgrZzMzVFVIbmRBTExRNlVk?=
- =?utf-8?B?bXVDV1I1cGo0Q1hpdFJrWGF4YjBLWVAwS1BmUmU4eUJsenJTczJpQVp4OWlD?=
- =?utf-8?B?NXgzcWsxdi8ralVLNGloZHlTT1h2Ym1CdzB3ZjNOcXFINmVDanlFWWhwZ3Nz?=
- =?utf-8?B?SWVRck43aWN1aW5JRWNwc0Mza2NqREYvd3lGVEFEcWNOTHF3d2srSGVZYlpY?=
- =?utf-8?B?cHlyQ0F3MHZ2dXBJTWxSOTVoOFBsR3l0cHE2aWJtbjVKaWlSNWdUeVpIY2lt?=
- =?utf-8?B?VnNuSU1yRlNUamFYNis1MFRHdHBHRHFMZ284Z1B5U0c5aCtnZStDQ0xXbFF6?=
- =?utf-8?B?aSt2a3ZGRTg2MlpIUTdaQUY1Qzh1VGVVY1dWdDFSUFgzaDF1V2MrV2Exb1JP?=
- =?utf-8?B?U2NseENjRFA3NGFHUHVHamtJUzlra0lxSjRJcXdUVmtYUEZrbnNkSi9PVDAx?=
- =?utf-8?B?a2k5VWxsdFVSUklhNDlWQjZCRThJNmJYRXhtNHN1QmpYNUl3aU5VeWVOQXRz?=
- =?utf-8?B?cTVrNEp3RGJsYzNmaFRlNHZ3dDZMQkJHSGRQZVFxTGlieWVld2lPZERTOUhs?=
- =?utf-8?B?VzIxdDZrM1JzMS9HTjlBbGU2TEZTbUpBT2NMcEV3eEVsRlYxOEIvMktWK210?=
- =?utf-8?B?MXVYcjliZy80UGN1NW53Q0NkQm1lUlppMVc3aHVIS1d1OXpMc2pIaXNEVXNp?=
- =?utf-8?B?d1k4Wkk1S0FwRGVPcXllRHFMY0RISkk1MUFIVFFQNTBHRDg0SlZrNFRnY2dD?=
- =?utf-8?B?WmJDcmZsWlIvR21HaWNsUG5FL1YwV0RZSDVLb0pvMlpZS3Z3eFM3bm8rNFlt?=
- =?utf-8?B?MUhjeldpWVNlSlhHMEtoK2hOREs1aXJQd0hnNEdETkJXVWZFZUdFWkZSWnQ3?=
- =?utf-8?B?dFZrU1FXQy9Zdyswa1JCMGtmQU1sVmVOZ3laL0tJK1FWTU1zeFVGVU1sVmxt?=
- =?utf-8?B?MzJEeE0xaHZ3UHlrMkpKektqWkg2MUp2VVRDaG52bVVIZ2ZHMUFWZW9aVVJV?=
- =?utf-8?B?V0JkaWwrNVhBNk9XR2Vzcm0zdUdyTE4ySEd5VHhiTUgzdnYwYkVLSUl2dk5R?=
- =?utf-8?B?V0tLK1ZSckZ5SnZnazY0VkNyUXczcFMzMldQNXRRNnA1bE9xSzZKcXV1UFhK?=
- =?utf-8?B?ZWQrN3M3SlN3T3p5SUt0VFhZdmI5VStYdGdiblo3OEIraUJ5Si9rZz09?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 98d0515a-13c6-4902-66a6-08df3f486b57
-X-MS-Exchange-CrossTenant-AuthSource: AMCPR10MB992291.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2026 16:33:58.1730
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: l5cVt9/TBCfOkK4HJvrcLP2/YmhcsCLWvZ4NOvnWAeYDZv+zvwevCjyHhHTGk199FcjgIw4bBeFI/lrDxdd2xg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR10MB6616
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="PiVxIwggLik0UFTH"
+Content-Disposition: inline
+In-Reply-To: <1931298540.80350.1793132613065@webmail.strato.de>
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 10 Nov 2026 16:34:07 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24734
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 10 Nov 2026 21:27:39 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24735
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
 
-Should reduce the load on the gitlab server and gives us the bits
-faster.
+--PiVxIwggLik0UFTH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
- recipes-bsp/u-boot/u-boot-common-2026.01.inc | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Hi!
 
-diff --git a/recipes-bsp/u-boot/u-boot-common-2026.01.inc b/recipes-bsp/u-boot/u-boot-common-2026.01.inc
-index 60dffe0b..8166379a 100644
---- a/recipes-bsp/u-boot/u-boot-common-2026.01.inc
-+++ b/recipes-bsp/u-boot/u-boot-common-2026.01.inc
-@@ -1,7 +1,7 @@
- #
- # CIP Core, generic profile
- #
--# Copyright (c) Siemens AG, 2022-2025
-+# Copyright (c) Siemens AG, 2022-2026
- #
- # Authors:
- #  Jan Kiszka <jan.kiszka@siemens.com>
-@@ -16,7 +16,7 @@ MAINTAINER = "cip-dev <cip-dev@lists.cip-project.org>"
- FILESPATH:append := ":${FILE_DIRNAME}/files"
- 
- SRC_URI += " \
--    https://git.u-boot-project.org/u-boot/u-boot/-/archive/v${PV}/u-boot-v${PV}.tar.bz2 \
-+    https://git.u-boot-project.org/u-boot/u-boot/-/releases/v${PV}/downloads/u-boot-${PV}.tar.bz2 \
-     file://0001-spl-Kconfig-Add-missing-SPL_LOAD_BLOCK-for-SYS_MMCSD.patch \
-     file://0002-spl-mmc-Account-for-SYS_MMCSD_RAW_MODE_U_BOOT_USE_PA.patch \
-     file://0003-spl-mmc-Respect-sector-value-passed-to-mmc_load_imag.patch \
-@@ -34,7 +34,7 @@ SRC_URI += " \
-     file://0006-mmc-Call-back-to-optee-after-a-successful-mmc_init.patch \
-     file://0007-mmc-Make-MMC-Device-not-found-a-debug-output.patch \
-     file://rules.tmpl;subdir=debian"
--SRC_URI[sha256sum] = "536c2204bb875236dcba41f5a5802090039a4b7a704dd284fcb9640e66a84a8a"
-+SRC_URI[sha256sum] = "b60d5865cefdbc75da8da4156c56c458e00de75a49b80c1a2e58a96e30ad0d54"
- 
- SRC_URI:append:ftpm-stmm = " \
-     file://ftpm-stmm.cfg"
-@@ -42,7 +42,7 @@ SRC_URI:append:ftpm-stmm = " \
- SRC_URI:append:secureboot = " \
-     file://secure-boot.cfg"
- 
--S = "${WORKDIR}/u-boot-v${PV}"
-+S = "${WORKDIR}/u-boot-${PV}"
- 
- DEBIAN_BUILD_DEPENDS += ", libssl-dev:native, libssl-dev:${DISTRO_ARCH}, \
-     libgnutls28-dev:native, libgnutls28-dev:${DISTRO_ARCH}"
--- 
-2.47.3
+> Here are the adapted backports for the upcoming 4.19 kernel release. Ther=
+e's a total of 95; 1 written by me, 2 by Qwen-3.8-27B and 92 by Qwen-3.8-Fl=
+ash-Next. (The latter are labeled with "Assisted-by: SLTR:qwen-3.8" and "As=
+sisted-by: SLTR:qwen-3.8-flash-next", respectively.)
+>=20
+> As always they can be found in https://git.kernel.org/pub/scm/linux/kerne=
+l/git/cip/linux-cip.git/log/?h=3Dlinux-4.19.y-st-rc
+
+As usual, lines marked with "^a" are patches I reviewed. Reviewed-by:
+Pavel Machek <pavel@nabladev.com>
+
+I believe f6c6a70da060ea is a bit too complex for us.
+
+Best regards,
+								Pavel
+
+
+a I would not change comment in the backport > 15dca0467fbc1b i2c: smbus: r=
+eject oversized block transfers in the common path
+a > ad002df2ef4324 ipv4: fib: bound automatic table ID allocation
+a > 36d5575a8baded net: mpls: clear inner_protocol when the last label is p=
+opped
+a > 0eceef464ddb41 cpufreq: initialize policy rwsem before sysfs publication
+a > 7a85d5bf37497f cpufreq: zero-initialize policy cpumask before sysfs pub=
+lication
+> f33862037392e3 macvlan: inherit needed_headroom and needed_tailroom from =
+lowerdev
+> 8c7a3c69bd6c75 drm/amd/display: set new_stream to NULL after release
+a > fab55095a265ba net/sched: cls_api: Don't replay RTM_GETCHAIN in tc_ctl_=
+chain().
+a > 7dbaf7cbcc17f2 bonding: use skb_cow_head() in bond_do_alb_xmit() and rl=
+b_arp_xmit()
+a > c991dca2b3c361 net/sched: act_api: budget all shared attributes in noti=
+fy skbs
+> 7d08f3c8750eb2 drm/virtio: Fix a NULL vs ERR_PTR() bug in virtio_gpu_user=
+_framebuffer_create()
+a > efc263c2c0b10b wifi: libertas: reject short monitor TX frames
+> b32f72a205795a xen/front-pgdir-shbuf: free grant reference head on errors
+a just a robustness > cba01a9b47aaf1 net: stmmac: xgmac2: disable RBUE in d=
+efault RX interrupt mask
+a > 7a599b7230d280 wifi: nl80211: Increase ie_len size to prevent truncated=
+ IEs in new peer notifications
+a > e6c0bfb715a6d7 ASoC: codecs: pcm3168a: Drop CONFIG_PM-conditional prepr=
+oc directive
+!! just a network namespacing, quite complex > f6c6a70da060ea rds: filter R=
+DS_INFO_* getsockopt by caller's netns
+> 98f4c9eafa9d27 scsi: pm8001: Reject firmware update in fatal error state
+> f0a0787eb48b2a thunderbolt: Set tb->root_switch to NULL when domain is st=
+opped
+> 6fe4d16722f049 NFSv4/pnfs: key the data server cache on the NFS version
+> af43e84cb9da3b NFS: Always clear an invalid mapping when attempting a buf=
+fered write
+a > 5b5b707281db3c lwt_bpf: Restore reserved headroom after xmit program
+a this is subtle way to return with retval =3D 0; I guess that's okay > 05f=
+ef2249c1be1 firmware_loader: do not queue completed sysfs fallback requests
+> 81db1e6ec46877 ocfs2: synchronize heartbeat callbacks with o2net teardown
+> 7383d078e76942 remoteproc: fix OOB read via signed offset in rsc_table_fo=
+r_each_entry()
+> 3d73e501fdc537 perf intel-pt: Fix off-by-one in auxtrace_info minimum siz=
+e check
+a > 1b1ebee1d17f8b tty: clear cdev pointer after cdev_add() failure
+a > af6929005c4a3a serial: amba-pl011: unprepare console clock on unregister
+a > 6434896a882257 wifi: mt76: mt76x02: do not WARN on invalid rx descripto=
+r length
+a > 65d7661a2a2887 locking/lockdep: Fix NULL pointer dereference in __lock_=
+set_class()
+> 9590d724daf3f2 remoteproc: Prevent crash handling to race with rproc_del()
+a two sbs batteries are pretty unusual config > 1d2cfeed814ebf power: suppl=
+y: sbs-battery: Use a per-device serial number buffer
+> f535e3674afd1c RDMA/srpt: Pass the mapped task attribute to target_init_c=
+md()
+> d7b349ebdfdafc ASoC: meson: Keep link pointers valid on realloc failure
+> d38f463c73bccc tty: hvc: restrict HVC_DCC to ARMv6+ and ARM64
+> 3f78220d000d94 xfrm6: fix out-of-bounds write in xfrm6_input_addr() when =
+secpath is full
+> 1b1bd4efd7d8a1 iommu/amd: Prevent SB IOAPIC from overriding IVRS validati=
+on errors
+> 05c7c199894226 soc: samsung: exynos-pmu: fix of_node refcount leak in exy=
+nos_get_pmu_regmap()
+> 4939afd8061ba8 HID: roccat: bound device-supplied profile index
+> 3c1c45a994001e bpf: Enforce expected_attach_type for tailcall compatibili=
+ty
+> efff42e7625928 tcp: clear sock_ops cb flags before force-closing a child =
+socket
+> e8453ec6b7f770 xhci: fix lost bounce buffers on TDs spanning several ring=
+ segments
+> 8eb84d0751f98b drm: Fix drm_crtc_commit leak if signaled when PAGE_FLIP_E=
+VENT is used
+> f0e7e4f141ca70 scsi: qla2xxx: Zero SFP DMA buffer in FRU/I2C bsg handlers
+> aec9df1263875c batman-adv: dat: avoid unaligned fault in IP extraction
+> 53a94e6cc49ffe mtd: rawnand: validate ONFI extended parameter page sectio=
+ns
+> c8846b93ddcb6e HID: wacom: validate report length in wacom_intuos_pro2_bt=
+_irq
+> a8a753f7fc41b0 scsi: core: Fill in DMA padding bytes in scsi_alloc_sgtabl=
+es()
+> 303a77ac1be15b selinux: reject an unclaimed class value in security_get_c=
+lasses()
+> 4fae216b4a1760 tcp: fix potential race in tcp_v6_syn_recv_sock()
+> 393c2ca46a3b27 fsnotify: Fix stale object mask after concurrent mark upda=
+tes
+> 83cb9c25f3391f openvswitch: Fix CT limit teardown use-after-free
+> aeca4496f07b9b netfilter: nf_queue: pin bridge device while NFQUEUE holds=
+ fake dst
+> aea3fa3f950c8c net: cap advertised IP tunnel headroom
+> ce12d5b2bdee84 net: openvswitch: fix flow mask use-after-free on flow del=
+etion
+> f139bc5bef5bc9 power: supply: max17040: synchronize work cancellation on =
+suspend
+> 7c74c8f9a71e98 sctp: fix stream->outcnt underflow on duplicate RECONF res=
+ponses
+> 7869f195dfe0a9 SUNRPC: harden gss_unwrap_resp_priv length checks
+> d93d0c0458686d SUNRPC: harden gss_krb5_unwrap_v2 against short tokens
+> f57c93fdce94d3 SUNRPC: Guard svcauth_gss_release() dispatch on rq_auth_st=
+at
+> d10d5ffbde1f9b sunrpc: route to a populated pool in svc_pool_for_cpu()
+> b86a2634b755b9 nfsd: add fh_want_write() for early-verified SETATTR in nf=
+sd_proc_setattr()
+> 3af3a1546df5c8 ALSA: aloop: Fix racy access at PCM trigger
+> 3a1fe75c4db943 mm/swap: reject swapon() on filesystem-level encrypted fil=
+es
+> 4084800d553361 selinux: switch two allocations to use kzalloc_objs()
+> b29f321b90465e ipv6: mcast: Fix use-after-free when processing MLD queries
+> 68018695bfef2c xfs: bounds-check buffer log item's dirty bitmap
+> fe55a808ff6078 KVM: arm64: Retry fault if vma_lookup() results become inv=
+alid
+> 9ef244c1264489 inet: frags: publish queues before arming timer
+> 9779b445f542b2 packet: synchronize pressure clearing with ring reconfigur=
+ation
+> 86ce0c431c5480 net/sched: reject overly deep qdisc hierarchies
+> 13115d704fea78 serial: amba-pl011: synchronize DMA teardown
+>=20
+> Thanks for having a look!
+>=20
+> CU
+> Uli
+
+--=20
+
+--PiVxIwggLik0UFTH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCavOMNwAKCRAw5/Bqldv6
+8hYdAJ9QtkZnDCse8euqSi+/PQ/7rerv9gCfdx2dfIYkCnqUlwtJpy9BCBleQGE=
+=32K3
+-----END PGP SIGNATURE-----
+
+--PiVxIwggLik0UFTH--
