@@ -1,195 +1,134 @@
-Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.3218.1794346050871227349
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.131])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.1571.1794357711852784359
  for <cip-dev@lists.cip-project.org>;
- Tue, 10 Nov 2026 13:27:31 -0800
+ Tue, 10 Nov 2026 16:41:53 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=clKqrCk5;
- spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BA8AE10DBB8;
-	Tue, 10 Nov 2026 22:27:21 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1794346044;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=l1jzo6BtIhl60oL9AXuixiZdBW+XLMznTWYaAwwU5vA=;
-	b=clKqrCk5xTroNAO0Ahi7H1hjnREKE1DoAVumsAYIWd/e6b+C1M1X43Yq397/Mxe2adP3Gk
-	f52LjJsdV+4DCr9/z44zm2JPsvSVQBdUZbhnaj9beR0eoxTXYC7WBEFYNFGddr4p1FzrGk
-	TF2Jwf9Upn6vpageKEuSf+DOX5TMoJSzELZAKdoCr8sxVKQcjnOufS0lEdJ/Gv1eyRgSS4
-	IJ5dA411OyFCPjc2lkOPkYt+dTUXubKounM1SUKyF9Hj5WyJCcHSMvxlTaF4WIE6mVD5u3
-	nd3wxDHbg0V0KWu2IFyoAAyNKPe0CRb21TlY37AKmP5bA8JFUODsyWTqE4JWaA==
-Date: Tue, 10 Nov 2026 22:27:19 +0100
-From: Pavel Machek <pavel@nabladev.com>
-To: Ulrich Hecht <uli@fpond.eu>
-Cc: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	"pavel@nabladev.com" <pavel@nabladev.com>,
-	"nobuhiro.iwamatsu.x90@mail.toshiba" <nobuhiro.iwamatsu.x90@mail.toshiba>
-Subject: Re: Request for review for 4.19-st21, 4.19-cip137
-Message-ID: <avOMN_cVRLv1uH9o@duo.ucw.cz>
-References: <1931298540.80350.1793132613065@webmail.strato.de>
+ dkim=pass header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.s=key2.smx header.b=lM+fTHVN;
+ spf=pass (domain: mail.toshiba, ip: 210.130.202.131, mailfrom: nobuhiro.iwamatsu.x90@mail.toshiba)
+DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=mail.toshiba;h=From:To:
+	Subject:Date:Message-ID:References:In-Reply-To:Content-Type:
+	Content-Transfer-Encoding:MIME-Version;i=nobuhiro.iwamatsu.x90@mail.toshiba;
+	s=key2.smx;t=1794357708;x=1795567308;bh=Ipg0xd3TtSl3haew46EgdXIOB4EXnzqC+Ihli
+	13JX+M=;b=lM+fTHVNkqDbdl+MP+QTyzBQr90Y4IMWeSrASFkLT1pa+4qMSmBX236Z6Q4vZeu3o2J
+	FCbUEQMbHGpP9IgoCAxD22r4x0wnud/TUP8lZF0bR+EEwcd75X9vA+CSp+Gozo0BI5EHMCTdlCOjy
+	0DPmRb0Jg0dWix8JnWksMTXL0prA3ewq/oL6XZ0NHozz48BUkySPKeDG7BjPBsJKgMLgu7ULcjfTI
+	xucflvhIAn/lzzhQr6p0YxX1csxTmkcsXJHN24XM5VF+Mw82RQC1MtL41fza9kcs7LmahXYu/tcDh
+	uq4TvYBospWldM0bTgUGSDtCTPuV71gbITA069TPVQmw==;
+Received: by mo-csw.securemx.jp (mx-mo-csw1120) id 6AB0fl8d1078067; Wed, 11 Nov 2026 09:41:48 +0900
+X-Iguazu-Qid: 2rWgYSPeppLohTEo0x
+X-Iguazu-QSIG: v=2; s=1; t=1794357707; q=2rWgYSPeppLohTEo0x; m=xK0HR4n3cp6oYccLN1/PfBqMQJDCOH2LfquVfwYgpac=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	 id 4jPPpz3GZXz1xnf; Wed, 11 Nov 2026 09:41:47 +0900 (JST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dq/7ooZ4Y32dipE6LQIvb35FjUFh+nMxlDoKGiiIqI1QiNmGWQujlTRmZU7W2I+rVQ/4NckJR4FwKnHDIPcpnJQrJOtdDmkznpuuoYavwngWvQlNlZ5674MobuEgJIo4+UlGSel+A/qCCq4sc14SVuC3VUB0MgVLxz9yO7ZHZljmI2IHL4l23XYz1ueUyKhIPJnMx70WItrR87xi5PnuNR5nNlHf+BB1DqqBqKc9DHGCCq0IS+r0COKeyjCKNI9H/8cl8iaAQa1KbcwkxbpY2mS1jbtehN/IdUD0iiDma513VwqdzEkpDBBusBm6SY3Y63yHgn2A+t7rJfgnr06A+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ipg0xd3TtSl3haew46EgdXIOB4EXnzqC+Ihli13JX+M=;
+ b=lVr/ZeevxYz9dx/ijXtqFG6CxUdrn9TCdLULkrtTHsOHNwgUohwc0hxeg8yjz1rqvaLASatrmT6Zqz+jV2006xaVd7U9HNilqyU32UBH1O+Dxl3KbU1PkeThEOI9vOC2h841BQe/lS1+O0o4+n9iL2D+KWVwM/yNryaYN0FjK8sH0Is0ljKhqK4Gm2lURqyIkXnjnu6j1XmxbqBy206wR53K7FVxIgTc10Idt2cG1MVgtYLMbsY4wGNcTKVyEHnGoM5BIxm6cmjVUSrb/eZ4VKSciqVrYpWB/O+koH6mdVkYcuyJD0GJec2C2RK4TwOvUqKDAXp5IXjG7u+DwfsAgg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mail.toshiba; dmarc=pass action=none header.from=mail.toshiba;
+ dkim=pass header.d=mail.toshiba; arc=none
+From: <nobuhiro.iwamatsu.x90@mail.toshiba>
+To: <jan.kiszka@siemens.com>, <cip-dev@lists.cip-project.org>
+Subject: RE: [isar-cip-core][PATCH] u-boot: Use release artifacts instead of
+ generated archives
+Thread-Topic: [isar-cip-core][PATCH] u-boot: Use release artifacts instead of
+ generated archives
+Thread-Index: AQHdcTFUceFG+tmFAUqvGAw4GvTJyLcoCCdA
+Date: Wed, 11 Nov 2026 00:41:44 +0000
+X-TSB-HOP2: ON
+Message-ID: <TY7PR01MB14818F0DADEA551A1A578750FCD712@TY7PR01MB14818.jpnprd01.prod.outlook.com>
+References: <87ba589e-3b20-4272-b264-74225378e6e0@siemens.com>
+In-Reply-To: <87ba589e-3b20-4272-b264-74225378e6e0@siemens.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mail.toshiba;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY7PR01MB14818:EE_|TY7PR01MB14458:EE_
+x-ms-office365-filtering-correlation-id: eb432f36-9aee-4968-cf55-08df3f8c8f9b
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|23010399003|38070700021|10067099003|11063799006|56012099006|261022075727099003|22082099003|18002099003;
+x-microsoft-antispam-message-info: RL8AGnBWqwAxO7SoO8lzv2KGVhDV69WATXsHFC5687jbZylC3afAxI7WStxdsN3OeHy6DlMxFNCyvt5RsIgjVL+wan8Nuz/keroMG/YLv3riSkvUfQFZx4yrsyCzQsoLs/z1u8Z4Fkq5rHDaTLAPODTBQpQW/F5I6etii9x5I1Ky4wTybi0AdzlEy1W2y//sAEih9XkJCnRXSXTO4DnZdVFqNRjT9X6Ukub8CaW1zBUHtp4fpciOrorTfCe45qgVQlR5hOCaOSJ7PbThbQ22JdatFfjww7IsXTaHQjgy4kq+P58p4ICjM+od2VxTh5hK0zmUCc33ZSO9HLCSUQ2K4ndaO2UWwVhJEPVqTAjsTZzSAEF3VZRnwwUBiS+RKz1gEjh188tp+ztuGYVFMBQYtxl1ot5EK0mhVMGJJNYt5KLR0hVlvaaVsfpqs/384kakMwf8Fq2ePmMzCP7Lf8AhqrhvjgmgIUHJ6YoVvfpboXC2iWfi2LjOixEMhwwQvYfnSmfjxs1IqeY6YekM3AkQsXVZmqAMWrH8GRNw/q2gUPKnGJFaAORQNmd7Bq5oHxT53agebifa8ZjYMWV5taDhnjejnkmXea8W0d6hOZpGj04gADRIqYDxzo5CsMCVR7rbfdF+EWIZq+F7d3f8R2qwPKIarlQXPkVS6rLynxrXFuK7/9pCGiQsi6ASSDZA2oimrMnoPWVkqeLtrXpzGi50qSQjbtiSUDww/H+Q2w7CMck=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7PR01MB14818.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(23010399003)(38070700021)(10067099003)(11063799006)(56012099006)(261022075727099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?RmFxclc3Q3lYRHA3K0tpTHlTa1JnajUwTDhiZEtnaThkVFltSm5WMWk5R1Ix?=
+ =?utf-8?B?NTRTUUlDb2FlYUN0YmJPZ2UzK1FZREhzeVRyK1VEbjZFL0tydWJoRHMzUFYy?=
+ =?utf-8?B?Y2M0elBxRkRqODBsamF3aWM1RjVOZ0pITE8xdnpHWnlyNkJHbHBScERVVk1H?=
+ =?utf-8?B?aEVab0VUNk45Mysrd204aXozZHVZNHBsbUE3MlVFNXBNVmRWZ0JMdmJCd0RC?=
+ =?utf-8?B?QXZYc2t1aDBUalI2QnEwZCtYSzN4NEowRFVpaTZ3K2NvR0RtVzlSaHdVSzh4?=
+ =?utf-8?B?TGhWU2xZd2NnTitmamsyd2wrenhzRmtnQWVYSUkxY29RaGhyeDJTM0RINmJM?=
+ =?utf-8?B?S2F2ZzV5dWtqbWpuV0F3bnYwRUtXdHQyclpNZnN5aVlpWHcrbTRoOVlBSTNM?=
+ =?utf-8?B?RkhnZEZKaEZNc20wNVFCS0JwR1FOV09qeHluWFlkOGlGS3N5RWhKWUl5VE9r?=
+ =?utf-8?B?SE5Cazd0ZmM1RHloR00vREkvZXNlK1EyZkJtUHMxTTJ6OFc3TXJHYWVneXkw?=
+ =?utf-8?B?ZU13dEFFYUl3eS8rL1NtWWJmNWNTZVJWNVExeXF3bWRqT2ZadGU2eVgvdUpK?=
+ =?utf-8?B?aW5KVHlncUY1VGRQejhXZXM0M3ZybFdaZENFTlNNMHVlRlFMUTlzSndiOTYv?=
+ =?utf-8?B?Vk1aVFZXcnNMSEFaeTB2ck4xVHNXWmRNZ1FXclEwLzlrTExSZVI1cWRIZTBE?=
+ =?utf-8?B?YjR5S2hWUitKU0orNi9COVE4VVJKWVgyK0tQM3ZmaGZCcE1MRU5HQU9zTnk2?=
+ =?utf-8?B?dFdQc25wakNhTitKZkZTdjMzMWxsZ0xObXNqL1c1ODNTUW90aEFhTEt6bVVr?=
+ =?utf-8?B?ZnpJd2hKM0JFNS9wc0wxTGRLZ2hhRU80VXlCNFEwUlcwcUpqMDhnZG8xWG1E?=
+ =?utf-8?B?WVVieU5ZRTh1SVNEYXF4dk9kVU0wV2VCeEE4R0JxZlRZbkZ2Rm5xOHhaVm1u?=
+ =?utf-8?B?N2pnZ2NaWDhyZUVKdGNBYUdVUmt0bE5EVDMrOWFSamh5MjJjK0JlOG9rQ3JW?=
+ =?utf-8?B?Q3dhRHNKOCtkanhkbmpEU2NWclMrY2JjQ3VnWE1iR3Evd1VoVlFCNkpCenlI?=
+ =?utf-8?B?YzFDSFpXSWpJU0N4OHljTndiRjk3K2NJTWRyU01TV1YwZXVPRlBLSWNva2M1?=
+ =?utf-8?B?b3oxYnBrRmt2WEJKWFRaQnQ0UzVwRWtSRUVYYTY2QWcwV0h3UDlELzhuWXhP?=
+ =?utf-8?B?S2djMzFEVFNVOHF0R2lGU0ROVmRRdGpLYmRaYy9qM2FMN1FCMDZWQ2ttNG5z?=
+ =?utf-8?B?a244eURDb0Q2eVFHWWNuOXB3R1hpcHp3eVh2ZVloUExHZFd4bjJYRHJ2QWZh?=
+ =?utf-8?B?WURYK1BXSGpMdHJaOUI1YmhJR3llTTdtTU1XL29LdUlna3l3SXEwZk9ma1Zz?=
+ =?utf-8?B?SURHYndvZlBpK3JXVzltY0dObTBzRU9Vblp0WmxKZm5IelgwUnZPd0pBL3ZX?=
+ =?utf-8?B?U2c0REphbHprNFkyelY2UnlkbnV6VTVJVjBaNlpDZjFrV3kySGkwOFJ6ZGdR?=
+ =?utf-8?B?eHIrTVR6UzlmUnp6YURsWHloMk5lamJMTHpDVEFkazdVSStwUDBscXY3UjZ0?=
+ =?utf-8?B?R3pwWEhDNm9UY0U0NlNjQmQ4NW9qajRYTTdWK3MzTFF3bXVZaDdVTlJnZ3Fp?=
+ =?utf-8?B?QUlZbUVVNUlGOWMvSlBEZHhvbHVXNzdSd2R1RUpsY2EybzdlcUhGalVFeEkr?=
+ =?utf-8?B?TG1lQUtnNmxHcmlXVW9MbzE2T083d1AwWFd5cTFvY1h3OTQyNHRJNmJYenNW?=
+ =?utf-8?B?bjE2MGZtVWNLSmhUTDBSNDdFdTMwcE4yRmwxRzJBQld2MEI2WDQzQmQzandQ?=
+ =?utf-8?B?YmFuZ21qS2dSemhSVllHSWJJVUkrVmtaakRZOXJZTFlnZFh0c0dIemthZVhL?=
+ =?utf-8?B?TXNDYjFXemludUE0L25mYXhRWUJlN21WWmNRQnlVcFdaeXhUOUh0RGhnUkJZ?=
+ =?utf-8?B?d0VjMk5GblpTVzBGckwzd3BsRGc1QWRkMTlFNHpyWm1xVGZzWG1sYlRRTnB4?=
+ =?utf-8?B?YW9YdGlVcFVRSEFTbGMraW85dzlyQVNzWEVkbkxMMTdOaFVOQ0ZaYTc3OTUw?=
+ =?utf-8?B?aXcrQVYzbjE0UzlrZXFwSFQ4OWQ4RjNFMjNjZGZEalJpVjA4VUJIdXFyUDRr?=
+ =?utf-8?B?WUZMV0FSK0RuMjZGSmkxeUNtRU5aWGxucmtLWkJEK0RFcEFqOXR0RmFLSitK?=
+ =?utf-8?B?NGkzUWhtMjVCdEJoMWdXL3Z2dFVlTndWUjgxUDd3OEpQMnl2QmZ5bnBZV0dp?=
+ =?utf-8?B?eTRJUjU2cUp5V1RYZG5kcURmMUlCeHFiM0hZai95M3IycmZoTzgrSlBEKzNj?=
+ =?utf-8?B?d24wUnhkMEV3bE1yS2dDTDh4VC8rczRwOGNPc3NDUEZaVkpjY2JBVVA4MEpx?=
+ =?utf-8?Q?YvEJ1zsiURDeNwcA=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="PiVxIwggLik0UFTH"
-Content-Disposition: inline
-In-Reply-To: <1931298540.80350.1793132613065@webmail.strato.de>
-X-Last-TLS-Session-Version: TLSv1.3
+X-Exchange-RoutingPolicyChecked: zfN/r5w6l8H7rewJX96QNsgo4MMVipn460QmiUklSXMmJMh8NVJuO8qUUyiteFyJgwa9s/E/TAQxhhJQsT6TDpdholaDUlUq2gQpO2HeK9fegJKneBrIG8gF7XmlXg4TeanA9VmyisO9JfnXbEaYppj9f3ZvoN62OuyDjrySwqpwQo8fSpLJwMUHHE6Xq43Tu7dkyL12r5ALlLMoCPK1g59lx6J+Yd81AluNPCIAsq/sOflOFfbxiiaby58zqZcbGUrQO2HWqSx0u35U5og5bGvrI3T0pwjR94JNxyJgI9UNszO3bzETbKatTpD/twF4YeTRiNvFGzuUr+BvLJiPHQ==
+X-OriginatorOrg: mail.toshiba
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY7PR01MB14818.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eb432f36-9aee-4968-cf55-08df3f8c8f9b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Nov 2026 00:41:44.6587
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: X6/olCLlXbOuYew+3JWOWgjbgBFh4IfKSYU6SxgHTgUBFLFqr/Z/x7fOWhrkjkRkxStKiB6oQGic1J2yklkVkEwQaQdGOYDthrYcQcGhG8zIavycQMCqY0/LK98aiAZd
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY7PR01MB14458
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 10 Nov 2026 21:27:39 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24735
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Wed, 11 Nov 2026 00:41:55 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24736
 
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBKYW4gS2lzemthIDxqYW4ua2lz
+emthQHNpZW1lbnMuY29tPg0KPiBTZW50OiBXZWRuZXNkYXksIE5vdmVtYmVyIDExLCAyMDI2IDE6
+MzQgQU0NCj4gVG86IGNpcC1kZXYgPGNpcC1kZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnPg0KPiBD
+YzogaXdhbWF0c3Ugbm9idWhpcm8o5bKp5p2+IOS/oea0iyDilqHvvKTvvKnvvLTvvKPil4vvvKPv
+vLDvvLQpDQo+IDxub2J1aGlyby5pd2FtYXRzdS54OTBAbWFpbC50b3NoaWJhPg0KPiBTdWJqZWN0
+OiBbaXNhci1jaXAtY29yZV1bUEFUQ0hdIHUtYm9vdDogVXNlIHJlbGVhc2UgYXJ0aWZhY3RzIGlu
+c3RlYWQgb2YNCj4gZ2VuZXJhdGVkIGFyY2hpdmVzDQo+IA0KPiBGcm9tOiBKYW4gS2lzemthIDxq
+YW4ua2lzemthQHNpZW1lbnMuY29tPg0KPiANCj4gU2hvdWxkIHJlZHVjZSB0aGUgbG9hZCBvbiB0
+aGUgZ2l0bGFiIHNlcnZlciBhbmQgZ2l2ZXMgdXMgdGhlIGJpdHMgZmFzdGVyLg0KPiANCj4gU2ln
+bmVkLW9mZi1ieTogSmFuIEtpc3prYSA8amFuLmtpc3prYUBzaWVtZW5zLmNvbT4NCg0KVGhhbmtz
+IGZvciB5b3VyIHVwZGF0ZS4NCg0KUmV2aWV3ZWQtYnk6IE5vYnVoaXJvIEl3YW1hdHN1IDxub2J1
+aGlyby5pd2FtYXRzdS54OTBAbWFpbC50b3NoaWJhPg0KDQpCZXN0IHJlZ2FyZHMsDQogIE5vYnVo
+aXJvDQoNCg==
 
---PiVxIwggLik0UFTH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> Here are the adapted backports for the upcoming 4.19 kernel release. Ther=
-e's a total of 95; 1 written by me, 2 by Qwen-3.8-27B and 92 by Qwen-3.8-Fl=
-ash-Next. (The latter are labeled with "Assisted-by: SLTR:qwen-3.8" and "As=
-sisted-by: SLTR:qwen-3.8-flash-next", respectively.)
->=20
-> As always they can be found in https://git.kernel.org/pub/scm/linux/kerne=
-l/git/cip/linux-cip.git/log/?h=3Dlinux-4.19.y-st-rc
-
-As usual, lines marked with "^a" are patches I reviewed. Reviewed-by:
-Pavel Machek <pavel@nabladev.com>
-
-I believe f6c6a70da060ea is a bit too complex for us.
-
-Best regards,
-								Pavel
-
-
-a I would not change comment in the backport > 15dca0467fbc1b i2c: smbus: r=
-eject oversized block transfers in the common path
-a > ad002df2ef4324 ipv4: fib: bound automatic table ID allocation
-a > 36d5575a8baded net: mpls: clear inner_protocol when the last label is p=
-opped
-a > 0eceef464ddb41 cpufreq: initialize policy rwsem before sysfs publication
-a > 7a85d5bf37497f cpufreq: zero-initialize policy cpumask before sysfs pub=
-lication
-> f33862037392e3 macvlan: inherit needed_headroom and needed_tailroom from =
-lowerdev
-> 8c7a3c69bd6c75 drm/amd/display: set new_stream to NULL after release
-a > fab55095a265ba net/sched: cls_api: Don't replay RTM_GETCHAIN in tc_ctl_=
-chain().
-a > 7dbaf7cbcc17f2 bonding: use skb_cow_head() in bond_do_alb_xmit() and rl=
-b_arp_xmit()
-a > c991dca2b3c361 net/sched: act_api: budget all shared attributes in noti=
-fy skbs
-> 7d08f3c8750eb2 drm/virtio: Fix a NULL vs ERR_PTR() bug in virtio_gpu_user=
-_framebuffer_create()
-a > efc263c2c0b10b wifi: libertas: reject short monitor TX frames
-> b32f72a205795a xen/front-pgdir-shbuf: free grant reference head on errors
-a just a robustness > cba01a9b47aaf1 net: stmmac: xgmac2: disable RBUE in d=
-efault RX interrupt mask
-a > 7a599b7230d280 wifi: nl80211: Increase ie_len size to prevent truncated=
- IEs in new peer notifications
-a > e6c0bfb715a6d7 ASoC: codecs: pcm3168a: Drop CONFIG_PM-conditional prepr=
-oc directive
-!! just a network namespacing, quite complex > f6c6a70da060ea rds: filter R=
-DS_INFO_* getsockopt by caller's netns
-> 98f4c9eafa9d27 scsi: pm8001: Reject firmware update in fatal error state
-> f0a0787eb48b2a thunderbolt: Set tb->root_switch to NULL when domain is st=
-opped
-> 6fe4d16722f049 NFSv4/pnfs: key the data server cache on the NFS version
-> af43e84cb9da3b NFS: Always clear an invalid mapping when attempting a buf=
-fered write
-a > 5b5b707281db3c lwt_bpf: Restore reserved headroom after xmit program
-a this is subtle way to return with retval =3D 0; I guess that's okay > 05f=
-ef2249c1be1 firmware_loader: do not queue completed sysfs fallback requests
-> 81db1e6ec46877 ocfs2: synchronize heartbeat callbacks with o2net teardown
-> 7383d078e76942 remoteproc: fix OOB read via signed offset in rsc_table_fo=
-r_each_entry()
-> 3d73e501fdc537 perf intel-pt: Fix off-by-one in auxtrace_info minimum siz=
-e check
-a > 1b1ebee1d17f8b tty: clear cdev pointer after cdev_add() failure
-a > af6929005c4a3a serial: amba-pl011: unprepare console clock on unregister
-a > 6434896a882257 wifi: mt76: mt76x02: do not WARN on invalid rx descripto=
-r length
-a > 65d7661a2a2887 locking/lockdep: Fix NULL pointer dereference in __lock_=
-set_class()
-> 9590d724daf3f2 remoteproc: Prevent crash handling to race with rproc_del()
-a two sbs batteries are pretty unusual config > 1d2cfeed814ebf power: suppl=
-y: sbs-battery: Use a per-device serial number buffer
-> f535e3674afd1c RDMA/srpt: Pass the mapped task attribute to target_init_c=
-md()
-> d7b349ebdfdafc ASoC: meson: Keep link pointers valid on realloc failure
-> d38f463c73bccc tty: hvc: restrict HVC_DCC to ARMv6+ and ARM64
-> 3f78220d000d94 xfrm6: fix out-of-bounds write in xfrm6_input_addr() when =
-secpath is full
-> 1b1bd4efd7d8a1 iommu/amd: Prevent SB IOAPIC from overriding IVRS validati=
-on errors
-> 05c7c199894226 soc: samsung: exynos-pmu: fix of_node refcount leak in exy=
-nos_get_pmu_regmap()
-> 4939afd8061ba8 HID: roccat: bound device-supplied profile index
-> 3c1c45a994001e bpf: Enforce expected_attach_type for tailcall compatibili=
-ty
-> efff42e7625928 tcp: clear sock_ops cb flags before force-closing a child =
-socket
-> e8453ec6b7f770 xhci: fix lost bounce buffers on TDs spanning several ring=
- segments
-> 8eb84d0751f98b drm: Fix drm_crtc_commit leak if signaled when PAGE_FLIP_E=
-VENT is used
-> f0e7e4f141ca70 scsi: qla2xxx: Zero SFP DMA buffer in FRU/I2C bsg handlers
-> aec9df1263875c batman-adv: dat: avoid unaligned fault in IP extraction
-> 53a94e6cc49ffe mtd: rawnand: validate ONFI extended parameter page sectio=
-ns
-> c8846b93ddcb6e HID: wacom: validate report length in wacom_intuos_pro2_bt=
-_irq
-> a8a753f7fc41b0 scsi: core: Fill in DMA padding bytes in scsi_alloc_sgtabl=
-es()
-> 303a77ac1be15b selinux: reject an unclaimed class value in security_get_c=
-lasses()
-> 4fae216b4a1760 tcp: fix potential race in tcp_v6_syn_recv_sock()
-> 393c2ca46a3b27 fsnotify: Fix stale object mask after concurrent mark upda=
-tes
-> 83cb9c25f3391f openvswitch: Fix CT limit teardown use-after-free
-> aeca4496f07b9b netfilter: nf_queue: pin bridge device while NFQUEUE holds=
- fake dst
-> aea3fa3f950c8c net: cap advertised IP tunnel headroom
-> ce12d5b2bdee84 net: openvswitch: fix flow mask use-after-free on flow del=
-etion
-> f139bc5bef5bc9 power: supply: max17040: synchronize work cancellation on =
-suspend
-> 7c74c8f9a71e98 sctp: fix stream->outcnt underflow on duplicate RECONF res=
-ponses
-> 7869f195dfe0a9 SUNRPC: harden gss_unwrap_resp_priv length checks
-> d93d0c0458686d SUNRPC: harden gss_krb5_unwrap_v2 against short tokens
-> f57c93fdce94d3 SUNRPC: Guard svcauth_gss_release() dispatch on rq_auth_st=
-at
-> d10d5ffbde1f9b sunrpc: route to a populated pool in svc_pool_for_cpu()
-> b86a2634b755b9 nfsd: add fh_want_write() for early-verified SETATTR in nf=
-sd_proc_setattr()
-> 3af3a1546df5c8 ALSA: aloop: Fix racy access at PCM trigger
-> 3a1fe75c4db943 mm/swap: reject swapon() on filesystem-level encrypted fil=
-es
-> 4084800d553361 selinux: switch two allocations to use kzalloc_objs()
-> b29f321b90465e ipv6: mcast: Fix use-after-free when processing MLD queries
-> 68018695bfef2c xfs: bounds-check buffer log item's dirty bitmap
-> fe55a808ff6078 KVM: arm64: Retry fault if vma_lookup() results become inv=
-alid
-> 9ef244c1264489 inet: frags: publish queues before arming timer
-> 9779b445f542b2 packet: synchronize pressure clearing with ring reconfigur=
-ation
-> 86ce0c431c5480 net/sched: reject overly deep qdisc hierarchies
-> 13115d704fea78 serial: amba-pl011: synchronize DMA teardown
->=20
-> Thanks for having a look!
->=20
-> CU
-> Uli
-
---=20
-
---PiVxIwggLik0UFTH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCavOMNwAKCRAw5/Bqldv6
-8hYdAJ9QtkZnDCse8euqSi+/PQ/7rerv9gCfdx2dfIYkCnqUlwtJpy9BCBleQGE=
-=32K3
------END PGP SIGNATURE-----
-
---PiVxIwggLik0UFTH--
