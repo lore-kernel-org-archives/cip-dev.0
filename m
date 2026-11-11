@@ -1,17 +1,17 @@
-Received: from TY3P286CU002.outbound.protection.outlook.com (TY3P286CU002.outbound.protection.outlook.com [52.101.229.32])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.5727.1794388754077745935
+Received: from OS0P286CU011.outbound.protection.outlook.com (OS0P286CU011.outbound.protection.outlook.com [52.101.228.34])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.5728.1794388754089779950
  for <cip-dev@lists.cip-project.org>;
  Wed, 11 Nov 2026 01:19:14 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=qQzam8GQ;
- spf=pass (domain: bp.renesas.com, ip: 52.101.229.32, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=sBzxTyA3;
+ spf=pass (domain: bp.renesas.com, ip: 52.101.228.34, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wKJoaPHTkp2L4GHp7td52MHOFsSd/k3m7GT95quO3TLzOBuMUS+cies6NvktrZyYxahI1aEEGRbdJUtaMlSZtTLtTqD7qYFTx8XylBXRc2N6F/8p8IBUNVigUPC1U6e14cTxZ3TlTQ9Y7l+932Az7JjgUUE2YKBsLTZ6GvUiFfOoZfWFMrt20t1Z5NPyyaAMnOTqe/j4ufyzSxnT85+XDnAYmRQC2GCBdunjMKcGacC29AQTQ1uygVbyWG1Ne7S9BEfUsw7mwZu8Fb31CKjlC4cfpWEoJKfbQhv7LBA08zeUzQoihgR1UVO3sZa7kAD7ozncIHatys/brT5jonMb1A==
+ b=Qhq3X1aO/4YKv9qXjDNugjfpMSutpYjvMg1QqBA4hIEnMjR0BR68rUmaNF9G66opQ/mHCia3V9wjesD/h9Cbd2234E70sm9Sh8KRDqM9xW7UVYq6aA/ePZQpSgTdI9V4CmZxvWICUmNaZHw7V+yDL/Xuwam5JKDZ6b2WMv4QTL1L6A67EmK2Kx29b4KRKBeSAbwZdFYwitsdSO3Lz/YH7hcfPK60iThnmCssMixJHTw0bikbKHPKnh+DSGnZxBEXbjhzKe7XO5ZgkCqZWGyKnJyXo5wz4G2+1X+P3EwfIRYK7Fyu+VjBEKGWxiha3wwozcLjIHlC48tPJn3BNFpyCg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HNZfqXI4s5lmVg5uDQC6P3S8UbXha8A41XG22FYLMZ8=;
- b=qwsFRTJ17OE6lA0o/LNA0Bcd4jDbqqWEMpin2uylfHaYhrpZAXIGuLKqsFhzJlx/krKnckwcnKdNHZ6vmMSpJ7JgSoHJSxDkZNTbaAHD5TRpuAFJt61ZaNzrfIeqGqYp7adRb+chVeMF2lxiogzAcJQYkfPLX6pB9dzXXzoyaK2W5y7KAsk15QqXu3uM6tXitoDUCyFO6KKuXGPXN1d2KRKQrr4sjJk+njN++JIoBPLnqPhg0wrVESdzm/pPb+VVwsX2LAjgkhUJjxoBSGWfcfYY2xcKxwNimGpBXasw6q5MHXgK8MA/b6ig2i0PwJSQgbnausLFKnTvCZbafPLXlw==
+ bh=XEPEYGbK7cMZEpJbMdFiTGix2S2gVoKPfV7VJBQSaa0=;
+ b=rkvtyQ6zkQdBvtF3kVtwfsQpXnFyHAExtdtTe06krz7B9kzKaozzuyiWlD6zXX3Mt0p9ea5/4UEFV8GIiICVOP4DJdSeD79mQzv8h0uLiSeJlTM6MxdX5Ccq89hzz19/SGpx+WTp8IyKl7XP5HpRHAHc+B6FfySxFs2fSWgr8sY1+ROTHl7BtwHZTHy54lSPC8kbqQ5Zc54vLKKC5e+M38qF3SZBxbWdnxqBQnbNXK+Zv4aaCW4HhHE0M0rRuYCRQBec10vLpKU25ApB2luYSE2uO8obdy8v2a+dggMHbYoqY0+Cmb9jqc4Y6oZHNlKkyhSwajGYWBmaKkfwfRkndg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  8.62.32.50) smtp.rcpttodomain=bp.renesas.com smtp.mailfrom=bp.renesas.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=bp.renesas.com;
@@ -19,18 +19,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HNZfqXI4s5lmVg5uDQC6P3S8UbXha8A41XG22FYLMZ8=;
- b=qQzam8GQuQyfTLBrYJgxbuWYvdzdGIKZ9T2ugVmbwNGhe8Ym3XGXa3sMZuftE1gWkgdp5tVglRtlJDBuOQhX9i8y7czWpNxk2kAyZr6dwHxWV7LIDQ8uOQ/sQTp6QIuIeO2iSNQCEPlqHjmcr5eVurhDNeAPnIgN71bfxSq8pzs=
-Received: from TY4P301CA0117.JPNP301.PROD.OUTLOOK.COM (2603:1096:405:37e::8)
- by TY1PR01MB10752.jpnprd01.prod.outlook.com (2603:1096:400:321::12) with
+ bh=XEPEYGbK7cMZEpJbMdFiTGix2S2gVoKPfV7VJBQSaa0=;
+ b=sBzxTyA3yMAOQvMXGPBiaHO1gbX8k7wmucQ/tSRg2syDUH3auzrNatqwTLnAghQePRBqXj+iq2aCDM/OlsC/p4Mqefw8v4en2vN91RWQgn/fR7U7AzHqGdEASTq6HFmjuMpri/xeroCY4oTTamsYroPk3jA0k+xkyrhJ85nro6A=
+Received: from OS7PR01CA0031.jpnprd01.prod.outlook.com (2603:1096:604:257::17)
+ by TYWPR01MB9559.jpnprd01.prod.outlook.com (2603:1096:400:1a6::10) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.615.8; Wed, 11 Nov
- 2026 09:19:08 +0000
-Received: from TY1PEPF00046B4F.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:37e:cafe::5b) by TY4P301CA0117.outlook.office365.com
- (2603:1096:405:37e::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.13; Wed, 11 Nov
+ 2026 09:19:07 +0000
+Received: from OS3PEPF0000003B.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:604:257:cafe::23) by OS7PR01CA0031.outlook.office365.com
+ (2603:1096:604:257::17) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.21.615.9 via Frontend Transport; Wed, 11
- Nov 2026 09:19:08 +0000
+ Nov 2026 09:19:06 +0000
 X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
  is 8.62.32.50) smtp.mailfrom=bp.renesas.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=bp.renesas.com;
@@ -38,20 +38,20 @@ Received-SPF: Pass (protection.outlook.com: domain of bp.renesas.com
  designates 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
  client-ip=8.62.32.50; helo=ejcrelay004p.adwin.renesas.com; pr=E
 Received: from ejcrelay004p.adwin.renesas.com (8.62.32.50) by
- TY1PEPF00046B4F.mail.protection.outlook.com (10.167.253.39) with Microsoft
+ OS3PEPF0000003B.mail.protection.outlook.com (10.167.240.4) with Microsoft
  SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.615.4
- via Frontend Transport; Wed, 11 Nov 2026 09:19:08 +0000
+ via Frontend Transport; Wed, 11 Nov 2026 09:19:06 +0000
 Received: from Ubuntu-22.. (deu-5cg22344cp.diasemi.com [10.24.0.52])
-	by ejcrelay004p.adwin.renesas.com (Postfix) with ESMTP id 2B4DF3001DF5;
-	Wed, 11 Nov 2026 18:19:06 +0900 (JST)
+	by ejcrelay004p.adwin.renesas.com (Postfix) with ESMTP id 7F0CC3001DE8;
+	Wed, 11 Nov 2026 18:19:05 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
 	Pavel Machek <pavel@nabladev.com>
 CC: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 03/21] rtc: rzn1: implement one-second accuracy for alarms
-Date: Wed, 11 Nov 2026 09:18:42 +0000
-Message-ID: <20261111091901.41995-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 02/21] rtc: rzn1: reduce register access
+Date: Wed, 11 Nov 2026 09:18:41 +0000
+Message-ID: <20261111091901.41995-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261111091901.41995-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20261111091901.41995-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -60,258 +60,176 @@ Content-Transfer-Encoding: quoted-printable
 Return-Path: prabhakar.mahadev-lad.rj@bp.renesas.com
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY1PEPF00046B4F:EE_|TY1PR01MB10752:EE_
-X-MS-Office365-Filtering-Correlation-Id: 32441ec0-9842-46ba-b27a-08df3fd4d721
+X-MS-TrafficTypeDiagnostic: OS3PEPF0000003B:EE_|TYWPR01MB9559:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5a24a48e-0547-40a4-8d1b-08df3fd4d634
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|36860700016|23010399003|82310400026|376014|1800799024|18002099003|22082099003|13003099007|11063799006|56012099006|261102123227099003|261009223027099003|261026121527099003|261021121427099003|261021123027099003|261022075727099003|261022105027099003|10067099003|261028144727099003|261026140227099003;
-X-Microsoft-Antispam-Message-Info: rjTlYLphgbgakFhZJcMfuX+l5iAK7aeL+mCLQNVbqrqJJOkYYnwwEUlnosaJLi+/SpP26a6ZtMmIUFe80lIjotek8ZCOHqzTkfVWHt3ZAuF/nQlHpVLFjoxG13Dyn5WIgI49njPZiyxjgorhPoEKHLyqjNT8m3pykVpQDkoNNYhWnrTQBRK+TjklmYaKGXEkFlJtc+W2JjJ3ados7kvRNfUD57LvcTsjdn5IigBHVuxH5gNDORvbMGZnN29LwxBNxHkigOkgqna0lzeZKB9LPGt3vJO8X0/Hm6VThOqKjGxIN7tdv0smId+MQJuQBgkYTtD+y+9Pp3wxKRHMDamruz4AJu7X0NY/Ua3kCPY98aBr3Zn81xc9BMiNkAJT0+btX2tWoHeca9/NvlFo/oyBqW/E2UhXd/lBhO0W4m2X+4izUMJhqe+DJfCFs85kM6ppeX9FS3YeN4RDo0G/LtrIkAqHchvV/1FBqXzR4LH1eqEt2TTgBMknMibch188UVn7mhUznI2ACcOR6UtW8nD286VLmY1NvBBnhEfJXD0Ss3JI66sxc/Ss0FJKAWTKWHVZesBTYCjnxA74z/jQ0iOrF1Ui8AbLnAEHvAEHp5Mx6FSB+8vSTArFU5PdDyBnU1NMW5MCS2/I2GNedWkWSY1K4QQEQYyveDTy3RyANfXFuqU=
-X-Forefront-Antispam-Report: CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay004p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(23010399003)(82310400026)(376014)(1800799024)(18002099003)(22082099003)(13003099007)(11063799006)(56012099006)(261102123227099003)(261009223027099003)(261026121527099003)(261021121427099003)(261021123027099003)(261022075727099003)(261022105027099003)(10067099003)(261028144727099003)(261026140227099003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|82310400026|23010399003|36860700016|376014|1800799024|18002099003|22082099003|13003099007|261028144727099003|10067099003|11063799006|56012099006|261009223027099003|261102123227099003|261021121427099003|261026140227099003|261022105027099003|261021123027099003|261026121527099003;
+X-Microsoft-Antispam-Message-Info: 5XCrnklc4/VrOAu93DBn5e/JBZuwHiJfqmYAMQKE29yflEQ0+Emi2+NybIZ8Wql2TJLQbck3lMtAIOQbf+Kzs4F23EvoqZRNEAvoJPmt8fql6a5L56gnOHIdkPe7ts7sDK9EFX6VjMpRnDhX57y+SsAxKBbn6jLKHxORc78SE8sBrqyq8VhsSs/bN8QId7wSlc3DSFMmF4Xo6ya6d/gd2AwZfCHY43NTQ8zeBr+oEixnKnj3S4TX36cDGlfSw2XBMJ+9/qtO5xsET0gkNcirEta9mtFDH6DKk+wKbilidjZjDT5V6zUJ034m2H71Eo9QwuslZx1c6f1KfCfsl5LN6fzBtyK4qjVLWJ/uptOf1QLonOw1riRGST/N1NvMk32iWN8e2gN3yFdvDOPmF/YEtGEHOwk4GpInQhqE6NECinURS0qlgyLoErMMIZL9HMrGlPLd4WwJzpfXSYAGdIiDu73WwOBSc53K/Z4i+h5EXmI9EWr+EsT4rfShI/mRarnz394XK47gZMQCVXbmQE3EnNavV48HhHNMMU9mCZEUmYEJI9BCGN6Hp+qeNRbC9LJJyaMpb9375qE3hc2KfVU8iY3mXdRruFJtyKmUaYvKk849IUtklQjvRslIWYyDl9SFUPK70e8P77KvRdIKXPPB+mzArksqwJ8/+CbQY/0YQ3Q=
+X-Forefront-Antispam-Report: CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay004p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(23010399003)(36860700016)(376014)(1800799024)(18002099003)(22082099003)(13003099007)(261028144727099003)(10067099003)(11063799006)(56012099006)(261009223027099003)(261102123227099003)(261021121427099003)(261026140227099003)(261022105027099003)(261021123027099003)(261026121527099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: AzMHWpXSsJNpah+VX4nPu/LjxFW1G74VQgTStXt9HU43/FPaus46pbdaKnb2+lFfFYDp3SvbLRjJaQAelAWB1YfoovFbynU9o8fEOCOfdIUMdORX10WFxNsjo7q7BnFVMmlc3H0x8uXH1LYHpMEIcy/MEk9J8hDBv4gwyPGM84vWiyGrzPlGi8NHvh/TK0Tyivo6FRkwJLVvDFsvRBQH8ojHqK8wYplkURWOzt0YF84ryzKpVg3E58LagEBCnPS2RzVnZ12VzRtT1S7j02zI0+tAt1fVkfKYhQRpZqPPow1TKfoimz5ct2aW0TOs6CCwi8h67HgBo6AguyH1fLoqsspx0oUfUoEjs1GA0eb2VKVueEK71hrllkqp8/JJ9QBCNqJiznXL7MzR4Mt8DMOD8VUH+6fSGe4XOoNSCBhIizw0x8ihnfP4iQHop4UOA6CK
+X-MS-Exchange-AntiSpam-MessageData-0: YK5sQAo+02NCdKkexNnuxjUfcNhH+UUVi55Dt8UxX4FAj+djP/iGXHPGef2rRDbH3NV/PIpWOen7CKdgw5HrO9fco3DzefHe03ky19vpqauWwuiYyB0zPN0bJDIrQXjP0TfK0ZoTwS9M42cQNWhhV04MnoKgUeEcq7iy1X3tYVSHW6gwwpWZSj5pN/98wK6gSab+BbIsAJSa2Yh3HZfjf2AqYQ01KuwcaAE4UrvZFfFt2WOMU6fvgJzYRHD0jk29wqaeZciqsObsSGchXeS9KnQk6lWXlJgyBhUoT0oUKehV//iL+43HcWjeKJXSxWx76mhAq6WrxbXskKggD3SAVhCP5jKC4hZgLK8JBmH8VqaG7ueBdbgMCs2wMfg/pQVYEzoiU3MK70Ls8DfbUN2czDplNq01/B416aF9/MUzxaYZWZsekeJc2XmTs5N50q1p
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2026 09:19:08.4322
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2026 09:19:06.8643
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 32441ec0-9842-46ba-b27a-08df3fd4d721
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5a24a48e-0547-40a4-8d1b-08df3fd4d634
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay004p.adwin.renesas.com]
-X-MS-Exchange-CrossTenant-AuthSource: TY1PEPF00046B4F.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthSource: OS3PEPF0000003B.JPNP286.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB10752
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB9559
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Wed, 11 Nov 2026 09:19:21 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24743
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24744
 Content-Type: text/plain; charset="utf-8"
 
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-commit eea7791e00f33a2a7a0c56479805bf1642ba378d upstream.
+commit 3ed345c948ef6ccd0f5dc85c5b6731593b4591f7 upstream.
 
-The hardware alarm only supports one-minute accuracy which is coarse and
-disables UIE usage. Use the 1-second interrupt to achieve per-second
-accuracy. It is activated once we hit the per-minute alarm. The new
-feature is optional. When there is no 1-second interrupt, old behaviour
-with per-minute accuracy is used as before. With this feature, all tests
-of 'rtctest' are successfully passed.
+This RTC has special 32bit registers which return multiple of the same
+8bit registers at once. Use these to minimize register access. Also, do
+the to/from BCD conversions right away, so 'tm' always contains values
+as described in time.h.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Link: https://lore.kernel.org/r/20250305101038.9933-2-wsa+renesas@sang-engi=
+Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Link: https://lore.kernel.org/r/20241122101448.4374-3-wsa+renesas@sang-engi=
 neering.com
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-[PL: manually applied the fix]
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/rtc/rtc-rzn1.c | 108 ++++++++++++++++++++++++++++++++++-------
- 1 file changed, 91 insertions(+), 17 deletions(-)
+ drivers/rtc/rtc-rzn1.c | 75 +++++++++++++++++++-----------------------
+ 1 file changed, 33 insertions(+), 42 deletions(-)
 
 diff --git a/drivers/rtc/rtc-rzn1.c b/drivers/rtc/rtc-rzn1.c
-index 2d47fae70fe33..0fe6137a9f7d4 100644
+index bdd4ec02a7672..2d47fae70fe33 100644
 --- a/drivers/rtc/rtc-rzn1.c
 +++ b/drivers/rtc/rtc-rzn1.c
-@@ -19,6 +19,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/rtc.h>
-+#include <linux/spinlock.h>
+@@ -35,13 +35,13 @@
+ #define   RZN1_RTC_CTL2_WUST BIT(5)
+ #define   RZN1_RTC_CTL2_STOPPED (RZN1_RTC_CTL2_WAIT | RZN1_RTC_CTL2_WST)
 =20
- #define RZN1_RTC_CTL0 0x00
- #define   RZN1_RTC_CTL0_SLSB_SUBU 0
-@@ -27,6 +28,7 @@
- #define   RZN1_RTC_CTL0_CE BIT(7)
+-#define RZN1_RTC_SEC 0x14
+-#define RZN1_RTC_MIN 0x18
+-#define RZN1_RTC_HOUR 0x1c
+-#define RZN1_RTC_WEEK 0x20
+-#define RZN1_RTC_DAY 0x24
+-#define RZN1_RTC_MONTH 0x28
+-#define RZN1_RTC_YEAR 0x2c
++#define RZN1_RTC_TIME 0x30
++#define RZN1_RTC_TIME_MIN_SHIFT 8
++#define RZN1_RTC_TIME_HOUR_SHIFT 16
++#define RZN1_RTC_CAL 0x34
++#define RZN1_RTC_CAL_DAY_SHIFT 8
++#define RZN1_RTC_CAL_MON_SHIFT 16
++#define RZN1_RTC_CAL_YEAR_SHIFT 24
 =20
- #define RZN1_RTC_CTL1 0x04
-+#define   RZN1_RTC_CTL1_1SE BIT(3)
- #define   RZN1_RTC_CTL1_ALME BIT(4)
+ #define RZN1_RTC_SUBU 0x38
+ #define   RZN1_RTC_SUBU_DEV BIT(7)
+@@ -52,12 +52,8 @@
+ #define RZN1_RTC_ALW 0x48
 =20
- #define RZN1_RTC_CTL2 0x08
-@@ -58,6 +60,13 @@
+ #define RZN1_RTC_SECC 0x4c
+-#define RZN1_RTC_MINC 0x50
+-#define RZN1_RTC_HOURC 0x54
+-#define RZN1_RTC_WEEKC 0x58
+-#define RZN1_RTC_DAYC 0x5c
+-#define RZN1_RTC_MONTHC 0x60
+-#define RZN1_RTC_YEARC 0x64
++#define RZN1_RTC_TIMEC 0x68
++#define RZN1_RTC_CALC 0x6c
+=20
  struct rzn1_rtc {
  	struct rtc_device *rtcdev;
- 	void __iomem *base;
-+	/*
-+	 * Protects access to RZN1_RTC_CTL1 reg. rtc_lock with threaded_irqs
-+	 * would introduce race conditions when switching interrupts because
-+	 * of potential sleeps
-+	 */
-+	spinlock_t ctl1_access_lock;
-+	struct rtc_time tm_alarm;
- };
+@@ -66,13 +62,18 @@ struct rzn1_rtc {
 =20
  static void rzn1_rtc_get_time_snapshot(struct rzn1_rtc *rtc, struct rtc_ti=
 me *tm)
-@@ -135,8 +144,38 @@ static int rzn1_rtc_set_time(struct device *dev, struc=
+ {
+-	tm->tm_sec =3D readl(rtc->base + RZN1_RTC_SECC);
+-	tm->tm_min =3D readl(rtc->base + RZN1_RTC_MINC);
+-	tm->tm_hour =3D readl(rtc->base + RZN1_RTC_HOURC);
+-	tm->tm_wday =3D readl(rtc->base + RZN1_RTC_WEEKC);
+-	tm->tm_mday =3D readl(rtc->base + RZN1_RTC_DAYC);
+-	tm->tm_mon =3D readl(rtc->base + RZN1_RTC_MONTHC);
+-	tm->tm_year =3D readl(rtc->base + RZN1_RTC_YEARC);
++	u32 val;
++
++	val =3D readl(rtc->base + RZN1_RTC_TIMEC);
++	tm->tm_sec =3D bcd2bin(val);
++	tm->tm_min =3D bcd2bin(val >> RZN1_RTC_TIME_MIN_SHIFT);
++	tm->tm_hour =3D bcd2bin(val >> RZN1_RTC_TIME_HOUR_SHIFT);
++
++	val =3D readl(rtc->base + RZN1_RTC_CALC);
++	tm->tm_wday =3D val & 0x0f;
++	tm->tm_mday =3D bcd2bin(val >> RZN1_RTC_CAL_DAY_SHIFT);
++	tm->tm_mon =3D bcd2bin(val >> RZN1_RTC_CAL_MON_SHIFT) - 1;
++	tm->tm_year =3D bcd2bin(val >> RZN1_RTC_CAL_YEAR_SHIFT) + 100;
+ }
+=20
+ static int rzn1_rtc_read_time(struct device *dev, struct rtc_time *tm)
+@@ -90,16 +91,9 @@ static int rzn1_rtc_read_time(struct device *dev, struct=
+ rtc_time *tm)
+=20
+ 	rzn1_rtc_get_time_snapshot(rtc, tm);
+ 	secs =3D readl(rtc->base + RZN1_RTC_SECC);
+-	if (tm->tm_sec !=3D secs)
++	if (tm->tm_sec !=3D bcd2bin(secs))
+ 		rzn1_rtc_get_time_snapshot(rtc, tm);
+=20
+-	tm->tm_sec =3D bcd2bin(tm->tm_sec);
+-	tm->tm_min =3D bcd2bin(tm->tm_min);
+-	tm->tm_hour =3D bcd2bin(tm->tm_hour);
+-	tm->tm_mday =3D bcd2bin(tm->tm_mday);
+-	tm->tm_mon =3D bcd2bin(tm->tm_mon) - 1;
+-	tm->tm_year =3D bcd2bin(tm->tm_year) + 100;
+-
+ 	return 0;
+ }
+=20
+@@ -109,13 +103,6 @@ static int rzn1_rtc_set_time(struct device *dev, struc=
 t rtc_time *tm)
- static irqreturn_t rzn1_rtc_alarm_irq(int irq, void *dev_id)
- {
- 	struct rzn1_rtc *rtc =3D dev_id;
-+	u32 ctl1, set_irq_bits =3D 0;
-+
-+	if (rtc->tm_alarm.tm_sec =3D=3D 0)
-+		rtc_update_irq(rtc->rtcdev, 1, RTC_AF | RTC_IRQF);
-+	else
-+		/* Switch to 1s interrupts */
-+		set_irq_bits =3D RZN1_RTC_CTL1_1SE;
-=20
--	rtc_update_irq(rtc->rtcdev, 1, RTC_AF | RTC_IRQF);
-+	guard(spinlock)(&rtc->ctl1_access_lock);
-+
-+	ctl1 =3D readl(rtc->base + RZN1_RTC_CTL1);
-+	ctl1 &=3D ~RZN1_RTC_CTL1_ALME;
-+	ctl1 |=3D set_irq_bits;
-+	writel(ctl1, rtc->base + RZN1_RTC_CTL1);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t rzn1_rtc_1s_irq(int irq, void *dev_id)
-+{
-+	struct rzn1_rtc *rtc =3D dev_id;
-+	u32 ctl1;
-+
-+	if (readl(rtc->base + RZN1_RTC_SECC) =3D=3D bin2bcd(rtc->tm_alarm.tm_sec)=
-) {
-+		guard(spinlock)(&rtc->ctl1_access_lock);
-+
-+		ctl1 =3D readl(rtc->base + RZN1_RTC_CTL1);
-+		ctl1 &=3D ~RZN1_RTC_CTL1_1SE;
-+		writel(ctl1, rtc->base + RZN1_RTC_CTL1);
-+
-+		rtc_update_irq(rtc->rtcdev, 1, RTC_AF | RTC_IRQF);
-+	}
-=20
- 	return IRQ_HANDLED;
- }
-@@ -144,14 +183,38 @@ static irqreturn_t rzn1_rtc_alarm_irq(int irq, void *=
-dev_id)
- static int rzn1_rtc_alarm_irq_enable(struct device *dev, unsigned int enab=
-le)
- {
- 	struct rzn1_rtc *rtc =3D dev_get_drvdata(dev);
--	u32 ctl1 =3D readl(rtc->base + RZN1_RTC_CTL1);
-+	struct rtc_time *tm =3D &rtc->tm_alarm, tm_now;
-+	u32 ctl1;
-+	int ret;
-=20
--	if (enable)
--		ctl1 |=3D RZN1_RTC_CTL1_ALME;
--	else
--		ctl1 &=3D ~RZN1_RTC_CTL1_ALME;
-+	guard(spinlock_irqsave)(&rtc->ctl1_access_lock);
-=20
--	writel(ctl1, rtc->base + RZN1_RTC_CTL1);
-+	ctl1 =3D readl(rtc->base + RZN1_RTC_CTL1);
-+
-+	if (enable) {
-+		/*
-+		 * Use alarm interrupt if alarm time is at least a minute away
-+		 * or less than a minute but in the next minute. Otherwise use
-+		 * 1 second interrupt to wait for the proper second
-+		 */
-+		do {
-+			ctl1 &=3D ~(RZN1_RTC_CTL1_ALME | RZN1_RTC_CTL1_1SE);
-+
-+			ret =3D rzn1_rtc_read_time(dev, &tm_now);
-+			if (ret)
-+				return ret;
-+
-+			if (rtc_tm_sub(tm, &tm_now) > 59 || tm->tm_min !=3D tm_now.tm_min)
-+				ctl1 |=3D RZN1_RTC_CTL1_ALME;
-+			else
-+				ctl1 |=3D RZN1_RTC_CTL1_1SE;
-+
-+			writel(ctl1, rtc->base + RZN1_RTC_CTL1);
-+		} while (readl(rtc->base + RZN1_RTC_SECC) !=3D bin2bcd(tm_now.tm_sec));
-+	} else {
-+		ctl1 &=3D ~(RZN1_RTC_CTL1_ALME | RZN1_RTC_CTL1_1SE);
-+		writel(ctl1, rtc->base + RZN1_RTC_CTL1);
-+	}
-=20
- 	return 0;
- }
-@@ -170,7 +233,7 @@ static int rzn1_rtc_read_alarm(struct device *dev, stru=
-ct rtc_wkalrm *alrm)
- 		return ret;
-=20
- 	ctl1 =3D readl(rtc->base + RZN1_RTC_CTL1);
--	alrm->enabled =3D !!(ctl1 & RZN1_RTC_CTL1_ALME);
-+	alrm->enabled =3D !!(ctl1 & (RZN1_RTC_CTL1_ALME | RZN1_RTC_CTL1_1SE));
-=20
- 	min =3D readl(rtc->base + RZN1_RTC_ALM);
- 	hour =3D readl(rtc->base + RZN1_RTC_ALH);
-@@ -224,6 +287,8 @@ static int rzn1_rtc_set_alarm(struct device *dev, struc=
-t rtc_wkalrm *alrm)
- 	writel(bin2bcd(tm->tm_hour), rtc->base + RZN1_RTC_ALH);
- 	writel(BIT(tm->tm_wday), rtc->base + RZN1_RTC_ALW);
-=20
-+	rtc->tm_alarm =3D alrm->time;
-+
- 	rzn1_rtc_alarm_irq_enable(dev, alrm->enabled);
-=20
- 	return 0;
-@@ -312,7 +377,7 @@ static const struct rtc_class_ops rzn1_rtc_ops =3D {
- static int rzn1_rtc_probe(struct platform_device *pdev)
- {
- 	struct rzn1_rtc *rtc;
--	int alarm_irq;
-+	int irq;
+ 	u32 val;
  	int ret;
 =20
- 	rtc =3D devm_kzalloc(&pdev->dev, sizeof(*rtc), GFP_KERNEL);
-@@ -325,9 +390,9 @@ static int rzn1_rtc_probe(struct platform_device *pdev)
- 	if (IS_ERR(rtc->base))
- 		return dev_err_probe(&pdev->dev, PTR_ERR(rtc->base), "Missing reg\n");
-=20
--	alarm_irq =3D platform_get_irq(pdev, 0);
--	if (alarm_irq < 0)
--		return alarm_irq;
-+	irq =3D platform_get_irq_byname(pdev, "alarm");
-+	if (irq < 0)
-+		return irq;
-=20
- 	rtc->rtcdev =3D devm_rtc_allocate_device(&pdev->dev);
- 	if (IS_ERR(rtc->rtcdev))
-@@ -337,8 +402,6 @@ static int rzn1_rtc_probe(struct platform_device *pdev)
- 	rtc->rtcdev->range_max =3D RTC_TIMESTAMP_END_2099;
- 	rtc->rtcdev->alarm_offset_max =3D 7 * 86400;
- 	rtc->rtcdev->ops =3D &rzn1_rtc_ops;
--	set_bit(RTC_FEATURE_ALARM_RES_MINUTE, rtc->rtcdev->features);
--	clear_bit(RTC_FEATURE_UPDATE_INTERRUPT, rtc->rtcdev->features);
-=20
- 	ret =3D devm_pm_runtime_enable(&pdev->dev);
- 	if (ret < 0)
-@@ -357,13 +420,24 @@ static int rzn1_rtc_probe(struct platform_device *pde=
-v)
- 	/* Disable all interrupts */
- 	writel(0, rtc->base + RZN1_RTC_CTL1);
-=20
--	ret =3D devm_request_irq(&pdev->dev, alarm_irq, rzn1_rtc_alarm_irq, 0,
--			       dev_name(&pdev->dev), rtc);
-+	spin_lock_init(&rtc->ctl1_access_lock);
-+
-+	ret =3D devm_request_irq(&pdev->dev, irq, rzn1_rtc_alarm_irq, 0, "RZN1 RT=
-C Alarm", rtc);
- 	if (ret) {
--		dev_err(&pdev->dev, "RTC timer interrupt not available\n");
-+		dev_err(&pdev->dev, "RTC alarm interrupt not available\n");
- 		goto dis_runtime_pm;
+-	tm->tm_sec =3D bin2bcd(tm->tm_sec);
+-	tm->tm_min =3D bin2bcd(tm->tm_min);
+-	tm->tm_hour =3D bin2bcd(tm->tm_hour);
+-	tm->tm_mday =3D bin2bcd(tm->tm_mday);
+-	tm->tm_mon =3D bin2bcd(tm->tm_mon + 1);
+-	tm->tm_year =3D bin2bcd(tm->tm_year - 100);
+-
+ 	val =3D readl(rtc->base + RZN1_RTC_CTL2);
+ 	if (!(val & RZN1_RTC_CTL2_STOPPED)) {
+ 		/* Hold the counter if it was counting up */
+@@ -129,13 +116,17 @@ static int rzn1_rtc_set_time(struct device *dev, stru=
+ct rtc_time *tm)
+ 			return ret;
  	}
 =20
-+	irq =3D platform_get_irq_byname_optional(pdev, "pps");
-+	if (irq >=3D 0)
-+		ret =3D devm_request_irq(&pdev->dev, irq, rzn1_rtc_1s_irq, 0, "RZN1 RTC =
-1s", rtc);
+-	writel(tm->tm_sec, rtc->base + RZN1_RTC_SEC);
+-	writel(tm->tm_min, rtc->base + RZN1_RTC_MIN);
+-	writel(tm->tm_hour, rtc->base + RZN1_RTC_HOUR);
+-	writel(tm->tm_wday, rtc->base + RZN1_RTC_WEEK);
+-	writel(tm->tm_mday, rtc->base + RZN1_RTC_DAY);
+-	writel(tm->tm_mon, rtc->base + RZN1_RTC_MONTH);
+-	writel(tm->tm_year, rtc->base + RZN1_RTC_YEAR);
++	val =3D bin2bcd(tm->tm_sec);
++	val |=3D bin2bcd(tm->tm_min) << RZN1_RTC_TIME_MIN_SHIFT;
++	val |=3D bin2bcd(tm->tm_hour) << RZN1_RTC_TIME_HOUR_SHIFT;
++	writel(val, rtc->base + RZN1_RTC_TIME);
 +
-+	if (irq < 0 || ret) {
-+		set_bit(RTC_FEATURE_ALARM_RES_MINUTE, rtc->rtcdev->features);
-+		clear_bit(RTC_FEATURE_UPDATE_INTERRUPT, rtc->rtcdev->features);
-+		dev_warn(&pdev->dev, "RTC pps interrupt not available. Alarm has only mi=
-nute accuracy\n");
-+	}
++	val =3D tm->tm_wday;
++	val |=3D bin2bcd(tm->tm_mday) << RZN1_RTC_CAL_DAY_SHIFT;
++	val |=3D bin2bcd(tm->tm_mon + 1) << RZN1_RTC_CAL_MON_SHIFT;
++	val |=3D bin2bcd(tm->tm_year - 100) << RZN1_RTC_CAL_YEAR_SHIFT;
++	writel(val, rtc->base + RZN1_RTC_CAL);
 +
- 	ret =3D devm_rtc_register_device(rtc->rtcdev);
- 	if (ret)
- 		goto dis_runtime_pm;
+ 	writel(0, rtc->base + RZN1_RTC_CTL2);
+=20
+ 	return 0;
 --=20
 2.43.0
 
