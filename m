@@ -1,77 +1,89 @@
 Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.4675.1794512944165374726
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.4820.1794513331061301632
  for <cip-dev@lists.cip-project.org>;
- Thu, 12 Nov 2026 11:49:04 -0800
+ Thu, 12 Nov 2026 11:55:31 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=EqKAxowW;
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=cr90giqo;
  spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 988AB10BDA3;
-	Thu, 12 Nov 2026 20:48:54 +0100 (CET)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1A5D710CE5A;
+	Thu, 12 Nov 2026 20:55:23 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1794512937;
+	s=dkim; t=1794513324;
 	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=PYEvZvDfTGwOz0j+Iv5FY6xzDlItAtD8rI1CXTOrdXI=;
-	b=EqKAxowWsi28eJ+kD/RZXBtly/GnSwAs+coSkeT335M4RaHYI5TleRGdgpkdwDFQInC0Xc
-	U7ARqjiV0lyJaAX6/XrLHG0Q2LzjAIxbLGMMPQAGa5QAd2ZzfulnxiuN6qNEhlrCoOqQKS
-	XQmpTPYev7UqgNFO+YVS07Bwrs5YnpplHcyciOmk3hXP7LvnSs7F4Y9bRtCNyDj0Gwzb6u
-	WF4K6wy1Yd6XJjUiqzSj+snOQxXgUhDQqcq+XIjGzFL09LMP6lEwU2FUidEJgR2e67foBk
-	FarK3gEGuUCPs2gcRYnjX+PFd7CzOHgdwHaBs1930yCzX74JLuVRAnXpDEyp4A==
-Date: Thu, 12 Nov 2026 20:48:51 +0100
+	 in-reply-to:references; bh=mx4of0oyW/SVr5o+hYoOlqZOE/L7J35xBhci3TyIKIc=;
+	b=cr90giqodtbSmF7dsopq9OPEw6zzOXXL6lgf9NLJCRDAMqiaIOm00Zn5QFjLV11Z5/2kww
+	kLLxZr6AVg8DFFLDVCtmYm9k6ZfbRd1e+iatjUGxz/iG5sx4rnV1lkcV61i5g434UQPYnv
+	yA9yXSWcgOxjgwP2/2AG2jF6IQQS4KhAROq/0VPfFaOZeALzAZ2NNdheF2zEBNgzsm8hcB
+	wguVTAtqRv+tXRgk5YpqWrhqvv/CSXmOMH9cW8kDv63jPq8eGpCco0WNJNXIpuLDchvt/n
+	XhSa3KtayiRVYusj7uUf7L9zMvjG2quE25HRta/+waXuRphxXlc1CIXoSWbOiw==
+Date: Thu, 12 Nov 2026 20:55:22 +0100
 From: Pavel Machek <pavel@nabladev.com>
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: cip-dev@lists.cip-project.org, pavel@nabladev.com,
-	nobuhiro.iwamatsu.x90@mail.toshiba, Daniel Wagner <wagi@monom.org>,
-	Bryan Brattlof <bb@ti.com>,
-	Sebastian Siewior <bigeasy@linutronix.de>,
-	Pasquale Nieddu <pasquale.nieddu@siemens.com>
-Subject: Re: [PATCH 6.12.y-cip v2 0/6] Backport PREEMPT-RT support for ARM
- 32-bit
-Message-ID: <avYYI7sPwZ4W87y5@duo.ucw.cz>
-References: <cover.1794223241.git.jan.kiszka@siemens.com>
+To: prabhakar.mahadev-lad.rj@bp.renesas.com
+Cc: cip-dev@lists.cip-project.org,
+	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
+	Pavel Machek <pavel@nabladev.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>
+Subject: Re: [cip-dev] [PATCH 6.12.y-cip 09/24] drm: renesas: rz-du: Add
+ support for RZ/T2H SoC
+Message-ID: <avYZqkO1GWX-t2oZ@duo.ucw.cz>
+References: <20261109121451.6042-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20261109121451.6042-10-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Kj7pI+ST//dvil+K"
+	protocol="application/pgp-signature"; boundary="uILO8I20X1H6OYuI"
 Content-Disposition: inline
-In-Reply-To: <cover.1794223241.git.jan.kiszka@siemens.com>
+In-Reply-To: <20261109121451.6042-10-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Thu, 12 Nov 2026 19:49:12 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24790
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Thu, 12 Nov 2026 19:55:32 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24791
 
 
---Kj7pI+ST//dvil+K
+--uILO8I20X1H6OYuI
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> As a full backport via stable was rejected, this is targeting CIP 6.12
-> with the required changes from upstream to enable PREEMPT-RT on ARM
-> 32-bit.
+> commit 4f2e625f3d5d27242f0f18ba106b9442d29a51ad upstream.
 >=20
-> The series was derived from the ARM-specific backlog in v6.12-rt-rebase,
-> only reconstructing it from the corresponding upstream commits - maybe
-> worth to consider for stable-rt as well.
+> The RZ/T2H (R9A09G077) SoC includes a DU with a DPI interface,
+> supporting resolutions up to WXGA with two RPFs for layer blending.
+> Unlike earlier RZ/G2L SoCs, RZ/T2H requires explicit assertion of a
+> DPI output-enable signal (DU_MCR0_DPI_EN) during CRTC startup.
 
-Series looks good to me.
+> +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c
+> @@ -217,8 +218,12 @@ static void rzg2l_du_crtc_put(struct rzg2l_du_crtc *=
+rcrtc)
+>  static void rzg2l_du_start_stop(struct rzg2l_du_crtc *rcrtc, bool start)
+>  {
+>  	struct rzg2l_du_device *rcdu =3D rcrtc->dev;
+> +	u32 val =3D DU_MCR0_DI_EN;
+> =20
+> -	writel(start ? DU_MCR0_DI_EN : 0, rcdu->mmio + DU_MCR0);
+> +	if (start && rzg2l_du_has(rcdu, RZG2L_DU_FEATURE_DPIO_OE))
+> +		val |=3D DU_MCR0_DPI_EN;
+> +
+> +	writel(start ? val : 0, rcdu->mmio + DU_MCR0);
+>  }
+>
 
-Reviewed-by: Pavel Machek <pavel@nabladev.com>
-
-I can apply the series if it passes testing and there are no other
-comments.
+This is quite strange code. We prepare "val", then discards it in case
+of "start =3D=3D false". I'd suggest dropping "start &&" from the if
+condition, or perhaps more refactoring.
 
 Best regards,
-                                                                Pavel
+								Pavel
 
---Kj7pI+ST//dvil+K
+--uILO8I20X1H6OYuI
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCavYYIwAKCRAw5/Bqldv6
-8m5aAJ9U1OkRXe4HzYDOphG4egjbH1uWdwCdGNrT3TlPbopJhSdBivskHCownxI=
-=10Yo
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCavYZqgAKCRAw5/Bqldv6
+8jYQAJ9gd7v4Msubrkj0eoZXQ3/AuIwlKgCfcpDKqesNWwjBtExxlypwS4spSQI=
+=Lilx
 -----END PGP SIGNATURE-----
 
---Kj7pI+ST//dvil+K--
+--uILO8I20X1H6OYuI--
