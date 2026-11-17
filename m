@@ -1,151 +1,216 @@
-Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.15777.1794915971403934597
+Received: from tor.source.kernel.org (tor.source.kernel.org [172.105.4.254])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.15785.1794915980173888875
  for <cip-dev@lists.cip-project.org>;
- Tue, 17 Nov 2026 03:46:11 -0800
+ Tue, 17 Nov 2026 03:46:20 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.234.252.31, mailfrom: srs0=gktq=jg=tuxon.dev=claudiu.beznea@kernel.org)
+ dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.105.4.254, mailfrom: srs0=gktq=jg=tuxon.dev=claudiu.beznea@kernel.org)
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by sea.source.kernel.org (Postfix) with ESMTP id 36E6D46A51;
-	Tue, 17 Nov 2026 11:46:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 021401F000C4;
-	Tue, 17 Nov 2026 11:46:09 +0000 (UTC)
+	by tor.source.kernel.org (Postfix) with ESMTP id 9807563404;
+	Tue, 17 Nov 2026 11:46:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33ED01F000C4;
+	Tue, 17 Nov 2026 11:46:17 +0000 (UTC)
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 09/69] clk: Provide managed helper to get and enable bulk clocks
-Date: Tue, 17 Nov 2026 13:44:53 +0200
-Message-ID: <20261117114553.1484215-10-claudiu.beznea@tuxon.dev>
+Subject: [PATCH 5.10.y-cip 14/69] i3c: renesas: Add suspend/resume support
+Date: Tue, 17 Nov 2026 13:44:58 +0200
+Message-ID: <20261117114553.1484215-15-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261117114553.1484215-1-claudiu.beznea@tuxon.dev>
 References: <20261117114553.1484215-1-claudiu.beznea@tuxon.dev>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 17 Nov 2026 11:46:20 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24850
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 17 Nov 2026 11:46:21 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24855
 Content-Type: text/plain; charset="utf-8"
 
-From: Shradha Todi <shradha.t@samsung.com>
+From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 
-commit 265b07df758a998f60cf5b5aec6bd72ca676655e upstream.
+commit e7218986319b4e903dfb4642dcbd1087cf16aaec upstream.
 
-Provide a managed devm_clk_bulk* wrapper to get and enable all
-bulk clocks in order to simplify drivers that keeps all clocks
-enabled for the time of driver operation.
+The Renesas I3C controller does not retain its register state across syst=
+em
+suspend, requiring the driver to explicitly save and restore hardware
+configuration.
 
-Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Signed-off-by: Shradha Todi <shradha.t@samsung.com>
-Link: https://lore.kernel.org/r/20240220084046.23786-2-shradha.t@samsung.=
-com
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Add suspend and resume NOIRQ callbacks to handle system sleep transitions=
+.
+
+During suspend, save the Device Address Table (DAT) entries, assert reset
+lines, and disable all related clocks to allow the controller to enter a
+low-power state.
+
+On resume, re-enable clocks and reset lines in the proper order. Restore
+the REFCKCTL register, master dynamic address, and all DAT entries, then
+reinitialize the controller.
+
+Store the REFCLK divider value, and the master dynamic address to restore
+timing and addressing configuration after resume.
+
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Link: https://patch.msgid.link/c469ef89e0156d37746a85bfc314232847d1185a.1=
+767781092.git.tommaso.merciai.xr@bp.renesas.com
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/clk/clk-devres.c | 40 ++++++++++++++++++++++++++++++++++++++++
- include/linux/clk.h      | 22 ++++++++++++++++++++++
- 2 files changed, 62 insertions(+)
+ drivers/i3c/master/renesas-i3c.c | 89 ++++++++++++++++++++++++++++++++
+ 1 file changed, 89 insertions(+)
 
-diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-index 737aa70e2cb3..90e6078fb6e1 100644
---- a/drivers/clk/clk-devres.c
-+++ b/drivers/clk/clk-devres.c
-@@ -182,6 +182,46 @@ int __must_check devm_clk_bulk_get_all(struct device=
- *dev,
- }
- EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all);
+diff --git a/drivers/i3c/master/renesas-i3c.c b/drivers/i3c/master/renesa=
+s-i3c.c
+index 737f60dd0001..2560efbac566 100644
+--- a/drivers/i3c/master/renesas-i3c.c
++++ b/drivers/i3c/master/renesas-i3c.c
+@@ -257,16 +257,19 @@ struct renesas_i3c {
+ 	enum i3c_internal_state internal_state;
+ 	u16 maxdevs;
+ 	u32 free_pos;
++	u32 dyn_addr;
+ 	u32 i2c_STDBR;
+ 	u32 i3c_STDBR;
+ 	unsigned long rate;
+ 	u8 addrs[RENESAS_I3C_MAX_DEVS];
+ 	struct renesas_i3c_xferqueue xferqueue;
+ 	void __iomem *regs;
++	u32 *DATBASn;
+ 	struct clk_bulk_data *clks;
+ 	struct reset_control *presetn;
+ 	struct reset_control *tresetn;
+ 	u8 num_clks;
++	u8 refclk_div;
+ };
 =20
-+static void devm_clk_bulk_release_all_enable(struct device *dev, void *r=
-es)
-+{
-+	struct clk_bulk_devres *devres =3D res;
-+
-+	clk_bulk_disable_unprepare(devres->num_clks, devres->clks);
-+	clk_bulk_put_all(devres->num_clks, devres->clks);
-+}
-+
-+int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
-+					      struct clk_bulk_data **clks)
-+{
-+	struct clk_bulk_devres *devres;
-+	int ret;
-+
-+	devres =3D devres_alloc(devm_clk_bulk_release_all_enable,
-+			      sizeof(*devres), GFP_KERNEL);
-+	if (!devres)
+ struct renesas_i3c_i2c_dev_data {
+@@ -616,6 +619,7 @@ static int renesas_i3c_bus_init(struct i3c_master_con=
+troller *m)
+ 					   EXTBR_EBRHP(pp_high_ticks));
+=20
+ 	renesas_writel(i3c->regs, REFCKCTL, REFCKCTL_IREFCKS(cks));
++	i3c->refclk_div =3D cks;
+=20
+ 	/* I3C hw init*/
+ 	renesas_i3c_hw_init(i3c);
+@@ -624,6 +628,7 @@ static int renesas_i3c_bus_init(struct i3c_master_con=
+troller *m)
+ 	if (ret < 0)
+ 		return ret;
+=20
++	i3c->dyn_addr =3D ret;
+ 	renesas_writel(i3c->regs, MSDVAD, MSDVAD_MDYAD(ret) | MSDVAD_MDYADV);
+=20
+ 	memset(&info, 0, sizeof(info));
+@@ -1400,6 +1405,12 @@ static int renesas_i3c_probe(struct platform_devic=
+e *pdev)
+ 	i3c->maxdevs =3D RENESAS_I3C_MAX_DEVS;
+ 	i3c->free_pos =3D GENMASK(i3c->maxdevs - 1, 0);
+=20
++	/* Allocate dynamic Device Address Table backup. */
++	i3c->DATBASn =3D devm_kzalloc(&pdev->dev, sizeof(u32) * i3c->maxdevs,
++				    GFP_KERNEL);
++	if (!i3c->DATBASn)
 +		return -ENOMEM;
 +
-+	ret =3D clk_bulk_get_all(dev, &devres->clks);
-+	if (ret > 0) {
-+		*clks =3D devres->clks;
-+		devres->num_clks =3D ret;
-+	} else {
-+		devres_free(devres);
-+		return ret;
-+	}
-+
-+	ret =3D clk_bulk_prepare_enable(devres->num_clks, *clks);
-+	if (!ret) {
-+		devres_add(dev, devres);
-+	} else {
-+		clk_bulk_put_all(devres->num_clks, devres->clks);
-+		devres_free(devres);
-+	}
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all_enable);
-+
- static int devm_clk_match(struct device *dev, void *res, void *data)
- {
- 	struct clk **c =3D res;
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index cfa53819276e..6d798a221525 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -462,6 +462,22 @@ int __must_check devm_clk_bulk_get_optional(struct d=
-evice *dev, int num_clks,
- int __must_check devm_clk_bulk_get_all(struct device *dev,
- 				       struct clk_bulk_data **clks);
+ 	return i3c_master_register(&i3c->base, &pdev->dev, &renesas_i3c_ops, fa=
+lse);
+ }
 =20
-+/**
-+ * devm_clk_bulk_get_all_enable - Get and enable all clocks of the consu=
-mer (managed)
-+ * @dev: device for clock "consumer"
-+ * @clks: pointer to the clk_bulk_data table of consumer
-+ *
-+ * Returns success (0) or negative errno.
-+ *
-+ * This helper function allows drivers to get all clocks of the
-+ * consumer and enables them in one operation with management.
-+ * The clks will automatically be disabled and freed when the device
-+ * is unbound.
-+ */
-+
-+int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
-+					      struct clk_bulk_data **clks);
-+
- /**
-  * devm_clk_get - lookup and obtain a managed reference to a clock produ=
-cer.
-  * @dev: device for clock "consumer"
-@@ -922,6 +938,12 @@ static inline int __must_check devm_clk_bulk_get_all=
-(struct device *dev,
+@@ -1412,6 +1423,83 @@ static int renesas_i3c_remove(struct platform_devi=
+ce *pdev)
  	return 0;
  }
 =20
-+static inline int __must_check devm_clk_bulk_get_all_enable(struct devic=
-e *dev,
-+						struct clk_bulk_data **clks)
++static int renesas_i3c_suspend_noirq(struct device *dev)
 +{
++	struct renesas_i3c *i3c =3D dev_get_drvdata(dev);
++	int i, ret;
++
++	i2c_mark_adapter_suspended(&i3c->base.i2c);
++
++	/* Store Device Address Table values. */
++	for (i =3D 0; i < i3c->maxdevs; i++)
++		i3c->DATBASn[i] =3D renesas_readl(i3c->regs, DATBAS(i));
++
++	ret =3D reset_control_assert(i3c->presetn);
++	if (ret)
++		goto err_mark_resumed;
++
++	ret =3D reset_control_assert(i3c->tresetn);
++	if (ret)
++		goto err_presetn;
++
++	clk_bulk_disable(i3c->num_clks, i3c->clks);
++
 +	return 0;
++
++err_presetn:
++	reset_control_deassert(i3c->presetn);
++err_mark_resumed:
++	i2c_mark_adapter_resumed(&i3c->base.i2c);
++
++	return ret;
 +}
 +
- static inline struct clk *devm_get_clk_from_child(struct device *dev,
- 				struct device_node *np, const char *con_id)
- {
++static int renesas_i3c_resume_noirq(struct device *dev)
++{
++	struct renesas_i3c *i3c =3D dev_get_drvdata(dev);
++	int i, ret;
++
++	ret =3D reset_control_deassert(i3c->presetn);
++	if (ret)
++		return ret;
++
++	ret =3D reset_control_deassert(i3c->tresetn);
++	if (ret)
++		goto err_presetn;
++
++	ret =3D clk_bulk_enable(i3c->num_clks, i3c->clks);
++	if (ret)
++		goto err_tresetn;
++
++	/* Re-store I3C registers value. */
++	renesas_writel(i3c->regs, REFCKCTL,
++		       REFCKCTL_IREFCKS(i3c->refclk_div));
++	renesas_writel(i3c->regs, MSDVAD, MSDVAD_MDYADV |
++		       MSDVAD_MDYAD(i3c->dyn_addr));
++
++	/* Restore Device Address Table values. */
++	for (i =3D 0; i < i3c->maxdevs; i++)
++		renesas_writel(i3c->regs, DATBAS(i), i3c->DATBASn[i]);
++
++	/* I3C hw init. */
++	renesas_i3c_hw_init(i3c);
++
++	i2c_mark_adapter_resumed(&i3c->base.i2c);
++
++	return 0;
++
++err_tresetn:
++	reset_control_assert(i3c->tresetn);
++err_presetn:
++	reset_control_assert(i3c->presetn);
++	return ret;
++}
++
++static const struct dev_pm_ops renesas_i3c_pm_ops =3D {
++	NOIRQ_SYSTEM_SLEEP_PM_OPS(renesas_i3c_suspend_noirq,
++				  renesas_i3c_resume_noirq)
++};
++
+ static const struct of_device_id renesas_i3c_of_ids[] =3D {
+ 	{ .compatible =3D "renesas,r9a08g045-i3c" },
+ 	{ .compatible =3D "renesas,r9a09g047-i3c" },
+@@ -1425,6 +1513,7 @@ static struct platform_driver renesas_i3c =3D {
+ 	.driver =3D {
+ 		.name =3D "renesas-i3c",
+ 		.of_match_table =3D renesas_i3c_of_ids,
++		.pm =3D pm_sleep_ptr(&renesas_i3c_pm_ops),
+ 	},
+ };
+ module_platform_driver(renesas_i3c);
 --=20
 2.43.0
 
