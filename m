@@ -1,259 +1,101 @@
 Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.15817.1794916021629003921
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.15819.1794916024790141533
  for <cip-dev@lists.cip-project.org>;
- Tue, 17 Nov 2026 03:47:01 -0800
+ Tue, 17 Nov 2026 03:47:04 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.234.252.31, mailfrom: srs0=gktq=jg=tuxon.dev=claudiu.beznea@kernel.org)
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by sea.source.kernel.org (Postfix) with ESMTP id 6DF3D415CD;
-	Tue, 17 Nov 2026 11:47:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 412AB1F000C4;
-	Tue, 17 Nov 2026 11:47:00 +0000 (UTC)
+	by sea.source.kernel.org (Postfix) with ESMTP id 9450B415CD;
+	Tue, 17 Nov 2026 11:47:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 680361F000C4;
+	Tue, 17 Nov 2026 11:47:03 +0000 (UTC)
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 40/69] pinctrl: renesas: rzg2l: Add RZ/G3S support for selecting I3C power source
-Date: Tue, 17 Nov 2026 13:45:24 +0200
-Message-ID: <20261117114553.1484215-41-claudiu.beznea@tuxon.dev>
+Subject: [PATCH 5.10.y-cip 42/69] arm64: dts: renesas: r9a08g045: Add I3C node
+Date: Tue, 17 Nov 2026 13:45:26 +0200
+Message-ID: <20261117114553.1484215-43-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261117114553.1484215-1-claudiu.beznea@tuxon.dev>
 References: <20261117114553.1484215-1-claudiu.beznea@tuxon.dev>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 17 Nov 2026 11:47:04 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24881
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 17 Nov 2026 11:47:14 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24883
 Content-Type: text/plain; charset="utf-8"
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Quynh Nguyen <quynh.nguyen.xb@renesas.com>
 
-commit ec5202ccfa24791acf64146d5bac6b63ce234f95 upstream.
+commit cd09e96fbac54fa962750c8cecea4d3d5e7e72ae upstream.
 
-The Renesas RZ/G3S I3C pins can be powered at either 1.8V or 1.2V.  The
-pin controller provides a register to select between these two options.
-Update the Renesas RZ/G2L pin controller driver to allow selecting the
-I3C power source on RZ/G3S SoC.
+Add the I3C node to RZ/G3S SoC DTSI.
 
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Quynh Nguyen <quynh.nguyen.xb@renesas.com>
+[wsa: adapted to upstream driver, moved bus frequencies to board file]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://patch.msgid.link/20260904125425.412632-6-claudiu.beznea+ren=
-esas@tuxon.dev
+Link: https://lore.kernel.org/20250807151434.5241-7-wsa+renesas@sang-engi=
+neering.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[claudiu.beznea:
-- fixed conflict in the defines code and adjusted PIN_CFG_IO_VMC_I3C to
-  use bit 18 instead of 23
-- fixed conflict in rzg2l_register_offsets by keeping only the i3c_set
-  member
-- dropped RZ/G3L code from rzg2l_register_masks and get rid of anonimous
-  union
-- fixed conflict in available_ps[] by keeping the I3C voltage domain
-- in rzg2l_caps_to_pwr_reg(), rzg2l_pinctrl_suspend_noirq(),
-  rzg2l_pinctrl_resume_noirq() fixed conflict by keeping the I3C code onl=
-y
-- introduced masks member to struct rzg2l_hwcfg as initially presented in
-  commit 342a7ce6d2f7 ("pinctrl: renesas: rzg2l: Generalize power source
-  code") since this is its first user in v5.10 CIP
-- fixed conflict in rzg3s_hwcfg by keeping i3c_set]
+[claudiu.beznea: fixed conflict b/w TSU and I3C nodes by keeping them
+ both]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 42 +++++++++++++++++++++++--
- 1 file changed, 40 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi | 36 ++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/re=
-nesas/pinctrl-rzg2l.c
-index ed2ecde9ec07..f16d43c96e05 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -55,6 +55,7 @@
- #define PIN_CFG_OEN			BIT(15)
- #define PIN_CFG_VARIABLE		BIT(16)
- #define PIN_CFG_NOGPIO_INT		BIT(17)
-+#define PIN_CFG_IO_VMC_I3C		BIT(18)
+diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot=
+/dts/renesas/r9a08g045.dtsi
+index c386d92499e1..18457dc19cd7 100644
+--- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+@@ -282,6 +282,42 @@ tsu: thermal@10059000 {
+ 			io-channel-names =3D "tsu";
+ 		};
 =20
- #define RZG2L_MPXED_COMMON_PIN_FUNCS(group) \
- 					(PIN_CFG_IOLH_##group | \
-@@ -177,12 +178,22 @@
-  * @sd_ch: SD_CH register offset
-  * @eth_poc: ETH_POC register offset
-  * @qspi: QSPI register offset
-+ * @i3c_set: I3C_SET register offset
-  */
- struct rzg2l_register_offsets {
- 	u16 pwpr;
- 	u16 sd_ch;
- 	u16 eth_poc;
- 	u16 qspi;
-+	u16 i3c_set;
-+};
++		i3c: i3c@1005b000 {
++			compatible =3D "renesas,r9a08g045-i3c";
++			reg =3D <0 0x1005b000 0 0x1000>;
++			clocks =3D <&cpg CPG_MOD R9A08G045_I3C_PCLK>,
++				 <&cpg CPG_MOD R9A08G045_I3C_TCLK>;
++			clock-names =3D "pclk", "tclk";
++			interrupts =3D <GIC_SPI 289 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 293 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 294 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 295 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 296 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 297 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 298 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 299 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 307 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 306 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names =3D "ierr", "terr", "abort", "resp",
++					  "cmd", "ibi", "rx", "tx", "rcv",
++					  "st", "sp", "tend", "nack", "al",
++					  "tmo", "wu", "exit";
++			resets =3D <&cpg R9A08G045_I3C_PRESETN>,
++				 <&cpg R9A08G045_I3C_TRESETN>;
++			reset-names =3D "presetn", "tresetn";
++			power-domains =3D <&cpg>;
++			#address-cells =3D <3>;
++			#size-cells =3D <0>;
++			status =3D "disabled";
++		};
 +
-+/**
-+ * struct rzg2l_register_masks - Masks for different RZ/G2L pinctrl func=
-tionalities
-+ * @i3c_set_poc: I3C_SET_POC mask
-+ */
-+struct rzg2l_register_masks {
-+	u8 i3c_set_poc;
- };
-=20
- /**
-@@ -207,6 +218,8 @@ enum rzg2l_iolh_index {
- /**
-  * struct rzg2l_hwcfg - hardware configuration data structure
-  * @regs: hardware specific register offsets
-+ * @masks: hardware specific masks for various functionalities available=
- in
-+ * the registers described by regs
-  * @iolh_groupa_ua: IOLH group A uA specific values
-  * @iolh_groupb_ua: IOLH group B uA specific values
-  * @iolh_groupc_ua: IOLH group C uA specific values
-@@ -218,6 +231,7 @@ enum rzg2l_iolh_index {
-  */
- struct rzg2l_hwcfg {
- 	const struct rzg2l_register_offsets regs;
-+	const struct rzg2l_register_masks masks;
- 	u16 iolh_groupa_ua[RZG2L_IOLH_IDX_MAX];
- 	u16 iolh_groupb_ua[RZG2L_IOLH_IDX_MAX];
- 	u16 iolh_groupc_ua[RZG2L_IOLH_IDX_MAX];
-@@ -282,6 +296,7 @@ struct rzg2l_pinctrl_pin_settings {
-  * @eth_poc: ET_POC registers cache
-  * @eth_mode: ETH_MODE register cache
-  * @qspi: QSPI registers cache
-+ * @i3c_set: I3C_SET register cache
-  */
- struct rzg2l_pinctrl_reg_cache {
- 	u8	*p;
-@@ -295,6 +310,7 @@ struct rzg2l_pinctrl_reg_cache {
- 	u8	eth_poc[2];
- 	u8	eth_mode;
- 	u8	qspi;
-+	u8	i3c_set;
- };
-=20
- struct rzg2l_pinctrl {
-@@ -364,6 +380,10 @@ static const struct rzg2l_pinctrl_ps_desc available_=
-ps[] =3D {
- 	RZG2L_PINCTRL_PS_DESC(1800, 1, PIN_CFG_IO_VMC_QSPI, RZG2L_IOLH_IDX_1V8)=
-,
- 	RZG2L_PINCTRL_PS_DESC(3300, 0, PIN_CFG_IO_VMC_QSPI, RZG2L_IOLH_IDX_3V3)=
-,
-=20
-+	/* I3C I/O voltage domains */
-+	RZG2L_PINCTRL_PS_DESC(1200, 1, PIN_CFG_IO_VMC_I3C, RZG2L_IOLH_IDX_NA),
-+	RZG2L_PINCTRL_PS_DESC(1800, 0, PIN_CFG_IO_VMC_I3C, RZG2L_IOLH_IDX_NA),
-+
- 	/* Software voltage domains */
- 	RZG2L_PINCTRL_PS_DESC(1800, 0, PIN_CFG_SOFT_PS, RZG2L_IOLH_IDX_1V8),
- 	RZG2L_PINCTRL_PS_DESC(2500, 0, PIN_CFG_SOFT_PS, RZG2L_IOLH_IDX_2V5),
-@@ -899,6 +919,7 @@ static void rzg2l_rmw_pin_config(struct rzg2l_pinctrl=
- *pctrl, u32 offset,
- }
-=20
- static int rzg2l_caps_to_pwr_reg(const struct rzg2l_register_offsets *re=
-gs,
-+				 const struct rzg2l_register_masks *masks,
- 				 u32 caps, u16 *offset, u8 *mask)
- {
- 	*mask =3D PVDD_MASK;
-@@ -923,6 +944,11 @@ static int rzg2l_caps_to_pwr_reg(const struct rzg2l_=
-register_offsets *regs,
- 		*offset =3D regs->qspi;
- 		return 0;
- 	}
-+	if (caps & PIN_CFG_IO_VMC_I3C) {
-+		*offset =3D regs->i3c_set;
-+		*mask =3D masks->i3c_set_poc;
-+		return 0;
-+	}
-=20
- 	return -EINVAL;
- }
-@@ -953,6 +979,7 @@ static int rzg2l_get_power_source(struct rzg2l_pinctr=
-l *pctrl, u32 pin, u32 caps
- {
- 	const struct rzg2l_hwcfg *hwcfg =3D pctrl->data->hwcfg;
- 	const struct rzg2l_register_offsets *regs =3D &hwcfg->regs;
-+	const struct rzg2l_register_masks *masks =3D &hwcfg->masks;
- 	u8 mask, val;
- 	u16 offset;
- 	int ret;
-@@ -960,7 +987,7 @@ static int rzg2l_get_power_source(struct rzg2l_pinctr=
-l *pctrl, u32 pin, u32 caps
- 	if (caps & PIN_CFG_SOFT_PS)
- 		return pctrl->settings[pin].power_source;
-=20
--	ret =3D rzg2l_caps_to_pwr_reg(regs, caps, &offset, &mask);
-+	ret =3D rzg2l_caps_to_pwr_reg(regs, masks, caps, &offset, &mask);
- 	if (ret)
- 		return ret;
-=20
-@@ -973,6 +1000,7 @@ static int rzg2l_set_power_source(struct rzg2l_pinct=
-rl *pctrl, u32 pin, u32 caps
- {
- 	const struct rzg2l_hwcfg *hwcfg =3D pctrl->data->hwcfg;
- 	const struct rzg2l_register_offsets *regs =3D &hwcfg->regs;
-+	const struct rzg2l_register_masks *masks =3D &hwcfg->masks;
- 	unsigned long flags;
- 	u8 mask, tmp;
- 	u16 offset;
-@@ -983,7 +1011,7 @@ static int rzg2l_set_power_source(struct rzg2l_pinct=
-rl *pctrl, u32 pin, u32 caps
- 		return 0;
- 	}
-=20
--	ret =3D rzg2l_caps_to_pwr_reg(regs, caps, &offset, &mask);
-+	ret =3D rzg2l_caps_to_pwr_reg(regs, masks, caps, &offset, &mask);
- 	if (ret)
- 		return ret;
-=20
-@@ -1952,6 +1980,8 @@ static const struct rzg2l_dedicated_configs rzg3s_d=
-edicated_pins[] =3D {
- 	{ "AUDIO_CLK1", RZG2L_SINGLE_PIN_PACK(0x2, 0, PIN_CFG_IEN) },
- 	{ "AUDIO_CLK2", RZG2L_SINGLE_PIN_PACK(0x2, 1, PIN_CFG_IEN) },
- 	{ "WDTOVF_PERROUT#", RZG2L_SINGLE_PIN_PACK(0x6, 0, PIN_CFG_IOLH_A | PIN=
-_CFG_SOFT_PS) },
-+	{ "I3C_SDA", RZG2L_SINGLE_PIN_PACK(0x9, 0, (PIN_CFG_IEN | PIN_CFG_IO_VM=
-C_I3C)) },
-+	{ "I3C_SCL", RZG2L_SINGLE_PIN_PACK(0x9, 1, (PIN_CFG_IEN | PIN_CFG_IO_VM=
-C_I3C)) },
- 	{ "SD0_CLK", RZG2L_SINGLE_PIN_PACK(0x10, 0, (PIN_CFG_IOLH_B | PIN_CFG_I=
-O_VMC_SD0)) },
- 	{ "SD0_CMD", RZG2L_SINGLE_PIN_PACK(0x10, 1, (PIN_CFG_IOLH_B | PIN_CFG_I=
-EN |
- 						     PIN_CFG_IO_VMC_SD0)) },
-@@ -2772,6 +2802,8 @@ static int __maybe_unused rzg2l_pinctrl_suspend_noi=
-rq(struct device *dev)
- 	if (regs->qspi)
- 		cache->qspi =3D readb(pctrl->base + regs->qspi);
- 	cache->eth_mode =3D readb(pctrl->base + ETH_MODE);
-+	if (regs->i3c_set)
-+		cache->i3c_set =3D readb(pctrl->base + regs->i3c_set);
-=20
- 	if (!atomic_read(&pctrl->wakeup_path))
- 		clk_disable_unprepare(pctrl->clk);
-@@ -2803,6 +2835,8 @@ static int __maybe_unused rzg2l_pinctrl_resume_noir=
-q(struct device *dev)
- 		writeb(cache->sd_ch[i], pctrl->base + SD_CH(regs->sd_ch, i));
- 		writeb(cache->eth_poc[i], pctrl->base + ETH_POC(regs->eth_poc, i));
- 	}
-+	if (regs->i3c_set)
-+		writeb(cache->i3c_set, pctrl->base + regs->i3c_set);
-=20
- 	rzg2l_pinctrl_pm_setup_pfc(pctrl);
- 	rzg2l_pinctrl_pm_setup_regs(pctrl, false);
-@@ -2831,6 +2865,10 @@ static const struct rzg2l_hwcfg rzg3s_hwcfg =3D {
- 		.pwpr =3D 0x3000,
- 		.sd_ch =3D 0x3004,
- 		.eth_poc =3D 0x3010,
-+		.i3c_set =3D 0x301c,
-+	},
-+	.masks =3D {
-+		.i3c_set_poc =3D BIT(2),
- 	},
- 	.iolh_groupa_ua =3D {
- 		/* 1v8 power source */
+ 		vbattb: clock-controller@1005c000 {
+ 			compatible =3D "renesas,r9a08g045-vbattb";
+ 			reg =3D <0 0x1005c000 0 0x1000>;
 --=20
 2.43.0
 
