@@ -1,510 +1,184 @@
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.152])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.8464.1794878070172440164
+Received: from DUZPR83CU001.outbound.protection.outlook.com (DUZPR83CU001.outbound.protection.outlook.com [52.101.66.44])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.12140.1794896554515832474
  for <cip-dev@lists.cip-project.org>;
- Mon, 16 Nov 2026 17:14:31 -0800
+ Mon, 16 Nov 2026 22:22:35 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.s=key2.smx header.b=Z2z7Y8xO;
- spf=pass (domain: mail.toshiba, ip: 210.130.202.152, mailfrom: nobuhiro.iwamatsu.x90@mail.toshiba)
-DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=mail.toshiba;h=From:To:CC:
-	Subject:Date:Message-ID:Content-Type:Content-Transfer-Encoding:MIME-Version;
-	i=nobuhiro.iwamatsu.x90@mail.toshiba;s=key2.smx;t=1794878059;x=1796087659;bh=
-	3LFyOzMCaItPQiDEKKecKhRTzqpqdi6356RPKWi7G6g=;b=Z2z7Y8xOUn938bd/ox2pujGjTdNvUr
-	qXKgqCUDNvGYWrmJqXjQgCD+V4hcyzNZrZxCUpn6g/V+aQBUlVYGXx+DPLa8ChudwqiRsIgF6MUMO
-	XFbxJeFB2C0gCfmcQnHuF5eMOpx2AllVuVk6JJtq4DqNZPQlqRRDn3a7TRv7Qp98xYLLpQDP7TEpM
-	PxO19QwqGJwWXLiIcNohgFVPzNpf3jOqjfGNNpMXHYZ6WPJh8PR9dN+LwyPLMkiMjJGpp66gcNmHX
-	2LWG73yHR2qm3X9d1cLTyn30b6XrDu+Hm7nnCMJYG+LEMr0qbUOtL0XjjHIp11GGKK1BU//j1vQB3
-	FWNA==;
-Received: by mo-csw.securemx.jp (mx-mo-csw1802) id 6AH1EIC41033414; Tue, 17 Nov 2026 10:14:18 +0900
-X-Iguazu-Qid: 2yAbSJ9nt44q2Mp4QV
-X-Iguazu-QSIG: v=2; s=1; t=1794878057; q=2yAbSJ9nt44q2Mp4QV; m=NIk3Y46XVzV3LSVUfsULmE+7hm1zmyvlzOo+gPW7FCQ=
-Received: from imx12-a.toshiba.co.jp (unknown [38.106.60.135])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	 id 4jT6Fg6pp0z1xnZ; Tue, 17 Nov 2026 10:14:14 +0900 (JST)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=bEWYQq1u;
+ spf=pass (domain: siemens.com, ip: 52.101.66.44, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lmAFUsU0Nl71+xtMpdK/QA1cwJWJKpmEMObNZhcQ4r+1hkiFRsMSVWbDzVGWwBevAxV9v7dbSaYPWmv1b1wJoaPj7dHIAEaA0Z8zfgYmU/RzNzV+KSinHZdMfTAsYqfEkXVqDdawxUk4Zpc9+zlcGetycKAsLZiG7B/+/aMd0+LN3EQWDnDd60Rgzl7jRomyWGNATFAp6V4KVNbFE9f7USpy8oetDc1iohbjUJIsOJHuM4clqdKZYnVKZwFzu+yGot+X0Ofta1OFKs9xGxU0TllpuMKUVgnLn3KId1xqNgUjliyjH8ptjSNKcSumElMoHwlJ8q7Vg3vmD5Mfy4e3eQ==
+ b=M+MIze9uNSQ+GCnYCgnzuWVsnuc5WmLZggR1Uw0sAS3D1b2+XFKs1CkyNL54V8yVmuCKk9Pc5P9F3aHnjaEvAYXTBWBgrkdnOM6YeEm0CjSdvIyX2uRGktt1mxN5LaaLL+ZREcXo5FqrdcJBwcVPS3Ke563Ilw8TnwHR2gmFYB4X95S7PorAzM7B35cpIhekPrG0mAXgap+S/ogYrGfAxG+a0dE2nTgCheklceqeSA4aJcvpus/QTA3SyJefDYuHKT8T2R1xOMFpSb0V597ZGnmJGAH3xTydlpFWQkzqw6S5JNUrKL3GJaOGZ1BOFsGkQ2F6Yfwl2TAEl/WcjaisQA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=McH8eoyTpR++EuAl1+uluscKx/RCIh/iP3T2fuc1WVY=;
- b=O21um00wy66N7711sPMX0OC8P124mbQqZHDhMbINM0MizG9trkCejimLjEPzbDcDnjf+Wtm5LWuZ9xPc6wkNAuj7ijcALuIMtK7MJdUS9rhZWTj6dP95I5jn6G77M/L1Gc0gnXTpQd8fnrhYbgmKLfOYLOFhjh7R4LDLvkBdq/PCW4VMf9E0Dv0yYaSFiIVcHqpr+7h4oTjXMmH0jIWxl3InZ2Y3+euH38k3uiDy0t8pFpgfBFqyHYw3thz4HL0j+qt0WdZ5caBoZLC47e9vEeG39b/SeduBXOl3Yr3LYGUsdiBsxmm6y+AB1fURhwWQB126IVXSCj5KWlwCYswQ8Q==
+ bh=ZuoPzcy9Wi1Ph5r29WqTpd5aPyL2Xl0Uvi4JDf1nI5Q=;
+ b=D4Zc/nW9v8vX5C06182Qtf+OdQl434ocynwZqMXOFu4aWA+zebhGkesbQWdGg23eQGMia6B5zTqxTc4jNR8yg78rdLs/DSvI3gm2hrlVZ6GNSiUATm9YzPSDWJkl1PPHpcyv/V3SCUZ2nCmvqUYzJ21sMWdWN6XbbMA0uqtthGEhleSeSGw4fGOcxPYfyXIXXqsoyimpm/L3RlNVxHh0/jXspx9a0F/0FYcxit76slR8oPxLjtARZESzmvLQDFRLsJRZAPqhbDv9x3wHtCmqXvEVDA5mq9RUXcI/e+fqcx4484JEw28SxLlbcvFFHAPH01OrNU+3p3VCY+YQgF2o6A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mail.toshiba; dmarc=pass action=none header.from=mail.toshiba;
- dkim=pass header.d=mail.toshiba; arc=none
-From: <nobuhiro.iwamatsu.x90@mail.toshiba>
-To: <cip-dev@lists.cip-project.org>
-CC: <jan.kiszka@siemens.com>, <masami.ichikawa@miraclelinux.com>,
-        <uli@fpond.eu>, <pavel@nabladev.com>, <chris.paterson2@renesas.com>
-Subject: [ANNOUNCE] Release v6.12.117-cip35
-Thread-Topic: [ANNOUNCE] Release v6.12.117-cip35
-Thread-Index: Ad12MN9xBvugLGz1RU6DvZe8snJ+lg==
-Date: Tue, 17 Nov 2026 01:14:09 +0000
-X-TSB-HOP2: ON
-Message-ID: <TY7PR01MB14818E0CB4EA9A3E19AFBF7E6CD7B2@TY7PR01MB14818.jpnprd01.prod.outlook.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mail.toshiba;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY7PR01MB14818:EE_|OSZPR01MB8864:EE_
-x-ms-office365-filtering-correlation-id: bf809df2-94b3-4b01-b7f1-08df4448159b
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|23010399003|366016|18002099003|6133799003|261009223027099003|3023799007|56012099006|11063799006|261102123227099003|261028144727099003|261026121527099003|261026140227099003|261021121427099003|261021123027099003|261022105027099003|261022075727099003|261021135927099003|38070700021|10067099003;
-x-microsoft-antispam-message-info: NFziByGQpT31N0mQFEhoCilfKSDL2y8rvvVOyvbA+6tWQwOGYi5l329KqiSI2u6DYvxPiq4wrMZ2l6ceuWp5NBVu1IF4CFrIZDGpr1KjuvF7evt+qbHgxmuAJ0pkUOrPuSUz9heRhf/xbUe/uB0HxotnjwPKMjn6bwj/iV1ngttsCR6uR0nRSGhEv8jzujdo4dHBH5TW0W7lrfeivQAiBfyo35Bh2RNEzmr86vXuWGWwzMTRaeemue+UzVAE/Lb2A1fV0dI3Zvj0hSsh6m7KMahu4+RDKEcSG4tJxhKypcHU0MMMOWcBF0gHNHRMIkCOFHs+tOYTjPwDaGmAGzwuV1P5hy08N63O6zEqelIrV8eycXJpB3f/tpv5IgYwT4JHBPbADM70uZr3aBBVDDKF5NBHuZpoIKEphZMU4jxGeXRKH41bWuug/g7QTxI0RV2Nr5lj0AM1uCSmx2SubjyzzOFl4YwpaYw4Or/PXQJPDmiiOJOBjCkKkjeiWVbuhlHeERwcmOzYFGwh7b4VQTmeaFgeO1YwVVzy7na0TDbUWp55sQj5cUREWExryt5J3VbA3ccwk9T77BMktKS1pbpUHUjOeFsD3tFyE0u7EgX+RlzWm0qazkrB1gIpXS+BtAM5N+uaKCMoTHH7kLfeXaTVgETxsXGwBXxbr8vZZHnqAtg=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7PR01MB14818.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(23010399003)(366016)(18002099003)(6133799003)(261009223027099003)(3023799007)(56012099006)(11063799006)(261102123227099003)(261028144727099003)(261026121527099003)(261026140227099003)(261021121427099003)(261021123027099003)(261022105027099003)(261022075727099003)(261021135927099003)(38070700021)(10067099003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-2022-jp?B?UUlwNE9WUnJNaVJoeGhOYnBKb1hlTkNPUnkzN1ZjTUNRTHNlQS9mblpG?=
- =?iso-2022-jp?B?TFpZakdUNVlsSTZoNnRSYVRTNE92YmtPOUFWRkdaMldKYmErcy9mNmp1?=
- =?iso-2022-jp?B?V1R6TnhlVDZEN0hwdktNbnNrV1M4OFZ6UkZQSk4vQVFidVdpSkZzcWkr?=
- =?iso-2022-jp?B?ejkzQkdJcnJxcnpvazczaVMvTDJMM0ozZG1wbzh6Q3JsUVp4RlRndU5k?=
- =?iso-2022-jp?B?QnNnRWdWYW1uTDVJWEZTSzF2MkpQTWxVSVc2aXlyNHdIUk5hcCtTK1VT?=
- =?iso-2022-jp?B?ODFVelczZVpMeEVPaXU2Y3BXZXh4S3RsZkk2bzBqMi9UUi8xNVF2ZnBO?=
- =?iso-2022-jp?B?Y1NWenNBNEZIVWV2bFo5b2lhRHVrd0NsU204dEJHMVBGZ1d4dTNWdWFF?=
- =?iso-2022-jp?B?UjJyaXdPWU4wa1lMNEpMc3ZScEFHQUFuazl1VkthOVN0alFzSFVIWFhx?=
- =?iso-2022-jp?B?OW5hSnQ2ZFYxTFpleGpCNkEzUXkzTnJwcldneFlia1NLVDZvcWpOVFdr?=
- =?iso-2022-jp?B?UUdOK0FBSmIrN1BIUWJRblJTUzJxSHFrUXNiaWZReHBWb0ZMckE4TVVU?=
- =?iso-2022-jp?B?MWlVMWpSWk1pYVhPMnh2MlVkMU9rNlpEbHJibE0vdkpyUnhLOFdROFdD?=
- =?iso-2022-jp?B?T0VzK1VEZEo3VmtvMFJjTTQ1U3pHRFA5YUtsQkdzMVFCdmQwTGFGSkFN?=
- =?iso-2022-jp?B?UzlvOHlZdWpTSVNOdVNFNFJBMjdaeElQWTRVREw5OGNvMnFxL29Ud3hG?=
- =?iso-2022-jp?B?cm4zU0dVYmtxT2xPQkRYVjRxR0JOaVhsTFdtR2pYUisyK0lpMHY3U1B5?=
- =?iso-2022-jp?B?WFBUSGdpSlF0cWVaOUJ2RngzMFdXdDdUeEdXenkxRlRpZFcxcmJzMFFV?=
- =?iso-2022-jp?B?V0s3VXdwMlhQTllqZlZDOFJLWU1sZHBnR1Flc1dZZ2k1TG1mMXJEVmNm?=
- =?iso-2022-jp?B?akFQeURrWDhzQm82UmRnbldyc1o3VEFKejA4bjJuNWFPanhuLzVqNUM1?=
- =?iso-2022-jp?B?S1V2eU1hMGZvN2svRjZqdzNFdkp1VVMxNTBKZ3Z1Tk1lQ0wyV1JFQUNu?=
- =?iso-2022-jp?B?K0NOVnUzMVlRSnJjajZ1TUkwa1JhSWd1WHRXdGxQc0pJWHhiYjBNd0Zo?=
- =?iso-2022-jp?B?ZXJGc2RJU05GL0Z5NllwMXJoVE5aVm9LcjYrcHljbGxzMEFUYldML3Uy?=
- =?iso-2022-jp?B?aXFYK3pZMGNocnY3dDRJYjlNMitnbUtsVGJwTlI2d3Q3dVVRZHd1blI2?=
- =?iso-2022-jp?B?bEpBb3hKbGV0UHFKSmp1czViLzJXY1IzcXpFMmxKd1ZkRkNpRUxIM284?=
- =?iso-2022-jp?B?d29scG1uYVpXZEpOdXcrR2Z6Y1hnNVNvcTErME1zaUlGUDRjbE8wUVJ0?=
- =?iso-2022-jp?B?eVd3eVBSMlhzREdOd2EvUVRDTDk0WExvaWZCeG5SOEZ6UzV2Nm9ObWJB?=
- =?iso-2022-jp?B?Vjk1M1JHNUZQTEg4L0E2ZGo3eklQOWlqVzlUM0xlWFc5TFJuRDdWbzNL?=
- =?iso-2022-jp?B?YXpaZVpJLzFPUldRMkJtRDNkdnZnejhjYzZLY242MFVNTGl3VkZKZmx2?=
- =?iso-2022-jp?B?L0xwYmVJNURCZVRrdm1zV08zVzFkY01XYjQ3OEFRTmRHUUN5TXZ1K0s0?=
- =?iso-2022-jp?B?SGhweU80UTFXTXZ2cm54cFhabTlOYlg2MS93RmRsZXpTdEk4bE9xTGhx?=
- =?iso-2022-jp?B?SzcxanVENnNmMjkzV3V2bUNscThzZzBRSnB1VENGbVY2a2tLUlRMSGZL?=
- =?iso-2022-jp?B?ZCszMGgrOVRNcFBwWE54aGN4bllFQU9MSFNia1lmQXNxOFBjZHJsM2Fu?=
- =?iso-2022-jp?B?WGk5M2l4WXhuNFg3SUlaN0JWSGVOUjU4VmUwLzY2bGUyKzA0V1BpUG8w?=
- =?iso-2022-jp?B?TUFjY3BZK3lHZGdjZUR3VmV5VHBrS0IzUXE3U0tHSGVmTUlUQldGTm1V?=
- =?iso-2022-jp?B?KzBNck5NWlBhMDl3ckZlTTJqQU5icTk4Uk1zV1o2Rld5TkRRaFRNMTdO?=
- =?iso-2022-jp?B?NHVuZUNkUVBOcTFRbmxHM0tEeTExbXFIV1JQNnpnK2JmMHlJTGorMkdw?=
- =?iso-2022-jp?B?U1JYbGZ1MFJ1cXcvRjgvMEp5UENmdXNVZVJ2RzkrelNGdWRpYUZScGMw?=
- =?iso-2022-jp?B?bnRTWjZHMVNJQUNHMlNiWnhrTVdEVHZtUWNSR1NxSENuQVpud1BvWGNL?=
- =?iso-2022-jp?B?YkdHeW5LZmlIWXkyRDRzS2tQeW43VStHVS9TSCt4SmorbGc2UEt4WUln?=
- =?iso-2022-jp?B?cGZ4MmNIdE4wcDQ3Q0EvOGZodFdnWW5PNzlyTzR5MURsSzlEVUZzd1ZI?=
- =?iso-2022-jp?B?Y1NCZEx2T1NRZnpVaFJxeFI0Vm9tSDFxWjA1LzZucWlKSlNNN1F3YTlx?=
- =?iso-2022-jp?B?S3AvQ1B1dG91N0dZU1UvVGVMcWprTEJhTVRnSGYwWGd6MC84S1lzaGpU?=
- =?iso-2022-jp?B?T3ZndHJrS2d5VXQzZmRseHVIMms2Mzd3ejZnZ1JuV2tSSFU3c3ZpQjY2?=
- =?iso-2022-jp?B?QVFOL0F1Smg4cnp1Ynl2NldJYTAwbWZMcTVKM3ZSRFUzakRyaHNxdDc5?=
- =?iso-2022-jp?B?T0ZNNkdSYz0=?=
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZuoPzcy9Wi1Ph5r29WqTpd5aPyL2Xl0Uvi4JDf1nI5Q=;
+ b=bEWYQq1uuR6AXbuLgrAkbzEAV4boCgScLRESlX5HhXJ0atQUz1gX/KuAHnGq8DHCrsK1/Yk0uFZJLqmx8JtJSvfFS9WjcpsLqpKBmNPx4LwuYD2zaLgklqjlJ/kCobzeDbIQRh7V0ZvNR0HEsniJoNsft7bWdBr1DJhPrIgPg+KopQiDLL3vaQDsNeyc3AyrQokjsMgOKa/iKEMO+H7/2OxmMDU3h+ytrzU4GC7Hf1ma3jsGfKerngib9Y1KuFqGYWlG7Mz+SDrEvxkvEiWb7IRnGSKMFeTVmFYAl1L8Kotng+Hh4bImUYiAt6/B9EjMF5NRUq7po5QzKtASVYdcGQ==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AMCPR10MB992291.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:785::10) by DU0PR10MB6953.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:10:414::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.639.7; Tue, 17 Nov
+ 2026 06:22:30 +0000
+Received: from AMCPR10MB992291.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::fbce:789a:27cf:d1e]) by AMCPR10MB992291.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::fbce:789a:27cf:d1e%5]) with mapi id 15.21.0639.006; Tue, 17 Nov 2026
+ 06:22:30 +0000
+Message-ID: <01bcebb4-9c8e-417d-9b0a-ce2c7cecde59@siemens.com>
+Date: Tue, 17 Nov 2026 07:22:29 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.12.y-cip v2 0/6] Backport PREEMPT-RT support for ARM
+ 32-bit
+To: Pavel Machek <pavel@nabladev.com>, Chris.Paterson2@renesas.com
+Cc: cip-dev@lists.cip-project.org, nobuhiro.iwamatsu.x90@mail.toshiba,
+ Daniel Wagner <wagi@monom.org>, Bryan Brattlof <bb@ti.com>,
+ Sebastian Siewior <bigeasy@linutronix.de>,
+ Pasquale Nieddu <pasquale.nieddu@siemens.com>
+References: <cover.1794223241.git.jan.kiszka@siemens.com>
+ <avbS_UO1IHpgbZgA@duo.ucw.cz>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Content-Language: en-US
+Autocrypt: addr=jan.kiszka@siemens.com; keydata=
+ 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
+In-Reply-To: <avbS_UO1IHpgbZgA@duo.ucw.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR3P281CA0171.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a0::7) To AMCPR10MB992291.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:785::10)
+Return-Path: jan.kiszka@siemens.com
 MIME-Version: 1.0
-X-Exchange-RoutingPolicyChecked: gSrhxhIcdf6Qwi/jwlJFgbjxPPd4UeMOk4lgdfPXdV6JJiDV4tZ1kgrTkMOJG5j62D7eoeaJFNgKzXNsspXcz8gftVwYVZEEbJKgTQKJfp6wClSh9apgqj8yG4S40OSR1LGVcsMirc71wpEjhkHj18b25mLw9No3taUPbAkdO7GB1ry90bKs68q4FLsbwd88bGFzsqhmDUSYzMXknnKGmOOeICTWjdYfIR4D/aZuB4j/sCuCGq8o28QIoHugljcgbtunJdUsGCmDVAiAWHBd9N6EE26o/sXVHv8xxOCF3DJHsUxNsbMKaQq+Ix/6PSvGx9eJ29l/IK6UrorovrsYKQ==
-X-OriginatorOrg: mail.toshiba
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AMCPR10MB992291:EE_|DU0PR10MB6953:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7ba6a42e-3803-4fc4-0820-08df4473289b
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|23010399003|261102123227099003|10067099003|4143699003|11063799006|56012099006|261021121427099003|55112099003|22082099003|18002099003|6133799003;
+X-Microsoft-Antispam-Message-Info: GbmaxLwti0GbirxLMKfKt/msExFo5mE/Z4f1CJNySWXpG/JXhnuBtlgdJCYCLOGrQRpbBaCMfhdrgRUZNUu+VECNw01rYcLXGe3T3NPgsBGqFXiTaGJTgSjiBNDj7a8twG8Mwjd3jZ8dqmqIXddj5E/ocZ0aRyVWokZODDWkk/24vQ9xdG64JZjKkvpJGj7EP41KuTNDL7zEeKO/SzwzhVXDAnWmROi08XwZ3iJvcfxAJF+y2dCyHeFffvhWfQ+GWtooQYpqfz9dsIPzwxW2J8iwVsf/oI7zj4J0xgnGKu1SDuv7gkYC+2Xpv+0ssIVjiNQb8xPWY6DEefKeTj7VxthXm47R4Ein8LYFIMgQxm7KRqSQzTF7Q5zsltrxT2qlngPRR1xYtDiXHkhOefxhremS6G94hlC8RJZU029W666zZIHIg9Bgg4ybosYToDZ5YY2jVGHLFwXxzFvo1+9nqjQsmcf511GWhJNZ2NI/7IQ76DiYgKPOFMeosd6NKS2K+W7iZBsfkWGklGo7/QqHhuaB7lXz9E0+fdQSTFeqJvkkAYTnH//k540AvsQJUwri3EcUpF6Q4+Ar2Zo+59FwZl9tSj8H6g86W0A8PofQugO46PIJuBLZ+xi+O2JYu/Qs0ldWDD5qEMbEYADeGWG7ZQXrU4fI5GRWhI7o3ChtGf4=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AMCPR10MB992291.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(23010399003)(261102123227099003)(10067099003)(4143699003)(11063799006)(56012099006)(261021121427099003)(55112099003)(22082099003)(18002099003)(6133799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eHhFMVpuVHRuWlJmLzlSczV1OUJsNTVObkZVaEFJRHVRdHUyU1phUDNtb1dv?=
+ =?utf-8?B?NXRRRDJ1U2x2b1ZpVlNtZjhTNXFSbkdUSVpkQW9rME5tVGNGd0pHclU2UXhM?=
+ =?utf-8?B?WkhsTXNOVGErMU0vdGRMVXV3UUFmR2VTWW15b2FPQUsvdXpnb1lWUzF2bkxM?=
+ =?utf-8?B?bXo0YXp3eUxLRm1NVHFJb2FwcDVMbEgyQ3FtK2FzRkM0cVhDd3RvcFVCbnpE?=
+ =?utf-8?B?eTRBZFpSOTRZSGN1cEhBWmpDd2VpTDhnQ0JMMktQempxQmxIbEdBVW52UzFo?=
+ =?utf-8?B?VkIzS2RmUmpYMndWYzdmSjgyZEorMTB4YXVES3JLVTJ4TVAwZFZzblFYS1NF?=
+ =?utf-8?B?RnVibnpFa253VmZmcDVZcnVUenY0Q3p6ZUdmM0N6aFVxZ2RZMmc3L3hRdHFW?=
+ =?utf-8?B?U0ZKM3A2K1dzY0lsam55dzBPWVlOMmoxTjdqZmRLY2tIbWJtQTlRamxGbHJI?=
+ =?utf-8?B?T2tGYkcyY1lkblZvQzdKL3djUzUrV1h6WFlONVdyZnFRSVlIK2JiaE1wb2ti?=
+ =?utf-8?B?MTlPTEpzOTR4TGh2WHdKN3dTV3ZZeUJ0MjJYeDI2SkJCQlJLbnA1L2R2WGRB?=
+ =?utf-8?B?THBITkVrYTdYbTFOSXJrVWQ5SjBSck9uUWdBQ3A3UjMwcTc2dXdXUW8vRmNQ?=
+ =?utf-8?B?Z01pdjJVbU1KM2ppbVRTdTlWS3FCeURZVnZ2VGxoRVRocnJlUUMvb0p3QkRD?=
+ =?utf-8?B?dExyODdXUndNZGlSUld6ZG1VZ2Q2QVdmNHBSNEVhbE9zNlBxbjRkdFV3aENM?=
+ =?utf-8?B?bG81cWd6NGJGcFBJaS9LZTlwOHJDZGJkbmZkTWFhbk9yNmNZTnhod3lOKzRE?=
+ =?utf-8?B?RnBhMUhLencreHdPbmVOQWpFZ25neTlKQU5wOXNHbXZhcCtpY242aWd6d0lN?=
+ =?utf-8?B?YUVXcEhxV1kvc3JJdERlSXE0Z1NXd2xEcnRBLzYvL1JpaTIzc21ENjRneTFv?=
+ =?utf-8?B?N0hCZnZTbWxMSm9NVUpIemM3amdJZWFMbFpyWDA5dkM5K2FNNXlBVG1JaDhx?=
+ =?utf-8?B?R2oyUFplMnRRQXRCNDJ5S2g4bVFYaG8wd3VNVE91N2dPRTNmSlpUSWFMVVpG?=
+ =?utf-8?B?dnhYVEV1dGthSU92eW9ZU3oyS1IwbXY0M3pqSXlmUW95ZEI3ZjhEZW9mUVJG?=
+ =?utf-8?B?R3lJUXNNSUIxZWgvU0grMHliM2syNFlZZFZjVklZajZCU290WkpQWmtaK2xa?=
+ =?utf-8?B?ZDhVR1duWE5CZCtZbjhSWEQ5dGJ3alZyRFh4MHE0M24zUlBJM09lQUNhTHZD?=
+ =?utf-8?B?VG5CMjJya0NYSnU1MTZhV3Mrb3RWZUl6ekpnSnhML2UwY1Z0cmpESEJ4K3RS?=
+ =?utf-8?B?dmlsRXdUUW1OcmhjakpqY1ZXSFRWa1B3MFo4RTBCOXl5aGpqR0tSRmRIT2lX?=
+ =?utf-8?B?djh5QU52UXc3ZVhuMUxJcFNUc2tpbldBdlhLTUYrdHAzZ0N2aWpRaEtqbmNa?=
+ =?utf-8?B?NGd0Y29lcVEycGMycHdOb3E2R0NvNG1JWFV2U0JDYXFiMXM5M3BoY1M3UmRY?=
+ =?utf-8?B?Ly9qSGkwTlpjUVNaMUgxaXpQSG9PL0R0dXpkZW5HUnNVb051TjFRSmYwSUh1?=
+ =?utf-8?B?Nzg4NC8zV3JVSGtvZHNlNXZwSTNHQkl6c3lITjlUNTdJbnhoZklsdHp3YkdG?=
+ =?utf-8?B?WTl1VkJPMzhmdXQvcUpjdUhYYVBUTGtRLy9TRFZ2QnBIUk9hUnZBMTcyOVJn?=
+ =?utf-8?B?Wm9JSGZBN3JNTlJjeEw0bXFUS2NRTGU0VUU5YVFmWklQUlNQSE16ZmJiSGx6?=
+ =?utf-8?B?OHFaREdEZ2RPdG1MSkFodVZJV2U3aG1Wd0tkL2lML1hkOXh5OUpVZmlXUHhB?=
+ =?utf-8?B?dTRseU5oMWdWcmptZnBJbUVxaWFTNTRFeXBhZXNybUhFUCtheXY1b3hTZTMy?=
+ =?utf-8?B?RXh5SGkrY3RmN2VnVlV4MklGNEh1RWVhcjdzRjN4OWRram96R3N0UXdtTVdV?=
+ =?utf-8?B?N3ZTVnBaVlRDTVBBL3RNZW83aTVhLzRJVU9xSHFWbGFnKzY0cDNuQkhsKzlT?=
+ =?utf-8?B?RFNqaTRyTFFSTGQwV2Z1bXRCb2pOVVZJemNGYkJpVWxIQXJjd0FNZGJxejRy?=
+ =?utf-8?B?bWpPKzErdlZvN1c3REtLc0lhaVlzZHpmM0gzZFBPTTRoTTZROWs1TUExckdw?=
+ =?utf-8?B?V28zOE9ucGtnUytWelJsR0ZSZ2Fra0hUMnFMTHVkRm9xYkdmaTU4dDdBVURK?=
+ =?utf-8?B?MlpwOHl6bE9Wc0ViSzlMYzkwY1NWUTA0ZnBDbTIzY2x4a20vazFTZjNyNjh1?=
+ =?utf-8?B?MFVQSGZrZndmaE1ZWlE5YUdmTFZxZ0xBd2NNWHFDQXlMTGhLYTY4QlQwZ0Zk?=
+ =?utf-8?B?UjJNaXlvS1RhS1JoMCtER28wRDdJZTZkT1IySUdqTEdha3ZObWF4Zz09?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7ba6a42e-3803-4fc4-0820-08df4473289b
+X-MS-Exchange-CrossTenant-AuthSource: AMCPR10MB992291.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY7PR01MB14818.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf809df2-94b3-4b01-b7f1-08df4448159b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Nov 2026 01:14:10.0268
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Nov 2026 06:22:30.4480
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: co8eVD/oiFyVwldL9NvEb0YWTUOozmp4rKx+MEmBKVp+62geoC1YOrxLDccYiXL9Jfor55pw72IPuxIeJUTukLGGNkfNDaFrQP20tmCPDAJXRYnTUKxKrws/t2kwBt7w
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZPR01MB8864
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: s+ujJrw2gwDHiVNeanxY2AiYwn2fxlD1utk33DwivCHR5OD3ugpPdU4Yt6klpDe8jDIGBAYM30oL7j8xpkB0VQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB6953
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 17 Nov 2026 01:14:35 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24810
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 17 Nov 2026 06:22:39 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24811
 
-Hi all,
+On 13.11.26 10:06, Pavel Machek wrote:
+> Hi!
+> 
+>> As a full backport via stable was rejected, this is targeting CIP 6.12
+>> with the required changes from upstream to enable PREEMPT-RT on ARM
+>> 32-bit.
+>>
+>> The series was derived from the ARM-specific backlog in v6.12-rt-rebase,
+>> only reconstructing it from the corresponding upstream commits - maybe
+>> worth to consider for stable-rt as well.
+> 
+> Thank you, applied. It might be good to merge relevant configs so that
+> we start testing rt on arm32.
 
-CIP kernel team has released Linux kernel v6.12.117-cip35.
-The linux-6.12.y-cip tree has been updated base version from v6.12.114 to v=
-6.12.117.
+The config snippet for RT is arch-agnostic. But it may need some
+tweaking to request builds with it for arm32 as well - Chris?
 
-Additionally, patches have been added in this release to support RTC, displ=
-ay output
-(LCDC/DU), and PCIe, as well as to optimize the XSPI/RPC-IF drivers for Ren=
-esas ARM64
-SoCs (RZ/T2H, RZ/N2H, and RZ/V2H). It also includes patches to improve VFP =
-locking in
-order to enable PREEMPT_RT support on the ARM architecture.
+Jan
 
-Information about this release is as follows:
-
-  v6.12.117-cip35:
-    repository:
-      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-    branch:
-      linux-6.12.y-cip
-    commit hash:
-      a7db02f4a542344fbaef08cc445aefbb348912ef
-    fixed CVEs:
-      CVE-2026-72453: regcache: Do not overwrite error code when finalizing=
- cache after error
-      CVE-2026-80729: mm/huge_memory: initialise workingset state before fo=
-lio split
-      CVE-2026-89754: mm/pagewalk: fix stale walk->action escaping walk_pmd=
-_range()
-      CVE-2026-99077: ipv4: udp: Create exceptions before socket matching
-      CVE-2026-99100: wifi: p54: validate firmware record lengths
-      CVE-2026-99103: workqueue: Fix unbound pool lifetime for pending pwqs
-      CVE-2026-99105: sched_ext: Fix stall when a task enqueued with SCX_EN=
-Q_LAST lands back on its CPU's local DSQ
-      CVE-2026-99106: drm/amdgpu: free the userptr ranges when a CS fails a=
-fter parser_bos
-      CVE-2026-99110: smb: client: fix heap overflow in cifs_do_set_acl()
-      CVE-2026-99112: net/sched: cls_flower: validate mask pointer after nl=
-a_next()
-      CVE-2026-99113: ksmbd: zero the FS_OBJECT_ID_INFORMATION buffer befor=
-e filling it in
-      CVE-2026-99114: ksmbd: initialize FileSystemControlFlags in FS_CONTRO=
-L_INFORMATION
-      CVE-2026-99115: ksmbd: fill in FileSysIdentifier in FS_POSIX_INFORMAT=
-ION
-      CVE-2026-99117: net: bridge: mcast: don't truncate the port group wal=
-k on teardown
-      CVE-2026-99118: drm/i915/dmc: Harden DMC firmware payload parsing
-      CVE-2026-99121: ipv4: avoid divide by zero in fib_rebalance
-      CVE-2026-99123: vsock/virtio: validate packet source for connected so=
-ckets
-      CVE-2026-99124: s390/pci: Fix leak of uninitialized kernel data in SC=
-LP report
-      CVE-2026-99126: s390/ctcm: Prevent XID null dereference
-      CVE-2026-99127: page_pool: keep frag_offset aligned for odd-sized req=
-uests
-      CVE-2026-99128: sctp: validate chunk length in the inqueue parser
-      CVE-2026-99130: io_uring/cancel: don't spin on local work the task ca=
-n't run
-      CVE-2026-99131: xfs: fix capability check in xfs
-      CVE-2026-99132: xfs: don't hold buffer locks across sync transaction =
-commit in xfs_sync_sb_buf
-      CVE-2026-99133: net/iucv: fix the recvmsg window update
-      CVE-2026-99134: mac802154: fix data race and NULL deref on local->ass=
-oc_dev
-      CVE-2026-99135: dm-integrity: fix infinite loop on discard with large=
- tag size
-      CVE-2026-99136: dm-crypt: fix a tiny race condition in crypt_dec_pend=
-ing
-      CVE-2026-99138: tcp: fix use-after-free in do_tcp_getsockopt(TCP_CC_I=
-NFO)
-      CVE-2026-99139: tcp: fix use-after-free in do_tcp_getsockopt(TCP_CONG=
-ESTION)
-      CVE-2026-99140: tracing: Fix hist trigger timestamps for buffered eve=
-nts
-      CVE-2026-99142: tracing: Check operator stack capacity before pushing
-      CVE-2026-99143: tracing: Keep the predicate limit separate from progr=
-am capacity
-      CVE-2026-99147: drm/exec: don't immediately add prelocked obj to arra=
-y of locked objs
-      CVE-2026-99150: drm/amdgpu: don't drop the runtime PM reference twice=
- in amdgpu_gpr
-      CVE-2026-99152: scsi: libiscsi: Validate the task named by a manageme=
-nt response
-      CVE-2026-99153: scsi: libiscsi: Validate the ITT reflected in a Rejec=
-t PDU
-      CVE-2026-99154: scsi: libiscsi: Reject a negative task index from par=
-se_pdu_itt
-      CVE-2026-99155: scsi: xen/scsifront: Check for a NULL shadow entry on=
- a backend response
-      CVE-2026-99156: scsi: st: Fix use-after-free race between st_remove()=
- and st_open()
-      CVE-2026-99157: scsi: bsg: Pass reply_len to bsg_setup_queue() to fit=
- UFS ARPMB replies
-      CVE-2026-99158: ring-buffer: Fix false warning in ring_buffer_map_get=
-_reader()
-      CVE-2026-99159: ring-buffer: Fix the sub-buffer array base in rb_meta=
-_subbuf_idx()
-      CVE-2026-99160: ring-buffer: Do not show buffer_meta for CPUs without=
- a buffer
-      CVE-2026-99161: i2c: viai2c-wmt: Fix clock leak in wmt_i2c_probe()
-      CVE-2026-99163: tracing/histograms: Reject non-stacktrace fields for =
-synthetic stacktrace fields
-      CVE-2026-99165: sctp: revalidate output stream after association conn=
-ect wait
-      CVE-2026-99166: net: rds: fix uninitialized trans dereference in CM e=
-vent handler
-      CVE-2026-99167: net/sched: fix use-after-free in __tcf_action_put()
-      CVE-2026-99169: futex: Fix mm reuse handling for FUT_OFF_MMSHARED
-      CVE-2026-99171: ntfs3: free the sbi after a grace period
-      CVE-2026-99173: eventfs: Free the eventfs_inode after an rcu grace pe=
-riod too
-      CVE-2026-99174: ext4: free the sbi after a grace period
-      CVE-2026-99175: fsnotify: prevent mark additions during connector tea=
-rdown
-      CVE-2026-99176: KVM: nVMX: Reset MMU back to the root MMU if loading =
-L2 state fails for !VM-Entry
-      CVE-2026-99178: x86/kvm: Don't consume async #PF flags on a kernel #P=
-F in NMI context
-      CVE-2026-99179: watch_queue: Fix note pool publication race in watch_=
-queue_set_size()
-      CVE-2026-99180: unicode: free the map after a grace period
-      CVE-2026-99181: autofs: ignore notification errors from a replaced pi=
-pe
-      CVE-2026-99182: ASoC: SOF: ipc4-topology: Fix shift-out-of-bounds for=
- aggregated ALH capture
-      CVE-2026-99187: perf: Fix perf_pmu_migrate_context() leaving events b=
-ehind
-      CVE-2026-99190: gpiolib: fix memory leak in gpiod_set_array_value_com=
-plex() on error paths
-      CVE-2026-99191: calipso: keep BIG TCP payload_len in calipso_skbuff_s=
-etattr()
-      CVE-2026-99192: net: bcmgenet: unshare the skb before writing the con=
-trol block
-      CVE-2026-99201: netlink: avoid hashing the network namespace pointer
-      CVE-2026-99202: scsi: libsas: Fix SMP IO deadlock during HA resume
-      CVE-2026-99203: pipe: preserve existing fasync readers on writer setu=
-p failure
-      CVE-2026-99204: ocfs2/dlm: Protect the recovery list during debugfs r=
-eads
-      CVE-2026-99206: scsi: target: iscsi: Fix race in discovery auth updat=
-es
-      CVE-2026-99211: netlink: reset skb headers before unicast and multica=
-st filtering
-      CVE-2026-99212: net/rds: don't let the rdma_cm destroy an id RDS stil=
-l owns on route failure
-      CVE-2026-99213: vsock: treat TCP_CLOSING as once-established
-      CVE-2026-99214: drm/vc4: hdmi: Move packet RAM enable to PM runtime
-      CVE-2026-99216: Drivers: hv: Don't reset VMBus connection state on er=
-ror/exit paths
-      CVE-2026-99217: [REJECTED]: fork: release the files of a failed fork =
-after sched_cancel_fork()
-      CVE-2026-99218: coredump: hold RCU while releasing parked threads
-      CVE-2026-99219: ftrace: Initialize modname and offset in print_rec()
-      CVE-2026-99220: asymmetric_keys: reject trust keys without IDs
-      CVE-2026-99221: keys/trusted_keys: return immediately after TPM unsea=
-l failure
-      CVE-2026-99222: keys: Protect the read method check against type remo=
-val
-      CVE-2026-99223: keys: make keyring indexes independent of kernel addr=
-esses
-      CVE-2026-99224: keys: Protect the type name while describing a key
-      CVE-2026-99225: keys: Check the authorization payload in process keyr=
-ing searches
-      CVE-2026-99226: keys: Avoid the owner account dereference in named ke=
-yring lookup
-      CVE-2026-99227: io_uring/waitid: prevent cancel reference wrap
-      CVE-2026-99228: io_uring/io-wq: don't lose the signal that ends work
-      CVE-2026-99229: io_uring/wait: don't spin on a stuck overflow list
-      CVE-2026-99230: io_uring/cmd: don't leave list poison in ->hash_node
-      CVE-2026-99231: io_uring/waitid: own the request before clearing ->he=
-ad
-      CVE-2026-99233: tracing/histograms: Verify event_call identity when u=
-pdating synth_event refcount
-      CVE-2026-99234: tracing: Unregister field variable histograms when th=
-e command fails
-      CVE-2026-99235: tracing: Save the event file instead of the compatibl=
-e histogram
-      CVE-2026-99236: tracing: Reject incomplete event filter expressions
-      CVE-2026-99239: Bluetooth: L2CAP: refuse __l2cap_chan_add if chan alr=
-eady has conn
-      CVE-2026-99243: [REJECTED]: io-wq: order the exit bit against worker =
-creation task work
-      CVE-2026-99244: pid_namespace: prevent TIF_NOTIFY_SIGNAL from interru=
-pting the reaper
-      CVE-2026-99245: KEYS: Fix key_reject_and_link() race with keyring res=
-triction
-      CVE-2026-99246: tipc: protect node reset trace dump with node lock
-      CVE-2026-99247: tracing: Do not initialize tracefs work if tracing is=
- disabled
-      CVE-2026-99249: pid_namespace: make zap_pid_ns_processes() freezable
-      CVE-2026-99250: printk: Postpone kthread startup
-      CVE-2026-99251: Drivers: hv: Avoid infinite retry loop in init_vp_ind=
-ex()
-      CVE-2026-99254: io_uring: don't flood a cancelling task with task_wor=
-k
-      CVE-2026-99255: io_uring/io-wq: don't hide a link from cancellations
-      CVE-2026-99256: dm cache: fix issue with background work locking
-      CVE-2026-99258: x86/hyperv: Avoid using per-cpu output page in hv_api=
-cid_to_vp_index()
-      CVE-2026-99262: [REJECTED]: io_uring/timeout: don't lose a cancel as =
-io-wq arms a timeout
-      CVE-2026-99263: [REJECTED]: io_uring/poll: avoid retry wakeup loss wh=
-en dropping ownership
-      CVE-2026-99264: [REJECTED]: io_uring/net: don't retry recv on uncommi=
-tted buffers
-      CVE-2026-99267: [REJECTED]: io_uring/napi: make stale entries time ou=
-t after 60s
-      CVE-2026-99268: [REJECTED]: io_uring: wake ring pollers for local tas=
-k_work
-      CVE-2026-99285: netfilter: nft_byteorder: remove multi-register suppo=
-rt
-      CVE-2026-100080: xen-netback: Fix UAF when reading statistics data
-      CVE-2026-100081: xen-netback: defer xenvif_mcast_addr_list_free()
-      CVE-2026-100082: xen-blkback: Avoid UAF when reading I/O statistics
-      CVE-2026-0004: TSA variant: TSA-Fill
-      CVE-2026-81010: [REJECTED]: io_uring/waitid: honor task_work cancella=
-tion
-      CVE-2026-89556: module: validate string table section types
-      CVE-2026-89866: media: chips-media: wave5: Resume device before setti=
-ng EOS flag
-      CVE-2026-92499: ext4: validate readdir offset before accessing dirent
-      CVE-2026-93241: memcg: bypass the reclaim and oom killer for dying ta=
-sks once oom_reaper is done
-      CVE-2026-98176: drm/amdkfd: Avoid integer underflow with ffs in EOP r=
-ing size calc
-      CVE-2026-98177: drm/amdkfd: Avoid integer underflow in EOP ring size =
-calculation.
-      CVE-2026-98180: drm/msm: RCU-free the scheduler-containing ring and V=
-M objects
-      CVE-2026-98228: mips: select CONFIG_WEAK_REORDERING_BEYOND_LLSC from =
-CONFIG_EYEQ
-      CVE-2026-98389: drm/amdgpu: skip gfx switch_power_profile during GPU =
-reset
-      CVE-2026-98408: watchdog: rzv2h: Avoid division by zero
-      CVE-2026-98439: smb/server: cancel async requests when closing connec=
-tion
-      CVE-2026-98449: smb: client: delete compound mids on send failure bef=
-ore unlock
-      CVE-2026-98466: KVM: arm64: Transfer the hyp stack pages out of the h=
-ost stage-2
-      CVE-2026-98674: iio: adc: adi-axi-adc: Initialize state mutex
-      CVE-2026-98682: smb: client: drain and invalidate before server-side =
-copy/clone
-      CVE-2026-98683: smb: client: flush dirty data before zeroing a range
-      CVE-2026-98684: smb: client: flush and commit data before querying al=
-located ranges
-      CVE-2026-98685: smb: client: discard post-EOF pagecache when extendin=
-g a file via clone range
-      CVE-2026-98714: KVM: SVM: Update control fields on #VMEXIT if and onl=
-y if VMRUN succeeded
-      CVE-2026-98715: KVM: SVM: Preserve TLB control (i.e. pending TLB flus=
-h) on failed VMRUN
-      CVE-2026-98786: drm/amd/display: guard dc_sink dereferences in MST mo=
-de validation
-      CVE-2026-98853: net: gso: limit recursive IP-in-IP segmentation
-      CVE-2026-98863: KVM: x86: Re-pend GET_NESTED_STATE_PAGES if getting s=
-aid pages fails
-      CVE-2026-98920: netfs: Fix missing alloc tagging of direct mempool al=
-locations
-      CVE-2026-98978: namespace: never expire a locked mount
-      CVE-2026-98989: namespace: check a recursive bind mount for mount nam=
-espace loops
-      CVE-2026-98996: fs: don't silently unmount busy mounts
-      CVE-2026-99021: regulator: of: fill in supply names in of_regulator_b=
-ulk_get_all()
-      CVE-2026-99026: net: team: free skb when broadcast has no txable port
-      CVE-2026-99076: ipv6: udp: Create exceptions before socket matching
-      CVE-2026-99086: dm-integrity: validate the superblock on resume
-      CVE-2026-99087: dm-integrity: fix NULL pointer dereference when the '=
-R' flag is used
-      CVE-2026-99109: smb: client: reject SetEA requests that do not fit th=
-e request buffer
-      CVE-2026-99122: vsock/vmci: validate packet source for connected sock=
-ets
-      CVE-2026-99146: drm/i915/dmc: Add sanity check for DMC load address
-      CVE-2026-99172: ipc: drop the mqueue mount with kern_unmount() on set=
-up failure
-      CVE-2026-99240: mm/damon/core: error damos_commit_quota_goal() for ze=
-ro target_value
-      CVE-2026-99270: tcp: Fix potential UAF in reqsk_timer_handler().
-      CVE-2026-99271: ALSA: line6: Clear prev_fbuf on capture buffer releas=
-e
-      CVE-2026-99273: ksmbd: reserve space for the UTF-16 terminator in str=
-eam info
-      CVE-2026-99274: smb: client: fix fiemap wild read on empty truncated =
-response
-      CVE-2026-99281: tun: Require CAP_NET_ADMIN to attach to an ownerless =
-device
-      CVE-2026-99282: net/sched: sch_teql: fix use-after-free on lower qdis=
-c drop
-      CVE-2026-99283: netfilter: conntrack: tcp: use UNACK timeout for non-=
-closing RST packets
-      CVE-2026-99284: net: skbuff: propagate shared-frag marker in skb_zero=
-copy()
-      CVE-2026-99286: xen-netback: Fix XenBus connection failure cleanup
-      CVE-2026-99287: xen-netback: Zero out sring pointers on unmap
-      CVE-2026-99288: inet: reject unhashed sockets during established look=
-ups
-    added commits:
-      CIP: Bump version suffix to -cip35 after merge from stable
-      arm64: dts: renesas: rzt2h-n2h-evk: Enable RTC support
-      arm64: dts: renesas: r9a09g087: Add RTC node
-      arm64: dts: renesas: r9a09g077: Add RTC node
-      rtc: rzn1: Add support for Renesas RZ/T2H and RZ/N2H SoCs
-      rtc: rzn1: Drop trailing comma from OF match table sentinel
-      rtc: rzn1: Add OF match data to gate SUBU register access
-      rtc: rzn1: use FIELD_PREP/FIELD_GET and GENMASK for register access
-      rtc: rzn1: Consistently use dev_err_probe()
-      rtc: rzn1: Use temporary variable for struct device
-      rtc: rzn1: Dynamically calculate synchronization delay based on clock=
- rate
-      rtc: rzn1: Replace remove callback with devm_add_action_or_reset()
-      rtc: rzn1: Use pm_runtime_put_sync()
-      rtc: Kconfig: Broaden RTC_DRV_RZN1 dependency to ARCH_RENESAS
-      rtc: rzn1: Fix alarm range check truncation on 32-bit systems
-      rtc: rzn1: Handle EPROBE_DEFER for optional pps interrupt
-      rtc: rzn1: support input frequencies other than 32768Hz
-      rtc: rzn1: Disable controller before initialization
-      rtc: rzn1: clear interrupts on remove
-      rtc: rzn1: implement one-second accuracy for alarms
-      rtc: rzn1: reduce register access
-      rtc: rzn1: drop superfluous wday calculation
-      arm64: dts: renesas: Add LCDC overlays for RZ/T2H and RZ/N2H EVKs
-      arm64: dts: renesas: rzt2h-n2h-evk: Use consistent switch notation
-      arm64: dts: renesas: r9a09g087: Add DU node
-      arm64: dts: renesas: r9a09g087: Add VSPD and FCPVD nodes
-      arm64: dts: renesas: r9a09g077: Add DU node
-      arm64: dts: renesas: r9a09g077: Add VSPD and FCPVD nodes
-      clk: renesas: r9a09g077: Add LCDC and PLL3 clock support for RZ/T2H d=
-isplay pipeline
-      clk: renesas: r9a09g077: Add RTC clocks
-      dt-bindings: clock: renesas,r9a09g077/87: Add PCLKRTC clock ID
-      clk: renesas: rzv2h-cpg: Extract PLL calculation helpers into shared =
-library
-      clk: renesas: rzv2h: Add PLLDSI clk mux support
-      clk: renesas: rzv2h-cpg: Use per-SoC PLL reference frequency for calc=
-ulations
-      clk: renesas: cpg-mssr: Implement dedicated MSTP delay logic for RZ/T=
-2H LCDC and RTC
-      clk: divider: Fix clk_divider_bestdiv() returning min rate for large =
-rate requests
-      clk: divider: Add KUnit tests for clk_divider_bestdiv() ULONG_MAX han=
-dling
-      drm: renesas: rz-du: Add support for RZ/T2H SoC
-      drm: renesas: rz-du: Move mode_valid logic to per-SoC clock limits
-      drm: renesas: rz-du: Make DU reset control optional for RZ/T2H suppor=
-t
-      media: renesas: vsp1: Make reset control optional to support platform=
-s without a reset line
-      media: dt-bindings: media: renesas,vsp1: Document RZ/T2H and RZ/N2H S=
-oCs
-      media: dt-bindings: media: renesas,fcp: Document RZ/T2H and RZ/N2H So=
-Cs
-      dt-bindings: clock: renesas,r9a09g077/87: Add LCDC_CLKD clock ID
-      dt-bindings: display: renesas,rzg2l-du: Add RZ/T2H and RZ/N2H support
-      dt-bindings: display: renesas,rzg2l-du: Refuse port@1 for RZ/G2UL
-      ARM: 9463/1: Allow to enable RT
-      ARM: 9426/1: vfp: Move sending signals outside of vfp_state_hold()ed =
-section.
-      ARM: 9425/1: vfp: Use vfp_state_hold() in vfp_support_entry().
-      ARM: 9424/1: vfp: Use vfp_state_hold() in vfp_sync_hwstate().
-      ARM: 9423/1: vfp: Provide vfp_state_hold() for VFP locking.
-      ARM: 9459/1: Disable jump-label on PREEMPT_RT
-      arm64: dts: renesas: rzt2h-n2h-evk: Mark XSPI1 boot partitions read-o=
-nly
-      memory: renesas-rpc-if: Use runtime PM autosuspend after transfers
-      memory: renesas-rpc-if: Consolidate command setup register programmin=
-g
-      memory: renesas-rpc-if: Consolidate XSPI_CDTBUF0 updates in read path
-      memory: renesas-rpc-if: Consolidate XSPI_CDTBUF0 updates in write pat=
-h
-      memory: renesas-rpc-if: Move static bridge configurations out of dirm=
-ap hot paths
-      memory: renesas-rpc-if: Mark XSPI_CDD1BUF0 as volatile
-      spi: spi-rpc-if: Implement 200ms runtime PM autosuspend delay
-      arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Enable PCIe
-      arm64: dts: renesas: r9a09g057: Add PCIe nodes
-      clk: renesas: r9a09g057: Add PCIe clocks and reset
-      PCI: rzg3s-host: Add support for RZ/V2H(P) SoC
-      PCI: rzg3s-host: Prepare System Controller handling for multiple cont=
-rollers
-      PCI: rzg3s-host: Use shared reset controls for power domain resets
-      dt-bindings: PCI: renesas,r9a08g045-pcie: Add RZ/V2H(P) support
-
-Best regards,
-  Nobuhiro
-
+-- 
+Siemens AG, Foundational Technologies
+Linux Expert Center
