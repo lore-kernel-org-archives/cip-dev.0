@@ -1,21 +1,21 @@
-Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.15907.1794916169975255010
+Received: from tor.source.kernel.org (tor.source.kernel.org [172.105.4.254])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.15911.1794916173301724216
  for <cip-dev@lists.cip-project.org>;
- Tue, 17 Nov 2026 03:49:30 -0800
+ Tue, 17 Nov 2026 03:49:33 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.234.252.31, mailfrom: srs0=gktq=jg=tuxon.dev=claudiu.beznea@kernel.org)
+ dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.105.4.254, mailfrom: srs0=gktq=jg=tuxon.dev=claudiu.beznea@kernel.org)
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by sea.source.kernel.org (Postfix) with ESMTP id C20F640227;
-	Tue, 17 Nov 2026 11:49:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC36F1F000C4;
-	Tue, 17 Nov 2026 11:49:28 +0000 (UTC)
+	by tor.source.kernel.org (Postfix) with ESMTP id B77FE60F0F;
+	Tue, 17 Nov 2026 11:49:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78C481F000C4;
+	Tue, 17 Nov 2026 11:49:31 +0000 (UTC)
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 6.1.y-cip 04/34] i3c: renesas: Restore STDBR and EXTBR registers on resume
-Date: Tue, 17 Nov 2026 13:48:50 +0200
-Message-ID: <20261117114921.1485204-5-claudiu.beznea@tuxon.dev>
+Subject: [PATCH 6.1.y-cip 06/34] i3c: renesas: Reconfigure the DATBAS register on re-attach
+Date: Tue, 17 Nov 2026 13:48:52 +0200
+Message-ID: <20261117114921.1485204-7-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261117114921.1485204-1-claudiu.beznea@tuxon.dev>
 References: <20261117114921.1485204-1-claudiu.beznea@tuxon.dev>
@@ -23,72 +23,67 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 17 Nov 2026 11:49:39 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24915
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24917
 Content-Type: text/plain; charset="utf-8"
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 21cded44e69c630799e65baadb72ad123d1347c8 upstream.
+commit 1364afd3e2e76e007a2c07ec95704d56980226f0 upstream.
 
-The Renesas RZ/G3S supports a power saving state where power to the most
-SoC componentes (including I3C) is lost.
+During re-attach, the device may change its position in the i3c->addrs[]
+array. As a result, it may use a different Device Address Table Basic
+Register (DATBAS), which needs to be reconfigured.
 
-The STDBR and EXTBR are configured in initialization phase though the
-struct i3c_master_controller_ops::bus_init. Set them on resume function
-as well to keep the same state of the controller after a suspend with
-power loss and a similar initialization sequence as in bus_init.
+Reconfigure the DATBAS register on re-attach. Along with it update
+software caches.
 
-Fixes: e7218986319b ("i3c: renesas: Add suspend/resume support")
+Fixes: d028219a9f14 ("i3c: master: Add basic driver for the Renesas I3C c=
+ontroller")
 Cc: stable@vger.kernel.org
 Reviewed-by: Frank Li <Frank.Li@nxp.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Tested-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Link: https://patch.msgid.link/20260713130545.568657-3-claudiu.beznea+ren=
+Link: https://patch.msgid.link/20260713130545.568657-5-claudiu.beznea+ren=
 esas@tuxon.dev
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/i3c/master/renesas-i3c.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/i3c/master/renesas-i3c.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
 diff --git a/drivers/i3c/master/renesas-i3c.c b/drivers/i3c/master/renesa=
 s-i3c.c
-index ffe3f0d9d5ce..6c85cb059e8a 100644
+index 910c8e543865..c1f08110575c 100644
 --- a/drivers/i3c/master/renesas-i3c.c
 +++ b/drivers/i3c/master/renesas-i3c.c
-@@ -261,6 +261,7 @@ struct renesas_i3c {
- 	u32 dyn_addr;
- 	u32 i2c_STDBR;
- 	u32 i3c_STDBR;
-+	u32 extbr;
- 	unsigned long rate;
- 	u8 addrs[RENESAS_I3C_MAX_DEVS];
- 	struct renesas_i3c_xferqueue xferqueue;
-@@ -623,10 +624,9 @@ static int renesas_i3c_bus_init(struct i3c_master_co=
-ntroller *m)
- 	renesas_writel(i3c->regs, STDBR, i3c->i3c_STDBR);
+@@ -908,10 +908,26 @@ static int renesas_i3c_reattach_i3c_dev(struct i3c_=
+dev_desc *dev,
+ 	struct i3c_master_controller *m =3D i3c_dev_get_master(dev);
+ 	struct renesas_i3c *i3c =3D to_renesas_i3c(m);
+ 	struct renesas_i3c_i2c_dev_data *data =3D i3c_dev_get_master_data(dev);
++	int pos;
++
++	pos =3D renesas_i3c_get_free_pos(i3c);
++
++	if (data->index > pos && pos >=3D 0) {
++		renesas_writel(i3c->regs, DATBAS(data->index), 0);
++		i3c->addrs[data->index] =3D 0;
++		i3c->free_pos |=3D BIT(data->index);
++
++		data->index =3D pos;
++		i3c->free_pos &=3D ~BIT(data->index);
++	}
 =20
- 	/* Extended Bit Rate setting */
--	renesas_writel(i3c->regs, EXTBR, EXTBR_EBRLO(od_low_ticks) |
--					   EXTBR_EBRHO(od_high_ticks) |
--					   EXTBR_EBRLP(pp_low_ticks) |
--					   EXTBR_EBRHP(pp_high_ticks));
-+	i3c->extbr =3D EXTBR_EBRLO(od_low_ticks) | EXTBR_EBRHO(od_high_ticks) |
-+		     EXTBR_EBRLP(pp_low_ticks) | EXTBR_EBRHP(pp_high_ticks);
-+	renesas_writel(i3c->regs, EXTBR, i3c->extbr);
+ 	i3c->addrs[data->index] =3D dev->info.dyn_addr ? dev->info.dyn_addr :
+ 							dev->info.static_addr;
 =20
- 	renesas_writel(i3c->regs, REFCKCTL, REFCKCTL_IREFCKS(cks));
- 	i3c->refclk_div =3D cks;
-@@ -1494,6 +1494,8 @@ static int renesas_i3c_resume_noirq(struct device *=
-dev)
- 		goto err_tresetn;
++	renesas_writel(i3c->regs, DATBAS(data->index),
++		       DATBAS_DVSTAD(dev->info.static_addr) |
++		       datbas_dvdyad_with_parity(i3c->addrs[data->index]));
++
+ 	return 0;
+ }
 =20
- 	/* Re-store I3C registers value. */
-+	renesas_writel(i3c->regs, STDBR, i3c->i3c_STDBR);
-+	renesas_writel(i3c->regs, EXTBR, i3c->extbr);
- 	renesas_writel(i3c->regs, REFCKCTL,
- 		       REFCKCTL_IREFCKS(i3c->refclk_div));
- 	renesas_writel(i3c->regs, MSDVAD, MSDVAD_MDYADV |
 --=20
 2.43.0
 
