@@ -1,22 +1,22 @@
 Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.15981.1794916058622950224
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.15845.1794916060150432327
  for <cip-dev@lists.cip-project.org>;
- Tue, 17 Nov 2026 03:47:38 -0800
+ Tue, 17 Nov 2026 03:47:40 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.234.252.31, mailfrom: srs0=gktq=jg=tuxon.dev=claudiu.beznea@kernel.org)
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by sea.source.kernel.org (Postfix) with ESMTP id 69F9140698;
+	by sea.source.kernel.org (Postfix) with ESMTP id EB02543B26;
+	Tue, 17 Nov 2026 11:47:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0CD01F000C4;
 	Tue, 17 Nov 2026 11:47:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FC251F000C4;
-	Tue, 17 Nov 2026 11:47:37 +0000 (UTC)
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 64/69] hwmon: (tmp108) Add NXP p3t1085 support
-Date: Tue, 17 Nov 2026 13:45:48 +0200
-Message-ID: <20261117114553.1484215-65-claudiu.beznea@tuxon.dev>
+Subject: [PATCH 5.10.y-cip 65/69] hwmon: (tmp108) Add helper function tmp108_common_probe() to prepare I3C support
+Date: Tue, 17 Nov 2026 13:45:49 +0200
+Message-ID: <20261117114553.1484215-66-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261117114553.1484215-1-claudiu.beznea@tuxon.dev>
 References: <20261117114553.1484215-1-claudiu.beznea@tuxon.dev>
@@ -24,76 +24,101 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 17 Nov 2026 11:47:47 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24905
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24906
 Content-Type: text/plain; charset="utf-8"
 
 From: Frank Li <Frank.Li@nxp.com>
 
-commit 11d35624d7696a64724160199fc94587010d7cb2 upstream.
+commit 700f3250198d51093884254220a96777a922dd47 upstream.
 
-Add compatible string 'nxp,p3t1085' since p3t1085's register layout is th=
-e
-same as tmp108.
+Add help function tmp108_common_probe() to pave road to support i3c for
+P3T1085(NXP) chip.
 
-The p3t1085 supports I3C interface.
-
-Update document tmp108.rst and Kconfig's help context.
+Use dev_err_probe() to simplify the code.
 
 Signed-off-by: Frank Li <Frank.Li@nxp.com>
-Message-ID: <20241111-p3t1085-v3-2-bff511550aad@nxp.com>
+Message-ID: <20241112-p3t1085-v4-1-a1334314b1e6@nxp.com>
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- Documentation/hwmon/tmp108.rst | 8 ++++++++
- drivers/hwmon/Kconfig          | 2 +-
- drivers/hwmon/tmp108.c         | 1 +
- 3 files changed, 10 insertions(+), 1 deletion(-)
+ drivers/hwmon/tmp108.c | 39 +++++++++++++++++++++------------------
+ 1 file changed, 21 insertions(+), 18 deletions(-)
 
-diff --git a/Documentation/hwmon/tmp108.rst b/Documentation/hwmon/tmp108.=
-rst
-index 6df7cf1b42f4..bc4941d98268 100644
---- a/Documentation/hwmon/tmp108.rst
-+++ b/Documentation/hwmon/tmp108.rst
-@@ -3,6 +3,14 @@ Kernel driver tmp108
-=20
- Supported chips:
-=20
-+  * NXP P3T1085
-+
-+    Prefix: 'p3t1085'
-+
-+    Addresses scanned: none
-+
-+    Datasheet: https://www.nxp.com/docs/en/data-sheet/P3T1085UK.pdf
-+
-   * Texas Instruments TMP108
-=20
-     Prefix: 'tmp108'
-diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-index c82bb7664cad..6f8022008f85 100644
---- a/drivers/hwmon/Kconfig
-+++ b/drivers/hwmon/Kconfig
-@@ -1842,7 +1842,7 @@ config SENSORS_TMP108
- 	select REGMAP_I2C
- 	help
- 	  If you say yes here you get support for Texas Instruments TMP108
--	  sensor chips.
-+	  sensor chips and NXP P3T1085.
-=20
- 	  This driver can also be built as a module. If so, the module
- 	  will be called tmp108.
 diff --git a/drivers/hwmon/tmp108.c b/drivers/hwmon/tmp108.c
-index 1d10ab8e1695..9490dfa09989 100644
+index 9490dfa09989..9e87851ebf64 100644
 --- a/drivers/hwmon/tmp108.c
 +++ b/drivers/hwmon/tmp108.c
-@@ -420,6 +420,7 @@ MODULE_DEVICE_TABLE(i2c, tmp108_i2c_ids);
-=20
- #ifdef CONFIG_OF
- static const struct of_device_id tmp108_of_ids[] =3D {
-+	{ .compatible =3D "nxp,p3t1085", },
- 	{ .compatible =3D "ti,tmp108", },
- 	{}
+@@ -323,33 +323,19 @@ static const struct regmap_config tmp108_regmap_con=
+fig =3D {
+ 	.use_single_write =3D true,
  };
+=20
+-static int tmp108_probe(struct i2c_client *client)
++static int tmp108_common_probe(struct device *dev, struct regmap *regmap=
+, char *name)
+ {
+-	struct device *dev =3D &client->dev;
+ 	struct device *hwmon_dev;
+ 	struct tmp108 *tmp108;
+-	int err;
+ 	u32 config;
+-
+-	if (!i2c_check_functionality(client->adapter,
+-				     I2C_FUNC_SMBUS_WORD_DATA)) {
+-		dev_err(dev,
+-			"adapter doesn't support SMBus word transactions\n");
+-		return -ENODEV;
+-	}
++	int err;
+=20
+ 	tmp108 =3D devm_kzalloc(dev, sizeof(*tmp108), GFP_KERNEL);
+ 	if (!tmp108)
+ 		return -ENOMEM;
+=20
+ 	dev_set_drvdata(dev, tmp108);
+-
+-	tmp108->regmap =3D devm_regmap_init_i2c(client, &tmp108_regmap_config);
+-	if (IS_ERR(tmp108->regmap)) {
+-		err =3D PTR_ERR(tmp108->regmap);
+-		dev_err(dev, "regmap init failed: %d", err);
+-		return err;
+-	}
++	tmp108->regmap =3D regmap;
+=20
+ 	err =3D regmap_read(tmp108->regmap, TMP108_REG_CONF, &config);
+ 	if (err < 0) {
+@@ -383,13 +369,30 @@ static int tmp108_probe(struct i2c_client *client)
+ 		return err;
+ 	}
+=20
+-	hwmon_dev =3D devm_hwmon_device_register_with_info(dev, client->name,
++	hwmon_dev =3D devm_hwmon_device_register_with_info(dev, name,
+ 							 tmp108,
+ 							 &tmp108_chip_info,
+ 							 NULL);
+ 	return PTR_ERR_OR_ZERO(hwmon_dev);
+ }
+=20
++static int tmp108_probe(struct i2c_client *client)
++{
++	struct device *dev =3D &client->dev;
++	struct regmap *regmap;
++
++	if (!i2c_check_functionality(client->adapter,
++				     I2C_FUNC_SMBUS_WORD_DATA))
++		return dev_err_probe(dev, -ENODEV,
++				     "adapter doesn't support SMBus word transactions\n");
++
++	regmap =3D devm_regmap_init_i2c(client, &tmp108_regmap_config);
++	if (IS_ERR(regmap))
++		return dev_err_probe(dev, PTR_ERR(regmap), "regmap init failed");
++
++	return tmp108_common_probe(dev, regmap, client->name);
++}
++
+ static int tmp108_suspend(struct device *dev)
+ {
+ 	struct tmp108 *tmp108 =3D dev_get_drvdata(dev);
 --=20
 2.43.0
 
