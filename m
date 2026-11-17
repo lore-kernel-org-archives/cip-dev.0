@@ -1,185 +1,90 @@
-Received: from tor.source.kernel.org (tor.source.kernel.org [172.105.4.254])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.15932.1794915991548591904
+Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.15794.1794915987686155057
  for <cip-dev@lists.cip-project.org>;
- Tue, 17 Nov 2026 03:46:31 -0800
+ Tue, 17 Nov 2026 03:46:27 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.105.4.254, mailfrom: srs0=gktq=jg=tuxon.dev=claudiu.beznea@kernel.org)
+ dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.234.252.31, mailfrom: srs0=gktq=jg=tuxon.dev=claudiu.beznea@kernel.org)
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by tor.source.kernel.org (Postfix) with ESMTP id F3D0C63404;
-	Tue, 17 Nov 2026 11:46:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B7611F000C5;
-	Tue, 17 Nov 2026 11:46:29 +0000 (UTC)
+	by sea.source.kernel.org (Postfix) with ESMTP id 7D3CE44D18;
+	Tue, 17 Nov 2026 11:46:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 468821F000C4;
+	Tue, 17 Nov 2026 11:46:26 +0000 (UTC)
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 21/69] i3c: renesas: Perform Dynamic Address Assignment on resume
-Date: Tue, 17 Nov 2026 13:45:05 +0200
-Message-ID: <20261117114553.1484215-22-claudiu.beznea@tuxon.dev>
+Subject: [PATCH 5.10.y-cip 19/69] i3c: renesas: Reconfigure the DATBAS register on re-attach
+Date: Tue, 17 Nov 2026 13:45:03 +0200
+Message-ID: <20261117114553.1484215-20-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261117114553.1484215-1-claudiu.beznea@tuxon.dev>
 References: <20261117114553.1484215-1-claudiu.beznea@tuxon.dev>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 17 Nov 2026 11:46:31 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24862
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 17 Nov 2026 11:46:32 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24860
 Content-Type: text/plain; charset="utf-8"
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit fbf26154c47953d08c60fb402ab19c5c56c3779f upstream.
+commit 1364afd3e2e76e007a2c07ec95704d56980226f0 upstream.
 
-The Renesas RZ/G3S SoC supports a power saving mode where power to most
-SoC components, including I3C, is turned off.
+During re-attach, the device may change its position in the i3c->addrs[]
+array. As a result, it may use a different Device Address Table Basic
+Register (DATBAS), which needs to be reconfigured.
 
-On systems where the I3C devices also loses power during suspend (e.g. NX=
-P
-P3T1085UK-ARD connected to the PMOD1_6A connector of the RZ SMARC Carrier
-2 + Renesas RZ/G3S SMARC SOM), the devices becomes unreachable after
-resume.
+Reconfigure the DATBAS register on re-attach. Along with it update
+software caches.
 
-Running DAA in the controller resume path restores communication. However=
-,
-DAA relies on interrupts for TX/RX, which are not available in the noirq
-suspend/resume phase (unless they are wakeup interrupts). For this, the
-suspend/resume callbacks were moved out of the noirq phase. Currently,
-there is no identified use case on either the Renesas RZ/G3S or Renesas
-RZ/G3E SoCs that requires the controller suspend/resume hooks to be part =
-of
-the noirq suspend/resume phase.
-
-Since renesas_i3c_reset() is not called anymore in atomic context
-update it to use read_poll_timeout().
-
-Along with this, struct renesas_i3c::DATBASn and its usage were removed,
-as they are no longer needed.
-
-Fixes: e7218986319b ("i3c: renesas: Add suspend/resume support")
+Fixes: d028219a9f14 ("i3c: master: Add basic driver for the Renesas I3C c=
+ontroller")
 Cc: stable@vger.kernel.org
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Reviewed-by: Frank Li <Frank.Li@nxp.com>
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Tested-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Link: https://patch.msgid.link/20260713130545.568657-7-claudiu.beznea+ren=
+Link: https://patch.msgid.link/20260713130545.568657-5-claudiu.beznea+ren=
 esas@tuxon.dev
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/i3c/master/renesas-i3c.c | 38 +++++++++++++-------------------
- 1 file changed, 15 insertions(+), 23 deletions(-)
+ drivers/i3c/master/renesas-i3c.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
 diff --git a/drivers/i3c/master/renesas-i3c.c b/drivers/i3c/master/renesa=
 s-i3c.c
-index 9f613dd6bc35..0fff7301831a 100644
+index f5bc291e42f4..e422340b8574 100644
 --- a/drivers/i3c/master/renesas-i3c.c
 +++ b/drivers/i3c/master/renesas-i3c.c
-@@ -266,7 +266,6 @@ struct renesas_i3c {
- 	u8 addrs[RENESAS_I3C_MAX_DEVS];
- 	struct renesas_i3c_xferqueue xferqueue;
- 	void __iomem *regs;
--	u32 *DATBASn;
- 	struct clk_bulk_data *clks;
- 	struct reset_control *presetn;
- 	struct reset_control *tresetn;
-@@ -502,8 +501,8 @@ static int renesas_i3c_reset(struct renesas_i3c *i3c)
- 	renesas_writel(i3c->regs, BCTL, 0);
- 	renesas_set_bit(i3c->regs, RSTCTL, RSTCTL_RI3CRST);
-=20
--	return read_poll_timeout_atomic(renesas_readl, val, !(val & RSTCTL_RI3C=
-RST),
--					0, 1000, false, i3c->regs, RSTCTL);
-+	return read_poll_timeout(renesas_readl, val, !(val & RSTCTL_RI3CRST),
-+				 0, 1000, false, i3c->regs, RSTCTL);
- }
-=20
- static void renesas_i3c_hw_init(struct renesas_i3c *i3c)
-@@ -1457,12 +1456,6 @@ static int renesas_i3c_probe(struct platform_devic=
-e *pdev)
- 	i3c->maxdevs =3D RENESAS_I3C_MAX_DEVS;
- 	i3c->free_pos =3D GENMASK(i3c->maxdevs - 1, 0);
-=20
--	/* Allocate dynamic Device Address Table backup. */
--	i3c->DATBASn =3D devm_kzalloc(&pdev->dev, sizeof(u32) * i3c->maxdevs,
--				    GFP_KERNEL);
--	if (!i3c->DATBASn)
--		return -ENOMEM;
--
- 	return i3c_master_register(&i3c->base, &pdev->dev, &renesas_i3c_ops, fa=
-lse);
- }
-=20
-@@ -1475,17 +1468,13 @@ static int renesas_i3c_remove(struct platform_dev=
-ice *pdev)
- 	return 0;
- }
-=20
--static int renesas_i3c_suspend_noirq(struct device *dev)
-+static int renesas_i3c_suspend(struct device *dev)
- {
- 	struct renesas_i3c *i3c =3D dev_get_drvdata(dev);
--	int i, ret;
-+	int ret;
-=20
- 	i2c_mark_adapter_suspended(&i3c->base.i2c);
-=20
--	/* Store Device Address Table values. */
--	for (i =3D 0; i < i3c->maxdevs; i++)
--		i3c->DATBASn[i] =3D renesas_readl(i3c->regs, DATBAS(i));
--
- 	ret =3D reset_control_assert(i3c->presetn);
- 	if (ret)
- 		goto err_mark_resumed;
-@@ -1506,10 +1495,10 @@ static int renesas_i3c_suspend_noirq(struct devic=
-e *dev)
- 	return ret;
- }
-=20
--static int renesas_i3c_resume_noirq(struct device *dev)
-+static int renesas_i3c_resume(struct device *dev)
- {
- 	struct renesas_i3c *i3c =3D dev_get_drvdata(dev);
--	int i, ret;
-+	int ret;
-=20
- 	ret =3D reset_control_deassert(i3c->presetn);
- 	if (ret)
-@@ -1535,15 +1524,19 @@ static int renesas_i3c_resume_noirq(struct device=
- *dev)
- 	renesas_writel(i3c->regs, MSDVAD, MSDVAD_MDYADV |
- 		       MSDVAD_MDYAD(i3c->dyn_addr));
-=20
--	/* Restore Device Address Table values. */
--	for (i =3D 0; i < i3c->maxdevs; i++)
--		renesas_writel(i3c->regs, DATBAS(i), i3c->DATBASn[i]);
--
- 	/* I3C hw init. */
- 	renesas_i3c_hw_init(i3c);
-=20
-+	ret =3D i3c_master_do_daa_ext(&i3c->base, true);
-+	if (ret)
-+		dev_err(dev, "DAA failed on resume, ret=3D%d", ret);
+@@ -914,10 +914,26 @@ static int renesas_i3c_reattach_i3c_dev(struct i3c_=
+dev_desc *dev,
+ 	struct i3c_master_controller *m =3D i3c_dev_get_master(dev);
+ 	struct renesas_i3c *i3c =3D to_renesas_i3c(m);
+ 	struct renesas_i3c_i2c_dev_data *data =3D i3c_dev_get_master_data(dev);
++	int pos;
 +
- 	i2c_mark_adapter_resumed(&i3c->base.i2c);
++	pos =3D renesas_i3c_get_free_pos(i3c);
++
++	if (data->index > pos && pos >=3D 0) {
++		renesas_writel(i3c->regs, DATBAS(data->index), 0);
++		i3c->addrs[data->index] =3D 0;
++		i3c->free_pos |=3D BIT(data->index);
++
++		data->index =3D pos;
++		i3c->free_pos &=3D ~BIT(data->index);
++	}
 =20
-+	/*
-+	 * I3C devices may have retained their dynamic address anyway. Do not
-+	 * fail the resume because of DAA error.
-+	 */
+ 	i3c->addrs[data->index] =3D dev->info.dyn_addr ? dev->info.dyn_addr :
+ 							dev->info.static_addr;
+=20
++	renesas_writel(i3c->regs, DATBAS(data->index),
++		       DATBAS_DVSTAD(dev->info.static_addr) |
++		       datbas_dvdyad_with_parity(i3c->addrs[data->index]));
++
  	return 0;
-=20
- err_clks_disable:
-@@ -1556,8 +1549,7 @@ static int renesas_i3c_resume_noirq(struct device *=
-dev)
  }
 =20
- static const struct dev_pm_ops renesas_i3c_pm_ops =3D {
--	NOIRQ_SYSTEM_SLEEP_PM_OPS(renesas_i3c_suspend_noirq,
--				  renesas_i3c_resume_noirq)
-+	SYSTEM_SLEEP_PM_OPS(renesas_i3c_suspend, renesas_i3c_resume)
- };
-=20
- static const struct of_device_id renesas_i3c_of_ids[] =3D {
 --=20
 2.43.0
 
