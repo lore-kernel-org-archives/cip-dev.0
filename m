@@ -1,86 +1,75 @@
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.52])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.1249.1794931909380596524
+Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.1419.1794937920931103016
  for <cip-dev@lists.cip-project.org>;
- Tue, 17 Nov 2026 08:11:49 -0800
+ Tue, 17 Nov 2026 09:52:01 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@fpond.eu header.s=strato-dkim-0002 header.b=g/Pyx0DP;
- dkim=pass header.i=@fpond.eu header.s=strato-dkim-0003 header.b=ye9F8k0E;
- spf=none, err=permanent DNS error (domain: fpond.eu, ip: 85.215.255.52, mailfrom: uli@fpond.eu)
-ARC-Seal: i=1; a=rsa-sha256; t=1794931899; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=H2Wd9berviofah6FgNZWOfDJ6E2sYH1f5ivkiRWK11QEUffTG961G3XZG+kGnWFTW/
-    lur31ys0Apujn1kY6J5LNi/Re7wG9tXlC10bvD6oKJVcu4EAdQIUyooleWcEPTKZadlc
-    m9dKkOq+wH2J+G553zoTZ8F8vSZBWJlP7HymDNRxgb58K/JTy9eCx/Hw0h3dwaCUNIsw
-    6LNYqVli8DWnpMFOvAVC8jup+n3BBW3vWwiHkTxBiY8slEer18zHRrS5MGYuMspI23Y5
-    xdsTuUb3uc3jPYacMzlm93FMrDKnZF8iVddE7maNzEFoIcHRod5qcvRMtrcA+QNnlevV
-    S/XA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1794931899;
-    s=strato-dkim-0002; d=strato.com;
-    h=Subject:References:In-Reply-To:Message-ID:To:From:Date:Cc:Date:From:
-    Subject:Sender;
-    bh=VY8OcxMZ1nR6ZHwZFCquz+zakbVGmjauz3OYKJ6tHnA=;
-    b=OM9CYZJ/MoCy7IcxI3sIIHedR48yXejAzsM/8jYKMs/A6QmIzQ+BS2nGmurM2m9Zo9
-    Kj422YSFkgRYnskd2TeTtJH50hguxCytzsiv4tiDWLIHgaCgSXsyDqUK+ttF8dou2515
-    IT2L7Wr4m5buw2uguSUuMTn/2SB6kme5v1nef3vHHCKA+Y4BJgacPH47KRDGe2AC92nW
-    gcugfA5JZBm4TXecUCNWM0LmwN/B6YhRBU6lqPSheamaYiXod4ul0Te5Hee33AjQJoHv
-    C4WMUUq1nNF1+JUhwW6QvhUCI/z29S6TSVh9y26P4LnOAQ2y00x+zkDzQ8tPt8XYWu8T
-    kjEw==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1794931899;
-    s=strato-dkim-0002; d=fpond.eu;
-    h=Subject:References:In-Reply-To:Message-ID:To:From:Date:Cc:Date:From:
-    Subject:Sender;
-    bh=VY8OcxMZ1nR6ZHwZFCquz+zakbVGmjauz3OYKJ6tHnA=;
-    b=g/Pyx0DPY/fJ6WlcfLitJaDYdo7Lx3ax/HYO7kXnMPvhqM/+szRJqNNciYscCXA4Do
-    pwwV1SzJOlqMaa3zsDEblgFxF8GMFXqoAB1j+LSQw6jmid1Av+jP0zHuj9jEmNkeUUjl
-    iusUNDQj470VszsUy7OPAZTXpHCwzWQV3Lw08N5BBwT8/qjjxo1Mg/n/i9tt1SuWzzI4
-    93zuQFGFrsG9BIGfSvmi2BEsmkWeZSrurF/CBRfxMFKjb2pQQtkfJ/ywC/HmVjKWLDaT
-    ogCCSh85hlCx7rkzB+wBb6dPQnDl8XaotU950mLQBxAB47dTx3iGRtRQvJxfEueGMjJM
-    Tx4A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1794931899;
-    s=strato-dkim-0003; d=fpond.eu;
-    h=Subject:References:In-Reply-To:Message-ID:To:From:Date:Cc:Date:From:
-    Subject:Sender;
-    bh=VY8OcxMZ1nR6ZHwZFCquz+zakbVGmjauz3OYKJ6tHnA=;
-    b=ye9F8k0Ea4d4ufONjKv4MAG8R92vgJWXbBmKGChyX6bXNDFZEBo2QKVkTTmZyvMahC
-    m+TGeP48Bxa3XkypCKDQ==
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzotGZvghOuyX/LuaP4"
-Received: from open-xchange-core-mw-gw-7.open-xchange-core-mw-hazelcast-headless.open-xchange.svc.cluster.local
-    by smtp-ox.front (RZmta 55.6.3 AUTH)
-    with ESMTPSA id z81ed22AHGBdVAu
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256 bits))
-	(Client did not present a certificate);
-    Tue, 17 Nov 2026 17:11:39 +0100 (CET)
-Date: Tue, 17 Nov 2026 17:11:39 +0100 (CET)
-From: Ulrich Hecht <uli@fpond.eu>
-To: nobuhiro.iwamatsu.x90@mail.toshiba, cip-dev@lists.cip-project.org,
-	pavel@nabladev.com
-Message-ID: <1854696130.1239098.1794931899510@webmail.strato.de>
-In-Reply-To: <TY7PR01MB14818A05E3A9CE2B63F7846FDCD7B2@TY7PR01MB14818.jpnprd01.prod.outlook.com>
-References: <179686212.779511.1794480813521@webmail.strato.de>
- <TY7PR01MB14818A05E3A9CE2B63F7846FDCD7B2@TY7PR01MB14818.jpnprd01.prod.outlook.com>
-Subject: Re: [cip-dev] Request for review for 4.4-st81, 4.4-cip116
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=DNCGwjKU;
+ spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6352A10F7ED;
+	Tue, 17 Nov 2026 18:51:53 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
+	s=dkim; t=1794937914;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=EVVzpB57YGCuut2Dwkwi+WidNPP/8o9Rk1KythiAH5Y=;
+	b=DNCGwjKUqhluHbaSbl8tD6sTTqr1v171Bfr7twYWIko/z6N14sAyyG4Wltvbc4sEUmmEjY
+	nYwH/Ao2x33ZdjAVRKm+eXV+fUzg4PlNQspyl0ZpQDfCtR3VAp+m5rNUc5hQ+tzB31yMoa
+	kCfTPJw8NzpPLc+QW2HWyBAJUaE41JGYVo4eQyNP6nrQNdzIM9cdaaJNa6XQ3Nu7PFiYJD
+	TNVhh/NJ6PoYrBztpbK0GNVNszO9ef0k9JYtUAoQ78/sFLMdiklzMjc3JJp/5nSTF3kF+l
+	DVXSN3vfVJ9aHqHiwKJTJnPWDE6KZXXYj01WZw3p8CniKbIpyV/73EPbfHq9aA==
+Date: Tue, 17 Nov 2026 18:51:51 +0100
+From: Pavel Machek <pavel@nabladev.com>
+To: luca.weiss@fairphone.com
+Cc: cip-dev@lists.cip-project.org
+Subject: Re: [cip-dev] [PATCH 4.19.y-cip 0/4] Backport sign-file,extract-cert
+ patches for OpenSSL 4 compatibility
+Message-ID: <avyUNwowVKWAJDj9@duo.ucw.cz>
+References: <20261112-openssl4-419cip-v1-0-2f56859669bb@fairphone.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v8.46.154
-X-Originating-Port: 54752
-X-Originating-Client: open-xchange-appsuite
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ItIZWmbUt9AVvw18"
+Content-Disposition: inline
+In-Reply-To: <20261112-openssl4-419cip-v1-0-2f56859669bb@fairphone.com>
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 17 Nov 2026 16:11:58 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24945
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 17 Nov 2026 17:52:10 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24946
 
 
-> On 11/17/2026 3:28 PM CET Nobuhiro Iwamatsu via cip-dev <nobuhiro.iwamatsu.x90=mail.toshiba@lists.cip-project.org> wrote:
-> I reviewed this update, looks good to me.
-> Reviewed-by: Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
+--ItIZWmbUt9AVvw18
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks!
+Hi!
 
-CU
-Uli
+> On Arch Linux the extract-cert tool from 4.19.y-cip doesn't compile
+> anymore due to OpenSSL 4 upgrade which removed some APIs used in the
+> host tools.
+>=20
+> Backport some patches, taken from linux-6.1.y to fix compilation.
+>=20
+> Note, this is the first time I'm sending patches to cip-dev, so I hope
+> I'm not missing some contribution guidelines.
+
+I believe these are not yet in 5.10, that would be first step.
+
+This is not usual kind of bugfix, nor is it backport from a member
+company. Still, I'd not be opposed in taking these, provided 5.10
+version is taken first.
+
+Reviewed-by: Pavel Machek <pavel@nabladev.com>
+
+Best regards,
+							Pavel
+
+--ItIZWmbUt9AVvw18
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCavyUNwAKCRAw5/Bqldv6
+8gFzAJ9Tl2YA5qpDVGEAsN/ZzN3W7VR33ACgkVGvS3IqtfN8YQy7mYWNF9ho3AQ=
+=0VjM
+-----END PGP SIGNATURE-----
+
+--ItIZWmbUt9AVvw18--
