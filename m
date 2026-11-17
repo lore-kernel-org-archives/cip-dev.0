@@ -1,262 +1,152 @@
-Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.15936.1794916204073756815
+Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.16742.1794919155670456933
  for <cip-dev@lists.cip-project.org>;
- Tue, 17 Nov 2026 03:50:04 -0800
+ Tue, 17 Nov 2026 04:39:17 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.234.252.31, mailfrom: srs0=gktq=jg=tuxon.dev=claudiu.beznea@kernel.org)
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by sea.source.kernel.org (Postfix) with ESMTP id DB27C40312;
-	Tue, 17 Nov 2026 11:50:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9B911F000C5;
-	Tue, 17 Nov 2026 11:50:02 +0000 (UTC)
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-To: nobuhiro.iwamatsu.x90@mail.toshiba,
-	pavel@nabladev.com
-Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 6.1.y-cip 28/34] pinctrl: renesas: rzg2l: Add RZ/G3S support for selecting I3C power source
-Date: Tue, 17 Nov 2026 13:49:14 +0200
-Message-ID: <20261117114921.1485204-29-claudiu.beznea@tuxon.dev>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261117114921.1485204-1-claudiu.beznea@tuxon.dev>
-References: <20261117114921.1485204-1-claudiu.beznea@tuxon.dev>
+ dkim=pass header.i=badrikesh.prusty@siemens.com header.s=fm1 header.b=N7orsmOM;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.226, mailfrom: fm-1328765-20261117123911a63691c29f00020728-yvpwrm@rts-flowmailer.siemens.com)
+Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20261117123911a63691c29f00020728
+        for <cip-dev@lists.cip-project.org>;
+        Tue, 17 Nov 2026 13:39:12 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=badrikesh.prusty@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=aUeol9lKbGV01KEnSA7aK15SiVVpKGXae4t6YTTju18=;
+ b=N7orsmOM3YJYmC0WKQ6A7zFKneafrgOsSNJbp7HNsnf+K3taYuUxb0und0kX1oxy7h/7A4
+ 5OoauSN1LS/0U1uRolr6rLQe3JihAGXYo0VnwWOZmBL+A1ACSPkY0Yz9u4FdPb0fCuwuaII4
+ x75/RxGBTEouZnpuCD7xzsG5YKGVuNNN8YFeS4wdwvJiV7mctxDqL9D5j2giml71EIb3Jdtq
+ yQnu0zyOjRaqI79QkuepoWlew2rtuvwzQsgWYpYPYcTjirQWvNdHQbKmeIb12Us13i2HGsyt
+ 0/SiKGPTxcN/J0Ml7OTBqSv4AMlrIt5ptkL7Hn3LiCbfOgmBUldbN42w==;
+From: Badrikesh Prusty <badrikesh.prusty@siemens.com>
+To: cip-dev@lists.cip-project.org
+Cc: jan.kiszka@siemens.com,
+	Badrikesh Prusty <badrikesh.prusty@siemens.com>
+Subject: [isar-cip-core][PATCH] linux-cip: Update to 4.19.325-cip137[-rt51], 5.10.272-cip79[-rt35], 6.1.190-cip62, 6.12.117-cip35
+Date: Tue, 17 Nov 2026 07:38:46 -0500
+Message-ID: <20261117123846.177888-1-badrikesh.prusty@siemens.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1328765:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 17 Nov 2026 11:50:11 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24939
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 17 Nov 2026 12:39:24 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24941
 Content-Type: text/plain; charset="utf-8"
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-
-commit ec5202ccfa24791acf64146d5bac6b63ce234f95 upstream.
-
-The Renesas RZ/G3S I3C pins can be powered at either 1.8V or 1.2V.  The
-pin controller provides a register to select between these two options.
-Update the Renesas RZ/G2L pin controller driver to allow selecting the
-I3C power source on RZ/G3S SoC.
-
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://patch.msgid.link/20260904125425.412632-6-claudiu.beznea+ren=
-esas@tuxon.dev
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[claudiu.beznea:
- - fixed conflict in the defines code and adjusted PIN_CFG_IO_VMC_I3C to
-   use bit 19 instead of 23
- - fixed conflict in rzg2l_register_offsets by keeping only the i3c_set
-   member
- - dropped RZ/G3L code from rzg2l_register_masks and get rid of anonimous
-   union
- - fixed conflict in available_ps[] by keeping the I3C voltage domain
- - in rzg2l_caps_to_pwr_reg(), rzg2l_pinctrl_suspend_noirq(),
-   rzg2l_pinctrl_resume_noirq() fixed conflict by keeping the I3C code on=
-ly
- - introduced masks member to struct rzg2l_hwcfg as initially presented i=
-n
-   commit 342a7ce6d2f7 ("pinctrl: renesas: rzg2l: Generalize power source
-   code") since this is its first user in v6.1 CIP]
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Signed-off-by: Badrikesh Prusty <badrikesh.prusty@siemens.com>
 ---
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 42 +++++++++++++++++++++++--
- 1 file changed, 40 insertions(+), 2 deletions(-)
+ ....325-cip136-rt50.bb => linux-cip-rt_4.19.325-cip137-rt51.bb} | 2 +-
+ ...10.268-cip77-rt34.bb => linux-cip-rt_5.10.272-cip79-rt35.bb} | 2 +-
+ recipes-kernel/linux/linux-cip-rt_6.12.114-cip34.bb             | 1 -
+ recipes-kernel/linux/linux-cip-rt_6.12.117-cip35.bb             | 1 +
+ ...inux-cip_4.19.325-cip136.bb => linux-cip_4.19.325-cip137.bb} | 2 +-
+ ...{linux-cip_5.10.271-cip78.bb => linux-cip_5.10.272-cip79.bb} | 2 +-
+ .../{linux-cip_6.1.189-cip61.bb => linux-cip_6.1.190-cip62.bb}  | 2 +-
+ ...{linux-cip_6.12.114-cip34.bb => linux-cip_6.12.117-cip35.bb} | 2 +-
+ 8 files changed, 7 insertions(+), 7 deletions(-)
+ rename recipes-kernel/linux/{linux-cip-rt_4.19.325-cip136-rt50.bb => linux-cip-rt_4.19.325-cip137-rt51.bb} (68%)
+ rename recipes-kernel/linux/{linux-cip-rt_5.10.268-cip77-rt34.bb => linux-cip-rt_5.10.272-cip79-rt35.bb} (68%)
+ delete mode 120000 recipes-kernel/linux/linux-cip-rt_6.12.114-cip34.bb
+ create mode 120000 recipes-kernel/linux/linux-cip-rt_6.12.117-cip35.bb
+ rename recipes-kernel/linux/{linux-cip_4.19.325-cip136.bb => linux-cip_4.19.325-cip137.bb} (68%)
+ rename recipes-kernel/linux/{linux-cip_5.10.271-cip78.bb => linux-cip_5.10.272-cip79.bb} (68%)
+ rename recipes-kernel/linux/{linux-cip_6.1.189-cip61.bb => linux-cip_6.1.190-cip62.bb} (59%)
+ rename recipes-kernel/linux/{linux-cip_6.12.114-cip34.bb => linux-cip_6.12.117-cip35.bb} (59%)
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/re=
-nesas/pinctrl-rzg2l.c
-index faccc764e09c..fa4d70d043d8 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -62,6 +62,7 @@
- #define PIN_CFG_SMT			BIT(16)	/* Schmitt-trigger input control */
- #define PIN_CFG_ELC			BIT(17)
- #define PIN_CFG_IOLH_RZV2H		BIT(18)
-+#define PIN_CFG_IO_VMC_I3C		BIT(19)
-=20
- #define RZG2L_SINGLE_PIN		BIT_ULL(63)	/* Dedicated pin */
- #define RZG2L_VARIABLE_CFG		BIT_ULL(62)	/* Variable cfg for port pins */
-@@ -217,6 +218,7 @@ static const struct pin_config_item renesas_rzv2h_con=
-f_items[] =3D {
-  * @eth_poc: ETH_POC register offset
-  * @oen: OEN register offset
-  * @qspi: QSPI register offset
-+ * @i3c_set: I3C_SET register offset
-  */
- struct rzg2l_register_offsets {
- 	u16 pwpr;
-@@ -224,6 +226,15 @@ struct rzg2l_register_offsets {
- 	u16 eth_poc;
- 	u16 oen;
- 	u16 qspi;
-+	u16 i3c_set;
-+};
-+
-+/**
-+ * struct rzg2l_register_masks - Masks for different RZ/G2L pinctrl func=
-tionalities
-+ * @i3c_set_poc: I3C_SET_POC mask
-+ */
-+struct rzg2l_register_masks {
-+	u8 i3c_set_poc;
- };
-=20
- /**
-@@ -248,6 +259,8 @@ enum rzg2l_iolh_index {
- /**
-  * struct rzg2l_hwcfg - hardware configuration data structure
-  * @regs: hardware specific register offsets
-+ * @masks: hardware specific masks for various functionalities available=
- in
-+ * the registers described by regs
-  * @iolh_groupa_ua: IOLH group A uA specific values
-  * @iolh_groupb_ua: IOLH group B uA specific values
-  * @iolh_groupc_ua: IOLH group C uA specific values
-@@ -261,6 +274,7 @@ enum rzg2l_iolh_index {
-  */
- struct rzg2l_hwcfg {
- 	const struct rzg2l_register_offsets regs;
-+	const struct rzg2l_register_masks masks;
- 	u16 iolh_groupa_ua[RZG2L_IOLH_IDX_MAX];
- 	u16 iolh_groupb_ua[RZG2L_IOLH_IDX_MAX];
- 	u16 iolh_groupc_ua[RZG2L_IOLH_IDX_MAX];
-@@ -326,6 +340,7 @@ struct rzg2l_pinctrl_pin_settings {
-  * @eth_poc: ET_POC registers cache
-  * @oen: Output Enable register cache
-  * @qspi: QSPI registers cache
-+ * @i3c_set: I3C_SET register cache
-  */
- struct rzg2l_pinctrl_reg_cache {
- 	u8	*p;
-@@ -340,6 +355,7 @@ struct rzg2l_pinctrl_reg_cache {
- 	u8	eth_poc[2];
- 	u8	oen;
- 	u8	qspi;
-+	u8	i3c_set;
- };
-=20
- struct rzg2l_pinctrl {
-@@ -409,6 +425,10 @@ static const struct rzg2l_pinctrl_ps_desc available_=
-ps[] =3D {
- 	RZG2L_PINCTRL_PS_DESC(1800, 1, PIN_CFG_IO_VMC_QSPI, RZG2L_IOLH_IDX_1V8)=
-,
- 	RZG2L_PINCTRL_PS_DESC(3300, 0, PIN_CFG_IO_VMC_QSPI, RZG2L_IOLH_IDX_3V3)=
-,
-=20
-+	/* I3C I/O voltage domains */
-+	RZG2L_PINCTRL_PS_DESC(1200, 1, PIN_CFG_IO_VMC_I3C, RZG2L_IOLH_IDX_NA),
-+	RZG2L_PINCTRL_PS_DESC(1800, 0, PIN_CFG_IO_VMC_I3C, RZG2L_IOLH_IDX_NA),
-+
- 	/* Software voltage domains */
- 	RZG2L_PINCTRL_PS_DESC(1800, 0, PIN_CFG_SOFT_PS, RZG2L_IOLH_IDX_1V8),
- 	RZG2L_PINCTRL_PS_DESC(2500, 0, PIN_CFG_SOFT_PS, RZG2L_IOLH_IDX_2V5),
-@@ -960,6 +980,7 @@ static void rzg2l_rmw_pin_config(struct rzg2l_pinctrl=
- *pctrl, u32 offset,
- }
-=20
- static int rzg2l_caps_to_pwr_reg(const struct rzg2l_register_offsets *re=
-gs,
-+				 const struct rzg2l_register_masks *masks,
- 				 u32 caps, u16 *offset, u8 *mask)
- {
- 	*mask =3D PVDD_MASK;
-@@ -984,6 +1005,11 @@ static int rzg2l_caps_to_pwr_reg(const struct rzg2l=
-_register_offsets *regs,
- 		*offset =3D regs->qspi;
- 		return 0;
- 	}
-+	if (caps & PIN_CFG_IO_VMC_I3C) {
-+		*offset =3D regs->i3c_set;
-+		*mask =3D masks->i3c_set_poc;
-+		return 0;
-+	}
-=20
- 	return -EINVAL;
- }
-@@ -1014,6 +1040,7 @@ static int rzg2l_get_power_source(struct rzg2l_pinc=
-trl *pctrl, u32 pin, u32 caps
- {
- 	const struct rzg2l_hwcfg *hwcfg =3D pctrl->data->hwcfg;
- 	const struct rzg2l_register_offsets *regs =3D &hwcfg->regs;
-+	const struct rzg2l_register_masks *masks =3D &hwcfg->masks;
- 	u8 mask, val;
- 	u16 offset;
- 	int ret;
-@@ -1021,7 +1048,7 @@ static int rzg2l_get_power_source(struct rzg2l_pinc=
-trl *pctrl, u32 pin, u32 caps
- 	if (caps & PIN_CFG_SOFT_PS)
- 		return pctrl->settings[pin].power_source;
-=20
--	ret =3D rzg2l_caps_to_pwr_reg(regs, caps, &offset, &mask);
-+	ret =3D rzg2l_caps_to_pwr_reg(regs, masks, caps, &offset, &mask);
- 	if (ret)
- 		return ret;
-=20
-@@ -1034,6 +1061,7 @@ static int rzg2l_set_power_source(struct rzg2l_pinc=
-trl *pctrl, u32 pin, u32 caps
- {
- 	const struct rzg2l_hwcfg *hwcfg =3D pctrl->data->hwcfg;
- 	const struct rzg2l_register_offsets *regs =3D &hwcfg->regs;
-+	const struct rzg2l_register_masks *masks =3D &hwcfg->masks;
- 	u16 offset;
- 	u8 mask;
- 	int ret;
-@@ -1043,7 +1071,7 @@ static int rzg2l_set_power_source(struct rzg2l_pinc=
-trl *pctrl, u32 pin, u32 caps
- 		return 0;
- 	}
-=20
--	ret =3D rzg2l_caps_to_pwr_reg(regs, caps, &offset, &mask);
-+	ret =3D rzg2l_caps_to_pwr_reg(regs, masks, caps, &offset, &mask);
- 	if (ret)
- 		return ret;
-=20
-@@ -2288,6 +2316,8 @@ static const struct rzg2l_dedicated_configs rzg3s_d=
-edicated_pins[] =3D {
- 	{ "AUDIO_CLK1", RZG2L_SINGLE_PIN_PACK(0x2, 0, PIN_CFG_IEN) },
- 	{ "AUDIO_CLK2", RZG2L_SINGLE_PIN_PACK(0x2, 1, PIN_CFG_IEN) },
- 	{ "WDTOVF_PERROUT#", RZG2L_SINGLE_PIN_PACK(0x6, 0, PIN_CFG_IOLH_A | PIN=
-_CFG_SOFT_PS) },
-+	{ "I3C_SDA", RZG2L_SINGLE_PIN_PACK(0x9, 0, (PIN_CFG_IEN | PIN_CFG_IO_VM=
-C_I3C)) },
-+	{ "I3C_SCL", RZG2L_SINGLE_PIN_PACK(0x9, 1, (PIN_CFG_IEN | PIN_CFG_IO_VM=
-C_I3C)) },
- 	{ "SD0_CLK", RZG2L_SINGLE_PIN_PACK(0x10, 0, (PIN_CFG_IOLH_B | PIN_CFG_I=
-O_VMC_SD0)) },
- 	{ "SD0_CMD", RZG2L_SINGLE_PIN_PACK(0x10, 1, (PIN_CFG_IOLH_B | PIN_CFG_I=
-EN |
- 						     PIN_CFG_IO_VMC_SD0)) },
-@@ -3277,6 +3307,8 @@ static int rzg2l_pinctrl_suspend_noirq(struct devic=
-e *dev)
- 	if (regs->qspi)
- 		cache->qspi =3D readb(pctrl->base + regs->qspi);
- 	cache->oen =3D readb(pctrl->base + pctrl->data->hwcfg->regs.oen);
-+	if (regs->i3c_set)
-+		cache->i3c_set =3D readb(pctrl->base + regs->i3c_set);
-=20
- 	if (!atomic_read(&pctrl->wakeup_path))
- 		clk_disable_unprepare(pctrl->clk);
-@@ -3303,6 +3335,8 @@ static int rzg2l_pinctrl_resume_noirq(struct device=
- *dev)
-=20
- 	if (regs->qspi)
- 		writeb(cache->qspi, pctrl->base + regs->qspi);
-+	if (regs->i3c_set)
-+		writeb(cache->i3c_set, pctrl->base + regs->i3c_set);
-=20
- 	raw_spin_lock_irqsave(&pctrl->lock, flags);
- 	rzg2l_oen_write_with_pwpr(pctrl, cache->oen);
-@@ -3376,8 +3410,12 @@ static const struct rzg2l_hwcfg rzg3s_hwcfg =3D {
- 		.pwpr =3D 0x3000,
- 		.sd_ch =3D 0x3004,
- 		.eth_poc =3D 0x3010,
-+		.i3c_set =3D 0x301c,
- 		.oen =3D 0x3018,
- 	},
-+	.masks =3D {
-+		.i3c_set_poc =3D BIT(2),
-+	},
- 	.iolh_groupa_ua =3D {
- 		/* 1v8 power source */
- 		[RZG2L_IOLH_IDX_1V8] =3D 2200, 4400, 9000, 10000,
---=20
-2.43.0
+diff --git a/recipes-kernel/linux/linux-cip-rt_4.19.325-cip136-rt50.bb b/recipes-kernel/linux/linux-cip-rt_4.19.325-cip137-rt51.bb
+similarity index 68%
+rename from recipes-kernel/linux/linux-cip-rt_4.19.325-cip136-rt50.bb
+rename to recipes-kernel/linux/linux-cip-rt_4.19.325-cip137-rt51.bb
+index 6b54d1d..19b48fe 100644
+--- a/recipes-kernel/linux/linux-cip-rt_4.19.325-cip136-rt50.bb
++++ b/recipes-kernel/linux/linux-cip-rt_4.19.325-cip137-rt51.bb
+@@ -11,4 +11,4 @@
+ 
+ require linux-cip-release.inc
+ 
+-SRC_URI[sha256sum] = "424e3e7f2f6e1282021ddf61ceed8cd71332e33fbaf42868784fe22a780fd82b"
++SRC_URI[sha256sum] = "aac5292feb94163f9c97a2886fdb0e58e84f1be87ea787b9fc858e0b17c9529b"
+diff --git a/recipes-kernel/linux/linux-cip-rt_5.10.268-cip77-rt34.bb b/recipes-kernel/linux/linux-cip-rt_5.10.272-cip79-rt35.bb
+similarity index 68%
+rename from recipes-kernel/linux/linux-cip-rt_5.10.268-cip77-rt34.bb
+rename to recipes-kernel/linux/linux-cip-rt_5.10.272-cip79-rt35.bb
+index 9f3cb2b..f211866 100644
+--- a/recipes-kernel/linux/linux-cip-rt_5.10.268-cip77-rt34.bb
++++ b/recipes-kernel/linux/linux-cip-rt_5.10.272-cip79-rt35.bb
+@@ -11,4 +11,4 @@
+ 
+ require linux-cip-release.inc
+ 
+-SRC_URI[sha256sum] = "735246b660eae9314f9a312eedca69773996d3604399810271c0b544c30400b8"
++SRC_URI[sha256sum] = "bddf7a247276da228aad949208dd769b441e9b67f2c06bd30e1f5bb8d43d4161"
+diff --git a/recipes-kernel/linux/linux-cip-rt_6.12.114-cip34.bb b/recipes-kernel/linux/linux-cip-rt_6.12.114-cip34.bb
+deleted file mode 120000
+index 91a3ca2..0000000
+--- a/recipes-kernel/linux/linux-cip-rt_6.12.114-cip34.bb
++++ /dev/null
+@@ -1 +0,0 @@
+-linux-cip_6.12.114-cip34.bb
+\ No newline at end of file
+diff --git a/recipes-kernel/linux/linux-cip-rt_6.12.117-cip35.bb b/recipes-kernel/linux/linux-cip-rt_6.12.117-cip35.bb
+new file mode 120000
+index 0000000..8023eb0
+--- /dev/null
++++ b/recipes-kernel/linux/linux-cip-rt_6.12.117-cip35.bb
+@@ -0,0 +1 @@
++linux-cip_6.12.117-cip35.bb
+\ No newline at end of file
+diff --git a/recipes-kernel/linux/linux-cip_4.19.325-cip136.bb b/recipes-kernel/linux/linux-cip_4.19.325-cip137.bb
+similarity index 68%
+rename from recipes-kernel/linux/linux-cip_4.19.325-cip136.bb
+rename to recipes-kernel/linux/linux-cip_4.19.325-cip137.bb
+index 9fb5905..dee0731 100644
+--- a/recipes-kernel/linux/linux-cip_4.19.325-cip136.bb
++++ b/recipes-kernel/linux/linux-cip_4.19.325-cip137.bb
+@@ -11,4 +11,4 @@
+ 
+ require linux-cip-release.inc
+ 
+-SRC_URI[sha256sum] = "9e753afd86e574a8e67cdadbb8cc43ee8337521cd5afaef931c4c217fb2bbeb2"
++SRC_URI[sha256sum] = "0788097dc70bea3fb512e6f6d6401d21bd54f4d3779c0d0190c62aeb599564d6"
+diff --git a/recipes-kernel/linux/linux-cip_5.10.271-cip78.bb b/recipes-kernel/linux/linux-cip_5.10.272-cip79.bb
+similarity index 68%
+rename from recipes-kernel/linux/linux-cip_5.10.271-cip78.bb
+rename to recipes-kernel/linux/linux-cip_5.10.272-cip79.bb
+index c6fccfb..dad120e 100644
+--- a/recipes-kernel/linux/linux-cip_5.10.271-cip78.bb
++++ b/recipes-kernel/linux/linux-cip_5.10.272-cip79.bb
+@@ -11,4 +11,4 @@
+ 
+ require linux-cip-release.inc
+ 
+-SRC_URI[sha256sum] = "a972b3e41472bcbd28f41ef48bec9354ac7a050b8d0e0c880de207c70f929201"
++SRC_URI[sha256sum] = "d3a621032b579b47692c9127b3e2c643d508e394c5e25f6a6a2606a6571892ca"
+diff --git a/recipes-kernel/linux/linux-cip_6.1.189-cip61.bb b/recipes-kernel/linux/linux-cip_6.1.190-cip62.bb
+similarity index 59%
+rename from recipes-kernel/linux/linux-cip_6.1.189-cip61.bb
+rename to recipes-kernel/linux/linux-cip_6.1.190-cip62.bb
+index 4b6c7d5..831fbc0 100644
+--- a/recipes-kernel/linux/linux-cip_6.1.189-cip61.bb
++++ b/recipes-kernel/linux/linux-cip_6.1.190-cip62.bb
+@@ -7,4 +7,4 @@
+ 
+ require linux-cip-release.inc
+ 
+-SRC_URI[sha256sum] = "7003af449cbaf2af04c671dd3d06193bc8a7d8a10e94a9d286b5a3c36690c923"
++SRC_URI[sha256sum] = "404a492ac47b321f2657e1345821e9aac16bb07f8d8703ca1774f59016fa6c3c"
+diff --git a/recipes-kernel/linux/linux-cip_6.12.114-cip34.bb b/recipes-kernel/linux/linux-cip_6.12.117-cip35.bb
+similarity index 59%
+rename from recipes-kernel/linux/linux-cip_6.12.114-cip34.bb
+rename to recipes-kernel/linux/linux-cip_6.12.117-cip35.bb
+index 95cd7b2..3927cef 100644
+--- a/recipes-kernel/linux/linux-cip_6.12.114-cip34.bb
++++ b/recipes-kernel/linux/linux-cip_6.12.117-cip35.bb
+@@ -7,4 +7,4 @@
+ 
+ require linux-cip-release.inc
+ 
+-SRC_URI[sha256sum] = "801ba01e82a8e25738d4f30d2640e537cc06bb13f9dbf0f6fce5095f3fb1f168"
++SRC_URI[sha256sum] = "7c3d5c0938f6030ca3dd6673a11776dd433a80d9544ab3909f073962da40f840"
+-- 
+2.39.5
 
