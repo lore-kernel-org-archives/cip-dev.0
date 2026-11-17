@@ -1,22 +1,22 @@
-Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.15941.1794916002238546611
+Received: from tor.source.kernel.org (tor.source.kernel.org [172.105.4.254])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.15797.1794915997977349226
  for <cip-dev@lists.cip-project.org>;
- Tue, 17 Nov 2026 03:46:42 -0800
+ Tue, 17 Nov 2026 03:46:38 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.234.252.31, mailfrom: srs0=gktq=jg=tuxon.dev=claudiu.beznea@kernel.org)
+ dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.105.4.254, mailfrom: srs0=gktq=jg=tuxon.dev=claudiu.beznea@kernel.org)
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by sea.source.kernel.org (Postfix) with ESMTP id 0EAC641F44;
-	Tue, 17 Nov 2026 11:46:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE0C01F000C4;
-	Tue, 17 Nov 2026 11:46:40 +0000 (UTC)
+	by tor.source.kernel.org (Postfix) with ESMTP id 6835F63404;
+	Tue, 17 Nov 2026 11:46:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07D941F000C4;
+	Tue, 17 Nov 2026 11:46:35 +0000 (UTC)
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 28/69] i3c: renesas: Organize structures to avoid unnecessary padding
-Date: Tue, 17 Nov 2026 13:45:12 +0200
-Message-ID: <20261117114553.1484215-29-claudiu.beznea@tuxon.dev>
+Subject: [PATCH 5.10.y-cip 25/69] i3c: renesas: Follow a unified pattern for transfer and command initialization
+Date: Tue, 17 Nov 2026 13:45:09 +0200
+Message-ID: <20261117114553.1484215-26-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261117114553.1484215-1-claudiu.beznea@tuxon.dev>
 References: <20261117114553.1484215-1-claudiu.beznea@tuxon.dev>
@@ -24,89 +24,110 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 17 Nov 2026 11:46:42 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24869
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24866
 Content-Type: text/plain; charset="utf-8"
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 42a6f531c950c8b8009d938b3e51fed3533a1a3c upstream.
+commit 234a26e6febcf789d9f6779d67c01e3d0c1df5bc upstream.
 
-Reorder structure members to reduce padding and improve memory layout.
+Follow a unified pattern for transfer and command initialization across
+the driver. This keeps the code cleaner and easier to follow. Also, in
+some cases the I3C device was enabled before the transfer data structure
+was even allocated.
 
 Reviewed-by: Frank Li <Frank.Li@nxp.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Tested-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Link: https://patch.msgid.link/20260713130545.568657-15-claudiu.beznea+re=
+Link: https://patch.msgid.link/20260713130545.568657-12-claudiu.beznea+re=
 nesas@tuxon.dev
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+[claudiu.beznea: fixed conflict and adjust the patch to the v5.10 CIP cod=
+e
+ base]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/i3c/master/renesas-i3c.c | 31 ++++++++++++++++---------------
- 1 file changed, 16 insertions(+), 15 deletions(-)
+ drivers/i3c/master/renesas-i3c.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/i3c/master/renesas-i3c.c b/drivers/i3c/master/renesa=
 s-i3c.c
-index c10937e6bc7b..1276b61ff5c1 100644
+index 878342339a48..ae16e1bb94ea 100644
 --- a/drivers/i3c/master/renesas-i3c.c
 +++ b/drivers/i3c/master/renesas-i3c.c
-@@ -222,19 +222,19 @@ enum renesas_i3c_event {
- };
+@@ -670,6 +670,10 @@ static int renesas_i3c_daa(struct i3c_master_control=
+ler *m)
+ 	if (!xfer)
+ 		return -ENOMEM;
 =20
- struct renesas_i3c_cmd {
-+	const void *tx_buf;
-+	void *rx_buf;
-+	/* i2c xfer */
-+	u8 *i2c_buf;
-+	const struct i2c_msg *msg;
-+	int i2c_bytes_left;
-+	int i2c_is_last;
- 	u32 cmd0;
- 	u32 len;
--	const void *tx_buf;
- 	u32 tx_count;
--	void *rx_buf;
- 	u32 rx_count;
- 	u32 err;
- 	u8 rnw;
--	/* i2c xfer */
--	int i2c_bytes_left;
--	int i2c_is_last;
--	u8 *i2c_buf;
--	const struct i2c_msg *msg;
- };
++	init_completion(&xfer->comp);
++	cmd =3D xfer->cmds;
++	cmd->rx_count =3D 0;
++
+ 	/* Enable I3C bus. */
+ 	renesas_i3c_bus_enable(m, true);
 =20
- struct renesas_i3c_xfer {
-@@ -254,21 +254,22 @@ struct renesas_i3c_xferqueue {
- };
+@@ -691,10 +695,6 @@ static int renesas_i3c_daa(struct i3c_master_control=
+ler *m)
+ 		renesas_writel(i3c->regs, DATBAS(pos), datbas_dvdyad_with_parity(ret))=
+;
+ 	}
 =20
- struct renesas_i3c {
-+	void __iomem *regs;
-+	struct clk_bulk_data *clks;
-+	struct reset_control *presetn;
-+	struct reset_control *tresetn;
-+	struct renesas_i3c_xferqueue xferqueue;
- 	struct i3c_master_controller base;
-+	u8 addrs[RENESAS_I3C_MAX_DEVS];
-+	unsigned long rate;
- 	enum i3c_internal_state internal_state;
--	u16 maxdevs;
-+	bool resuming;
- 	u32 free_pos;
- 	u32 dyn_addr;
- 	u32 i2c_STDBR;
- 	u32 i3c_STDBR;
- 	u32 extbr;
--	unsigned long rate;
--	u8 addrs[RENESAS_I3C_MAX_DEVS];
--	struct renesas_i3c_xferqueue xferqueue;
--	void __iomem *regs;
--	struct clk_bulk_data *clks;
--	struct reset_control *presetn;
--	struct reset_control *tresetn;
-+	u16 maxdevs;
- 	u8 num_clks;
- 	u8 refclk_div;
- };
+-	init_completion(&xfer->comp);
+-	cmd =3D xfer->cmds;
+-	cmd->rx_count =3D 0;
+-
+ 	ret =3D renesas_i3c_get_free_pos(i3c);
+ 	if (ret < 0)
+ 		return ret;
+@@ -786,13 +786,13 @@ static int renesas_i3c_send_ccc_cmd(struct i3c_mast=
+er_controller *m,
+ 			return pos;
+ 	}
+=20
+-	renesas_i3c_bus_enable(m, true);
+-
+ 	init_completion(&xfer->comp);
+ 	cmd =3D xfer->cmds;
+ 	cmd->rnw =3D ccc->rnw;
+ 	cmd->cmd0 =3D 0;
+=20
++	renesas_i3c_bus_enable(m, true);
++
+ 	/* Calculate the command descriptor. */
+ 	switch (ccc->id) {
+ 	case I3C_CCC_SETDASA:
+@@ -846,11 +846,11 @@ static int renesas_i3c_priv_xfers(struct i3c_dev_de=
+sc *dev, struct i3c_priv_xfer
+ 	if (!xfer)
+ 		return -ENOMEM;
+=20
++	init_completion(&xfer->comp);
++
+ 	/* Enable I3C bus. */
+ 	renesas_i3c_bus_enable(m, true);
+=20
+-	init_completion(&xfer->comp);
+-
+ 	for (i =3D 0; i < i3c_nxfers; i++) {
+ 		struct renesas_i3c_cmd *cmd =3D xfer->cmds;
+=20
+@@ -971,12 +971,12 @@ static int renesas_i3c_i2c_xfers(struct i2c_dev_des=
+c *dev,
+ 	if (!i2c_nxfers)
+ 		return 0;
+=20
+-	renesas_i3c_bus_enable(m, false);
+-
+ 	init_completion(&xfer->comp);
+ 	xfer->is_i2c_xfer =3D true;
+ 	cmd =3D xfer->cmds;
+=20
++	renesas_i3c_bus_enable(m, false);
++
+ 	if (!(renesas_readl(i3c->regs, BCST) & BCST_BFREF)) {
+ 		cmd->err =3D -EBUSY;
+ 		return cmd->err;
 --=20
 2.43.0
 
