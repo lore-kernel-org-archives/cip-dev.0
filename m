@@ -1,25 +1,25 @@
 Received: from GVXPR05CU001.outbound.protection.outlook.com (GVXPR05CU001.outbound.protection.outlook.com [52.101.83.8])
  by mx.groups.io with SMTP id smtpd.msgproc01-g2.15713.1794915001116929499
  for <cip-dev@lists.cip-project.org>;
- Tue, 17 Nov 2026 03:30:02 -0800
+ Tue, 17 Nov 2026 03:30:03 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=UWHFtE7n;
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=xoifcW4p;
  spf=pass (domain: siemens.com, ip: 52.101.83.8, mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=crHGvX3NaFLRC4pXI1huOT6DJETww/Cglx+r70xJBB/WveSPWe3kF4bstuoChf7pvR+qfcep5Y6CPivGMVoZEp/iMFggzgarZrY8zy7xF1f3S9Kgd0Touq9vi/YSAPQDWgEdNp2orQA9FEUHf+ki+SyB0zMxsrIAmcNflLF6mjyqxlPQKvdhyLCABoBhiSEaBRQUYlhfd3vPldLA/qKeHZEdit/SLb21ngRI7KJLCVJxWuOA4FNglckhwLZFtbW0oKH6N3KaBcpvVRlCYoV8JF5AteDIsMKdBeP7O/7EzhSyurpEY0mqZ1PZiKmZufjNk1cqK/njrb9P5ZUs9+zwiQ==
+ b=GqSQG9bJf4T6KN1dpRKJiz7zbVfRXQ2oXmbOmV7ETrMJAhfCMMvpBrHtHkrO/lj6ckndAvHHkhrzmlHgfqkj2mMSGFPvc3Q/LZSnAipEhgyc63sy8rpcx7UToVgR912Z0dXHK3eKvhagUEwtFID7qjV2UQy982iu8scB/ZPojkyjA+GUPpZsdRVbbvnBoZjtSB+VOFl3uVCpHmeHw81na+qfR5+BDj0scouAw2l4JZ6IYRdEgftFSkfqnYDIH1aFKs7wwjL58F6aM4c3XRyuk83MZ19OUDNp2qH9YizVG+LsVeijlxcrmQ/j3ynD43rYrAZKQKpex4ZqADXTwymTZw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=q6r7JZkmEZOuAj1YR8Fn5XuMSmWLqn3Dq5khLx/h7Ps=;
- b=Qx6RPLTzl7Bh/vQElmzxh1YG8Hiax2ixViFiQETQl9NFSRtHALxQXcI2ZPWI22aisbNc+Q4nRGKL/Cu8v0Fsg0p4kPs2cRoWcHahwc2VUGBg23iGNOqvXW60dEjFnfQCpfCOnYu09nD8KKviweZIbBDArM3/F7/rUGuLDzk4s0uXibaYDD0RGD6GFCcI1yQ66UmzEwoBVsHAZM/cZZ7hjpGfQ/xVwLMt5PylwXYiDcAhZE87vvIRJtKrjAcSsH75ZCwc/IUQQ9sq5NZbYhUHWi9MHytta7y56e4zJ1WvYfSeE2k6gsVolxoyyPP8pDA3WtkodH6unSvmoMRnx/Bo7A==
+ bh=5ZkgNouJipD2IQmaCvteLJ0lJ4/JIXxFRke8+fQd1c0=;
+ b=TjtAf3LC/eTm0PNOiqZSa+/3mD03wRfLKuAH1DId5EI+JfbD+EOSXIHKVLrkPjTuvOuuXPtFrvktX3cJod/kuElkGDnHbNoC8ofqksQ4VFMvx0RG5Rvn70+AV0+1cKczTWjQMq8y+hgVD9bgKiM6wWWk4R1B6dEsf9XJpMElOdz7xJhm9l8pwTN+qE0oEbKr1vmKowp+ap4sl2BDN6CeSuaqAYHhugU6+MWuduNgjT8thBnOubplu4VQ4kZyobUzAbV5cWJqzqrOCSz9rjKC1oZWrxUKpOF7N0hZRhcPhzpNkN/uc1JZhswMal+6wvVWu6Q6tIFpjMH/afd4RdbTNA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=q6r7JZkmEZOuAj1YR8Fn5XuMSmWLqn3Dq5khLx/h7Ps=;
- b=UWHFtE7nhExkHt66eE8Ussv31eIwLLv73/q+W9kuCiZ76QT5yn8pGTNZKJO4MMRMla6pvDOaN8ry3gRC6yWy/hrNof+kpgo7n/3t5aSocqplQLs+AaNatcFRbtYtsNRCS0GBpXvKUM4QFOhq93qE5z2lj/quND8Nnvw5Vqk9bkGbk+YoPMbeZSZc2kcw6gQX8FyMzH1sD71xudis0vCHV0JiMxR4y70hj8N4I3Fp53Xgf/5Y2S4iKVwNM0MCXyrcl8TawV7RbI10xr1Bbwus8V/Z84dwUNaLwaoCexRyPz71c+FU8+lbhe7ZUui44ESKo5VA8WtzCQhp7R1Fmu2u9w==
+ bh=5ZkgNouJipD2IQmaCvteLJ0lJ4/JIXxFRke8+fQd1c0=;
+ b=xoifcW4pLmQEGZ/8bBTPcKXH6poBp9B68zHzSQ7gcstnxUxtklie5phB1IyTC26Gg3CslyoSDUjkC+6lKsgR6Mv6rfsplO5zqcKV7BnbY3gfpsacD1bMSxDulUlsxoHpS5J9OHQpddASRfx2qOB/0+Ir6ScCPIK8lqpSgjO1VSHn8I7txyu4TRLTeLXjxfnhh4ehpznV9W2QO55VhpVLIkXilzJeHldUWfY7/6vSeSp7fsGw2y/uma/Cc5cucHahsRJ5ld0LtrM17XiwKm/gNHmKdNezaxa+sTmR6XvmHTuIdnmg64NW5xs/dF2H40v3sIZv3hskGvjYWEWj5Q01sQ==
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:113::12)
@@ -35,9 +35,9 @@ From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org
 CC: jan.kiszka@siemens.com,
 	felix.moessbauer@siemens.com
-Subject: [isar-cip-core][PATCH v3 18/19] Kconfig: add option to generate initramfs with dracut
-Date: Tue, 17 Nov 2026 12:28:32 +0100
-Message-ID: <20261117112833.316234-19-quirin.gylstorff@siemens.com>
+Subject: [isar-cip-core][PATCH v3 19/19] doc: document dracut initramfs
+Date: Tue, 17 Nov 2026 12:28:33 +0100
+Message-ID: <20261117112833.316234-20-quirin.gylstorff@siemens.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261117112833.316234-1-quirin.gylstorff@siemens.com>
 References: <20261117112833.316234-1-quirin.gylstorff@siemens.com>
@@ -49,138 +49,315 @@ Return-Path: quirin.gylstorff@siemens.com
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DB8PR10MB3178:EE_|AS2PR10MB6615:EE_
-X-MS-Office365-Filtering-Correlation-Id: aa664ab3-83d4-40df-c116-08df449e1b15
+X-MS-Office365-Filtering-Correlation-Id: d287db84-fb69-4422-a079-08df449e1b60
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|23010399003|376014|366016|1800799024|10067099003|56012099006|11063799006|261026140227099003|261028144727099003|261026121527099003|261022115727099003|261021123027099003|261022105027099003|261021121427099003|261022075727099003|261102123227099003|261009223027099003|55112099003|22082099003|18002099003|6133799003;
-X-Microsoft-Antispam-Message-Info: H5toFCdrwcdqQn7apDz0gNGefIBUx+7QbkK3qWwFgGMLAmxcwTeQdE6sf9vOTtedBR6x6fS1YT4J/YHJgOzLCODh9C5PKp4PC8E9245x4/VoayiYNiduopTJ3ANhSwFyrmr8cbZZ+RzaJazXUai5Uqnvs/ZLgZrXuHaITjwnL8N8rYBHJSe+4SmgNvPiL4vVeKwcjwIu5AagK15wDpO+PXki3+PsBxg3zSTYQ6BnoBMaI4QIwVRRdsTjgdCzsWJwQpf3n10W/kGeVdf5cMW837HdEaDwKvAUnqXtUyvYe4EG82EUqTv8Tps+5L1I1d93NfTDSqJsZ7tijDm0eCWG/KCvBSyPtpk2wr7cVK66WDvC6kMgj86CpXZQgWie0Oii06FTHfCBSrO7CVS6dQ5HQssRNOeEqjq8zeKcwafEyr5CbmsC4pDdwk/xuowKBqRgRAGg/fip7t7ba8MIt8OvkVS2HAyFT9kGCSa/WWSg4qRv8cgdRuYnOkKYjcfuQrXejZqLkWUeGNCrs7n9PgL7D3Od+RC7Bk6LxoZqFNG1uKZcGXdd6kTEE+97eza50GGC8I53BIKY61pEC/0+iKZPKFdlg2JaiGX+vfidHOyBgP1Gb2v5aOWFm+G7Wv+Xa6XEys+6u/4lCeI6R5o59suWLEFW0NdJeKAUnoKKQlcV4WU=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(376014)(366016)(1800799024)(10067099003)(56012099006)(11063799006)(261026140227099003)(261028144727099003)(261026121527099003)(261022115727099003)(261021123027099003)(261022105027099003)(261021121427099003)(261022075727099003)(261102123227099003)(261009223027099003)(55112099003)(22082099003)(18002099003)(6133799003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|23010399003|376014|366016|1800799024|10067099003|56012099006|11063799006|261026140227099003|261028144727099003|261026121527099003|261022115727099003|261021123027099003|261022105027099003|261021121427099003|261022113327099003|261022075727099003|261102123227099003|261009220027099003|261009223327099003|261009223027099003|261009221227099003|261009221727099003|55112099003|22082099003|18002099003|6133799003|3023799007;
+X-Microsoft-Antispam-Message-Info: 59rEefCsG7fJbX06MDfYFmLss+rzG/HpQR53aCrpcFEPKinUFJR7IPfnEdBrVkGpW017vhQdTHohM+LUZo2uVKZRefyAtnIZ11Rk7+VT3tozDYEX/+zcNEpPpMdsnlL/PI3Za3irx+iLApk9s7Cgey63GNBCZyIdeAaQfEUDbh+PSv7FvtpuQkrfNNDpsYuHP6n8PphMiBfPRk2c+XdPOdxLyem1Qu1Si+7wm8+GryBrYwFj2M/JHRTPLCORWM1EDQyHhLnsxLfGZ1Sdl55idfyZOoMYyAbf9vmFARZ+k75xQVbf/ggDwOF9b9E4zQb7MJutKLDx77pKVl/RcjQ2XK9HC+ZEzPw5719EU8ThxxLWZceVRWrMl8JY4oinL66RVx6ipQINlXwSb3/er6KfL2OPMsi957P4ejGrXto/hMRNDcpmoFFG85lQkp04voHQbN+lYJlViV3zsnJ6C+DMvSzoV20R/GZgbjFVJL7apA9YH+q2vb8a+XBEbleaZsfi6jpmeA+KYJxgl2LKvWamFSpwAtLxyUP57EsSgoeo6o6phAFC+GRAoB+Lluxg1v0GZLKx3nhVa3XftTO7zxuXEAk7bgwnYbzq5ibb/7+v10U78szj4vLws+8M1nYkVBbU2lOtAJV4NYKJ+jQxIIoywohVWjYeE1FfQRUAlPHoow8=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(376014)(366016)(1800799024)(10067099003)(56012099006)(11063799006)(261026140227099003)(261028144727099003)(261026121527099003)(261022115727099003)(261021123027099003)(261022105027099003)(261021121427099003)(261022113327099003)(261022075727099003)(261102123227099003)(261009220027099003)(261009223327099003)(261009223027099003)(261009221227099003)(261009221727099003)(55112099003)(22082099003)(18002099003)(6133799003)(3023799007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?jdJ+myvcL8E01hllzzoBv95zgEs/F64HFLAVb9rG51/uXKLMVYdvXbRVHfge?=
- =?us-ascii?Q?zs34jp2w5ODwVo9ED6VxdBdCoCr7mjvahQKxN7pMopyhDfzvmCP0FQ1LI60k?=
- =?us-ascii?Q?lg7j995nq3GWoq70bAcO0ZDvnoVbxyyPRu3xU6gh2te2eQs3+cAYDl2Z1Fxi?=
- =?us-ascii?Q?eZetQbBc3g6pVBQ4wTLDbE2hFfnqBzQGf4NGy+Tyvzdt+oAZbMJWk/dgD0hE?=
- =?us-ascii?Q?HX1bHEXhQIDnc46a96hPzbRXjf7TjzY0tF4kH+rtUICJshRkDZKOj3a7It4+?=
- =?us-ascii?Q?8jJ9EXrXcM/Ut3xB6Qjko7rjRPrwmzC//PLHzVW6sF5S7q/BDjHQzdi0K/t9?=
- =?us-ascii?Q?BBEqxd/CFTzU/DUZ6f9ehZ882UPtPqGrY2reizL+33mzaMKEpgk7LTzfvjhv?=
- =?us-ascii?Q?LF7RXK6oKqVubBKaVMct/qguzGmtKVX1f2vQ5khscQPkjOvXiz0+LY9zGk8v?=
- =?us-ascii?Q?Spy0ZZM+4APB8DMXbIE0B6AMG0WlXQagQQxFDuRxIgk/mCrXUqsjpUPwfR6F?=
- =?us-ascii?Q?kQhB8LFEbohsfGFgM50yVV5q+IdSoI70w0o2EMX8oz/xsh5/4Jr/rbCqigZy?=
- =?us-ascii?Q?PjJtBiYNMyaggRohl61tYCfWoTEfqRUiqLEcIyiD5hyQj8Abm9EKX0VM4T2v?=
- =?us-ascii?Q?/yU5RJMg/7R/Cttwb+3l6eCHCnz2zYncVY/LpI+KovIkxXz4vHA7BR+vk2ns?=
- =?us-ascii?Q?uOrl0CW7XEkmwivMfq0261PVSkyjpM6g4E5cSPjGkFpovD8MJDCOcgzjYXg9?=
- =?us-ascii?Q?nt06wEANvRcmB3ZtoysP/V4Ohinr6GK0U6qhO0iDfXIHBFOtNcUfJbP7R1ho?=
- =?us-ascii?Q?zj9th1GjYBDIw6r1bQ2VqyeeTpk3aJh0Zd4nIlllXti29kuxmUuOjqLf5ElL?=
- =?us-ascii?Q?6zz2mg1obnEbbSlvYp7CJw3E4HqXJGBUlxeJ85E0h3R/mZ94yhpnSBFyk3VC?=
- =?us-ascii?Q?k8HrSvBfI2oQgVHE9l2ojhZfj2tOr9xVirLTSprikK92jbRfq5ZUIrAYy4Tm?=
- =?us-ascii?Q?FgPQ9UMOJQGWqt4rNUnZWTdbGvAxZKaqSDZVvPGuMAGmpj98sdkjrSjMzhgd?=
- =?us-ascii?Q?Wvi8sY2URAownM4MrrdxYUKD78rsrd1xykDl2aW9YgLEk2PbyMg2jJj8THj5?=
- =?us-ascii?Q?kOsfW1Sqd2t0SX8WX/uwXd6YV595h0/zDEI5sa/i5vxOeCbr949ihkUv2CEf?=
- =?us-ascii?Q?oKXFuUd45cIgioEN3sOM8JrHhh4QvO26WckPfGJkv6DGmMVOrrLdjiluTW7o?=
- =?us-ascii?Q?9ATiJjrKbCP/pnW1c50PFgJKAg5Tep0g5KYxoDdT4GpSN5cQKrHGif0wCy6w?=
- =?us-ascii?Q?jVzsiKPXUhOg6BH0mpJWe3VhGIeTm/O+bBjf0cDHevrulNsun2BwQYp9lA6a?=
- =?us-ascii?Q?KXtpmNjsr+xVSgs6EGjH3BVRYxg8VZQ3KANhBrbW5M+s67bsSiqNI7lFMVg/?=
- =?us-ascii?Q?mhHWrFYeOhfNWFPbFglp8qxSgLhQDq5YhBmr4ab4y6xRCZl1+fTW9i0M7C+e?=
- =?us-ascii?Q?DVuIqBUOJFbLIzjaY9PhWSjBxWBFs4DAW0pQnVOp/44bxRZ4UXHyscSxFgb4?=
- =?us-ascii?Q?eyaf6Ewz2QI8W2TCt0Yk0LoTi0BZz1YVYXXEtBMfu1cj63i7kkbHUsmJmSIx?=
- =?us-ascii?Q?1FsTfcKcUI9J1bYlVK8cwl38fZ9rk9M4/KkV0+JxPBWvDTXImDRDJec2P5nL?=
- =?us-ascii?Q?/MIqXeBHQmjcBF9p6fG4tZFVf6Wo81h0exOLsHBP6uIgiFG4WfTPgidNmUnK?=
- =?us-ascii?Q?RCZDoOX+3vgCNz42kNzdqDgOEKlhDDE=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?GNjIZdoH2bW6yg4qxyM+TDwEXVRJBpGNH6Du707qrM2Jd7rW+hAHV/r2Uki8?=
+ =?us-ascii?Q?ZShaxrnNrPfQeXTDedYpcSm9N0rPE9DPtbhLSboBsOhb0BCLv9frwnCByh9Z?=
+ =?us-ascii?Q?v8K5nt6lsqXeN6im0BUF5sSNcf0YWvAbnZlC+2g5oxj20TmkvKAHAddA4VwL?=
+ =?us-ascii?Q?YcRPYimPWOSeixV0m7aNGBCni+JUwvwa/h+5jUK3zhj9fYCGYdUFpCvx8JKy?=
+ =?us-ascii?Q?VG1Kf7IroQFokPSTaaZgqKhKBGxeTr/qKayY/UaidCe4cDy3swMnNbE4t1RJ?=
+ =?us-ascii?Q?5gnq6leIcBKmQWCDSucavC5VaRU+bK/gfTQhBVieDU9FJY16Q9yZWl+7lW3c?=
+ =?us-ascii?Q?b4+ktQfF8GVErfXMrWvp299psjwGVqNCf5ZwEjoPyyV0RPrjIcT2VNMyL5AS?=
+ =?us-ascii?Q?1djZzm6406KBQnTN1HqzSFljvsx4Dw9dn2Wklsu9kgsLPJizL15yzGBQg5V3?=
+ =?us-ascii?Q?L4b+yxDDsxqMmmcl2Ou5oAuU4nxYCpETqnZ+19uWThpGdzggMMsD3OMEHi5A?=
+ =?us-ascii?Q?HTBsI05y4KHm534NL5hW5HZZON/WSqtsaJ7KdvjM9zUMfhrVxF8gcERlwjsg?=
+ =?us-ascii?Q?L9LjEsjvoZzvM8gn6acte+q5Tx3NbsitMi7ZjJPDMyaVntbjypfpKoeyf/Nk?=
+ =?us-ascii?Q?3kjPObHjTOYclfCrB+usEWnUpmwU2dCOTA0U7bCzHxDFBN6VJOoIovFw7eqL?=
+ =?us-ascii?Q?gq1LipozpVEfTbdfK/Dy5tXlsqPKOQ7F9TfdN3mqEWdTlVJx/KeGQW+Kj/fz?=
+ =?us-ascii?Q?fKNQqm0+yD8rJPmlavHmo96L2LBlCNzKgYuD6ZG0tqMqfXCFtGN588KJpsGx?=
+ =?us-ascii?Q?Hlk3i5G0I/r7aIKa1TyeS9bkrT/uYFvI2/gM2BEBeJl5IbySg3fnXrhbcYwg?=
+ =?us-ascii?Q?DWelOQSBIO+e05ov7S7X4bemO1NjLtcwWj6jJ13ZO07OOhMRBbbP8Q3wrBC9?=
+ =?us-ascii?Q?GIagUxryU4Q6sKdy3T0L0XUOu03tm6kRc4nz7BDW/BotHP09pp42iv7+1eGR?=
+ =?us-ascii?Q?8dyN1dNixFRJr+QPjqgE8XIV3nizb0pgYs0qGEYmpI8yr3JLwVGYUBr/rRba?=
+ =?us-ascii?Q?eH3VWlhda9OnvtZuUiQXIXqWQ9XRh1uiPIhMtA6A661tuD36vCmgQI2Ya2fs?=
+ =?us-ascii?Q?+oxklbsKavTAQwFDfUN/1zyuVeYdmuWu8ftUbakv8lgHSYeZysanuyxGXPVG?=
+ =?us-ascii?Q?c93vSng7Trcsw/ZumD4pLZM577TJG5zM45R0mfQGBQbWzVR3IZJ54TtQ3HnI?=
+ =?us-ascii?Q?MYzDgY0+e5ypeYlJbAsATp4uq62mZbz1AG1ABzKF9JP6ktQsKwTZf/4Y8F/l?=
+ =?us-ascii?Q?YGmqfK/71CqyJ8guBs83jsYPmLf08m9oUIpKCrA5DK0e42UVEns+ks6QEK4m?=
+ =?us-ascii?Q?6JMagW5vXvv8nJKwFBGRvzD/yvmm9NUAhnyW80a8K/u6CPC3r4QfnoyM68wv?=
+ =?us-ascii?Q?/bHi29Vrdol1YXadH0rkQgU/teL88+QeJ0DTRi47xA/ZB4pYkZbG5bKerVN9?=
+ =?us-ascii?Q?mv/YN/2V0TfR1YwqV4REcBTrCmJk4wecofQED/gKzdHPmRva7AN+N5OJGup5?=
+ =?us-ascii?Q?QRWax+gt4ja3e2bqidnBOnYmKbGOl0FKzUlN8vxvQ6qh288jUnpoAhF3D0eC?=
+ =?us-ascii?Q?dt3qg+ACs9ByleyXSBb0I4Zy/S1DPx8rD1VeWTGAjWcBWNNoBlIuDNrM2H7T?=
+ =?us-ascii?Q?vDq5cVaRoJa69AnmXnhosIiNrUzdn3ErNtPBBFp/3nA4A8Y4yPGq1mUICOQY?=
+ =?us-ascii?Q?ILzg6lJBHwbwx1W3DUPxwQTwvy7iJSM=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aa664ab3-83d4-40df-c116-08df449e1b15
+X-MS-Exchange-CrossTenant-Network-Message-Id: d287db84-fb69-4422-a079-08df449e1b60
 X-MS-Exchange-CrossTenant-AuthSource: DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Nov 2026 11:29:56.1823
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Nov 2026 11:29:56.6779
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: p/Trhfpw32xfpkF2Pn0wmXsOUbAqWZVdJB407c+Z15bcvUD0iEcU+wkuQe0b+FC+Vo17zBJnmayMQ5MzbYJbBO98a2WHPMQFFq3skkTCSbA=
+X-MS-Exchange-CrossTenant-UserPrincipalName: nATF8/jlhyBZ7Ad+n6oT4UGkUEl8DMZwECV/ff2c8es+B09m+Y3SE/LizTELvkwsc/70PHZNCG3ikAmDPZ5BcdFCdb/PO0VPLxSwJOvhx/s=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR10MB6615
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 17 Nov 2026 11:30:09 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24839
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24840
 Content-Type: text/plain; charset="utf-8"
 
-Let the kas menu select kas/opt/dracut.yml. The dracut initramfs is only
-used with the efibootguard-boot wic plugin and a verity root, which come
-with SWUpdate, so the option depends on it. As dracut always uses a
-verity root, the separate verity option is not offered with it.
-
-Encrypting the rootfs is not offered with dracut either: the
-embedded-verity udev rule only matches unencrypted filesystem
-partitions, so the verity data in an opened LUKS container is never
-found, and the encryption of the active rootfs partitions on the first
-boot would have to happen after they are already in use as the verity
-root. Encrypted data partitions (/var, /home) are not affected.
+Describe the dracut initramfs, its modules and configuration packages,
+and the dracut-specific behaviour of factory reset and secure boot.
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- Kconfig                 | 22 +++++++++++++++++++++-
- kas/opt/encrypt-all.yml |  4 ++--
- 2 files changed, 23 insertions(+), 3 deletions(-)
+ doc/README.dracut.md        | 100 ++++++++++++++++++++++++++++++++++++
+ doc/README.factory-reset.md |  46 +++++++++++++++++
+ doc/README.secureboot.md    |   4 ++
+ 3 files changed, 150 insertions(+)
+ create mode 100644 doc/README.dracut.md
 
-diff --git a/Kconfig b/Kconfig
-index 929373d9..18ac94aa 100644
---- a/Kconfig
-+++ b/Kconfig
-@@ -279,6 +279,24 @@ config KAS_INCLUDE_TESTING
- 	string
- 	default "kas/opt/test.yml" if IMAGE_TESTING
-=20
-+config IMAGE_DRACUT
-+	bool "Use dracut to generate the initramfs"
-+	depends on !DEBIAN_BUSTER && !DEBIAN_BULLSEYE && !DEBIAN_BOOKWORM
-+	depends on IMAGE_SWUPDATE
-+	help
-+	  Generate the initramfs with dracut instead of initramfs-tools.
-+	  The rootfs is always protected with dm-verity. Without secure
-+	  boot the unified kernel image and its root hash are unsigned:
-+	  verity then only selects the A/B rootfs and detects accidental
-+	  corruption, it does not protect against tampering.
-+	  Encrypted data partitions and, with kas/opt/encrypt-all.yml, an
-+	  encrypted rootfs are supported.
-+	  See also ./doc/README.dracut.md.
+diff --git a/doc/README.dracut.md b/doc/README.dracut.md
+new file mode 100644
+index 00000000..a41b1a70
+--- /dev/null
++++ b/doc/README.dracut.md
+@@ -0,0 +1,100 @@
++# dracut-generated initramfs
 +
-+config KAS_INCLUDE_DRACUT
-+	string
-+	default "kas/opt/dracut.yml" if IMAGE_DRACUT
++isar-cip-core can generate dracut based initramfs images instead of using =
+initramfs-tools.
++This prepares for Debian 14, which switches the initramfs generator from
++initramfs-tools to dracut. It is supported on trixie and later (including =
+sid
++and forky). `cip-core-initramfs-dracut` is skipped on buster, bullseye and
++bookworm, whose dracut lacks the features the modules need.
 +
- if !KERNEL_4_4 && !KERNEL_4_19 && !NO_KERNEL
++## Build
++
++Add `kas/opt/dracut.yml` to the kas chain, for example:
++
++```bash
++./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/securit=
+y.yml:kas/opt/dracut.yml
++```
++
++The fragment sets `INITRAMFS_RECIPE =3D "cip-core-initramfs-dracut"`. The =
+distro
++configuration derives `ROOTFS_CONTAINER_TYPE =3D "verity"`, the `dracut` o=
+verride and
++`INITRD_CMDLINE_STYLE =3D "systemd"` from it, so setting `INITRAMFS_RECIPE=
+` in
++`local.conf` is sufficient. With the style `systemd` the efibootguard-boot=
+ wic
++plugin emits systemd's native verity arguments instead of
++`cip.verity_root_options=3D`: `roothash=3D`, `systemd.verity_root_options=
+=3D`,
++`systemd.verity_root_data=3D` and `systemd.verity_root_hash=3D` (both poin=
+ting at
++`/dev/${DRACUT_VERITY_DEVICE_LINK}`), plus `root=3D/dev/mapper/root`, `roo=
+tfstype=3D` and `ro`.
++
++## What is in the initrd
++
++The dracut modules are maintained in a separate repository,
++[embedded-dracut-modules](https://gitlab.com/cip-playground/embedded-dracu=
+t-modules),
++and built by the `embedded-dracut-modules` recipe. Their configuration is =
+shipped
++separately by `dracut-config-cip-*` packages built in this layer.
++
++| dracut module | Module package | Configuration package | Replaces |
++|---|---|---|---|
++| `embedded-verity` | `dracut-embedded-verity` | `dracut-config-cip-verity=
+` | `initramfs-verity-hook` |
++| `embedded-overlay` | `dracut-embedded-overlay` | `dracut-config-cip-over=
+lay` | `initramfs-overlay-hook` |
++| `embedded-crypt` | `dracut-embedded-crypt` | `dracut-config-cip-crypt` |=
+ `initramfs-crypt-hook` (systemd backend only) |
++| `embedded-factory-reset` | `dracut-embedded-factory-reset` | `dracut-con=
+fig-cip-factory-reset` | `initramfs-factory-reset-hook` (EFI variable only)=
+ |
++| `embedded-watchdog` | `dracut-embedded-watchdog` | `dracut-config-cip-wa=
+tchdog` | watchdog handling of the crypt and factory-reset hooks |
++
++`cip-core-initramfs-dracut` installs only the configuration packages; each
++pulls in its module package. Overlay and watchdog are always installed; th=
+e watchdog is only serviced
++if `INITRAMFS_WATCHDOG_DEVICE` is set. Verity is always
++installed, crypt with `encrypt-partitions` and
++factory-reset with `factory-reset` (`kas/opt/factory-reset.yml`). The drac=
+ut
++modules are enabled via `DRACUT_EXTRA_MODULES`.
++
++## Configuration
++
++The configuration variables (`INITRAMFS_OVERLAY_*`, `CRYPT_*`,
++`INITRAMFS_FACTORY_RESET_*`, `DRACUT_VERITY_DEVICE_TIMEOUT`, ...) are unch=
+anged.
++The `dracut-config-cip-*` packages write them to `/etc/dracut-embedded/`, =
+where they
++override the module defaults. `dracut-config-cip-crypt` also generates a
++crypttab from `CRYPT_PARTITIONS`, ships it as `/usr/share/dracut-embedded/=
+crypttab`
++and installs it to `/etc/crypttab` in its postinst.
++UUIDs in `CRYPT_PARTITIONS` must be lower-case, the build fails otherwise.=
+ This
++differs from `initramfs-crypt-hook`, which also accepts upper-case UUIDs.
++
++`INITRAMFS_OVERLAY_RECOVERY_SCRIPT` is optional; if empty, the module's
++default recovery script is used.
++
++The initramfs is built with `--no-hostonly`, which `embedded-crypt` requir=
+es.
++
++`embedded-verity` does not open the verity device itself. It ships a udev =
+rule that
++runs `embedded-verity-match` against every filesystem partition and publis=
+hes the one
++whose dm-verity header UUID matches the identity on the kernel command lin=
+e as
++`/dev/${DRACUT_VERITY_DEVICE_LINK}`. systemd's own `systemd-veritysetup-ge=
+nerator` then opens
++it as `/dev/mapper/root`.
++
++`embedded-overlay` is a `pre-pivot` hook that mounts the persistent storag=
+e device
++under the real root and stacks a writable overlay over each path in
++`INITRAMFS_OVERLAY_PATHS`.
++
++## Encrypted partitions and `:expand`
++
++`embedded-crypt` provisions TPM2-sealed LUKS2 partitions on first boot and=
+ leaves
++unlocking to systemd's native `systemd-cryptsetup-generator` (build-time
++`/etc/crypttab`). With `kas/opt/expand-on-first-boot.yml`, the last
++`CRYPT_PARTITIONS` entry gets `:expand`: on every boot the pre-mount hook
++grows that partition with `growpart`, and after mounting, `systemd-growfs`
++grows the LUKS2 payload and the filesystem. This is a no-op if the disk is
++already fully used. Only the last partition on the disk is grown. If the
++entry is not last, the module logs a warning and boots normally.
++
++## Constraints
++
++- **Verity is required.** A/B slot selection falls out of roothash matchin=
+g;
++  there is no dracut port of `initramfs-abrootfs-hook` and there will not =
+be
++  one. The `efibootguard-boot` wic plugin selects the verity root from
++  `ROOTFS_CONTAINER_TYPE`; the filesystem inside is selected by
++  `RO_ROOTFS_TYPE` (`squashfs` or `erofs`). Without secure boot the unifie=
+d kernel image is
++  unsigned: verity only selects the slot and detects accidental corruption=
+,
++  it does not protect against tampering. The build warns about this.
++  Setting `ROOTFS_CONTAINER_TYPE =3D ""` with dracut fails the build, as t=
+he
++  default of `verity` is the only supported value.
++- **UKI systems only.** The non-unified-kernel efibootguard path
++  (`unified-kernel=3Dn`) is not supported and not tested against dracut.
++- One generator per image. Isar's `initramfs.bbclass` rejects an image tha=
+t
++  mixes generators - with dracut selected, any package whose name contains
++  `initramfs` is an error - so there is no hybrid migration step.
+diff --git a/doc/README.factory-reset.md b/doc/README.factory-reset.md
+index 4b1a1ab9..99a8d78d 100644
+--- a/doc/README.factory-reset.md
++++ b/doc/README.factory-reset.md
+@@ -5,6 +5,8 @@ To enable the factory-reset functionality the following two=
+ elements need to be
+ ```
+ INITRAMFS_INSTALL +=3D "initramfs-factory-reset-hook"
+ ```
++  With dracut (`kas/opt/dracut.yml`), the module is `dracut-embedded-facto=
+ry-reset`
++  instead. It is installed via `kas/opt/factory-reset.yml`, see [dracut](#=
+dracut).
+ - factory-reset-helper which provides the helper scripts to set the factor=
+y-reset marker
+ ```
+ IMAGE_INSTALL +=3D "factory-reset-helper"
+@@ -28,6 +30,50 @@ As the factory-reset is executed before the disks are un=
+locked in the initramfs,
+ variable `INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE`. The factory-reset of =
+encrypted partition is not supported with the file based
+ marker.
 =20
- config IMAGE_SECURITY
-@@ -341,10 +359,12 @@ config IMAGE_SECURE_BOOT
- config IMAGE_ROOTFS_CONTAINER_VERITY
- 	bool "Protect the read-only rootfs with dm-verity"
- 	depends on !IMAGE_SECURE_BOOT
-+	depends on !IMAGE_DRACUT
- 	help
- 	  Wrap the read-only rootfs in a dm-verity container. Without secure
- 	  boot, dm-verity detects corruption of the rootfs, but the root hash is
--	  not authenticated. Secure boot always enables dm-verity.
-+	  not authenticated. Secure boot and the dracut initramfs always
-+	  enable dm-verity.
++## dracut
++
++With `kas/opt/dracut.yml`, `dracut-embedded-factory-reset` replaces
++`initramfs-factory-reset-hook` and is installed automatically with
++`kas/opt/factory-reset.yml`.
++
++- **Trigger:** only systemd's EFI variable
++  `FactoryReset-8cf2644b-4b0b-428f-9387-6d876050dc67`. With dracut,
++  `set-factory-reset.sh` writes this variable. EFI variables are required.=
+ A
++  build with `factory-reset-helper-file` fails.
++- **Flow:** a systemd generator pulls in `factory-reset.target` only if
++  the variable exists. The variable is deleted before anything is wiped. A
++  failing or timed-out reset (`INITRAMFS_FACTORY_RESET_TIMEOUT`) reboots
++  (`FailureAction=3Dreboot-force`) into a normal boot.
++- **Plain partitions:** zeroed, `wipefs`, and re-created with the previous
++  filesystem type and label.
++- **Encrypted partitions** (`encrypt-partitions`): the LUKS keyslots are
++  erased first (`cryptsetup erase`); the unlocked mapping keeps working
++  because the kernel holds the volume key. Then the mapping is zeroed, so =
+an
++  interrupted reset cannot leave a partition that still unlocks with partl=
+y
++  old data. Then the mapping is closed, the signature is removed, and on t=
+rixie the TPM is cleared (`tpm2_clear`,
++  disable with `INITRAMFS_FACTORY_RESET_CLEAR_TPM =3D "0"`).
++  `dracut-embedded-crypt` then creates a new LUKS2 container with a new vo=
+lume
++  key and TPM2 token, and a new filesystem.
++- **Filesystem type:** encrypted partitions get their filesystem from
++  `dracut-embedded-crypt` (`CRYPT_CREATE_FILE_SYSTEM_CMD`).
++  `INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE` is only the fallback type for
++  unencrypted devices without a detectable filesystem.
++- **Unlock failed:** an encrypted partition that could not be unlocked is =
+not
++  zeroed. Its LUKS keyslots are erased and the TPM is cleared, so the data=
+ is
++  unrecoverable (same as `initramfs-factory-reset-hook`).
++- **All TPM2-sealed partitions:** clearing the TPM makes every TPM2-sealed
++  partition impossible to unlock, including `CRYPT_PARTITIONS` entries not=
+ listed in
++  `INITRAMFS_FACTORY_RESET_DEVICES`. List all of them.
++- **Power loss:** a power loss during the reset (after the variable was
++  deleted) leaves partially wiped partitions. The next boot does not repea=
+t
++  the reset.
++- **Watchdog:** if `INITRAMFS_WATCHDOG_DEVICE` is set, the module configur=
+es
++  systemd's hardware watchdog (`WatchdogDevice=3D`/`RuntimeWatchdogSec=3D`=
+) for
++  the initrd on every boot, not only during a reset.
++- **Forky:** TPM clearing will move to `systemd-tpm2-clear.service`. Until
++  then, `INITRAMFS_FACTORY_RESET_CLEAR_TPM` is ignored there, and the buil=
+d
++  shows a warning.
++
+ ## Verification
 =20
- config KAS_INCLUDE_ROOTFS_CONTAINER_VERITY
- 	string
-diff --git a/kas/opt/encrypt-all.yml b/kas/opt/encrypt-all.yml
-index 8ad40eeb..a9290685 100644
---- a/kas/opt/encrypt-all.yml
-+++ b/kas/opt/encrypt-all.yml
-@@ -17,7 +17,7 @@ local_conf_header:
-   encrypted_root: |
-     # Do not set mount points for systema and systemb as they are mounted =
-by the
-     # abrootfs/verity initramfs
--    # As we use a weak default assignment in the intramfs-crypt-hook recip=
-e we need
--    # to set all partitions
-+    # As we use a weak default assignment in the initramfs-crypt-hook and
-+    # dracut-config-cip-crypt recipes we need to set all partitions
-     CRYPT_PARTITIONS =3D "${ABROOTFS_PART_UUID_A}::reencrypt ${ABROOTFS_PA=
-RT_UUID_B}::reencrypt \
-                          var:/var:reencrypt"
+ - Create a test file in a target partition (ex: `/var`)
+diff --git a/doc/README.secureboot.md b/doc/README.secureboot.md
+index 256e8fae..9b2430be 100644
+--- a/doc/README.secureboot.md
++++ b/doc/README.secureboot.md
+@@ -191,6 +191,10 @@ local_conf_header:
+ Replace `demo` with the name of the user-generated certificates. The user-=
+generated certificates
+ need to stored in the folder `recipes-devtools/secure-boot-secrets/files`.
+=20
++The example above builds the initramfs with initramfs-tools. The initrd ca=
+n
++alternatively be generated with dracut, which replaces `initramfs-verity-h=
+ook`
++by the dracut module `embedded-verity`, see [README.dracut.md](README.drac=
+ut.md).
++
+ Build the image with user-generated keys by executing the command:
+=20
+ ```bash
 --=20
 2.47.3
 
