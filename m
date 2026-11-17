@@ -1,252 +1,89 @@
-Received: from tor.source.kernel.org (tor.source.kernel.org [172.105.4.254])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.16060.1794916200342615274
+Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.16064.1794916205477319584
  for <cip-dev@lists.cip-project.org>;
- Tue, 17 Nov 2026 03:50:00 -0800
+ Tue, 17 Nov 2026 03:50:05 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.105.4.254, mailfrom: srs0=gktq=jg=tuxon.dev=claudiu.beznea@kernel.org)
+ dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.234.252.31, mailfrom: srs0=gktq=jg=tuxon.dev=claudiu.beznea@kernel.org)
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by tor.source.kernel.org (Postfix) with ESMTP id C156060F0F;
-	Tue, 17 Nov 2026 11:49:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BB951F000C4;
-	Tue, 17 Nov 2026 11:49:58 +0000 (UTC)
+	by sea.source.kernel.org (Postfix) with ESMTP id 486324120F;
+	Tue, 17 Nov 2026 11:50:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D0991F000C5;
+	Tue, 17 Nov 2026 11:50:04 +0000 (UTC)
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 6.1.y-cip 25/34] pinctrl: renesas: rzg2l: Generalize power source code
-Date: Tue, 17 Nov 2026 13:49:11 +0200
-Message-ID: <20261117114921.1485204-26-claudiu.beznea@tuxon.dev>
+Subject: [PATCH 6.1.y-cip 29/34] clk: renesas: r9a08g045: Add I3C clocks and resets
+Date: Tue, 17 Nov 2026 13:49:15 +0200
+Message-ID: <20261117114921.1485204-30-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261117114921.1485204-1-claudiu.beznea@tuxon.dev>
 References: <20261117114921.1485204-1-claudiu.beznea@tuxon.dev>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 17 Nov 2026 11:50:01 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24936
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 17 Nov 2026 11:50:11 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24940
 Content-Type: text/plain; charset="utf-8"
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-commit 342a7ce6d2f7b13037f0f993ca760779c53834d9 upstream.
+commit 148bda0cfeae913b1212c4c683e6d3f6ae1a5e69 upstream.
 
-The current functions used to get/set the pin power source check the
-OTHER_POC register, which is specific to the RZ/G3L SoC only.  To allow
-the code to be extended for other power source functionalities (e.g. I3C
-on RZ/G3S), generalize the functions used to get/set the pin power
-source.
+Extracted from the BSP driver and rebased.
 
-For this, introduce the struct rzg2l_register_masks data structure whose
-purpose is to store SoC specific register bit masks.  The members of
-this structure are then used in rzg2l_caps_to_pwr_reg() to retrieve the
-bitmask corresponding to a SoC specific power source capability.
-
-The conversion between HW specific power source values and SW specific
-power source values is now handled through rzg2l_pwr_reg_val_to_ps() and
-rzg2l_ps_to_pwr_reg_val().
-
-Finally, to keep the code generic, the register update in
-rzg2l_set_power_source() was changed to a read-modify-write approach to
-cover all cases.
-
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://patch.msgid.link/20260904125425.412632-2-claudiu.beznea+ren=
-esas@tuxon.dev
+Link: https://lore.kernel.org/20250630192438.38311-2-wsa+renesas@sang-eng=
+ineering.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[claudiu.beznea:
- - fixed conflict
- - dropped sd_ch2 and PIN_CFG_OTHER_POC_MASK specific code
- - dropped RZ/G3L specific code
- - dropped struct rzg2l_register_masks since it is not used]
+[claudiu.beznea: fixed conflict b/w PCIe and I3C clocks and resets by
+ keeping them all]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 128 +++++++++++++++---------
- 1 file changed, 81 insertions(+), 47 deletions(-)
+ drivers/clk/renesas/r9a08g045-cpg.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/re=
-nesas/pinctrl-rzg2l.c
-index 855c8aa8225f..817d974ef242 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -149,6 +149,7 @@
- #define PVDD_2500		2	/* I/O domain voltage 2.5V */
- #define PVDD_1800		1	/* I/O domain voltage <=3D 1.8V */
- #define PVDD_3300		0	/* I/O domain voltage >=3D 3.3V */
-+#define PVDD_MASK		0x3
-=20
- #define PWPR_B0WI		BIT(7)	/* Bit Write Disable */
- #define PWPR_PFCWE		BIT(6)	/* PFC Register Write Enable */
-@@ -898,37 +899,37 @@ static void rzg2l_rmw_pin_config(struct rzg2l_pinct=
-rl *pctrl, u32 offset,
- 	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
- }
-=20
--static int rzg2l_caps_to_pwr_reg(const struct rzg2l_register_offsets *re=
-gs, u32 caps)
-+static int rzg2l_caps_to_pwr_reg(const struct rzg2l_register_offsets *re=
-gs,
-+				 u32 caps, u16 *offset, u8 *mask)
+diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9=
+a08g045-cpg.c
+index 937a044cd5d3..cb4b004e7bc7 100644
+--- a/drivers/clk/renesas/r9a08g045-cpg.c
++++ b/drivers/clk/renesas/r9a08g045-cpg.c
+@@ -182,6 +182,7 @@ static const struct cpg_core_clk r9a08g045_core_clks[=
+] __initconst =3D {
+ 	DEF_G3S_DIV("P3", R9A08G045_CLK_P3, CLK_PLL3_DIV2_4, DIVPL3C, G3S_DIVPL=
+3C_STS,
+ 		    dtable_1_32, 0, 0, 0, NULL),
+ 	DEF_FIXED("P3_DIV2", CLK_P3_DIV2, R9A08G045_CLK_P3, 1, 2),
++	DEF_FIXED("P5", R9A08G045_CLK_P5, CLK_PLL2_DIV2, 1, 4),
+ 	DEF_FIXED("ZT", R9A08G045_CLK_ZT, CLK_PLL3_DIV2_8, 1, 1),
+ 	DEF_FIXED("S0", R9A08G045_CLK_S0, CLK_SEL_PLL4, 1, 2),
+ 	DEF_FIXED("OSC", R9A08G045_OSCCLK, CLK_EXTAL, 1, 1),
+@@ -295,6 +296,10 @@ static const struct rzg2l_mod_clk r9a08g045_mod_clks=
+[] =3D {
+ 					MSTOP(BUS_PERI_COM, BIT(10))),
+ 	DEF_MOD("pci_clkl1pm",		R9A08G045_PCI_CLKL1PM, R9A08G045_CLK_ZT, 0x608,=
+ 1,
+ 					MSTOP(BUS_PERI_COM, BIT(10))),
++	DEF_MOD("i3c_pclk",             R9A08G045_I3C_PCLK, R9A08G045_CLK_TSU, =
+0x610, 0,
++					MSTOP(BUS_MCPU3, BIT(10))),
++	DEF_MOD("i3c_tclk",             R9A08G045_I3C_TCLK, R9A08G045_CLK_P5, 0=
+x610, 1,
++					MSTOP(BUS_MCPU3, BIT(10))),
+ 	DEF_MOD("vbat_bclk",		R9A08G045_VBAT_BCLK, R9A08G045_OSCCLK, 0x614, 0,
+ 					MSTOP(BUS_MCPU3, GENMASK(8, 7))),
+ };
+@@ -342,6 +347,8 @@ static const struct rzg2l_reset r9a08g045_resets[] =3D=
  {
--	if (caps & PIN_CFG_IO_VMC_SD0)
--		return SD_CH(regs->sd_ch, 0);
--	if (caps & PIN_CFG_IO_VMC_SD1)
--		return SD_CH(regs->sd_ch, 1);
--	if (caps & PIN_CFG_IO_VMC_ETH0)
--		return ETH_POC(regs->eth_poc, 0);
--	if (caps & PIN_CFG_IO_VMC_ETH1)
--		return ETH_POC(regs->eth_poc, 1);
--	if (caps & PIN_CFG_IO_VMC_QSPI)
--		return QSPI;
-+	*mask =3D PVDD_MASK;
-+
-+	if (caps & PIN_CFG_IO_VMC_SD0) {
-+		*offset =3D SD_CH(regs->sd_ch, 0);
-+		return 0;
-+	}
-+	if (caps & PIN_CFG_IO_VMC_SD1) {
-+		*offset =3D SD_CH(regs->sd_ch, 1);
-+		return 0;
-+	}
-+	if (caps & PIN_CFG_IO_VMC_ETH0) {
-+		*offset =3D ETH_POC(regs->eth_poc, 0);
-+		return 0;
-+	}
-+	if (caps & PIN_CFG_IO_VMC_ETH1) {
-+		*offset =3D ETH_POC(regs->eth_poc, 1);
-+		return 0;
-+	}
-+	if (caps & PIN_CFG_IO_VMC_QSPI) {
-+		*offset =3D regs->qspi;
-+		return 0;
-+	}
+ 	DEF_RST(R9A08G045_PCI_RST_RSM_B, 0x908, 4),
+ 	DEF_RST(R9A08G045_PCI_RST_CFG_B, 0x908, 5),
+ 	DEF_RST(R9A08G045_PCI_RST_LOAD_B, 0x908, 6),
++	DEF_RST(R9A08G045_I3C_TRESETN, 0x910, 0),
++	DEF_RST(R9A08G045_I3C_PRESETN, 0x910, 1),
+ 	DEF_RST(R9A08G045_VBAT_BRESETN, 0x914, 0),
+ };
 =20
- 	return -EINVAL;
- }
-=20
--static int rzg2l_get_power_source(struct rzg2l_pinctrl *pctrl, u32 pin, =
-u32 caps)
-+static int rzg2l_pwr_reg_val_to_ps(u8 val, u32 caps)
- {
--	const struct rzg2l_hwcfg *hwcfg =3D pctrl->data->hwcfg;
--	const struct rzg2l_register_offsets *regs =3D &hwcfg->regs;
--	int pwr_reg;
--	u8 val;
--
--	if (caps & PIN_CFG_SOFT_PS)
--		return pctrl->settings[pin].power_source;
--
--	pwr_reg =3D rzg2l_caps_to_pwr_reg(regs, caps);
--	if (pwr_reg < 0)
--		return pwr_reg;
--
--	val =3D readb(pctrl->base + pwr_reg);
- 	switch (val) {
- 	case PVDD_1800:
- 		return 1800;
-@@ -936,43 +937,76 @@ static int rzg2l_get_power_source(struct rzg2l_pinc=
-trl *pctrl, u32 pin, u32 caps
- 		return 2500;
- 	case PVDD_3300:
- 		return 3300;
--	default:
--		/* Should not happen. */
--		return -EINVAL;
- 	}
-+
-+	return -EINVAL;
-+}
-+
-+static int rzg2l_ps_to_pwr_reg_val(u32 ps, u32 caps)
-+{
-+	switch (ps) {
-+	case 1800:
-+		return PVDD_1800;
-+	case 2500:
-+		if (!(caps & (PIN_CFG_IO_VMC_ETH0 | PIN_CFG_IO_VMC_ETH1)))
-+			return -EINVAL;
-+		return PVDD_2500;
-+	case 3300:
-+		return PVDD_3300;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static int rzg2l_get_power_source(struct rzg2l_pinctrl *pctrl, u32 pin, =
-u32 caps)
-+{
-+	const struct rzg2l_hwcfg *hwcfg =3D pctrl->data->hwcfg;
-+	const struct rzg2l_register_offsets *regs =3D &hwcfg->regs;
-+	u8 mask, val;
-+	u16 offset;
-+	int ret;
-+
-+	if (caps & PIN_CFG_SOFT_PS)
-+		return pctrl->settings[pin].power_source;
-+
-+	ret =3D rzg2l_caps_to_pwr_reg(regs, caps, &offset, &mask);
-+	if (ret)
-+		return ret;
-+
-+	val =3D readb(pctrl->base + offset);
-+
-+	return rzg2l_pwr_reg_val_to_ps(field_get(mask, val), caps);
- }
-=20
- static int rzg2l_set_power_source(struct rzg2l_pinctrl *pctrl, u32 pin, =
-u32 caps, u32 ps)
- {
- 	const struct rzg2l_hwcfg *hwcfg =3D pctrl->data->hwcfg;
- 	const struct rzg2l_register_offsets *regs =3D &hwcfg->regs;
--	int pwr_reg;
--	u8 val;
-+	u16 offset;
-+	u8 mask;
-+	int ret;
-=20
- 	if (caps & PIN_CFG_SOFT_PS) {
- 		pctrl->settings[pin].power_source =3D ps;
- 		return 0;
- 	}
-=20
--	switch (ps) {
--	case 1800:
--		val =3D PVDD_1800;
--		break;
--	case 2500:
--		val =3D PVDD_2500;
--		break;
--	case 3300:
--		val =3D PVDD_3300;
--		break;
--	default:
--		return -EINVAL;
--	}
-+	ret =3D rzg2l_caps_to_pwr_reg(regs, caps, &offset, &mask);
-+	if (ret)
-+		return ret;
-+
-+	ret =3D rzg2l_ps_to_pwr_reg_val(ps, caps);
-+	if (ret < 0)
-+		return ret;
-=20
--	pwr_reg =3D rzg2l_caps_to_pwr_reg(regs, caps);
--	if (pwr_reg < 0)
--		return pwr_reg;
-+	scoped_guard(raw_spinlock_irqsave, &pctrl->lock) {
-+		u8 tmp =3D readb(pctrl->base + offset);
-+
-+		tmp &=3D ~mask;
-+		tmp |=3D field_prep(mask, ret);
-+		writeb(tmp, pctrl->base + offset);
-+	}
-=20
--	writeb(val, pctrl->base + pwr_reg);
- 	pctrl->settings[pin].power_source =3D ps;
-=20
- 	return 0;
 --=20
 2.43.0
 
