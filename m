@@ -1,22 +1,22 @@
 Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.15953.1794916015249575481
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.15958.1794916023244202070
  for <cip-dev@lists.cip-project.org>;
- Tue, 17 Nov 2026 03:46:55 -0800
+ Tue, 17 Nov 2026 03:47:03 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.234.252.31, mailfrom: srs0=gktq=jg=tuxon.dev=claudiu.beznea@kernel.org)
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by sea.source.kernel.org (Postfix) with ESMTP id 12AF74373F;
-	Tue, 17 Nov 2026 11:46:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCAFB1F000C4;
-	Tue, 17 Nov 2026 11:46:53 +0000 (UTC)
+	by sea.source.kernel.org (Postfix) with ESMTP id 10EEB437EA;
+	Tue, 17 Nov 2026 11:47:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C57011F000C4;
+	Tue, 17 Nov 2026 11:47:01 +0000 (UTC)
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 36/69] pinctrl: renesas: rzg2l: Make QSPI register handling conditional
-Date: Tue, 17 Nov 2026 13:45:20 +0200
-Message-ID: <20261117114553.1484215-37-claudiu.beznea@tuxon.dev>
+Subject: [PATCH 5.10.y-cip 41/69] clk: renesas: r9a08g045: Add I3C clocks and resets
+Date: Tue, 17 Nov 2026 13:45:25 +0200
+Message-ID: <20261117114553.1484215-42-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261117114553.1484215-1-claudiu.beznea@tuxon.dev>
 References: <20261117114553.1484215-1-claudiu.beznea@tuxon.dev>
@@ -24,105 +24,67 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 17 Nov 2026 11:47:04 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24877
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24882
 Content-Type: text/plain; charset="utf-8"
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-commit 55793d3ddf774e9bbeed3c940fb19d6c1124b6d3 upstream.
+commit 148bda0cfeae913b1212c4c683e6d3f6ae1a5e69 upstream.
 
-The QSPI register at offset 0x3008 is not present on all SoCs supported b=
-y
-the RZ/G2L pinctrl driver. Unconditionally reading and writing this
-register during suspend/resume on hardware that lacks it can cause
-undefined behaviour.
+Extracted from the BSP driver and rebased.
 
-Add a qspi field to rzg2l_register_offsets to allow per-SoC declaration o=
-f
-the QSPI register offset, and guard the suspend/resume accesses with a
-check on that field. Populate the offset only for the RZ/{G2L,G2LC,G2UL,
-Five} hardware configuration, which is where the register is known to
-exist.
-
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20260430093422.74812-3-biju.das.jz@bp.rene=
-sas.com
+Link: https://lore.kernel.org/20250630192438.38311-2-wsa+renesas@sang-eng=
+ineering.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[claudiu.beznea:
-- fixed conflict in defines area by keeping only ETH_MODE define
-- fixed conflict in rzg2l_register_offsets by keeping only qspi member
-- fixed conflict in rzg2l_pinctrl_suspend_noirq() by keeping qspi and
-  eth_mode code
-- fixed conflict in rzg2l_pinctrl_resume_noirq() by keeping qspi, eth_mod=
-e,
-  sd_ch[], eth_poc[] code
-- fixed conflict in rzg2l_hwcfg by keeping only .qspi initialization
-- updated rzg2l_caps_to_pwr_reg() to use regs->qspi]
+[claudiu.beznea: fixed conflict b/w PCIe and I3C clocks and resets by
+ keeping them all]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/clk/renesas/r9a08g045-cpg.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/re=
-nesas/pinctrl-rzg2l.c
-index 17cca917767a..d64ee291e0e4 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -179,11 +179,13 @@
-  * @pwpr: PWPR register offset
-  * @sd_ch: SD_CH register offset
-  * @eth_poc: ETH_POC register offset
-+ * @qspi: QSPI register offset
-  */
- struct rzg2l_register_offsets {
- 	u16 pwpr;
- 	u16 sd_ch;
- 	u16 eth_poc;
-+	u16 qspi;
+diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9=
+a08g045-cpg.c
+index 937a044cd5d3..cb4b004e7bc7 100644
+--- a/drivers/clk/renesas/r9a08g045-cpg.c
++++ b/drivers/clk/renesas/r9a08g045-cpg.c
+@@ -182,6 +182,7 @@ static const struct cpg_core_clk r9a08g045_core_clks[=
+] __initconst =3D {
+ 	DEF_G3S_DIV("P3", R9A08G045_CLK_P3, CLK_PLL3_DIV2_4, DIVPL3C, G3S_DIVPL=
+3C_STS,
+ 		    dtable_1_32, 0, 0, 0, NULL),
+ 	DEF_FIXED("P3_DIV2", CLK_P3_DIV2, R9A08G045_CLK_P3, 1, 2),
++	DEF_FIXED("P5", R9A08G045_CLK_P5, CLK_PLL2_DIV2, 1, 4),
+ 	DEF_FIXED("ZT", R9A08G045_CLK_ZT, CLK_PLL3_DIV2_8, 1, 1),
+ 	DEF_FIXED("S0", R9A08G045_CLK_S0, CLK_SEL_PLL4, 1, 2),
+ 	DEF_FIXED("OSC", R9A08G045_OSCCLK, CLK_EXTAL, 1, 1),
+@@ -295,6 +296,10 @@ static const struct rzg2l_mod_clk r9a08g045_mod_clks=
+[] =3D {
+ 					MSTOP(BUS_PERI_COM, BIT(10))),
+ 	DEF_MOD("pci_clkl1pm",		R9A08G045_PCI_CLKL1PM, R9A08G045_CLK_ZT, 0x608,=
+ 1,
+ 					MSTOP(BUS_PERI_COM, BIT(10))),
++	DEF_MOD("i3c_pclk",             R9A08G045_I3C_PCLK, R9A08G045_CLK_TSU, =
+0x610, 0,
++					MSTOP(BUS_MCPU3, BIT(10))),
++	DEF_MOD("i3c_tclk",             R9A08G045_I3C_TCLK, R9A08G045_CLK_P5, 0=
+x610, 1,
++					MSTOP(BUS_MCPU3, BIT(10))),
+ 	DEF_MOD("vbat_bclk",		R9A08G045_VBAT_BCLK, R9A08G045_OSCCLK, 0x614, 0,
+ 					MSTOP(BUS_MCPU3, GENMASK(8, 7))),
+ };
+@@ -342,6 +347,8 @@ static const struct rzg2l_reset r9a08g045_resets[] =3D=
+ {
+ 	DEF_RST(R9A08G045_PCI_RST_RSM_B, 0x908, 4),
+ 	DEF_RST(R9A08G045_PCI_RST_CFG_B, 0x908, 5),
+ 	DEF_RST(R9A08G045_PCI_RST_LOAD_B, 0x908, 6),
++	DEF_RST(R9A08G045_I3C_TRESETN, 0x910, 0),
++	DEF_RST(R9A08G045_I3C_PRESETN, 0x910, 1),
+ 	DEF_RST(R9A08G045_VBAT_BRESETN, 0x914, 0),
  };
 =20
- /**
-@@ -844,7 +846,7 @@ static int rzg2l_caps_to_pwr_reg(const struct rzg2l_r=
-egister_offsets *regs, u32
- 	if (caps & PIN_CFG_IO_VMC_ETH1)
- 		return ETH_POC(regs->eth_poc, 1);
- 	if (caps & PIN_CFG_IO_VMC_QSPI)
--		return QSPI;
-+		return regs->qspi;
-=20
- 	return -EINVAL;
- }
-@@ -2692,7 +2694,8 @@ static int __maybe_unused rzg2l_pinctrl_suspend_noi=
-rq(struct device *dev)
- 		cache->eth_poc[i] =3D readb(pctrl->base + ETH_POC(regs->eth_poc, i));
- 	}
-=20
--	cache->qspi =3D readb(pctrl->base + QSPI);
-+	if (regs->qspi)
-+		cache->qspi =3D readb(pctrl->base + regs->qspi);
- 	cache->eth_mode =3D readb(pctrl->base + ETH_MODE);
-=20
- 	if (!atomic_read(&pctrl->wakeup_path))
-@@ -2718,7 +2721,8 @@ static int __maybe_unused rzg2l_pinctrl_resume_noir=
-q(struct device *dev)
- 			return ret;
- 	}
-=20
--	writeb(cache->qspi, pctrl->base + QSPI);
-+	if (regs->qspi)
-+		writeb(cache->qspi, pctrl->base + regs->qspi);
- 	writeb(cache->eth_mode, pctrl->base + ETH_MODE);
- 	for (i =3D 0; i < 2; i++) {
- 		writeb(cache->sd_ch[i], pctrl->base + SD_CH(regs->sd_ch, i));
-@@ -2738,6 +2742,7 @@ static const struct rzg2l_hwcfg rzg2l_hwcfg =3D {
- 		.pwpr =3D 0x3014,
- 		.sd_ch =3D 0x3000,
- 		.eth_poc =3D 0x300c,
-+		.qspi =3D QSPI,
- 	},
- 	.iolh_groupa_ua =3D {
- 		/* 3v3 power source */
 --=20
 2.43.0
 
