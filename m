@@ -1,22 +1,22 @@
 Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.15819.1794916024790141533
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.15825.1794916030919583541
  for <cip-dev@lists.cip-project.org>;
- Tue, 17 Nov 2026 03:47:04 -0800
+ Tue, 17 Nov 2026 03:47:10 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.234.252.31, mailfrom: srs0=gktq=jg=tuxon.dev=claudiu.beznea@kernel.org)
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by sea.source.kernel.org (Postfix) with ESMTP id 9450B415CD;
-	Tue, 17 Nov 2026 11:47:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 680361F000C4;
-	Tue, 17 Nov 2026 11:47:03 +0000 (UTC)
+	by sea.source.kernel.org (Postfix) with ESMTP id B362343CC8;
+	Tue, 17 Nov 2026 11:47:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 893691F000C4;
+	Tue, 17 Nov 2026 11:47:09 +0000 (UTC)
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 42/69] arm64: dts: renesas: r9a08g045: Add I3C node
-Date: Tue, 17 Nov 2026 13:45:26 +0200
-Message-ID: <20261117114553.1484215-43-claudiu.beznea@tuxon.dev>
+Subject: [PATCH 5.10.y-cip 46/69] arm64: dts: renesas: rzg3s-smarc-som: Enable I3C
+Date: Tue, 17 Nov 2026 13:45:30 +0200
+Message-ID: <20261117114553.1484215-47-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261117114553.1484215-1-claudiu.beznea@tuxon.dev>
 References: <20261117114553.1484215-1-claudiu.beznea@tuxon.dev>
@@ -24,78 +24,85 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 17 Nov 2026 11:47:14 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24883
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24887
 Content-Type: text/plain; charset="utf-8"
 
-From: Quynh Nguyen <quynh.nguyen.xb@renesas.com>
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit cd09e96fbac54fa962750c8cecea4d3d5e7e72ae upstream.
+commit 7953f601285c559263fd082fed44d738f2fc0466 upstream.
 
-Add the I3C node to RZ/G3S SoC DTSI.
+The Renesas RZ/G3S SMARC SoM board has a connector for I3C interface.
+Enable I3C.
 
-Signed-off-by: Quynh Nguyen <quynh.nguyen.xb@renesas.com>
-[wsa: adapted to upstream driver, moved bus frequencies to board file]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250807151434.5241-7-wsa+renesas@sang-engi=
-neering.com
+Link: https://patch.msgid.link/20260710113637.1328000-6-claudiu.beznea+re=
+nesas@tuxon.dev
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[claudiu.beznea: fixed conflict b/w TSU and I3C nodes by keeping them
- both]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi | 36 ++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ .../boot/dts/renesas/rzg3s-smarc-som.dtsi      | 18 ++++++++++++++++++
+ .../boot/dts/renesas/rzg3s-smarc-switches.h    |  4 ++++
+ 2 files changed, 22 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot=
-/dts/renesas/r9a08g045.dtsi
-index c386d92499e1..18457dc19cd7 100644
---- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-@@ -282,6 +282,42 @@ tsu: thermal@10059000 {
- 			io-channel-names =3D "tsu";
- 		};
+diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi b/arch/arm6=
+4/boot/dts/renesas/rzg3s-smarc-som.dtsi
+index e2a9b56df762..8bfaad700253 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+@@ -170,6 +170,14 @@ a0 80 30 30 9c
+ 	};
+ };
 =20
-+		i3c: i3c@1005b000 {
-+			compatible =3D "renesas,r9a08g045-i3c";
-+			reg =3D <0 0x1005b000 0 0x1000>;
-+			clocks =3D <&cpg CPG_MOD R9A08G045_I3C_PCLK>,
-+				 <&cpg CPG_MOD R9A08G045_I3C_TCLK>;
-+			clock-names =3D "pclk", "tclk";
-+			interrupts =3D <GIC_SPI 289 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 293 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 294 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 295 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 296 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 297 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 298 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 299 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 307 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 306 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names =3D "ierr", "terr", "abort", "resp",
-+					  "cmd", "ibi", "rx", "tx", "rcv",
-+					  "st", "sp", "tend", "nack", "al",
-+					  "tmo", "wu", "exit";
-+			resets =3D <&cpg R9A08G045_I3C_PRESETN>,
-+				 <&cpg R9A08G045_I3C_TRESETN>;
-+			reset-names =3D "presetn", "tresetn";
-+			power-domains =3D <&cpg>;
-+			#address-cells =3D <3>;
-+			#size-cells =3D <0>;
-+			status =3D "disabled";
-+		};
++&i3c {
++	pinctrl-names =3D "default";
++	pinctrl-0 =3D <&i3c_pins>;
++	i2c-scl-hz =3D <400000>;
++	i3c-scl-hz =3D <12500000>;
++	status =3D "okay";
++};
 +
- 		vbattb: clock-controller@1005c000 {
- 			compatible =3D "renesas,r9a08g045-vbattb";
- 			reg =3D <0 0x1005c000 0 0x1000>;
+ &pcie_port0 {
+ 	clocks =3D <&versa3 5>;
+ 	clock-names =3D "ref";
+@@ -301,6 +309,16 @@ mux {
+ 		};
+ 	};
+=20
++	i3c_pins: i3c {
++		pins =3D "I3C_SDA", "I3C_SCL";
++#if SW_CONFIG4 =3D=3D SW_ON
++		power-source =3D <1200>;
++#else
++		power-source =3D <1800>;
++#endif
++		input-enable;
++	};
++
+ 	sdhi0_pins: sd0 {
+ 		data {
+ 			pins =3D "SD0_DATA0", "SD0_DATA1", "SD0_DATA2", "SD0_DATA3";
+diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h b/arch/ar=
+m64/boot/dts/renesas/rzg3s-smarc-switches.h
+index bbf908a5322c..9cccc87da057 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
++++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
+@@ -25,9 +25,13 @@
+  * @SW_CONFIG3:
+  *	SW_OFF - SD2 is connected to SoC
+  *	SW_ON  - SCIF1, SSI0, IRQ0, IRQ1 connected to SoC
++ * @SW_CONFIG4:
++ *	SW_OFF - I3C voltage is 1.8V
++ *	SW_ON  - I3C voltage is 1.2V
+  */
+ #define SW_CONFIG2	SW_OFF
+ #define SW_CONFIG3	SW_ON
++#define SW_CONFIG4	SW_OFF
+=20
+ /*
+  * SW_OPT_MUX[x] switches' states:
 --=20
 2.43.0
 
