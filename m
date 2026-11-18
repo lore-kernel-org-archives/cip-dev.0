@@ -1,21 +1,21 @@
-Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.944.1795020122055089481
+Received: from tor.source.kernel.org (tor.source.kernel.org [172.105.4.254])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.947.1795020124031431013
  for <cip-dev@lists.cip-project.org>;
- Wed, 18 Nov 2026 08:42:02 -0800
+ Wed, 18 Nov 2026 08:42:04 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.234.252.31, mailfrom: srs0=4qsa=jh=tuxon.dev=claudiu.beznea@kernel.org)
+ dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.105.4.254, mailfrom: srs0=4qsa=jh=tuxon.dev=claudiu.beznea@kernel.org)
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by sea.source.kernel.org (Postfix) with ESMTP id D68EB46733;
-	Wed, 18 Nov 2026 16:42:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D974D1F000C7;
-	Wed, 18 Nov 2026 16:42:00 +0000 (UTC)
+	by tor.source.kernel.org (Postfix) with ESMTP id 7628162C0B;
+	Wed, 18 Nov 2026 16:42:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F1F01F000C4;
+	Wed, 18 Nov 2026 16:42:02 +0000 (UTC)
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: cip-dev@lists.cip-project.org
-Subject: [RESEND PATCH 6.12.y-cip 09/35] i3c: renesas: Clean DATBAS register on detach
-Date: Wed, 18 Nov 2026 18:41:20 +0200
-Message-ID: <20261118164146.3040784-10-claudiu.beznea@tuxon.dev>
+Subject: [RESEND PATCH 6.12.y-cip 10/35] i3c: renesas: Fix out-of-bounds access for newdevs mask
+Date: Wed, 18 Nov 2026 18:41:21 +0200
+Message-ID: <20261118164146.3040784-11-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261118164146.3040784-1-claudiu.beznea@tuxon.dev>
 References: <20261118164146.3040784-1-claudiu.beznea@tuxon.dev>
@@ -23,45 +23,56 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Wed, 18 Nov 2026 16:42:07 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24972
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24973
 Content-Type: text/plain; charset="utf-8"
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 797ed83c0cd495be4b345750c59e0363bf4d6207 upstream.
+commit 50dec95c9d1f1f82819bc898ef2b60fa83fd4ccd upstream.
 
-The controller uses DATBAS registers on TX/RX logic. Clean the DATBAS
-register for the detached I3C device to avoid issues.
+When software initiates DAA (Dynamic Address Assignment), the controller
+reports the result via the NRSPQP (Normal Response Queue Port Register).
+The data length field of the response descriptor, which is accessible
+through the NRSPQP register, indicates the number of devices remaining
+after DAA. Consequently, when the bus is empty, this field contains the
+maximum number of devices supported by the controller (8 for the Renesas
+I3C controller).
 
-Fixes: d028219a9f14 ("i3c: master: Add basic driver for the Renesas I3C c=
-ontroller")
+Adjust the condition that computes the newly discovered devices bitmask
+to prevent an out-of-bounds when the I3C bus is empty.
+
+Fixes: e7218986319b ("i3c: renesas: Add suspend/resume support")
 Cc: stable@vger.kernel.org
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 Tested-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Link: https://patch.msgid.link/20260713130545.568657-8-claudiu.beznea+ren=
+Link: https://patch.msgid.link/20260713130545.568657-9-claudiu.beznea+ren=
 esas@tuxon.dev
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/i3c/master/renesas-i3c.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/i3c/master/renesas-i3c.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/i3c/master/renesas-i3c.c b/drivers/i3c/master/renesa=
 s-i3c.c
-index 3e7789a80b7b..e27ea30cfdd1 100644
+index e27ea30cfdd1..b85e2b1ce5f3 100644
 --- a/drivers/i3c/master/renesas-i3c.c
 +++ b/drivers/i3c/master/renesas-i3c.c
-@@ -935,6 +935,8 @@ static void renesas_i3c_detach_i3c_dev(struct i3c_dev=
-_desc *dev)
- 	struct i3c_master_controller *m =3D i3c_dev_get_master(dev);
- 	struct renesas_i3c *i3c =3D to_renesas_i3c(m);
+@@ -703,7 +703,11 @@ static int renesas_i3c_daa(struct i3c_master_control=
+ler *m)
 =20
-+	renesas_writel(i3c->regs, DATBAS(data->index), 0);
+ 	renesas_i3c_wait_xfer(i3c, xfer);
+=20
+-	newdevs =3D GENMASK(i3c->maxdevs - cmd->rx_count - 1, 0);
++	if (cmd->rx_count >=3D i3c->maxdevs)
++		newdevs =3D 0;
++	else
++		newdevs =3D GENMASK(i3c->maxdevs - cmd->rx_count - 1, 0);
 +
- 	i3c_dev_set_master_data(dev, NULL);
- 	i3c->addrs[data->index] =3D 0;
- 	i3c->free_pos |=3D BIT(data->index);
+ 	newdevs &=3D ~olddevs;
+=20
+ 	for (pos =3D 0; pos < i3c->maxdevs; pos++) {
 --=20
 2.43.0
 
