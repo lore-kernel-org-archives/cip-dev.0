@@ -1,21 +1,21 @@
 Received: from tor.source.kernel.org (tor.source.kernel.org [172.105.4.254])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.955.1795020129590247175
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.920.1795020130926328302
  for <cip-dev@lists.cip-project.org>;
- Wed, 18 Nov 2026 08:42:09 -0800
+ Wed, 18 Nov 2026 08:42:11 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.105.4.254, mailfrom: srs0=4qsa=jh=tuxon.dev=claudiu.beznea@kernel.org)
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by tor.source.kernel.org (Postfix) with ESMTP id 0955562BE3;
+	by tor.source.kernel.org (Postfix) with ESMTP id 5C22A62BF5;
+	Wed, 18 Nov 2026 16:42:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 369F51F000C4;
 	Wed, 18 Nov 2026 16:42:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D741C1F000C4;
-	Wed, 18 Nov 2026 16:42:07 +0000 (UTC)
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: cip-dev@lists.cip-project.org
-Subject: [RESEND PATCH 6.12.y-cip 14/35] i3c: renesas: Drop the explicit memset() call
-Date: Wed, 18 Nov 2026 18:41:25 +0200
-Message-ID: <20261118164146.3040784-15-claudiu.beznea@tuxon.dev>
+Subject: [RESEND PATCH 6.12.y-cip 15/35] i3c: renesas: Update HW registers after SW computations are done
+Date: Wed, 18 Nov 2026 18:41:26 +0200
+Message-ID: <20261118164146.3040784-16-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261118164146.3040784-1-claudiu.beznea@tuxon.dev>
 References: <20261118164146.3040784-1-claudiu.beznea@tuxon.dev>
@@ -23,42 +23,93 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Wed, 18 Nov 2026 16:42:17 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24977
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24978
 Content-Type: text/plain; charset="utf-8"
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 5e0b4ae8017782c5495f96f924b28fa447682a36 upstream.
+commit 826a7d3d5ff2296d021a6a4521544b852609047a upstream.
 
-Drop the explicit memset() call on struct i3c_device_info object, as it i=
-s
-already initialized at declaration through compiler initialization.
+renesas_i3c_bus_init() performs a number of computations and software
+cache updates, interleaving them with hardware register writes. While
+this works today, it makes it harder to minimize the time the controller
+must remain powered when runtime PM is introduced.
+
+Perform all software computations and cache updates first, then update
+the hardware registers. This prepares for future runtime PM support.
 
 Reviewed-by: Frank Li <Frank.Li@nxp.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Tested-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Link: https://patch.msgid.link/20260713130545.568657-13-claudiu.beznea+re=
+Link: https://patch.msgid.link/20260713130545.568657-14-claudiu.beznea+re=
 nesas@tuxon.dev
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/i3c/master/renesas-i3c.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/i3c/master/renesas-i3c.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/i3c/master/renesas-i3c.c b/drivers/i3c/master/renesa=
 s-i3c.c
-index 7f3fbf823d15..f7010ab3d8f5 100644
+index f7010ab3d8f5..1fec310ed5d1 100644
 --- a/drivers/i3c/master/renesas-i3c.c
 +++ b/drivers/i3c/master/renesas-i3c.c
-@@ -639,7 +639,6 @@ static int renesas_i3c_bus_init(struct i3c_master_con=
-troller *m)
- 	i3c->dyn_addr =3D ret;
- 	renesas_writel(i3c->regs, MSDVAD, MSDVAD_MDYAD(ret) | MSDVAD_MDYADV);
+@@ -565,10 +565,6 @@ static int renesas_i3c_bus_init(struct i3c_master_co=
+ntroller *m)
+ 	if (!i3c->rate)
+ 		return -EINVAL;
 =20
--	memset(&info, 0, sizeof(info));
- 	info.dyn_addr =3D ret;
+-	ret =3D renesas_i3c_reset(i3c);
+-	if (ret)
+-		return ret;
+-
+ 	i2c_total_ticks =3D DIV_ROUND_UP(i3c->rate, bus->scl_rate.i2c);
+ 	i3c_total_ticks =3D DIV_ROUND_UP(i3c->rate, bus->scl_rate.i3c);
+=20
+@@ -619,27 +615,31 @@ static int renesas_i3c_bus_init(struct i3c_master_c=
+ontroller *m)
+ 			STDBR_SBRHO(double_SBR, od_high_ticks) |
+ 			STDBR_SBRLP(pp_low_ticks) |
+ 			STDBR_SBRHP(pp_high_ticks);
+-	renesas_writel(i3c->regs, STDBR, i3c->i3c_STDBR);
+=20
+ 	/* Extended Bit Rate setting */
+ 	i3c->extbr =3D EXTBR_EBRLO(od_low_ticks) | EXTBR_EBRHO(od_high_ticks) |
+ 		     EXTBR_EBRLP(pp_low_ticks) | EXTBR_EBRHP(pp_high_ticks);
+-	renesas_writel(i3c->regs, EXTBR, i3c->extbr);
+-
+-	renesas_writel(i3c->regs, REFCKCTL, REFCKCTL_IREFCKS(cks));
+-	i3c->refclk_div =3D cks;
+-
+-	/* I3C hw init*/
+-	renesas_i3c_hw_init(i3c);
+=20
+ 	ret =3D i3c_master_get_free_addr(m, 0);
+ 	if (ret < 0)
+ 		return ret;
+=20
++	info.dyn_addr =3D ret;
+ 	i3c->dyn_addr =3D ret;
+-	renesas_writel(i3c->regs, MSDVAD, MSDVAD_MDYAD(ret) | MSDVAD_MDYADV);
++	i3c->refclk_div =3D cks;
++
++	ret =3D renesas_i3c_reset(i3c);
++	if (ret)
++		return ret;
++
++	renesas_writel(i3c->regs, STDBR, i3c->i3c_STDBR);
++	renesas_writel(i3c->regs, EXTBR, i3c->extbr);
++	renesas_writel(i3c->regs, REFCKCTL, REFCKCTL_IREFCKS(cks));
++	renesas_writel(i3c->regs, MSDVAD, MSDVAD_MDYAD(i3c->dyn_addr) | MSDVAD_=
+MDYADV);
++
++	/* I3C hw init*/
++	renesas_i3c_hw_init(i3c);
+=20
+-	info.dyn_addr =3D ret;
  	return i3c_master_set_info(&i3c->base, &info);
  }
+=20
 --=20
 2.43.0
 
