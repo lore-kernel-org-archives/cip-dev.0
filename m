@@ -1,100 +1,88 @@
-Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.229.1795018410634251477
+Received: from tor.source.kernel.org (tor.source.kernel.org [172.105.4.254])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.262.1795018413984859647
  for <cip-dev@lists.cip-project.org>;
- Wed, 18 Nov 2026 08:13:30 -0800
+ Wed, 18 Nov 2026 08:13:34 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.234.252.31, mailfrom: srs0=4qsa=jh=tuxon.dev=claudiu.beznea@kernel.org)
+ dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.105.4.254, mailfrom: srs0=4qsa=jh=tuxon.dev=claudiu.beznea@kernel.org)
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by sea.source.kernel.org (Postfix) with ESMTP id 6FD9A43AF4;
-	Wed, 18 Nov 2026 16:13:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 670131F000C6;
-	Wed, 18 Nov 2026 16:13:28 +0000 (UTC)
+	by tor.source.kernel.org (Postfix) with ESMTP id 6560E62735;
+	Wed, 18 Nov 2026 16:13:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B0A71F000C7;
+	Wed, 18 Nov 2026 16:13:31 +0000 (UTC)
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: cip-dev@lists.cip-project.org
-Subject: [RESEND PATCH 6.1.y-cip 30/34] arm64: dts: renesas: r9a08g045: Add I3C node
-Date: Wed, 18 Nov 2026 18:13:17 +0200
-Message-ID: <20261118161321.3032517-1-claudiu.beznea@tuxon.dev>
+Subject: [RESEND PATCH 6.1.y-cip 32/34] arm64: dts: renesas: r9a08g045: Move interrupt-parent to root node
+Date: Wed, 18 Nov 2026 18:13:19 +0200
+Message-ID: <20261118161321.3032517-3-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <18E8D2BE9419961D.1262307@lists.cip-project.org>
+In-Reply-To: <20261118161321.3032517-1-claudiu.beznea@tuxon.dev>
 References: <18E8D2BE9419961D.1262307@lists.cip-project.org>
+ <20261118161321.3032517-1-claudiu.beznea@tuxon.dev>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Wed, 18 Nov 2026 16:13:36 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24957
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24959
 Content-Type: text/plain; charset="utf-8"
 
-From: Quynh Nguyen <quynh.nguyen.xb@renesas.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-commit cd09e96fbac54fa962750c8cecea4d3d5e7e72ae upstream.
+commit 1342f314c4cf3d4e68dca6771f63f79901ee4690 upstream.
 
-Add the I3C node to RZ/G3S SoC DTSI.
+Move the "interrupt-parent =3D <&gic>" property from the soc node to the
+root node, and simplify "interrupts-extended =3D <&gic ...>" to
+"interrupts =3D <...>".
 
-Signed-off-by: Quynh Nguyen <quynh.nguyen.xb@renesas.com>
-[wsa: adapted to upstream driver, moved bus frequencies to board file]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250807151434.5241-7-wsa+renesas@sang-engi=
-neering.com
+Link: https://patch.msgid.link/87jz1o8o8o.wl-kuninori.morimoto.gx@renesas=
+.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[claudiu.beznea: fixed conflict b/w TSU and I3C nodes by keeping them
- both]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi | 36 ++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot=
 /dts/renesas/r9a08g045.dtsi
-index 10a0813a9781..93f897d05ce5 100644
+index 2fe5f3a65932..a3b48d94de7f 100644
 --- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-@@ -282,6 +282,42 @@ tsu: thermal@10059000 {
- 			io-channel-names =3D "tsu";
- 		};
+@@ -13,6 +13,7 @@ / {
+ 	compatible =3D "renesas,r9a08g045";
+ 	#address-cells =3D <2>;
+ 	#size-cells =3D <2>;
++	interrupt-parent =3D <&gic>;
 =20
-+		i3c: i3c@1005b000 {
-+			compatible =3D "renesas,r9a08g045-i3c";
-+			reg =3D <0 0x1005b000 0 0x1000>;
-+			clocks =3D <&cpg CPG_MOD R9A08G045_I3C_PCLK>,
-+				 <&cpg CPG_MOD R9A08G045_I3C_TCLK>;
-+			clock-names =3D "pclk", "tclk";
-+			interrupts =3D <GIC_SPI 289 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 293 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 294 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 295 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 296 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 297 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 298 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 299 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 307 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 306 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names =3D "ierr", "terr", "abort", "resp",
-+					  "cmd", "ibi", "rx", "tx", "rcv",
-+					  "st", "sp", "tend", "nack", "al",
-+					  "tmo", "wu", "exit";
-+			resets =3D <&cpg R9A08G045_I3C_PRESETN>,
-+				 <&cpg R9A08G045_I3C_TRESETN>;
-+			reset-names =3D "presetn", "tresetn";
-+			power-domains =3D <&cpg>;
-+			#address-cells =3D <3>;
-+			#size-cells =3D <0>;
-+			status =3D "disabled";
-+		};
-+
- 		vbattb: clock-controller@1005c000 {
- 			compatible =3D "renesas,r9a08g045-vbattb";
- 			reg =3D <0 0x1005c000 0 0x1000>;
+ 	audio_clk1: audio1-clk {
+ 		compatible =3D "fixed-clock";
+@@ -92,7 +93,6 @@ psci {
+=20
+ 	soc: soc {
+ 		compatible =3D "simple-bus";
+-		interrupt-parent =3D <&gic>;
+ 		#address-cells =3D <2>;
+ 		#size-cells =3D <2>;
+ 		ranges;
+@@ -937,11 +937,11 @@ wdt0: watchdog@12800800 {
+=20
+ 	timer {
+ 		compatible =3D "arm,armv8-timer";
+-		interrupts-extended =3D <&gic GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
+-				      <&gic GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
+-				      <&gic GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
+-				      <&gic GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>,
+-				      <&gic GIC_PPI 12 IRQ_TYPE_LEVEL_LOW>;
++		interrupts =3D <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_PPI 12 IRQ_TYPE_LEVEL_LOW>;
+ 		interrupt-names =3D "sec-phys", "phys", "virt", "hyp-phys",
+ 				  "hyp-virt";
+ 	};
 --=20
 2.43.0
 
