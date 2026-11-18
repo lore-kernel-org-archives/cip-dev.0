@@ -1,21 +1,21 @@
 Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.936.1795020152448132051
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.940.1795020153790206609
  for <cip-dev@lists.cip-project.org>;
- Wed, 18 Nov 2026 08:42:32 -0800
+ Wed, 18 Nov 2026 08:42:33 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.234.252.31, mailfrom: srs0=4qsa=jh=tuxon.dev=claudiu.beznea@kernel.org)
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by sea.source.kernel.org (Postfix) with ESMTP id 3443A467D0;
+	by sea.source.kernel.org (Postfix) with ESMTP id 95F8B467C3;
+	Wed, 18 Nov 2026 16:42:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EBB11F000C7;
 	Wed, 18 Nov 2026 16:42:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 248641F000D1;
-	Wed, 18 Nov 2026 16:42:30 +0000 (UTC)
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: cip-dev@lists.cip-project.org
-Subject: [RESEND PATCH 6.12.y-cip 31/35] clk: renesas: r9a08g045: Add I3C clocks and resets
-Date: Wed, 18 Nov 2026 18:41:42 +0200
-Message-ID: <20261118164146.3040784-32-claudiu.beznea@tuxon.dev>
+Subject: [RESEND PATCH 6.12.y-cip 32/35] arm64: dts: renesas: r9a08g045: Add I3C node
+Date: Wed, 18 Nov 2026 18:41:43 +0200
+Message-ID: <20261118164146.3040784-33-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261118164146.3040784-1-claudiu.beznea@tuxon.dev>
 References: <20261118164146.3040784-1-claudiu.beznea@tuxon.dev>
@@ -23,67 +23,78 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Wed, 18 Nov 2026 16:42:39 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24994
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24995
 Content-Type: text/plain; charset="utf-8"
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Quynh Nguyen <quynh.nguyen.xb@renesas.com>
 
-commit 148bda0cfeae913b1212c4c683e6d3f6ae1a5e69 upstream.
+commit cd09e96fbac54fa962750c8cecea4d3d5e7e72ae upstream.
 
-Extracted from the BSP driver and rebased.
+Add the I3C node to RZ/G3S SoC DTSI.
 
+Signed-off-by: Quynh Nguyen <quynh.nguyen.xb@renesas.com>
+[wsa: adapted to upstream driver, moved bus frequencies to board file]
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250630192438.38311-2-wsa+renesas@sang-eng=
-ineering.com
+Link: https://lore.kernel.org/20250807151434.5241-7-wsa+renesas@sang-engi=
+neering.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[claudiu.beznea: fixed conflict b/w PCIe and I3C clocks and resets by
- keeping them all]
+[claudiu.beznea: fixed conflict b/w TSU and I3C nodes by keeping them
+ both]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/clk/renesas/r9a08g045-cpg.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi | 36 ++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9=
-a08g045-cpg.c
-index 2b71a2ff6292..20e97f2f1eba 100644
---- a/drivers/clk/renesas/r9a08g045-cpg.c
-+++ b/drivers/clk/renesas/r9a08g045-cpg.c
-@@ -179,6 +179,7 @@ static const struct cpg_core_clk r9a08g045_core_clks[=
-] __initconst =3D {
- 	DEF_G3S_DIV("P3", R9A08G045_CLK_P3, CLK_PLL3_DIV2_4, DIVPL3C, G3S_DIVPL=
-3C_STS,
- 		    dtable_1_32, 0, 0, 0, NULL),
- 	DEF_FIXED("P3_DIV2", CLK_P3_DIV2, R9A08G045_CLK_P3, 1, 2),
-+	DEF_FIXED("P5", R9A08G045_CLK_P5, CLK_PLL2_DIV2, 1, 4),
- 	DEF_FIXED("ZT", R9A08G045_CLK_ZT, CLK_PLL3_DIV2_8, 1, 1),
- 	DEF_FIXED("S0", R9A08G045_CLK_S0, CLK_SEL_PLL4, 1, 2),
- 	DEF_FIXED("OSC", R9A08G045_OSCCLK, CLK_EXTAL, 1, 1),
-@@ -292,6 +293,10 @@ static const struct rzg2l_mod_clk r9a08g045_mod_clks=
-[] =3D {
- 					MSTOP(BUS_PERI_COM, BIT(10))),
- 	DEF_MOD("pci_clkl1pm",		R9A08G045_PCI_CLKL1PM, R9A08G045_CLK_ZT, 0x608,=
- 1,
- 					MSTOP(BUS_PERI_COM, BIT(10))),
-+	DEF_MOD("i3c_pclk",             R9A08G045_I3C_PCLK, R9A08G045_CLK_TSU, =
-0x610, 0,
-+					MSTOP(BUS_MCPU3, BIT(10))),
-+	DEF_MOD("i3c_tclk",             R9A08G045_I3C_TCLK, R9A08G045_CLK_P5, 0=
-x610, 1,
-+					MSTOP(BUS_MCPU3, BIT(10))),
- 	DEF_MOD("vbat_bclk",		R9A08G045_VBAT_BCLK, R9A08G045_OSCCLK, 0x614, 0,
- 					MSTOP(BUS_MCPU3, GENMASK(8, 7))),
- };
-@@ -339,6 +344,8 @@ static const struct rzg2l_reset r9a08g045_resets[] =3D=
- {
- 	DEF_RST(R9A08G045_PCI_RST_RSM_B, 0x908, 4),
- 	DEF_RST(R9A08G045_PCI_RST_CFG_B, 0x908, 5),
- 	DEF_RST(R9A08G045_PCI_RST_LOAD_B, 0x908, 6),
-+	DEF_RST(R9A08G045_I3C_TRESETN, 0x910, 0),
-+	DEF_RST(R9A08G045_I3C_PRESETN, 0x910, 1),
- 	DEF_RST(R9A08G045_VBAT_BRESETN, 0x914, 0),
- };
+diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot=
+/dts/renesas/r9a08g045.dtsi
+index 77d4e7e6d90b..e2bf25266dce 100644
+--- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+@@ -282,6 +282,42 @@ tsu: thermal@10059000 {
+ 			io-channel-names =3D "tsu";
+ 		};
 =20
++		i3c: i3c@1005b000 {
++			compatible =3D "renesas,r9a08g045-i3c";
++			reg =3D <0 0x1005b000 0 0x1000>;
++			clocks =3D <&cpg CPG_MOD R9A08G045_I3C_PCLK>,
++				 <&cpg CPG_MOD R9A08G045_I3C_TCLK>;
++			clock-names =3D "pclk", "tclk";
++			interrupts =3D <GIC_SPI 289 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 293 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 294 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 295 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 296 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 297 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 298 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 299 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 307 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 306 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names =3D "ierr", "terr", "abort", "resp",
++					  "cmd", "ibi", "rx", "tx", "rcv",
++					  "st", "sp", "tend", "nack", "al",
++					  "tmo", "wu", "exit";
++			resets =3D <&cpg R9A08G045_I3C_PRESETN>,
++				 <&cpg R9A08G045_I3C_TRESETN>;
++			reset-names =3D "presetn", "tresetn";
++			power-domains =3D <&cpg>;
++			#address-cells =3D <3>;
++			#size-cells =3D <0>;
++			status =3D "disabled";
++		};
++
+ 		vbattb: clock-controller@1005c000 {
+ 			compatible =3D "renesas,r9a08g045-vbattb";
+ 			reg =3D <0 0x1005c000 0 0x1000>;
 --=20
 2.43.0
 
