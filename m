@@ -1,130 +1,95 @@
-Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.989.1795020156482810547
+Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.1388.1795021151050715889
  for <cip-dev@lists.cip-project.org>;
- Wed, 18 Nov 2026 08:42:36 -0800
+ Wed, 18 Nov 2026 08:59:11 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.234.252.31, mailfrom: srs0=4qsa=jh=tuxon.dev=claudiu.beznea@kernel.org)
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by sea.source.kernel.org (Postfix) with ESMTP id 4BD794099A;
-	Wed, 18 Nov 2026 16:42:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F0C31F000C4;
-	Wed, 18 Nov 2026 16:42:35 +0000 (UTC)
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-To: nobuhiro.iwamatsu.x90@mail.toshiba,
-	pavel@nabladev.com
-Cc: cip-dev@lists.cip-project.org
-Subject: [RESEND PATCH 6.12.y-cip 34/35] arm64: dts: renesas: r9a08g045: Move max-frequency to SoC dtsi
-Date: Wed, 18 Nov 2026 18:41:45 +0200
-Message-ID: <20261118164146.3040784-35-claudiu.beznea@tuxon.dev>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261118164146.3040784-1-claudiu.beznea@tuxon.dev>
-References: <20261118164146.3040784-1-claudiu.beznea@tuxon.dev>
+ dkim=pass header.i=@nabladev.com header.s=dkim header.b=ex11XTxA;
+ spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5632510FA5E;
+	Wed, 18 Nov 2026 17:59:01 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
+	s=dkim; t=1795021144;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=t+ihe1yhT+76h7CDlhh5eOIICAXaUEP5/rulTOZw+B8=;
+	b=ex11XTxAfxZGSQ6jT47eumthacqGHCd0/hDdWoZcJuHHBj/2Z5v/lscC7q2Cyhh699B6XR
+	wceI3Do+YYw2kp6Mxf/AWv/50teSUUoXNMepIWpZRP/NmFUtdxe/m6zTBHUZ91fYczV/Pz
+	9DpOp9TtwhXTQEi/qXurb9SKMHFa5Wcv/6bFAoXgpuyB305cSRLI2wRbgjIbzX9YfGFE7N
+	YC/k5joh6skdo3sNzw/QGU3Chd8TnJ4Wp2PgTjrZveLDkiyz59EEwAzzAIPAqU2ABGk5WC
+	3CL5eCccvMN/NlUP04rENjd+fSSQQAaR3MuKkoQivKyHuXRNLPsXwHwX5Ie3ig==
+Date: Wed, 18 Nov 2026 17:58:59 +0100
+From: Pavel Machek <pavel@nabladev.com>
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Pavel Machek <pavel@nabladev.com>,
+	Masami Ichikawa <masami.ichikawa@miraclelinux.com>,
+	cip-dev <cip-dev@lists.cip-project.org>,
+	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
+	Ulrich Hecht <uli@fpond.eu>
+Subject: Re: CVE-2026-99288: Re: [kernel-cve-report] New CVE entries this week
+Message-ID: <av3ZUzcCn01qH4YJ@duo.ucw.cz>
+References: <CAODzB9rb+qvRFhe8UcFY2Pt-j82sqgpS=mfc4NbCrbdwww2Tpw@mail.gmail.com>
+ <4b4745fa-2a9e-48ea-996f-fff98ffec832@siemens.com>
+ <avzGdm2kkPzk8cLD@duo.ucw.cz>
+ <63257a1a-dcbd-46ea-958d-fd4fc876cd2e@siemens.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="BY/HXw4acxROeI2s"
+Content-Disposition: inline
+In-Reply-To: <63257a1a-dcbd-46ea-958d-fd4fc876cd2e@siemens.com>
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Wed, 18 Nov 2026 16:42:39 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24997
-Content-Type: text/plain; charset="utf-8"
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Wed, 18 Nov 2026 16:59:19 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24999
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
 
-commit 28efe119bdc6d3fc78e96b29d56e5d071eccfe38 upstream.
+--BY/HXw4acxROeI2s
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Move the max-frequency property for SDHI0/1/2 from the board-level
-SMARC dtsi files into the r9a08g045.dtsi SoC file, since these
-values reflect controller/SoC limitations rather than board-specific.
+Hi!
 
-This removes the duplicated max-frequency =3D <125000000> entries for
-SDHI0 (both SD and eMMC variants) and SDHI1 in rzg3s-smarc-som.dtsi
-and rzg3s-smarc.dtsi, and the max-frequency =3D <50000000> entry for
-SDHI2, consolidating them as defaults in r9a08g045.dtsi instead.
+> > I tried to do a quick research, and this seems to be more of server
+> > issue, and may be hard/impossible to exploit in embedded
+> > systems. Researcher's writeup seems to be at
+> > https://github.com/V4bel/NoisyTCP . Quoting "so it can be triggered
+> > against servers that have two or more RX queues, or where RPS
+> > distributes packets across multiple CPUs."
+>=20
+> Just to be clear: We have server-like scenarios in scope as well.
+> "Embedded" does not imply a specific size of the system or
+> performance.
 
-Boards needing a different limit can still override max-frequency
-locally.
+I know. I'm just saying people should not really be running
+"crash-me-if-you-can.com" webserver on 4.4-cip (on public internet).
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20260619075621.126961-1-biju.das.jz@bp.ren=
-esas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi       | 3 +++
- arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi | 3 ---
- arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi     | 1 -
- 3 files changed, 3 insertions(+), 4 deletions(-)
+> > sudo sysctl -w net.ipv4.tcp_syncookies=3D0 was cited as possible
+> > workaround.
+> >=20
+> > If someone believes their machine are in danger, please let us know.
+> >=20
+> > We could do 6.12-cip fairly easily, older would be more tricky as
+> > there was no suitable -stable release. But I don't think this is "as
+> > bad" as bugs we did extra releases for.
+>=20
+> Can we support on this, or is this ongoing work already (<6.12)?
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot=
-/dts/renesas/r9a08g045.dtsi
-index 3a69bb246bab..ae92d45ede38 100644
---- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-@@ -655,6 +655,7 @@ sdhi0: mmc@11c00000  {
- 				 <&cpg CPG_MOD R9A08G045_SDHI0_IMCLK2>,
- 				 <&cpg CPG_MOD R9A08G045_SDHI0_ACLK>;
- 			clock-names =3D "core", "clkh", "cd", "aclk";
-+			max-frequency =3D <125000000>;
- 			resets =3D <&cpg R9A08G045_SDHI0_IXRST>;
- 			power-domains =3D <&cpg>;
- 			status =3D "disabled";
-@@ -670,6 +671,7 @@ sdhi1: mmc@11c10000 {
- 				 <&cpg CPG_MOD R9A08G045_SDHI1_IMCLK2>,
- 				 <&cpg CPG_MOD R9A08G045_SDHI1_ACLK>;
- 			clock-names =3D "core", "clkh", "cd", "aclk";
-+			max-frequency =3D <125000000>;
- 			resets =3D <&cpg R9A08G045_SDHI1_IXRST>;
- 			power-domains =3D <&cpg>;
- 			status =3D "disabled";
-@@ -685,6 +687,7 @@ sdhi2: mmc@11c20000 {
- 				 <&cpg CPG_MOD R9A08G045_SDHI2_IMCLK2>,
- 				 <&cpg CPG_MOD R9A08G045_SDHI2_ACLK>;
- 			clock-names =3D "core", "clkh", "cd", "aclk";
-+			max-frequency =3D <50000000>;
- 			resets =3D <&cpg R9A08G045_SDHI2_IXRST>;
- 			power-domains =3D <&cpg>;
- 			status =3D "disabled";
-diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi b/arch/arm6=
-4/boot/dts/renesas/rzg3s-smarc-som.dtsi
-index b45acfe6288a..9039a927bc46 100644
---- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-@@ -184,7 +184,6 @@ &sdhi0 {
- 	bus-width =3D <4>;
- 	sd-uhs-sdr50;
- 	sd-uhs-sdr104;
--	max-frequency =3D <125000000>;
- 	status =3D "okay";
- };
- #else
-@@ -199,7 +198,6 @@ &sdhi0 {
- 	mmc-hs200-1_8v;
- 	non-removable;
- 	fixed-emmc-driver-type =3D <1>;
--	max-frequency =3D <125000000>;
- 	status =3D "okay";
- };
- #endif
-@@ -210,7 +208,6 @@ &sdhi2 {
- 	pinctrl-names =3D "default";
- 	vmmc-supply =3D <&vcc_sdhi2>;
- 	bus-width =3D <4>;
--	max-frequency =3D <50000000>;
- 	status =3D "okay";
- };
- #endif
-diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi b/arch/arm64/bo=
-ot/dts/renesas/rzg3s-smarc.dtsi
-index 071da86ed3dc..b5389cd6da09 100644
---- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-@@ -275,7 +275,6 @@ &sdhi1 {
- 	bus-width =3D <4>;
- 	sd-uhs-sdr50;
- 	sd-uhs-sdr104;
--	max-frequency =3D <125000000>;
- 	status =3D "okay";
- };
-=20
---=20
-2.43.0
+-rc1 of -stable kernels was just announced, so I assume we should have
+suitable 6.1-stable and 5.10-stable with the fix, soon.
 
+Unless someone tells me otherwise, I can do 6.12-cip "soon" and
+6.1-cip / 5.10-cip "soon" once -stable kernels are released.
+
+Best regards,
+								Pavel
+
+--BY/HXw4acxROeI2s
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCav3ZUwAKCRAw5/Bqldv6
+8g6pAJoC4TsVqIb4WVgH34ImyoOhZRZUyQCgsTwmVqEgY+/Y7hWPAQgaCiccenQ=
+=trd/
+-----END PGP SIGNATURE-----
+
+--BY/HXw4acxROeI2s--
