@@ -1,21 +1,21 @@
-Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.263.1795018414523836813
+Received: from tor.source.kernel.org (tor.source.kernel.org [172.105.4.254])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.233.1795018416054730088
  for <cip-dev@lists.cip-project.org>;
- Wed, 18 Nov 2026 08:13:34 -0800
+ Wed, 18 Nov 2026 08:13:36 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.234.252.31, mailfrom: srs0=4qsa=jh=tuxon.dev=claudiu.beznea@kernel.org)
+ dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.105.4.254, mailfrom: srs0=4qsa=jh=tuxon.dev=claudiu.beznea@kernel.org)
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by sea.source.kernel.org (Postfix) with ESMTP id 9EE6E41433;
+	by tor.source.kernel.org (Postfix) with ESMTP id 3CF0A62727;
+	Wed, 18 Nov 2026 16:13:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 043F11F000C4;
 	Wed, 18 Nov 2026 16:13:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9430C1F000C4;
-	Wed, 18 Nov 2026 16:13:32 +0000 (UTC)
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: cip-dev@lists.cip-project.org
-Subject: [RESEND PATCH 6.1.y-cip 33/34] arm64: dts: renesas: r9a08g045: Move max-frequency to SoC dtsi
-Date: Wed, 18 Nov 2026 18:13:20 +0200
-Message-ID: <20261118161321.3032517-4-claudiu.beznea@tuxon.dev>
+Subject: [RESEND PATCH 6.1.y-cip 34/34] arm64: dts: renesas: rzg3s-smarc-som: Enable I3C
+Date: Wed, 18 Nov 2026 18:13:21 +0200
+Message-ID: <20261118161321.3032517-5-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261118161321.3032517-1-claudiu.beznea@tuxon.dev>
 References: <18E8D2BE9419961D.1262307@lists.cip-project.org>
@@ -24,108 +24,85 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Wed, 18 Nov 2026 16:13:36 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24960
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24961
 Content-Type: text/plain; charset="utf-8"
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 28efe119bdc6d3fc78e96b29d56e5d071eccfe38 upstream.
+commit 7953f601285c559263fd082fed44d738f2fc0466 upstream.
 
-Move the max-frequency property for SDHI0/1/2 from the board-level
-SMARC dtsi files into the r9a08g045.dtsi SoC file, since these
-values reflect controller/SoC limitations rather than board-specific.
+The Renesas RZ/G3S SMARC SoM board has a connector for I3C interface.
+Enable I3C.
 
-This removes the duplicated max-frequency =3D <125000000> entries for
-SDHI0 (both SD and eMMC variants) and SDHI1 in rzg3s-smarc-som.dtsi
-and rzg3s-smarc.dtsi, and the max-frequency =3D <50000000> entry for
-SDHI2, consolidating them as defaults in r9a08g045.dtsi instead.
-
-Boards needing a different limit can still override max-frequency
-locally.
-
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20260619075621.126961-1-biju.das.jz@bp.ren=
-esas.com
+Link: https://patch.msgid.link/20260710113637.1328000-6-claudiu.beznea+re=
+nesas@tuxon.dev
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi       | 3 +++
- arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi | 3 ---
- arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi     | 1 -
- 3 files changed, 3 insertions(+), 4 deletions(-)
+ .../boot/dts/renesas/rzg3s-smarc-som.dtsi      | 18 ++++++++++++++++++
+ .../boot/dts/renesas/rzg3s-smarc-switches.h    |  4 ++++
+ 2 files changed, 22 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot=
-/dts/renesas/r9a08g045.dtsi
-index a3b48d94de7f..fe61f09ef1e9 100644
---- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-@@ -654,6 +654,7 @@ sdhi0: mmc@11c00000  {
- 				 <&cpg CPG_MOD R9A08G045_SDHI0_IMCLK2>,
- 				 <&cpg CPG_MOD R9A08G045_SDHI0_ACLK>;
- 			clock-names =3D "core", "clkh", "cd", "aclk";
-+			max-frequency =3D <125000000>;
- 			resets =3D <&cpg R9A08G045_SDHI0_IXRST>;
- 			power-domains =3D <&cpg>;
- 			status =3D "disabled";
-@@ -669,6 +670,7 @@ sdhi1: mmc@11c10000 {
- 				 <&cpg CPG_MOD R9A08G045_SDHI1_IMCLK2>,
- 				 <&cpg CPG_MOD R9A08G045_SDHI1_ACLK>;
- 			clock-names =3D "core", "clkh", "cd", "aclk";
-+			max-frequency =3D <125000000>;
- 			resets =3D <&cpg R9A08G045_SDHI1_IXRST>;
- 			power-domains =3D <&cpg>;
- 			status =3D "disabled";
-@@ -684,6 +686,7 @@ sdhi2: mmc@11c20000 {
- 				 <&cpg CPG_MOD R9A08G045_SDHI2_IMCLK2>,
- 				 <&cpg CPG_MOD R9A08G045_SDHI2_ACLK>;
- 			clock-names =3D "core", "clkh", "cd", "aclk";
-+			max-frequency =3D <50000000>;
- 			resets =3D <&cpg R9A08G045_SDHI2_IXRST>;
- 			power-domains =3D <&cpg>;
- 			status =3D "disabled";
 diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi b/arch/arm6=
 4/boot/dts/renesas/rzg3s-smarc-som.dtsi
-index 990adea09799..e2a9b56df762 100644
+index e2a9b56df762..8bfaad700253 100644
 --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
 +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-@@ -186,7 +186,6 @@ &sdhi0 {
- 	bus-width =3D <4>;
- 	sd-uhs-sdr50;
- 	sd-uhs-sdr104;
--	max-frequency =3D <125000000>;
- 	status =3D "okay";
- };
- #else
-@@ -201,7 +200,6 @@ &sdhi0 {
- 	mmc-hs200-1_8v;
- 	non-removable;
- 	fixed-emmc-driver-type =3D <1>;
--	max-frequency =3D <125000000>;
- 	status =3D "okay";
- };
- #endif
-@@ -212,7 +210,6 @@ &sdhi2 {
- 	pinctrl-names =3D "default";
- 	vmmc-supply =3D <&vcc_sdhi2>;
- 	bus-width =3D <4>;
--	max-frequency =3D <50000000>;
- 	status =3D "okay";
- };
- #endif
-diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi b/arch/arm64/bo=
-ot/dts/renesas/rzg3s-smarc.dtsi
-index 6fc795a51ebb..051baebe3d17 100644
---- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-@@ -276,7 +276,6 @@ &sdhi1 {
- 	bus-width =3D <4>;
- 	sd-uhs-sdr50;
- 	sd-uhs-sdr104;
--	max-frequency =3D <125000000>;
- 	status =3D "okay";
+@@ -170,6 +170,14 @@ a0 80 30 30 9c
+ 	};
  };
 =20
++&i3c {
++	pinctrl-names =3D "default";
++	pinctrl-0 =3D <&i3c_pins>;
++	i2c-scl-hz =3D <400000>;
++	i3c-scl-hz =3D <12500000>;
++	status =3D "okay";
++};
++
+ &pcie_port0 {
+ 	clocks =3D <&versa3 5>;
+ 	clock-names =3D "ref";
+@@ -301,6 +309,16 @@ mux {
+ 		};
+ 	};
+=20
++	i3c_pins: i3c {
++		pins =3D "I3C_SDA", "I3C_SCL";
++#if SW_CONFIG4 =3D=3D SW_ON
++		power-source =3D <1200>;
++#else
++		power-source =3D <1800>;
++#endif
++		input-enable;
++	};
++
+ 	sdhi0_pins: sd0 {
+ 		data {
+ 			pins =3D "SD0_DATA0", "SD0_DATA1", "SD0_DATA2", "SD0_DATA3";
+diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h b/arch/ar=
+m64/boot/dts/renesas/rzg3s-smarc-switches.h
+index bbf908a5322c..9cccc87da057 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
++++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
+@@ -25,9 +25,13 @@
+  * @SW_CONFIG3:
+  *	SW_OFF - SD2 is connected to SoC
+  *	SW_ON  - SCIF1, SSI0, IRQ0, IRQ1 connected to SoC
++ * @SW_CONFIG4:
++ *	SW_OFF - I3C voltage is 1.8V
++ *	SW_ON  - I3C voltage is 1.2V
+  */
+ #define SW_CONFIG2	SW_OFF
+ #define SW_CONFIG3	SW_ON
++#define SW_CONFIG4	SW_OFF
+=20
+ /*
+  * SW_OPT_MUX[x] switches' states:
 --=20
 2.43.0
 
