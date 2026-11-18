@@ -1,382 +1,246 @@
-Received: from DUZPR83CU001.outbound.protection.outlook.com (DUZPR83CU001.outbound.protection.outlook.com [52.101.66.32])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.11830.1795006475654257463
+Received: from PA4PR04CU001.outbound.protection.outlook.com (PA4PR04CU001.outbound.protection.outlook.com [40.107.162.63])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.11826.1795006500885356502
  for <cip-dev@lists.cip-project.org>;
- Wed, 18 Nov 2026 04:54:36 -0800
+ Wed, 18 Nov 2026 04:55:01 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=twEKi0IG;
- spf=pass (domain: siemens.com, ip: 52.101.66.32, mailfrom: felix.moessbauer@siemens.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=HfvFC8Gq;
+ spf=pass (domain: siemens.com, ip: 40.107.162.63, mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ot6RQ18h+GrSwQnsItLZl6isvEtN0O2DFagqDTWGm05IsDyWGhISydFADJZ3Dcao0g6UqXlVlK3Tl8NL7svExXXN+wt/jO9OOceeB3VBFvmomZMJ+figoLTfxtFEWFM3Mi2RhTKQ6ai6JqdoUsLAN/9lgQrELEpn5bDbY60nR2WhPbMgcTv9pk7aWBP3+VySVDymuvjzcoP1FTiinTc5HUzeY8nKCX7Xz8eF8vsdQkQMDqKPrAguf2dpBZytHF85tJ827qr6ewq8Y6/2IzdGkCYSvSItSuqzqbNClk2yUSbHtBXpWSSRiFi6UY+722Blh8zWUAWgfNBC+ae4oT8cGA==
+ b=Z5NcxFHOJ28F+SkLSK8kYrwgJCn4wZVlSsseOK4CJReZeSNA52QLy9xRiZI+abwcG8zTeeQiz6Ef4Vtmb+0SNDzjfc/psNgRS6FgSd+qWSoORYtu/NiNKAelP8ZSy0sy8lTykPshZbUwFPlwZkO6RqGiGMQnCSb4VurprPCfuQzZmMzzIn3nODW51zhUvR1xB5wmFr14ewFqc2izqVF+2e+Pril4+jmBC2zjKH7ya4N93omFiylCc1+1q34AoOH06W/NiQcOAyH7C/QHaFFGGiQbIlaylB0tZZ2TXxwOx3Z19jkiybarfYRwD+ShLEsSni8bi4EITATBljyRAYyQcA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=astOCrtkFe+7m/Q5FfXMTUCXY3XGv+tlhQrM9o+E0U4=;
- b=avzKfxUwEfJ13NsEb+e+qcAAgr36HuX0wKO0vTGPi9ZIEegYmhxW7UCcEd4N30N9dA5jCzw59TAlFDuXEMnzcadewHc8L/+lVXWX3ix6kAAV8zT377mktuiSefZjATHQtYupuPFJvMwJCRJG7gPv2Y0Sl2x5ui8uaTYpyin73jikfdh7bCBEfXhrWwIJoTlywYINe8EmEgcqdSySYXDULgF4tC2sdWxRwdviwHi+LbH5TFlRygbXyhrDhZQyp2dITN08wazaYdzMuhNQ/l93uApABxRQU6PQP3Ud18Jq54qeSjMTzE1tCbhDCfzLmKXtWNGxuwXN5aNhUYKlynKp8w==
+ bh=+/ipR2GUFz2CaWvPcwS1JuHEht1YKj6w0WCt+VNMa9o=;
+ b=ey8KxuqCICJZxx0xjUU7j/TtlRIICK1aQw52aTapEWhfUzOR//l6wn60UNuC4NSJDjqg9DvwMFGeseOhFW3dQi2pS7bmF1tCcCHv2e5adWC4Xx4DkGb+/+hb/oKjkm05ZP6rZ5l/7N/bgYBdKElZZpTqdzFBflK22irNumNcZNk6ZzcYDCHX66z00lfMN7dSuNjjkdwiQuX+zJkTJmSgjK1zT10hmGuvZ4V0R5refBkFu4AVcP6wXtVvE2GgwLdptGgbIFSa1bh5C6jljIw8nRj4EYrzw7NwaJ1oN0LLHnEEQF1EKgLhdiuxFGll5TQ7U9RzyicxqkUD+lrJrudR1A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=astOCrtkFe+7m/Q5FfXMTUCXY3XGv+tlhQrM9o+E0U4=;
- b=twEKi0IGp8Y7BoeG0rCaO95f3TPqE4s9xtYFg2N5fpPaVw//OJmYVqDi5f+iSAohiCZZMBKCYbuUw14aCSrbigk/5kcGe8auaTx+jnZL1aaE5uXeIf6J7YdmLDTfo1CJwvdhpPev9PJCZdqhYYypG6pZ7XOjdTaEIh5pVHxpryYVaD30DVaRP37NgJLUr1w3qNRiXxFsW1ufdco44GgihlgezmyxP/Y660CDKyiUBwLek+8/QHyLEchJ05EwKPgU5pBJSXN6Du9D28Gu8xNTZfrtQL5hcyZv676/5rhFbW2ekPkfnWr7zxezmwa87/LThmt+uGiP2NUzQObRngBx9g==
+ bh=+/ipR2GUFz2CaWvPcwS1JuHEht1YKj6w0WCt+VNMa9o=;
+ b=HfvFC8Gq6RradIHyQ2veQsIVmG4Lb89gGxhh9s3GrNwDGjJiuYRZnh73cwpUwqKmHSSOrS6RAXs140sNMtvcsKwgQb0UWJuMdeeNoBw23uPo7EGlQ+BEmavUoTZbhc8I2+Z4XiL9wUctGRQqiVGVyTAk1UP+Qa4PmmF/NULapGMpdYf1jWc0kqsEC3vfLVIw/TfO85zNUq0WQxKArkPJxFEv7nCazgcXs7oww3qk4jdKA2GUAlGyHD+RyTi4tbkbl17VyrD/R+iYow5SEO4GIi9RDWnna3MmeVkg8DWwLQH2Kw5U4FJzCyqaXenBvuYxan9bYtkuI2honiAPTjD6tA==
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AM7PR10MB3956.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:17e::10)
- by PA1PR10MB8839.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:451::11) with
+Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:113::12)
+ by PA2PR10MB9067.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:420::20) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.639.8; Wed, 18 Nov
- 2026 12:54:31 +0000
-Received: from AM7PR10MB3956.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::c54c:ccd8:ebbf:477c]) by AM7PR10MB3956.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::c54c:ccd8:ebbf:477c%3]) with mapi id 15.21.0639.006; Wed, 18 Nov 2026
- 12:54:31 +0000
-From: Felix Moessbauer <felix.moessbauer@siemens.com>
+ 2026 12:54:56 +0000
+Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::ae26:d131:7cff:4001]) by DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::ae26:d131:7cff:4001%3]) with mapi id 15.21.0639.005; Wed, 18 Nov 2026
+ 12:54:56 +0000
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org
-CC: clara.kowalsky@siemens.com,
-	jan.kiszka@siemens.com,
-	Felix Moessbauer <felix.moessbauer@siemens.com>
-Subject: [isar-cip-core][RFC 1/1] convert wic plugins to execution-from-host model
-Date: Wed, 18 Nov 2026 13:54:12 +0100
-Message-ID: <20261118125412.2039363-1-felix.moessbauer@siemens.com>
-X-Mailer: git-send-email 2.55.0
+CC: jan.kiszka@siemens.com,
+	chris.paterson2@renesas.com,
+	nobuhiro1.iwamatsu@toshiba.co.jp
+Subject: [cip-dev][isar-cip-core][PATCH] Drop ext4 build as default
+Date: Wed, 18 Nov 2026 13:54:50 +0100
+Message-ID: <20261118125450.620231-1-quirin.gylstorff@siemens.com>
+X-Mailer: git-send-email 2.56.0
 Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: SI2PR02CA0049.apcprd02.prod.outlook.com
- (2603:1096:4:196::7) To AM7PR10MB3956.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:17e::10)
-Return-Path: felix.moessbauer@siemens.com
+X-ClientProxiedBy: FR4P281CA0160.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:ba::6) To DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:10:113::12)
+Return-Path: quirin.gylstorff@siemens.com
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR10MB3956:EE_|PA1PR10MB8839:EE_
-X-MS-Office365-Filtering-Correlation-Id: fd53626e-d44d-4f30-13dd-08df45731666
+X-MS-TrafficTypeDiagnostic: DB8PR10MB3178:EE_|PA2PR10MB9067:EE_
+X-MS-Office365-Filtering-Correlation-Id: fa144111-18db-4b26-d7a9-08df45732596
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|23010399003|11063799006|56012099006|261026121527099003|10067099003|261022075727099003|261022115727099003|261021123027099003|261021121427099003|261102123227099003|261009223027099003|55112099003|18002099003|6133799003|3023799007;
-X-Microsoft-Antispam-Message-Info: tstfFIY7vfEPiFWJJp+Cd2MAIUzfc6dZYLyVArmBTb0+l7Gk60WHa4NDjzgp3FIzrjAYhxakx38f4Dac7vvmtXM9ACrZKkGcAS7e3QelnAHz+AS9jNjNKDuDmKoVcj2ywPaswNcyEz83VMW3WPN3YY8Gxv6l3lrcDlmUiyhl7nHXOtJLJ80u6ivSUu0DQzVYNf8mge2uhiSA9gJ8IOG9tLKVRfFGNlf2GkkIMGM8GXyeTLPxomthhN/DVttCoDLHCLASXvoeadVwY7dfk4wE7Y5M3Ny+hu/7ApT3rAGuZYD6qvISDrgaZClLtHgz6IgbA0fAz9qya+kTznoFwCtqLohzaz9TEroI71PKuzCNwXwT9nuKz8y8BCHXMucqzSJGug832iGPFIZZBkWVKeGmNNRLth6fk1JuMdb5XDVadFXT6UXaC3A9Csgs38AjYq5klMBBjQa9dfdMKyH/vTYaL+HmqHRdr9wsnJaSW3bpn5StKIacUNm+cxTKdvLu7eyQja4YlPS7dG2oMUpmew3EqkcTD6HwkUpYWAZEaM94fOlKG67xX0yQc3Ajs8GNcpo0kwbLbYTofRMlLLuFKM7cIfNzOq8Cr7qfb78VjkdV29MwCDM2Z7gDG7N7/kygVABV
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR10MB3956.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(23010399003)(11063799006)(56012099006)(261026121527099003)(10067099003)(261022075727099003)(261022115727099003)(261021123027099003)(261021121427099003)(261102123227099003)(261009223027099003)(55112099003)(18002099003)(6133799003)(3023799007);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|23010399003|376014|366016|1800799024|18002099003|261009223027099003|55112099003|11063799006|56012099006|261102123227099003|10067099003|261026121527099003|261021121427099003|261021123027099003|261022075727099003|261022115727099003;
+X-Microsoft-Antispam-Message-Info: As1LiG4XQ5qlU9nIr9OQACHumkrF86pC4yaCA4QAoehBpLcEth1xrckqkGXmofgE0Am6QrgEzN/BYFA3hH8KzvKbIbRF4YliM/B1lP1SoVI7ntw381/+AiWH9lNYlGuNwOxxgv82mU2DalQ2d566iDizZttauVPjSjWwOLMLCzGMCXkJIfT3LsN4kJx8uJFskWqcq/6mfCQ4xsHjsR9ydiU+4AHZXu55LORF6bs9rA5o2cIssDhxRMHiqcC62tgqfyiOYFrBWyVcBqI8KYPbUzvJ9md3W1lGgvIKyHVuQbvSyqvMK8t6MmUSZSAYPMq6JeNF7FT9l8kJYXAN+flT7trYTTwOZjTr9pwtTWhCmJ/pnYBiHWfEJoIPnhXVshTKdE0KWROil95SGalyzDdQSIeZHBkckWVroKCBwfsuVMTnQWUUzCYsk7DIZD/rAu/7e66U+FfJsgiSZCVeS0ZLCCpGnPnVMFxUegV2ZZOxM9PJOY/rv+zQzLnZghYFZwMaBWbJJ9asX/Ja8UYHJnjPjnYbs3V27ifMTeGBuQkS7JpMA4QRy2U6zgU7ONntIiyjcSLNtzbNE5ksEGk6/ajtZWU6hvy5oERhlGobY8yPlqRh2OB4TZrztehdyvUrk8wXNIgcdKAKuxlERFauApaFDStzhTQ5YMsyuiTmamIxujE=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(376014)(366016)(1800799024)(18002099003)(261009223027099003)(55112099003)(11063799006)(56012099006)(261102123227099003)(10067099003)(261026121527099003)(261021121427099003)(261021123027099003)(261022075727099003)(261022115727099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?y4SuYhI3aYSP65raZpNbUVCNSUrAV2BrX4wXwCvFAtlfD3Z+VpeGhW897CdB?=
- =?us-ascii?Q?Oqs6eiKwR2GrSkMdq6d0+QosT9xFNBuA0A2DQIvdmS+fSsNxRVKlU44cbf6x?=
- =?us-ascii?Q?fr33dRBGSRxN/gIU81uD/uyNqC5BFWDt58xUQKhvZ+5aCGkk28S0v/+JXHfS?=
- =?us-ascii?Q?ojKWhrVU4aPWuSkzpNUuN6QEpAFOfX48eMp3v6nyiLXZeLFfcgInOCNzUml/?=
- =?us-ascii?Q?MF4owDcYYfxBEFIwjvorvy51Dw8ThGhTSIBFPjd7mZC57NHGCBR8GJfN6IaJ?=
- =?us-ascii?Q?LtYyC/0PSTL+pMcQBX3tzd0MBcOEat6oFpySIyc+hM+3Ge6o7u4ZZQOC7YCY?=
- =?us-ascii?Q?LK8BIb6VIVFmli3gQTNPKMJ1dviItazHKfMkc7kI3JNzXOQ1ShniA/f8qpQC?=
- =?us-ascii?Q?79jiwUfAFUI4I2wwrTMs+FGfyPBQzSDrWnjC2VtmDV1sSwfQHevEY1qw4o6/?=
- =?us-ascii?Q?tbipYv0r1ATYbJ1JEoxFQsmrBMTSeUpaiWPe5kLLAMqkyRqZTQsS4fa3xSWe?=
- =?us-ascii?Q?lkLsm97MEUVqyE1cI5H9vz+9j3bGHtwp4rmoc9c8xRLsgXnkd5oQcv3RynjY?=
- =?us-ascii?Q?M58hRIkycKgy1nRSpYIXtVW/ZBvLApysyEbL49ywrgSZYxoMxfW15IQEE+pd?=
- =?us-ascii?Q?lk4TZzNfNE7EN53kTybjRdF0HcAniHwufq5bWpbiXiR4ZQ89ipKrAX6ry7Hs?=
- =?us-ascii?Q?ZYbWxrpXXBP8BDTHTkIXIJtqXD82Vbzm5ULwTq74wS1z729TNbMe2NsiPriJ?=
- =?us-ascii?Q?ASwwEccg5rH/Jb4GnN1OvTkfKradjTub77ezAczMJnVHq7k48oIff4Z+JaIh?=
- =?us-ascii?Q?eY51N2jHgVjHttEJWlroGs1E0k5EJI972Lg/5ZdHisurfgUTTkMUTEL2t3az?=
- =?us-ascii?Q?mxaYRDopzBGPTVFyLR0dshmkQaFOPQfXbLHAjdmTDlVMJ70ow+qj+eMZp5bJ?=
- =?us-ascii?Q?BmJFX2S7iW1COE9XMnVECy9t7jNOaw0b1E0meRIwKRT3lHuC4laWugvmD8no?=
- =?us-ascii?Q?+MJuLZK+q5msOrP9NsTqUqIYMbafCrwtpwNC0aJti8JlmSpBmWDuzglxoxRK?=
- =?us-ascii?Q?bCWcSOpytjMgavxhSdQuL5qmMXKk6W/nXrUKhcC55LCOIfEUAzCm63Ey7E5L?=
- =?us-ascii?Q?Sp/M09Ukpl6OOlZWOw77/9+aGNIRZUgj5v5tZVsC2ybByZ7dnJbeLLAkgUou?=
- =?us-ascii?Q?zwL3C6vrcpYJZvwIiykcslftdcGOSWO2+nLuRbbOfXuRepqrc+LtdJKDSNVv?=
- =?us-ascii?Q?HxMBipBHxkX5mEoQ3TKcRdgN++Zwfmdy/P1ODaT2HaaIjShX2a+iww2sZc3Y?=
- =?us-ascii?Q?oUvtVUVNvadBgfMRr5VOlBocMv12Suv2R/5ut3a+/QAfcRHitEzlhBV9LBUI?=
- =?us-ascii?Q?x9P9EFpUK8kQRmwZRS8WmCVHhJq3VmA7NT759rJxZTiAidtxZvXE/4OibgIa?=
- =?us-ascii?Q?IfwKxFNpYnf0yv/HvohVBW983CXLkggc2EEhV78OQQnNdl6leJDSGvu6gSFy?=
- =?us-ascii?Q?7Tq8+p0oKAaQjP8x+N9LGAy9U8tVwf3HJMF/Y0OPtrP7onnPz2p93s0b2eN0?=
- =?us-ascii?Q?p7AY5an0MC2UzSABAf7F4DWl95CwAantpI6ijQd/eCghXghpYenTHR26+dom?=
- =?us-ascii?Q?xDfgqsDlUiuPbHi12uZ2NwcQwAG98SA9aveFdLmkzsYWMz3tWrm1F5AiTUoI?=
- =?us-ascii?Q?drIybbWbavcuLv95WU8VsostUARPkERhrjZ6zMEzwYqJa741EKblydHv7ewt?=
- =?us-ascii?Q?bK84GcN/ow90T/ojodDPgu+zD39aolI=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?zcPykvEPcMhvV5TAO9Qn7cv22iHOljT8nUztSj9fvDY8Z+FvWcz5ccKSEnUH?=
+ =?us-ascii?Q?GV7sqbDkJFAd/Tqg0iaKO9hgqhUi+L0kzhgPJTcEFzrPnUkO1VVmKWjeoy6h?=
+ =?us-ascii?Q?8kM4ULu6qs05zKm1kMkfyTDhcuvjsTFdaItGBIicgOH6umUPTU0Bq5ZsVv73?=
+ =?us-ascii?Q?e+T1k/57rkCIvYGHr+s0pbNdaX6yBZlj2ZP6oK4itK48iOC9t4uURfurel9V?=
+ =?us-ascii?Q?hJu72Kf30803EOdUU9E2310CtDllZR1kSnka+Vd72av/fjCYvNFo3aH0UTj8?=
+ =?us-ascii?Q?Gr7H3DUu4xLecCYXUHn0+U2JDvSNlRnrrYyTuUozERVti562nXyiu6DHrmVZ?=
+ =?us-ascii?Q?k4O3P7yeVs7+wRiHSS6/4MnEwoD+pyYA6XezQ7P3VA9trvqNEyw3crhOdDmk?=
+ =?us-ascii?Q?CRYEJmUdbQAY9xyj8EVJ4HwvaAAwCEH8ewranUUKndwbDOM9HrXYA9lgVzYI?=
+ =?us-ascii?Q?cNasy2gE1ipAJIzL/ezK00n8+VxnZQFI8A0YTwj4SHzpmDtL2o+U4vxVa01i?=
+ =?us-ascii?Q?KMCHqk0WagwkXN2cxwjC1dVmpnrqVwOfGfeizSZ5PPpwZh/fT2P+LYaxrZXK?=
+ =?us-ascii?Q?uDIEm6f2TQm274nSAqt4XIcEZck8Itl8ALPMmE0v6vdZSvj+FyAc9N3ZDhKz?=
+ =?us-ascii?Q?GBkn8UlRPp4N9dzRl1cQnTL1fwrnrUy352kLuntE/0b2C6ypfZQyZKcD6StF?=
+ =?us-ascii?Q?0ecwkdaZRYXyvHh4dyEkyxPOPExol7c9mFd2fIGXjBlwRxcAE0b37SqJi+4X?=
+ =?us-ascii?Q?vRBIfL95Oc1agEGjZWA1EMHfDjNA9/qD9QTZ9kp8qRRFwW1DiseBSYwZ2tai?=
+ =?us-ascii?Q?Lj1jbR/4FA2Xys0VFe3tYtX+0e6qi+3hqZSt5b1bgMpFv6Ec1LqBafbL/3mo?=
+ =?us-ascii?Q?nFA4D9VZZFz3GgfqyTPyXCbIvfAJJ7u/Ry+FtY6FprAvYsAPzxqxyubS0/5s?=
+ =?us-ascii?Q?G7BVsEZNr291EfqA0W8RnJwvD+PH8g0E+/f95wSFP5ox4O8TVsO2Un3q/xvq?=
+ =?us-ascii?Q?rA8UCGPrlGyHXqNGdDXN/K59txMzGban3yQlCem/XKJiHYATParQnZ0wuSrN?=
+ =?us-ascii?Q?yGi9Plo08dk4GWNQcpH/2hdn8I5kiIDsOU+N71Bq8W1Alhg62unMsZoUFgPL?=
+ =?us-ascii?Q?gFZpYQIrg230aFgKJdXzg6ePr2BAlPK8nigwaYc8t5jjbFsOeifDvEbUwilz?=
+ =?us-ascii?Q?suwdqdXMtFJDpL2NTDbNIApjZJ3oUCKUIlerkM8WP9nLRjSRxKjkF3KdYbTE?=
+ =?us-ascii?Q?9T3m/nIcA4LKWyENodp3TeU6fQsvXNKaCeIceeWYt1v8WKjMvJoYyOq8N5+E?=
+ =?us-ascii?Q?sbydeY09C+K4Tia9qm2gVywzON3yze12csCEZo9j6PS2cu9EtZ7IHTF1Jtzg?=
+ =?us-ascii?Q?8jmX290G0DNMt4QgwIm35N0z/YbCtqID+P/AoP2j2BcLvxNBT6y42V8dlmrZ?=
+ =?us-ascii?Q?o/SXbWQ08MN6v+hFTCpn3FlIza9zxproVCjT1Dnpw4VmuWOriJu5QqUkPgcI?=
+ =?us-ascii?Q?59amrYF0ChYklpSCKybHXKDuM08+oQ1sW+TMdeVeIcnnGb/m+8CPD8GcY9jR?=
+ =?us-ascii?Q?IK5kHiiJHKifmwJ05LgwY3cfx2hvJOjvpLcxyujBRaq4er9DJYeN4eNdEeN+?=
+ =?us-ascii?Q?n2tCwqoMZ+dwR3KPkEYXo0IKLNi+HOYOy9JI86FiTtYMvG1qvW15J51xIrBY?=
+ =?us-ascii?Q?6n3/7Ubn38uq0OOgeudZj0LSNhFdksMg8+aBwf8oEZRkjMP86XO5TbdpRohD?=
+ =?us-ascii?Q?EvQndNNdodp4lSxSTRc1n32PsR+d6qY=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fd53626e-d44d-4f30-13dd-08df45731666
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR10MB3956.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: fa144111-18db-4b26-d7a9-08df45732596
+X-MS-Exchange-CrossTenant-AuthSource: DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2026 12:54:31.2496
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2026 12:54:56.7227
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aG8Hx2QWd9SWzRDde+1A/yEFMVQvLN7eNryRQSaHDbR8W8rJwktz2D4Tb0TZbDK46fcKmU2qUejLsIhRAP97+kF1xCtDQuIpfiQl8T52qWk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR10MB8839
+X-MS-Exchange-CrossTenant-UserPrincipalName: Sw88zCADhV0aSKDcpo9r3tFkLvAX2bA33bOnVWasb+Erl49H3g3mCprLVC3Dk17fW9fqqX62nlN34sS4QSjHsXVWXifFmj4zWI042kq2HjQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2PR10MB9067
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Wed, 18 Nov 2026 12:54:41 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24953
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Wed, 18 Nov 2026 12:55:01 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/24954
 Content-Type: text/plain; charset="utf-8"
 
-We convert the wic plugins so that they support being executed via a
-WIC_TOOL_RUNNER. This change has to happen in lockstep with the
-corresponding isar update, as it is incompatible with the previous
-execution model.
+Only the no-kernel builds and qemu-risc64 require the ext4 build.
+Make wic the default and set ext4 via a kas option.
 
-Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
-This patch has to be used on top of isar with
-"[PATCH v2 0/6] Update BitBake in Isar" [1].
 
-The _tool_path_exists() method should be moved to wic.misc (in isar) so tha=
-t
-it can be reused by all wic plugins.
+This needs an ack from Chris and/or Iwamatsu-san
 
-[1] https://groups.google.com/g/isar-users/c/NYmzKbKTqH0/m/BTECiBRVAQAJ
+ .gitlab-ci.yml                 |  3 ++-
+ conf/machine/qemu-amd64.conf   |  2 +-
+ conf/machine/qemu-arm.conf     |  2 +-
+ conf/machine/qemu-arm64.conf   |  2 +-
+ conf/machine/qemu-riscv64.conf |  2 +-
+ kas/opt/ebg-swu.yml            |  5 -----
+ kas/opt/ext4.yml               | 18 ++++++++++++++++++
+ 7 files changed, 24 insertions(+), 10 deletions(-)
+ create mode 100644 kas/opt/ext4.yml
 
-Best regards,
-Felix Moessbauer
-
- .../wic/plugins/source/efibootguard-boot.py   | 46 ++++++++++++-------
- .../wic/plugins/source/efibootguard-efi.py    | 40 ++++++++++------
- 2 files changed, 55 insertions(+), 31 deletions(-)
-
-diff --git a/scripts/lib/wic/plugins/source/efibootguard-boot.py b/scripts/=
-lib/wic/plugins/source/efibootguard-boot.py
-index 2eb3bf4..9fb3e42 100644
---- a/scripts/lib/wic/plugins/source/efibootguard-boot.py
-+++ b/scripts/lib/wic/plugins/source/efibootguard-boot.py
-@@ -37,7 +37,7 @@ msger =3D logging.getLogger('wic')
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+index bf21e744..b9a2895e 100644
+--- a/.gitlab-ci.yml
++++ b/.gitlab-ci.yml
+@@ -71,7 +71,7 @@ default:
+     - if [ "${watchdog}" =3D "disable" ]; then base_yaml=3D"${base_yaml}:k=
+as/opt/disable-watchdog.yml"; fi
+     - if [ "${security_test}" =3D "enable" ]; then base_yaml=3D"${base_yam=
+l}:kas/opt/security_test.yml"; fi
+     - if [ "${swupdate_version}" =3D "2022.12" ]; then base_yaml=3D"${base=
+_yaml}:kas/opt/swupdate-2022.12.yaml"; fi
+-    - if [ "${no_kernel}" =3D "enable" ]; then base_yaml=3D"${base_yaml}:k=
+as/opt/no_kernel.yml:kas/opt/targz.yml"; fi
++    - if [ "${no_kernel}" =3D "enable" ]; then base_yaml=3D"${base_yaml}:k=
+as/opt/no_kernel.yml:kas/opt/targz.yml:kas/opt/ext4.yml"; fi
+     - echo "Building ${base_yaml}"
+     - kas build ${base_yaml}
+     - if [ "${deploy}" =3D "enable" ]; then scripts/deploy-cip-core.sh ${r=
+elease} ${target} ${extension} ${no_kernel} ${dtb} ${CI_PIPELINE_ID} wic; f=
+i
+@@ -173,6 +173,7 @@ build:qemu-riscv64:
+   variables:
+     target: qemu-riscv64
+     use_rt: disable
++    extension: ext4
 =20
- from wic import WicError
- from wic.pluginbase import SourcePlugin
--from wic.misc import exec_cmd, get_bitbake_var, BOOTDD_EXTRA_SPACE
-+from wic.misc import exec_native_cmd, get_bitbake_var, BOOTDD_EXTRA_SPACE
+ build:beaglev-fire:
+   extends:
+diff --git a/conf/machine/qemu-amd64.conf b/conf/machine/qemu-amd64.conf
+index 748aaa33..09b322b6 100644
+--- a/conf/machine/qemu-amd64.conf
++++ b/conf/machine/qemu-amd64.conf
+@@ -8,7 +8,7 @@
 =20
- class EfibootguardBootPlugin(SourcePlugin):
-     """
-@@ -109,7 +109,8 @@ class EfibootguardBootPlugin(SourcePlugin):
-                                                           kernel_image,
-                                                           initrd_image,
-                                                           dtb_files,
--                                                          source_params)
-+                                                          source_params,
-+                                                          native_sysroot)
-             boot_files.append(boot_image)
-         else:
-             if dtb_files:
-@@ -129,27 +130,27 @@ class EfibootguardBootPlugin(SourcePlugin):
-         part_rootfs_dir =3D "%s/disk/%s.%s" % (cr_workdir,
-                                              part.label, part.lineno)
-         create_dir_cmd =3D "install -d %s" % part_rootfs_dir
--        exec_cmd(create_dir_cmd)
-+        exec_native_cmd(create_dir_cmd, native_sysroot)
+ DISTRO_ARCH =3D "amd64"
 =20
--        cwd =3D os.getcwd()
--        os.chdir(part_rootfs_dir)
--        config_cmd =3D '/usr/bin/bg_setenv -f . -k "C:%s:%s" %s -r %s -w %=
-s' \
-+        # Tools run via WIC_TOOL_RUNNER in their own working directory, so
-+        # pass the output directory explicitly instead of relying on os.ch=
-dir.
-+        config_cmd =3D '/usr/bin/bg_setenv -f %s -k "C:%s:%s" %s -r %s -w =
-%s' \
-             % (
-+                part_rootfs_dir,
-                 part.label.upper(),
-                 boot_image,
-                 '-a "%s"' % cmdline if unified_kernel !=3D 'y' else '',
-                 source_params.get("revision", 1),
-                 wdog_timeout
-             )
--        exec_cmd(config_cmd, True)
--        os.chdir(cwd)
-+        exec_native_cmd(config_cmd, native_sysroot)
+-IMAGE_FSTYPES ?=3D "ext4"
++IMAGE_FSTYPES ?=3D "wic"
+ USE_CIP_KERNEL_CONFIG =3D "1"
 =20
-         boot_files =3D list(filter(None, boot_files))
-         for boot_file in boot_files:
-             if os.path.isfile("%s/%s" % (kernel_dir, kernel_image)):
-                 install_cmd =3D "install -m 0644 %s/%s %s/%s" % \
-                     (kernel_dir, boot_file, part_rootfs_dir, boot_file)
--                exec_cmd(install_cmd)
-+                exec_native_cmd(install_cmd, native_sysroot)
-             else:
-                 msger.error("file %s not found in directory %s",
-                             boot_file, kernel_dir)
-@@ -254,7 +255,7 @@ class EfibootguardBootPlugin(SourcePlugin):
-         part.prepare_rootfs_msdos(bootimg, cr_workdir, oe_builddir,
-                                   part_rootfs_dir, native_sysroot, None)
-         du_cmd =3D "du -Lbks %s" % bootimg
--        bootimg_size =3D int(exec_cmd(du_cmd).split()[0])
-+        bootimg_size =3D int(exec_native_cmd(du_cmd, native_sysroot)[1].sp=
-lit()[0])
+ PREFERRED_PROVIDER_factory-reset-helper:swupdate =3D "factory-reset-helper=
+-efi"
+diff --git a/conf/machine/qemu-arm.conf b/conf/machine/qemu-arm.conf
+index e0fe9603..f689a85b 100644
+--- a/conf/machine/qemu-arm.conf
++++ b/conf/machine/qemu-arm.conf
+@@ -9,7 +9,7 @@
 =20
-         part.size =3D bootimg_size
-         part.source_file =3D bootimg
-@@ -262,7 +263,7 @@ class EfibootguardBootPlugin(SourcePlugin):
-     @classmethod
-     def _create_unified_kernel_image(cls, rootfs_dir, cr_workdir, cmdline,
-                                      deploy_dir, kernel_image, initrd_imag=
-e,
--                                     dtb_files, source_params):
-+                                     dtb_files, source_params, native_sysr=
-oot):
-         efiarch =3D get_bitbake_var("EFI_ARCH")
-         if not efiarch:
-             msger.error("Bitbake variable 'EFI_ARCH' not set, exiting\n")
-@@ -295,23 +296,34 @@ class EfibootguardBootPlugin(SourcePlugin):
-                 cmd +=3D ' -d {deploy_dir}/{dtb_file}'.format(
-                     deploy_dir=3Ddeploy_dir,
-                     dtb_file=3Dos.path.basename(dtb))
--        exec_cmd(cmd, as_shell=3DTrue)
-+        exec_native_cmd(cmd, native_sysroot)
+ DISTRO_ARCH =3D "armhf"
 =20
--        cls._sign_file(signee=3Duefi_kernel_file, source_params=3Dsource_p=
-arams)
-+        cls._sign_file(signee=3Duefi_kernel_file, source_params=3Dsource_p=
-arams,
-+                       native_sysroot=3Dnative_sysroot)
+-IMAGE_FSTYPES ?=3D "ext4"
++IMAGE_FSTYPES ?=3D "wic"
+ USE_CIP_KERNEL_CONFIG =3D "1"
 =20
-         return uefi_kernel_name
+ # watchdog is not yet supported in our QEMU executor for this platform, di=
+sable it
+diff --git a/conf/machine/qemu-arm64.conf b/conf/machine/qemu-arm64.conf
+index 314d1430..24afedfa 100644
+--- a/conf/machine/qemu-arm64.conf
++++ b/conf/machine/qemu-arm64.conf
+@@ -8,7 +8,7 @@
 =20
-+    @staticmethod
-+    def _tool_path_exists(path):
-+        # With WIC_TOOL_RUNNER, tools run in the imaging chroot, so resolv=
-e
-+        # their paths relative to the chroot when checking from the host.
-+        tool_sysroot =3D os.environ.get('WIC_TOOL_SYSROOT')
-+        if os.environ.get('WIC_TOOL_RUNNER') and tool_sysroot \
-+                and os.path.isabs(path):
-+            path =3D os.path.join(tool_sysroot, path.lstrip('/'))
-+        return os.path.exists(path)
+ DISTRO_ARCH =3D "arm64"
+=20
+-IMAGE_FSTYPES ?=3D "ext4"
++IMAGE_FSTYPES ?=3D "wic"
+ IMAGE_FSTYPES:append:ftpm-stmm =3D " qemu-emmc"
+=20
+ USE_CIP_KERNEL_CONFIG =3D "1"
+diff --git a/conf/machine/qemu-riscv64.conf b/conf/machine/qemu-riscv64.con=
+f
+index 2158a964..44975e29 100644
+--- a/conf/machine/qemu-riscv64.conf
++++ b/conf/machine/qemu-riscv64.conf
+@@ -11,7 +11,7 @@
+=20
+ DISTRO_ARCH =3D "riscv64"
+=20
+-IMAGE_FSTYPES ?=3D "ext4"
++IMAGE_FSTYPES ?=3D "wic"
+ USE_CIP_KERNEL_CONFIG =3D "1"
+=20
+ # watchdog is not yet supported in our QEMU executor for this platform, di=
+sable it
+diff --git a/kas/opt/ebg-swu.yml b/kas/opt/ebg-swu.yml
+index bf540796..e28f523a 100644
+--- a/kas/opt/ebg-swu.yml
++++ b/kas/opt/ebg-swu.yml
+@@ -30,8 +30,3 @@ local_conf_header:
+     IMAGER_BUILD_DEPS:append:qemu-arm64 =3D " ${QEMU_ARM64_FIRMWARE}"
+     IMAGER_BUILD_DEPS:append:qemu-arm =3D " u-boot-qemu-arm"
+     IMAGER_BUILD_DEPS:append:qemu-riscv64 =3D " opensbi-qemu-riscv64"
+-  drop-ext4-images: |
+-    IMAGE_FSTYPES:remove:qemu-amd64 =3D "ext4"
+-    IMAGE_FSTYPES:remove:qemu-arm64 =3D "ext4"
+-    IMAGE_FSTYPES:remove:qemu-arm =3D "ext4"
+-    IMAGE_FSTYPES:remove:qemu-riscv64 =3D "ext4"
+diff --git a/kas/opt/ext4.yml b/kas/opt/ext4.yml
+new file mode 100644
+index 00000000..b9a3a80e
+--- /dev/null
++++ b/kas/opt/ext4.yml
+@@ -0,0 +1,18 @@
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2024
++#
++# Authors:
++#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
++#
++# SPDX-License-Identifier: MIT
++#
 +
-     @classmethod
--    def _sign_file(cls, signee, source_params):
-+    def _sign_file(cls, signee, source_params, native_sysroot):
-         sign_script =3D source_params.get("signwith")
--        if sign_script and os.path.exists(sign_script):
-+        if sign_script and cls._tool_path_exists(sign_script):
-             msger.info("sign with script %s", sign_script)
-             orig_signee =3D signee + ".unsigned"
-             os.rename(signee, orig_signee)
-             sign_cmd =3D "{sign_script} {orig_signee} {signee}"\
-                 .format(sign_script=3Dsign_script, orig_signee=3Dorig_sign=
-ee,
-                         signee=3Dsignee)
--            exec_cmd(sign_cmd)
--        elif sign_script and not os.path.exists(sign_script):
-+            exec_native_cmd(sign_cmd, native_sysroot)
-+        elif sign_script and not cls._tool_path_exists(sign_script):
-             msger.error("Could not find script %s", sign_script)
-             exit(1)
-diff --git a/scripts/lib/wic/plugins/source/efibootguard-efi.py b/scripts/l=
-ib/wic/plugins/source/efibootguard-efi.py
-index f84c61a..03cc0aa 100644
---- a/scripts/lib/wic/plugins/source/efibootguard-efi.py
-+++ b/scripts/lib/wic/plugins/source/efibootguard-efi.py
-@@ -38,7 +38,7 @@ msger =3D logging.getLogger('wic')
-=20
- from wic import WicError
- from wic.pluginbase import SourcePlugin
--from wic.misc import exec_cmd, get_bitbake_var, BOOTDD_EXTRA_SPACE
-+from wic.misc import exec_native_cmd, get_bitbake_var, BOOTDD_EXTRA_SPACE
-=20
- class EfibootguardEFIPlugin(SourcePlugin):
-     """
-@@ -48,7 +48,7 @@ class EfibootguardEFIPlugin(SourcePlugin):
-     name =3D 'efibootguard-efi'
-=20
-     @classmethod
--    def _deploy_additional_boot_files(cls, boot_files, kernel_dir, part_ro=
-otfs_dir):
-+    def _deploy_additional_boot_files(cls, boot_files, kernel_dir, part_ro=
-otfs_dir, native_sysroot):
-         # based on bootimg-efi-isar.py to get consistent behavior
-         # list of tuples (src_name, dst_name)
-         deploy_files =3D []
-@@ -90,7 +90,7 @@ class EfibootguardEFIPlugin(SourcePlugin):
-                 install_cmd =3D "install -m 0644 -D %s %s" \
-                               % (os.path.join(kernel_dir, src_path),
-                                  os.path.join(part_rootfs_dir, dst_path))
--                exec_cmd(install_cmd)
-+                exec_native_cmd(install_cmd, native_sysroot)
-=20
-     @classmethod
-     def do_prepare_partition(cls, part, source_params, creator, cr_workdir=
-,
-@@ -130,53 +130,65 @@ class EfibootguardEFIPlugin(SourcePlugin):
-                                              part.label,
-                                              part.lineno)
-         create_dir_cmd =3D "install -d %s/EFI/BOOT" % part_rootfs_dir
--        exec_cmd(create_dir_cmd)
-+        exec_native_cmd(create_dir_cmd, native_sysroot)
-=20
-         name =3D "boot{}.efi".format(efiarch)
-=20
-         signed_bootloader =3D cls._sign_file(name,
-                                            bootloader,
-                                            cr_workdir,
--                                           source_params)
-+                                           source_params,
-+                                           native_sysroot)
-         cp_cmd =3D "cp %s/%s %s/EFI/BOOT/%s" % (cr_workdir,
-                                               signed_bootloader,
-                                               part_rootfs_dir,
-                                               name)
--        exec_cmd(cp_cmd, True)
-+        exec_native_cmd(cp_cmd, native_sysroot)
-=20
-         cp_to_deploy_cmd =3D "cp %s/%s %s/%s" % (cr_workdir,
-                                                signed_bootloader,
-                                                deploy_dir,
-                                                name)
--        exec_cmd(cp_to_deploy_cmd, True)
-+        exec_native_cmd(cp_to_deploy_cmd, native_sysroot)
-=20
-         boot_files =3D get_bitbake_var("IMAGE_EFI_BOOT_FILES")
-         if boot_files:
--            cls._deploy_additional_boot_files(boot_files, kernel_dir, part=
-_rootfs_dir)
-+            cls._deploy_additional_boot_files(boot_files, kernel_dir, part=
-_rootfs_dir,
-+                                              native_sysroot)
-=20
-         efi_part_image =3D "%s/%s.%s.img" % (cr_workdir, part.label, part.=
-lineno)
-         part.prepare_rootfs_msdos(efi_part_image, cr_workdir, oe_builddir,
-                                   part_rootfs_dir, native_sysroot, None)
-=20
-         du_cmd =3D "du -Lbks %s" % efi_part_image
--        efi_part_image_size =3D int(exec_cmd(du_cmd).split()[0])
-+        efi_part_image_size =3D int(exec_native_cmd(du_cmd, native_sysroot=
-)[1].split()[0])
-=20
-         part.size =3D efi_part_image_size
-         part.source_file =3D efi_part_image
-=20
-=20
-+    @staticmethod
-+    def _tool_path_exists(path):
-+        # With WIC_TOOL_RUNNER, tools run in the imaging chroot, so resolv=
-e
-+        # their paths relative to the chroot when checking from the host.
-+        tool_sysroot =3D os.environ.get('WIC_TOOL_SYSROOT')
-+        if os.environ.get('WIC_TOOL_RUNNER') and tool_sysroot \
-+                and os.path.isabs(path):
-+            path =3D os.path.join(tool_sysroot, path.lstrip('/'))
-+        return os.path.exists(path)
++header:
++  version: 23
 +
-     @classmethod
--    def _sign_file(cls, name, signee, cr_workdir, source_params):
-+    def _sign_file(cls, name, signee, cr_workdir, source_params, native_sy=
-sroot):
-         sign_script =3D source_params.get("signwith")
--        if sign_script and os.path.exists(sign_script):
-+        if sign_script and cls._tool_path_exists(sign_script):
-             work_name =3D name.replace(".efi", ".signed.efi")
-             sign_cmd =3D "{sign_script} {signee} \
-             {cr_workdir}/{work_name}".format(sign_script=3Dsign_script,
-                                              signee=3Dsignee,
-                                              cr_workdir=3Dcr_workdir,
-                                              work_name=3Dwork_name)
--            exec_cmd(sign_cmd)
--        elif sign_script and not os.path.exists(sign_script):
-+            exec_native_cmd(sign_cmd, native_sysroot)
-+        elif sign_script and not cls._tool_path_exists(sign_script):
-             msger.error("Could not find script %s", sign_script)
-             exit(1)
-         else:
-@@ -186,5 +198,5 @@ class EfibootguardEFIPlugin(SourcePlugin):
-                 signee=3Dsignee,
-                 cr_workdir=3Dcr_workdir,
-                 work_name=3Dwork_name)
--            exec_cmd(cp_cmd)
-+            exec_native_cmd(cp_cmd, native_sysroot)
-         return work_name
++local_conf_header:
++  ext4-image: |
++    IMAGE_FSTYPES =3D "ext4"
++
 --=20
-2.55.0
+2.56.0
 
