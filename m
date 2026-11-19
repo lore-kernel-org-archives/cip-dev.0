@@ -1,179 +1,442 @@
-Received: from PA4PR04CU001.outbound.protection.outlook.com (PA4PR04CU001.outbound.protection.outlook.com [40.107.162.45])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.11111.1795081678367931879
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.152])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.11401.1795083355542000755
  for <cip-dev@lists.cip-project.org>;
- Thu, 19 Nov 2026 01:47:58 -0800
+ Thu, 19 Nov 2026 02:15:57 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=ZFYZ2vWj;
- spf=pass (domain: siemens.com, ip: 40.107.162.45, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=shivanand.kunijadar.v45@mail.toshiba header.s=key2.smx header.b=GOMJ7gVX;
+ spf=pass (domain: mail.toshiba, ip: 210.130.202.152, mailfrom: shivanand.kunijadar.v45@mail.toshiba)
+DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=mail.toshiba;h=From:To:CC:
+	Subject:Date:Message-ID:Content-Type:MIME-Version;i=
+	shivanand.kunijadar.v45@mail.toshiba;s=key2.smx;t=1795083352;x=1796292952;bh=
+	md6d+PN2/0UxCVPeTopoBxLNCP3X9sbhW0vZHgSvM0k=;b=GOMJ7gVXWChqEDREiA+xSp9pv1fz6I
+	dBATbiZbA1P1XBZVzg7HULcLx8mRAWcBAKZGTmPVep4d+L5Qk4Ky5IP2SPtQyGU9RCCwIxQI6vgEa
+	kBNXSDDN30svIbTLFXwbUBI/bYgWWroCgvVxCLpHnyAEx9GYUp193/BnLkEKWRfbEA7ABgzy3itOJ
+	TEx1MEAuGvGTTukkmJGAsdN6liBRWSAiJcdGYJqpMrDUMHkRLPJ5h9dU6zo+zhc+wj+TbbI8cPvpZ
+	+n5SLzthukWvRmMEDWccZJJmWR6cu9xCcZamQMKMOFG7Nz57YSfRZ1mGt5Msd5Znp8Wev/GeTMCWr
+	fa+w==;
+Received: by mo-csw.securemx.jp (mx-mo-csw1802) id 6AJAFp2c732092; Thu, 19 Nov 2026 19:15:52 +0900
+X-Iguazu-Qid: 2yAc0F2ngcfoUo9PZC
+X-Iguazu-QSIG: v=2; s=1; t=1795083351; q=2yAc0F2ngcfoUo9PZC; m=Md/YhlLvZL0HR/j8KKPiU6/UHctmqtm8YhoPK0E6Wds=
+Received: from imx12-a.toshiba.co.jp (unknown [38.106.60.135])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	 id 4jVZ9g2GZfz1xnh; Thu, 19 Nov 2026 19:15:50 +0900 (JST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WfOVhtc34DVfEzvhVhe0UM8pTg5OEZLABjS+7fx0fHOV0ZTpAV3lKGUvR7F0QNHZFGftOGEIgcGBTX5afNOKnAnYdo5Jq4gJtic/SUX5vC+ftNIL/RgzVVno6eiuLeWcscQCMjdbEWP4kQKxdFpm1MSO0cB3qHMtqb+n2CsXZdCEIaCg5O3zV1y9wjbx0iLKq/cWCouXJkCIf6oN2sspqQfMYCYz7BrSTJhkTmxOUNu4J/E2PBDx4f3O1AfrPF/XSaTUVaLzS3Wrgll7nHMV24T5AdfhsUoKsdU59OobUPTY9WJo8iKgyljmrnuBTbtv2SR67uWDza2j1DACAD5Z4A==
+ b=zUKaTVGoCVWVV622Tu8qFt/8qslZEe0/f2nTGGcxlDNCLzh+Q9les25jeku1ncR2N181cflqiTIwG4JHBeYLwkQzpgVwlu1jpjvRevcEXn2DuQ0Lf1hmr3DUyYc4bwZc1QSB3WZMFdyehfX0vq4l6fPjdmygHXq7Q8M0h/v3/eHlEd29QuwJ+7HRzhTVoEfU7RxNDxZ0Ywh9iT2ZJJqaET/n0S8a7sPfcQq85Wn+DOROTaSMu4EDVhyW1G+KDWkkkh0yNL1CTXb/+Z24dwXzwbNBp1Wwa6qz9uif9EtmxueZ21tUXFY/ROjZjoX8b57XeOTa4Fck3Q8Foojx2CaVAw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IL/nsRAkIKXivBQgcC20Vz1t+M3mW3Z/5XZupANOc9Q=;
- b=YXhNsMmS7UlsqFWZDckMEiK6Qcz8emEeDSU6ehOhsaS08BN2SGMfYiYJ2RPtg9vBQbZq5zTawNBUVq6NyvKwUsBrLxo+7+9ea8mUEfYNjuFJIfaf3lwNhvoKC153B71ddDTmN0Go45LsO3R8My/rXESvf+noigc6PlJwGHTNibiRIlHyDysoNlpgR+Ubkjid8ccCpsB8xuDgKWsKR8TBVbal8x8xS7Ue8EeI7H8ir7nTJrBceDPjY9Ng8j3QTcCMAvNULDGBYLeaPl87vKNf9TiwfVqyTGkXBvqUiZqfJEtLwl0NkiST+lSnwMZOf0ZzZtWAQvzpfGHJLQn+D7LGMA==
+ bh=In7DYT6oUWdKLxPxIEYYcQ7uXUP1qrBWxIvv6URmcJs=;
+ b=fkKcA1nnKrEA1Pa9EdMPPrZ+xobi4TjGAWCS9rbyMmQJ/4MALERkwRgv9zK5Bs9HwhrgedUMzdJ/PrUyrptCTSCC2AapQVXntj07xP8F3G/FN1Hoxo8MjnZRAyam7Rea9BopYHaVi5GoNMSA3EdJyVdLHzPgi7gG061+o2qFSPq+HRrjm7A29f9Y7Ah+17DApVn8EwGAUjtbvO7mVjMXmxt0VMhptPHxtx2TJVjeWYQsgXEXH7KwpoRUjJf6/m0VCk5bjEig/dUHlijz7Yr3ONEF3Bsz67FAH60AF5pzmY3B3h8WVN7tAQU7ts+icQnBIgxFI8nS7BOR3PV4sDzJvA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IL/nsRAkIKXivBQgcC20Vz1t+M3mW3Z/5XZupANOc9Q=;
- b=ZFYZ2vWjTB3+XO/fVFmPgMcLC0rlicQIoxKhuwRL0xpfGp2wefTmcpxI/12B1h/f7mZ33JNFtRmGfiBQx0r/X92y1CYZ5cVATCHGDUnO3c0e6vz8rUUpyxICQcMFIkqXUXjoww5tZqkCs6nSv5OR/xAzxeJOs9QX72pyNG9bkm0hQ7LA+WvI6UkAnK/JXHUpUnrEUwyxwm5AxIU39yoflINTLiuoTUnLEY5cOyaYTqEpnAwkRTz6S9yICHXa995cm0orf/3RJGZdkPid8iv45aFkI44pT0Y5ijm1w8HmEuvkLvt4K7cpVsXzIP7uuT4mLOmLtDYYpOBpv22yTU+sqg==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AMCPR10MB992291.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:785::10) by ZR6PR10MB130213.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:910:e8::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.662.1; Thu, 19 Nov
- 2026 09:47:54 +0000
-Received: from AMCPR10MB992291.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::fbce:789a:27cf:d1e]) by AMCPR10MB992291.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::fbce:789a:27cf:d1e%5]) with mapi id 15.21.0639.006; Thu, 19 Nov 2026
- 09:47:54 +0000
-Message-ID: <9eed115b-9ea6-4624-829f-3843c607abb0@siemens.com>
-Date: Thu, 19 Nov 2026 10:47:53 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [isar-cip-core][PATCH] linux-cip: Update to 4.4.302-cip116 and
- 6.12.118-cip136
-From: Jan Kiszka <jan.kiszka@siemens.com>
-To: cip-dev <cip-dev@lists.cip-project.org>
-References: <e6cb733e-e8ff-436a-be3f-10d15ce6dd02@siemens.com>
+ smtp.mailfrom=mail.toshiba; dmarc=pass action=none header.from=mail.toshiba;
+ dkim=pass header.d=mail.toshiba; arc=none
+From: <shivanand.kunijadar.v45@mail.toshiba>
+To: <chris.paterson2@renesas.com>
+CC: <cip-dev@lists.cip-project.org>, <kumar.dinesh.h95@mail.toshiba>,
+        <kazuhiro.hayashi.f74@mail.toshiba>,
+        <adithya.balakumar.f33@mail.toshiba>
+Subject: Review request for AWS s3 artifacts lifecycle policy & add forky/sid
+ OVMF keys to lava docker
+Thread-Topic: Review request for AWS s3 artifacts lifecycle policy & add
+ forky/sid OVMF keys to lava docker
+Thread-Index: Ad14Duo8+d8o2LadRE+SqxEZ03Crqw==
+Date: Thu, 19 Nov 2026 10:15:48 +0000
+X-TSB-HOP2: ON
+Message-ID: <TY3PR01MB1107531C6E4E9400A3F5AFAA6C5792@TY3PR01MB11075.jpnprd01.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
-Autocrypt: addr=jan.kiszka@siemens.com; keydata=
- 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
-In-Reply-To: <e6cb733e-e8ff-436a-be3f-10d15ce6dd02@siemens.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR5P281CA0058.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:f0::14) To AMCPR10MB992291.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:785::10)
-Return-Path: jan.kiszka@siemens.com
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mail.toshiba;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB11075:EE_|TY5PR01MB18158:EE_
+x-ms-office365-filtering-correlation-id: 07c96016-2074-4404-6e20-08df462614f7
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|23010399003|366016|18002099003|261009223027099003|13003099007|8096899003|5023799004|11063799006|56012099006|261028144727099003|261102123227099003|261026140227099003|261026121527099003|261022115727099003|261021121427099003|261021123027099003|261022075727099003|261022105027099003|38070700021|10067099003;
+x-microsoft-antispam-message-info: KhAS2hgF0tv2ASXnNx19W+vVnlcJfPSZc6ViYhwTUu9wDsrQe/0lQ3EEwnfSwjar6wypqmW3rDhA2SrpEU22AsoNZdfwvjSf1C2Vm2pWNqLjd0TtTkcXFFyk96Ckl3MHxuANeK/8k37Wm5eg3AslZJ5GLNnFRwsQArt9R+UNKY/UYTifCyxlmv+jxS7nvHyR/36lv0Puq5s31yAqJeBdMG4boK6LmaJD1hF5ZGg0wamfMZaPO5uZOfY/Nj5VJzfHVHwSLWR9EF8V3UN/YBUs/5jT+1cdVsmzFcT76ViFXasTB6DtYyhuy6TVsCAwWFiqZmscs3P64Qdee0G0pOo2l5rXsqY274VlUlpmShu0TVh8Ct6Ao81asee5nYhqIgmU8wFExpnV9WKyOVRBQbmkBTwkFGVo5ge8p52nY6eGnFGhm/NNxtVV74y5KrxBmft50objgBK679CrjdgbKYBidKnca3CuCoM0uxLiL0wS9oNesAMh2fR/x7Hds4NODFZ+QOeuodFdZYI0+0Q938a/M5Aov/HgnKI9T+Y7ULkXmNBuFcd0N4bLxiRX4sA0kATZ/09h6kKfgRczYL8KnAPm3gP59nNVQgpX9neHCObdxjUGdae3EeXP6MK3Tj+zDZgoNnZa50JyHMj+KlIpEhNvtgfXfaHD6xy6VoNzJkc9z8tuQupusWSAwx9ASvQJDql7gnaVLr72FEgKnl1WE7ttXiLQE4peeWFiIGH5bDngYHM=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11075.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(23010399003)(366016)(18002099003)(261009223027099003)(13003099007)(8096899003)(5023799004)(11063799006)(56012099006)(261028144727099003)(261102123227099003)(261026140227099003)(261026121527099003)(261022115727099003)(261021121427099003)(261021123027099003)(261022075727099003)(261022105027099003)(38070700021)(10067099003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-2022-jp?B?b3AzbG91c2tDdEUrSUJKMlgrbVJzMVNucHFGYmQzQ29UNzQ4dk8vdXVm?=
+ =?iso-2022-jp?B?bFZsb1VWcjZ0ZXF6dGRob3NLMmJhdURsMEVYMkJ0QWw0YXh6OFBoaTZm?=
+ =?iso-2022-jp?B?bFdYR093Um80cnpwbGxZRnp5dzI3OUEyZzQ2UllWeHUzYlM1TnZkVXNE?=
+ =?iso-2022-jp?B?QXVtbGJwT2wrVXRySDcyV21wTmhFUXVDUXdzYlgzZkxJdTZKZ1QwM3My?=
+ =?iso-2022-jp?B?LzdaZ0h5S2JVUTNqSmZoQXBGcEJrSFNNakRDN0pFOWVMUDMwOUVqVkpu?=
+ =?iso-2022-jp?B?aEc3aGhqRDFXU2lPYmN2NjlvWjljOXpJSW5jZWRuN0w4bUdWQWtvQjRq?=
+ =?iso-2022-jp?B?eDIrVkhBK1N3OXNjaGlEMTdYM001V3JIaTdpanFsSmJDeUQzT2lVWUZO?=
+ =?iso-2022-jp?B?ZFJiVkNjRko1WlRGbVlDTmpJeHV0aEpPN1J0SnY3b2ltOTllekVubm41?=
+ =?iso-2022-jp?B?YTk4TEdMb0dGRGRQejNITU1JME0vTDhXQlZlWFFOZ1FDRFdGWis1enhQ?=
+ =?iso-2022-jp?B?NUR5N0ZzTHV0L29CU2lCdFJCS3VJaTJqdXFoYlZ1NEt1dmNDdzd1U3RQ?=
+ =?iso-2022-jp?B?R3NxcStkUGNFNk5JelNPUHhNMnJJSkh4WTV5alNLUjI4YzhoMml3WkpO?=
+ =?iso-2022-jp?B?Wld2cE11S25LbWN3TnhuVUhUMHpWZ3FUYzBPcWxlYnZWakdEMGE1N2Q1?=
+ =?iso-2022-jp?B?NktvQVd2dUQ4Ky9CbXJEOFhiODl2eTdnWUNMSUU0U2NjcVpHWmltbGkz?=
+ =?iso-2022-jp?B?T1EyQXIrNklPaHJNUlhKTEVPZHNGQWF3K05VSjZkbjc4bUcvMmdhWVlw?=
+ =?iso-2022-jp?B?WWlIZFhvTW9SUUprN3F0azBZcHAzaDhvNC93czREOWY3MkU2ZHFtYXA3?=
+ =?iso-2022-jp?B?bTVjK0haUWZYdHFVVWVHQzJUNGRqS09mTUZ4VDNzbHp1WVF5Q3U2S3Yz?=
+ =?iso-2022-jp?B?Z24zWC8vQ05meWdCeTFjNko1OHB2TTljYlVDZkpMUk9jQVJZT0FLbnIz?=
+ =?iso-2022-jp?B?QXd0UHNaQmJVbDhtMmZMSmV0UTdPQmpIckppSVpOL0sxVm9sVkVkVnp6?=
+ =?iso-2022-jp?B?RUJFdFVlSFhrK0FqVVdQQUFpVW0wNFhwa25kTHdvcytvYkQ3VnBlTXU4?=
+ =?iso-2022-jp?B?Yjh2eVR3bUhqNlN6cmFzV2RVRkJTVmQ4eWExc0pvNk05TzcrSVVMYmIr?=
+ =?iso-2022-jp?B?czFSSnlQam1CdTZ0MFZRSkVBMjI4QnUyZ1hYZjNIenJlQVQ1U0R0Z2h2?=
+ =?iso-2022-jp?B?V3NBbGdsU1dNb3pFU0xHUWFOY0x2VFlxaUtSQVJVelEzS2I3ejVqZytv?=
+ =?iso-2022-jp?B?OWdvSFNSY1ZmdXV6L1RyYnAxZGNhbVdIcDNSTlhBRjA0RlZUUS9admFu?=
+ =?iso-2022-jp?B?Q0E3cTdqcHB6OFdvUnJVZFp1M3lsMTN4dUhYeEw3bFZmY0dXeGtob0t6?=
+ =?iso-2022-jp?B?K3dDTVBnNGYralFhbWdVZ0lOYlFWWjNIblV1ZnhwcUFnWWUzWDFieEdy?=
+ =?iso-2022-jp?B?a0ZMVnJDQXBPMElWSDkxeS9aLzJNYWNoT3ZvMk1jMWNCWUtOdk9rVVhK?=
+ =?iso-2022-jp?B?UDhvdWlyb2FuRStCQ0Mxa0dkcmMvT1pTcC9MU3htTkpXaWF3MEVUc01x?=
+ =?iso-2022-jp?B?ZWhvdjRPekRKL21yeUNpUU5GYllWdGxjZ2dZSmhUMSs2eDVJNWJBZFE2?=
+ =?iso-2022-jp?B?UjVRUHk4QUhubTRURzJjc09jRytCc3lyRmhnMmFWaU4zbU1RTUZRZTRi?=
+ =?iso-2022-jp?B?bmF0Ynl5MTBDSEtZN2Iyd1NaUFBuZ0VlK3pBV0dIVTRNTG5OTy8zRWIv?=
+ =?iso-2022-jp?B?LytOZG9ha2hnaUEwaVEyYVhjM2Y4elVPbWljRTR2NGlOdzZDZDZKYUJx?=
+ =?iso-2022-jp?B?dlpEQmFURHB5dmlRR1FESjgxZk1lUzdaTVFNdXZLNmJ6d2lNMVBEQnVP?=
+ =?iso-2022-jp?B?OHNCTk83VCtXMlBTVTZhMHhzNUliZVFSdVZ0Sk9nQitXOVVqSTZxMUhE?=
+ =?iso-2022-jp?B?cGgvSVpyejcxZ0M2WlZTL0F5ZWRBQUptMi80RENUK0V3UXNzYWFDYm53?=
+ =?iso-2022-jp?B?OGo4MVVSbjkwQlRMRlRjdXVsN0RoQjhTL3cybE5hSnk2bEhDY21SREN0?=
+ =?iso-2022-jp?B?UEw0Ly96T2lJV2FLR2lhZEEvd2F6bVBnckppMExGMGJZNWFsNmdCNzBj?=
+ =?iso-2022-jp?B?N0FWK3poKzdqNlpiVTY5cnk0Snd1YTlwaDRvVVFxenl4U25FVzYxdDdY?=
+ =?iso-2022-jp?B?cEVQc0xNTlhlZWxtZjRGTUtqSEFTeEtYQ2M5eUVvRVd2cGJEQTVwRDg1?=
+ =?iso-2022-jp?B?OVFjVk5ZT3JYbUZETU1UTVlHbG0zOURlVXBQb2ZXenIrcHoxTnVRV09t?=
+ =?iso-2022-jp?B?cVVvb3h4VDcrNHdzVjJqa3JuY2JCZEVpMitZdGNmS0xab3lualB4TVIz?=
+ =?iso-2022-jp?B?YjlZMmRvSmNnUXFkcERaSXQ0bUhyYm1wMWgvb2FOVlVCSE1NdUQwN1U0?=
+ =?iso-2022-jp?B?WG9CaHRQTWtpeHRNZHoxb1ozL21BZXpUNnNzOU5KMTJ6d0NaY0t0Unlj?=
+ =?iso-2022-jp?B?K285bXA5TT0=?=
+Content-Type: multipart/alternative;
+	boundary="_000_TY3PR01MB1107531C6E4E9400A3F5AFAA6C5792TY3PR01MB11075jp_"
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AMCPR10MB992291:EE_|ZR6PR10MB130213:EE_
-X-MS-Office365-Filtering-Correlation-Id: 279ccf54-bc6b-44e9-dce0-08df46222ed2
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|23010399003|55112099003|6133799003|261009223027099003|18002099003|22082099003|261021121427099003|261021123027099003|56012099006|10067099003|261102123227099003|11063799006;
-X-Microsoft-Antispam-Message-Info: H9H2cmH4M2ND97Y6b/Ipm4TQYI78eKDZFv8xJKPNmar4fzkPSP7v8bBhgWuG2K5NSWerkWq2GeqTeSUIxL0P28A9I3FkBPRTprUjkA7SzI5F68xATXpSqA3Yk9DblpHFwTf3WP0zdjLGOnHFIKW8ZWsc/bNUoRKKmu49UC2sEcfo83wfM/nSy/wRwn3Kdfy+G1oHBfi5BHw7OZu5hfXLz+H5hR2bymCpgNcRtBwi3IIdSPSMqcY1aM6TYlQk4bUYLTQybpll4TvBLwrs5JECLjifPy4T9ser9vw4+R726HKQtyXpJzZwydGXsTDVExNGM2LCR7P8oSuLnMnuSra/QIqHDk8hbcntaVhR2Bnud88kHObl3CNJHC6/qH/frT3gtpFjTe0QmPeUHvVs3tojihxqkzxmln/JtEsCzx++pGg3zhnBEnyuyuX07Uc9Ftsm/d7uoyyJkpZ/vD6BxVoY3+8/5sLvrjkiGbCTKvmFOMXODgfbVbI+IfuxW64EunozaxMmYpi8I/VejOwJ+wrnS2loFo5KnwzzKfELOR5PMWurqiPyYkST4LguoTxzIqBmxQTw3z2/vhNbXATJMUEf9h3GEwGMRW2ObY0I+IxvLQiwpqPyAkyA1srSRqsmAfoBYpP/f6CSXgngiM3rxrLrKYnLh5gjJ8WuHdSwYymtwio=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AMCPR10MB992291.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(23010399003)(55112099003)(6133799003)(261009223027099003)(18002099003)(22082099003)(261021121427099003)(261021123027099003)(56012099006)(10067099003)(261102123227099003)(11063799006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?SllUb0NLa1lDdkZpNllHV2QvQWxuSHhCRzljMUhhby9qd3ArbzRlRDlWMHFp?=
- =?utf-8?B?SlJqTHh2UXZRaUdwbHhtcmZhVzRoWVdaNGg1eC9FbXc3aTg3OTdCZjdkNWxv?=
- =?utf-8?B?K2JSanBsMm1pTEp2L3g2QytXRnFIUk9tN2VZZUd0VGZsa0tteXI2VWxLYlNI?=
- =?utf-8?B?TlVSYTMybFhZMmRrZ3NvV3QzWDQwN2NUZnlpS0tyWkNEZ25acTZOcHRlWlpQ?=
- =?utf-8?B?VUxKVVBmd21YSmVOYXB6MFBsQlZsMzRtWVh6Q2xvQmNPQnNzOXV5Mnd1UjFJ?=
- =?utf-8?B?bUx5M1YvVEZ3dzlTT2tOaXhFN0w0clJlL0tLOGJtSVdmblhrNHRUMU5mcHlG?=
- =?utf-8?B?bVJvN0M1MzBVVllxOEdaOTd6Z1JzaUswVGlPQTRxM0VyWTFiazBDakplU1ll?=
- =?utf-8?B?ajdPRGNmM1dZMnZlRk8rS2I5bndiUytMUGhNNWlOZTRzbU9LdmIwTTRlNEZX?=
- =?utf-8?B?QjZsbEUxT3pWc2xKSmxuRVVrOUZqWHpubWQ3NmdBNWdaSkM3SlVYRXRaclQ1?=
- =?utf-8?B?aVhPSUY0RWszT0ovQU1hMTZ5QkZyaDhQZkdkM3NXZ25HV0cyckJHalR1NEJU?=
- =?utf-8?B?MktJa0NnUU5kREFpYURzUnpyZjF0UEV6TGh0ckIyZlBoWGZqcXdMUzFLUXcx?=
- =?utf-8?B?Yk9CZ0c3NkxJSzRnMHNQREk4VjF3dnZMcWVyRzE5bFZFeDdOOVdyMWtKRjhH?=
- =?utf-8?B?YXpzZGtkOHlHZ05SUWQ4ajZWd2ZjR1NSOHZVS3BHdGx1TXFFR05DaXpOa3BC?=
- =?utf-8?B?UzhoMHRiZTJDWVcvcDZ6SEJTNFZaUVlMODBxQ3hka1RuMmpUcURBMGl6b0Ro?=
- =?utf-8?B?SmJ3VmpxODBRUjRLd0xaaUJ3ZkxMYTkxbmVqR1hHSkpvU3Fqdy9hVlZFTkdO?=
- =?utf-8?B?Z1o3K3haMTBrSDlDL1h3YStkbkx3WlRLei9oSWdMZm53M01aMmpkVVMwVm9u?=
- =?utf-8?B?aHJKOS92cVA4NSsyYnFHYWNRb050WjNrMXgwMHJiUm5xdm9oMFRHc2psTVFx?=
- =?utf-8?B?cC8yWjBzdXIwc2c2WVRmbUdwOEN1MVpyN3NUWlEwWVBGMDVNamIrZXZyc1Fz?=
- =?utf-8?B?Q0FreFN0MW9XdGZHSTA3dnpPZWdSZGt2Z28xV1p5WnZhUlBRZ3lWZ201b1VT?=
- =?utf-8?B?UWRLZmplcHhKQnFTSGFEMWszeTgxbkZKcHdpTnBQUEdzSGxtY2JDNjlyZVFm?=
- =?utf-8?B?KzRpWklrb0NHb3ZiTStsb2VHRG12d2pCWThGb1prUjJjV3VaZS9mbHZmb2FC?=
- =?utf-8?B?VGtuLytjYjg2TlRFN21FSVk5VVFMWjJnQUV5MzhnT1VrWTAzeUJmR2R3OXdZ?=
- =?utf-8?B?MDBXUUFDejl6Z1pEVFN0RFZwWXhCTWUzN0xKR0tWcVgvN2pZMWw0UGV4UU5N?=
- =?utf-8?B?cFI5eEh6TUwwUC90QWRIWGZRK2pqNWhtMnpvdS9Hdi9ZM21mUjFMMG1UTWJS?=
- =?utf-8?B?Y2plR3p4djhtYXdYaWgwNlFFVkxucVpPOEk5YlBheVBlZ3V4aGVFZDZnZ2R0?=
- =?utf-8?B?ZllCMzNMbHF5Znk2VFloVUR5MVZBb0dKQnU2T0p3bSt1anU4REY2Z0UwUHRC?=
- =?utf-8?B?RXJOeUwyWmxnc09YQSs5a1dqdG5aK1RlRWNocDdRRHhXRWV1d3k2UUJZQmg5?=
- =?utf-8?B?NGRWN1dkQ28wNklxaVF2VmZodTBEMGlNcEtocWxta08wRW9XeUJnUWNPd1NL?=
- =?utf-8?B?QjgzbFM5NGZHQThYNXJTWXJLT01tKyt2ZnN6elNnNlIrc1F6eUdWdjlqY2Z1?=
- =?utf-8?B?WWR4NERpY0NPTzZsaUwxVHIvT2p1KzQrbkNSMVkxbXJMeVpEZGdKT0FtQWt2?=
- =?utf-8?B?SFhMVHJESEYxekxPNXNSS2UrQmdNdTFZem9pOHFCemJucWFPSVpmQmFFWXMv?=
- =?utf-8?B?ckxSU2UwWVgyMDFBRUp1aWZ1dGQyY2l0VVJYYlZYVExVMi9na05jYlowZzBk?=
- =?utf-8?B?clJ3OUVJbEx1dTJXVkJJKzdTR2VZbDFhWkxrZlpISmZuNWxGV3FIU2lGS0NK?=
- =?utf-8?B?K1IzVmtERU5EdGEreGkwT3Y1UEFKNUFNU0VVSmdlaWJRODVtZWFsb2JXVEpx?=
- =?utf-8?B?dXZmeldoOW9FOUdmenE4aFJ0aHpUd0NjdEVLdjVwUm14QXRRWm9wdTZzdVo1?=
- =?utf-8?B?dFE1WFdhZVp2TWZJU05OUVRrTkhYR3ZjL21KVDJPZFFNVFBvNDM1cVEvcldH?=
- =?utf-8?B?aDVSYjlMUlFiV1ZUTUN2R2ZsM1lRMldneE5iVXJNa3huRjFjMFZkczZjV2pC?=
- =?utf-8?B?U096RVphYjJBZzJvOENRWG1jSVkraXF1WUFLY3UzdUZ6Skp5RURLN2JlOUVU?=
- =?utf-8?B?dE9kcjNyaVA5S2d4YUNYOEZXVDVZd0hSV2pTNGtUUkNTSWcyRFd4Zz09?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 279ccf54-bc6b-44e9-dce0-08df46222ed2
-X-MS-Exchange-CrossTenant-AuthSource: AMCPR10MB992291.EURPRD10.PROD.OUTLOOK.COM
+X-Exchange-RoutingPolicyChecked: mV6WNK/KMq4vuqd2d60kXDXO3P4gUXVsMr9T4uH3gSej5FyWn55tgswA5gWc31nrrbiDTMIDNBiGUnMQExMwUcg2OvvjCpcBKsq6lqjGQuJOMoepZcOY43MEVhZSOsOIdXsyJipqv/NbX58i116WM24uWTjX5Z6a2lK2pzY1U9EFYY9vxlJ/0ljIqKBgZmT3V6gOnju68plXwmgtGpbr7FgKi4NMTz5JYZ5PBWLQqQvo7QEzdAXomDWECOVvVXHjvxWHc1umxJj76PFZiEpZA4NMhv30b312UP+VJuBDXbax4tbxTt40RkKiGYh2cUSUXTNa9oe3AJREi6qEznSPOA==
+X-OriginatorOrg: mail.toshiba
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2026 09:47:53.9343
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11075.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 07c96016-2074-4404-6e20-08df462614f7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Nov 2026 10:15:48.4126
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SBCUCSB5/AbnDrxIaVGp6NOtQGRfz2lXBpLAq2Qg4M8N3q5Dui4uKkuNHJhswsW2HJUjpwKI8pTp2QBdH7GKAA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZR6PR10MB130213
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 7Gis73yQ+wqO9ds9YXzb8lFetByqdD4onLLD5Bz4ejnxJZyVSzjyuOhXyWlzWTA9xhDEUtzisRubcFVQlBFIqZQzxKFErQeXAblA+J/MEdQhhecYcL/fNX8zcPZDrAQN
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY5PR01MB18158
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Thu, 19 Nov 2026 09:48:01 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/25011
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Thu, 19 Nov 2026 10:16:05 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/25012
 
-On 19.11.26 08:59, Jan Kiszka wrote:
-> From: Jan Kiszka <jan.kiszka@siemens.com>
-> 
-> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-> ---
->  recipes-kernel/linux/linux-cip-rt_6.12.117-cip35.bb             | 1 -
->  recipes-kernel/linux/linux-cip-rt_6.12.118-cip136.bb            | 1 +
->  ...{linux-cip_4.4.302-cip115.bb => linux-cip_4.4.302-cip116.bb} | 2 +-
->  ...linux-cip_6.12.117-cip35.bb => linux-cip_6.12.118-cip136.bb} | 2 +-
->  4 files changed, 3 insertions(+), 3 deletions(-)
->  delete mode 120000 recipes-kernel/linux/linux-cip-rt_6.12.117-cip35.bb
->  create mode 120000 recipes-kernel/linux/linux-cip-rt_6.12.118-cip136.bb
->  rename recipes-kernel/linux/{linux-cip_4.4.302-cip115.bb => linux-cip_4.4.302-cip116.bb} (68%)
->  rename recipes-kernel/linux/{linux-cip_6.12.117-cip35.bb => linux-cip_6.12.118-cip136.bb} (59%)
+--_000_TY3PR01MB1107531C6E4E9400A3F5AFAA6C5792TY3PR01MB11075jp_
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 
-Holding back - the 6.12-cip release was mis-tagged.
+Hello Chris,
 
-Jan
+Hope this message finds you well.
 
--- 
-Siemens AG, Foundational Technologies
-Linux Expert Center
+I would appreciate your feedback on the following issue and merge request (=
+MR) at your convenience.
+
+
+  1.  issue: CI: Pipelines can race test
+https://gitlab.com/cip-project/cip-core/isar-cip-core/-/work_items/134
+
+For this issue, the CI pipeline is already configured to upload artifacts t=
+o the AWS S3 bucket using the CI_PIPELINE_ID.
+
+As a result, a large number of artifacts may accumulate over time, leading =
+to unnecessary storage consumption and increased costs.
+To mitigate this, it would be beneficial to configure an S3 lifecycle polic=
+y that automatically deletes older artifacts after a defined retention peri=
+od.
+
+Could you please check whether such a lifecycle policy is already in place =
+and, if not, apply the appropriate settings if you have the necessary permi=
+ssions?
+Please ignore this request if the lifecycle policy has already been configu=
+red or any past artefacts needs to be maintained for some reasons.
+
+
+  1.  MR: Deploy OVMF for Debian sid & forky
+https://gitlab.com/cip-project/cip-testing/lava-docker/-/merge_requests/57
+
+The isar-cip-core project has already been updated to support Debian Forky =
+and Debian Sid based builds, along with minimal validation testing.
+This MR adds the required OVMF keys for Debian Forky and Sid to the LAVA Do=
+cker image, enabling the execution of Secure Boot (+security) tests within =
+the LAVA test environment.
+
+As this MR has been open for a considerable period, I would appreciate it i=
+f you could review the proposed changes and share your feedback when you ge=
+t time.
+
+Thanks & Regards
+Shivanand K
+
+--_000_TY3PR01MB1107531C6E4E9400A3F5AFAA6C5792TY3PR01MB11075jp_
+Content-Type: text/html; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
+
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
+osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
+xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
+//www.w3.org/TR/REC-html40">
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
+jp">
+<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
+<style><!--
+/* Font Definitions */
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Aptos;}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0cm;
+	font-size:11.0pt;
+	font-family:"Aptos",sans-serif;
+	mso-ligatures:standardcontextual;
+	mso-fareast-language:EN-US;}
+a:link, span.MsoHyperlink
+	{mso-style-priority:99;
+	color:#0563C1;
+	text-decoration:underline;}
+p.MsoListParagraph, li.MsoListParagraph, div.MsoListParagraph
+	{mso-style-priority:34;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:36.0pt;
+	font-size:11.0pt;
+	font-family:"Aptos",sans-serif;
+	mso-ligatures:standardcontextual;
+	mso-fareast-language:EN-US;}
+span.EmailStyle17
+	{mso-style-type:personal-compose;
+	font-family:"Aptos",sans-serif;
+	color:windowtext;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	font-size:11.0pt;
+	mso-fareast-language:EN-US;}
+@page WordSection1
+	{size:612.0pt 792.0pt;
+	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
+div.WordSection1
+	{page:WordSection1;}
+/* List Definitions */
+@list l0
+	{mso-list-id:565457396;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1351996336 1074331663 1074331673 1074331675 1074331=
+663 1074331673 1074331675 1074331663 1074331673 1074331675;}
+@list l0:level1
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l0:level2
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l0:level3
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l0:level4
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l0:level5
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l0:level6
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l0:level7
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l0:level8
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l0:level9
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l1
+	{mso-list-id:606620023;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-821258654 1074331663 1074331673 1074331675 10743316=
+63 1074331673 1074331675 1074331663 1074331673 1074331675;}
+@list l1:level1
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l1:level2
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l1:level3
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l1:level4
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l1:level5
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l1:level6
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l1:level7
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l1:level8
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l1:level9
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l2
+	{mso-list-id:2081369457;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-323867206 1074331663 1074331673 1074331675 10743316=
+63 1074331673 1074331675 1074331663 1074331673 1074331675;}
+@list l2:level1
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l2:level2
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l2:level3
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l2:level4
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l2:level5
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l2:level6
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l2:level7
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l2:level8
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l2:level9
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+ol
+	{margin-bottom:0cm;}
+ul
+	{margin-bottom:0cm;}
+--></style><!--[if gte mso 9]><xml>
+<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
+</xml><![endif]--><!--[if gte mso 9]><xml>
+<o:shapelayout v:ext=3D"edit">
+<o:idmap v:ext=3D"edit" data=3D"1" />
+</o:shapelayout></xml><![endif]-->
+</head>
+<body lang=3D"EN-IN" link=3D"#0563C1" vlink=3D"#954F72" style=3D"word-wrap:=
+break-word">
+<div class=3D"WordSection1">
+<p class=3D"MsoNormal">Hello Chris, <o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Hope this message finds you well. <o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">I would appreciate your feedback on the following is=
+sue and merge request (MR) at your convenience.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<ol style=3D"margin-top:0cm" start=3D"1" type=3D"1">
+<li class=3D"MsoListParagraph" style=3D"margin-left:0cm;mso-list:l2 level1 =
+lfo3">issue: CI: Pipelines can race test<o:p></o:p></li></ol>
+<p class=3D"MsoNormal" style=3D"text-indent:18.0pt"><a href=3D"https://gitl=
+ab.com/cip-project/cip-core/isar-cip-core/-/work_items/134">https://gitlab.=
+com/cip-project/cip-core/isar-cip-core/-/work_items/134</a><o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">For this issue, the CI pipeline is already configure=
+d to upload artifacts to the AWS S3 bucket using the CI_PIPELINE_ID.<o:p></=
+o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">As a result, a large number of artifacts may accumul=
+ate over time, leading to unnecessary storage consumption and increased cos=
+ts.
+<o:p></o:p></p>
+<p class=3D"MsoNormal">To mitigate this, it would be beneficial to configur=
+e an S3 lifecycle policy that automatically deletes older artifacts after a=
+ defined retention period.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Could you please check whether such a lifecycle poli=
+cy is already in place and, if not, apply the appropriate settings if you h=
+ave the necessary permissions?
+<o:p></o:p></p>
+<p class=3D"MsoNormal">Please ignore this request if the lifecycle policy h=
+as already been configured or any past artefacts needs to be maintained for=
+ some reasons.
+<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<ol style=3D"margin-top:0cm" start=3D"2" type=3D"1">
+<li class=3D"MsoListParagraph" style=3D"margin-left:0cm;mso-list:l2 level1 =
+lfo3">MR: Deploy OVMF for Debian sid &amp; forky<o:p></o:p></li></ol>
+<p class=3D"MsoNormal" style=3D"text-indent:18.0pt"><a href=3D"https://gitl=
+ab.com/cip-project/cip-testing/lava-docker/-/merge_requests/57">https://git=
+lab.com/cip-project/cip-testing/lava-docker/-/merge_requests/57</a><o:p></o=
+:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">The isar-cip-core project has already been updated t=
+o support Debian Forky and Debian Sid based builds, along with minimal vali=
+dation testing.<o:p></o:p></p>
+<p class=3D"MsoNormal">This MR adds the required OVMF keys for Debian Forky=
+ and Sid to the LAVA Docker image, enabling the execution of Secure Boot (+=
+security) tests within the LAVA test environment.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">As this MR has been open for a considerable period, =
+I would appreciate it if you could review the proposed changes and share yo=
+ur feedback when you get time.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Thanks &amp; Regards<o:p></o:p></p>
+<p class=3D"MsoNormal">Shivanand K<o:p></o:p></p>
+</div>
+</body>
+</html>
+
+--_000_TY3PR01MB1107531C6E4E9400A3F5AFAA6C5792TY3PR01MB11075jp_--
+
