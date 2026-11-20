@@ -1,44 +1,44 @@
 Received: from GVXPR05CU001.outbound.protection.outlook.com (GVXPR05CU001.outbound.protection.outlook.com [52.101.83.48])
  by mx.groups.io with SMTP id smtpd.msgproc02-g2.2110.1795163166724666808
  for <cip-dev@lists.cip-project.org>;
- Fri, 20 Nov 2026 00:26:09 -0800
+ Fri, 20 Nov 2026 00:26:10 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=zfVUYp8M;
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=miBakNlk;
  spf=pass (domain: siemens.com, ip: 52.101.83.48, mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EBqyQUlVYfuP9Hkzw9Jr0fZRb5Rlt519b4RjbbIsjdc0KapeH6lo95aJW3nn6Wv38K4WKAIMjKhNEiZ5aBLMTxk/KJbZtMSsXGt2eg1ugBugrCRO+6FnDXqoZi2GKQlMgxPmfARG8I42BX5X2Q1frFK715qKBTVjSDyQf+kd6qBblugq5akaAH1qf3bXeFrqTgpn55yN9h+dW1PFsrmIwLsSYKmVc/JrQKQZwacABwcDtus42ruzT0ECQ6vUQV3l8+O6GMFjx8DAx46hYpG40gzk/mnAvwS0bCU0F6E5RqN/f6t/5nfmhAss6o4aKIZ6Z1OpIceV4418Xa/CRxwSaQ==
+ b=TYQY3FVzuVUtKFpjhBzJWR+0jIiLNsQHZWg+yvwwZSxSp9uGbS0dTh1Z+AbeatCjC6DgYlhJzK6kpDeAXi/nRO3mXTNEnBuAAekxmPf7nMNJJQAfSUidmSbV0FnhrQ7gOkFSgyCnN1cG1dKE62CYGzR7oiGvAJi8mjQQBPaPSbEM/9vhzgGR0o7j9LNIhbIeIlwcKURehN6AEDxgAoRtIDqhQRuu1DYtyPZn8uHYG/rbyZL0z2GKkhxOaHxhB8ih2yGy68xOj1U9E2eC2lN9hjVjd1eu+nXMLqhGXa0EvHrmv7smg5D6cD7z1r8Rp2mlogxyV/08yWEFdkJMi0poeA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=I3lowCLCLFmAq2JP+N2v1YgxCiQRm6E7N0zVmQ8prm0=;
- b=h7lLjEkrTXyRlTWbbTYqPvmAN3KBQmBWGcAEFgsT5ANVqSFZqUZr9OJhgNfLhhs/iZQl1GvGcBTDOT23XIK8DEVNnAQUlkqCWcNARP4/0gWgLED3TlWHS7YX2AOvalc91Z6ri28wiy92zWN7IyFuFAxhDyeKVdbbr2DBqNbGPD9oxxC/xqDJcMUASJTnrbTYAJrmQJV1zCrY9iFwEz30s1tScLgwzcbptxKNtCHfoNRWNt1QDXE0EpjcrK8EWkKZQIANnajhbNHliotp6LujwGhRUd4oWRPqbeRSlEDODuHv9Vys/5bzlvlodjMDoZZGilcex4q5l5wnf8JmPFJZNA==
+ bh=Osbk7b2fEDvbhjEEJWtnm/BFwn2EL2lsOFOLRO/bjOI=;
+ b=cmsLI2nIpga7B6jDKBGrGZgd/m/tqvYoRnP4wiu7RD3uRKqrbYyzdvyEmTgKhG/XTsQBdBwwj0X/dQ0zZMSwYgHE2+5Yqu6ZDsebHJd9TZbneUFljnt3PmDmEipPdQ9yH1veDeJhVs7RQZiHRP9/0icCNGlkiuAV145FTQMNXEPUYp3ZrDQCNgZ6XYkovfZTcAzDX9E3Ex3ze7Pyh1VKei2RSMJhQhtm61s+Aj/gSAAgIumAUPOJBXKTLM1TwiW8t4V3IQ8/EVNtI2xhv5K41dk2TQWI5wg4O8sR1zCw10RMXR7VhX25RzHI1kpbniAMFl6goEN2WodmiCKUy1WKzQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=I3lowCLCLFmAq2JP+N2v1YgxCiQRm6E7N0zVmQ8prm0=;
- b=zfVUYp8MOQlxnZLOYzK96s0EtOc3PbwhIQKa3ezWOZKksuAcnvb/SpjlMtMhcOAW88mwyO+3X6s1TH3kciBbUiTlzCssnnrM7nljo/NXl7nZ1V4vptKA+zYGOKHi3/tLV3DGfP92Uq5OM1GGBAiepHXnY7WbNLRVgpho80hle1mrQrt3b+4P2w/ZjSVnHZ5ZhAgVpaxYi1ncDNm3jKxcAOC+KkBxPqC6zmtUG4nIiBiS3MgmBUT0dp7jbtz6VVnFmHZQGv5pKzqNq4Vds8oxEqoNyxF7yoU+IcQdCiRm4rC/8RFE+p/KztSQpN3sF1YZpBwrhLvbjsc91L7Dho3nKg==
+ bh=Osbk7b2fEDvbhjEEJWtnm/BFwn2EL2lsOFOLRO/bjOI=;
+ b=miBakNlk+mr8MiQoaQMhg1ZxIgARGASQgKB3bBcexTMVWiFKijalge36VkqFBqlyKFV6h8S2sPJlXI67KHzxN4UApTBuogryfsdnXp8bhbAUjEf/rGCvXgy2uCEpz8n8DqWh69+l7Q0N8cXGHilAAq+T8zVIbyfA7B4whD7PIQaw6sEbwVzJkSAh71hLikFWFDsEJHpXGouuXoPaOtA0MoNI4qWWEB1xaXb3f7rRhMLQdP1qtTbIc9+iyJcwamUMVewfVz0/UMc1OwOsZ5iLntBoG+s5jN+dVE/F62L0ZU26l0qgIXjDGDCOnbT9M9dY8xEhsN16k0DNscS6DqnNIw==
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:113::12)
  by PR3PR10MB4077.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:97::8) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.662.2; Fri, 20 Nov
- 2026 08:26:02 +0000
+ 2026 08:26:03 +0000
 Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::ae26:d131:7cff:4001]) by DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::ae26:d131:7cff:4001%3]) with mapi id 15.21.0662.001; Fri, 20 Nov 2026
- 08:26:02 +0000
+ 08:26:03 +0000
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org
 CC: jan.kiszka@siemens.com,
 	chris.paterson2@renesas.com,
 	nobuhiro1.iwamatsu@toshiba.co.jp
-Subject: [isar-cip-core][RFC PATCH 2/8] ci: install zstd explicitly in the reproducible build check
-Date: Fri, 20 Nov 2026 09:25:48 +0100
-Message-ID: <20261120082554.375548-3-quirin.gylstorff@siemens.com>
+Subject: [isar-cip-core][RFC PATCH 3/8] ci: deploy zstd compressed wic images
+Date: Fri, 20 Nov 2026 09:25:49 +0100
+Message-ID: <20261120082554.375548-4-quirin.gylstorff@siemens.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261120082554.375548-1-quirin.gylstorff@siemens.com>
 References: <20261120082554.375548-1-quirin.gylstorff@siemens.com>
@@ -50,88 +50,402 @@ Return-Path: quirin.gylstorff@siemens.com
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DB8PR10MB3178:EE_|PR3PR10MB4077:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4c913ca7-67ea-4547-f7c3-08df46dfe9ee
+X-MS-Office365-Filtering-Correlation-Id: 756466a7-9c0d-4b00-5daa-08df46dfea50
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|23010399003|1800799024|10067099003|11063799006|56012099006|261009223027099003|261022115727099003|261022075727099003|261021121427099003|261021123027099003|261102123227099003|55112099003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info: 0jfzoRctfK8jLzUL9qaZR2IDFAt4YOwvig3bHYtTF5z6+dJrZqUZYnDQfJncNFlrOEefmz1ETAjXXygyKz+SujpwcAIE6iV/gbtAgpB+5l0uITpWmjIaPUUUwd1K02d3RJDJse242Fm1LoQ/OqPiE71uVhGgP2BPcfcR5mmTdy9C+u8virZx2Enm7d3LgjfUnT/++AV+h6o05t/jQnNLyOL6pIjW/hqWX04V7NFCu7NJ+V3ckzkeznPRE83HYTety4cwS2+FxOsx5sNg13qx96wTdj9jhVXCaDAA9crKz2+ahN7bFm0oA8Y4+NnIBFclQ1uNB2q1y55Rdts2kUDZLLhxqwHMGa5hHoLbMlboCDAin3ndSzBCtmqH21UkdPzaM7RwvCchWGLzbcDCAj10pJWulNegSVuE5fQ9FMDNSWG4MrG8JB1XG0Tfbk9mBJ6v71VGpXIeu3r+COWJUw5OiTnOYmwPagjdjFSE7+5TBhkXBz1yn8bxI58azc7ejvc/nbi2hz3RHd2I9c/X6Em6Erme1pBrP0pu/hkd/YFwwkB4Ko+w6lWKGTTv4zrlPW8cyLCLAjNR7O2Cc6qQPzYQIL3lC6DiGPHqbjyBwrDo48sxonoO9804rRYhidvF77bKm5VPKwWM7PTy2dT+gkIbLYpaYmAQiQo3XV+aXZlrO1U=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(23010399003)(1800799024)(10067099003)(11063799006)(56012099006)(261009223027099003)(261022115727099003)(261022075727099003)(261021121427099003)(261021123027099003)(261102123227099003)(55112099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|23010399003|1800799024|10067099003|11063799006|56012099006|261009223027099003|261022115727099003|261022075727099003|261021121427099003|261021130227099003|261021123027099003|261022105027099003|261021133027099003|261102123227099003|261021135927099003|261026121527099003|261026135527099003|261028144727099003|261026130827099003|261026140227099003|261022113327099003|55112099003|20052099010|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info: YDI0ZP71eGDI8PcfYNqQ6Sjvp7NmUNT5nMjMED9azm/FwNhjg3Vj6RkgBuXL+7aFlihoeMx5WkB2bStAr90ehoiVhsG5JLRGGLkwA6LoINgC5gnhQYigbWHHsVDxT9Z30pD1foXIEofUwlOOaWMZDpK8Jt7DVvk0PqqDYWNiP+MKa7PNw3UO581G0RKcoQNfMbFq2+G71+zfbYNGWU96YLR3q6E5mYV7QIvA1adQjYDNaUL1bfgNwQ/D2ChMS+NFKM/iEbDH3X8p7d1uNjSMmjmVSTtvm8b1Bu4+aM5kHxBOEjsuKYo/s/HLOLLvFf4Thokug3MmbFOWS9rubCSowRarC8WcfBFmQbD1dYFj1/YpI6Ur079C3uU+EMV8sOpmj+PlsOsGdZxYtsFj/YTjfK9CsJX5p3QZkjA5QJHsCgrOgvqYbvJHsdN5rqYf8VYbUN+uS8w15hcxinF6o+VNyEnDbLYZB1N6/fstkPr14UBBG+zovKriY/vhsPCo9NRHQ0muw5+1eFH9NJ2+lKloKsMZGOv3cZUnDj0PDDYyo+YPCdIOVFw1WG9rvEWMSKLriVTrElJgRn0Vhxxa0M1xKm1R0X0FjiZ4WWmBgOwjw1WVXo+VqKjP+uUp2JzYit37FAWIE4X9INTgrkm3cBSM2BOnrXAREJRXOBkt8/zAuhY=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(23010399003)(1800799024)(10067099003)(11063799006)(56012099006)(261009223027099003)(261022115727099003)(261022075727099003)(261021121427099003)(261021130227099003)(261021123027099003)(261022105027099003)(261021133027099003)(261102123227099003)(261021135927099003)(261026121527099003)(261026135527099003)(261028144727099003)(261026130827099003)(261026140227099003)(261022113327099003)(55112099003)(20052099010)(22082099003)(18002099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?bOmBE4MRtguyyQRE/riIGD2NUTWGVSwvFHCvZ/LSlqH/rF8Z3wg8R5WTQ8SR?=
- =?us-ascii?Q?g+Ty3+5LXhE9oVOiKrg42qYzxhFzdW7smuOpeO0WD8lHq1NIeK98qhvaTIlv?=
- =?us-ascii?Q?Cl7Ug9zU6H72djiGabhPNJ0whKO5CrzfCz7oki2o0BuPISsjsZdEB+Eap3Vh?=
- =?us-ascii?Q?+sNFH7UVT6cWDSk5+G8zFo7fmvMu0IYEoIuakOy6Zwi+BTeUPXxmw1gLO3N3?=
- =?us-ascii?Q?3ehLjoxdP0jXO0rXJmgwXTuWxg9jpkMsfIDfIUK8G8zen+T3BgN3K9JQNXgp?=
- =?us-ascii?Q?dGT+DXi1HOg/3uv/AdpHpGb7Wehstxm+aZkhM8nebKpoZ5L9UxnGZwIe/ZEn?=
- =?us-ascii?Q?lJ8NEDBZxRgFyuWzp+YkHLFZrbNYp+DSqJinytk+GRN4wwh+WJrvSizUWu8q?=
- =?us-ascii?Q?o3yfXhjcMQXXRjjsilhl8IkS5x9MDd3vO5xEPfI11rI2ImM6DnzxVMG/O/KY?=
- =?us-ascii?Q?zDF005AmNf7NwDphlnI9ZuyavdrSoQ5zaXe59oI7tNgGCd0XDIn9rp/5mh/h?=
- =?us-ascii?Q?pjr7JrMHqiKpvugJaZIST7d96Lp8ha84x+JV+wHCxgAS+Y7xEunSh4fIKSM4?=
- =?us-ascii?Q?rHqIcVJR/kKxb3yjQUiorZvpxqtXbuQlrN6lqnrPCuTn84l0htwF4lp8aKxa?=
- =?us-ascii?Q?6XM7TZdXnHw9mOOhSqGnpYGZCwPGemC6vRtfLyn5yiBPM7yJSZ1mi2afnbc1?=
- =?us-ascii?Q?vqBLLwIwuw5cmifqrUgilcGqq7GPtf9i0XujkbJC/qh6mDwiLWWerjVbbB1U?=
- =?us-ascii?Q?nPv0LOtojRz4AvKfzlvRaZZHWRWm83C3Zq5PHmDeenjxIjCFQxqxUk5cmWr+?=
- =?us-ascii?Q?1TBwmy1g9wts8hjwYM4Dpg2PxlwvW+u1NlKYQ3ZZnxwx15PAhXhFEZ1iLxc6?=
- =?us-ascii?Q?5kgOOQTaSsp4VT5crUxFY8qRisq6b4ys1w2gLUTIbgkRlBy0Oi242j4jmNKa?=
- =?us-ascii?Q?hSPinQ0guq/qe/k688kejhsYwR7PKYUYp8kxSQl3lAwniiYWODdZlNMiuBPH?=
- =?us-ascii?Q?bbEYqZTDf01eKBlxpsoQTUJyelmG1yWLEiNdv1mw+cu+uuESmKAjiHB78xdm?=
- =?us-ascii?Q?GD/e31y36itvvaxr6570rgRtb1gP7LPd7WV70cRWYF4yvynzNfBgcqTeL0RX?=
- =?us-ascii?Q?tlf5X+V7UlLWCWDq0YHK46EjYrp4HilSk4QryhJKQVEQyLHD2po9noSv++eF?=
- =?us-ascii?Q?skfza2gKQAuBR3t9D9TpWSADPCilnYlvcf+ntVDUwiuEshJ32pmXJdLMLtuI?=
- =?us-ascii?Q?ikPVSHEhmb7JDzRNJ2wjHmsVWNJRUycsOWAKHIvIXauNkEapUUnRTNi93K2G?=
- =?us-ascii?Q?Sp/raAb+UNYVBbKI1QOegIUrZBeXAhJTbpOIh4V204peVuKae1TRPfp8IjcK?=
- =?us-ascii?Q?fO25mvlwTl4Ebk7mlP1dPjN3PxZXbz1Uw4MLwXc/lYazDDGBFJ9iIHxH0X43?=
- =?us-ascii?Q?AtaffvR9K5/1akc0YKt4PF31QyZOsmT44eVXr4cb7LXcAdDr+VoCLkVYoMcy?=
- =?us-ascii?Q?Z4riSRy8TaqS9kEix4JP3ysMiBRA1UgVk94HBlAXfCitoOiSG/rJctxKBd94?=
- =?us-ascii?Q?kTXIpa2N5AKvIcP5AciDjb492MLrqq42AjMxF8Wn7GeCr0UgiwhgCV3+D6tG?=
- =?us-ascii?Q?N1hNTni1iGP4Kjz19j0hx5nQm+kB0ngy7vUk8pZGmddtHaXvSuWBT23GBcA1?=
- =?us-ascii?Q?mNsyvrpotTr9SsATfA4kXsIMDBoHwlenssWCzMoiLtxzKiHOShq6CqMUNMje?=
- =?us-ascii?Q?5wt2S3xJbUliZg1Kc2pON5ZdKDQibCA=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?uL0ElzSIKaKgSDHWIV7zKarQ4Gb7YQ9AFF8td8aFXqE18j3fboiRUc1BzcJ8?=
+ =?us-ascii?Q?dNWONwNLkuKhyxdQ73iHm/sjoU78n83d1/AzS9izUlr0NNzv0fQYiJrX03eG?=
+ =?us-ascii?Q?5tTOMVkeDsBOZ2l5WaU6Y2I60mXpQPhz0hVB9TP3Ui2kqGprxhdIm3+ON328?=
+ =?us-ascii?Q?tyxodiwe1CAVQ6M8/ldGTjj1Yc3rXRt7AxH+jOsS0ZAMvTw9hNuOAu52S4iS?=
+ =?us-ascii?Q?f4x0EuvHFdEG8Je3fjB5XaYQ2x1mILn22ZDhs0+gpQionVCWMCz2R9pyagAC?=
+ =?us-ascii?Q?ubxXediqKDQab5wLaFlQl6u7+v8mXYbrpoP2v4QqU+K4GnDiDJthodafNXnT?=
+ =?us-ascii?Q?z9DboKvWILEvhfTEqMvZW0I3s9XFYRRHR7I0JyTFTPHBXyqPhN5klB7nINWQ?=
+ =?us-ascii?Q?c7kS5yvHHaW6uwCanTcxSgEL4Sq8dYhpvOnnM8uMmRPJKyaQPIOpTUOkOv+B?=
+ =?us-ascii?Q?zhHBeeXK1G8oPlG0KU80MezCpSRoK0NJCy7YnJO5os0g1k8m66UmiTHgcPrt?=
+ =?us-ascii?Q?PFs4T+iaS2032+xZg6dkDc4hxfKwIiyRlR8Z3dIBr6OPo0g8IE3pg7uT1Okv?=
+ =?us-ascii?Q?cbb78p7/2uuVSFVGMfWc65dje4C+FCqwK/oI4s6VJeH5KWSyBWDmAAS/Yb3U?=
+ =?us-ascii?Q?hFZPfW4qlzWsBT1xgpsr5AnI5QCBiQt+0upI+wS6QTsT9dWz7UVJjUSArwie?=
+ =?us-ascii?Q?joIMfpzE0z2dp3aFkTJeQY/IjX2QcjG/dpvQISNbtyUjLeUyFyxUp5Ui/id/?=
+ =?us-ascii?Q?ilS+d5FmjBekJNOW7fn/DBlgDlRwgN73Tiwy1GUZbgAtZNPuU8sylnrCe/ur?=
+ =?us-ascii?Q?zchI3XtKvvH4rjtL5l2Y27ktjzvWuAo1XhqiFTRiyM0K6Mojd6gBt1V53LBP?=
+ =?us-ascii?Q?3lUOV6x3eUpgD43moL9a5RhjiiUySTeFaY9pK+OJxFLyuD3xxpeVaydCQC07?=
+ =?us-ascii?Q?aBSYhy9g+h6TuA5BQTecWNpO89S1zMmjrpkI/evyZlAZ1Y50YlbstPrd0Lic?=
+ =?us-ascii?Q?udUuPs3I9n585Cr0K5l4dCW9PA7RkcmXg5oYzEPNZ4uTKaz/2M/xpy5ORo++?=
+ =?us-ascii?Q?vz/eMXmxP7jX1Av/JSHpJAel+7yY6u999UAw/piPRkeORzawwsv7T+uJZqUi?=
+ =?us-ascii?Q?P7FKY039uzBMuGWOWkaE2EwqSUgLhDm3QK4C1bTKTsueSO+ZBjPntKd5oawV?=
+ =?us-ascii?Q?ifWTeF+YDoyMW/8He7zjDPrNl+hNHpfNuST/A+tewHGzhmtA6jZDN1Wx/rbH?=
+ =?us-ascii?Q?hlpmUJY3CUMnUMc0fiPvgUNI9x4kEs36i921gkG/Q+gh+Te2ji1eaISTnait?=
+ =?us-ascii?Q?Qn627crzEHA8Ve3CnXijDGjuDzC5w9dQ/tpTB+MUpyIrTRjYe43yGJdPao9s?=
+ =?us-ascii?Q?08bS+dHfGUevB0t12vs98z5tjBuIjk2ZyvVXHUUrRvyapZJjKbTRqFTg0/wv?=
+ =?us-ascii?Q?khuNybaNwnr7CAZzi+atikSkdGxm4TCd3meKLeDb40rzFDhuAYPU+NLYj5hc?=
+ =?us-ascii?Q?3fSX9oHSf5Zokx9zwZpHEm1xiFAUditTjp57kdQH0HpMRf/3hyoGk+FRTmBE?=
+ =?us-ascii?Q?wT+vkCFif4AxgtV1J3lcOfDfYFemWeTRp0AGtz+PwSRwCAXdrynz9uBJP7HP?=
+ =?us-ascii?Q?f5UxO7FpIQGjMASmrY3KERxMj04xGufcw7eSr5AIGyQtzZdRNT3czDQfXkV8?=
+ =?us-ascii?Q?hskV5RzgHE6pnTlpiI+pnYJe20+gz7YDKFlQcaZZylbF54PjBaOe2dd5WlHI?=
+ =?us-ascii?Q?GNYIpF175uIzKiqCDRrfd8lVo/IhVv8=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4c913ca7-67ea-4547-f7c3-08df46dfe9ee
+X-MS-Exchange-CrossTenant-Network-Message-Id: 756466a7-9c0d-4b00-5daa-08df46dfea50
 X-MS-Exchange-CrossTenant-AuthSource: DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2026 08:26:02.7769
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2026 08:26:03.4065
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qZZcc3MKmxG8LA6UhD8sWmlwQ27n4Sh3JCIHgqD1MkX0iFzGK8CgTyqHI1CY2Jsq9nFu5dDlQ/2SNB+pQWQU8VC93sVxadV1XGX+y7EiARI=
+X-MS-Exchange-CrossTenant-UserPrincipalName: kwI36xLvTtgFZRHUlqfGknrVCxPBO2Yc0Dw6mTe9qpww5/5A4O+5DOaI9V7dfAIwO2Lh1+/GnLTne45aUyO4l37ACTolZYgXVhDmN4M30cs=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR10MB4077
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Fri, 20 Nov 2026 08:26:18 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/25029
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Fri, 20 Nov 2026 08:26:19 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/25030
 Content-Type: text/plain; charset="utf-8"
 
-The next commit switches the deployed wic images and partition archives
-to zstd, which the reproducible build check has to decompress. zstd is
-only installed as a recommendation of diffoscope so far; install it
-explicitly.
+The wic images were compressed with xz -9 in deploy-cip-core.sh after
+the build, and the LAVA jobs decompress the image for every test run.
 
-Also use apt-get instead of apt, which has no stable CLI interface for
-scripts.
+Let Isar produce wic.zst images (IMAGE_FSTYPES) and deploy those
+instead. The deploy step no longer compresses, and decompression is
+about 4.5 times faster (qemu-arm: 2.2-2.8 s with xz, 0.5 s with zstd)
+for almost the same size (qemu-amd64 +0.7 %, qemu-arm +0.5 %,
+qemu-arm64 +7 %). Switch the wic-partitions archive, the reproducible
+build check and the LAVA templates to zstd accordingly.
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- .reproducible-check-ci.yml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .reproducible-check-ci.yml                   | 10 +++++-----
+ conf/machine/bbb.conf                        |  2 +-
+ conf/machine/beaglev-fire.conf               |  3 +--
+ conf/machine/de0-nano-soc.conf               |  2 +-
+ conf/machine/hihope-rzg2m.conf               |  2 +-
+ conf/machine/iwg20m.conf                     |  2 +-
+ conf/machine/rzt2h-evk.conf                  |  2 +-
+ conf/machine/ti-am62px-sk.conf               |  2 +-
+ conf/machine/x86-uefi.conf                   |  2 +-
+ kas/opt/ebg-secure-boot-snakeoil.yml         |  2 +-
+ scripts/deploy-cip-core.sh                   | 10 ++++------
+ tests/templates/IEC_template.yml             |  4 ++--
+ tests/templates/M-COM-x86.yml                |  2 +-
+ tests/templates/secureboot_negative_test.yml |  4 ++--
+ tests/templates/secureboot_template.yml      |  4 ++--
+ tests/templates/swupdate_negative_test.yml   |  4 ++--
+ tests/templates/swupdate_template.yml        |  4 ++--
+ 17 files changed, 29 insertions(+), 32 deletions(-)
 
 diff --git a/.reproducible-check-ci.yml b/.reproducible-check-ci.yml
-index f8a79527..72089685 100644
+index 72089685..a156efdc 100644
 --- a/.reproducible-check-ci.yml
 +++ b/.reproducible-check-ci.yml
-@@ -64,7 +64,7 @@
-     extension: security
-     image_base: "cip-core-image-cip-core"
-   before_script:
--    - apt update && DEBIAN_FRONTEND=3Dnoninteractive apt install -y diffos=
-cope wget
-+    - apt-get update && DEBIAN_FRONTEND=3Dnoninteractive apt-get install -=
-y diffoscope wget zstd
-   script:
-     - if [ "${extension}" =3D "security" ]; then
-         image_base=3D"cip-core-image-security-cip-core";
+@@ -76,12 +76,12 @@
+         local base_url=3D"${BASE_S3_URL}/${CI_COMMIT_REF_SLUG}/${target}/r=
+b/build${build_num}";
+=20
+         mkdir -p "$dir";
+-        wget "${base_url}/${image_base}-${release}-${target}.wic.xz";
+-        xz -d ${image_base}-${release}-${target}.wic.xz && mv ${image_base=
+}-${release}-${target}.wic "$dir";
++        wget "${base_url}/${image_base}-${release}-${target}.wic.zst";
++        zstd -d ${image_base}-${release}-${target}.wic.zst && mv ${image_b=
+ase}-${release}-${target}.wic "$dir";
+=20
+-        wget "${base_url}/${image_base}-${release}-${target}-wic-partition=
+s.tar.xz";
+-        tar -xJf ${image_base}-${release}-${target}-wic-partitions.tar.xz =
+-C "$dir";
+-        rm -f ${image_base}-${release}-${target}-wic-partitions.tar.xz;
++        wget "${base_url}/${image_base}-${release}-${target}-wic-partition=
+s.tar.zst";
++        tar -xf ${image_base}-${release}-${target}-wic-partitions.tar.zst =
+-C "$dir";
++        rm -f ${image_base}-${release}-${target}-wic-partitions.tar.zst;
+=20
+         if [ "${extension}" !=3D "none" ]; then
+           wget "${base_url}/${image_base}-${release}-${target}.swu" && mv =
+${image_base}-${release}-${target}.swu "$dir";
+diff --git a/conf/machine/bbb.conf b/conf/machine/bbb.conf
+index 40af2dc0..cba60a6f 100644
+--- a/conf/machine/bbb.conf
++++ b/conf/machine/bbb.conf
+@@ -9,7 +9,7 @@
+ DISTRO_ARCH =3D "armhf"
+ DTB_FILES =3D "am335x-boneblack.dtb"
+=20
+-IMAGE_FSTYPES ?=3D "wic"
++IMAGE_FSTYPES ?=3D "wic.zst"
+ IMAGER_INSTALL:wic +=3D "u-boot-bbb ${SYSTEMD_BOOTLOADER_INSTALL}"
+ IMAGER_BUILD_DEPS +=3D "u-boot-bbb"
+=20
+diff --git a/conf/machine/beaglev-fire.conf b/conf/machine/beaglev-fire.con=
+f
+index 585c7803..c8539d2e 100644
+--- a/conf/machine/beaglev-fire.conf
++++ b/conf/machine/beaglev-fire.conf
+@@ -10,8 +10,7 @@
+ #
+=20
+ DISTRO_ARCH =3D "riscv64"
+-
+-IMAGE_FSTYPES ?=3D "wic"
++IMAGE_FSTYPES ?=3D "wic wic.zst"
+=20
+ IMAGER_INSTALL:wic +=3D "${SYSTEMD_BOOTLOADER_INSTALL} u-boot-beaglev-fire=
+"
+ IMAGER_BUILD_DEPS +=3D "u-boot-beaglev-fire"
+diff --git a/conf/machine/de0-nano-soc.conf b/conf/machine/de0-nano-soc.con=
+f
+index e4669b5a..963b704e 100644
+--- a/conf/machine/de0-nano-soc.conf
++++ b/conf/machine/de0-nano-soc.conf
+@@ -9,7 +9,7 @@
+ DISTRO_ARCH =3D "armhf"
+ DTB_FILES =3D "socfpga_cyclone5_de0_nano_soc.dtb"
+=20
+-IMAGE_FSTYPES ?=3D "wic"
++IMAGE_FSTYPES ?=3D "wic wic.zst"
+ IMAGER_INSTALL:wic +=3D "u-boot-de0-nano-soc ${SYSTEMD_BOOTLOADER_INSTALL}=
+"
+ IMAGER_BUILD_DEPS +=3D "u-boot-de0-nano-soc"
+=20
+diff --git a/conf/machine/hihope-rzg2m.conf b/conf/machine/hihope-rzg2m.con=
+f
+index a09e4a71..d09f21c9 100644
+--- a/conf/machine/hihope-rzg2m.conf
++++ b/conf/machine/hihope-rzg2m.conf
+@@ -11,7 +11,7 @@
+=20
+ DISTRO_ARCH =3D "arm64"
+=20
+-IMAGE_FSTYPES ?=3D "wic"
++IMAGE_FSTYPES ?=3D "wic wic.zst"
+=20
+ USE_CIP_KERNEL_CONFIG =3D "1"
+ DTB_FILES =3D "r8a774a1-hihope-rzg2m-ex.dtb"
+diff --git a/conf/machine/iwg20m.conf b/conf/machine/iwg20m.conf
+index ace7b9ac..e4d68327 100644
+--- a/conf/machine/iwg20m.conf
++++ b/conf/machine/iwg20m.conf
+@@ -8,7 +8,7 @@
+ DISTRO_ARCH =3D "armhf"
+=20
+ # see wic/iwg20m.wks
+-IMAGE_FSTYPES ?=3D "wic"
++IMAGE_FSTYPES ?=3D "wic wic.zst"
+=20
+ # sets serial login getty
+ MACHINE_SERIAL =3D "ttySC0"
+diff --git a/conf/machine/rzt2h-evk.conf b/conf/machine/rzt2h-evk.conf
+index 5cfbfa5e..ff641091 100644
+--- a/conf/machine/rzt2h-evk.conf
++++ b/conf/machine/rzt2h-evk.conf
+@@ -11,7 +11,7 @@
+=20
+ DISTRO_ARCH =3D "arm64"
+=20
+-IMAGE_FSTYPES ?=3D "wic"
++IMAGE_FSTYPES ?=3D "wic wic.zst"
+=20
+ USE_CIP_KERNEL_CONFIG =3D "1"
+ DTB_FILES =3D "r9a09g077m44-rzt2h-evk.dtb"
+diff --git a/conf/machine/ti-am62px-sk.conf b/conf/machine/ti-am62px-sk.con=
+f
+index beabac9e..2f0d2d37 100644
+--- a/conf/machine/ti-am62px-sk.conf
++++ b/conf/machine/ti-am62px-sk.conf
+@@ -10,7 +10,7 @@
+ DISTRO_ARCH =3D "arm64"
+ DTB_FILES =3D "k3-am62p5-sk.dtb"
+=20
+-IMAGE_FSTYPES ?=3D "wic"
++IMAGE_FSTYPES ?=3D "wic wic.zst"
+=20
+ IMAGER_INSTALL:wic +=3D "${SYSTEMD_BOOTLOADER_INSTALL} u-boot-ti-am62px-sk=
+"
+ IMAGER_BUILD_DEPS +=3D "u-boot-ti-am62px-sk"
+diff --git a/conf/machine/x86-uefi.conf b/conf/machine/x86-uefi.conf
+index 84cf8bbe..13afb72e 100644
+--- a/conf/machine/x86-uefi.conf
++++ b/conf/machine/x86-uefi.conf
+@@ -8,7 +8,7 @@
+=20
+ DISTRO_ARCH =3D "amd64"
+=20
+-IMAGE_FSTYPES ?=3D "wic"
++IMAGE_FSTYPES ?=3D "wic wic.zst"
+ WKS_FILE ?=3D "x86_64-generic.wks"
+ IMAGER_INSTALL:wic +=3D "${SYSTEMD_BOOTLOADER_INSTALL}"
+ USE_CIP_KERNEL_CONFIG =3D "1"
+diff --git a/kas/opt/ebg-secure-boot-snakeoil.yml b/kas/opt/ebg-secure-boot=
+-snakeoil.yml
+index 569d2a5f..870d775f 100644
+--- a/kas/opt/ebg-secure-boot-snakeoil.yml
++++ b/kas/opt/ebg-secure-boot-snakeoil.yml
+@@ -16,7 +16,7 @@ header:
+=20
+ local_conf_header:
+   secure-boot-image: |
+-    IMAGE_FSTYPES =3D "wic"
++    IMAGE_FSTYPES =3D "wic wic.zst"
+     IMAGE_TYPEDEP:wic +=3D "verity"
+     SWU_ROOTFS_TYPE =3D "verity"
+     WKS_FILE =3D "${MACHINE}-efibootguard-secureboot.wks.in"
+diff --git a/scripts/deploy-cip-core.sh b/scripts/deploy-cip-core.sh
+index fe3ffb77..b2d87824 100755
+--- a/scripts/deploy-cip-core.sh
++++ b/scripts/deploy-cip-core.sh
+@@ -48,7 +48,7 @@ if [ "${NO_KERNEL}" =3D "enable" ]; then
+ 	BASE_PATH=3D"${BASE_PATH}-nokernel"
+ fi
+=20
+-if [ -f "${BASE_PATH}.wic" ]; then
++if [ -f "${BASE_PATH}.wic.zst" ]; then
+ 	echo "Uploading artifacts..."
+ 	if [ "$DEPLOY" =3D "swus" ]; then
+ 		aws s3 cp --no-progress --acl public-read "${BASE_PATH}.swu" "${S3_TARGE=
+T}"
+@@ -58,13 +58,11 @@ if [ -f "${BASE_PATH}.wic" ]; then
+ 	elif [ "$DEPLOY" =3D "wic-partitions" ]; then
+ 		# deploy individual wic partitions, helpful for RB tests
+ 		cd build/tmp/deploy/images/"$TARGET"
+-		tar --ignore-failed-read -cJf "${BASE_FILENAME}-wic-partitions.tar.xz" "=
+${BASE_FILENAME}".wic.p*
+-		aws s3 cp --no-progress --acl public-read "${BASE_FILENAME}-wic-partitio=
+ns.tar.xz" "${S3_TARGET}"
++		tar --ignore-failed-read --zst -cf "${BASE_FILENAME}-wic-partitions.tar.=
+zst" "${BASE_FILENAME}".wic.p*
++		aws s3 cp --no-progress --acl public-read "${BASE_FILENAME}-wic-partitio=
+ns.tar.zst" "${S3_TARGET}"
+ 		cd -
+ 	else
+-		echo "Compressing $BASE_FILENAME.wic..."
+-		xz -9 -k -T0 "${BASE_PATH}.wic"
+-		aws s3 cp --no-progress --acl public-read "${BASE_PATH}.wic.xz" "${S3_TA=
+RGET}"
++		aws s3 cp --no-progress --acl public-read "${BASE_PATH}.wic.zst" "${S3_T=
+ARGET}"
+ 		aws s3 cp --no-progress --acl public-read "${BASE_PATH}.wic.bmap" "${S3_=
+TARGET}"
+=20
+ 		if [ -f "build/tmp/deploy/images/$TARGET/firmware.bin" ]; then
+diff --git a/tests/templates/IEC_template.yml b/tests/templates/IEC_templat=
+e.yml
+index dd02bb75..bf7279e1 100644
+--- a/tests/templates/IEC_template.yml
++++ b/tests/templates/IEC_template.yml
+@@ -40,8 +40,8 @@ actions:
+         image_arg: '-drive file=3D{system},discard=3Dunmap,if=3Dnone,id=3D=
+disk,format=3Draw -m 1G -serial mon:stdio
+                     -nographic -netdev user,id=3Dnet,hostfwd=3Dtcp:127.0.0=
+.1:22222-:22 -chardev socket,id=3Dchrtpm,path=3D/tmp/qemu-swtpm.sock
+                     -tpmdev emulator,id=3Dtpm0,chardev=3Dchrtpm #imageargs=
+#'
+-        url: #project_url#/#branch#/#architecture#/cip-core-image-security=
+-cip-core-#distribution#-#architecture#.wic.xz
+-        compression: xz
++        url: #project_url#/#branch#/#architecture#/cip-core-image-security=
+-cip-core-#distribution#-#architecture#.wic.zst
++        compression: zstd
+=20
+       #Firmware#
+         #Firmware_args#
+diff --git a/tests/templates/M-COM-x86.yml b/tests/templates/M-COM-x86.yml
+index 107243d0..01adee94 100644
+--- a/tests/templates/M-COM-x86.yml
++++ b/tests/templates/M-COM-x86.yml
+@@ -31,7 +31,7 @@ actions:
+     to: flasher
+     images:
+       image:
+-        url: #project_url#/#branch#/x86-uefi/cip-core-image-security-cip-c=
+ore-#distribution#-x86-uefi.wic.xz
++        url: #project_url#/#branch#/x86-uefi/cip-core-image-security-cip-c=
+ore-#distribution#-x86-uefi.wic.zst
+=20
+ # BOOT BLOCK
+ - boot:
+diff --git a/tests/templates/secureboot_negative_test.yml b/tests/templates=
+/secureboot_negative_test.yml
+index a8e42268..0814b868 100644
+--- a/tests/templates/secureboot_negative_test.yml
++++ b/tests/templates/secureboot_negative_test.yml
+@@ -37,8 +37,8 @@ actions:
+       minutes: 30
+     images:
+       system:
+-        url: #project_url#/#branch#/#architecture#/cip-core-image-security=
+-cip-core-#distribution#-#architecture#.wic.xz
+-        compression: xz
++        url: #project_url#/#branch#/#architecture#/cip-core-image-security=
+-cip-core-#distribution#-#architecture#.wic.zst
++        compression: zstd
+     postprocess:
+       docker:
+         image: debian:bookworm
+diff --git a/tests/templates/secureboot_template.yml b/tests/templates/secu=
+reboot_template.yml
+index 723adb34..2a150b8f 100644
+--- a/tests/templates/secureboot_template.yml
++++ b/tests/templates/secureboot_template.yml
+@@ -40,8 +40,8 @@ actions:
+         image_arg: '-drive file=3D{system},discard=3Dunmap,if=3Dnone,id=3D=
+disk,format=3Draw -m 1G -serial mon:stdio
+                     -nographic -netdev user,id=3Dnet,hostfwd=3Dtcp:127.0.0=
+.1:22222-:22 -chardev socket,id=3Dchrtpm,path=3D/tmp/qemu-swtpm.sock
+                     -tpmdev emulator,id=3Dtpm0,chardev=3Dchrtpm #imageargs=
+#'
+-        url: #project_url#/#branch#/#architecture#/cip-core-image-security=
+-cip-core-#distribution#-#architecture#.wic.xz
+-        compression: xz
++        url: #project_url#/#branch#/#architecture#/cip-core-image-security=
+-cip-core-#distribution#-#architecture#.wic.zst
++        compression: zstd
+=20
+       #Firmware#
+         #Firmware_args#
+diff --git a/tests/templates/swupdate_negative_test.yml b/tests/templates/s=
+wupdate_negative_test.yml
+index 70d4d770..950368f1 100644
+--- a/tests/templates/swupdate_negative_test.yml
++++ b/tests/templates/swupdate_negative_test.yml
+@@ -48,8 +48,8 @@ actions:
+         image_arg: '-drive file=3D{system},discard=3Dunmap,if=3Dnone,id=3D=
+disk,format=3Draw -m 1G -serial mon:stdio
+                     -nographic -netdev user,id=3Dnet,hostfwd=3Dtcp:127.0.0=
+.1:22222-:22 -chardev socket,id=3Dchrtpm,path=3D/tmp/qemu-swtpm.sock
+                     -tpmdev emulator,id=3Dtpm0,chardev=3Dchrtpm #imageargs=
+#'
+-        url: #project_url#/#branch#/#architecture#/cip-core-image-security=
+-cip-core-#distribution#-#architecture#.wic.xz
+-        compression: xz
++        url: #project_url#/#branch#/#architecture#/cip-core-image-security=
+-cip-core-#distribution#-#architecture#.wic.zst
++        compression: zstd
+=20
+       #Firmware#
+         #Firmware_args#
+diff --git a/tests/templates/swupdate_template.yml b/tests/templates/swupda=
+te_template.yml
+index 63b3b10c..cd1c98cb 100644
+--- a/tests/templates/swupdate_template.yml
++++ b/tests/templates/swupdate_template.yml
+@@ -40,8 +40,8 @@ actions:
+         image_arg: '-drive file=3D{system},discard=3Dunmap,if=3Dnone,id=3D=
+disk,format=3Draw -m 1G -serial mon:stdio
+                     -nographic -netdev user,id=3Dnet,hostfwd=3Dtcp:127.0.0=
+.1:22222-:22 -chardev socket,id=3Dchrtpm,path=3D/tmp/qemu-swtpm.sock
+                     -tpmdev emulator,id=3Dtpm0,chardev=3Dchrtpm #imageargs=
+#'
+-        url: #project_url#/#branch#/#architecture#/cip-core-image-security=
+-cip-core-#distribution#-#architecture#.wic.xz
+-        compression: xz
++        url: #project_url#/#branch#/#architecture#/cip-core-image-security=
+-cip-core-#distribution#-#architecture#.wic.zst
++        compression: zstd
+=20
+       #Firmware#
+         #Firmware_args#
 --=20
 2.47.3
 
