@@ -1,25 +1,25 @@
 Received: from GVXPR05CU001.outbound.protection.outlook.com (GVXPR05CU001.outbound.protection.outlook.com [52.101.83.48])
  by mx.groups.io with SMTP id smtpd.msgproc02-g2.2110.1795163166724666808
  for <cip-dev@lists.cip-project.org>;
- Fri, 20 Nov 2026 00:26:08 -0800
+ Fri, 20 Nov 2026 00:26:09 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=Vk2Orv1Y;
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=zfVUYp8M;
  spf=pass (domain: siemens.com, ip: 52.101.83.48, mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fvsx9SD/7lG/5LtxEq8FiK0FmdXyPDYBSi3INDNbH3W+gGWcM5S2mlF5OYm+/a3YO80mDs46RfgCkqbaupaMb44DRK6jXQ/qX4xx7FV58k1LttNtkTa/LT5HJD0tKX43+qwXpFMm/vlQ0rAWlcg6dRXBXnZ99SVInYQKO2HDIxeliuPH8O5gQo9I8RqTGq2c2dO2k8m/wdaISBB7LXJjkOcP4A+j2giY2A/Mnl8r7J7NGyrNs9D0rGLN/culPG9gfcjLV4HctqtvNMW5vATBxyUwL19avtCl9uevuzsKnIxHicm+YkspHU6ZYcyl233WalpWwpcGwgniTgAwIgwz4A==
+ b=EBqyQUlVYfuP9Hkzw9Jr0fZRb5Rlt519b4RjbbIsjdc0KapeH6lo95aJW3nn6Wv38K4WKAIMjKhNEiZ5aBLMTxk/KJbZtMSsXGt2eg1ugBugrCRO+6FnDXqoZi2GKQlMgxPmfARG8I42BX5X2Q1frFK715qKBTVjSDyQf+kd6qBblugq5akaAH1qf3bXeFrqTgpn55yN9h+dW1PFsrmIwLsSYKmVc/JrQKQZwacABwcDtus42ruzT0ECQ6vUQV3l8+O6GMFjx8DAx46hYpG40gzk/mnAvwS0bCU0F6E5RqN/f6t/5nfmhAss6o4aKIZ6Z1OpIceV4418Xa/CRxwSaQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FGjx5a6xUwr9l/L71ubOq/bIEAETPLY+E7aWzONafqo=;
- b=a5rK8dAnr0yXigmLK/UXCgWyP5SfyIg3QoHYuQTun4XztBrSMA9Kt/U4pzT1sWY4WZRaA1PlIRnNbum5wsBFBTK5eDr289KCH22mzuY7f41L6H4BHh8VuiCnUFF0Zld55G4klUnL1935igJRH1dzu1rz7rJhqNBW5NJe4tlFzGa30T69cggxXL3jhc5N3CXDfRqMt2Q05ayGg4ZGwRdgYCQg3F5xkwiQtpMbfF39jCkDCCPh7NAmn6vyBOOOj12m+qv3FbpfDXKJ1PAoZ/FTZRbqTzUCKmWlKuvOwZ/3feJ8GfTvgHRGg7g9uLlad7JhVheH7ml5A4Qi9GWNc3S49A==
+ bh=I3lowCLCLFmAq2JP+N2v1YgxCiQRm6E7N0zVmQ8prm0=;
+ b=h7lLjEkrTXyRlTWbbTYqPvmAN3KBQmBWGcAEFgsT5ANVqSFZqUZr9OJhgNfLhhs/iZQl1GvGcBTDOT23XIK8DEVNnAQUlkqCWcNARP4/0gWgLED3TlWHS7YX2AOvalc91Z6ri28wiy92zWN7IyFuFAxhDyeKVdbbr2DBqNbGPD9oxxC/xqDJcMUASJTnrbTYAJrmQJV1zCrY9iFwEz30s1tScLgwzcbptxKNtCHfoNRWNt1QDXE0EpjcrK8EWkKZQIANnajhbNHliotp6LujwGhRUd4oWRPqbeRSlEDODuHv9Vys/5bzlvlodjMDoZZGilcex4q5l5wnf8JmPFJZNA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FGjx5a6xUwr9l/L71ubOq/bIEAETPLY+E7aWzONafqo=;
- b=Vk2Orv1YQB/J98r1s297Ef1lUFYLWsO57pGlaCO91egxNun+NVV/548BLgXOXcrotthkXRl3bfR4zFIK9cs0x/fBzIngOpG2K4oKMrQ5D7OrM6qUEOMxLJBflAsyaJ/o+vQy/9uo8BXmndrdgidv5LT2Y8fDi69Po7vK45XGl24q6BclYc7p7Oep/sT687EUKld0W8EJkXWeV24iJgD5zFQAc+I7is7HepG1y6FAQSwRd3y0/qAtcZ2p8jiDFeAetAgmFVYvoIeB4ngU0UfbjwxAizZ8AZ63wWeocrcCgfxt+KY1f6UYY5HBhZAsU7+GUC0N9IqHhuqJUfolNkegCA==
+ bh=I3lowCLCLFmAq2JP+N2v1YgxCiQRm6E7N0zVmQ8prm0=;
+ b=zfVUYp8MOQlxnZLOYzK96s0EtOc3PbwhIQKa3ezWOZKksuAcnvb/SpjlMtMhcOAW88mwyO+3X6s1TH3kciBbUiTlzCssnnrM7nljo/NXl7nZ1V4vptKA+zYGOKHi3/tLV3DGfP92Uq5OM1GGBAiepHXnY7WbNLRVgpho80hle1mrQrt3b+4P2w/ZjSVnHZ5ZhAgVpaxYi1ncDNm3jKxcAOC+KkBxPqC6zmtUG4nIiBiS3MgmBUT0dp7jbtz6VVnFmHZQGv5pKzqNq4Vds8oxEqoNyxF7yoU+IcQdCiRm4rC/8RFE+p/KztSQpN3sF1YZpBwrhLvbjsc91L7Dho3nKg==
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:113::12)
@@ -36,9 +36,9 @@ To: cip-dev@lists.cip-project.org
 CC: jan.kiszka@siemens.com,
 	chris.paterson2@renesas.com,
 	nobuhiro1.iwamatsu@toshiba.co.jp
-Subject: [isar-cip-core][RFC PATCH 1/8] scripts: use apt-get in run-cve-checks.sh
-Date: Fri, 20 Nov 2026 09:25:47 +0100
-Message-ID: <20261120082554.375548-2-quirin.gylstorff@siemens.com>
+Subject: [isar-cip-core][RFC PATCH 2/8] ci: install zstd explicitly in the reproducible build check
+Date: Fri, 20 Nov 2026 09:25:48 +0100
+Message-ID: <20261120082554.375548-3-quirin.gylstorff@siemens.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261120082554.375548-1-quirin.gylstorff@siemens.com>
 References: <20261120082554.375548-1-quirin.gylstorff@siemens.com>
@@ -50,84 +50,88 @@ Return-Path: quirin.gylstorff@siemens.com
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DB8PR10MB3178:EE_|PR3PR10MB4077:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6a02bc92-b234-44d3-0cf1-08df46dfe98d
+X-MS-Office365-Filtering-Correlation-Id: 4c913ca7-67ea-4547-f7c3-08df46dfe9ee
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|23010399003|1800799024|10067099003|11063799006|56012099006|261009223027099003|261021121427099003|261021123027099003|261102123227099003|55112099003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info: tWoGp/VnrcnWBRKK7hoYqiBvirZMptSmzgVjdMTA6GQBcu2hs4RXhsU6Efn27jkGNbdvXjCmBkaab202lgLqDKZeWcbi4VRhxhSWd9QI7kD3bjwSZFqsbzqgPH2EuPzly4mOOoq5qf9KIWonAAGZ/AY2w9auARp+b7rOlaoJK3Q5ZC4T/J0KIPt2eu2AI33XEfX03fd3IMEYMn4xJ+MG8BqlpciR7RUkCvjjLIzoAA+gbJiY/fmXPCUCkvIjtWt0zNqhWWD9RwDHOTTQRbJdzvS0sQRRd2E5jLKG1y358tLmc7pk1Sx9opFJW1qfC5Fkfbf0MQ4m5YsFObXl6kdHTCSoV8mgSCyrn9s6Mz9RgC2IpGgcj05FLDgKweJL+d7yQfexqKQM89uwf00w0Z8rVxILp2iWVEP1o+9hYVttQGwE+bIql13PYg+ZOthg24USFIUEQ3UTPre30BRR/kdZbzHjskKs446z8pMnXCTr1AeZ4bO3D5GfgmZbZoBONj3N5M08VYnN4fbFxHhGaL0Pfc6CX/VY1OCCHRDZoq7gfyOWwj3ES9LI0gS+symjaQ6rrCliSpj2m6xalHcBNhnJa15XJOX2D6YxTgHNTcm87hCmcZYAz02ciowHh47JCMwnfEpi7pDIChwCnT7aHQflFus481fQSygQHp15mZKXLgE=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(23010399003)(1800799024)(10067099003)(11063799006)(56012099006)(261009223027099003)(261021121427099003)(261021123027099003)(261102123227099003)(55112099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|23010399003|1800799024|10067099003|11063799006|56012099006|261009223027099003|261022115727099003|261022075727099003|261021121427099003|261021123027099003|261102123227099003|55112099003|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info: 0jfzoRctfK8jLzUL9qaZR2IDFAt4YOwvig3bHYtTF5z6+dJrZqUZYnDQfJncNFlrOEefmz1ETAjXXygyKz+SujpwcAIE6iV/gbtAgpB+5l0uITpWmjIaPUUUwd1K02d3RJDJse242Fm1LoQ/OqPiE71uVhGgP2BPcfcR5mmTdy9C+u8virZx2Enm7d3LgjfUnT/++AV+h6o05t/jQnNLyOL6pIjW/hqWX04V7NFCu7NJ+V3ckzkeznPRE83HYTety4cwS2+FxOsx5sNg13qx96wTdj9jhVXCaDAA9crKz2+ahN7bFm0oA8Y4+NnIBFclQ1uNB2q1y55Rdts2kUDZLLhxqwHMGa5hHoLbMlboCDAin3ndSzBCtmqH21UkdPzaM7RwvCchWGLzbcDCAj10pJWulNegSVuE5fQ9FMDNSWG4MrG8JB1XG0Tfbk9mBJ6v71VGpXIeu3r+COWJUw5OiTnOYmwPagjdjFSE7+5TBhkXBz1yn8bxI58azc7ejvc/nbi2hz3RHd2I9c/X6Em6Erme1pBrP0pu/hkd/YFwwkB4Ko+w6lWKGTTv4zrlPW8cyLCLAjNR7O2Cc6qQPzYQIL3lC6DiGPHqbjyBwrDo48sxonoO9804rRYhidvF77bKm5VPKwWM7PTy2dT+gkIbLYpaYmAQiQo3XV+aXZlrO1U=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(23010399003)(1800799024)(10067099003)(11063799006)(56012099006)(261009223027099003)(261022115727099003)(261022075727099003)(261021121427099003)(261021123027099003)(261102123227099003)(55112099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?9PwtHSGDm4Sc1dLELnIOxLX15kYjiGM/wIxpiJ90bnvwFq+t/aBkDaIFFQMM?=
- =?us-ascii?Q?DClmJNs/9lkxvfHOXyTYLmedC6GaaUaIlT6LSYfWPmGKfGH9DPluAgYjFnYb?=
- =?us-ascii?Q?kN/cddiTA6vbOYLAwkc5SuOGiGbbokgcnskubzmS/itzWpi0CYPu7hSbx8zJ?=
- =?us-ascii?Q?ZmsKOv7AA9kUJ/kD9Lte0puwUGJ/+vsBlp+dV0H23/UdmmfcP2GsjfjexAYF?=
- =?us-ascii?Q?bmvB5VMgWkJ6qCaupyI5MVlcvQjmrNpXOJ+L3CKoIkE5gKZdRhLDYeEjrN3o?=
- =?us-ascii?Q?Mtk/ANbJqNIlL/c0AARwg2dKmfBUL0y7zCUQhPKVNwwgyqGWbM60VlGunTWH?=
- =?us-ascii?Q?EaA4Hv/u7Ez6YlqoBHkQbzYGANvLuLPanzgwCT+m4VXyt+RQjooyGriNS7Qq?=
- =?us-ascii?Q?cVOhPZGp+fyjqRiSwJrVJ8Odmap2/D2b0UxtUk3yw/+GOiv+XIHx1v/5zQuI?=
- =?us-ascii?Q?sNf99UnCAmRzYxX6BC4A4ALXyB2i3wMAGmqlsn8MK60lZv+FvG6PLgNXmdf+?=
- =?us-ascii?Q?9xq4dP3/qSmUaCjVhPDpLS4Zv/1l7HQ0/Rjci6KrRQksCns0EZnSxt8v9OPj?=
- =?us-ascii?Q?0eWBYOoNg0pALMfPdgheQEXfBYctYgJkw4sJUmrxMoUbCL6TY4wR+W/cn2lj?=
- =?us-ascii?Q?eiLxwy+LCk/ZOgdQpSgccxImwGqhw3dNYO/f9j79A9TLCl/IB9wR/xZCEAfS?=
- =?us-ascii?Q?v/RSgVPHJMJ2Ug7n/myhkxpXMrDBHx4Hr4N7Ro4vzikgrMh6r4L9X2KsQVDJ?=
- =?us-ascii?Q?6tAi86AW4AEecix2+2RH3lAETcjFJ3lpJ4MccTafLB3O/gbYi9+Q5J6OdPGX?=
- =?us-ascii?Q?DrzU8EHjDskvQlvYrnGgWYu4RMq51UxHaJj+rOlYZWRESI1zVsxgsCAyF9Kq?=
- =?us-ascii?Q?L6oRmkT4xwcHgBzIA+t6K/2cOE7gWHXKbcT64iRrgMf6PYFdsMChpdDIRiA0?=
- =?us-ascii?Q?EHup4yaQCsWKA8cODwboju4dQBJxavt1FQM9KFDPYZIo5hFAMDx8h4n/cjEk?=
- =?us-ascii?Q?/L7lHSC18hZq+QBPgXw5D5mILEeX+j30SRvc9SJPqEaCoSs4cJwk1qAmm/yC?=
- =?us-ascii?Q?+kwEt5R9NtPiML3cqyrOptz3O03hpfAMeX1rmtGfFSbYvXcyMhf3Evo5oWDP?=
- =?us-ascii?Q?qdMrWE6CefbGipm9AjwxWkWzRucn9xhJLHgk/a+AnfsGM8ww3rHqbWqMsrsN?=
- =?us-ascii?Q?VjaSLOApXlYYno7xJ/jZAizq0J1BRKd/REIez0h+rPu01dMLf82vy8Nro1B+?=
- =?us-ascii?Q?kMVv0Yi5GsCz5ahtnEvoM1BljR+bY3coD+ORAFzmwdVENT9JMA9NJQBGU5WA?=
- =?us-ascii?Q?+stOavyPHXSy4L2AfQ9nmSebtKzS4CnzldLkRSqPocLA1L6JeS2zK7V1529Q?=
- =?us-ascii?Q?b9jYA3/6inkGRLP882Olg5/b9Hc+drqi5kFmtJQXAzxmSJ+x7bWX1egG4pEa?=
- =?us-ascii?Q?lZXGsPYq3CTv31LgGs02XwKSuOXkatDc4WLdWy59HVs3L9NHhvmJk8rz953H?=
- =?us-ascii?Q?9aZvDWuKjUi+Jrrux1OGPcHEL9Lc/fdGRXDOqfRgPcVyVscDsAmtlHv+flM+?=
- =?us-ascii?Q?2+9POk5X7AHauPSEWXb45Xou8m9qV9LfRDBW4buUEjMISoxKHxW2rsH5zFPz?=
- =?us-ascii?Q?c9sr+NHLN17icY4X6NJYDgYjp0iRqQs4/Bb5+QzpqUT0vondeYrPlFfJI3T5?=
- =?us-ascii?Q?JyHyGOd1wv6hi0wuX0j6ThXBscJDG1BfOwDIBTkjYAqZhXhdo4EWsSzct3H9?=
- =?us-ascii?Q?dhtGQTa+DvvHKzexFGk76lX8mkXQ4Qs=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?bOmBE4MRtguyyQRE/riIGD2NUTWGVSwvFHCvZ/LSlqH/rF8Z3wg8R5WTQ8SR?=
+ =?us-ascii?Q?g+Ty3+5LXhE9oVOiKrg42qYzxhFzdW7smuOpeO0WD8lHq1NIeK98qhvaTIlv?=
+ =?us-ascii?Q?Cl7Ug9zU6H72djiGabhPNJ0whKO5CrzfCz7oki2o0BuPISsjsZdEB+Eap3Vh?=
+ =?us-ascii?Q?+sNFH7UVT6cWDSk5+G8zFo7fmvMu0IYEoIuakOy6Zwi+BTeUPXxmw1gLO3N3?=
+ =?us-ascii?Q?3ehLjoxdP0jXO0rXJmgwXTuWxg9jpkMsfIDfIUK8G8zen+T3BgN3K9JQNXgp?=
+ =?us-ascii?Q?dGT+DXi1HOg/3uv/AdpHpGb7Wehstxm+aZkhM8nebKpoZ5L9UxnGZwIe/ZEn?=
+ =?us-ascii?Q?lJ8NEDBZxRgFyuWzp+YkHLFZrbNYp+DSqJinytk+GRN4wwh+WJrvSizUWu8q?=
+ =?us-ascii?Q?o3yfXhjcMQXXRjjsilhl8IkS5x9MDd3vO5xEPfI11rI2ImM6DnzxVMG/O/KY?=
+ =?us-ascii?Q?zDF005AmNf7NwDphlnI9ZuyavdrSoQ5zaXe59oI7tNgGCd0XDIn9rp/5mh/h?=
+ =?us-ascii?Q?pjr7JrMHqiKpvugJaZIST7d96Lp8ha84x+JV+wHCxgAS+Y7xEunSh4fIKSM4?=
+ =?us-ascii?Q?rHqIcVJR/kKxb3yjQUiorZvpxqtXbuQlrN6lqnrPCuTn84l0htwF4lp8aKxa?=
+ =?us-ascii?Q?6XM7TZdXnHw9mOOhSqGnpYGZCwPGemC6vRtfLyn5yiBPM7yJSZ1mi2afnbc1?=
+ =?us-ascii?Q?vqBLLwIwuw5cmifqrUgilcGqq7GPtf9i0XujkbJC/qh6mDwiLWWerjVbbB1U?=
+ =?us-ascii?Q?nPv0LOtojRz4AvKfzlvRaZZHWRWm83C3Zq5PHmDeenjxIjCFQxqxUk5cmWr+?=
+ =?us-ascii?Q?1TBwmy1g9wts8hjwYM4Dpg2PxlwvW+u1NlKYQ3ZZnxwx15PAhXhFEZ1iLxc6?=
+ =?us-ascii?Q?5kgOOQTaSsp4VT5crUxFY8qRisq6b4ys1w2gLUTIbgkRlBy0Oi242j4jmNKa?=
+ =?us-ascii?Q?hSPinQ0guq/qe/k688kejhsYwR7PKYUYp8kxSQl3lAwniiYWODdZlNMiuBPH?=
+ =?us-ascii?Q?bbEYqZTDf01eKBlxpsoQTUJyelmG1yWLEiNdv1mw+cu+uuESmKAjiHB78xdm?=
+ =?us-ascii?Q?GD/e31y36itvvaxr6570rgRtb1gP7LPd7WV70cRWYF4yvynzNfBgcqTeL0RX?=
+ =?us-ascii?Q?tlf5X+V7UlLWCWDq0YHK46EjYrp4HilSk4QryhJKQVEQyLHD2po9noSv++eF?=
+ =?us-ascii?Q?skfza2gKQAuBR3t9D9TpWSADPCilnYlvcf+ntVDUwiuEshJ32pmXJdLMLtuI?=
+ =?us-ascii?Q?ikPVSHEhmb7JDzRNJ2wjHmsVWNJRUycsOWAKHIvIXauNkEapUUnRTNi93K2G?=
+ =?us-ascii?Q?Sp/raAb+UNYVBbKI1QOegIUrZBeXAhJTbpOIh4V204peVuKae1TRPfp8IjcK?=
+ =?us-ascii?Q?fO25mvlwTl4Ebk7mlP1dPjN3PxZXbz1Uw4MLwXc/lYazDDGBFJ9iIHxH0X43?=
+ =?us-ascii?Q?AtaffvR9K5/1akc0YKt4PF31QyZOsmT44eVXr4cb7LXcAdDr+VoCLkVYoMcy?=
+ =?us-ascii?Q?Z4riSRy8TaqS9kEix4JP3ysMiBRA1UgVk94HBlAXfCitoOiSG/rJctxKBd94?=
+ =?us-ascii?Q?kTXIpa2N5AKvIcP5AciDjb492MLrqq42AjMxF8Wn7GeCr0UgiwhgCV3+D6tG?=
+ =?us-ascii?Q?N1hNTni1iGP4Kjz19j0hx5nQm+kB0ngy7vUk8pZGmddtHaXvSuWBT23GBcA1?=
+ =?us-ascii?Q?mNsyvrpotTr9SsATfA4kXsIMDBoHwlenssWCzMoiLtxzKiHOShq6CqMUNMje?=
+ =?us-ascii?Q?5wt2S3xJbUliZg1Kc2pON5ZdKDQibCA=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6a02bc92-b234-44d3-0cf1-08df46dfe98d
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4c913ca7-67ea-4547-f7c3-08df46dfe9ee
 X-MS-Exchange-CrossTenant-AuthSource: DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2026 08:26:02.1669
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2026 08:26:02.7769
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RnFpJ6dHQj3ERp7mWyLmMXSOVzPtC6sMllbacSQp3hZ16Rf+T8zGqqD/4rTJ3Pk4T0kHo6Dxdn+OzsTGIlrKrLNcK8vmzLUPZI95yfa9q+Y=
+X-MS-Exchange-CrossTenant-UserPrincipalName: qZZcc3MKmxG8LA6UhD8sWmlwQ27n4Sh3JCIHgqD1MkX0iFzGK8CgTyqHI1CY2Jsq9nFu5dDlQ/2SNB+pQWQU8VC93sVxadV1XGX+y7EiARI=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR10MB4077
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Fri, 20 Nov 2026 08:26:18 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/25028
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/25029
 Content-Type: text/plain; charset="utf-8"
 
-apt has no stable CLI interface for scripts. Use apt-get and install
-both packages in one call.
+The next commit switches the deployed wic images and partition archives
+to zstd, which the reproducible build check has to decompress. zstd is
+only installed as a recommendation of diffoscope so far; install it
+explicitly.
+
+Also use apt-get instead of apt, which has no stable CLI interface for
+scripts.
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- scripts/run-cve-checks.sh | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ .reproducible-check-ci.yml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/run-cve-checks.sh b/scripts/run-cve-checks.sh
-index 12fd74ee..12efcace 100755
---- a/scripts/run-cve-checks.sh
-+++ b/scripts/run-cve-checks.sh
-@@ -20,9 +20,8 @@ set -e
- # Install AWS CLI
- if ! which aws >/dev/null 2>&1; then
- 	echo "Installing awscli..."
--	apt update
--	apt install -y python3-wheel
--	apt install -y awscli
-+	apt-get update
-+	DEBIAN_FRONTEND=3Dnoninteractive apt-get install -y python3-wheel awscli
- fi
-=20
- # Retrieve the latest dpkg status files from AWS
+diff --git a/.reproducible-check-ci.yml b/.reproducible-check-ci.yml
+index f8a79527..72089685 100644
+--- a/.reproducible-check-ci.yml
++++ b/.reproducible-check-ci.yml
+@@ -64,7 +64,7 @@
+     extension: security
+     image_base: "cip-core-image-cip-core"
+   before_script:
+-    - apt update && DEBIAN_FRONTEND=3Dnoninteractive apt install -y diffos=
+cope wget
++    - apt-get update && DEBIAN_FRONTEND=3Dnoninteractive apt-get install -=
+y diffoscope wget zstd
+   script:
+     - if [ "${extension}" =3D "security" ]; then
+         image_base=3D"cip-core-image-security-cip-core";
 --=20
 2.47.3
 
