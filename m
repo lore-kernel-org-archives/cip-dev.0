@@ -1,77 +1,93 @@
-Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.4527.1795120778553666101
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.2987.1795138181121969735
  for <cip-dev@lists.cip-project.org>;
- Thu, 19 Nov 2026 12:39:39 -0800
+ Thu, 19 Nov 2026 17:29:41 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=BpL2NHLU;
- spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 18BF510EAA4;
-	Thu, 19 Nov 2026 21:39:30 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1795120772;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=cMVMC4wPIMh7KkFdCKHpd4xB4qKWv8ipzjsz5wHxq/c=;
-	b=BpL2NHLUB8IF7CNKZsWbFVq64EI12dN4/ldkoAOL19oCktH5gUx1sGrjjWiXHIGbcnIi++
-	6DsR8ZkaZ4JhUKWi4WyTBCBw6h4+G+7fXZGvrl5zZ4uzne/RRlJByisuQeAtk2iwjQ0fZw
-	WCZE1CrhdAAEUqMRM+9cO86woM2SIpSeTRblTLoNgMpdEkwAo1lO/7D7tqazBbF/Ha08e+
-	+YvBEmAmftly0j8vAEjFm6urQHkjjiUvXAgj9TUvdGGw3aKNmEipms1RmP1rKhxGTRDUJl
-	t6X9QRqY8qpXGcRSRscgHzVSAoOTtWJ1PlBrhBoCQTltZMKtWnwRfHptc7vnYw==
-Date: Thu, 19 Nov 2026 21:39:28 +0100
-From: Pavel Machek <pavel@nabladev.com>
-To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>, uli@fpond.eu
-Cc: cip-dev@lists.cip-project.org, pavel@nabladev.com,
-	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: Re: [PATCH 4.19.y-cip 0/8] mmc: renesas_sdhi: fix eMMC test hang on
- RZ/G2N
-Message-ID: <av9egKPuh4-B37O7@duo.ucw.cz>
-References: <20261119175533.110210-1-ovidiu.panait.rb@renesas.com>
+ dkim=pass header.i=@codewreck.org header.s=2 header.b=UTgDokha;
+ spf=pass (domain: codewreck.org, ip: 62.210.214.84, mailfrom: asmadeus@codewreck.org)
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 6972414C2D6;
+	Fri, 20 Nov 2026 02:29:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1795138178;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=RhtWuipBG/+XBsup4Yf0nxGChgbI35kknOju+MDCQEo=;
+	b=UTgDokhaazM5TJqJdowkW+j7cJEYXpx0HMEc++GHGk4Tq0wXu8ZQ3p3O0TNepxYaAh4aLB
+	CrtId3fjAAvPNMJG2WehK5eluLKqSHzoV4BQSbiqOfxpv6dpoS5Yc7Dei2wz7HsqWaAW2L
+	/bwm82Fu2uvLUtYNeylQd/3nFlf64qcjYmzFRgHtg1zbv1jr+4SBpoOLoSNRSTt6R+fbzS
+	MYbmjonFjFiLJBWtSaDnKgB7ggJrhjm5+406Hfi8jJZ7FzrpfMEOhMb+hM5q6Y0zjOe8uU
+	kltoRVR6Q0/FxmTyHqaMGzTuHseIVkqLibYpOB73hEw3ayESeQFJHBjD+NnAGw==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id c00d2ebf;
+	Fri, 20 Nov 2026 01:29:35 +0000 (UTC)
+Date: Fri, 20 Nov 2026 10:29:20 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: cip-dev@lists.cip-project.org
+Cc: Akihito Irie <akihito.irie@atmark-techno.com>,
+	Dominique Martinet <dominique.martinet@atmark-techno.com>
+Subject: Best practices to write CIP kernel details in a SBOM?
+Message-ID: <av-icExXuq2zIc1g@codewreck.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="u34TzD/+Xl4f0EXY"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261119175533.110210-1-ovidiu.panait.rb@renesas.com>
-X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Thu, 19 Nov 2026 20:39:49 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/25025
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Fri, 20 Nov 2026 01:29:44 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/25026
+
+Hi,
+
+I asked about SBOM on IRC a couple of days ago and got told "mailing
+list" would be better - I hope I got the right one.. :)
+(also note: my org (atmark-techno.com) is not a CIP member as far as I
+know, we're not using CIP kernels yet but we do maintain a 5.10 kernel
+and I intend to participate at least in reviews/testing starting next
+month when upstream 5.10 goes EOL, as I've been doing with upstream 5.10
+stable-rc tests. If it's a pre-requisite for discussion please let me
+know)
+
+Now for some more useful background and questions...
+We're working on improving our SBOM, as it becomes mandatory in various
+regulations, and in particular the linux kernel has been difficult to
+describe in a useful manner so our users (we ship an OS) can act on the
+SBOM.
+
+As long as we stick to upstream kernel stable releases, we can
+apparently write PURL/CPE tags as follow:
+- pkg:generic/linux-kernel@[version]
+- cpe:2.3:o:linux:linux_kernel:[version]:::::::*
+
+and since the linux upstream CVEs are fed to NVD/OSV databases then
+scanners will pick up the many CVEs still affecting the releases, so one
+can triage them and export the result as VEX as seems to be the current
+best practices; but if we don't provide a VEX there doesn't seem to be
+any way to describe the kernel version as e.g. v5.10.272-cip79 with all
+the fixes covered by CIP automatically covered.
+
+I've found about cip-kernel-sec[1] and kernel-cve-triage[2] and we can
+use it to automatically check boxes in a VEX, but would it make sense to
+publish this data as well somewhere so that "standard" scanners
+(dependency-track/grype/osv-scanner/etc) automatically do it in the
+first place?
+From what I've seen it's possible to setup a data source for OSV.dev
+that they'd pick it up[3], I'm not sure if it'd be useful for CIP as a
+project or if it's something that'd gather interest?
+
+[1] https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec
+[2] https://gitlab.com/cip-project/cip-kernel/kernel-cve-triage
+[3] https://google.github.io/osv.dev/data/
 
 
---u34TzD/+Xl4f0EXY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Just to be clear I'm not asking for free lunch here:
+- My main question is, if people here publish a SBOM, what do they use
+to describe their kernel to others, is there any recommendation
+somewhere I didn't see?
+(I saw https://github.com/siemens/debsbom from cip-documents, but
+there doesn't seem to be anything about the kernel there)
+- Are there any plans going forward for kernel? If so is there anything
+we can help with?
 
-Hi!
 
-> On the HopeRun HiHope RZ/G2N board, running mmc_test on the eMMC hangs the
-> board on 4.19-cip until the watchdog resets it.
->=20
-> This series backports the upstream manual correction series from
-> v5.7 (patches 4-8) to fix this. Patches 1-3 are support commits, so
-> that the series applies cleanly.
->=20
-> All patches were cherry-picked from mainline and apply cleanly.
-
-So it looks like 4/ and 8/ from the series are just a cleanups, and
-not really neccessarry to fix the bug?
-
-Anyway, series looks ok to me,
-
-Reviewed-by: Pavel Machek <pavel@nabladev.com>
-
-I guess Ulrich will take the series. I've cc-ed him.
-
-Best regards,
-								Pavel
-
---u34TzD/+Xl4f0EXY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCav9egAAKCRAw5/Bqldv6
-8jLPAJ9v75qUBQZBdqyxJBzSLp2SWnuAogCguGXjLqsZDD0i4PRmrsGbZJmuuQw=
-=hH+g
------END PGP SIGNATURE-----
-
---u34TzD/+Xl4f0EXY--
+Thanks!
+-- 
+Dominique Martinet | Asmadeus
