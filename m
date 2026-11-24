@@ -1,76 +1,88 @@
-Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.16068.1795521158011976258
+Received: from tor.source.kernel.org (tor.source.kernel.org [172.105.4.254])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.16426.1795522544928802843
  for <cip-dev@lists.cip-project.org>;
- Tue, 24 Nov 2026 03:52:38 -0800
+ Tue, 24 Nov 2026 04:15:45 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@nabladev.com header.s=dkim header.b=cLy6rMa1;
- spf=pass (domain: nabladev.com, ip: 178.251.229.89, mailfrom: pavel@nabladev.com)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9054510F234;
-	Tue, 24 Nov 2026 12:52:30 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1795521152;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=TYfQU0JiP84nzJoiDln/OE5499TIh0+o69nREuxS8es=;
-	b=cLy6rMa1oUIus/aB5SgywVvuxOluJHMYFy43HlRBxH+wQDVCTSagzDY9gIU7er8ZFMFpsQ
-	fox0yc8n9pwZiG82QJTtCB3Y6HJSdwM69ZGG8l7U30DBVc4vig5uNVJ8tUufmvHKWIi7+m
-	UlmhMmuyu5UXYhSF+IE/UW3Xtyb/b27w8i2THEt7akQwk655MIwBHS8++ovFM1FR5ollT4
-	5s8jjAE5PA077ahjuyGiT3y0F1SKv4rS1HYPmMgs0QPScTcm1wo2oykxDt7uacBSqnj7fL
-	FIq6QhtO5wHWLCwUnJKIEekthhrpwv4oINabezG17dQBi/GayCJZd45IaKNt9g==
-Date: Tue, 24 Nov 2026 12:52:29 +0100
-From: Pavel Machek <pavel@nabladev.com>
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: nobuhiro.iwamatsu.x90@mail.toshiba, cip-dev@lists.cip-project.org,
+ dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.105.4.254, mailfrom: srs0=qi6l=jn=tuxon.dev=claudiu.beznea@kernel.org)
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	by tor.source.kernel.org (Postfix) with ESMTP id 3100161F97;
+	Tue, 24 Nov 2026 12:15:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12E171F000D1;
+	Tue, 24 Nov 2026 12:15:41 +0000 (UTC)
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
-Subject: Re: [cip-dev] [PATCH 5.10.y-cip 00/69] i3c: Backport I3C support for
- Renesas RZ/G3S
-Message-ID: <awV6ffvCg6wqqpoi@duo.ucw.cz>
-References: <20261117114553.1484215-1-claudiu.beznea@tuxon.dev>
- <TY7PR01MB14818259F230784C9BEE2DDD7CD442@TY7PR01MB14818.jpnprd01.prod.outlook.com>
- <ea842856-92ca-4df1-a28e-1abf85d5c524@tuxon.dev>
+Cc: cip-dev@lists.cip-project.org
+Subject: [PATCH] i3c: master: dw: stop hardcoding initial speed
+Date: Tue, 24 Nov 2026 14:15:40 +0200
+Message-ID: <20261124121540.2804633-1-claudiu.beznea@tuxon.dev>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="g6MMQtP5/3VHq7D0"
-Content-Disposition: inline
-In-Reply-To: <ea842856-92ca-4df1-a28e-1abf85d5c524@tuxon.dev>
-X-Last-TLS-Session-Version: TLSv1.3
-List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 24 Nov 2026 11:52:44 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/25064
-
-
---g6MMQtP5/3VHq7D0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+List-Id: <cip-dev.lists.cip-project.org>
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Tue, 24 Nov 2026 12:15:54 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/25065
+Content-Type: text/plain; charset="utf-8"
 
-Hi!
+From: Jack Chen <zenghuchen@google.com>
 
-> > > Please provide your feedback.
-> >=20
-> > We require the following commitments:
-> > 510d2358c466bf6588034f0d3b2266eed2bc0a51 i3c: master: dw: stop hardcodi=
-ng initial speed
->=20
-> If there are no other comments on this series, would you like me to send =
-it
-> as reply to this thread (with --in-reply-to git-send-email option) or
-> re-send the full series and add 510d2358c466 ("i3c: master: dw: stop
-> hardcoding initial speed") ?
+commit 510d2358c466bf6588034f0d3b2266eed2bc0a51 upstream.
 
-If the 510d2358c466 can goes before or after the series, just submit
-it separately. Otherwise please start a new thread.
+Bus-speed could be default(12.5MHz) or defined by users in dts.
+Dw-i3c-master should not hard-code the initial speed to be
+I3C_BUS_TYP_I3C_SCL_RATE (12.5MHz)
+And because of Synopsys's I3C controller limit (hcnt/lcnt register
+length) and core-clk provided, there is a limit to bus speed, too.
+For example, when core-clk is 250 MHz, the bus speed cannot be
+lowered below 1MHz.
 
-Thanks and best regards,
-								Pavel
+Tested: tested with an i3c sensor and captured with a logic analyzer.
 
---g6MMQtP5/3VHq7D0
-Content-Type: application/pgp-signature; name="signature.asc"
+Signed-off-by: Jack Chen <zenghuchen@google.com>
+Link: https://lore.kernel.org/r/20230216151057.293764-1-zenghuchen@google=
+.com
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
 
------BEGIN PGP SIGNATURE-----
+Hi,
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCawV6fQAKCRAw5/Bqldv6
-8mmmAKC8sqrEBOoCAwwpPl0ZXo+TKaqP/gCdE8x9ISN+/mNItM1YEywejR2tU+Q=
-=4zez
------END PGP SIGNATURE-----
+Patch applies cleanly on top of series
+https://lore.kernel.org/all/20261117114553.1484215-1-claudiu.beznea@tuxon=
+.dev/
 
---g6MMQtP5/3VHq7D0--
+Thank you,
+Claudiu
+
+ drivers/i3c/master/dw-i3c-master.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i=
+3c-master.c
+index 4861496ab7fe..d57cdf298132 100644
+--- a/drivers/i3c/master/dw-i3c-master.c
++++ b/drivers/i3c/master/dw-i3c-master.c
+@@ -531,7 +531,7 @@ static int dw_i3c_clk_cfg(struct dw_i3c_master *maste=
+r)
+ 	if (hcnt < SCL_I3C_TIMING_CNT_MIN)
+ 		hcnt =3D SCL_I3C_TIMING_CNT_MIN;
+=20
+-	lcnt =3D DIV_ROUND_UP(core_rate, I3C_BUS_TYP_I3C_SCL_RATE) - hcnt;
++	lcnt =3D DIV_ROUND_UP(core_rate, master->base.bus.scl_rate.i3c) - hcnt;
+ 	if (lcnt < SCL_I3C_TIMING_CNT_MIN)
+ 		lcnt =3D SCL_I3C_TIMING_CNT_MIN;
+=20
+@@ -541,7 +541,8 @@ static int dw_i3c_clk_cfg(struct dw_i3c_master *maste=
+r)
+ 	if (!(readl(master->regs + DEVICE_CTRL) & DEV_CTRL_I2C_SLAVE_PRESENT))
+ 		writel(BUS_I3C_MST_FREE(lcnt), master->regs + BUS_FREE_TIMING);
+=20
+-	lcnt =3D DIV_ROUND_UP(I3C_BUS_TLOW_OD_MIN_NS, core_period);
++	lcnt =3D max_t(u8,
++		     DIV_ROUND_UP(I3C_BUS_TLOW_OD_MIN_NS, core_period), lcnt);
+ 	scl_timing =3D SCL_I3C_TIMING_HCNT(hcnt) | SCL_I3C_TIMING_LCNT(lcnt);
+ 	writel(scl_timing, master->regs + SCL_I3C_OD_TIMING);
+=20
+--=20
+2.43.0
+
