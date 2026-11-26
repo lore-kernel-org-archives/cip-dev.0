@@ -1,294 +1,324 @@
 Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.15991.1795706565471968602
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.15992.1795706567110872607
  for <cip-dev@lists.cip-project.org>;
- Thu, 26 Nov 2026 07:22:45 -0800
+ Thu, 26 Nov 2026 07:22:47 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.234.252.31, mailfrom: srs0=ebed=jp=tuxon.dev=claudiu.beznea@kernel.org)
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by sea.source.kernel.org (Postfix) with ESMTP id 4887046566;
+	by sea.source.kernel.org (Postfix) with ESMTP id E3B5B4657F;
+	Thu, 26 Nov 2026 15:22:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E70011F0093C;
 	Thu, 26 Nov 2026 15:22:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 110521F0093C;
-	Thu, 26 Nov 2026 15:22:43 +0000 (UTC)
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 25/27] dmaengine: sh: rz-dmac: Add runtime PM support
-Date: Thu, 26 Nov 2026 17:22:01 +0200
-Message-ID: <20261126152204.1297798-26-claudiu.beznea@tuxon.dev>
+Subject: [PATCH 5.10.y-cip 26/27] dmaengine: sh: rz-dmac: Add suspend to RAM support
+Date: Thu, 26 Nov 2026 17:22:02 +0200
+Message-ID: <20261126152204.1297798-27-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261126152204.1297798-1-claudiu.beznea@tuxon.dev>
 References: <20261126152204.1297798-1-claudiu.beznea@tuxon.dev>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Thu, 26 Nov 2026 15:22:52 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/25135
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Thu, 26 Nov 2026 15:22:53 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/25136
 Content-Type: text/plain; charset="utf-8"
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 7c27a4d54d48d0774518390e4ce6cf3309aac141 upstream.
+commit c13ce43e70719dead7009e7e708971ba1c447568 upstream.
 
-Protect the driver exposed APIs with runtime PM suspend/resume calls
-before accessing HW registers. As the current driver leaves runtime PM
-enabled in probe, the purpose of the changes in this patch is to avoid
-accessing HW registers after a failed system suspend leaves the runtime
-PM state of the device improperly reinitialized.
+The Renesas RZ/G3S SoC supports a power saving mode in which power to mos=
+t
+of the SoC components is turned off, including the DMA IP. Add suspend to
+RAM support to save and restore the DMA IP registers.
 
-In that case, the driver remains bound to the device, the APIs are still
-exposed, and any access to HW registers without runtime resuming the
-device may lead to synchronous aborts.
-
-To avoid leaking resources in case of runtime PM failures, save the error
-code returned by PM_RUNTIME_ACQUIRE_ERR() in rz_dmac_terminate_all() and
-return it only at the end of the function to allow the cleanup code to
-run. A similar approach is used in rz_dmac_free_chan_resources().
-
-Because some exposed APIs (e.g. ->device_terminate_all()) may be called
-from atomic context according to the documentation, mark the DMA device a=
-s
-pm_runtime_irq_safe().
-
-This patch prepares the driver for suspend-to-RAM support.
+Cyclic DMA channels require special handling. Since they can be paused an=
+d
+resumed during system suspend/resume, the driver restores additional
+registers for these channels during the system resume phase. If a channel
+was not explicitly paused during suspend, the driver ensures that it is
+paused and resumed as part of the system suspend/resume flow.
 
 Tested-by: John Madieu <john.madieu.xa@bp.renesas.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Tested-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Link: https://patch.msgid.link/20260526084710.3491480-15-claudiu.beznea@k=
+Link: https://patch.msgid.link/20260526084710.3491480-16-claudiu.beznea@k=
 ernel.org
 Signed-off-by: Vinod Koul <vkoul@kernel.org>
 [claudiu.beznea:
- - PM_RUNTIME_ACQUIRE_IF_ENABLED()/PM_RUNTIME_ACQUIRE_ERR()
-   with the equivalent open-coded pm_runtime_resume_and_get()/
-   pm_runtime_put()
- - replace guard() with spin_lock_irqsave()/spin_unlock_irqrestore() in
-   rz_dmac_device_pause() and rz_dmac_device_resume()]
+ - dropped rz_dmac_{v,t}2h_info, rz_dmac_generic_info since these are
+   not applicable to v5.10 CIP
+ - replace rz_dmac_set_dma_req_no() with rz_dmac_set_dmars_register()
+   since the former is NA in v5.10 CIP
+ - in rz_dmac_suspend_recover(): replaced PM_RUNTIME_ACQUIRE_IF_ENABLED()=
+/
+   PM_RUNTIME_ACQUIRE_ERR() in rz_dmac_suspend_recover() with the
+   equivalent open-coded pm_runtime_resume_and_get()/pm_runtime_put
+ - in rz_dmac_suspend(), rz_dmac_suspend_recover(), rz_dmac_resume():
+   moved the declaration of i iterator outside of for block
+ - dropped static keyword in front of DEFINE_SIMPLE_DEV_PM_OPS() since th=
+e
+   macro already includes the static declaration]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/dma/sh/rz-dmac.c | 86 ++++++++++++++++++++++++++++++++++++----
- 1 file changed, 78 insertions(+), 8 deletions(-)
+ drivers/dma/sh/rz-dmac.c | 184 +++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 179 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/dma/sh/rz-dmac.c b/drivers/dma/sh/rz-dmac.c
-index d5181f21538b..5b6d08fdade1 100644
+index 5b6d08fdade1..f2ec90e3f52a 100644
 --- a/drivers/dma/sh/rz-dmac.c
 +++ b/drivers/dma/sh/rz-dmac.c
-@@ -520,12 +520,21 @@ static void rz_dmac_free_chan_resources(struct dma_=
-chan *chan)
- 	struct rz_dmac *dmac =3D to_rz_dmac(chan->device);
- 	struct rz_dmac_desc *desc, *_desc;
- 	unsigned long flags;
-+	int ret;
+@@ -67,10 +67,12 @@ struct rz_dmac_desc {
+  * enum rz_dmac_chan_status: RZ DMAC channel status
+  * @RZ_DMAC_CHAN_STATUS_PAUSED: Channel is paused though DMA engine call=
+backs
+  * @RZ_DMAC_CHAN_STATUS_CYCLIC: Channel is cyclic
++ * @RZ_DMAC_CHAN_STATUS_PAUSED_INTERNAL: Channel is paused through drive=
+r internal logic
+  */
+ enum rz_dmac_chan_status {
+ 	RZ_DMAC_CHAN_STATUS_PAUSED,
+ 	RZ_DMAC_CHAN_STATUS_CYCLIC,
++	RZ_DMAC_CHAN_STATUS_PAUSED_INTERNAL,
+ };
+=20
+ struct rz_dmac_chan {
+@@ -90,6 +92,10 @@ struct rz_dmac_chan {
+ 	u32 chctrl;
+ 	int mid_rid;
+=20
++	struct {
++		u32 nxla;
++	} pm_state;
 +
-+	ret =3D pm_runtime_resume_and_get(dmac->dev);
-+	if (ret) {
-+		dev_err(dmac->dev, "RPM resume failed for channel %s, ret=3D%d\n!",
-+			dma_chan_name(chan), ret);
-+	}
+ 	struct list_head ld_free;
 =20
- 	spin_lock_irqsave(&channel->vc.lock, flags);
-=20
- 	rz_lmdesc_setup(channel, channel->lmdesc.base);
-=20
--	rz_dmac_disable_hw(channel);
-+	/*  Skip touching HW if RPM resume failed. Let the cleanup do its jobs.=
- */
-+	if (!ret)
-+		rz_dmac_disable_hw(channel);
-=20
- 	if (channel->mid_rid >=3D 0) {
- 		clear_bit(channel->mid_rid, dmac->modules);
-@@ -549,6 +558,9 @@ static void rz_dmac_free_chan_resources(struct dma_ch=
-an *chan)
- 	INIT_LIST_HEAD(&channel->ld_free);
-=20
- 	spin_unlock_irqrestore(&channel->vc.lock, flags);
-+
-+	if (!ret)
-+		pm_runtime_put(dmac->dev);
+ 	struct {
+@@ -1019,20 +1025,57 @@ static int rz_dmac_device_pause(struct dma_chan *=
+chan)
+ 	return ret;
  }
 =20
- static struct dma_async_tx_descriptor *
-@@ -684,11 +696,21 @@ rz_dmac_prep_dma_cyclic(struct dma_chan *chan, dma_=
-addr_t buf_addr,
- static int rz_dmac_terminate_all(struct dma_chan *chan)
++static int rz_dmac_device_pause_internal(struct rz_dmac_chan *channel)
++{
++	lockdep_assert_held(&channel->vc.lock);
++
++	/* Skip channels explicitly paused by consummers or disabled. */
++	if (channel->status & BIT(RZ_DMAC_CHAN_STATUS_PAUSED) ||
++	    !rz_dmac_chan_is_enabled(channel))
++		return 0;
++
++	return rz_dmac_device_pause_set(channel, BIT(RZ_DMAC_CHAN_STATUS_PAUSED=
+_INTERNAL));
++}
++
+ static int rz_dmac_device_resume_set(struct rz_dmac_chan *channel,
+ 				     unsigned long clear_bitmask)
  {
- 	struct rz_dmac_chan *channel =3D to_rz_dmac_chan(chan);
-+	struct rz_dmac *dmac =3D to_rz_dmac(chan->device);
- 	unsigned long flags;
- 	LIST_HEAD(head);
+-	int ret =3D 0;
+ 	u32 val;
++	int ret;
+=20
+ 	lockdep_assert_held(&channel->vc.lock);
+=20
+-	/* Do not check CHSTAT_SUS but rely on HW capabilities. */
++	/*
++	 * We can be:
++	 *
++	 * 1/ after the channel was paused by a consummer and now it
++	 *    needs to be resummed
++	 * 2/ after the channel was paused internally (as a result of
++	 *    a system suspend with power loss or not)
++	 * 3/ after the channel was paused by a consummer, the system
++	 *    went through a system suspend (with power loss or not)
++	 *    and the consummer wants to resume the channel
++	 *
++	 * To cover all the above cases we set both CLRSUS and SETEN.
++	 *
++	 * In case 1/ setting SETEN while the channel is still enabled
++	 * is harmless for the controller.
++	 *
++	 * In case 2/ the channel is disabled when calling this function
++	 * and setting CLRSUS is harmless for the controller as the
++	 * channel is disabled anyway.
++	 *
++	 * In case 3/ the channel is disabled/enabled if the system
++	 * went though a suspend with power loss/or not and setting
++	 * CLRSUS/SETEN is harmless for the controller as the channel
++	 * is enabled/disabled anyway.
++	 */
++
++	rz_dmac_ch_writel(channel, CHCTRL_CLRSUS | CHCTRL_SETEN, CHCTRL, 1);
+=20
+-	rz_dmac_ch_writel(channel, CHCTRL_CLRSUS, CHCTRL, 1);
+ 	ret =3D read_poll_timeout_atomic(rz_dmac_ch_readl, val,
+-				       !(val & CHSTAT_SUS), 1, 1024, false,
+-				       channel, CHSTAT, 1);
++				       ((val & (CHSTAT_SUS | CHSTAT_EN)) =3D=3D CHSTAT_EN),
++				       1, 1024, false, channel, CHSTAT, 1);
+=20
+ 	channel->status &=3D ~clear_bitmask;
+=20
+@@ -1063,6 +1106,16 @@ static int rz_dmac_device_resume(struct dma_chan *=
+chan)
+ 	return ret;
+ }
+=20
++static int rz_dmac_device_resume_internal(struct rz_dmac_chan *channel)
++{
++	lockdep_assert_held(&channel->vc.lock);
++
++	if (!(channel->status & BIT(RZ_DMAC_CHAN_STATUS_PAUSED_INTERNAL)))
++		return 0;
++
++	return rz_dmac_device_resume_set(channel, BIT(RZ_DMAC_CHAN_STATUS_PAUSE=
+D_INTERNAL));
++}
++
+ /*
+  * ---------------------------------------------------------------------=
+--------
+  * IRQ handling
+@@ -1389,6 +1442,126 @@ static int rz_dmac_remove(struct platform_device =
+*pdev)
+ 	return 0;
+ }
+=20
++static void rz_dmac_suspend_recover(struct rz_dmac *dmac)
++{
++	unsigned int i;
 +	int ret;
 +
 +	ret =3D pm_runtime_resume_and_get(dmac->dev);
-+	if (ret) {
-+		dev_err(dmac->dev, "RPM resume failed for channel %s, ret=3D%d\n!",
-+			dma_chan_name(chan), ret);
-+	}
-=20
- 	spin_lock_irqsave(&channel->vc.lock, flags);
--	rz_dmac_disable_hw(channel);
-+	/* Don't return if RPM failed. Let the cleanup do its jobs. */
-+	if (!ret)
-+		rz_dmac_disable_hw(channel);
- 	rz_lmdesc_setup(channel, channel->lmdesc.base);
-=20
- 	if (channel->desc) {
-@@ -703,13 +725,22 @@ static int rz_dmac_terminate_all(struct dma_chan *c=
-han)
- 	spin_unlock_irqrestore(&channel->vc.lock, flags);
- 	vchan_dma_desc_free_list(&channel->vc, &head);
-=20
--	return 0;
-+	if (!ret)
-+		pm_runtime_put(dmac->dev);
++	if (ret)
++		return;
 +
++	for (i =3D 0; i < dmac->n_channels; i++) {
++		struct rz_dmac_chan *channel =3D &dmac->channels[i];
++
++		guard(spinlock_irqsave)(&channel->vc.lock);
++
++		if (!(channel->status & BIT(RZ_DMAC_CHAN_STATUS_CYCLIC)))
++			continue;
++
++		rz_dmac_device_resume_internal(channel);
++	}
++
++	pm_runtime_put(dmac->dev);
++}
++
++static int rz_dmac_suspend(struct device *dev)
++{
++	struct rz_dmac *dmac =3D dev_get_drvdata(dev);
++	unsigned int i;
++	int ret =3D 0;
++
++	for (i =3D 0; i < dmac->n_channels; i++) {
++		struct rz_dmac_chan *channel =3D &dmac->channels[i];
++
++		guard(spinlock_irqsave)(&channel->vc.lock);
++
++		if (!(channel->status & BIT(RZ_DMAC_CHAN_STATUS_CYCLIC)))
++			continue;
++
++		ret =3D rz_dmac_device_pause_internal(channel);
++		if (ret) {
++			dev_err(dev, "Failed to suspend channel %s\n",
++				dma_chan_name(&channel->vc.chan));
++			break;
++		}
++
++		channel->pm_state.nxla =3D rz_dmac_ch_readl(channel, NXLA, 1);
++	}
++
++	if (ret)
++		goto suspend_recover;
++
++	ret =3D reset_control_assert(dmac->rstc);
++	if (ret)
++		goto suspend_recover;
++
++	ret =3D pm_runtime_put_sync(dev);
++	if (ret < 0)
++		goto reset_deassert;
++
++	return 0;
++
++reset_deassert:
++	reset_control_deassert(dmac->rstc);
++suspend_recover:
++	rz_dmac_suspend_recover(dmac);
 +	return ret;
- }
-=20
- static void rz_dmac_issue_pending(struct dma_chan *chan)
- {
- 	struct rz_dmac_chan *channel =3D to_rz_dmac_chan(chan);
-+	struct rz_dmac *dmac =3D to_rz_dmac(chan->device);
- 	unsigned long flags;
-+	int ret;
++}
 +
-+	ret =3D pm_runtime_resume_and_get(dmac->dev);
-+	if (ret)
-+		return;
-=20
- 	spin_lock_irqsave(&channel->vc.lock, flags);
-=20
-@@ -721,6 +752,8 @@ static void rz_dmac_issue_pending(struct dma_chan *ch=
-an)
- 		rz_dmac_xfer_desc(channel);
-=20
- 	spin_unlock_irqrestore(&channel->vc.lock, flags);
++static int rz_dmac_resume(struct device *dev)
++{
++	struct rz_dmac *dmac =3D dev_get_drvdata(dev);
++	int errors =3D 0, ret;
++	unsigned int i;
 +
-+	pm_runtime_put(dmac->dev);
- }
-=20
- static u8 rz_dmac_ds_to_val_mapping(enum dma_slave_buswidth ds)
-@@ -794,12 +827,18 @@ static void rz_dmac_device_synchronize(struct dma_c=
-han *chan)
-=20
- 	vchan_synchronize(&channel->vc);
-=20
-+	ret =3D pm_runtime_resume_and_get(dmac->dev);
-+	if (ret)
-+		return;
-+
- 	ret =3D read_poll_timeout(rz_dmac_ch_readl, chstat, !(chstat & CHSTAT_E=
-N),
- 				100, 100000, false, channel, CHSTAT, 1);
- 	if (ret < 0)
- 		dev_warn(dmac->dev, "DMA Timeout");
-=20
- 	rz_dmac_set_dmars_register(dmac, channel->index, 0);
-+
-+	pm_runtime_put(dmac->dev);
- }
-=20
- static struct rz_lmdesc *
-@@ -853,6 +892,7 @@ static int rz_dmac_chan_get_residue(struct device *de=
-v, struct rz_dmac_chan *cha
- 	struct rz_dmac_desc *desc =3D NULL;
- 	struct virt_dma_desc *vd;
- 	u32 crla, crtb, i;
-+	int ret;
-=20
- 	vd =3D vchan_find_desc(&channel->vc, cookie);
- 	if (vd) {
-@@ -871,6 +911,10 @@ static int rz_dmac_chan_get_residue(struct device *d=
-ev, struct rz_dmac_chan *cha
- 		return 0;
- 	}
-=20
 +	ret =3D pm_runtime_resume_and_get(dev);
 +	if (ret)
 +		return ret;
 +
- 	/*
- 	 * We need to read two registers. Make sure the hardware does not move
- 	 * to next lmdesc while reading the current lmdesc. Trying it 3 times
-@@ -892,6 +936,8 @@ static int rz_dmac_chan_get_residue(struct device *de=
-v, struct rz_dmac_chan *cha
- 	 */
- 	*residue =3D crtb + rz_dmac_calculate_residue_bytes_in_vd(channel, desc=
-, crla);
-=20
-+	pm_runtime_put(dev);
-+
- 	return 0;
- }
-=20
-@@ -956,10 +1002,21 @@ static int rz_dmac_device_pause_set(struct rz_dmac=
-_chan *channel,
- static int rz_dmac_device_pause(struct dma_chan *chan)
- {
- 	struct rz_dmac_chan *channel =3D to_rz_dmac_chan(chan);
-+	struct rz_dmac *dmac =3D to_rz_dmac(chan->device);
-+	unsigned long flags;
-+	int ret;
-=20
--	guard(spinlock_irqsave)(&channel->vc.lock);
-+	ret =3D pm_runtime_resume_and_get(dmac->dev);
-+	if (ret)
++	ret =3D reset_control_deassert(dmac->rstc);
++	if (ret) {
++		/*
++		 * Do not put runtime PM here and keep the same state as in
++		 * probe. As subsequent suspend/resume cycles may follow, leave
++		 * the runtime PM as is, here, to avoid imbalances.
++		 */
 +		return ret;
++	}
 +
-+	spin_lock_irqsave(&channel->vc.lock, flags);
-+	ret =3D rz_dmac_device_pause_set(channel, BIT(RZ_DMAC_CHAN_STATUS_PAUSE=
-D));
-+	spin_unlock_irqrestore(&channel->vc.lock, flags);
++	rz_dmac_writel(dmac, DCTRL_DEFAULT, CHANNEL_0_7_COMMON_BASE + DCTRL);
++	rz_dmac_writel(dmac, DCTRL_DEFAULT, CHANNEL_8_15_COMMON_BASE + DCTRL);
 +
-+	pm_runtime_put(dmac->dev);
-=20
--	return rz_dmac_device_pause_set(channel, BIT(RZ_DMAC_CHAN_STATUS_PAUSED=
-));
-+	return ret;
- }
-=20
- static int rz_dmac_device_resume_set(struct rz_dmac_chan *channel,
-@@ -985,13 +1042,25 @@ static int rz_dmac_device_resume_set(struct rz_dma=
-c_chan *channel,
- static int rz_dmac_device_resume(struct dma_chan *chan)
- {
- 	struct rz_dmac_chan *channel =3D to_rz_dmac_chan(chan);
-+	struct rz_dmac *dmac =3D to_rz_dmac(chan->device);
-+	unsigned long flags;
-+	int ret;
-=20
--	guard(spinlock_irqsave)(&channel->vc.lock);
-+	ret =3D pm_runtime_resume_and_get(dmac->dev);
-+	if (ret)
-+		return ret;
-=20
-+	spin_lock_irqsave(&channel->vc.lock, flags);
- 	if (!(channel->status & BIT(RZ_DMAC_CHAN_STATUS_PAUSED)))
--		return 0;
-+		goto unlock;
++	for (i =3D 0; i < dmac->n_channels; i++) {
++		struct rz_dmac_chan *channel =3D &dmac->channels[i];
 +
-+	ret =3D rz_dmac_device_resume_set(channel, BIT(RZ_DMAC_CHAN_STATUS_PAUS=
-ED));
-+unlock:
-+	spin_unlock_irqrestore(&channel->vc.lock, flags);
++		guard(spinlock_irqsave)(&channel->vc.lock);
 +
-+	pm_runtime_put(dmac->dev);
-=20
--	return rz_dmac_device_resume_set(channel, BIT(RZ_DMAC_CHAN_STATUS_PAUSE=
-D));
-+	return ret;
- }
-=20
- /*
-@@ -1221,6 +1290,7 @@ static int rz_dmac_probe(struct platform_device *pd=
-ev)
- 		return dev_err_probe(&pdev->dev, PTR_ERR(dmac->rstc),
- 				     "failed to get resets\n");
-=20
-+	pm_runtime_irq_safe(&pdev->dev);
- 	pm_runtime_enable(&pdev->dev);
- 	ret =3D pm_runtime_resume_and_get(&pdev->dev);
- 	if (ret < 0) {
++		rz_dmac_disable_hw(&dmac->channels[i]);
++
++		if (!(channel->status & BIT(RZ_DMAC_CHAN_STATUS_CYCLIC)))
++			continue;
++
++		rz_dmac_set_dmars_register(dmac, channel->index, channel->mid_rid);
++
++		rz_dmac_ch_writel(channel, channel->pm_state.nxla, NXLA, 1);
++		rz_dmac_ch_writel(channel, channel->chcfg, CHCFG, 1);
++		rz_dmac_ch_writel(channel, CHCTRL_SWRST, CHCTRL, 1);
++		rz_dmac_ch_writel(channel, channel->chctrl, CHCTRL, 1);
++
++		ret =3D rz_dmac_device_resume_internal(channel);
++		if (ret) {
++			errors =3D ret;
++			dev_err(dev, "Failed to resume channel %s, ret=3D%d\n",
++				dma_chan_name(&channel->vc.chan), ret);
++		}
++	}
++
++	return errors ? : 0;
++}
++
++DEFINE_SIMPLE_DEV_PM_OPS(rz_dmac_pm_ops, rz_dmac_suspend, rz_dmac_resume=
+);
++
+ static const struct of_device_id of_rz_dmac_match[] =3D {
+ 	{ .compatible =3D "renesas,rz-dmac", },
+ 	{ /* Sentinel */ }
+@@ -1399,6 +1572,7 @@ static struct platform_driver rz_dmac_driver =3D {
+ 	.driver		=3D {
+ 		.name	=3D "rz-dmac",
+ 		.of_match_table =3D of_rz_dmac_match,
++		.pm	=3D pm_ptr(&rz_dmac_pm_ops),
+ 	},
+ 	.probe		=3D rz_dmac_probe,
+ 	.remove		=3D rz_dmac_remove,
 --=20
 2.43.0
 
