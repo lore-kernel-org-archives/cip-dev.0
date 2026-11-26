@@ -1,43 +1,43 @@
-Received: from GVXPR05CU001.outbound.protection.outlook.com (GVXPR05CU001.outbound.protection.outlook.com [52.101.83.25])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.11362.1795689021983219042
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (DB3PR0202CU003.outbound.protection.outlook.com [52.101.84.47])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.11270.1795689018322784349
  for <cip-dev@lists.cip-project.org>;
- Thu, 26 Nov 2026 02:30:22 -0800
+ Thu, 26 Nov 2026 02:30:23 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=AmbM+x15;
- spf=pass (domain: siemens.com, ip: 52.101.83.25, mailfrom: quirin.gylstorff@siemens.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=ikf0Srae;
+ spf=pass (domain: siemens.com, ip: 52.101.84.47, mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ng/fq2p8Qw4dHAONJPaNrSacW2ev0/FMaQWxKE0AweHVCIr4LvM0m4E6L+lcfgJf4+awrl3wb0IxfybgfTaj2G5YELqSOPFY1P8WLVMBz5z7ekHta0MiZOOakOQdKxroLkj4UsDpqEipZFU8ZEewdoLILHS5Cm0Ni9jQiZdT07Ou/JelihHciSMk0dM5DKxz4yCZJy/d3vteLKQ1oDPDsphIU8NO1tNztw+ZFQO0wEcu4HTyM1Ji+wbQaSfiA0HCC17jUHxSjgi1xbbdwiK0ajI+IdpajE30beNdiFIujnJcNj/B0HZ0dm/L4wyIrT+nCsDO1u6M5OuepR4xGFRoXg==
+ b=H/e22t1xghDEbe+SRURz2qhVRtE8Yle0D6QL+A4ECjzk14dDfSW//NZ/I3dNndh1lNXsjxrMYoYod8EcSqD7dlIUIzqQ7fDKhxi5PCl3AxqBimAeT+H9YzQF6e2KVJc5/k7Bff9Oa/S+arBeTVFbi3GnzKDhM6umQxVCYNZe8huLez3meOxNd4knuaUCX9ovrgXV/TCViEi4pohP6KDjPafTNu26JK59mSwADJ5Lu2DbCn2VL9igy2v3UrIX6+xuq+PFlcexbG2KhDI5bvqV9FV8iu4B+pnnbmilyF9/yeh6oKsSFJz+QUA0ABViMZlYX+rt6N4LPD6jSk3ALraqIQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=b0CHCXfpycU7LggXZdtkkPPxsh4Ohd5GVIGWmzb4v+Q=;
- b=QdHfjYc/TDjXp2JpX1yHjTc3VJjUtf23XXP0rFqpC8B5vzGX2VR4NstMzQdS9J8Fbd2l5GoDEiY/Y7nhKJTlXo8jp+fZOXxGv6HEDznV1b65QK+ptCIlzTWFpsTyDueisv0T0IKNYG2IzAXMoJ2lLQnvnbJijUfAobe/7cSpaeYL/ViAVGbHg2jMHrs5q5A3272JKSIoy/fvxsAi2t0v9kzeEySqH21jxkRq6bGcy7+gYrTGvhYr3UJBvpY9mCa7/Li+a+nYVAyCX1hje5pLr+DCj5HBAybkdRFpEYuEK2be3TRlRm6FbsODym0footLOhlTVIl+3XC6Evsn6cxXOg==
+ bh=xQ0pvwvopatmah6gc6E3ajIRAkB6Vx7S+mMqIJeDikM=;
+ b=JK3ba9o3FU4cc6MJfLCEcRuUVls0StmNrCYKxW+eCJG4O7Gs24m0YTGAlAL9OzBP1sBwIJqeIEidLbteCLmWwaqXdqb8GgM11VS2YCv3l5nlwaAh19fHy302F7VySHNG2/r3AQznOTJf0lWVGZjCe839BAqtePgX2AqHi4yC6YWdryyUe7Q5ohtoeEx8oqdmQdY6VzN/EMc1LVrztQvB6wtVoyvF1dUSOAwEnLJsaoowPIbo6C8eSpvCtBo/5ZrwF7ZMdNWnmnhwPC7acNn9WdE/9S6CB0wHCZzEuXcfN3dOHkhae2VoPsoE3m8P3gqa21gMvnNihnhm6mcbaxTObg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=b0CHCXfpycU7LggXZdtkkPPxsh4Ohd5GVIGWmzb4v+Q=;
- b=AmbM+x15sGrJRVF47el+LJtZMvPT5CApR+lRMjMQ1DAfjDtJXFxZ17cZkPJCBgYKkoDBa2eRpFfXQGdhSIVRvKzg2fGCi4y4oSW8tguj5C4ohiePAC1LXYYvUEui6/tfMGYpzGzR38n0zpUYhLunkw54jjGan5X0pUCV1rqL2snHNnpfRWdj/4b+GaxkB4NB9flZfa0tQ+zyldufSfFD+MorBIjBrq7pwIVSb+YJC9hYMXYM0dAn4NC7NKdAcNVx4aTATbe66rnNtstXPwtOrsZ5DrcKyc25UZv4B4eQYZzAP62wpzWolEONakJ3D8y7C8lGuLkiBwxmCUs6m0kRkA==
+ bh=xQ0pvwvopatmah6gc6E3ajIRAkB6Vx7S+mMqIJeDikM=;
+ b=ikf0SraeQ35EsXWu2PgNkDebRiLstGHY01cIiGqX1hZUv6a50MiTtC3uzIWlw/MTqpWTHPJhPGrRII0sp7gzH14iicPveVoLnwUi3km1EWuGjlMKsVtUsTvfnSWz7g0zQBN5UVel9ewPywV84gW5NrMdnULugkomoaT60/doVDQF1+XAUTAWJQacUr0/zDtSD7FdFTXUr3rE7BoLW6r9nTP8TbhmPktqsM+knevych6Ky5kLpzUJJkj8V+T+sLJOOMaRfG4MzDGXAeZUlJS/l1pqw3IxFdeiWvgvZUADND2HPHJ132EbtuhwMsOWsJMjv1Sg4XwP9aovt53i2bw2wA==
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:113::12)
  by PA3PR10MB9258.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:4d7::16) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.662.4; Thu, 26 Nov
- 2026 10:30:15 +0000
+ 2026 10:30:17 +0000
 Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::ae26:d131:7cff:4001]) by DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::ae26:d131:7cff:4001%3]) with mapi id 15.21.0688.001; Thu, 26 Nov 2026
- 10:30:15 +0000
+ 10:30:17 +0000
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org
 CC: jan.kiszka@siemens.com,
 	felix.moessbauer@siemens.com
-Subject: [isar-cip-core][PATCH v4 01/21] initramfs-crypt-hook: treat mountpoint / as rootfs marker for A/B
-Date: Thu, 26 Nov 2026 11:29:47 +0100
-Message-ID: <20261126103007.2922985-2-quirin.gylstorff@siemens.com>
+Subject: [isar-cip-core][PATCH v4 07/21] read-only-rootfs: do not mount LABEL=var from fstab with dracut
+Date: Thu, 26 Nov 2026 11:29:53 +0100
+Message-ID: <20261126103007.2922985-8-quirin.gylstorff@siemens.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261126103007.2922985-1-quirin.gylstorff@siemens.com>
 References: <20261126103007.2922985-1-quirin.gylstorff@siemens.com>
@@ -49,191 +49,111 @@ Return-Path: quirin.gylstorff@siemens.com
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DB8PR10MB3178:EE_|PA3PR10MB9258:EE_
-X-MS-Office365-Filtering-Correlation-Id: ba467433-64dc-494d-300d-08df4ba841e6
+X-MS-Office365-Filtering-Correlation-Id: e978b9bd-99ac-4fb8-c6d2-08df4ba843cf
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|23010399003|261022105027099003|261028144727099003|10067099003|11063799006|56012099006|261021121427099003|261021123027099003|261009223027099003|261026140227099003|261022075727099003|261026121527099003|261102123227099003|18002099003|6133799003|55112099003|22082099003;
-X-Microsoft-Antispam-Message-Info: c1EAu0WsHNuC4u65YiQ9GFd2PhnkcLn9pRKJxa5ZJgsnSiUqaynA38Zh5cIqoHy/iIcrF6T/VJV93eeEcZgBVpOHCYCGOF8/xvV/TN2ZrHsvPfK2exYDwkPNlQ53ZyFBL8Ux5zWWQcm1wA9iQLVewC4SDrH3THbJoSGUsvwCA7Ga78IG2w+JSCArntBxl+XTojv/wKf1lLju2nQjr06Mo8oWCY4vAlHK6UAGWi9i+9Qf2nJX5xnsLMPh7squitW639bM+NEHEOkp40mem6Jjz80ybQqpQLj7YdnsgLFpHq1xC2I+RxyL+ZR5SJ1NlhO5hJVMRzYRzmjdqxaukcCGM2WLpLRaHUa5ewgogVb0q0RtX3pWIhDCcClLuMUWogkghLyt4cbijG8xzuYVMeBUf3vYxvr9HWaG3FR6lDhCEkQkX86r60wYk9vtzeKVN6txK/LhUF5mMZ9tzAQHJVB22+tf02ohVv2J5YgNWFoew4mpy7cJ7Y4MauCIcMzCz5BytWIhKZ92x54Yf4SkKsQSglItDWd14HkBLTUNMyTAyOpSus/YgLO7wnLriv2XDMgMeIoV2ceZGXG9XwnJlBW/a2klkX7DuNC9VjvnxMVdbxbffb2CZq5IEjl8ctmfMEGMk4udf31sYEi8ehMlVtzY8AKiz4WLdDSU2+xWIZrYSEM=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(23010399003)(261022105027099003)(261028144727099003)(10067099003)(11063799006)(56012099006)(261021121427099003)(261021123027099003)(261009223027099003)(261026140227099003)(261022075727099003)(261026121527099003)(261102123227099003)(18002099003)(6133799003)(55112099003)(22082099003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|23010399003|5023799004|261022105027099003|261028144727099003|10067099003|11063799006|261022115727099003|56012099006|261021121427099003|261021123027099003|261009223027099003|261026140227099003|261022075727099003|261102123227099003|18002099003|6133799003|55112099003|22082099003;
+X-Microsoft-Antispam-Message-Info: UOimBRX0lUIKTUOiraGyIIPS2/sj5JQ35zz8Mb8iTSa2OObwxZF2pbNXxA7/wKwLb9PW+S9VQ/27i3t8QjQzA8GbnhhOYMQXSwqcKjigY8Tc8FzPqC2IH0916r0znYpar1HLpMSbehOaZK91yxt65SmPmU5eIhuKEWr+UXxP6u1RO27kdK9fA9AFwTCOGqvMgJRYGj6CWkLiIqYn3gG67+7e0a/qvuB6Tot7qpwYv6zuJcq9uORU1roKvKquGjfAN+wFxFBhtgAZF5svqo1SPxcBduB5k+4YOAMFNfcIMELaC+nyyM4Wgke+MOM+UhtMCd4PQgY/N4mBWj5dIOnRh4SwP8HouDrtytEeoWFxW8jtdjcoUQRdD8Iz4hkU5N7KvUsFZZYfP7TaSZYIYzKhCtRO0F8YJOOZOlDigUruBlhBzyncdyQtcMFjd4WN4BB27WPJbs1O8+rLJ8L5z8FL8G1ElUTfvAf3E52V0XFq/JJ6udByuatROm0BuLMLQBAlVooWKtSlFnXtx2Cm4+AAXdHaAE8vw9I2sdl60fDjKoGSJNwwFxrkkswxhmp9J1MsxdDh5KNOHBpQNQIA/QFXzeRu0orJxohm+5eb7M4ZdGK7eYbekYFwhJIFtW7AUo+Ms7DIHKyBgb0s60+fKLXxo/BeBueUVaRizTqC3fLeTfw=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(23010399003)(5023799004)(261022105027099003)(261028144727099003)(10067099003)(11063799006)(261022115727099003)(56012099006)(261021121427099003)(261021123027099003)(261009223027099003)(261026140227099003)(261022075727099003)(261102123227099003)(18002099003)(6133799003)(55112099003)(22082099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?xXcf2QkSO4ER/La1rmxqirhI+o1cliEG+rj5OF7jkQnbQNqnvn7R900KY8ll?=
- =?us-ascii?Q?E6Zop3OPEVG1ldEwA6OUfDmDXm5wb/4AMm+wcPeSXC7t4jT4IDEXjwxWxrVi?=
- =?us-ascii?Q?VTl9kpkPHRHFtKnoQ06+QqIdp2Slb3ut5eT4xH1AkTxWoAGRVld7Ta5QTBrD?=
- =?us-ascii?Q?8ZX7+YOF+ElPPRXDaKRa0nXt1HIKpj1bp2vJlx/a0EzPMOLkHBFWUMORRZOt?=
- =?us-ascii?Q?KbWz4dJ97EQhDifHHaxFGoJ+GpdTewV7DhHL/fi8lbcAUUNFzVZ/JH8BW38F?=
- =?us-ascii?Q?4Xf8n4QUaYpctPV1aFHQU9DaT0eIrW5UGWrSBm/XmnIGVOBLwLlAu4dXZ67a?=
- =?us-ascii?Q?x+gciVaLdM2I+xJfA5oTXwnB8UfC1wkPsavbVL60KuDMoqgQjVqbM5LK6mjO?=
- =?us-ascii?Q?T301h9vfrDeCk4F8BDdJf3Gp6Dsb+8mMZ9jOzMpIG+YrAQp2fbVpH2cSD28P?=
- =?us-ascii?Q?W1aT+XvL3B62IJYrhw/6R2I7xT7aK6QSWV+OhHt354ig0qeU9FdIb5NECKX6?=
- =?us-ascii?Q?6uzfIlGTfNtApD0081waDmhM9Kz4JHPghpZzxJhFFXDKqorGXMDDtc7OlbRs?=
- =?us-ascii?Q?c/VBBn9xj3n6W9gE1W2boXF81LJgadMhEjIz4ye+Bve2017/4UImgHgGFrin?=
- =?us-ascii?Q?dR/e75zFHjwAEEnd/iAfSMER+jNeLb2CG7vLW5PZJSWrhtANYuPb0HOlcJm7?=
- =?us-ascii?Q?qNy5bNNZtM5COL9gdomLSxs/Kj1HEOsCV5nnIdUip+Bi4h9FK4ISm8jXQPiB?=
- =?us-ascii?Q?//3I83yQ2JJjL50GDduUJPRxgmyTBEN9410QgzwnhUefrDVTOOXkpH24svsA?=
- =?us-ascii?Q?MP721xiGmRzoDX3AqgSEcaCZK6OoRnAJFgvDy38liVSRXDMU9b5UpJHCbOtO?=
- =?us-ascii?Q?AzzEfmwzX8C+M+wv61zhTxjQR+AJFSdt1sLq5SsuNcJKKSDJxje7v0oM5/rP?=
- =?us-ascii?Q?uP/+K/xQWLTORQwgXZNI/jQyFnr2k9zbdhrqA7uK/WBPhyWytPk5TrHiDLK0?=
- =?us-ascii?Q?w/1rLkG5Lln3hhJ+AlrmhwBnEWuc+cd7eGez13P5uH6Ddn++bSnrWaKCWyjZ?=
- =?us-ascii?Q?FerH6qq/k6EYQjdjdK1Vc3smV9zquu6QpIdubUqlcxQCIjpFVT0Owrla5vLl?=
- =?us-ascii?Q?qeI4no75iweNEGuEh+smEQkVwCo9BafJriw3MLCoNFePJNl4RYspv+x6oU8A?=
- =?us-ascii?Q?KDavehXAF764sJJ83jCPTygPx49WN2R5JNOM8jhCP6xvJO6foeKBAga/Blhg?=
- =?us-ascii?Q?GTm4V+aAOCFHyeSzMlsF2imxv2sPdr7DfmTSb4MaEgALSFrfzPEaoZyeTCmg?=
- =?us-ascii?Q?ngFZkuzFMWrW0gcK7Tzs71tMR64Sj9iVDq+WMcMV2xboPe5S8+921IKUP66E?=
- =?us-ascii?Q?osd8zfISLGm+2ZHRZmyjaZFe9b/1coo9ZXjpcTWH9+6GBeX7yuuFTQ9xYKQz?=
- =?us-ascii?Q?kDKSmZNNH+VMhMuQ5Acckul6ClQHa0xrwQ4QOy2Oz9xwujflXWAetbBdMmK7?=
- =?us-ascii?Q?eUPuwxx0JS1C8rWOWYuiazz9RY62+NOci2HKo5s0mqDVyRaSUQQrAfBK09te?=
- =?us-ascii?Q?gBwbUniYsUsD0YEZnzi6u42FKcbvwx74c4XxUD3mA0a6B2HGqDDzE1twKKsC?=
- =?us-ascii?Q?Os3GDMmKTi+/IQYmjoe9+zG5jevTHPudo2IIKTaIri4NwZzVFA/qyMS2IDAB?=
- =?us-ascii?Q?N2lyyd6KXsd3VyqOrRITCXz9OAZNgMVLK/5oNzNoOqBQFZPwySniDtTLmCgg?=
- =?us-ascii?Q?vTNF1OsAcnalgXtM9uMpSU4f8bb3ozI=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?rGlF+fSbNzE24IqPqmV8tvYMk+D2FhRCT+CRgcMF6gvOQ3YjLJZ/pfcOo4m0?=
+ =?us-ascii?Q?ltxomjCjb7aw3VWYbpNlmM7ffo+g49rZixRB3jWkc9xxT3qUJkH83Eet1X9J?=
+ =?us-ascii?Q?Hq2ieOuM0gtrEZVVJQYWOkMXZqXGX1G4iRNwJkePG4QulsR1GfyPpoTuNxyz?=
+ =?us-ascii?Q?6uH3CN8QQtPTStM0L8/YoxjnLN3qA9hLXAhgKrpTJj7nyI5z8ZW52W+Vch5s?=
+ =?us-ascii?Q?2+gedf73dnLKv28Tw8LtNAnW1nve67z0SNETWrowA0fwLJpxNJRqRXYj2yIV?=
+ =?us-ascii?Q?R8JHL545Jx8upUu2iQYyjOZqK04GUD6mLG01ea/6kjyGpOWJ11tNG7QTLWwb?=
+ =?us-ascii?Q?elfhl/AgYsSSQncQ7WWpoEhjSqev+bEZtas5rvJZMGy88e/oCQmFQUgqMrDB?=
+ =?us-ascii?Q?kGlp5qKsiz0SpaIKJIRDPiR28DBfpqhnymkq3zdMkFNQe4weUxOsy2YMuZE2?=
+ =?us-ascii?Q?KmahGy+NPHqCm9gLM6/ItUByp/q7+sYRNGvk666yyEsjmh0u8JWjKG2xyjko?=
+ =?us-ascii?Q?RyqZ/gOueWUJJWJokza9hYTSAn+zQucYjkFtlTIsLq+SoMyOJo+sUZ9GcTTY?=
+ =?us-ascii?Q?8aN64xBSv0lUmBMu/Q0jE2cqHTHZIRHcXPD3KWrR9VbbV25k8Bj1wynEYxwn?=
+ =?us-ascii?Q?/YNNx/PlryUUraSu2+Z5eQ7mE1WEe/2yrX7w2P4OuBUv1og6dHI3gH5MPIot?=
+ =?us-ascii?Q?nCrUcI1wsluN1MbjFywNUo1a7qEQuUHzhRqbyRuyiTLJK8/bFxZ0MqNjIZtD?=
+ =?us-ascii?Q?23f/P1LEIJKwlgnGhHj4f12lXMbfjt9qlQmkhJ+wsmeownfA56XXhs1ecm9q?=
+ =?us-ascii?Q?GjCDAgohlhOI9nEDyd+M2uJm2f+u0VPVdl4xGBPn6QzSM9+aOe/r2+QQJJ3L?=
+ =?us-ascii?Q?Dw7NDEoGawNKnJl5Zatvv1Jne49IeFQsDkkkHvh/zgjcFEgb5dc/pcTxA72/?=
+ =?us-ascii?Q?oUP1supjYvh40+Y+GiQtbBWwBslwvSMgLC24bKIV3RLm8CLmvdmJxFeeQnp5?=
+ =?us-ascii?Q?c9pzZPujYn5rSPx+ZYtQu8MiaDK0WJHW/Ln+3inIwp9ez0D1NVB1JiJnriPY?=
+ =?us-ascii?Q?7onZy5WYnXi4iPHYtJzlLWzDI44gn61rfB/YfHvJYgAAxP35AVv5WODNeA0F?=
+ =?us-ascii?Q?KhdiJ6iAWo2GggqxFiMI/u1cApVQQ5TtomyS21ZDdFuEURM1qtVZuJgM9Qsi?=
+ =?us-ascii?Q?3FHKnWnN7Hd5RfapE+sM5pc4LPiqYsTbukWt+CPhO1Y9CZkN6o0tJSTYFADD?=
+ =?us-ascii?Q?kaf2O88sUyJ+rsMiaq8Xx7hTG9D8nf3lMyh6jg24l4E+It2iXg7MRVhUWEHk?=
+ =?us-ascii?Q?9lMkR5EkCVV2N2g+CfdweMFX4HrMSzk4eSOjXpIyiqY8RVIcUvtLfIBWsv5a?=
+ =?us-ascii?Q?3TAoCEKNe1RMn2Jgwh/VvM6AxVLcBDJKFyhpN7Sp+JuyvjugJXkpHMHDdibh?=
+ =?us-ascii?Q?mQDr17CyeWAEljI+umOOFqOvDcYi52m8bKkbQAtfPiqiD3t+ZCGhlP0cqKjp?=
+ =?us-ascii?Q?tjMiLvaxwwfYA1GUzY7IqJ9lMDa4uzci1Jk/PiXOSpp9Zi4fidwiVe7KTt0w?=
+ =?us-ascii?Q?BFjtTpOXkm9CBaChC+rjjU3VlqWCoD07zSboo0iMbLg74WQ2wMchq1WC8buI?=
+ =?us-ascii?Q?bRpEpXJhadEb/7aU+1tP1aTCwC9C8qiTMUYoFmMurBL2Byi3adkVaNOkjEYk?=
+ =?us-ascii?Q?ceq+mRLCa8ZArXx0NPSt5XU6jsqmieu3ySYSv1PB+ugZQKtYxXQx96BJzan8?=
+ =?us-ascii?Q?ZESuIiDcbU29D7hgxDknua1Wl0BDxG4=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ba467433-64dc-494d-300d-08df4ba841e6
+X-MS-Exchange-CrossTenant-Network-Message-Id: e978b9bd-99ac-4fb8-c6d2-08df4ba843cf
 X-MS-Exchange-CrossTenant-AuthSource: DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2026 10:30:14.3547
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2026 10:30:17.5404
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0csdfkjLkEhDRFmbaMvNoLzj44QgQ31aSnVBvsfemi/EKBP04KCfkAHErEdzJB8dLmt+Z52InzVkGTbemvUKMPaUTa62UbWD1zp+zObcD+Y=
+X-MS-Exchange-CrossTenant-UserPrincipalName: j6Xq6bxKrZTvrkTRNNTEodOIDdsCXGltDVyRqtDCiD2dyYH0vmIoDLIKpOvemSeBBKZVamjD4kZnwdRbe5p6J4nS0Ggw66AuHgkAUnp50Pk=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA3PR10MB9258
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Thu, 26 Nov 2026 10:30:25 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/25088
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/25089
 Content-Type: text/plain; charset="utf-8"
 
-An entry with mountpoint / marks the partition holding the root
-filesystem. Do not mount it in local-bottom and only point ROOT at its
-decrypted device if it is the only such entry and neither abrootfs nor
-verity selects the root device. Existing configurations with an empty
-mountpoint keep their behavior.
+With initramfs-tools the additional LABEL=3Dvar line in the fstab is
+redundant but harmless, and it keeps /var mounted for setups with a custom
+INITRAMFS_OVERLAY_STORAGE_PATH. With dracut it fails, as it is incompatible
+with how the initrd mounts /var.
+
+Drop the line for the dracut initramfs if the overlay storage path is
+below /var; the embedded-overlay module then mounts /var in the initrd.
+For a storage path outside /var, keep the line, as nothing else would
+mount LABEL=3Dvar.
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- doc/README.tpm2.encryption.md                 | 19 +++++++++++++----
- .../files/local-bottom-complete               |  7 ++++---
- .../files/local-top-complete                  | 21 +++++++++++++++++--
- 3 files changed, 38 insertions(+), 9 deletions(-)
+ classes-recipe/read-only-rootfs.bbclass | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/doc/README.tpm2.encryption.md b/doc/README.tpm2.encryption.md
-index 209b750a..09004736 100644
---- a/doc/README.tpm2.encryption.md
-+++ b/doc/README.tpm2.encryption.md
-@@ -62,12 +62,23 @@ Power failure safety: Changes to the partition structur=
-e or file system super bl
- To encrypt the root file system the variable `CRYPT_PARTITIONS` needs to b=
-e set to:
+diff --git a/classes-recipe/read-only-rootfs.bbclass b/classes-recipe/read-=
+only-rootfs.bbclass
+index 945976a3..e9a31dbe 100644
+--- a/classes-recipe/read-only-rootfs.bbclass
++++ b/classes-recipe/read-only-rootfs.bbclass
+@@ -84,6 +84,15 @@ copy_dpkg_state() {
+     run_privileged cp -a ${ROOTFSDIR}/var/lib/dpkg "$IMMUTABLE_VAR_LIB/"
+ }
 =20
- ```
--CRYPT_PARTITIONS =3D "${ABROOTFS_PART_UUID_A}::reencrypt ${ABROOTFS_PART_U=
-UID_B}::reencrypt"
-+CRYPT_PARTITIONS =3D "${ABROOTFS_PART_UUID_A}:/:reencrypt ${ABROOTFS_PART_=
-UUID_B}:/:reencrypt"
- ```
-=20
--The mountpoint is empty as the root partition is mounted by a seperate ini=
-tramfs hook.
--Both partitions are encrypted during first boot. The initramfs hook opens =
-`${ABROOTFS_PART_UUID_A}` and `${ABROOTFS_PART_UUID_B}`
--during boot.
-+The mountpoint `/` marks the partitions holding the root file system. They=
- are
-+not mounted by the crypt hook; the root file system is mounted by a separa=
-te
-+initramfs hook (abrootfs or verity). Both partitions are encrypted during =
-first
-+boot. The crypt hook opens `${ABROOTFS_PART_UUID_A}` and
-+`${ABROOTFS_PART_UUID_B}` during boot.
++# The initramfs mounts /var. With initramfs-tools an additional fstab entr=
+y is
++# redundant but harmless and covers custom INITRAMFS_OVERLAY_STORAGE_PATH
++# setups; dracut fails on it. The dracut embedded-overlay module mounts th=
+e
++# top-level directory of the storage path, so keep the entry if that is no=
+t
++# /var.
++FSTAB_VAR_LINE =3D "LABEL=3Dvar	/var		auto		defaults			0	0"
++FSTAB_VAR_ENTRY =3D "${FSTAB_VAR_LINE}"
++FSTAB_VAR_ENTRY:dracut =3D "${@'' if (d.getVar('INITRAMFS_OVERLAY_STORAGE_=
+PATH') or '/var/local').strip('/').split('/')[0] =3D=3D 'var' else d.getVar=
+('FSTAB_VAR_LINE')}"
 +
-+The crypt hook points the kernel `ROOT` parameter at the decrypted device
-+only if there is exactly one `/` entry and neither the abrootfs nor the ve=
-rity hook
-+is part of the initramfs. In all other cases the `/` entry is only a marke=
-r.
-+
-+The previous notation with an empty mountpoint
-+(`${ABROOTFS_PART_UUID_A}::reencrypt`) behaves the same as `/` with the
-+initramfs-tools-based hook and keeps working. With dracut, use `/`; an emp=
-ty
-+mountpoint marks a data partition (see [README.dracut.md](README.dracut.md=
-)).
-=20
- #### Encrypting the shared partition via an update
-=20
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-comp=
-lete b/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-complete
-index e1d2f7fc..648500cf 100644
---- a/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-complete
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-complete
-@@ -71,9 +71,10 @@ for partition_set in $partition_sets; do
- 			;;
- 	esac
- 	decrypted_part=3D/dev/mapper/"$crypt_mount_name"
--	if [ -z "$partition_mountpoint" ]; then
--		continue
--	fi
-+	# Empty: not mounted. "/": the root filesystem, mounted by the initramfs.
-+	case "$partition_mountpoint" in
-+	""|/) continue ;;
-+	esac
- 	if /usr/sbin/cryptsetup luksDump --batch-mode "$part_device" 2>/dev/null =
-\
- 			| grep -q "luks2"; then
- 		mount_partition "$decrypted_part" "${rootmnt}""$partition_mountpoint"
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complet=
-e b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-index f5b1c8f1..d26ab8fa 100755
---- a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-@@ -233,6 +233,23 @@ prepare_for_encryption
-=20
- wait_30sec_for_condition check_partitions
-=20
-+# An entry with mountpoint "/" holds the root filesystem. Only point ROOT =
-at
-+# its decrypted device if it is the only one and no later local-top script
-+# (abrootfs, verity) selects the root device itself; those only accept
-+# ROOT=3DPART* or an empty ROOT. Otherwise "/" is just a marker.
-+set_root_param=3Dn
-+root_entries=3D0
-+for partition_set in $partition_sets; do
-+	if [ "$(awk -v var=3D"$partition_set" 'BEGIN{split(var,a,":"); print a[2]=
-}')" =3D "/" ]; then
-+		root_entries=3D$((root_entries + 1))
-+	fi
-+done
-+if [ "$root_entries" -eq 1 ] &&
-+   [ ! -e /scripts/local-top/abrootfs ] &&
-+   [ ! -e /scripts/local-top/verity ]; then
-+	set_root_param=3Dy
-+fi
-+
- for partition_set in $partition_sets; do
- 	partition=3D"$(awk -v var=3D"$partition_set" 'BEGIN{split(var,a,":"); pri=
-nt a[1]}')"
- 	partition_mountpoint=3D"$(awk -v var=3D"$partition_set" 'BEGIN{split(var,=
-a,":"); print a[2]}')"
-@@ -264,7 +281,7 @@ for partition_set in $partition_sets; do
- 		open_tpm2_partition "$part_device" "$crypt_mount_name" "$tpm_device"
-=20
- 		# check if we are trying to mount root, set ROOT to decrypted partition:
--		if [ "$partition_mountpoint" =3D "/" ]; then
-+		if [ "$partition_mountpoint" =3D "/" ] && [ "$set_root_param" =3D y ]; t=
-hen
- 			echo "ROOT=3D$decrypted_part" >/conf/param.conf
- 		fi
-=20
-@@ -288,7 +305,7 @@ for partition_set in $partition_sets; do
- 	fi
-=20
- 	# check if we are trying to mount root, set ROOT to decrypted partition:
--	if [ "$partition_mountpoint" =3D "/" ]; then
-+	if [ "$partition_mountpoint" =3D "/" ] && [ "$set_root_param" =3D y ]; th=
-en
- 		echo "ROOT=3D$decrypted_part" >/conf/param.conf
- 	fi
-=20
+ ROOTFS_POSTPROCESS_COMMAND:append =3D " copy_home_to_immutable_data"
+ ROOTFS_POSTPROCESS_COMMAND:remove:separate-home-part =3D " copy_home_to_im=
+mutable_data"
+ copy_home_to_immutable_data() {
+@@ -109,7 +118,7 @@ image_configure_fstab() {
+     run_privileged tee '${IMAGE_ROOTFS}/etc/fstab' << EOF
+ # Begin /etc/fstab
+ /dev/root	/		auto		defaults,ro			0	0
+-LABEL=3Dvar	/var		auto		defaults			0	0
++${FSTAB_VAR_ENTRY}
+ proc		/proc		proc		nosuid,noexec,nodev		0	0
+ sysfs		/sys		sysfs		nosuid,noexec,nodev		0	0
+ devpts		/dev/pts	devpts		gid=3D5,mode=3D620			0	0
 --=20
 2.47.3
 
