@@ -1,93 +1,110 @@
-Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.15963.1795706527630766796
+Received: from tor.source.kernel.org (tor.source.kernel.org [172.105.4.254])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.15964.1795706529638906229
  for <cip-dev@lists.cip-project.org>;
- Thu, 26 Nov 2026 07:22:07 -0800
+ Thu, 26 Nov 2026 07:22:09 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.234.252.31, mailfrom: srs0=ebed=jp=tuxon.dev=claudiu.beznea@kernel.org)
+ dkim=none (message not signed); spf=pass (domain: kernel.org, ip: 172.105.4.254, mailfrom: srs0=ebed=jp=tuxon.dev=claudiu.beznea@kernel.org)
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	by sea.source.kernel.org (Postfix) with ESMTP id 9B7ED456EE;
+	by tor.source.kernel.org (Postfix) with ESMTP id 3817B6363A;
+	Thu, 26 Nov 2026 15:22:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEB2C1F000C0;
 	Thu, 26 Nov 2026 15:22:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D81B1F000C0;
-	Thu, 26 Nov 2026 15:22:05 +0000 (UTC)
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 To: nobuhiro.iwamatsu.x90@mail.toshiba,
 	pavel@nabladev.com
 Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 00/27] Renesas: Backport DMA fixes and improvements
-Date: Thu, 26 Nov 2026 17:21:36 +0200
-Message-ID: <20261126152204.1297798-1-claudiu.beznea@tuxon.dev>
+Subject: [PATCH 5.10.y-cip 01/27] dmaengine: sh: rz-dmac: Avoid format-overflow warning
+Date: Thu, 26 Nov 2026 17:21:37 +0200
+Message-ID: <20261126152204.1297798-2-claudiu.beznea@tuxon.dev>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261126152204.1297798-1-claudiu.beznea@tuxon.dev>
+References: <20261126152204.1297798-1-claudiu.beznea@tuxon.dev>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Thu, 26 Nov 2026 15:22:11 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/25110
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/25111
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Hi,
+commit c4d6dcb3b6250ea546a952ad33382daf7cd32425 upstream.
 
-This series backports cyclic DMA, runtime PM and suspend to RAM
-along with preparatory and cleanup patches.
+The max channel count for RZ DMAC is 16, hence use u8 instead of unsigned
+int and make the pdev_irqname string long enough to avoid the warning.
 
-I tried to limit the number of patches per series. Please let me know
-if this needs to be further improved and will consider it for the
-future sumissions.
+This fixes the below issue:
+drivers/dma/sh/rz-dmac.c: In function =E2=80=98rz_dmac_probe=E2=80=99:
+drivers/dma/sh/rz-dmac.c:770:34: warning: =E2=80=98%u=E2=80=99 directive =
+writing between 1 and 10 bytes into a region of size 3 [-Wformat-overflow=
+=3D]
+  770 |         sprintf(pdev_irqname, "ch%u", index);
+      |                                  ^~
+In function =E2=80=98rz_dmac_chan_probe=E2=80=99,
+    inlined from =E2=80=98rz_dmac_probe=E2=80=99 at drivers/dma/sh/rz-dma=
+c.c:910:9:
+drivers/dma/sh/rz-dmac.c:770:31: note: directive argument in the range [0=
+, 4294967294]
+  770 |         sprintf(pdev_irqname, "ch%u", index);
+      |                               ^~~~~~
+drivers/dma/sh/rz-dmac.c:770:9: note: =E2=80=98sprintf=E2=80=99 output be=
+tween 4 and 13 bytes into a destination of size 5
+  770 |         sprintf(pdev_irqname, "ch%u", index);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Thank you,
-Claudiu
+While at it use scnprintf() instead of sprintf() to make the code
+more robust.
 
-Biju Das (1):
-  dmaengine: sh: rz-dmac: Add device_tx_status() callback
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20240110222717.193719-1-prabhakar.mahadev=
+-lad.rj@bp.renesas.com
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
+ drivers/dma/sh/rz-dmac.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Claudiu Beznea (21):
-  dmaengine: sh: rz-dmac: Protect the driver specific lists
-  dmaengine: sh: rz-dmac: Move CHCTRL updates under spinlock
-  dmaengine: sh: rz-dmac: Drop read of CHCTRL register
-  dmaengine: sh: rz-dmac: Drop goto instruction and label
-  dmaengine: sh: rz-dmac: Drop unnecessary local_irq_save() call
-  dmaengine: sh: rz-dmac: Add device_{pause,resume}() callbacks
-  dmaengine: sh: rz-dmac: Move interrupt request after everything is set
-    up
-  dmaengine: sh: rz-dmac: Fix incorrect NULL check for
-    list_first_entry()
-  dmaengine: sh: rz-dmac: Use list_first_entry_or_null()
-  dmaengine: sh: rz-dmac: Use rz_dmac_disable_hw()
-  dmaengine: sh: rz-dmac: Add helper to compute the lmdesc address
-  dmaengine: sh: rz-dmac: Save the start LM descriptor
-  dmaengine: sh: rz-dmac: Add helper to check if the channel is enabled
-  dmaengine: sh: rz-dmac: Add helper to check if the channel is paused
-  dmaengine: sh: rz-dmac: Use virt-dma APIs for channel descriptor
-    processing
-  dmaengine: sh: rz-dmac: Refactor pause/resume code
-  dmaengine: sh: rz-dmac: Drop the update of channel->chctrl with
-    CHCTRL_SETEN
-  dmaengine: sh: rz-dmac: Add cyclic DMA support
-  dmaengine: sh: rz-dmac: Adjust rz_dmac_chan_get_residue() to return
-    error codes
-  dmaengine: sh: rz-dmac: Add runtime PM support
-  dmaengine: sh: rz-dmac: Add suspend to RAM support
-
-Geert Uytterhoeven (1):
-  dmaengine: sh: rz-dmac: Make channel irq local
-
-John Madieu (1):
-  dmaengine: sh: rz-dmac: Use rz_lmdesc_setup() to invalidate
-    descriptors
-
-Lad Prabhakar (1):
-  dmaengine: sh: rz-dmac: Avoid format-overflow warning
-
-Tommaso Merciai (1):
-  dmaengine: sh: rz-dmac: Fix off-by-one in residue lmdesc lookup
-
-Wolfram Sang (1):
-  dmaengine: sh: rz-dmac: handle configs where one address is zero
-
- drivers/dma/sh/rz-dmac.c | 927 +++++++++++++++++++++++++++++++--------
- 1 file changed, 747 insertions(+), 180 deletions(-)
-
+diff --git a/drivers/dma/sh/rz-dmac.c b/drivers/dma/sh/rz-dmac.c
+index 71c37d5e3227..18b12cba3a34 100644
+--- a/drivers/dma/sh/rz-dmac.c
++++ b/drivers/dma/sh/rz-dmac.c
+@@ -760,11 +760,11 @@ static struct dma_chan *rz_dmac_of_xlate(struct of_=
+phandle_args *dma_spec,
+=20
+ static int rz_dmac_chan_probe(struct rz_dmac *dmac,
+ 			      struct rz_dmac_chan *channel,
+-			      unsigned int index)
++			      u8 index)
+ {
+ 	struct platform_device *pdev =3D to_platform_device(dmac->dev);
+ 	struct rz_lmdesc *lmdesc;
+-	char pdev_irqname[5];
++	char pdev_irqname[6];
+ 	char *irqname;
+ 	int ret;
+=20
+@@ -772,7 +772,7 @@ static int rz_dmac_chan_probe(struct rz_dmac *dmac,
+ 	channel->mid_rid =3D -EINVAL;
+=20
+ 	/* Request the channel interrupt. */
+-	sprintf(pdev_irqname, "ch%u", index);
++	scnprintf(pdev_irqname, sizeof(pdev_irqname), "ch%u", index);
+ 	channel->irq =3D platform_get_irq_byname(pdev, pdev_irqname);
+ 	if (channel->irq < 0)
+ 		return channel->irq;
+@@ -850,9 +850,9 @@ static int rz_dmac_probe(struct platform_device *pdev=
+)
+ 	struct dma_device *engine;
+ 	struct rz_dmac *dmac;
+ 	int channel_num;
+-	unsigned int i;
+ 	int ret;
+ 	int irq;
++	u8 i;
+=20
+ 	dmac =3D devm_kzalloc(&pdev->dev, sizeof(*dmac), GFP_KERNEL);
+ 	if (!dmac)
 --=20
 2.43.0
 
