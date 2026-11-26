@@ -1,36 +1,36 @@
-Received: from OS0P286CU010.outbound.protection.outlook.com (OS0P286CU010.outbound.protection.outlook.com [40.107.74.41])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.336.1795708156536117027
+Received: from OS0P286CU010.outbound.protection.outlook.com (OS0P286CU010.outbound.protection.outlook.com [40.107.74.40])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.309.1795708162899912729
  for <cip-dev@lists.cip-project.org>;
- Thu, 26 Nov 2026 07:49:16 -0800
+ Thu, 26 Nov 2026 07:49:23 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=sAikOMiN;
- spf=pass (domain: bp.renesas.com, ip: 40.107.74.41, mailfrom: tommaso.merciai.xr@bp.renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=UBDC5C23;
+ spf=pass (domain: bp.renesas.com, ip: 40.107.74.40, mailfrom: tommaso.merciai.xr@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=N4fg7H9/FwAkBQv65FkUkFXPZkaB1cjA41k+5Nl9h0hfdJ/sctmOoT/dKmd4YpGe0XhkYW5JY50ntMrB4THmULxOd6nAkrZnc8Xs2QSZdGiYdIu4Kyu1M1qcnUvY80QcjoaHCAR88tAk912b30gpr80N7kTfQDqYLh7Va5jzqgTfdUfKo0M1Fb7LOUrtAc2fMtwPO1IdxlzxtoF2ZBjg9UILqQOme/cwTFfz5s4IhYqvutwK95YHeX+oqfpULrYUo0XP64rjMLzA0tv74+qQvzzr6PkEcORA0Qjo8+wLmuO8FlSzCp7I1b7XFB+D1HCs6zIzpl19lcB4YHYVgIu27A==
+ b=YL3jbWMegGCFMvbC4+U/2hiOfivoaHXfWeCKE9mY6P1v2idrtg2QN2/c2DyTNYxE8rDKWjZyT7UsO5ZkyZ5sj8xhkToEyQW0esFySHAcpxF9cmpbhqg+DDCf8mT0ePI3fYj14bE+W+oryLJGeTARGTTyqUUnKMUBOoY6fm/7zWlYwmkIi+H5YzRhtqZ1FSHuvBbvdAi3ZPW1y8H+uHeC05FDMp0DZDP10g3EfRTQRGv7Y43LIwjZ5lpK8liKq1x9zyDSds/dDHhJzo0nLVjwuIFheqi3zKKEVx8xWb0N8MKd9hVRFBjYnBG8SYzT9Yf2ClaaXDsD84mtpLig0GMT1g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wXm6ySYxsJhrayudZ0Z3zP8KwLflfib89RbccEIvxfk=;
- b=AfundKuqqDwZ7T2QV3IhfyP8Ovm4Xt4qfdxKzJuKPYXgLuJZW1pH12vfEEpvAzcaQMA3MkhwmON8rWDpexbQ0IUQ7HHtwCFLB79ijHuX8gf81JHjiCbxVUqoYwNscTCxfayOdx8CyW/F42zU5HVzoP+rqbuhFfLXTCxVy39cRMDnuIHq6VQS/CMAnBNWkXD9haVUyOUFkEHzuWiscV1FgWzAD8CZg8js1y00MrlmQc8xlGZkmarg/u3E3c4yR/9B06dxoXJDfvpHetACdmU5AOxz6lP8Dbq5L+DTR0OWlIQN937xbywb/D691I7/gG3XC2A9UvLhPszHvJTV6XC79A==
+ bh=uUFrNh6a/6B/QGCuJCqm42c/tpnrel+wJOKsXVBHskA=;
+ b=DRFZHfMwxUXdmp51bZkhYzxanLNVX39oXHSRK5IocoppzmYtNTGCDgDMMB/3rpOx3JgBQnhFVXb3bwusvxQow6OT9piD8t6nn8h8vu82iizKASBpYqGCI6b+zOViGMzXAap990lkyOnzi0iRbM74kf1wv1b3IOZdl5JZhEEULZ/O3EufF+CUQcA1SosSh0oM0RqUpRuYQqsZqUsCi8t3k9aXERcc4QFbi8pD9gpLtLkKZtw1styi767fNqVhFejTeaMBfPZidE0y9KO9SZo1xWYi7l4IHUuNADLRjnwldnSyliiYjol2bHqvi8nqHOBsRAQbn/LTWzF0sCAxDk4wbA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wXm6ySYxsJhrayudZ0Z3zP8KwLflfib89RbccEIvxfk=;
- b=sAikOMiNKR8s+1ihDGVFyfLtSjT+qDRTUn94NUXgi6stldPkpAkScxBfwFDjo0jes85dyjzPMnoey5ftfzboflA5pXwILJxhKgFumNqkLkYJi2w6HEAQFAyD/EE58MapzI4tJSeS2jRJVRMEPtdF1FTz8bG/O1evl2E6y5PweDk=
+ bh=uUFrNh6a/6B/QGCuJCqm42c/tpnrel+wJOKsXVBHskA=;
+ b=UBDC5C23aW9G1qh3TfZVAFgtDK8m4fzzkQqVtOtrOfX8/m+6efH3xIGr8E89DdufexO6s+uWN/Qzv16SzW1ESD5tG6Zql7AAw0vfEeOf/v8tPSU32Y5ruwZqFc5gphosl/o+FCVKpQmOwam8EUYEfhwceOw+yhBLtA5jjbHOR0E=
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=bp.renesas.com;
 Received: from OSOPR01MB295138.jpnprd01.prod.outlook.com
  (2603:1096:604:521::15) by TY4PR01MB13015.jpnprd01.prod.outlook.com
  (2603:1096:405:1dd::12) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.662.7; Thu, 26 Nov
- 2026 15:49:14 +0000
+ 2026 15:49:17 +0000
 Received: from OSOPR01MB295138.jpnprd01.prod.outlook.com
  ([fe80::4f0e:fd0e:ff2b:b180]) by OSOPR01MB295138.jpnprd01.prod.outlook.com
  ([fe80::4f0e:fd0e:ff2b:b180%7]) with mapi id 15.21.0662.004; Thu, 26 Nov 2026
- 15:49:14 +0000
+ 15:49:16 +0000
 From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -38,9 +38,9 @@ To: cip-dev@lists.cip-project.org,
 CC: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	tomm.merciai@gmail.com
-Subject: [PATCH 6.1.y-cip 23/27] dmaengine: sh: rz-dmac: Adjust rz_dmac_chan_get_residue() to return error codes
-Date: Thu, 26 Nov 2026 16:47:43 +0100
-Message-ID: <20261126154747.3832917-24-tommaso.merciai.xr@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 24/27] dmaengine: sh: rz-dmac: Add runtime PM support
+Date: Thu, 26 Nov 2026 16:47:44 +0100
+Message-ID: <20261126154747.3832917-25-tommaso.merciai.xr@bp.renesas.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20261126154747.3832917-1-tommaso.merciai.xr@bp.renesas.com>
 References: <20261126154747.3832917-1-tommaso.merciai.xr@bp.renesas.com>
@@ -52,152 +52,321 @@ Return-Path: tommaso.merciai.xr@bp.renesas.com
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: OSOPR01MB295138:EE_|TY4PR01MB13015:EE_
-X-MS-Office365-Filtering-Correlation-Id: f404fc63-b378-4f70-a070-08df4bd4d209
+X-MS-Office365-Filtering-Correlation-Id: b6d9e91f-cf61-4404-00bf-08df4bd4d3ac
 X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|52116014|23010399003|1800799024|38350700014|10067099003|11063799006|56012099006|261022105027099003|261021121427099003|261022075727099003|261021123027099003|261102123227099003|261009223027099003|261026140227099003|261028144727099003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info: QRi5xV0eNDp3sU/alPn+nrcEXcDC7A/BO5jG/36Iz7LZtQkrWvja7zaZl6MfFFLmdbVWRy5Jma3dYYRgcB//Bsn96Et2b5kxzzLpWr5/4VQWtxsX/h73veC0Y5CjY5P2D9Gv5yWuYITFFxwGXwrdvtOi+hZATpHoUEDq7omf0UxdLR1gJ0s+d99bMf+lDp9mEflqL8CN9+61/nGHId+8hZ/rTX/PyOdg8zELXkdaaKF97udsc9UqIHaVIJvKjyBEbshrqDox0g5liV4hrNxEc3+R313e2VCs0EQZiJaPZKtdDKNeZeK1vBZqXVwcA6YRKLsl54T8vzMCYBSZlnq6kneDSAm+G+EUe+pGce+NQtF5+L3Q/vy+jMfQeSsid4ZSQwfxfxjjByVYu+RUF9d99aPzJklFkX1E8SIGXxuqgdBFHhTRO2U51s5LckH+WS6ytkdade2kjIUaXq1C0Ltu2qkK3mGNRSbvxYRwp43taum+qH0qZqiLhnn4dKM/5fYEJpLAaUH+eAd6QlAdaW85Z7pJrF5f0kxTnHtEXR8Z/tmVx2aPX6rK3pdJF9g/yv1qVtqRUHoTR8slN2pbv69EYpV+mNt7CAt+mPXX30Wdg5kcPFCVBZpzvYBgIEXaND1UzKSQdYh+sUu4uPI+B4KJc7/7B143oUV/uJUbZG/aluM=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSOPR01MB295138.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(52116014)(23010399003)(1800799024)(38350700014)(10067099003)(11063799006)(56012099006)(261022105027099003)(261021121427099003)(261022075727099003)(261021123027099003)(261102123227099003)(261009223027099003)(261026140227099003)(261028144727099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|52116014|23010399003|1800799024|38350700014|10067099003|260925022911599003|11063799006|260925021911599003|260925021311599003|56012099006|261022115727099003|261022105027099003|261009221227099003|261021121427099003|261022075727099003|261021123027099003|261022113327099003|261102123227099003|261009223027099003|261026130827099003|261026121527099003|261026140227099003|261028144727099003|261021135927099003|261021130227099003|22082099003|18002099003|6133799003;
+X-Microsoft-Antispam-Message-Info: Bl/9JVu7EuQjbkLmzFTkBndNvhu4eriQs/udotmV+7EFGsGZYKN/DnF+T+GCRUzV3uMQ/WCtL5cVjBw/no9QxcOa2HzZ0SBEomhYW5yV9NUxJKIy7TMB7VQZsSia3neyUTpc4Eu2HR6HOZtysAwWFeQel5Mt0d6BReeFRdGG1auuCAuVMcVFkJvMgIaDeCrnQlh99H3QURb1zqBJzog2ZXb0fWYpng5ZKRpbP5KfKJ2sKFKn6msdUgwzJQAcPb+RlPvSQE5jZelfni2Kgv/6TrnIufVCAbI3wuq200LQxRjthLSpyl+UdKNfUBYkHuFAJmbfnR/PPGsBEguRMdG07TIAXFQBzMMKYqAE0oxfGsuRPg5EX0wWKI/XAvW4IYOMhB+OlBzS1FW4ePplow2+BWw1zHiyXFFZOgrZIHx8hL2pEU+SKNo7NokedpCeh90k7laZPFR16ajygY0pUw9LNiN+1CvowCl0Wisskcpw/q4xzp9eEfWUTw314eFkiUkxqA4QLpNkBHO86IKheq8Sc33fYTcw0uPkiJCUVdQRA2y1uwSI0SlISlktRmbBuHsAJrghTIvl59iOSQoSSQ6B/Xe15cUvyyAsQ4cQorTo0Y5JAPotCdB9QA+be3dhqunx7FWbfw7DH00+HpJ0gQlhJ54bqkABwSnxVa7uqlAw5pg=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSOPR01MB295138.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(52116014)(23010399003)(1800799024)(38350700014)(10067099003)(260925022911599003)(11063799006)(260925021911599003)(260925021311599003)(56012099006)(261022115727099003)(261022105027099003)(261009221227099003)(261021121427099003)(261022075727099003)(261021123027099003)(261022113327099003)(261102123227099003)(261009223027099003)(261026130827099003)(261026121527099003)(261026140227099003)(261028144727099003)(261021135927099003)(261021130227099003)(22082099003)(18002099003)(6133799003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ZcdJ/rgDfXw26UblJ8E2noB7NOlgdcQeyYB3oWmzJdDesDtn/eAhjC92UBJi?=
- =?us-ascii?Q?NTQyqegj6EcPeBW2x3vW33RXwpJ5p+F+Ubm9jsHHkLIVMemh9w7xKJchjxFr?=
- =?us-ascii?Q?ygz1BeCm+7N57y9dik0eACb/W77J8uAP6x5uhETxo4E/9Z6DvTJm5AtHNlrO?=
- =?us-ascii?Q?Um07sAH5hNFkMeizwdldLMXu3Isv4bY4eQ53nDRPauSspHT0TyW68jKNtBsW?=
- =?us-ascii?Q?Gb0C+0nr514wyO5cFJZ/jp41bMr0fcAw7JN/QgZhA83FK3L79grx3L4+PQC2?=
- =?us-ascii?Q?oN2JqErMnom/RGpzWBVrIrRfPxg4x5l38PNbkNGioh7Du+EUeuSRLEdzRg+l?=
- =?us-ascii?Q?QrCu9xvw4Uer/9GCaxNb1v36Vux9SXtMFl+LXE6VoAitH0mHZa4e1Uh6vguf?=
- =?us-ascii?Q?tglF+S4ubW1AkBJKVWVUiAEY6isSVGXedMvJl6cJwDivDY8hOtXp7c++nekL?=
- =?us-ascii?Q?Na0aDYLtZWZMCi7SBGjN7+c20+2wqXUVErpxNiQZ9ZbicjgrIIS0pE+ENZFZ?=
- =?us-ascii?Q?qNEAp98jzge+yQJEp18PYQj7Kr3dGw+SfE7ctxvBWuCJHOPqXA8Xnf5xKG/F?=
- =?us-ascii?Q?UhjDfxoBjlxjhue90/eKI8EtmIcJuiiJFnTc976TfQHR0Wdoy0OFKbYFBGcw?=
- =?us-ascii?Q?kSXV1Bb1Ugx7fZf8YiZWUMZvCE2Ah1ODH49uI4Rosa+FYNyAH0fGw8p0kInM?=
- =?us-ascii?Q?mYtAtXbeb6dQUf0AtcM5PKnh8JzgjUK+/W+yINnA6Lm4ENU41voGgP+b+W2M?=
- =?us-ascii?Q?MXNNE37aMFkwo0SerkLxLl6303Pw2N3IcPJCa0862CojUAK6yYK9kfe8edb2?=
- =?us-ascii?Q?6JBazp+hI6joBBW8Wp07JCDIaCVVkJ4GgYOf76C0PiIxZ+Q587ompbNw8KrP?=
- =?us-ascii?Q?MNs4OtmTFVoMbKEA49NTxJFKV1Ni8pF2AMcMpi9fkfLZyyI7DCFeoEs7YLnu?=
- =?us-ascii?Q?aqrPDdLo5hDuWuVjc0ZUPPHmzr5uW46aku/MJdHYj4thkuejJ601CPpgMbt+?=
- =?us-ascii?Q?yQgpO3D/z3pq1qRGEXSkFV0Jv1dDE9TUytWUY0FhlzIAYPruwPyNzlaQpZpL?=
- =?us-ascii?Q?xdpeETCO+JCo7dAgjSPMsdjqhFvdYCZR7gTMuGqIjAThf5k5R9muu8oYRtOY?=
- =?us-ascii?Q?T3FUIrcQ5Xk0vjXWWUbF76BVa8f5xnCjvKVmlsg+4klw7AjRaRJ7ou9bcPLV?=
- =?us-ascii?Q?6UzFG2UnBlqUfFVKO3BOdSvDgtlVLMBF2Qb0Oe9BCpvRkxILloAL3RIJax9+?=
- =?us-ascii?Q?EeS3Tn1wcVAItvusUY4zSRXbYyWJ5SSnEvIaRYJbFOvOgIidhAkYf9DTH+f/?=
- =?us-ascii?Q?WceYwC2nTTdEjEUSl3VTByifTTtt6UEIOULYpGiamWWzIfvnpBDYFYQ3V60M?=
- =?us-ascii?Q?+slwwBpCKpb36IAS1bNYLc/lqBbqijz963Wn42bj3JBlGb/gXS5lH+CAo8e6?=
- =?us-ascii?Q?PeMefB/TflqEpdQ2L4ZOF2ghilnzodoacXjMadqc80sIIjXUnH2vFbJZ9Qms?=
- =?us-ascii?Q?GS1LOJ4jJ5/8yG44sb7ltAd/hah1tlhuZhUNlqXMWOS+ZuJp8dEGDI2ZiBQF?=
- =?us-ascii?Q?7M8YR78Zxs3HiP/1dqSz0+q+qW7LhZ8weYjhXieWZMm5vnEIQIIj9W6BXXYs?=
- =?us-ascii?Q?zIQ66/G1955Wq0S6eTJh1TkVeZN6ylSpv9JsEAZiXtcvcd0Quf31xOl+iY3i?=
- =?us-ascii?Q?JeMh6qm53FF5dw0zW038/QPNAET37UGvDDfLL8kwqfUlIQMXv1msRDiRhoC5?=
- =?us-ascii?Q?QQpctWdarJvbRaKZxHR17Oo5R+NLozlo5pO/eqImQUtV4WE9VLn6?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?tUvmHkYzqXh+NszrvjT/RZiHBblfbT7vGxgXMKoM15dWF/kRP5r7Gbm60IYr?=
+ =?us-ascii?Q?h2ffc+VQ6Z4Xcg/uvIWXAtAY1uzPtFzwFelepnKKgZdSAMuLuHRIlLT2Go+H?=
+ =?us-ascii?Q?M4Oi2L56X1D8os/J2UF4rDUgE/SuNfYi13VkdKzuT3OAqh3OmZDNfpn3oxxP?=
+ =?us-ascii?Q?sGIAdCALRHHsoNBJ+x2GJhApgHDiei2cK2TOOhT4iKLnwbXpqe/29Rw1ipPE?=
+ =?us-ascii?Q?5WYCA8ZxkTDqtYbpkmJoHELavj9omgq6trZp9afX0UlzeZkP1yGseWE3Z8PI?=
+ =?us-ascii?Q?CYgyoPPVupEyEqFoNj7VdhcY1n1+HRre3BOjsL6F0cgA4KCUH+BCddf8c5qi?=
+ =?us-ascii?Q?TZwvfrkCfrJKxDqggNaovDf2BVYPz5bGAAivCYs1DttzYRFomhgqxCNg3v5K?=
+ =?us-ascii?Q?dv4pj6Swe9S+H9BTN3fi8ljZWE/7suWZohTXVjsZ7nULHdU7+XDx7RNaI3Zo?=
+ =?us-ascii?Q?zohRbQ7/IbMr4wFOryb3gOiFwmatVGfoAAI8ZKdLa+voOW/+fyIitzKZtFmQ?=
+ =?us-ascii?Q?mTL6RuJHTnqNj/V8qjMDAA3MzsIqoLWAFYVHxTq+58pdzCnF51ub57P4Btb5?=
+ =?us-ascii?Q?TXln0X89gYznwWY8hhM70aoAqR3Xd4VcLAw8k9NGsHIfQkAre+vAWySQDCTp?=
+ =?us-ascii?Q?blPD4ao3B5hR1I3HRRr0t+8D5LLhRJbcIYuHFe5AuMVNUJkTDPqIty57L0bT?=
+ =?us-ascii?Q?r1z8HgnLEy1sEIZLzMc7aveKeoDrKjq2mgX5HUct9wRFz2AvkO3fOtK+eW3S?=
+ =?us-ascii?Q?1QtvHmZ8R1IGeYok3QxzQw5Nvnu17M+QKQB7lBSCY+XzS5OYZPVSA92ZaNRz?=
+ =?us-ascii?Q?yfJ39dfzgmHTcB3OggTyMNRWjiYU9BXtUEkpLVY/sRYxmEdl23qujr9KQ4EB?=
+ =?us-ascii?Q?KWa7kuypLYOgoL4E2dE2fH/y3APxvXE+eb2nGKrCACuoNNpYlv9jMtqqc4pM?=
+ =?us-ascii?Q?9nmtxnveAJGqbpud/CVaL4pCSmYgGIRsw9K0loxqleZTFDbcAiN9p6d7KTu3?=
+ =?us-ascii?Q?GqwnoZ/BykWtxQur8i52wSBK6oOv50HU9+ubOkU4PCB6Me1ianHJsk9Sm/Bq?=
+ =?us-ascii?Q?BLvwN6/9IKf7CDY1aogo+csrXSdJMK21XAThOKS7OWr3Qbw6U4LBZNh53FSN?=
+ =?us-ascii?Q?rXY7q+yPHl2BEZNelyrR6PxQTBXmmPJ/rKF9eDjvtGdB912hZgpK2cYK4SiG?=
+ =?us-ascii?Q?r5zGvdCXg3x86KLLmlkWwElKFd2CehRRYyIH1sFDpVm0I8qLHk65kjnL8izu?=
+ =?us-ascii?Q?bnM57eH32kMlfpO5JuW5azTpF9NN648KJyYoY8sl9b4Nw+0ZFbxKrEOkbNT2?=
+ =?us-ascii?Q?eRL4uoc+8XYth+VbNDcnbOHwg66jR4Lm7/KCFioDAB9gtxk73cw4V2oYnr8f?=
+ =?us-ascii?Q?hkcEF+wUdMISLnaa3zAI+CR47VpsehjVSQyygq7QcaC7rDVNthPbJ2SM1o1P?=
+ =?us-ascii?Q?fM7feoCDkuPKtQbGVzXk1lpZbpGAtolsZQgVznjFxdN0QgepFQPycvQNpRg0?=
+ =?us-ascii?Q?zwp8Egzj0aQCSdfM9D5JJcoPMq8XdsAfVfIrDDSIqaavFdg7I+zWotfW/wnp?=
+ =?us-ascii?Q?A370PzL5MxpAxdfx5cPGOkUQtEbm/xMr6ti3+0ussUpgz7AjrLL3w4GJ/amB?=
+ =?us-ascii?Q?ZHpgE7a9w6OgwerUnqunT/DwFexAUs1ShXdPGdGOyySLwv4uRSbtREU6FBl9?=
+ =?us-ascii?Q?UmrX+zSLlqNJES6A1ioVLOjSvztCOYrNocP4nuaK2XXfDtgkTlc6iDuoMyYl?=
+ =?us-ascii?Q?FWP6vTIb6tychgCbsoa2SukIlrw0/8eiIJ4/Xf6cxtr4qNWs64ja?=
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f404fc63-b378-4f70-a070-08df4bd4d209
+X-MS-Exchange-CrossTenant-Network-Message-Id: b6d9e91f-cf61-4404-00bf-08df4bd4d3ac
 X-MS-Exchange-CrossTenant-AuthSource: OSOPR01MB295138.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2026 15:49:14.1643
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2026 15:49:16.8948
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MetWTId8ChaDnTn606BgPhnjRz4Xu/ASQDN/+EUGU41qcmuNH3qLPahNJc6ER/wNMQ/sRgT70ndubrnzdXWJ7hO/x+Ki+YoVfyzSKEwZQvf7QvTa63ObaFafGhEZPel5
+X-MS-Exchange-CrossTenant-UserPrincipalName: TsZvYo97dBRp++wk2e6f86xQP/VK75x3dP7EzD/pVUGHJeiUPsvZwbfi6113wLYRfmu2rwFyL3WpL4k3nNW+eGaNyfa40AG37AFD/lTZIWOpEQPeZdje1RLpxIImhHoF
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB13015
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Thu, 26 Nov 2026 15:49:22 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/25173
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Thu, 26 Nov 2026 15:49:32 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/25174
 Content-Type: text/plain; charset="utf-8"
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 16ba40151b1e6a52b28296a2173457bc6c31f022 upstream.
+commit 7c27a4d54d48d0774518390e4ce6cf3309aac141 upstream.
 
-Adjust rz_dmac_chan_get_residue() to return error codes on failure and
-provide the residue to callers through the residue parameter. This
-prepares the code for the addition of runtime PM support.
+Protect the driver exposed APIs with runtime PM suspend/resume calls
+before accessing HW registers. As the current driver leaves runtime PM
+enabled in probe, the purpose of the changes in this patch is to avoid
+accessing HW registers after a failed system suspend leaves the runtime
+PM state of the device improperly reinitialized.
 
+In that case, the driver remains bound to the device, the APIs are still
+exposed, and any access to HW registers without runtime resuming the
+device may lead to synchronous aborts.
+
+To avoid leaking resources in case of runtime PM failures, save the error
+code returned by PM_RUNTIME_ACQUIRE_ERR() in rz_dmac_terminate_all() and
+return it only at the end of the function to allow the cleanup code to
+run. A similar approach is used in rz_dmac_free_chan_resources().
+
+Because some exposed APIs (e.g. ->device_terminate_all()) may be called
+from atomic context according to the documentation, mark the DMA device as
+pm_runtime_irq_safe().
+
+This patch prepares the driver for suspend-to-RAM support.
+
+Tested-by: John Madieu <john.madieu.xa@bp.renesas.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Tested-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Link: https://patch.msgid.link/20260526084710.3491480-14-claudiu.beznea@ker=
+Link: https://patch.msgid.link/20260526084710.3491480-15-claudiu.beznea@ker=
 nel.org
 Signed-off-by: Vinod Koul <vkoul@kernel.org>
+[tm: Replaced PM_RUNTIME_ACQUIRE_IF_ENABLED()/PM_RUNTIME_ACQUIRE_ERR()
+ with the equivalent open-coded pm_runtime_resume_and_get()/
+ pm_runtime_put(), as the DEFINE_GUARD_COND()/ACQUIRE()/ACQUIRE_ERR()
+ infrastructure they rely on is not present in 6.1.y.
+ Converted the guard(spinlock_irqsave) in rz_dmac_device_pause()/
+ rz_dmac_device_resume() to explicit scoped_guard() section to preserve
+ the same release order (unlock before pm_runtime_put())]
 Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 ---
- drivers/dma/sh/rz-dmac.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ drivers/dma/sh/rz-dmac.c | 86 +++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 77 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/dma/sh/rz-dmac.c b/drivers/dma/sh/rz-dmac.c
-index d332907901d1..7b79795a54d9 100644
+index 7b79795a54d9..90a8625f84b3 100644
 --- a/drivers/dma/sh/rz-dmac.c
 +++ b/drivers/dma/sh/rz-dmac.c
-@@ -859,8 +859,8 @@ static u32 rz_dmac_calculate_residue_bytes_in_vd(struct=
- rz_dmac_chan *channel,
- 	return residue;
- }
-=20
--static u32 rz_dmac_chan_get_residue(struct rz_dmac_chan *channel,
--				    dma_cookie_t cookie)
-+static int rz_dmac_chan_get_residue(struct device *dev, struct rz_dmac_cha=
-n *channel,
-+				    dma_cookie_t cookie, u32 *residue)
- {
- 	struct rz_dmac_desc *desc =3D NULL;
- 	struct virt_dma_desc *vd;
-@@ -870,7 +870,8 @@ static u32 rz_dmac_chan_get_residue(struct rz_dmac_chan=
- *channel,
- 	if (vd) {
- 		/* Descriptor has been issued but not yet processed. */
- 		desc =3D to_rz_dmac_desc(vd);
--		return desc->len;
-+		*residue =3D desc->len;
-+		return 0;
- 	} else if (channel->desc && channel->desc->vd.tx.cookie =3D=3D cookie) {
- 		/* Descriptor is currently processed. */
- 		desc =3D channel->desc;
-@@ -878,6 +879,7 @@ static u32 rz_dmac_chan_get_residue(struct rz_dmac_chan=
- *channel,
-=20
- 	if (!desc) {
- 		/* Descriptor was not found. May be already completed by now. */
-+		*residue =3D 0;
- 		return 0;
- 	}
-=20
-@@ -900,7 +902,9 @@ static u32 rz_dmac_chan_get_residue(struct rz_dmac_chan=
- *channel,
- 	 * Calculate number of bytes transferred in processing virtual descriptor=
-.
- 	 * One virtual descriptor can have many lmdesc.
- 	 */
--	return crtb + rz_dmac_calculate_residue_bytes_in_vd(channel, desc, crla);
-+	*residue =3D crtb + rz_dmac_calculate_residue_bytes_in_vd(channel, desc, =
-crla);
+@@ -548,12 +548,21 @@ static void rz_dmac_free_chan_resources(struct dma_ch=
+an *chan)
+ 	struct rz_dmac *dmac =3D to_rz_dmac(chan->device);
+ 	struct rz_dmac_desc *desc, *_desc;
+ 	unsigned long flags;
++	int ret;
 +
-+	return 0;
++	ret =3D pm_runtime_resume_and_get(dmac->dev);
++	if (ret) {
++		dev_err(dmac->dev, "RPM resume failed for channel %s, ret=3D%d\n!",
++			dma_chan_name(chan), ret);
++	}
+=20
+ 	spin_lock_irqsave(&channel->vc.lock, flags);
+=20
+ 	rz_lmdesc_setup(channel, channel->lmdesc.base);
+=20
+-	rz_dmac_disable_hw(channel);
++	/*  Skip touching HW if RPM resume failed. Let the cleanup do its jobs. *=
+/
++	if (!ret)
++		rz_dmac_disable_hw(channel);
+=20
+ 	if (channel->mid_rid >=3D 0) {
+ 		clear_bit(channel->mid_rid, dmac->modules);
+@@ -577,6 +586,9 @@ static void rz_dmac_free_chan_resources(struct dma_chan=
+ *chan)
+ 	INIT_LIST_HEAD(&channel->ld_free);
+=20
+ 	spin_unlock_irqrestore(&channel->vc.lock, flags);
++
++	if (!ret)
++		pm_runtime_put(dmac->dev);
  }
 =20
- static enum dma_status rz_dmac_tx_status(struct dma_chan *chan,
-@@ -908,15 +912,20 @@ static enum dma_status rz_dmac_tx_status(struct dma_c=
-han *chan,
- 					 struct dma_tx_state *txstate)
+ static struct dma_async_tx_descriptor *
+@@ -696,11 +708,21 @@ rz_dmac_prep_dma_cyclic(struct dma_chan *chan, dma_ad=
+dr_t buf_addr,
+ static int rz_dmac_terminate_all(struct dma_chan *chan)
  {
  	struct rz_dmac_chan *channel =3D to_rz_dmac_chan(chan);
 +	struct rz_dmac *dmac =3D to_rz_dmac(chan->device);
- 	enum dma_status status;
- 	u32 residue;
-=20
- 	scoped_guard(spinlock_irqsave, &channel->vc.lock) {
-+		int ret;
+ 	unsigned long flags;
+ 	LIST_HEAD(head);
++	int ret;
 +
- 		status =3D dma_cookie_status(chan, cookie, txstate);
- 		if (status =3D=3D DMA_COMPLETE || !txstate)
- 			return status;
++	ret =3D pm_runtime_resume_and_get(dmac->dev);
++	if (ret) {
++		dev_err(dmac->dev, "RPM resume failed for channel %s, ret=3D%d\n!",
++			dma_chan_name(chan), ret);
++	}
 =20
--		residue =3D rz_dmac_chan_get_residue(channel, cookie);
-+		ret =3D rz_dmac_chan_get_residue(dmac->dev, channel, cookie, &residue);
-+		if (ret)
-+			return DMA_ERROR;
+ 	spin_lock_irqsave(&channel->vc.lock, flags);
+-	rz_dmac_disable_hw(channel);
++	/* Don't return if RPM failed. Let the cleanup do its jobs. */
++	if (!ret)
++		rz_dmac_disable_hw(channel);
+ 	rz_lmdesc_setup(channel, channel->lmdesc.base);
 =20
- 		if (status =3D=3D DMA_IN_PROGRESS && rz_dmac_chan_is_paused(channel))
- 			status =3D DMA_PAUSED;
+ 	if (channel->desc) {
+@@ -715,13 +737,22 @@ static int rz_dmac_terminate_all(struct dma_chan *cha=
+n)
+ 	spin_unlock_irqrestore(&channel->vc.lock, flags);
+ 	vchan_dma_desc_free_list(&channel->vc, &head);
+=20
+-	return 0;
++	if (!ret)
++		pm_runtime_put(dmac->dev);
++
++	return ret;
+ }
+=20
+ static void rz_dmac_issue_pending(struct dma_chan *chan)
+ {
+ 	struct rz_dmac_chan *channel =3D to_rz_dmac_chan(chan);
++	struct rz_dmac *dmac =3D to_rz_dmac(chan->device);
+ 	unsigned long flags;
++	int ret;
++
++	ret =3D pm_runtime_resume_and_get(dmac->dev);
++	if (ret)
++		return;
+=20
+ 	spin_lock_irqsave(&channel->vc.lock, flags);
+=20
+@@ -733,6 +764,8 @@ static void rz_dmac_issue_pending(struct dma_chan *chan=
+)
+ 		rz_dmac_xfer_desc(channel);
+=20
+ 	spin_unlock_irqrestore(&channel->vc.lock, flags);
++
++	pm_runtime_put(dmac->dev);
+ }
+=20
+ static u8 rz_dmac_ds_to_val_mapping(enum dma_slave_buswidth ds)
+@@ -806,12 +839,18 @@ static void rz_dmac_device_synchronize(struct dma_cha=
+n *chan)
+=20
+ 	vchan_synchronize(&channel->vc);
+=20
++	ret =3D pm_runtime_resume_and_get(dmac->dev);
++	if (ret)
++		return;
++
+ 	ret =3D read_poll_timeout(rz_dmac_ch_readl, chstat, !(chstat & CHSTAT_EN)=
+,
+ 				100, 100000, false, channel, CHSTAT, 1);
+ 	if (ret < 0)
+ 		dev_warn(dmac->dev, "DMA Timeout");
+=20
+ 	rz_dmac_set_dma_req_no(dmac, channel->index, dmac->info->default_dma_req_=
+no);
++
++	pm_runtime_put(dmac->dev);
+ }
+=20
+ static struct rz_lmdesc *
+@@ -865,6 +904,7 @@ static int rz_dmac_chan_get_residue(struct device *dev,=
+ struct rz_dmac_chan *cha
+ 	struct rz_dmac_desc *desc =3D NULL;
+ 	struct virt_dma_desc *vd;
+ 	u32 crla, crtb, i;
++	int ret;
+=20
+ 	vd =3D vchan_find_desc(&channel->vc, cookie);
+ 	if (vd) {
+@@ -883,6 +923,10 @@ static int rz_dmac_chan_get_residue(struct device *dev=
+, struct rz_dmac_chan *cha
+ 		return 0;
+ 	}
+=20
++	ret =3D pm_runtime_resume_and_get(dev);
++	if (ret)
++		return ret;
++
+ 	/*
+ 	 * We need to read two registers. Make sure the hardware does not move
+ 	 * to next lmdesc while reading the current lmdesc. Trying it 3 times
+@@ -904,6 +948,8 @@ static int rz_dmac_chan_get_residue(struct device *dev,=
+ struct rz_dmac_chan *cha
+ 	 */
+ 	*residue =3D crtb + rz_dmac_calculate_residue_bytes_in_vd(channel, desc, =
+crla);
+=20
++	pm_runtime_put(dev);
++
+ 	return 0;
+ }
+=20
+@@ -964,10 +1010,21 @@ static int rz_dmac_device_pause_set(struct rz_dmac_c=
+han *channel,
+ static int rz_dmac_device_pause(struct dma_chan *chan)
+ {
+ 	struct rz_dmac_chan *channel =3D to_rz_dmac_chan(chan);
++	struct rz_dmac *dmac =3D to_rz_dmac(chan->device);
++	int ret;
+=20
+-	guard(spinlock_irqsave)(&channel->vc.lock);
++	ret =3D pm_runtime_resume_and_get(dmac->dev);
++	if (ret)
++		return ret;
++
++	scoped_guard(spinlock_irqsave, &channel->vc.lock) {
++		ret =3D rz_dmac_device_pause_set(channel,
++					       BIT(RZ_DMAC_CHAN_STATUS_PAUSED));
++	}
++
++	pm_runtime_put(dmac->dev);
+=20
+-	return rz_dmac_device_pause_set(channel, BIT(RZ_DMAC_CHAN_STATUS_PAUSED))=
+;
++	return ret;
+ }
+=20
+ static int rz_dmac_device_resume_set(struct rz_dmac_chan *channel,
+@@ -993,13 +1050,23 @@ static int rz_dmac_device_resume_set(struct rz_dmac_=
+chan *channel,
+ static int rz_dmac_device_resume(struct dma_chan *chan)
+ {
+ 	struct rz_dmac_chan *channel =3D to_rz_dmac_chan(chan);
++	struct rz_dmac *dmac =3D to_rz_dmac(chan->device);
++	int ret;
+=20
+-	guard(spinlock_irqsave)(&channel->vc.lock);
++	ret =3D pm_runtime_resume_and_get(dmac->dev);
++	if (ret)
++		return ret;
+=20
+-	if (!(channel->status & BIT(RZ_DMAC_CHAN_STATUS_PAUSED)))
+-		return 0;
++	scoped_guard(spinlock_irqsave, &channel->vc.lock) {
++		if (channel->status & BIT(RZ_DMAC_CHAN_STATUS_PAUSED)) {
++			ret =3D rz_dmac_device_resume_set(channel,
++							BIT(RZ_DMAC_CHAN_STATUS_PAUSED));
++		}
++	}
++
++	pm_runtime_put(dmac->dev);
+=20
+-	return rz_dmac_device_resume_set(channel, BIT(RZ_DMAC_CHAN_STATUS_PAUSED)=
+);
++	return ret;
+ }
+=20
+ /*
+@@ -1273,6 +1340,7 @@ static int rz_dmac_probe(struct platform_device *pdev=
+)
+ 		return dev_err_probe(&pdev->dev, PTR_ERR(dmac->rstc),
+ 				     "failed to get resets\n");
+=20
++	pm_runtime_irq_safe(&pdev->dev);
+ 	pm_runtime_enable(&pdev->dev);
+ 	ret =3D pm_runtime_resume_and_get(&pdev->dev);
+ 	if (ret < 0) {
 --=20
 2.54.0
 
