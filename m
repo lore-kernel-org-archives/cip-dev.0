@@ -1,25 +1,25 @@
 Received: from DB3PR0202CU003.outbound.protection.outlook.com (DB3PR0202CU003.outbound.protection.outlook.com [52.101.84.47])
  by mx.groups.io with SMTP id smtpd.msgproc01-g2.11270.1795689018322784349
  for <cip-dev@lists.cip-project.org>;
- Thu, 26 Nov 2026 02:30:20 -0800
+ Thu, 26 Nov 2026 02:30:21 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=Gunh4jG8;
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=gS6DWc9L;
  spf=pass (domain: siemens.com, ip: 52.101.84.47, mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=neVJ8DAjRuP6YEiTpf/xYjVNZSGEKtyu/NCH/Pw2mvZAYM1XlB78JcX7NeS63WMmNszFMGt85zTSuwgtotSfy5PFMi82K92AOGYpn1dO/tqLYtaLdCHR+I6tWjGU+MorTSxflBhCmkVJEp1lpctK3UHgY+ICawSrTiDqa7R0k6O6viShC8wtL7PWlDUMw6xlawsn2fKXWPHHwFT882NIZOaUcb7eePCL0GPJsUMDcY8DDIliOme+FMTFdErrLY5PLRrUjGVJ9iUPYoDSpYsmPilUHVPrBMgSmLYSUROLJkGH2YvtnqBZFNhai3TwkcCwJoEOFTIl6e8OAq3Mrgg4JQ==
+ b=zWbw7DLvKFESCiuZCd1MXdTQSWTlsOK5wI4ip0aAebzUEFqsldTMFaJU+CzDgYpIbP3L3NoAcsso74xjtyyRdZcH0tt0qGXT4+sHlhQFHbobFO0uBTLZPVobtSKAm4ZMzCeTe/Ghflq4pQgfIr8bJf0YvsHVWVOsWhcUsuHErrgKwq3F7QRNWLGbUm0GX35Cz9jCPiJSFbP8jvfT8VpQ3VdAUaLU0bsYl+Ie4grT4Fr9TmrSVzozaqsJZRaBZJnS8Yzb8Xt4mCpXb8zZ81iTlmZXcy+jDiXxvIY3wv26f1YGhc/RH/99vcxDIEzStFxGYPxcAJwMvoaBWpu5/ObwGw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cwH6m3kklHT7CB/4iPJR8ZBs7Sz3N3DfoWmkKajMwLk=;
- b=H0FlZTW1lPmzNZbPe3obCG+2SVRftqF70jIXDciduiccT4nQ8UOx9Oa7P79vYAXKICiM7vp4qALObAzw/Tkd+XSIx6wcBu8Oaz0RfED0vKBXO4QqybpQMCiUEiSFXYJOhzsS1zOhCgAYDyf9FJcvq7AHl4SPntUdeKlUNFy0wv302S7ouMcqxAWiGpnADA3hZIuQRU2BWE9gFz8dPr+klMKLjMIOa6QN/cDiWDljb8ny5sXgtORMfjvjFN9IgIh+jlLuxS1htDUSlnLEPaVkILFOJgW24AWwK0wBBsodSDZc49NkT9PWfQj7WWhaIN614JaAuO9pRUp0UGmRY/9xrg==
+ bh=RKFQFcoQ49bcw3OEzNmpgfdxhWM8OAW1aHfdjZs6OX8=;
+ b=rfi8fP+/R6coA+cqJ0qU0cMuPIzBYB73w65/XW9xYWhPdFJzTsr6z8Zjg7IFjxAh2wQ66ozbMVWsJ1d7iozs2ziB3XC8+eo7SACymvxGixMXy4DTChBBxr27WAWw87nsHVQBU6kEazI9f2xxaD6jOgaWa0s40RhdF5Z1vUfykiEUr5JNMbbe4qQRkFuyqgn6gEJ5W1MNQOR9w7OAbmelsH4DQOyrkwdYni/Ep6aTh6TwQpdw/18pGulAuwn3fxKUOLLZU65dBMmE67SNMEI+hIrLHYKAHJ5cYbi7EnW5D66vDca75FYCPUnDoQtG+RZP0gdWws2piRx/9ATvS+vYOg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cwH6m3kklHT7CB/4iPJR8ZBs7Sz3N3DfoWmkKajMwLk=;
- b=Gunh4jG8WGSMUJ06/ZivnVunBY0MgXyNK25uPGzAyMnRhZFM2BrQqEQbijN7u31p7l8mE8ranZPUT9WeDGN+QSVZYtmgj8BaDCJGulzjS4bld5JY1fPTfIlY2WTcxqGhy2j0JUe5ojcUqG5qylVMTrPD5zTJfv3s7tvj5PrrI5RR+zKFtbTmVV4IbKf6Yfp/r3kR1v/dyjaJCKBSVrGyrAqGj+B0IJPWuYzK87epPa+eAibB0btpfGxdfq0MMOga+ZvH+VL4pzNMyZa9gfD+CnbgkI9jzDM8nYaln5fwTRjB+gGm/zaAKL/RfmOFOENaCnKJgxUhe+OHYSb9CMXfog==
+ bh=RKFQFcoQ49bcw3OEzNmpgfdxhWM8OAW1aHfdjZs6OX8=;
+ b=gS6DWc9LpDzvhvgkOSo3erssAjdE2m+kY07TxeJ9SkvUjq0zjKvcoPdD8cEi/be45cgICwvQoqfTor9z7on+aXfuhMQinPWHSjkjzT6rUKiKxMcG3ezlLU4kaOJwQWyjzG5objwGdYtePryJIqmrtKjCLMCvVWgHp4LdyMeRKJytABIK52ro/aYOm9Axq1SY0yxgUHgI473yFMSR5dhzFbU2ir0r59o5VycknsFjlzA7XTnJuSASQIFTb8Y+w3BbIXRSotvGXvDZBt8+OSJ8IdjqCS/gvyWqskKdp/Xx8FJIUMGSzrfjbJSJkjwT1k9hbBV+88Gr+3Jrppil5MxBZQ==
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:113::12)
@@ -30,14 +30,14 @@ Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:113::12)
 Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::ae26:d131:7cff:4001]) by DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::ae26:d131:7cff:4001%3]) with mapi id 15.21.0688.001; Thu, 26 Nov 2026
- 10:30:15 +0000
+ 10:30:16 +0000
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org
 CC: jan.kiszka@siemens.com,
 	felix.moessbauer@siemens.com
-Subject: [isar-cip-core][PATCH v4 03/21] Add ROOTFS_CONTAINER_TYPE to wrap the read-only rootfs
-Date: Thu, 26 Nov 2026 11:29:49 +0100
-Message-ID: <20261126103007.2922985-4-quirin.gylstorff@siemens.com>
+Subject: [isar-cip-core][PATCH v4 04/21] efibootguard-boot: derive root mode from ROOTFS_CONTAINER_TYPE
+Date: Thu, 26 Nov 2026 11:29:50 +0100
+Message-ID: <20261126103007.2922985-5-quirin.gylstorff@siemens.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261126103007.2922985-1-quirin.gylstorff@siemens.com>
 References: <20261126103007.2922985-1-quirin.gylstorff@siemens.com>
@@ -49,494 +49,355 @@ Return-Path: quirin.gylstorff@siemens.com
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DB8PR10MB3178:EE_|PA3PR10MB9258:EE_
-X-MS-Office365-Filtering-Correlation-Id: 79faed99-3893-4007-2581-08df4ba84287
+X-MS-Office365-Filtering-Correlation-Id: 155a806b-ac9d-4311-1ad6-08df4ba842e1
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|23010399003|261022105027099003|261028144727099003|10067099003|11063799006|261009220027099003|261022115727099003|56012099006|261009223327099003|261009221727099003|261021121427099003|261021123027099003|261009223027099003|261026140227099003|261022075727099003|261009221227099003|261026121527099003|261102123227099003|18002099003|6133799003|55112099003|22082099003|3023799007;
-X-Microsoft-Antispam-Message-Info: 54iBqnNmBwHa4XgEBdY4OW+9Uab7Zxm6zBfu4lJ0Caj+NgV/VC+RULsEhmLvbNYghwMwg3Rzy9EBEn1zzTX8qK89YgfqCJAGzK4FNuSV/KBPMxbhxf8nKgdyPWSbCr2b8vnElWclzim39T8Nw6d4/9qIYaR6ci9VXYcSYKU7hJKHbBUDBsjtnmVGeUD0+u1G3fqT8Tp3uwx+GTsXKWksdSZ172LRTeXNyPqtJKirxidsUakRElFulZg2011xigC/ejeXes6eiACODN+sfsyCOD3UXdLCnJizvF9roz0+HPhIukmPlxphTL6i92ggH3KPHY0UwbvMFQw9rIqMrHOSL1xnyCxC9s9fTQysBVta8TOUAvX0bYO8BJJ+UA8gWqbXcyU664SO90rEpuQtCALXksRyF7tSCMEPVrzT0F6LcanAi8UQEHGEN+dLnraXxlr4xCRavtjCvo1yWxRoXiKmWE2qLOc+NKkXP8/xouV3P2Z9YEaggih+YHnlLhyLBQdwFiP4ag493XSn8leyapzffS+G0c/hSDb7YhlbQCQlpKsekW7kUbPtokuGZwyhux4+fz6ax3+FQs+Y4fmvtdHUAG/inB8ulF24OSLWs/v6ixpFTLHvHrtNytOVjQGrvcgqVbcq8V0HxTqmvMFEhrX/V+nGVRZXS58rSSdLLwV9VAc=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(23010399003)(261022105027099003)(261028144727099003)(10067099003)(11063799006)(261009220027099003)(261022115727099003)(56012099006)(261009223327099003)(261009221727099003)(261021121427099003)(261021123027099003)(261009223027099003)(261026140227099003)(261022075727099003)(261009221227099003)(261026121527099003)(261102123227099003)(18002099003)(6133799003)(55112099003)(22082099003)(3023799007);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|23010399003|261022105027099003|261028144727099003|261102130727099003|10067099003|11063799006|261022115727099003|261021135927099003|56012099006|260925022911599003|260925021311599003|261021121427099003|261021123027099003|261009223027099003|261026140227099003|261022075727099003|261026121527099003|261102123227099003|18002099003|6133799003|55112099003|22082099003;
+X-Microsoft-Antispam-Message-Info: +raTP14K1xD5D3/dGfGEnX8biRkNQxyEKkJN48TwVOPTdia98n9N59eAg5MK22V6v9k1+AmDu7JZs9qvUrvGPwa0xDv9vOOz67wRtpjStyp4eajhAEhzEUFB+7UzTXaAj1wlx6JGub8LBvNfWK3rFL3VgMBo4caHeC/3Au8pIQugpWZDrLbCNszZxaQ8MhesWX51TSuuBLZyTjW+bUC9Tp8S6bMtEKyHBc8//4cQYDtoDS9OlkDAr6Qdwo9X9NrFWGk3Lu0KaXoPclMe5eBw7DbHsJ5T3KeVVHPaCcpzGW9uZ4sBlByieNVKH1M/1wXPvP/HfPBsNZ+g6jQQ+L6xaGNA/604hsDDs8JmUOpjYgLN7u6rg+iMyIRTYaB9Q9gQBg2oC8RDx7DoLXKGsGAi1d7Un4fIlRhkNJhgYls/3T+zaR/H+lPggheaOXi0//O4Oos65Ycn5mO5edeH09P0O4rBBGY3lmS/mPG0V2dXT5ZLeP2TB++XVd5usM2ndui0C6yyISbmLxm/e06gX8LptoQo5/3V6t37MxR8I+eMhpoICTdXukWj0AxdAa9/N8nKDZoGas3/8RZpzaJAOcTM9mAcj7thEUUXRQ0H3gvX02bKfyOJZiXdNf9wH7SskxdgHPg4sIn8ygs9CZ2ZfjexP0bi3/024Zk0HWvsBLi3Wa8=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(23010399003)(261022105027099003)(261028144727099003)(261102130727099003)(10067099003)(11063799006)(261022115727099003)(261021135927099003)(56012099006)(260925022911599003)(260925021311599003)(261021121427099003)(261021123027099003)(261009223027099003)(261026140227099003)(261022075727099003)(261026121527099003)(261102123227099003)(18002099003)(6133799003)(55112099003)(22082099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?EINqvHgMuemAx2ispe2ID2TKb84k8S7OCmxqdMDULoDEyqoPrcM0sSACBMZb?=
- =?us-ascii?Q?h/T+ha+7O/xNVP1eUwrqjA5picftdPpEj9iTmHzoORZLQ7SKC4TBrhEvl/2S?=
- =?us-ascii?Q?ueBhYL0F07ZGv8pQ7dUm4fOAZKFCZB0smdMxubjUmeoct0Ma6bPj8Folp/ZU?=
- =?us-ascii?Q?hhMlvjXhfKqxdSRa5YZcstUsd2zX3qo7CKc5oPyWRG2qjZ/nCnjuSDUde/IK?=
- =?us-ascii?Q?b4eF0rAKjmPSYbWAP9/PiqR1DS1lqyBTqdi2aMdvBjDnXdWr6BLhtKJfCv2H?=
- =?us-ascii?Q?SgTY8UgVsInYeo7cY9UIanCCtnSsjo/XtmJb31tTK7BW7w493/XJmMUSPOxp?=
- =?us-ascii?Q?f1QSvN7YeGSAYHceoAgQXZaeZtSliuiePj28kFgqFicmp9vprUiUDRbrncJD?=
- =?us-ascii?Q?6V7nTG4CvnD/1tgS8mQDo6YOmxtSv1Ys1g5lglI+u486K133d/eCZ+px8c+5?=
- =?us-ascii?Q?44bif0SVIIi46i31Yk231Ss1YwxgCFHXE3YLEqUBoMNrRwtSg10HDOJSjGJ3?=
- =?us-ascii?Q?kdZIy3/EeEk1feg7vk+N9tincLfDMYZck/9hiSMGU/2idWzyTraHjxjxI75k?=
- =?us-ascii?Q?d0Irjf+w8ghMLYCe4w98jeyjcsvOSUV3mskZx4wvmhy1JalLuY9uCq7HVOGu?=
- =?us-ascii?Q?AU6RSZlhU+YUJMM9okYp+GieflZdMq3nVGM+9uEklGDWjQEd1PCM9VnP9Q8q?=
- =?us-ascii?Q?AaZ6zNYOPNceWc57Va66Y0IlnjzrUj/w42stLOLQmmdrOekAPBGrO3UZ7BPC?=
- =?us-ascii?Q?vmLWEYxxNrGMZkaCCQzn84oPTd7UUKgYX3Q2+ngzd8lm4dvmg+LhD+v5c4xe?=
- =?us-ascii?Q?JRVaXmO/xY/TygDuxQtkhTyH1c/J+OVP/+hSa8P39KZQ4KmJchsAGroFLChS?=
- =?us-ascii?Q?521myRQaKNsatcLVUbNhZjgwa1Wa9lDHncGCnZVDDccMDInWzLlCe38THxQV?=
- =?us-ascii?Q?Rc1Xv6FYLN3f3FeQvwG2JKjDL3Xn43ajfoRdn78roIhxG9TutAARZG9vbyKN?=
- =?us-ascii?Q?wcBYKuC5kEf0+3du/Nopb0fWCetvIAGGw9NgMEO3Tn3tK9xEI1ARMFi9G/eC?=
- =?us-ascii?Q?/u6kOxeM3ju1I/XnKRBzQr17epeVI5Nv230NOz1ZNmlH/PEfUlQs4zFi4HM8?=
- =?us-ascii?Q?oTgFWbTiTu5ZPJ7FWR1LHFn9wbvisOynzVdip5Z24nVdBvsBVHROTZvoVk/Z?=
- =?us-ascii?Q?Pcu7xRA/QA47GAEKEn67RBM7yHkmLA93fPXdI5sWTe8ox3V7cpfhF2O2z6qA?=
- =?us-ascii?Q?G6y0hcpIhtgkMVwHlqt7KI/LNnjeVTKPO/m/8mxIqL1AyX626Aa4tX4//fWv?=
- =?us-ascii?Q?J+IxLQgnl8suPBtKVQwidm7HaoR8ywD22p80ETE7FGQr9zieomMu3Sj8tBxK?=
- =?us-ascii?Q?03QzH8bEDf3p6RWew2Q0pyF88NbOlB3J/ZmugEiukkMgR7cgQVLSky0/Q5Rt?=
- =?us-ascii?Q?JXOFKsLD4T9+5BZDsuWg3xWi4zCjtUbB1kAAEAGTcKyyQbuLTBz6pKO9W2jV?=
- =?us-ascii?Q?/u36aDjvZ3pAzDNuv/mJLMehyYJYE9kHeqbcZ3hWlkKLmUugh2T9E/4XquGS?=
- =?us-ascii?Q?wtZ69KZv7KylaDalHtFfogX3l+1nPR/vgkINk074tU6W38D7QQCxy34QlJan?=
- =?us-ascii?Q?n595m42PeHhV0+YwDVWVqqDj/ghmGHjazf6QD2h131jKm+I1Jyo0HKZeh8Yf?=
- =?us-ascii?Q?J9v/kDIQaceTviRrx6A9OwPQJ2gfv556wTcOY6C/1BA5Lg4c/PkQsoOchZ+Y?=
- =?us-ascii?Q?M1wfGkBpFOTQR5VsUWJgYzwo18ErkNU=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?M0zdhpJwOWAaJds3JlVQdGbkhjhOpADrpLXmIMUAiAjtvmpwDSYjRoDGM1sY?=
+ =?us-ascii?Q?SqmTAmc/QDBgFhx1dO8Fwa2mV44oKMYX+YT/Ejs823aGMQU86RYxUGqW8XDG?=
+ =?us-ascii?Q?botRYpUF0KVNUaDyw1NMeqT/YFSwrAspoAmw2RaBLDC7JI16c8ZBga/oFOqM?=
+ =?us-ascii?Q?j2nLSO7eKMcIOyHzJUvkEL17LQeTxD6JTjjHopjNqRR8NOCb3VKcKO7yuC/D?=
+ =?us-ascii?Q?Srr+xC1Khys2+1I1JvAflO31gEM9IRrtGKTyK+N6l4viXc8mtimB+FXGM0ZL?=
+ =?us-ascii?Q?pVF4l0T92bl6e+e/8tGhiyLDPE7hLxqGwJk50zRQGU9598KKKF2SUfINFhNZ?=
+ =?us-ascii?Q?iU843whN5SfHxkFT+mUmkeIbpgmzW3Uk/tUkf+p+CNBiRb/wYYyrMEgKeA+u?=
+ =?us-ascii?Q?k9kqcsZll9CBqJFYH8unCjnzjXcjDZBMKqf+aoIcgMgW2TTyLQ9EicUnGV/u?=
+ =?us-ascii?Q?v7wN+56u7AiCwYC45RoFvFEG08dt06lMREWdTGL9rbRoYwLZSAbu+ke0ZoVT?=
+ =?us-ascii?Q?/MoKAdn2S0pb1Hambx1k6VI/lWp/NK+wyzkXqnkb22NzgfUT+a65KnOdNBty?=
+ =?us-ascii?Q?HiWbB89Vt943/InvalgHDA3Oe2EKTY8aeGqWVIhh2AeZ1VRB26GNjnhCKm24?=
+ =?us-ascii?Q?Yk+rcXsVhDS7HYcw3dBEPI/jjmBDzXjhiU7QveYj4ryZZHFX4Ruhb7v6Kbi+?=
+ =?us-ascii?Q?Nk89FuxrC1e2vtyhN/t2SKofDbgFKm8N0Y5FK4GDD/GIJR4CuTlA4CfgPUra?=
+ =?us-ascii?Q?b4EJ4bSJLM2UQtJYOt2ITrcEEc4DwcU2ISpKbMlUG5R4lzBpNw31VEn/mPh7?=
+ =?us-ascii?Q?WsQxKrzTbiCtpuj76Ppegvdum5odFwtpbZXGKGkxyvowW1AFjTHaxzELDY11?=
+ =?us-ascii?Q?UiOn0jWcPi4BfQMhUKLObUpS7o5zG/dZUs6jZmY0+jorKniMUt+IMnEhL9nI?=
+ =?us-ascii?Q?ziIsbMNk4R+ptshDxnNU30mwFT1dpTiHeVx/+jxJdztGrX2lM4uENS1ODEYZ?=
+ =?us-ascii?Q?6MzN0JcWDqQKkApAa/losUKVc24MdU9zIS+1bErmxXt/N4gxoZqU0wtODMg4?=
+ =?us-ascii?Q?ZCZsudzdqJOsgEGCIcL167SVJ//xOzdVKRfufxgw8So6D0wcM3QZg/1Sh3E4?=
+ =?us-ascii?Q?Srjzx/diIaWbGs8gxbCzXoLy9YP2P7BmQ29UdYjViZGLH+2Yix6GmQHjaPiB?=
+ =?us-ascii?Q?lMT6IqEBUQABi1K2M7oJcTAJn92oBj3nRRy/e+VkXSg4fd48ilk8hg6RN7Zf?=
+ =?us-ascii?Q?WP821IIf8/iBqZvDi9rKmmiE9a7kUftYwgzHeMKdW2Ma2PBRZeiFCVkRB3GE?=
+ =?us-ascii?Q?+OLqUSwqmfjKp2W7AqYh7g2uXu4VmrY7v+lyEKb9+IpVr79btK9XNtR3ptaO?=
+ =?us-ascii?Q?mYvNZp53vTUhYUMgUZF/KJ27Qrrc++4RTG4zxtXC0AYL2uV/rjIF6LNqLxkh?=
+ =?us-ascii?Q?n2TE/u8U7bJ590V793c0MPptxRRDGJ4m0YZwrmcTZkoGiFZpRrqgKh2M4F/n?=
+ =?us-ascii?Q?Y/q0A71LeRegaGRPE4aAz+Zf3M5tqflY8b1QBNyv1BBbJlVKwfbiVqArhU//?=
+ =?us-ascii?Q?6rAa1mrF9TgclJzRAmJ3aOWJCscxuax2z9SD8mX3TeyYfIlxJ1ax9WoP1KgM?=
+ =?us-ascii?Q?AwgR6DPsHDslWcYVmgA5StUVVqc7yM1D9etpfZzHGC9SC8qP3jIue62LDMvi?=
+ =?us-ascii?Q?qHRfhuxws+ZEF1zx4mWZQR36kiKQIMARd181DLc/V4/3lzwI0VyGiWZLJUFj?=
+ =?us-ascii?Q?PP2W/mOUEYi3MMEWViSRN7hBtPOC2jg=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 79faed99-3893-4007-2581-08df4ba84287
+X-MS-Exchange-CrossTenant-Network-Message-Id: 155a806b-ac9d-4311-1ad6-08df4ba842e1
 X-MS-Exchange-CrossTenant-AuthSource: DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2026 10:30:15.4720
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2026 10:30:15.9982
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Khmjv9RQFfetitXQ5mNXCPqak+5fbrg5+yjHVJbp5N15A3E9LlixZArw7XDVKZJxcXHq+meeWfARaqbW1ivyM/OEtd2nBgWeC+njhxFlzdU=
+X-MS-Exchange-CrossTenant-UserPrincipalName: xBfnjz+XJbDGUzPVEkOSQDw5c9frwRklwoHAejChvBWSccWl1S8er7EboUuAbHoxzuy/PACrugdyeaFb34Sg2aNUOdV3FNKR9rH5bLJ+Olc=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA3PR10MB9258
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Thu, 26 Nov 2026 10:30:24 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/25084
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/25085
 Content-Type: text/plain; charset="utf-8"
 
-This is in preparation for the introduction of dracut to support
-dm-verity on systems where secure boot is disabled.
+Whether a partition boots an A/B root (abrootfs) or a dm-verity root is
+decided per image by ROOTFS_CONTAINER_TYPE, but the wic layout repeated
+that decision in the wks sourceparams abrootfs_root=3Dy and verity_root=3Dy=
+.
+Two switches for the same thing can disagree, and wic .inc files cannot
+be parametrized as wic does not expand BitBake variables there.
 
-dm-verity does not replace the filesystem of the read-only rootfs, it is
-stacked on top of it: the verity image is created from
-rootfs.${RO_ROOTFS_TYPE} and only changes the file suffix. Selecting
-"verity" with RO_ROOTFS_TYPE mixed both layers and required a second
-variable, VERITY_IMAGE_TYPE, for the filesystem inside.
+Export RO_ROOTFS_TYPE and ROOTFS_CONTAINER_TYPE to wic via WICVARS and
+select the root mode from them: the "verity" container emits a verity
+root, no container uses abrootfs. Remove the
+sourceparams from ebg-sysparts.inc and ebg-signed-sysparts.inc.
 
-Keep RO_ROOTFS_TYPE for the filesystem (squashfs, erofs) and add
-ROOTFS_CONTAINER_TYPE for the container around it: empty for none,
-"verity" for dm-verity. A type instead of a boolean leaves room for other
-containers like dm-integrity or IMA later.
+Empty variables are not exported to wic, so an empty container is seen as
+unset. RO_ROOTFS_TYPE is never empty and tells the plugin that the image
+exports the root settings, as opposed to an out-of-tree wks file of an
+image that does not.
 
-ROOTFS_IMAGE_TYPE is derived from both and names the image that is
-written to the A/B partitions and packed into the swu: the container type
-if set, else RO_ROOTFS_TYPE. The wks files use it, so the secure boot
-variants no longer hardcode .verity. The initramfs selects the filesystem
-hook from RO_ROOTFS_TYPE and the verity hook from the
-rootfs-container-verity override.
+This also fixes images without secure boot and a verity container, which
+used to get an abrootfs cmdline although the initramfs has no abrootfs
+hook in that case. The signed layout now follows ROOTFS_CONTAINER_TYPE as
+well instead of always selecting verity.
 
-Secure boot sets ROOTFS_CONTAINER_TYPE to verity by default in the
-distro configuration, so it does not depend on the snakeoil kas file.
+The sourceparams verity_root=3Dy and abrootfs_root=3Dy are only used for
+out-of-tree wks files of images that do not export the root settings. If
+the image exports them, an explicit sourceparam that conflicts with the
+mode derived from ROOTFS_CONTAINER_TYPE fails with a WicError instead of
+being ignored.
 
-VERITY_IMAGE_TYPE is replaced by RO_ROOTFS_TYPE.
-
-The older "RO_ROOTFS_TYPE ??=3D squashfs" defaults in swupdate.bbclass,
-verity.bbclass and cip-core-initramfs.bb predate this change and are
-left alone. The new variables are defined only in the CIP distro
-configuration; using the layer without the CIP distro is not supported.
+With the root mode following the container, dm-verity can be used without
+secure boot too, by adding kas/opt/verity.yml or selecting it in the kas
+menu.
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- classes-recipe/swupdate.bbclass                    |  2 +-
- classes-recipe/verity.bbclass                      |  8 +++++---
- conf/distro/cip-core-common.inc                    | 14 ++++++++++++++
- doc/README.secureboot.md                           |  6 +-----
- kas/opt/ebg-secure-boot-snakeoil.yml               |  2 --
- recipes-core/images/swupdate.inc                   |  2 +-
- .../cip-core-initramfs/cip-core-initramfs.bb       |  5 +++--
- wic/bbb-efibootguard.wks.in                        |  2 +-
- wic/beaglev-fire-efibootguard.wks.in               |  2 +-
- wic/de0-nano-soc-efibootguard.wks.in               |  2 +-
- wic/hihope-rzg2m-efibootguard.wks.in               |  2 +-
- wic/qemu-arm64-efibootguard-secureboot.wks.in      |  2 +-
- wic/qemu-arm64-efibootguard.wks.in                 |  2 +-
- wic/qemu-riscv64-efibootguard.wks.in               |  2 +-
- wic/rzt2h-evk-efibootguard.wks.in                  |  2 +-
- wic/ti-am62px-sk-efibootguard-secureboot.wks.in    |  2 +-
- wic/ti-am62px-sk-efibootguard.wks.in               |  2 +-
- wic/x86-uefi-efibootguard-secureboot.wks.in        |  2 +-
- wic/x86-uefi-efibootguard.wks.in                   |  2 +-
- 19 files changed, 37 insertions(+), 26 deletions(-)
+ Kconfig                                       | 12 ++++++
+ classes-recipe/read-only-rootfs.bbclass       |  2 +
+ doc/README.secureboot.md                      | 12 ++++++
+ doc/README.swupdate.md                        |  2 +-
+ kas/opt/verity.yml                            | 18 +++++++++
+ .../wic/plugins/source/efibootguard-boot.py   | 38 ++++++++++++++++++-
+ wic/ebg-signed-sysparts.inc                   |  4 +-
+ wic/ebg-sysparts.inc                          |  4 +-
+ 8 files changed, 85 insertions(+), 7 deletions(-)
+ create mode 100644 kas/opt/verity.yml
 
-diff --git a/classes-recipe/swupdate.bbclass b/classes-recipe/swupdate.bbcl=
-ass
-index 4011739d..565a66e7 100644
---- a/classes-recipe/swupdate.bbclass
-+++ b/classes-recipe/swupdate.bbclass
-@@ -11,7 +11,7 @@
- # SPDX-License-Identifier: MIT
+diff --git a/Kconfig b/Kconfig
+index 163813b9..929373d9 100644
+--- a/Kconfig
++++ b/Kconfig
+@@ -338,6 +338,18 @@ config IMAGE_SECURE_BOOT
+ 	bool "Secure boot support"
+ 	depends on HAS_SECURE_BOOT
 =20
- RO_ROOTFS_TYPE ??=3D "squashfs"
--SWU_ROOTFS_TYPE ?=3D "${RO_ROOTFS_TYPE}"
-+SWU_ROOTFS_TYPE ?=3D "${ROOTFS_IMAGE_TYPE}"
- SWU_ROOTFS_NAME ?=3D "${IMAGE_FULLNAME}"
- SWU_KERNEL_NAME ?=3D "linux.efi"
- # compression type as defined by swupdate (zlib or zstd). Set to empty str=
-ing to disable compression
-diff --git a/classes-recipe/verity.bbclass b/classes-recipe/verity.bbclass
-index 56e4f4ea..366aee21 100644
---- a/classes-recipe/verity.bbclass
-+++ b/classes-recipe/verity.bbclass
-@@ -9,12 +9,14 @@
- # SPDX-License-Identifier: MIT
- #
-=20
--IMAGE_TYPEDEP:verity =3D "${VERITY_IMAGE_TYPE}"
-+IMAGE_TYPEDEP:verity =3D "${RO_ROOTFS_TYPE}"
- IMAGER_INSTALL:verity +=3D "cryptsetup"
-=20
-+# The filesystem image protected by dm-verity is selected by RO_ROOTFS_TYP=
-E
-+# (squashfs or erofs).
- RO_ROOTFS_TYPE ??=3D "squashfs"
--VERITY_IMAGE_TYPE ?=3D "${RO_ROOTFS_TYPE}"
--VERITY_INPUT_IMAGE ?=3D "${IMAGE_FULLNAME}.${VERITY_IMAGE_TYPE}"
++config IMAGE_ROOTFS_CONTAINER_VERITY
++	bool "Protect the read-only rootfs with dm-verity"
++	depends on !IMAGE_SECURE_BOOT
++	help
++	  Wrap the read-only rootfs in a dm-verity container. Without secure
++	  boot, dm-verity detects corruption of the rootfs, but the root hash is
++	  not authenticated. Secure boot always enables dm-verity.
 +
-+VERITY_INPUT_IMAGE ?=3D "${IMAGE_FULLNAME}.${RO_ROOTFS_TYPE}"
- VERITY_OUTPUT_IMAGE ?=3D "${IMAGE_FULLNAME}.verity"
- VERITY_IMAGE_METADATA =3D "${VERITY_OUTPUT_IMAGE}.metadata"
- VERITY_HASH_BLOCK_SIZE ?=3D "1024"
-diff --git a/conf/distro/cip-core-common.inc b/conf/distro/cip-core-common.=
-inc
-index c945378a..da48b47f 100644
---- a/conf/distro/cip-core-common.inc
-+++ b/conf/distro/cip-core-common.inc
-@@ -32,6 +32,20 @@ TEE_SUPPLICANT_IN_USERLAND ?=3D "0"
- PREFERRED_PROVIDER_factory-reset-helper ?=3D "factory-reset-helper-file"
- PREFERRED_PROVIDER_factory-reset-helper:ftpm-stmm =3D "factory-reset-helpe=
-r-efi"
-=20
-+# The read-only rootfs is described by two stacked settings:
-+# - RO_ROOTFS_TYPE: filesystem of the rootfs (squashfs, erofs)
-+# - ROOTFS_CONTAINER_TYPE: container around that filesystem. Empty for non=
-e,
-+#   "verity" for dm-verity.
-+# ROOTFS_IMAGE_TYPE is derived from both: it is the image type that is wri=
-tten
-+# to the A/B partitions and packed into the swu.
-+RO_ROOTFS_TYPE ?=3D "squashfs"
-+ROOTFS_CONTAINER_TYPE ?=3D ""
-+ROOTFS_CONTAINER_TYPE:secureboot ?=3D "verity"
-+# Derived from the two settings above, do not set it.
-+ROOTFS_IMAGE_TYPE ?=3D "${RO_ROOTFS_TYPE}"
-+ROOTFS_IMAGE_TYPE:rootfs-container-verity ?=3D "verity"
-+OVERRIDES .=3D "${@':rootfs-container-' + d.getVar('ROOTFS_CONTAINER_TYPE'=
-) if d.getVar('ROOTFS_CONTAINER_TYPE') else ''}"
++config KAS_INCLUDE_ROOTFS_CONTAINER_VERITY
++	string
++	default "kas/opt/verity.yml" if IMAGE_ROOTFS_CONTAINER_VERITY
 +
- # Watchdog to service by initramfs hooks during lengthy operations like
- # partition encryption or factory reset. In our integration, enabling
- # fTPM/StMM implies a U-Boot-based firmware which may enable a watchdog ea=
-rly.
+ config KAS_INCLUDE_SWUPDATE_SECBOOT
+ 	string
+ 	default "kas/opt/ebg-swu.yml" if IMAGE_SWUPDATE && !IMAGE_SECURE_BOOT
+diff --git a/classes-recipe/read-only-rootfs.bbclass b/classes-recipe/read-=
+only-rootfs.bbclass
+index 1c35d8c6..0bf808d2 100644
+--- a/classes-recipe/read-only-rootfs.bbclass
++++ b/classes-recipe/read-only-rootfs.bbclass
+@@ -14,6 +14,8 @@ IMAGE_INITRD =3D "${INITRAMFS_RECIPE}"
+=20
+ do_image_wic[depends] +=3D "${INITRAMFS_RECIPE}:do_build"
+=20
++WICVARS +=3D "RO_ROOTFS_TYPE ROOTFS_CONTAINER_TYPE"
++
+ WIC_HOME_PARTITION =3D ""
+ WIC_HOME_PARTITION:separate-home-part =3D "part /home --source rootfs --ch=
+ange-directory=3Dhome --fstype=3Dext4 --label home --align 1024  --size 1G =
+--fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid c07d5e8f-3448-46dc-9c0=
+f-58904f369524"
+=20
 diff --git a/doc/README.secureboot.md b/doc/README.secureboot.md
-index 2b14bfb2..1b908483 100644
+index 1b908483..23e23c3f 100644
 --- a/doc/README.secureboot.md
 +++ b/doc/README.secureboot.md
-@@ -158,12 +158,8 @@ header:
- local_conf_header:
-   secure-boot-image: |
-     IMAGE_FSTYPES =3D "wic"
--    IMAGE_TYPEDEP:wic +=3D "verity"
--    SWU_ROOTFS_TYPE =3D "verity"
+@@ -17,6 +17,18 @@ select the root file system generates a uuid and stores =
+the id in /etc/os-releas
+ During boot the initramfs compares its own uuid with the uuid stored in /e=
+tc/os-release of each rootfs.
+ If a match is found the rootfs is used for the boot.
+=20
++### Root file system protection
++
++The read-only root file system is described by two stacked settings:
++`RO_ROOTFS_TYPE` selects the file system (`squashfs` or `erofs`) and
++`ROOTFS_CONTAINER_TYPE` the container around it. With secure boot the
++container defaults to `verity`, so the root file system is protected with
++dm-verity and its root hash is part of the signed unified kernel image.
++
++dm-verity can also be used without secure boot, by adding `kas/opt/verity.=
+yml`
++or setting `ROOTFS_CONTAINER_TYPE =3D "verity"`. As the root hash is not s=
+igned
++then, verity only detects accidental corruption and the build warns about =
+it.
++
+ ## Adaptation for Images
+=20
+ ### WIC
+diff --git a/doc/README.swupdate.md b/doc/README.swupdate.md
+index c1428a7a..83aca236 100644
+--- a/doc/README.swupdate.md
++++ b/doc/README.swupdate.md
+@@ -409,7 +409,7 @@ The image is built with the RT kernel just so that ther=
+e are some differences be
+=20
+ **Note**: Only `rdiff` supports delta kernel binary update using `rdiff_fi=
+le` handler.
+=20
+-Creating an delta update file for rdiff_image (rootfs) and rdiff_file (ker=
+nel)  handlers requires a reference artifacts (against which the delta is c=
+omputed). In this case, the image and kernel built in the previous section =
+can be used as the reference artifacts. By default the `DELTA_UPDATE_TYPE` =
+is set to `rdiff`, `DELTA_RDIFF_REF_IMAGE` is set to the name `${IMAGE_FULL=
+NAME}.squashfs` (or ${IMAGE_FULLNAME}.verity in the case of Secure boot ena=
+bled image) and `DELTA_RDIFF_REF_KERNEL_IMAGE` is set to the name `linux.ef=
+i`. The values of `DELTA_UPDATE_TYPE`, `DELTA_RDIFF_REF_IMAGE` and `DELTA_R=
+DIFF_REF_KERNEL_IMAGE` can be changed in the `delta-update.yml` file.
++Creating a delta update file for rdiff_image (rootfs) and rdiff_file (kern=
+el) handlers requires reference artifacts (against which the delta is compu=
+ted). In this case, the image and kernel built in the previous section can =
+be used as the reference artifacts. By default the `DELTA_UPDATE_TYPE` is s=
+et to `rdiff`, `DELTA_RDIFF_REF_IMAGE` is set to the name `${IMAGE_FULLNAME=
+}.squashfs` (or `${IMAGE_FULLNAME}.verity` if `ROOTFS_CONTAINER_TYPE` is `v=
+erity`, as for secure boot images) and `DELTA_RDIFF_REF_KERNEL_IMAGE` is se=
+t to the name `linux.efi`. The values of `DELTA_UPDATE_TYPE`, `DELTA_RDIFF_=
+REF_IMAGE` and `DELTA_RDIFF_REF_KERNEL_IMAGE` can be changed in the `delta-=
+update.yml` file.
+=20
+ The build system looks for the reference artifact in a directory named `pr=
+evious-image` in the build directory used for the build process.
+=20
+diff --git a/kas/opt/verity.yml b/kas/opt/verity.yml
+new file mode 100644
+index 00000000..3de74f36
+--- /dev/null
++++ b/kas/opt/verity.yml
+@@ -0,0 +1,18 @@
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2026
++#
++# Authors:
++#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
++#
++# SPDX-License-Identifier: MIT
++
++header:
++  version: 23
++  includes:
++    - kas/opt/ebg-swu.yml
++
++local_conf_header:
++  verity: |
 +    ROOTFS_CONTAINER_TYPE =3D "verity"
-     WKS_FILE =3D "${MACHINE}-efibootguard-secureboot.wks.in"
--    INITRAMFS_INSTALL:append =3D " initramfs-verity-hook"
--    # abrootfs cannot be installed together with verity
--    INITRAMFS_INSTALL:remove =3D "initramfs-abrootfs-hook"
+diff --git a/scripts/lib/wic/plugins/source/efibootguard-boot.py b/scripts/=
+lib/wic/plugins/source/efibootguard-boot.py
+index ca97d7d7..22173d6e 100644
+--- a/scripts/lib/wic/plugins/source/efibootguard-boot.py
++++ b/scripts/lib/wic/plugins/source/efibootguard-boot.py
+@@ -31,11 +31,13 @@
 =20
-   secure-boot: |
-     IMAGER_BUILD_DEPS +=3D "ebg-secure-boot-signer"
-diff --git a/kas/opt/ebg-secure-boot-snakeoil.yml b/kas/opt/ebg-secure-boot=
--snakeoil.yml
-index 569d2a5f..13b23a16 100644
---- a/kas/opt/ebg-secure-boot-snakeoil.yml
-+++ b/kas/opt/ebg-secure-boot-snakeoil.yml
-@@ -17,8 +17,6 @@ header:
- local_conf_header:
-   secure-boot-image: |
-     IMAGE_FSTYPES =3D "wic"
--    IMAGE_TYPEDEP:wic +=3D "verity"
--    SWU_ROOTFS_TYPE =3D "verity"
-     WKS_FILE =3D "${MACHINE}-efibootguard-secureboot.wks.in"
+ import os
+ import fnmatch
++import re
+ import sys
+ import logging
 =20
-   secure-boot: |
-diff --git a/recipes-core/images/swupdate.inc b/recipes-core/images/swupdat=
-e.inc
-index 699c9619..14617b91 100644
---- a/recipes-core/images/swupdate.inc
-+++ b/recipes-core/images/swupdate.inc
-@@ -21,7 +21,7 @@ python __anonymous() {
+ msger =3D logging.getLogger('wic')
 =20
- include recipes-core/images/swupdate-${SWUPDATE_BOOTLOADER}.inc
++from wic import WicError
+ from wic.pluginbase import SourcePlugin
+ from wic.misc import exec_cmd, get_bitbake_var, BOOTDD_EXTRA_SPACE
 =20
--IMAGE_TYPEDEP:wic +=3D "${RO_ROOTFS_TYPE}"
-+IMAGE_TYPEDEP:wic +=3D "${ROOTFS_IMAGE_TYPE}"
- IMAGE_FSTYPES:append =3D " swu"
- # input is already compressed
- SWU_COMPRESSION_TYPE =3D ""
-diff --git a/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb b/r=
-ecipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
-index 7e77a205..7d3bbe3b 100644
---- a/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
-+++ b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
-@@ -21,8 +21,9 @@ INITRAMFS_INSTALL:append:encrypt-partitions =3D " initram=
-fs-crypt-hook"
- INITRAMFS_INSTALL:append:factory-reset =3D " initramfs-factory-reset-hook"
- INITRAMFS_INSTALL:append:ftpm-stmm =3D " initramfs-tee-ftpm-hook"
- INITRAMFS_INSTALL:append:swupdate =3D " initramfs-abrootfs-hook"
-+# The filesystem hook is needed for the filesystem, also inside a containe=
-r
- INITRAMFS_INSTALL:append:swupdate =3D " initramfs-${RO_ROOTFS_TYPE}-hook"
- INITRAMFS_INSTALL:append:secureboot =3D " initramfs-sbcerts-hook"
--INITRAMFS_INSTALL:append:secureboot =3D " initramfs-verity-hook"
-+INITRAMFS_INSTALL:append:rootfs-container-verity =3D " initramfs-verity-ho=
-ok"
- # abrootfs cannot be installed together with verity
--INITRAMFS_INSTALL:remove:secureboot =3D "initramfs-abrootfs-hook"
-+INITRAMFS_INSTALL:remove:rootfs-container-verity =3D "initramfs-abrootfs-h=
-ook"
-diff --git a/wic/bbb-efibootguard.wks.in b/wic/bbb-efibootguard.wks.in
-index b6d19ba2..ca4e0228 100644
---- a/wic/bbb-efibootguard.wks.in
-+++ b/wic/bbb-efibootguard.wks.in
-@@ -11,7 +11,7 @@ part --source rawcopy --sourceparams "file=3D/usr/lib/u-b=
-oot/bbb/u-boot.img" --no-
+@@ -89,11 +91,16 @@ class EfibootguardBootPlugin(SourcePlugin):
+         boot_files =3D source_params.get("files", "").split(' ')
+         unified_kernel =3D source_params.get("unified-kernel") or 'y'
+         cmdline =3D bootloader.append or ''
++        root_mode =3D cls._resolve_root_mode(source_params)
+         # the verity cmdline format is identical to systemd.verity_root_op=
+tions
+-        if source_params.get("verity_root") =3D=3D 'y':
++        if root_mode =3D=3D "verity":
+             cmdline +=3D " cip.verity_root_options=3Dpanic-on-corruption,%=
+s" \
+                 % cls._get_verity_opts()
+-        if source_params.get("abrootfs_root") =3D=3D 'y':
++            # panic-on-corruption needs a reboot afterwards, otherwise the
++            # system hangs instead of rolling back to the other rootfs.
++            if not re.search(r'(^|\s)panic=3D', cmdline):
++                cmdline +=3D " panic=3D5"
++        elif root_mode =3D=3D "abrootfs":
+             cmdline +=3D " cip.abrootfs_root_options=3D%s" \
+                 % cls._get_abrootfs_opts()
+         if unified_kernel =3D=3D 'y':
+@@ -152,6 +159,33 @@ class EfibootguardBootPlugin(SourcePlugin):
+         cls._create_img(part_rootfs_dir, part, cr_workdir,
+                         native_sysroot, oe_builddir)
 =20
- include ebg-sysparts.inc
++    @classmethod
++    def _resolve_root_mode(cls, source_params):
++        """
++        Return the root selection: 'verity', 'abrootfs' or None.
++        The mode is derived from ROOTFS_CONTAINER_TYPE: "verity" selects a
++        verity root, no container an A/B root. RO_ROOTFS_TYPE is never emp=
+ty
++        and tells whether the image exports the root settings. If it does,
++        an explicit sourceparam verity_root=3Dy or abrootfs_root=3Dy must =
+match
++        the derived mode, otherwise a WicError is raised. Without
++        RO_ROOTFS_TYPE the sourceparams of out-of-tree wks files are used.
++        """
++        explicit =3D None
++        if source_params.get("verity_root") =3D=3D 'y':
++            explicit =3D "verity"
++        elif source_params.get("abrootfs_root") =3D=3D 'y':
++            explicit =3D "abrootfs"
++        if get_bitbake_var("RO_ROOTFS_TYPE"):
++            # Empty variables are not exported to wic
++            container =3D get_bitbake_var("ROOTFS_CONTAINER_TYPE")
++            mode =3D "verity" if container =3D=3D "verity" else "abrootfs"
++            if explicit and explicit !=3D mode:
++                raise WicError("efibootguard-boot: sourceparam %s_root=3Dy=
+ "
++                               "conflicts with ROOTFS_CONTAINER_TYPE '%s'"
++                               % (explicit, container or ""))
++            return mode
++        return explicit
++
+     @classmethod
+     def _generate_kernel_opts_from_file(cls, filename, keys):
+         env_file =3D None
+diff --git a/wic/ebg-signed-sysparts.inc b/wic/ebg-signed-sysparts.inc
+index 8210598d..01f6c486 100644
+--- a/wic/ebg-signed-sysparts.inc
++++ b/wic/ebg-signed-sysparts.inc
+@@ -7,5 +7,5 @@
+ part --source efibootguard-efi  --size 16M --label efi   --align 1024 --pa=
+rt-type=3DEF00 --active --sourceparams "signwith=3D/usr/bin/sign_secure_ima=
+ge.sh" --fsuuid 0x4321dcba --uuid d1360f76-b09a-4bcc-b923-8195088cbe02
 =20
--part --source rawcopy --sourceparams "file=3D${IMAGE_FULLNAME}.${RO_ROOTFS=
-_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --par=
-t-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
-+part --source rawcopy --sourceparams "file=3D${IMAGE_FULLNAME}.${ROOTFS_IM=
-AGE_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --=
-part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
- part --source empty --sourceparams "${ABROOTFS_SOURCEPARAMS_B}" --align 10=
-24 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-84=
-83-4772-8E79-3D69D8477DE4 --part-name systemb
+ # EFI Boot Guard environment/config partitions plus Kernel files
+-part --source efibootguard-boot --fixed-size 128M --label BOOT0 --align 10=
+24 --part-type=3D0700 --sourceparams "revision=3D2,signwith=3D/usr/bin/sign=
+_secure_image.sh,verity_root=3Dy" --fsuuid 0x4321dcbb --uuid f870258b-706f-=
+4a66-8d58-b5a75ce61b8b
+-part --source efibootguard-boot --fixed-size 128M --label BOOT1 --align 10=
+24 --part-type=3D0700 --sourceparams "revision=3D1,signwith=3D/usr/bin/sign=
+_secure_image.sh,verity_root=3Dy" --fsuuid 0x4321dcbc --uuid 6e41f2a7-e3eb-=
+403f-8637-b111e4482ee9
++part --source efibootguard-boot --fixed-size 128M --label BOOT0 --align 10=
+24 --part-type=3D0700 --sourceparams "revision=3D2,signwith=3D/usr/bin/sign=
+_secure_image.sh" --fsuuid 0x4321dcbb --uuid f870258b-706f-4a66-8d58-b5a75c=
+e61b8b
++part --source efibootguard-boot --fixed-size 128M --label BOOT1 --align 10=
+24 --part-type=3D0700 --sourceparams "revision=3D1,signwith=3D/usr/bin/sign=
+_secure_image.sh" --fsuuid 0x4321dcbc --uuid 6e41f2a7-e3eb-403f-8637-b111e4=
+482ee9
+diff --git a/wic/ebg-sysparts.inc b/wic/ebg-sysparts.inc
+index b7f1afa6..199c89a5 100644
+--- a/wic/ebg-sysparts.inc
++++ b/wic/ebg-sysparts.inc
+@@ -7,5 +7,5 @@
+ part --source efibootguard-efi  --fixed-size 16M --label efi   --align 102=
+4 --part-type=3DEF00 --active --fsuuid 0x4321dcba --uuid c19e7e9f-bacf-49a6=
+-b43d-2fc18d2a8d03
 =20
- # var and optional home are extra partitions
-diff --git a/wic/beaglev-fire-efibootguard.wks.in b/wic/beaglev-fire-efiboo=
-tguard.wks.in
-index 0274745a..70779456 100644
---- a/wic/beaglev-fire-efibootguard.wks.in
-+++ b/wic/beaglev-fire-efibootguard.wks.in
-@@ -10,7 +10,7 @@ part --source rawcopy --sourceparams "file=3D/usr/lib/u-b=
-oot/beaglev-fire/payload.
-=20
- include ebg-sysparts.inc
-=20
--part --source rawcopy --sourceparams "file=3D${IMAGE_FULLNAME}.${RO_ROOTFS=
-_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --par=
-t-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
-+part --source rawcopy --sourceparams "file=3D${IMAGE_FULLNAME}.${ROOTFS_IM=
-AGE_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --=
-part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
- part --source empty --sourceparams "${ABROOTFS_SOURCEPARAMS_B}" --align 10=
-24 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-84=
-83-4772-8E79-3D69D8477DE4 --part-name systemb
-=20
- # var and optional home are extra partitions
-diff --git a/wic/de0-nano-soc-efibootguard.wks.in b/wic/de0-nano-soc-efiboo=
-tguard.wks.in
-index b61a68a4..63c7589e 100644
---- a/wic/de0-nano-soc-efibootguard.wks.in
-+++ b/wic/de0-nano-soc-efibootguard.wks.in
-@@ -10,7 +10,7 @@ part --source rawcopy --sourceparams "file=3D/usr/lib/u-b=
-oot/de0-nano-soc/u-boot-w
-=20
- include ebg-sysparts.inc
-=20
--part --source rawcopy --sourceparams "file=3D${IMAGE_FULLNAME}.${RO_ROOTFS=
-_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --par=
-t-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
-+part --source rawcopy --sourceparams "file=3D${IMAGE_FULLNAME}.${ROOTFS_IM=
-AGE_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --=
-part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
- part --source empty --sourceparams "${ABROOTFS_SOURCEPARAMS_B}" --align 10=
-24 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-84=
-83-4772-8E79-3D69D8477DE4 --part-name systemb
-=20
- # var and optional home are extra partitions
-diff --git a/wic/hihope-rzg2m-efibootguard.wks.in b/wic/hihope-rzg2m-efiboo=
-tguard.wks.in
-index 04ec65ee..b78e7275 100644
---- a/wic/hihope-rzg2m-efibootguard.wks.in
-+++ b/wic/hihope-rzg2m-efibootguard.wks.in
-@@ -6,7 +6,7 @@
-=20
- include ebg-sysparts.inc
-=20
--part --source rawcopy --sourceparams "file=3D${IMAGE_FULLNAME}.${RO_ROOTFS=
-_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --par=
-t-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
-+part --source rawcopy --sourceparams "file=3D${IMAGE_FULLNAME}.${ROOTFS_IM=
-AGE_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --=
-part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
- part --source empty --sourceparams "${ABROOTFS_SOURCEPARAMS_B}" --align 10=
-24 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-84=
-83-4772-8E79-3D69D8477DE4 --part-name systemb
-=20
- # var and optional home are extra partitions
-diff --git a/wic/qemu-arm64-efibootguard-secureboot.wks.in b/wic/qemu-arm64=
--efibootguard-secureboot.wks.in
-index 29096087..223455d7 100644
---- a/wic/qemu-arm64-efibootguard-secureboot.wks.in
-+++ b/wic/qemu-arm64-efibootguard-secureboot.wks.in
-@@ -3,7 +3,7 @@
- #
- include ebg-signed-sysparts.inc
-=20
--part --source rawcopy --sourceparams "file=3D${IMAGE_FULLNAME}.verity" --a=
-lign 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC6=
-3DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
-+part --source rawcopy --sourceparams "file=3D${IMAGE_FULLNAME}.${ROOTFS_IM=
-AGE_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --=
-part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
- part --source empty --sourceparams "${ABROOTFS_SOURCEPARAMS_B}" --align 10=
-24 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-84=
-83-4772-8E79-3D69D8477DE4 --part-name systemb
-=20
- # var and optional home are extra partitions
-diff --git a/wic/qemu-arm64-efibootguard.wks.in b/wic/qemu-arm64-efibootgua=
-rd.wks.in
-index c60fbc56..b6523252 100644
---- a/wic/qemu-arm64-efibootguard.wks.in
-+++ b/wic/qemu-arm64-efibootguard.wks.in
-@@ -6,7 +6,7 @@
-=20
- include ebg-sysparts.inc
-=20
--part --source rawcopy --sourceparams "file=3D${IMAGE_FULLNAME}.${RO_ROOTFS=
-_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --par=
-t-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
-+part --source rawcopy --sourceparams "file=3D${IMAGE_FULLNAME}.${ROOTFS_IM=
-AGE_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --=
-part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
- part --source empty --sourceparams "${ABROOTFS_SOURCEPARAMS_B}" --align 10=
-24 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-84=
-83-4772-8E79-3D69D8477DE4 --part-name systemb
-=20
- # var and optional home are extra partitions
-diff --git a/wic/qemu-riscv64-efibootguard.wks.in b/wic/qemu-riscv64-efiboo=
-tguard.wks.in
-index f902dcef..2f03bdeb 100644
---- a/wic/qemu-riscv64-efibootguard.wks.in
-+++ b/wic/qemu-riscv64-efibootguard.wks.in
-@@ -6,7 +6,7 @@
-=20
- include ebg-sysparts.inc
-=20
--part --source rawcopy --sourceparams "file=3D${IMAGE_FULLNAME}.${RO_ROOTFS=
-_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --par=
-t-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
-+part --source rawcopy --sourceparams "file=3D${IMAGE_FULLNAME}.${ROOTFS_IM=
-AGE_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --=
-part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
- part --source empty --sourceparams "${ABROOTFS_SOURCEPARAMS_B}" --align 10=
-24 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-84=
-83-4772-8E79-3D69D8477DE4 --part-name systemb
-=20
- # var and optional home are extra partitions
-diff --git a/wic/rzt2h-evk-efibootguard.wks.in b/wic/rzt2h-evk-efibootguard=
-.wks.in
-index ca18bec8..71bc6795 100644
---- a/wic/rzt2h-evk-efibootguard.wks.in
-+++ b/wic/rzt2h-evk-efibootguard.wks.in
-@@ -4,7 +4,7 @@
-=20
- include ebg-sysparts.inc
-=20
--part --source rawcopy --sourceparams "file=3D${IMAGE_FULLNAME}.${RO_ROOTFS=
-_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --par=
-t-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
-+part --source rawcopy --sourceparams "file=3D${IMAGE_FULLNAME}.${ROOTFS_IM=
-AGE_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --=
-part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
- part --source empty --sourceparams "${ABROOTFS_SOURCEPARAMS_B}" --align 10=
-24 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-84=
-83-4772-8E79-3D69D8477DE4 --part-name systemb
-=20
- # var and optional home are extra partitions
-diff --git a/wic/ti-am62px-sk-efibootguard-secureboot.wks.in b/wic/ti-am62p=
-x-sk-efibootguard-secureboot.wks.in
-index 1e2f578a..8ab3bca6 100644
---- a/wic/ti-am62px-sk-efibootguard-secureboot.wks.in
-+++ b/wic/ti-am62px-sk-efibootguard-secureboot.wks.in
-@@ -13,7 +13,7 @@ part /boot/firmware --source bootimg-partition --fstype=
-=3Dvfat --label firmware --
- include ebg-signed-sysparts.inc
-=20
- # ABROOTFS partitions
--part --source rawcopy --sourceparams "file=3D${IMAGE_FULLNAME}.verity" --a=
-lign 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC6=
-3DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
-+part --source rawcopy --sourceparams "file=3D${IMAGE_FULLNAME}.${ROOTFS_IM=
-AGE_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --=
-part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
- part --source empty --sourceparams "${ABROOTFS_SOURCEPARAMS_B}" --align 10=
-24 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-84=
-83-4772-8E79-3D69D8477DE4 --part-name systemb
-=20
- ${WIC_HOME_PARTITION}
-diff --git a/wic/ti-am62px-sk-efibootguard.wks.in b/wic/ti-am62px-sk-efiboo=
-tguard.wks.in
-index d0c7ef44..66ab62ed 100644
---- a/wic/ti-am62px-sk-efibootguard.wks.in
-+++ b/wic/ti-am62px-sk-efibootguard.wks.in
-@@ -13,7 +13,7 @@ part /boot/firmware --source bootimg-partition --fstype=
-=3Dvfat --label firmware --
- include ebg-sysparts.inc
-=20
- # ABROOTFS partitions
--part --source rawcopy --sourceparams "file=3D${IMAGE_FULLNAME}.${RO_ROOTFS=
-_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --par=
-t-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
-+part --source rawcopy --sourceparams "file=3D${IMAGE_FULLNAME}.${ROOTFS_IM=
-AGE_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --=
-part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
- part --source empty --sourceparams "${ABROOTFS_SOURCEPARAMS_B}" --align 10=
-24 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-84=
-83-4772-8E79-3D69D8477DE4 --part-name systemb
-=20
- ${WIC_HOME_PARTITION}
-diff --git a/wic/x86-uefi-efibootguard-secureboot.wks.in b/wic/x86-uefi-efi=
-bootguard-secureboot.wks.in
-index f441c4ba..73e3c894 100644
---- a/wic/x86-uefi-efibootguard-secureboot.wks.in
-+++ b/wic/x86-uefi-efibootguard-secureboot.wks.in
-@@ -3,7 +3,7 @@
- #
- include ebg-signed-sysparts.inc
-=20
--part --source rawcopy --sourceparams "file=3D${IMAGE_FULLNAME}.verity" --a=
-lign 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC6=
-3DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
-+part --source rawcopy --sourceparams "file=3D${IMAGE_FULLNAME}.${ROOTFS_IM=
-AGE_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --=
-part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
- part --source empty --sourceparams "${ABROOTFS_SOURCEPARAMS_B}" --align 10=
-24 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-84=
-83-4772-8E79-3D69D8477DE4 --part-name systemb
-=20
- # var and optional home are extra partitions
-diff --git a/wic/x86-uefi-efibootguard.wks.in b/wic/x86-uefi-efibootguard.w=
-ks.in
-index abc0d6eb..9cae346a 100644
---- a/wic/x86-uefi-efibootguard.wks.in
-+++ b/wic/x86-uefi-efibootguard.wks.in
-@@ -6,7 +6,7 @@
-=20
- include ebg-sysparts.inc
-=20
--part --source rawcopy --sourceparams "file=3D${IMAGE_FULLNAME}.${RO_ROOTFS=
-_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --par=
-t-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
-+part --source rawcopy --sourceparams "file=3D${IMAGE_FULLNAME}.${ROOTFS_IM=
-AGE_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --=
-part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
- part --source empty --sourceparams "${ABROOTFS_SOURCEPARAMS_B}" --align 10=
-24 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-84=
-83-4772-8E79-3D69D8477DE4 --part-name systemb
-=20
-=20
+ # EFI Boot Guard environment/config partitions plus Kernel files
+-part --source efibootguard-boot --fixed-size 128M --label BOOT0 --align 10=
+24 --part-type=3D0700 --sourceparams "revision=3D2,abrootfs_root=3Dy" --fsu=
+uid 0x4321dcbb --uuid e8567692-2dfa-459a-be15-f6e5ddcc8f49
+-part --source efibootguard-boot --fixed-size 128M --label BOOT1 --align 10=
+24 --part-type=3D0700 --sourceparams "revision=3D1,abrootfs_root=3Dy" --fsu=
+uid 0x4321dcbc --uuid 94b2174d-c792-4e8e-8a34-b506e2927937
++part --source efibootguard-boot --fixed-size 128M --label BOOT0 --align 10=
+24 --part-type=3D0700 --sourceparams "revision=3D2" --fsuuid 0x4321dcbb --u=
+uid e8567692-2dfa-459a-be15-f6e5ddcc8f49
++part --source efibootguard-boot --fixed-size 128M --label BOOT1 --align 10=
+24 --part-type=3D0700 --sourceparams "revision=3D1" --fsuuid 0x4321dcbc --u=
+uid 94b2174d-c792-4e8e-8a34-b506e2927937
 --=20
 2.47.3
 
