@@ -1,43 +1,43 @@
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (DB3PR0202CU003.outbound.protection.outlook.com [52.101.84.47])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.11270.1795689018322784349
+Received: from GVXPR05CU001.outbound.protection.outlook.com (GVXPR05CU001.outbound.protection.outlook.com [52.101.83.25])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.11362.1795689021983219042
  for <cip-dev@lists.cip-project.org>;
  Thu, 26 Nov 2026 02:30:23 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=ikf0Srae;
- spf=pass (domain: siemens.com, ip: 52.101.84.47, mailfrom: quirin.gylstorff@siemens.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=rxqI5ku3;
+ spf=pass (domain: siemens.com, ip: 52.101.83.25, mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=H/e22t1xghDEbe+SRURz2qhVRtE8Yle0D6QL+A4ECjzk14dDfSW//NZ/I3dNndh1lNXsjxrMYoYod8EcSqD7dlIUIzqQ7fDKhxi5PCl3AxqBimAeT+H9YzQF6e2KVJc5/k7Bff9Oa/S+arBeTVFbi3GnzKDhM6umQxVCYNZe8huLez3meOxNd4knuaUCX9ovrgXV/TCViEi4pohP6KDjPafTNu26JK59mSwADJ5Lu2DbCn2VL9igy2v3UrIX6+xuq+PFlcexbG2KhDI5bvqV9FV8iu4B+pnnbmilyF9/yeh6oKsSFJz+QUA0ABViMZlYX+rt6N4LPD6jSk3ALraqIQ==
+ b=jw2vfvC8uAI1AxomLqpMIz6PZ7F1VjjxDYPubQjEUVvZ9onVvmZBiu1vojAc5uI3C8/JKRYC1sbIczSrNd2KqdLNEVNUuzdF0B0PQyUZvWgHOdEBKTfvrBdoVV+ejfjO3OBR2daZpXlR56EvVnN5xs0WD+A5fuRYnaId0PXjJj6/Z2av40l6oX19HnHcNVIJc2CatlphRTHWrbc6XTHj/yJZERhCNDfwIYwVMuHjjbfNkE76XCcSxN+5CO4c2sx7WNUEQymXNYXmxd1dKcpBaEs1Uwbq5HA73MMcy0YgPbgv0/104GzdR15stsc4IANDzFEmrsX7EwCs93PqTxURBA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xQ0pvwvopatmah6gc6E3ajIRAkB6Vx7S+mMqIJeDikM=;
- b=JK3ba9o3FU4cc6MJfLCEcRuUVls0StmNrCYKxW+eCJG4O7Gs24m0YTGAlAL9OzBP1sBwIJqeIEidLbteCLmWwaqXdqb8GgM11VS2YCv3l5nlwaAh19fHy302F7VySHNG2/r3AQznOTJf0lWVGZjCe839BAqtePgX2AqHi4yC6YWdryyUe7Q5ohtoeEx8oqdmQdY6VzN/EMc1LVrztQvB6wtVoyvF1dUSOAwEnLJsaoowPIbo6C8eSpvCtBo/5ZrwF7ZMdNWnmnhwPC7acNn9WdE/9S6CB0wHCZzEuXcfN3dOHkhae2VoPsoE3m8P3gqa21gMvnNihnhm6mcbaxTObg==
+ bh=B4uEGVyy1dpOYgSjNA7olQTO8ZNNUMLuTqPpE8U8ios=;
+ b=X/K/x2D2Q9Tkc5EGK1TSmJawbe9q6i+4IUMj94y3wfr0P7dl14Gxwa648vGxKYpIz1DDvj8HKsmSkpn1aTYGD2GgwK4qSI+ZTo5FR1GBfWdwGKoramDiS4Ycot8evSuO8Ur6IwhULFUS7+cpzhm+8NC2Qu/wFpnNKwCXCpOPx0QQI46oQgpW/2cbhv8eoy0TX+/8/Ha0Cp/9woROqFWOS/lxL2uebWzZN4b1TsglDZiBY5d9GwZqSjMoemrAdEbjBxBK5hQ9UfsfLbZKEyTt7nDlooYp2P+jvsVppWIwfH2kKmbATbua6yawlb26vDSza0bEjoioGOMqVXZIwnfWuQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xQ0pvwvopatmah6gc6E3ajIRAkB6Vx7S+mMqIJeDikM=;
- b=ikf0SraeQ35EsXWu2PgNkDebRiLstGHY01cIiGqX1hZUv6a50MiTtC3uzIWlw/MTqpWTHPJhPGrRII0sp7gzH14iicPveVoLnwUi3km1EWuGjlMKsVtUsTvfnSWz7g0zQBN5UVel9ewPywV84gW5NrMdnULugkomoaT60/doVDQF1+XAUTAWJQacUr0/zDtSD7FdFTXUr3rE7BoLW6r9nTP8TbhmPktqsM+knevych6Ky5kLpzUJJkj8V+T+sLJOOMaRfG4MzDGXAeZUlJS/l1pqw3IxFdeiWvgvZUADND2HPHJ132EbtuhwMsOWsJMjv1Sg4XwP9aovt53i2bw2wA==
+ bh=B4uEGVyy1dpOYgSjNA7olQTO8ZNNUMLuTqPpE8U8ios=;
+ b=rxqI5ku3LMxatWPD9ue/sxy3ABk4piIPLDXhPF5bETdv6Noo/8ZG7Zx43vq647uFHjxr8jSrG48nLGOUljz6g0h8Sc01as977t0pBCgjlZVcEuZ3CKcI2PwlWRJN2BMgrITFxzkPwJnFxtec1hZ+0eNTGi7mROt9BU0AfQJCkm7hAhLFdNypztU5UsPqps68Qs3Lgkz8xsyfL3HCJXDIKHkqX3YuXvVt9hSDK3tT0Qw/fFs84zQEPGd+Xm3NGTLV4Hq2VY39rv4bWTaFZR4MQMmhDE2IJWXpWiK62zE8XHi1Z1d2lNGRILacwLDc4jkIgcdaWNzUk1Be4Z/rz1iM1w==
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:113::12)
  by PA3PR10MB9258.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:4d7::16) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.662.4; Thu, 26 Nov
- 2026 10:30:17 +0000
+ 2026 10:30:18 +0000
 Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::ae26:d131:7cff:4001]) by DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::ae26:d131:7cff:4001%3]) with mapi id 15.21.0688.001; Thu, 26 Nov 2026
- 10:30:17 +0000
+ 10:30:18 +0000
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org
 CC: jan.kiszka@siemens.com,
 	felix.moessbauer@siemens.com
-Subject: [isar-cip-core][PATCH v4 07/21] read-only-rootfs: do not mount LABEL=var from fstab with dracut
-Date: Thu, 26 Nov 2026 11:29:53 +0100
-Message-ID: <20261126103007.2922985-8-quirin.gylstorff@siemens.com>
+Subject: [isar-cip-core][PATCH v4 08/21] customizations: make systemd watchdog timeout configurable
+Date: Thu, 26 Nov 2026 11:29:54 +0100
+Message-ID: <20261126103007.2922985-9-quirin.gylstorff@siemens.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261126103007.2922985-1-quirin.gylstorff@siemens.com>
 References: <20261126103007.2922985-1-quirin.gylstorff@siemens.com>
@@ -49,111 +49,229 @@ Return-Path: quirin.gylstorff@siemens.com
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DB8PR10MB3178:EE_|PA3PR10MB9258:EE_
-X-MS-Office365-Filtering-Correlation-Id: e978b9bd-99ac-4fb8-c6d2-08df4ba843cf
+X-MS-Office365-Filtering-Correlation-Id: e2dc45df-8109-4e5d-64b9-08df4ba8441e
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|23010399003|5023799004|261022105027099003|261028144727099003|10067099003|11063799006|261022115727099003|56012099006|261021121427099003|261021123027099003|261009223027099003|261026140227099003|261022075727099003|261102123227099003|18002099003|6133799003|55112099003|22082099003;
-X-Microsoft-Antispam-Message-Info: UOimBRX0lUIKTUOiraGyIIPS2/sj5JQ35zz8Mb8iTSa2OObwxZF2pbNXxA7/wKwLb9PW+S9VQ/27i3t8QjQzA8GbnhhOYMQXSwqcKjigY8Tc8FzPqC2IH0916r0znYpar1HLpMSbehOaZK91yxt65SmPmU5eIhuKEWr+UXxP6u1RO27kdK9fA9AFwTCOGqvMgJRYGj6CWkLiIqYn3gG67+7e0a/qvuB6Tot7qpwYv6zuJcq9uORU1roKvKquGjfAN+wFxFBhtgAZF5svqo1SPxcBduB5k+4YOAMFNfcIMELaC+nyyM4Wgke+MOM+UhtMCd4PQgY/N4mBWj5dIOnRh4SwP8HouDrtytEeoWFxW8jtdjcoUQRdD8Iz4hkU5N7KvUsFZZYfP7TaSZYIYzKhCtRO0F8YJOOZOlDigUruBlhBzyncdyQtcMFjd4WN4BB27WPJbs1O8+rLJ8L5z8FL8G1ElUTfvAf3E52V0XFq/JJ6udByuatROm0BuLMLQBAlVooWKtSlFnXtx2Cm4+AAXdHaAE8vw9I2sdl60fDjKoGSJNwwFxrkkswxhmp9J1MsxdDh5KNOHBpQNQIA/QFXzeRu0orJxohm+5eb7M4ZdGK7eYbekYFwhJIFtW7AUo+Ms7DIHKyBgb0s60+fKLXxo/BeBueUVaRizTqC3fLeTfw=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(23010399003)(5023799004)(261022105027099003)(261028144727099003)(10067099003)(11063799006)(261022115727099003)(56012099006)(261021121427099003)(261021123027099003)(261009223027099003)(261026140227099003)(261022075727099003)(261102123227099003)(18002099003)(6133799003)(55112099003)(22082099003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|23010399003|261022105027099003|261028144727099003|10067099003|11063799006|261022115727099003|56012099006|261021121427099003|261021123027099003|261009223027099003|261026140227099003|261022075727099003|261026121527099003|261102123227099003|18002099003|6133799003|55112099003|22082099003|3023799007;
+X-Microsoft-Antispam-Message-Info: sS78yZcI4qOIGri84bjTAkBWA0H75dALu4znRsetXHTW+pe5ZCuOPhIOe3eYYOwAKsEuWNF3joboBMBZS9gDpsoioFioDQPGBXzV0ihv609+W6kQscxPa2ilZ8TBYGCkycixHLqoDlDUM1Aw7v19+1Ggh13ie8tqosxb36IXPOMeQ0ZW/FVpqPXgkaHL+c7FXmm8CnqECmq8RUvwMIuJ4MNa9A7aM56PxwXx72K5QX79ZOG3/OoS1DONXtm9PTpgjRL6i58C3nH2/SIrs/g1GLCpTPHhoJtI7HCAzYT8BX7+Wuo7diRkXGzonT6ACU0aDUuSOQJpoIIHU7mljkeoH7lohixStg9Yl0gzDHWqrSUlhaPoGD3hnp5j4EyuFfJyIlTjD4SngYqmtwq00ZIFO57mRrbLaudGcuuYEHz19pEftyYpKD0arGHNH+yyP7ytR7BXSC0W7RzDIBagZ6snBCluYs1NEu0AYveMiUWLDNPcvXUFbniGFI95N1pq4x7cvKlbP+OiOrgcGPwBdsi2pYGaty2WibcmZZdO+4IBFCfC+AahvjYJFC6oOZRahkcpI5N8ywdDqyLYyIT9CfTserpkogihUxWbeUyIm7iph/ciYxuetis91grteYl2+uIkeTzmVndatECInkY+ElMl1eRiI/Lpwzzwb3dmFL5SlEA=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(23010399003)(261022105027099003)(261028144727099003)(10067099003)(11063799006)(261022115727099003)(56012099006)(261021121427099003)(261021123027099003)(261009223027099003)(261026140227099003)(261022075727099003)(261026121527099003)(261102123227099003)(18002099003)(6133799003)(55112099003)(22082099003)(3023799007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?rGlF+fSbNzE24IqPqmV8tvYMk+D2FhRCT+CRgcMF6gvOQ3YjLJZ/pfcOo4m0?=
- =?us-ascii?Q?ltxomjCjb7aw3VWYbpNlmM7ffo+g49rZixRB3jWkc9xxT3qUJkH83Eet1X9J?=
- =?us-ascii?Q?Hq2ieOuM0gtrEZVVJQYWOkMXZqXGX1G4iRNwJkePG4QulsR1GfyPpoTuNxyz?=
- =?us-ascii?Q?6uH3CN8QQtPTStM0L8/YoxjnLN3qA9hLXAhgKrpTJj7nyI5z8ZW52W+Vch5s?=
- =?us-ascii?Q?2+gedf73dnLKv28Tw8LtNAnW1nve67z0SNETWrowA0fwLJpxNJRqRXYj2yIV?=
- =?us-ascii?Q?R8JHL545Jx8upUu2iQYyjOZqK04GUD6mLG01ea/6kjyGpOWJ11tNG7QTLWwb?=
- =?us-ascii?Q?elfhl/AgYsSSQncQ7WWpoEhjSqev+bEZtas5rvJZMGy88e/oCQmFQUgqMrDB?=
- =?us-ascii?Q?kGlp5qKsiz0SpaIKJIRDPiR28DBfpqhnymkq3zdMkFNQe4weUxOsy2YMuZE2?=
- =?us-ascii?Q?KmahGy+NPHqCm9gLM6/ItUByp/q7+sYRNGvk666yyEsjmh0u8JWjKG2xyjko?=
- =?us-ascii?Q?RyqZ/gOueWUJJWJokza9hYTSAn+zQucYjkFtlTIsLq+SoMyOJo+sUZ9GcTTY?=
- =?us-ascii?Q?8aN64xBSv0lUmBMu/Q0jE2cqHTHZIRHcXPD3KWrR9VbbV25k8Bj1wynEYxwn?=
- =?us-ascii?Q?/YNNx/PlryUUraSu2+Z5eQ7mE1WEe/2yrX7w2P4OuBUv1og6dHI3gH5MPIot?=
- =?us-ascii?Q?nCrUcI1wsluN1MbjFywNUo1a7qEQuUHzhRqbyRuyiTLJK8/bFxZ0MqNjIZtD?=
- =?us-ascii?Q?23f/P1LEIJKwlgnGhHj4f12lXMbfjt9qlQmkhJ+wsmeownfA56XXhs1ecm9q?=
- =?us-ascii?Q?GjCDAgohlhOI9nEDyd+M2uJm2f+u0VPVdl4xGBPn6QzSM9+aOe/r2+QQJJ3L?=
- =?us-ascii?Q?Dw7NDEoGawNKnJl5Zatvv1Jne49IeFQsDkkkHvh/zgjcFEgb5dc/pcTxA72/?=
- =?us-ascii?Q?oUP1supjYvh40+Y+GiQtbBWwBslwvSMgLC24bKIV3RLm8CLmvdmJxFeeQnp5?=
- =?us-ascii?Q?c9pzZPujYn5rSPx+ZYtQu8MiaDK0WJHW/Ln+3inIwp9ez0D1NVB1JiJnriPY?=
- =?us-ascii?Q?7onZy5WYnXi4iPHYtJzlLWzDI44gn61rfB/YfHvJYgAAxP35AVv5WODNeA0F?=
- =?us-ascii?Q?KhdiJ6iAWo2GggqxFiMI/u1cApVQQ5TtomyS21ZDdFuEURM1qtVZuJgM9Qsi?=
- =?us-ascii?Q?3FHKnWnN7Hd5RfapE+sM5pc4LPiqYsTbukWt+CPhO1Y9CZkN6o0tJSTYFADD?=
- =?us-ascii?Q?kaf2O88sUyJ+rsMiaq8Xx7hTG9D8nf3lMyh6jg24l4E+It2iXg7MRVhUWEHk?=
- =?us-ascii?Q?9lMkR5EkCVV2N2g+CfdweMFX4HrMSzk4eSOjXpIyiqY8RVIcUvtLfIBWsv5a?=
- =?us-ascii?Q?3TAoCEKNe1RMn2Jgwh/VvM6AxVLcBDJKFyhpN7Sp+JuyvjugJXkpHMHDdibh?=
- =?us-ascii?Q?mQDr17CyeWAEljI+umOOFqOvDcYi52m8bKkbQAtfPiqiD3t+ZCGhlP0cqKjp?=
- =?us-ascii?Q?tjMiLvaxwwfYA1GUzY7IqJ9lMDa4uzci1Jk/PiXOSpp9Zi4fidwiVe7KTt0w?=
- =?us-ascii?Q?BFjtTpOXkm9CBaChC+rjjU3VlqWCoD07zSboo0iMbLg74WQ2wMchq1WC8buI?=
- =?us-ascii?Q?bRpEpXJhadEb/7aU+1tP1aTCwC9C8qiTMUYoFmMurBL2Byi3adkVaNOkjEYk?=
- =?us-ascii?Q?ceq+mRLCa8ZArXx0NPSt5XU6jsqmieu3ySYSv1PB+ugZQKtYxXQx96BJzan8?=
- =?us-ascii?Q?ZESuIiDcbU29D7hgxDknua1Wl0BDxG4=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?NhnRmbb5+OxTaECxV9tT29oUHgVLFUUNw5cxgqb8h+aDJHug2SZiANfcR+As?=
+ =?us-ascii?Q?aWRE5MDVC0HIHbPzCT+dIb8JJHBZjD5uhj/rQ3jnmZ54zDLIlhhla8O2beB7?=
+ =?us-ascii?Q?iKcUeWW9GCs+Z9jl1sfyByz6DlrOoztMzblVXX9AXZDAyPZ7V8zK3+eV81do?=
+ =?us-ascii?Q?7UQlqszoUZ+AHt62f502BPRJMV17jJvrRXF7PwzjuA7HYmH85zgJG1Gfr8Ch?=
+ =?us-ascii?Q?km6yCUNnzgCE3QT6PkNqcvXTwQ/hHWGcopg7fjMsdUwBWk5jOIK6mO6euXQA?=
+ =?us-ascii?Q?m0KWlaWcVTtoRbp1BLdWYo3JqYo6YkMECf4MWo8hyhsnaarPUKojy9cNz6Fe?=
+ =?us-ascii?Q?/fNbJL2+dVMA4s4SV7sBs7z0p3IpK61IUFGRXx9ndXHsTaZXcl5zdFpKkIEn?=
+ =?us-ascii?Q?bvCU60TzHHl+4zqEaFPagIMGZHYAaHPXIp0APpt/MUr9GRprFwj7hiHFgeim?=
+ =?us-ascii?Q?LWqEVIA23qg+f0Wxuelk8AxrMQljKFDUKZQFIvxqLjPJGzZIJUcW3NHu50ku?=
+ =?us-ascii?Q?2jVsAYJNcXIn5iA/a2sE/epQmgMQXk+9t+Qos2goRLQT/AZOXmzsHMQXDKL+?=
+ =?us-ascii?Q?fXDTEaMBcCJ564nuNgmUbHMyCAB5N3A+FOt9ZpX7D3nPZmDE5fN4JwjwZQIR?=
+ =?us-ascii?Q?qbe5R6biNE0vKch3JV0KojqgTFNrwqR6DXte2b8gGmiYGA3F3Kh/w1ojnIRC?=
+ =?us-ascii?Q?R4hlYeTvgNs/29tISKkOQRMC2GmyyzpQlwk7j0weblam0suktkBheEZVW4/c?=
+ =?us-ascii?Q?foCf9YTQl4vsVvsFZLCnVHXczCbmaDz/xDsbOGcbn9MIGOHcNP/iwBpAycAB?=
+ =?us-ascii?Q?k6MELis80Es2uitHsiQz+JhvFxg+zpfqwYMIR8OpOnH0gvjZ0C620i8Xr8dg?=
+ =?us-ascii?Q?fD7h5LEnIgVxAF1d5jmImb3389vB1CvWpAuNRYgJJGyNvE3GJub//WzJiQo5?=
+ =?us-ascii?Q?DQNlDMP5VyvyFHazpKXYBMy+kKFF3y7NWilyHaOY49ka/QJ8XdhGsq9DmA3L?=
+ =?us-ascii?Q?FmcLkLpn++yWTN8An1Je7kVuS2OjtgefRee4Qtcq8PPhM/dl5W6b16nWs8gG?=
+ =?us-ascii?Q?21d5wwipGX3AM+b4YPgXpY6ginBq/YfLvK47PSJhEA2duCAs3lB9Umq7RYHH?=
+ =?us-ascii?Q?oLuJkqTvqinKgjbijr0MWnnqm9TnUmxt+GhEB1Q4V1kEtiwOvnGteD7HFkNo?=
+ =?us-ascii?Q?3fDjIhWcennP9fnY0jx8X7rNyvUMlSr9jURstu5jViJTcxoU2hrYvvnsZwJq?=
+ =?us-ascii?Q?l/qjyKPYKZiYY4MTQ83uSOAF6vdCejColCi0kTae7xRKesCygsn9MPTTfm6z?=
+ =?us-ascii?Q?bcfMKreyCGmRbzu0X51FmTR4AwajjbTLlVyWlcqFSNbLgEF9dXRk06TK1B0R?=
+ =?us-ascii?Q?+SnTBg22AxHxqqX3Gkg6btK2u+3Kvyz5OxFSoVDshu5hBiyjTxIADRK3y+q8?=
+ =?us-ascii?Q?R8jJVhH7aZNFNt3cdkXKI3Rzgl1MFZ7EP2DXYpA4wlVtXWOUIMhGmubNsicg?=
+ =?us-ascii?Q?UFOugfwkEzOgptMeJFXAdWpqOUK2EiTgooVzrBoUyP0giKNYN8sUa26PxmUz?=
+ =?us-ascii?Q?MjMWQKIIPk1sTFQP8tu6o9edB1xmvwLVo06+OrfOO6neKrCvFzUKXnhk86ao?=
+ =?us-ascii?Q?7J83uI9ngpU9Sd+btQwkB31sE//nAsMq8WRej3eqQwmU0v5iTMPke8q/6ISM?=
+ =?us-ascii?Q?ifjuppLKsdCaHasFVqOfTrXpxULuC+hFg9AC50iTc8lGuyGuTr2Hcwh6vF6V?=
+ =?us-ascii?Q?pfw+5kqqb0pW2xYeNkip2RnIzxtN5gc=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e978b9bd-99ac-4fb8-c6d2-08df4ba843cf
+X-MS-Exchange-CrossTenant-Network-Message-Id: e2dc45df-8109-4e5d-64b9-08df4ba8441e
 X-MS-Exchange-CrossTenant-AuthSource: DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2026 10:30:17.5404
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2026 10:30:18.0430
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: j6Xq6bxKrZTvrkTRNNTEodOIDdsCXGltDVyRqtDCiD2dyYH0vmIoDLIKpOvemSeBBKZVamjD4kZnwdRbe5p6J4nS0Ggw66AuHgkAUnp50Pk=
+X-MS-Exchange-CrossTenant-UserPrincipalName: Z45hiAWRPN08Suvvwqw57argD6nr/h1O+c5Hy4UDEB3qO4T0cq3uP/F23s0xhjC5uCr/ZVYMLw0HGBkUVHd/MTEDRGyZ0U2O+pAq1CXk69E=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA3PR10MB9258
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Thu, 26 Nov 2026 10:30:25 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/25089
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/25090
 Content-Type: text/plain; charset="utf-8"
 
-With initramfs-tools the additional LABEL=3Dvar line in the fstab is
-redundant but harmless, and it keeps /var mounted for setups with a custom
-INITRAMFS_OVERLAY_STORAGE_PATH. With dracut it fails, as it is incompatible
-with how the initrd mounts /var.
+The runtime watchdog timeout of systemd in the rootfs was fixed in
+99-watchdog.conf. SYSTEMD_WATCHDOG_TIMEOUT sets it now. It follows
+WDOG_TIMEOUT, the timeout of the bootloader, but falls back to 60 seconds
+when WDOG_TIMEOUT is 0: that value means that EFI Boot Guard does not
+enable the watchdog, as U-Boot or the kernel already started it, and
+systemd still has to service it. Set SYSTEMD_WATCHDOG_TIMEOUT to 0 to
+disable the runtime watchdog, as kas/opt/disable-watchdog.yml does.
 
-Drop the line for the dracut initramfs if the overlay storage path is
-below /var; the embedded-overlay module then mounts /var in the initrd.
-For a storage path outside /var, keep the line, as nothing else would
-mount LABEL=3Dvar.
+WDOG_TIMEOUT now has a default in the distro configuration. As
+INITRAMFS_WATCHDOG_DEVICE depends on it, machines that did not set it
+before (for example hihope-rzg2m or x86-uefi built without the kas menu)
+now also get /dev/watchdog serviced by the initramfs-tools crypt and
+factory-reset hooks.
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- classes-recipe/read-only-rootfs.bbclass | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ Kconfig                                             |  5 ++++-
+ conf/distro/cip-core-common.inc                     | 13 ++++++++++++-
+ conf/machine/qemu-amd64.conf                        |  3 ++-
+ kas/opt/disable-watchdog.yml                        |  1 +
+ recipes-core/customizations/common.inc              |  6 +++---
+ recipes-core/customizations/files/99-watchdog.conf  |  6 ------
+ .../customizations/files/99-watchdog.conf.tmpl      |  8 ++++++++
+ recipes-core/images/swupdate-efibootguard.inc       |  1 -
+ 8 files changed, 30 insertions(+), 13 deletions(-)
+ delete mode 100644 recipes-core/customizations/files/99-watchdog.conf
+ create mode 100644 recipes-core/customizations/files/99-watchdog.conf.tmpl
 
-diff --git a/classes-recipe/read-only-rootfs.bbclass b/classes-recipe/read-=
-only-rootfs.bbclass
-index 945976a3..e9a31dbe 100644
---- a/classes-recipe/read-only-rootfs.bbclass
-+++ b/classes-recipe/read-only-rootfs.bbclass
-@@ -84,6 +84,15 @@ copy_dpkg_state() {
-     run_privileged cp -a ${ROOTFSDIR}/var/lib/dpkg "$IMMUTABLE_VAR_LIB/"
- }
+diff --git a/Kconfig b/Kconfig
+index 929373d9..df71aa36 100644
+--- a/Kconfig
++++ b/Kconfig
+@@ -413,7 +413,10 @@ config WDOG_TIMEOUT
+ 	  needs to be large enough so that systemd can take over the watchdog,
+ 	  continuing to drive it via Linux.
 =20
-+# The initramfs mounts /var. With initramfs-tools an additional fstab entr=
-y is
-+# redundant but harmless and covers custom INITRAMFS_OVERLAY_STORAGE_PATH
-+# setups; dracut fails on it. The dracut embedded-overlay module mounts th=
-e
-+# top-level directory of the storage path, so keep the entry if that is no=
-t
-+# /var.
-+FSTAB_VAR_LINE =3D "LABEL=3Dvar	/var		auto		defaults			0	0"
-+FSTAB_VAR_ENTRY =3D "${FSTAB_VAR_LINE}"
-+FSTAB_VAR_ENTRY:dracut =3D "${@'' if (d.getVar('INITRAMFS_OVERLAY_STORAGE_=
-PATH') or '/var/local').strip('/').split('/')[0] =3D=3D 'var' else d.getVar=
-('FSTAB_VAR_LINE')}"
-+
- ROOTFS_POSTPROCESS_COMMAND:append =3D " copy_home_to_immutable_data"
- ROOTFS_POSTPROCESS_COMMAND:remove:separate-home-part =3D " copy_home_to_im=
-mutable_data"
- copy_home_to_immutable_data() {
-@@ -109,7 +118,7 @@ image_configure_fstab() {
-     run_privileged tee '${IMAGE_ROOTFS}/etc/fstab' << EOF
- # Begin /etc/fstab
- /dev/root	/		auto		defaults,ro			0	0
--LABEL=3Dvar	/var		auto		defaults			0	0
-+${FSTAB_VAR_ENTRY}
- proc		/proc		proc		nosuid,noexec,nodev		0	0
- sysfs		/sys		sysfs		nosuid,noexec,nodev		0	0
- devpts		/dev/pts	devpts		gid=3D5,mode=3D620			0	0
+-	  Set to 0 for disabling the watchdog in case hardware lacks support.
++	  Set to 0 if EFI Boot Guard should not enable the watchdog, for
++	  example because the hardware lacks support or firmware or the kernel
++	  already drive it. The systemd runtime watchdog is configured
++	  separately via SYSTEMD_WATCHDOG_TIMEOUT.
+=20
+ endif
+=20
+diff --git a/conf/distro/cip-core-common.inc b/conf/distro/cip-core-common.=
+inc
+index da48b47f..d2fcb7da 100644
+--- a/conf/distro/cip-core-common.inc
++++ b/conf/distro/cip-core-common.inc
+@@ -46,9 +46,20 @@ ROOTFS_IMAGE_TYPE ?=3D "${RO_ROOTFS_TYPE}"
+ ROOTFS_IMAGE_TYPE:rootfs-container-verity ?=3D "verity"
+ OVERRIDES .=3D "${@':rootfs-container-' + d.getVar('ROOTFS_CONTAINER_TYPE'=
+) if d.getVar('ROOTFS_CONTAINER_TYPE') else ''}"
+=20
++# Watchdog timeout in seconds that EFI Boot Guard sets. 0 means EFI Boot G=
+uard
++# does not touch the watchdog, e.g. because U-Boot or the kernel already
++# started it.
++WDOG_TIMEOUT ?=3D "60"
++# Timeout of the systemd runtime watchdog. It is independent of WDOG_TIMEO=
+UT:
++# a watchdog that is already running must still be serviced. Set it to 0 t=
+o
++# disable the watchdog completely.
++SYSTEMD_WATCHDOG_TIMEOUT ?=3D "${@'60' if d.getVar('WDOG_TIMEOUT') =3D=3D =
+'0' else d.getVar('WDOG_TIMEOUT')}"
+ # Watchdog to service by initramfs hooks during lengthy operations like
+ # partition encryption or factory reset. In our integration, enabling
+ # fTPM/StMM implies a U-Boot-based firmware which may enable a watchdog ea=
+rly.
+-INITRAMFS_WATCHDOG_DEVICE ?=3D "${@'/dev/watchdog' \
++# SYSTEMD_WATCHDOG_TIMEOUT =3D 0 disables the watchdog completely, includi=
+ng
++# in the initramfs, so no device is serviced then.
++INITRAMFS_WATCHDOG_DEVICE ?=3D "${@'' \
++    if d.getVar('SYSTEMD_WATCHDOG_TIMEOUT') =3D=3D '0' else '/dev/watchdog=
+' \
+     if int(d.getVar('WDOG_TIMEOUT') or 0) > 0 \
+         or 'ftpm-stmm' in d.getVar('OVERRIDES').split(':') else ''}"
+diff --git a/conf/machine/qemu-amd64.conf b/conf/machine/qemu-amd64.conf
+index 748aaa33..6cec9b97 100644
+--- a/conf/machine/qemu-amd64.conf
++++ b/conf/machine/qemu-amd64.conf
+@@ -13,5 +13,6 @@ USE_CIP_KERNEL_CONFIG =3D "1"
+=20
+ PREFERRED_PROVIDER_factory-reset-helper:swupdate =3D "factory-reset-helper=
+-efi"
+=20
+-# when running without kvm (as in CI so far), 60 seconds might be to short
++# when running without kvm (as in CI so far), 60 seconds might be to short=
+,
++# for the bootloader and for the watchdog serviced by systemd and the init=
+rd
+ WDOG_TIMEOUT =3D "120"
+diff --git a/kas/opt/disable-watchdog.yml b/kas/opt/disable-watchdog.yml
+index 64695b83..56cc1a76 100644
+--- a/kas/opt/disable-watchdog.yml
++++ b/kas/opt/disable-watchdog.yml
+@@ -13,3 +13,4 @@ header:
+ local_conf_header:
+   no-watchdog: |
+     WDOG_TIMEOUT =3D "0"
++    SYSTEMD_WATCHDOG_TIMEOUT =3D "0"
+diff --git a/recipes-core/customizations/common.inc b/recipes-core/customiz=
+ations/common.inc
+index 0fd3d4f8..016e558b 100644
+--- a/recipes-core/customizations/common.inc
++++ b/recipes-core/customizations/common.inc
+@@ -19,14 +19,14 @@ SRC_URI =3D " \
+     file://postinst.tmpl \
+     file://ethernet \
+     file://99-silent-printk.conf \
+-    file://99-watchdog.conf"
++    file://99-watchdog.conf.tmpl"
+=20
+ CUSTOM_HOSTNAME ??=3D "demo"
+ WIRELESS_FIRMWARE_PACKAGE ?=3D ""
+ INSTALL_WIRELESS_TOOLS ??=3D "0"
+=20
+-TEMPLATE_FILES +=3D "postinst.tmpl"
+-TEMPLATE_VARS +=3D "CUSTOM_HOSTNAME"
++TEMPLATE_FILES +=3D "postinst.tmpl 99-watchdog.conf.tmpl"
++TEMPLATE_VARS +=3D "CUSTOM_HOSTNAME SYSTEMD_WATCHDOG_TIMEOUT"
+=20
+ DEPENDS +=3D "sshd-regen-keys change-root-homedir"
+=20
+diff --git a/recipes-core/customizations/files/99-watchdog.conf b/recipes-c=
+ore/customizations/files/99-watchdog.conf
+deleted file mode 100644
+index 1f38c559..00000000
+--- a/recipes-core/customizations/files/99-watchdog.conf
++++ /dev/null
+@@ -1,6 +0,0 @@
+-#
+-# SPDX-License-Identifier: MIT
+-#
+-[Manager]
+-RuntimeWatchdogSec=3D60s
+-ShutdownWatchdogSec=3D60s
+diff --git a/recipes-core/customizations/files/99-watchdog.conf.tmpl b/reci=
+pes-core/customizations/files/99-watchdog.conf.tmpl
+new file mode 100644
+index 00000000..c75cae0c
+--- /dev/null
++++ b/recipes-core/customizations/files/99-watchdog.conf.tmpl
+@@ -0,0 +1,8 @@
++#
++# Copyright (c) Siemens AG, 2026
++#
++# SPDX-License-Identifier: MIT
++#
++[Manager]
++RuntimeWatchdogSec=3D${SYSTEMD_WATCHDOG_TIMEOUT}s
++ShutdownWatchdogSec=3D${SYSTEMD_WATCHDOG_TIMEOUT}s
+diff --git a/recipes-core/images/swupdate-efibootguard.inc b/recipes-core/i=
+mages/swupdate-efibootguard.inc
+index a9be514d..3a0c17c5 100644
+--- a/recipes-core/images/swupdate-efibootguard.inc
++++ b/recipes-core/images/swupdate-efibootguard.inc
+@@ -13,7 +13,6 @@ IMAGE_INSTALL:append =3D " efibootguard-tools libebgenv0"
+ IMAGER_INSTALL:wic:append =3D " efibootguard:${DISTRO_ARCH} efibootguard-t=
+ools:${DISTRO_ARCH}"
+ IMAGER_BUILD_DEPS:wic:append =3D " efibootguard"
+ IMAGER_BOM:wic:append =3D " efibootguard:${DISTRO_ARCH}"
+-WDOG_TIMEOUT ?=3D "60"
+ WICVARS +=3D "WDOG_TIMEOUT IMAGE_FULLNAME KERNEL_IMAGE INITRD_DEPLOY_FILE =
+DTB_FILES EFI_ARCH EFI_LIB_ARCH UKI_FILENAME"
+ IMAGE_TYPEDEP:swu:append =3D " wic"
+=20
 --=20
 2.47.3
 
