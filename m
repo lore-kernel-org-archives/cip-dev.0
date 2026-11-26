@@ -1,43 +1,43 @@
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (DB3PR0202CU003.outbound.protection.outlook.com [52.101.84.47])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.11270.1795689018322784349
+Received: from GVXPR05CU001.outbound.protection.outlook.com (GVXPR05CU001.outbound.protection.outlook.com [52.101.83.25])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.11362.1795689021983219042
  for <cip-dev@lists.cip-project.org>;
- Thu, 26 Nov 2026 02:30:21 -0800
+ Thu, 26 Nov 2026 02:30:22 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=cI1Fcoz+;
- spf=pass (domain: siemens.com, ip: 52.101.84.47, mailfrom: quirin.gylstorff@siemens.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=AmbM+x15;
+ spf=pass (domain: siemens.com, ip: 52.101.83.25, mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BRNqghlIcgbbx5tfJJrexTtec5yiEnriQM3yhHClXqBlPv8DUI7jlb3XWj762EgaKxHyCGZVtvblf82TWC9FHiDAQifdRfodwNBEiM82vNXYhiYgPn6bVPTLIhq0lzZqmWAUyeoJjmBT6BSkJHrKK73hULLpHbq8l6HHbtvozUK6LgRFMXkRR0VThrOGxUldxZK3IqvtrnQEJl4bt+6CJBi286ksDmfFas46Gtl3pBhI94LRKwdHJBKsg6HJFO67AXhOk5mqApt7OsFT4XYjxUEOsOicw4N3QNuIzXkWFJ5aXY7GW1+6tUhxMeFYKITwClYIu/+6pI6+/+7B5Mvlrg==
+ b=ng/fq2p8Qw4dHAONJPaNrSacW2ev0/FMaQWxKE0AweHVCIr4LvM0m4E6L+lcfgJf4+awrl3wb0IxfybgfTaj2G5YELqSOPFY1P8WLVMBz5z7ekHta0MiZOOakOQdKxroLkj4UsDpqEipZFU8ZEewdoLILHS5Cm0Ni9jQiZdT07Ou/JelihHciSMk0dM5DKxz4yCZJy/d3vteLKQ1oDPDsphIU8NO1tNztw+ZFQO0wEcu4HTyM1Ji+wbQaSfiA0HCC17jUHxSjgi1xbbdwiK0ajI+IdpajE30beNdiFIujnJcNj/B0HZ0dm/L4wyIrT+nCsDO1u6M5OuepR4xGFRoXg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OTuzRI/zgWWS37LpPQWBzj4wrMtI3QqrvR3scKWyV1E=;
- b=A8awNvR5lpqSwr+5hjR3279BsqA1abwhkzHNlYLO3rSV+MHkLooSsk9GOft3M7NkGVIXP8pToimXh9wsDSstpMveczavHJrhdtu7lZgSwrRb4i+StqNly4n6O8t4x+WV4IrQY/3q63890lNoKiBRdZTeCjJ+Gx67xxIMVn727L5QIho9E37OWtgB/5YlnFbMCbWJhswm7/Frk7f/+thyi0zF0hxPLXeM4KGOUv5CnP2EAYj98wJgVO2ta/WujbkcjcGJEKYWm9iggBnT6JUFN6MPc8GydVjArsBqgpPS/5sKoXMORE5rtkyOmyA4UTROgf57N8ut3TFB+/+TM97DVg==
+ bh=b0CHCXfpycU7LggXZdtkkPPxsh4Ohd5GVIGWmzb4v+Q=;
+ b=QdHfjYc/TDjXp2JpX1yHjTc3VJjUtf23XXP0rFqpC8B5vzGX2VR4NstMzQdS9J8Fbd2l5GoDEiY/Y7nhKJTlXo8jp+fZOXxGv6HEDznV1b65QK+ptCIlzTWFpsTyDueisv0T0IKNYG2IzAXMoJ2lLQnvnbJijUfAobe/7cSpaeYL/ViAVGbHg2jMHrs5q5A3272JKSIoy/fvxsAi2t0v9kzeEySqH21jxkRq6bGcy7+gYrTGvhYr3UJBvpY9mCa7/Li+a+nYVAyCX1hje5pLr+DCj5HBAybkdRFpEYuEK2be3TRlRm6FbsODym0footLOhlTVIl+3XC6Evsn6cxXOg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OTuzRI/zgWWS37LpPQWBzj4wrMtI3QqrvR3scKWyV1E=;
- b=cI1Fcoz+5YWJ404lsYr2v7kzWjM5atSuffSKXFAoqKOq+2hT8cE9ncPG/8kMPrkegnfLnReB6skDMOaDtStl7FJAc+zcq9yLdaD1vj+JwwcsdXZy5YOUJKMD8DzHo6nl1MlP7ROt7J1Zi3r5gvhd/UqjzcZWcNnsBe9ZKZynjs2td/aChVbLVw03+kvAFPbtJYT8oYywurJH2pTJrFsEQYzYJF/SMbjANzouPUC/9Wy5X1kCfzce2dW8gxhYIBbWw6zBFI08mZXgZ3TWSm0EHMg34MyY7PCZcorrl5NKY9RlBKWgbQhhuqq6v841Il51Z8UuGDfM/nctUx6NHqdfHQ==
+ bh=b0CHCXfpycU7LggXZdtkkPPxsh4Ohd5GVIGWmzb4v+Q=;
+ b=AmbM+x15sGrJRVF47el+LJtZMvPT5CApR+lRMjMQ1DAfjDtJXFxZ17cZkPJCBgYKkoDBa2eRpFfXQGdhSIVRvKzg2fGCi4y4oSW8tguj5C4ohiePAC1LXYYvUEui6/tfMGYpzGzR38n0zpUYhLunkw54jjGan5X0pUCV1rqL2snHNnpfRWdj/4b+GaxkB4NB9flZfa0tQ+zyldufSfFD+MorBIjBrq7pwIVSb+YJC9hYMXYM0dAn4NC7NKdAcNVx4aTATbe66rnNtstXPwtOrsZ5DrcKyc25UZv4B4eQYZzAP62wpzWolEONakJ3D8y7C8lGuLkiBwxmCUs6m0kRkA==
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:113::12)
  by PA3PR10MB9258.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:4d7::16) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.662.4; Thu, 26 Nov
- 2026 10:30:16 +0000
+ 2026 10:30:15 +0000
 Received: from DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::ae26:d131:7cff:4001]) by DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::ae26:d131:7cff:4001%3]) with mapi id 15.21.0688.001; Thu, 26 Nov 2026
- 10:30:16 +0000
+ 10:30:15 +0000
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org
 CC: jan.kiszka@siemens.com,
 	felix.moessbauer@siemens.com
-Subject: [isar-cip-core][PATCH v4 05/21] efibootguard-boot: look up verity and uuid env by image name
-Date: Thu, 26 Nov 2026 11:29:51 +0100
-Message-ID: <20261126103007.2922985-6-quirin.gylstorff@siemens.com>
+Subject: [isar-cip-core][PATCH v4 01/21] initramfs-crypt-hook: treat mountpoint / as rootfs marker for A/B
+Date: Thu, 26 Nov 2026 11:29:47 +0100
+Message-ID: <20261126103007.2922985-2-quirin.gylstorff@siemens.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261126103007.2922985-1-quirin.gylstorff@siemens.com>
 References: <20261126103007.2922985-1-quirin.gylstorff@siemens.com>
@@ -49,228 +49,191 @@ Return-Path: quirin.gylstorff@siemens.com
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DB8PR10MB3178:EE_|PA3PR10MB9258:EE_
-X-MS-Office365-Filtering-Correlation-Id: afa7a01d-1d72-4fce-04ea-08df4ba84337
+X-MS-Office365-Filtering-Correlation-Id: ba467433-64dc-494d-300d-08df4ba841e6
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|23010399003|261022105027099003|261028144727099003|261102130727099003|10067099003|11063799006|261022115727099003|56012099006|261021121427099003|261021123027099003|261009223027099003|261026140227099003|261022075727099003|261026121527099003|261102123227099003|18002099003|6133799003|55112099003|22082099003;
-X-Microsoft-Antispam-Message-Info: tZtwpnnejrvhZ4rvGHnLud2L2/uEVYC5bv0zIAX4SjDjicb8GtvheSt3Ep5qgLKjwjGkUhfBO1omBLklTT8yZATtyCBh6R3khy0JSpFQgMgS2WmoUMwczZs18OG4OL4PTNZJ0f3moAnuwDp7kGBgaAobpDM2yQlGj8ZMPJuwBhcJInoQopMTPNw1mIQGiARhHaRw9Y/4ARFaXTpr55YOIOYyLgbomMNCAAYGnh9DW+1mpi0weLGUQv1lCpNRUUhi0cx1BzQP3TF239K6H5xXV5SVMxcYCdBpSiRSIUNgu/fWhsEGg129IJqrsLpPmP0cB+fkjNciOTzI0ms17pxGUDs2F0u4LGZ00/kOeZBEpQjrpC6xXWtBLkJ03IoYAAcK9nNq9H3Wljc++whzatNsXOGThVcnMQ8IZ3aJ6i0tZKq/Gnt3P1JTOqwToHuL9HYFLq92KXZAbIBaYhrONwssRh6tgSPatajsWw7Pw3cd3A5CsFVMiTcnRxj0nvb9LwJn4qATt98LhkkWe7NBjhwCu9Sc2QnjXlb8mYN41z0sN/EKisDTKF+a30Ik2y9Jq4kYSgJVJEBlfD9WSejKc05tX4iZ7H05Z3SNlLGd/jRLiRFGAy5do5SJEe7a7mUC36qWbJ5BbF2XsdQvtVKOd4HsKvwyUw+4yIrg/w9tqeD1IJs=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(23010399003)(261022105027099003)(261028144727099003)(261102130727099003)(10067099003)(11063799006)(261022115727099003)(56012099006)(261021121427099003)(261021123027099003)(261009223027099003)(261026140227099003)(261022075727099003)(261026121527099003)(261102123227099003)(18002099003)(6133799003)(55112099003)(22082099003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|23010399003|261022105027099003|261028144727099003|10067099003|11063799006|56012099006|261021121427099003|261021123027099003|261009223027099003|261026140227099003|261022075727099003|261026121527099003|261102123227099003|18002099003|6133799003|55112099003|22082099003;
+X-Microsoft-Antispam-Message-Info: c1EAu0WsHNuC4u65YiQ9GFd2PhnkcLn9pRKJxa5ZJgsnSiUqaynA38Zh5cIqoHy/iIcrF6T/VJV93eeEcZgBVpOHCYCGOF8/xvV/TN2ZrHsvPfK2exYDwkPNlQ53ZyFBL8Ux5zWWQcm1wA9iQLVewC4SDrH3THbJoSGUsvwCA7Ga78IG2w+JSCArntBxl+XTojv/wKf1lLju2nQjr06Mo8oWCY4vAlHK6UAGWi9i+9Qf2nJX5xnsLMPh7squitW639bM+NEHEOkp40mem6Jjz80ybQqpQLj7YdnsgLFpHq1xC2I+RxyL+ZR5SJ1NlhO5hJVMRzYRzmjdqxaukcCGM2WLpLRaHUa5ewgogVb0q0RtX3pWIhDCcClLuMUWogkghLyt4cbijG8xzuYVMeBUf3vYxvr9HWaG3FR6lDhCEkQkX86r60wYk9vtzeKVN6txK/LhUF5mMZ9tzAQHJVB22+tf02ohVv2J5YgNWFoew4mpy7cJ7Y4MauCIcMzCz5BytWIhKZ92x54Yf4SkKsQSglItDWd14HkBLTUNMyTAyOpSus/YgLO7wnLriv2XDMgMeIoV2ceZGXG9XwnJlBW/a2klkX7DuNC9VjvnxMVdbxbffb2CZq5IEjl8ctmfMEGMk4udf31sYEi8ehMlVtzY8AKiz4WLdDSU2+xWIZrYSEM=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(23010399003)(261022105027099003)(261028144727099003)(10067099003)(11063799006)(56012099006)(261021121427099003)(261021123027099003)(261009223027099003)(261026140227099003)(261022075727099003)(261026121527099003)(261102123227099003)(18002099003)(6133799003)(55112099003)(22082099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?iA6yHDLyqRI2/PGGTL8v95Ci8UNc416uXlW4lJLt9trRcDQ18FvthTsyc8to?=
- =?us-ascii?Q?Sy0IF97Ygv9L3cCTwkbr+KUwREcMV2i5zMdhUMgqAyReF+xVpkUayUkUIUuv?=
- =?us-ascii?Q?X0e/g1Pukqq5eaNEcB8GroPfs5ABE2qEMpMQsKcECh7FQQc7PEPd4cuOTfSW?=
- =?us-ascii?Q?Oydh/RgIuOipNJ5/ZsYZlO/9AHyDGZ4tbbEoFZPYcay4X4pxbv7oWkhGurWG?=
- =?us-ascii?Q?lpaEav3zF0CeY4XcjenYrQDlAdm58dgHclLNgsth2Xc+vMrLYkJYpY06lzx4?=
- =?us-ascii?Q?jX5gfmUKQGIJLG3hTHlNaCNYaMVxrUsmPKZ5Eypa9LXpkAzqf1cKAAfiaBQ0?=
- =?us-ascii?Q?/X19jHhHa3dnNFYsKQuTLHHYoM5asQSrYuJXZIQ7zHH95Izgfe6AVU3xbHQq?=
- =?us-ascii?Q?wlhXbGJ+j5+t+M+WaBo09JWPHgZ4BrKF67MFEMv29L/DXnKr93XdqVCGphwT?=
- =?us-ascii?Q?3KxfX3poQ3w9ratKo7itKmtumngwUxK8uExow5G7u/5CAdn0G4RZaaaUC6N/?=
- =?us-ascii?Q?5HZBGKaQm58CN8IsSfTtXeeU0B4yO+WOMRREcsq+nxtvws6Rlxq3EjaBh32i?=
- =?us-ascii?Q?EOiCI1DKzj7dZUW8FkFtxQMsflo4sHLqvoVHnSytpjxdU66tK9mEIMwTgsRU?=
- =?us-ascii?Q?MOs/STdcboeY8hH3zRBHgWoDVBEoFxWaSuxJ8noP2wsklLfq4E8giFQ+/t84?=
- =?us-ascii?Q?YTdUnkgDsFzk3VNMzXLGXZtBdzUDWQ7Xu2GSpAzuEvdqoX+2QDFuEogdIQX7?=
- =?us-ascii?Q?8QfrLxSvuaZ31jnzD9e2v4T9L7i9b+lbDBBxqELbGU9s431vALGjD8fscyQy?=
- =?us-ascii?Q?pRglySAMNWFjdwHAJYnc4JWCs8xspZbkJ5Qp7pbwTcijQgBJ/8zh9J+L9Fdl?=
- =?us-ascii?Q?brHC+4a0DzD0UXr/MthNPrtd9L/qCtdva5MNDAYAQC4p+nJfPSpnghfweHIV?=
- =?us-ascii?Q?vae3SRToHMIuUE1ZGZJ1C5MZ/a34n0JuSxx+c2zcqYVYx1atnl947PnmjXqP?=
- =?us-ascii?Q?Fnw5FQ7led/r4svLrueqlzh1ekq5VtZgT6L9o+rZQEaHJYpZoF5e+dYdBkyb?=
- =?us-ascii?Q?GkSghsqFDtzY4DgajeAmzvfVKXeoRSCp2a3ua/TFpeHI+Z5miLlY0Bs/H8kU?=
- =?us-ascii?Q?AHgIfH1WxceFIWbxJ2Kbk19futLalMKUSTQ0gGM8pyLZXbfboXK01y47oEtZ?=
- =?us-ascii?Q?ysGCiBfe50Thv4lxVIzRi3D6xOG4WTM/itKczGR4GP0cB3acW4gI1ioiK5dq?=
- =?us-ascii?Q?E5E8IPDsORzwGSXMKQ+GDq9wl0ATpIc0p3/4PljsJUWVNLTc9TFuOhZF4C/p?=
- =?us-ascii?Q?xLJ+nn1MvsW2liw8RDf5LQ+oQxcrE4e1Rb7y8ao6BZReJxkWCO0LYj/ySeOl?=
- =?us-ascii?Q?qDZi0TtDcF+tJYffnCk6DDmxmD8D1QzyqQ1C36H7p05FuGoD5Ww8wQfqXmtD?=
- =?us-ascii?Q?LXc2kzAkPhLCPndkKsm0SKZMeFgyHFWSgQplbt6RI9duVXwF+a/mOvP45bmw?=
- =?us-ascii?Q?GGW/9z/WP+Qwzy0HSpUyXF+NXl+120dvONg6//1AKuIeRqLbFZAtVbiK7d3c?=
- =?us-ascii?Q?df2KJ5FfB0R2AbKYBmrLqP29IptAiWqopsYwT92l5oW2F/jJCZUcGgsP6KgM?=
- =?us-ascii?Q?VKF07MewN21zNbHE3BBK39T6enKjgCswAOpE8n+yIeN+0cp5heqA4vSHxOMZ?=
- =?us-ascii?Q?aGLizumq1ZVocYLVMfuBz+I+ag1QdZT9LUUsbIf9K5IMV7h7bqETZY+rXps9?=
- =?us-ascii?Q?TEBSrbZJLZ3fsI5Cz3NVp+avvxNDmYI=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?xXcf2QkSO4ER/La1rmxqirhI+o1cliEG+rj5OF7jkQnbQNqnvn7R900KY8ll?=
+ =?us-ascii?Q?E6Zop3OPEVG1ldEwA6OUfDmDXm5wb/4AMm+wcPeSXC7t4jT4IDEXjwxWxrVi?=
+ =?us-ascii?Q?VTl9kpkPHRHFtKnoQ06+QqIdp2Slb3ut5eT4xH1AkTxWoAGRVld7Ta5QTBrD?=
+ =?us-ascii?Q?8ZX7+YOF+ElPPRXDaKRa0nXt1HIKpj1bp2vJlx/a0EzPMOLkHBFWUMORRZOt?=
+ =?us-ascii?Q?KbWz4dJ97EQhDifHHaxFGoJ+GpdTewV7DhHL/fi8lbcAUUNFzVZ/JH8BW38F?=
+ =?us-ascii?Q?4Xf8n4QUaYpctPV1aFHQU9DaT0eIrW5UGWrSBm/XmnIGVOBLwLlAu4dXZ67a?=
+ =?us-ascii?Q?x+gciVaLdM2I+xJfA5oTXwnB8UfC1wkPsavbVL60KuDMoqgQjVqbM5LK6mjO?=
+ =?us-ascii?Q?T301h9vfrDeCk4F8BDdJf3Gp6Dsb+8mMZ9jOzMpIG+YrAQp2fbVpH2cSD28P?=
+ =?us-ascii?Q?W1aT+XvL3B62IJYrhw/6R2I7xT7aK6QSWV+OhHt354ig0qeU9FdIb5NECKX6?=
+ =?us-ascii?Q?6uzfIlGTfNtApD0081waDmhM9Kz4JHPghpZzxJhFFXDKqorGXMDDtc7OlbRs?=
+ =?us-ascii?Q?c/VBBn9xj3n6W9gE1W2boXF81LJgadMhEjIz4ye+Bve2017/4UImgHgGFrin?=
+ =?us-ascii?Q?dR/e75zFHjwAEEnd/iAfSMER+jNeLb2CG7vLW5PZJSWrhtANYuPb0HOlcJm7?=
+ =?us-ascii?Q?qNy5bNNZtM5COL9gdomLSxs/Kj1HEOsCV5nnIdUip+Bi4h9FK4ISm8jXQPiB?=
+ =?us-ascii?Q?//3I83yQ2JJjL50GDduUJPRxgmyTBEN9410QgzwnhUefrDVTOOXkpH24svsA?=
+ =?us-ascii?Q?MP721xiGmRzoDX3AqgSEcaCZK6OoRnAJFgvDy38liVSRXDMU9b5UpJHCbOtO?=
+ =?us-ascii?Q?AzzEfmwzX8C+M+wv61zhTxjQR+AJFSdt1sLq5SsuNcJKKSDJxje7v0oM5/rP?=
+ =?us-ascii?Q?uP/+K/xQWLTORQwgXZNI/jQyFnr2k9zbdhrqA7uK/WBPhyWytPk5TrHiDLK0?=
+ =?us-ascii?Q?w/1rLkG5Lln3hhJ+AlrmhwBnEWuc+cd7eGez13P5uH6Ddn++bSnrWaKCWyjZ?=
+ =?us-ascii?Q?FerH6qq/k6EYQjdjdK1Vc3smV9zquu6QpIdubUqlcxQCIjpFVT0Owrla5vLl?=
+ =?us-ascii?Q?qeI4no75iweNEGuEh+smEQkVwCo9BafJriw3MLCoNFePJNl4RYspv+x6oU8A?=
+ =?us-ascii?Q?KDavehXAF764sJJ83jCPTygPx49WN2R5JNOM8jhCP6xvJO6foeKBAga/Blhg?=
+ =?us-ascii?Q?GTm4V+aAOCFHyeSzMlsF2imxv2sPdr7DfmTSb4MaEgALSFrfzPEaoZyeTCmg?=
+ =?us-ascii?Q?ngFZkuzFMWrW0gcK7Tzs71tMR64Sj9iVDq+WMcMV2xboPe5S8+921IKUP66E?=
+ =?us-ascii?Q?osd8zfISLGm+2ZHRZmyjaZFe9b/1coo9ZXjpcTWH9+6GBeX7yuuFTQ9xYKQz?=
+ =?us-ascii?Q?kDKSmZNNH+VMhMuQ5Acckul6ClQHa0xrwQ4QOy2Oz9xwujflXWAetbBdMmK7?=
+ =?us-ascii?Q?eUPuwxx0JS1C8rWOWYuiazz9RY62+NOci2HKo5s0mqDVyRaSUQQrAfBK09te?=
+ =?us-ascii?Q?gBwbUniYsUsD0YEZnzi6u42FKcbvwx74c4XxUD3mA0a6B2HGqDDzE1twKKsC?=
+ =?us-ascii?Q?Os3GDMmKTi+/IQYmjoe9+zG5jevTHPudo2IIKTaIri4NwZzVFA/qyMS2IDAB?=
+ =?us-ascii?Q?N2lyyd6KXsd3VyqOrRITCXz9OAZNgMVLK/5oNzNoOqBQFZPwySniDtTLmCgg?=
+ =?us-ascii?Q?vTNF1OsAcnalgXtM9uMpSU4f8bb3ozI=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: afa7a01d-1d72-4fce-04ea-08df4ba84337
+X-MS-Exchange-CrossTenant-Network-Message-Id: ba467433-64dc-494d-300d-08df4ba841e6
 X-MS-Exchange-CrossTenant-AuthSource: DB8PR10MB3178.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2026 10:30:16.5650
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2026 10:30:14.3547
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Vcs7aGpYE+2aWa5EzJCH2RyL04ii913UNbK66HumaCyLMyeygrolF8HhA/kpDLcrO3sO3R6/I1VLblreFSmlOzPeUml/Nlcgbs1hUmtgXjo=
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0csdfkjLkEhDRFmbaMvNoLzj44QgQ31aSnVBvsfemi/EKBP04KCfkAHErEdzJB8dLmt+Z52InzVkGTbemvUKMPaUTa62UbWD1zp+zObcD+Y=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA3PR10MB9258
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Thu, 26 Nov 2026 10:30:24 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/25086
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by lin-tor-korg-lkml-alma10-1 with HTTPS for <cip-dev@lists.cip-project.org>; Thu, 26 Nov 2026 10:30:25 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/25088
 Content-Type: text/plain; charset="utf-8"
 
-The verity and uuid env files were found by globbing IMAGE_BASENAME*,
-which can match the env file of a different image in the deploy
-directory and pick up the wrong root hash or UUID. The exact name is
-known: IMAGE_FULLNAME, which is also what verity.bbclass and
-image_uuid.bbclass use to write the files.
-
-Export IMAGE_FULLNAME to wic and look the files up by that exact name
-instead of guessing with a glob. A missing file raises a WicError in one
-place, with a hint to set ROOTFS_CONTAINER_TYPE =3D "verity" for the
-verity env file, instead of exiting the plugin. An unset IMAGE_FULLNAME
-raises a WicError instead of looking for "None.verity.env".
-
-A read-only image without a container and without a uuid env file has
-no A/B rootfs. It gets no root options, as before when its wks file did
-not set abrootfs_root=3Dy, instead of failing on the missing file.
+An entry with mountpoint / marks the partition holding the root
+filesystem. Do not mount it in local-bottom and only point ROOT at its
+decrypted device if it is the only such entry and neither abrootfs nor
+verity selects the root device. Existing configurations with an empty
+mountpoint keep their behavior.
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- classes-recipe/read-only-rootfs.bbclass       |  2 +-
- recipes-core/images/swupdate-efibootguard.inc |  2 +-
- .../wic/plugins/source/efibootguard-boot.py   | 50 +++++++++++++------
- 3 files changed, 36 insertions(+), 18 deletions(-)
+ doc/README.tpm2.encryption.md                 | 19 +++++++++++++----
+ .../files/local-bottom-complete               |  7 ++++---
+ .../files/local-top-complete                  | 21 +++++++++++++++++--
+ 3 files changed, 38 insertions(+), 9 deletions(-)
 
-diff --git a/classes-recipe/read-only-rootfs.bbclass b/classes-recipe/read-=
-only-rootfs.bbclass
-index 0bf808d2..98d66774 100644
---- a/classes-recipe/read-only-rootfs.bbclass
-+++ b/classes-recipe/read-only-rootfs.bbclass
-@@ -14,7 +14,7 @@ IMAGE_INITRD =3D "${INITRAMFS_RECIPE}"
+diff --git a/doc/README.tpm2.encryption.md b/doc/README.tpm2.encryption.md
+index 209b750a..09004736 100644
+--- a/doc/README.tpm2.encryption.md
++++ b/doc/README.tpm2.encryption.md
+@@ -62,12 +62,23 @@ Power failure safety: Changes to the partition structur=
+e or file system super bl
+ To encrypt the root file system the variable `CRYPT_PARTITIONS` needs to b=
+e set to:
 =20
- do_image_wic[depends] +=3D "${INITRAMFS_RECIPE}:do_build"
+ ```
+-CRYPT_PARTITIONS =3D "${ABROOTFS_PART_UUID_A}::reencrypt ${ABROOTFS_PART_U=
+UID_B}::reencrypt"
++CRYPT_PARTITIONS =3D "${ABROOTFS_PART_UUID_A}:/:reencrypt ${ABROOTFS_PART_=
+UUID_B}:/:reencrypt"
+ ```
 =20
--WICVARS +=3D "RO_ROOTFS_TYPE ROOTFS_CONTAINER_TYPE"
-+WICVARS +=3D "RO_ROOTFS_TYPE ROOTFS_CONTAINER_TYPE IMAGE_FULLNAME"
-=20
- WIC_HOME_PARTITION =3D ""
- WIC_HOME_PARTITION:separate-home-part =3D "part /home --source rootfs --ch=
-ange-directory=3Dhome --fstype=3Dext4 --label home --align 1024  --size 1G =
---fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid c07d5e8f-3448-46dc-9c0=
-f-58904f369524"
-diff --git a/recipes-core/images/swupdate-efibootguard.inc b/recipes-core/i=
-mages/swupdate-efibootguard.inc
-index d85e8569..a9be514d 100644
---- a/recipes-core/images/swupdate-efibootguard.inc
-+++ b/recipes-core/images/swupdate-efibootguard.inc
-@@ -14,7 +14,7 @@ IMAGER_INSTALL:wic:append =3D " efibootguard:${DISTRO_ARC=
-H} efibootguard-tools:${D
- IMAGER_BUILD_DEPS:wic:append =3D " efibootguard"
- IMAGER_BOM:wic:append =3D " efibootguard:${DISTRO_ARCH}"
- WDOG_TIMEOUT ?=3D "60"
--WICVARS +=3D "WDOG_TIMEOUT KERNEL_IMAGE INITRD_DEPLOY_FILE DTB_FILES EFI_A=
-RCH EFI_LIB_ARCH UKI_FILENAME"
-+WICVARS +=3D "WDOG_TIMEOUT IMAGE_FULLNAME KERNEL_IMAGE INITRD_DEPLOY_FILE =
-DTB_FILES EFI_ARCH EFI_LIB_ARCH UKI_FILENAME"
- IMAGE_TYPEDEP:swu:append =3D " wic"
-=20
- def distro_to_efi_arch(d):
-diff --git a/scripts/lib/wic/plugins/source/efibootguard-boot.py b/scripts/=
-lib/wic/plugins/source/efibootguard-boot.py
-index 22173d6e..6067bb53 100644
---- a/scripts/lib/wic/plugins/source/efibootguard-boot.py
-+++ b/scripts/lib/wic/plugins/source/efibootguard-boot.py
-@@ -30,7 +30,6 @@
- # Christian Storm <christian.storm (at] siemens.com>
-=20
- import os
--import fnmatch
- import re
- import sys
- import logging
-@@ -169,6 +168,9 @@ class EfibootguardBootPlugin(SourcePlugin):
-         an explicit sourceparam verity_root=3Dy or abrootfs_root=3Dy must =
-match
-         the derived mode, otherwise a WicError is raised. Without
-         RO_ROOTFS_TYPE the sourceparams of out-of-tree wks files are used.
-+        A read-only image without a container and without an
-+        IMAGE_FULLNAME.uuid.env (no A/B rootfs) gets no root options, as
-+        before without abrootfs_root=3Dy.
-         """
-         explicit =3D None
-         if source_params.get("verity_root") =3D=3D 'y':
-@@ -179,6 +181,9 @@ class EfibootguardBootPlugin(SourcePlugin):
-             # Empty variables are not exported to wic
-             container =3D get_bitbake_var("ROOTFS_CONTAINER_TYPE")
-             mode =3D "verity" if container =3D=3D "verity" else "abrootfs"
-+            if mode =3D=3D "abrootfs" and not explicit \
-+                    and not cls._has_uuid_env():
-+                return None
-             if explicit and explicit !=3D mode:
-                 raise WicError("efibootguard-boot: sourceparam %s_root=3Dy=
- "
-                                "conflicts with ROOTFS_CONTAINER_TYPE '%s'"
-@@ -187,17 +192,29 @@ class EfibootguardBootPlugin(SourcePlugin):
-         return explicit
-=20
-     @classmethod
--    def _generate_kernel_opts_from_file(cls, filename, keys):
--        env_file =3D None
-+    def _has_uuid_env(cls):
-+        """True if the image deployed an A/B uuid env (image_uuid.bbclass)=
-."""
-+        return os.path.exists(os.path.join(
-+            get_bitbake_var("DEPLOY_DIR_IMAGE") or "",
-+            "%s.uuid.env" % get_bitbake_var("IMAGE_FULLNAME")))
+-The mountpoint is empty as the root partition is mounted by a seperate ini=
+tramfs hook.
+-Both partitions are encrypted during first boot. The initramfs hook opens =
+`${ABROOTFS_PART_UUID_A}` and `${ABROOTFS_PART_UUID_B}`
+-during boot.
++The mountpoint `/` marks the partitions holding the root file system. They=
+ are
++not mounted by the crypt hook; the root file system is mounted by a separa=
+te
++initramfs hook (abrootfs or verity). Both partitions are encrypted during =
+first
++boot. The crypt hook opens `${ABROOTFS_PART_UUID_A}` and
++`${ABROOTFS_PART_UUID_B}` during boot.
 +
-+    @classmethod
-+    def _required_var(cls, name):
-+        """Value of an exported bitbake variable; WicError if it is unset.=
-"""
-+        value =3D get_bitbake_var(name)
-+        if not value:
-+            raise WicError("efibootguard-boot: %s is not set or not in "
-+                           "WICVARS" % name)
-+        return value
++The crypt hook points the kernel `ROOT` parameter at the decrypted device
++only if there is exactly one `/` entry and neither the abrootfs nor the ve=
+rity hook
++is part of the initramfs. In all other cases the `/` entry is only a marke=
+r.
 +
-+    @classmethod
-+    def _generate_kernel_opts_from_file(cls, filename, keys, hint=3D""):
-         opts =3D {}
-         deploy_dir =3D get_bitbake_var("DEPLOY_DIR_IMAGE")
--        for file in os.listdir(deploy_dir):
--            if fnmatch.fnmatch(file, filename):
--                env_file =3D os.path.join(deploy_dir, file)
--                break
--        if not env_file:
--            msger.error("File '%s' not found in directory %s", filename, d=
-eploy_dir)
--            exit(1)
-+        env_file =3D os.path.join(deploy_dir, filename)
-+        if not os.path.exists(env_file):
-+            raise WicError("efibootguard-boot: file '%s' not found in "
-+                           "directory %s.%s" % (filename, deploy_dir, hint=
-))
-         with open(env_file, "r") as venv:
-             for line in venv:
-                 k, v =3D line.strip().split("=3D")
-@@ -209,9 +226,10 @@ class EfibootguardBootPlugin(SourcePlugin):
-     def _get_verity_opts(cls):
-         verity_sd_keys =3D ["data-block-size", "hash-block-size", "data-bl=
-ocks",
-                           "hash-offset", "salt", "uuid", "root-hash"]
--        image_basename =3D get_bitbake_var("IMAGE_BASENAME")
--        opts =3D cls._generate_kernel_opts_from_file(f'{image_basename}*.v=
-erity.env',
--                                               verity_sd_keys)
-+        opts =3D cls._generate_kernel_opts_from_file(
-+            '%s.verity.env' % cls._required_var("IMAGE_FULLNAME"), verity_=
-sd_keys,
-+            hint=3D" Verity root requested, set ROOTFS_CONTAINER_TYPE =3D =
-"
-+                 "\"verity\".")
-         cmdline=3D[]
-         # fixup for root-hash to avoid an error in the initramfs search fo=
-r the
-         # root option in the kernel cmdline
-@@ -225,9 +243,9 @@ class EfibootguardBootPlugin(SourcePlugin):
-     @classmethod
-     def _get_abrootfs_opts(cls):
-         abrootfs_sd_keys =3D ["target-image-uuid"]
--        image_basename =3D get_bitbake_var("IMAGE_BASENAME")
--        opts =3D cls._generate_kernel_opts_from_file(f'{image_basename}*.u=
-uid.env',
--                                                   abrootfs_sd_keys)
-+        opts =3D cls._generate_kernel_opts_from_file(
-+            '%s.uuid.env' % cls._required_var("IMAGE_FULLNAME"),
-+            abrootfs_sd_keys)
-         return ",".join(["%s=3D%s" % (k, v) for k, v in opts.items()])
++The previous notation with an empty mountpoint
++(`${ABROOTFS_PART_UUID_A}::reencrypt`) behaves the same as `/` with the
++initramfs-tools-based hook and keeps working. With dracut, use `/`; an emp=
+ty
++mountpoint marks a data partition (see [README.dracut.md](README.dracut.md=
+)).
 =20
-     @classmethod
+ #### Encrypting the shared partition via an update
+=20
+diff --git a/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-comp=
+lete b/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-complete
+index e1d2f7fc..648500cf 100644
+--- a/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-complete
++++ b/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-complete
+@@ -71,9 +71,10 @@ for partition_set in $partition_sets; do
+ 			;;
+ 	esac
+ 	decrypted_part=3D/dev/mapper/"$crypt_mount_name"
+-	if [ -z "$partition_mountpoint" ]; then
+-		continue
+-	fi
++	# Empty: not mounted. "/": the root filesystem, mounted by the initramfs.
++	case "$partition_mountpoint" in
++	""|/) continue ;;
++	esac
+ 	if /usr/sbin/cryptsetup luksDump --batch-mode "$part_device" 2>/dev/null =
+\
+ 			| grep -q "luks2"; then
+ 		mount_partition "$decrypted_part" "${rootmnt}""$partition_mountpoint"
+diff --git a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complet=
+e b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
+index f5b1c8f1..d26ab8fa 100755
+--- a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
++++ b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
+@@ -233,6 +233,23 @@ prepare_for_encryption
+=20
+ wait_30sec_for_condition check_partitions
+=20
++# An entry with mountpoint "/" holds the root filesystem. Only point ROOT =
+at
++# its decrypted device if it is the only one and no later local-top script
++# (abrootfs, verity) selects the root device itself; those only accept
++# ROOT=3DPART* or an empty ROOT. Otherwise "/" is just a marker.
++set_root_param=3Dn
++root_entries=3D0
++for partition_set in $partition_sets; do
++	if [ "$(awk -v var=3D"$partition_set" 'BEGIN{split(var,a,":"); print a[2]=
+}')" =3D "/" ]; then
++		root_entries=3D$((root_entries + 1))
++	fi
++done
++if [ "$root_entries" -eq 1 ] &&
++   [ ! -e /scripts/local-top/abrootfs ] &&
++   [ ! -e /scripts/local-top/verity ]; then
++	set_root_param=3Dy
++fi
++
+ for partition_set in $partition_sets; do
+ 	partition=3D"$(awk -v var=3D"$partition_set" 'BEGIN{split(var,a,":"); pri=
+nt a[1]}')"
+ 	partition_mountpoint=3D"$(awk -v var=3D"$partition_set" 'BEGIN{split(var,=
+a,":"); print a[2]}')"
+@@ -264,7 +281,7 @@ for partition_set in $partition_sets; do
+ 		open_tpm2_partition "$part_device" "$crypt_mount_name" "$tpm_device"
+=20
+ 		# check if we are trying to mount root, set ROOT to decrypted partition:
+-		if [ "$partition_mountpoint" =3D "/" ]; then
++		if [ "$partition_mountpoint" =3D "/" ] && [ "$set_root_param" =3D y ]; t=
+hen
+ 			echo "ROOT=3D$decrypted_part" >/conf/param.conf
+ 		fi
+=20
+@@ -288,7 +305,7 @@ for partition_set in $partition_sets; do
+ 	fi
+=20
+ 	# check if we are trying to mount root, set ROOT to decrypted partition:
+-	if [ "$partition_mountpoint" =3D "/" ]; then
++	if [ "$partition_mountpoint" =3D "/" ] && [ "$set_root_param" =3D y ]; th=
+en
+ 		echo "ROOT=3D$decrypted_part" >/conf/param.conf
+ 	fi
+=20
 --=20
 2.47.3
 
